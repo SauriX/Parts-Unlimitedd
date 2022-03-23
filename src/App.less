@@ -1,0 +1,118 @@
+@import "~antd/dist/antd.less";
+
+#root {
+  height: 100%;
+}
+
+#app-layout {
+  height: 100%;
+}
+
+.site-layout-background {
+  background: #fff;
+}
+
+// Header
+.header {
+  padding: 0;
+  border-bottom: 1px solid #a6a6a6;
+}
+
+.header .header-data > * {
+  margin-right: 24px;
+}
+
+.menu-options {
+  width: 100%;
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+.header .header-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 65px;
+  width: 200px;
+}
+
+.header .header-logo-container .ant-image {
+  display: flex;
+  height: 90%;
+}
+
+.header .header-logo-container .ant-image .ant-image-img {
+  height: 100%;
+  width: auto;
+}
+
+// Menu
+.menu-item span {
+  color: white !important;
+
+  a {
+    color: white !important;
+  }
+
+  + i {
+    color: white !important;
+  }
+  // background: #0070c0;
+}
+
+// Encabezados
+.header-container {
+  padding: 0;
+
+  .ant-page-header-heading-extra {
+    display: flex;
+    align-items: center;
+  }
+
+  .ant-space-item {
+    min-width: 35px;
+    text-align: center;
+  }
+}
+
+.header-container.no-padding {
+  padding: 0px 0px 0px 0px;
+
+  .ant-page-header-heading-extra {
+    margin: 0;
+  }
+}
+
+.header-title {
+  display: inline-block;
+  margin-bottom: 0 !important;
+
+  .ant-image {
+    height: 30px;
+    width: auto;
+    margin-right: 10px;
+
+    img {
+      height: 100%;
+      width: auto;
+    }
+  }
+}
+
+.header-title-icon {
+  margin-right: 10px;
+}
+
+.ant-page-header-heading-extra > * {
+  margin-left: 12px !important;
+}
+
+.header-divider {
+  margin: 12px 0;
+  border-top: 1px solid #b2b2b2;
+}
+
+// Buttons
+.ant-col button ~ button {
+  margin-left: 12px;
+}
