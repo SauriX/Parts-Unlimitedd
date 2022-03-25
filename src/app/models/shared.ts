@@ -35,3 +35,8 @@ export type TreeData = {
   key: string;
   children?: TreeData[];
 };
+
+export interface ISearchParams {
+  search: string;
+  mode: "edit" | "readonly";
+}

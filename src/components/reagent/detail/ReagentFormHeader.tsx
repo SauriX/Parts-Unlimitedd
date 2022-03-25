@@ -6,9 +6,10 @@ import { useNavigate } from "react-router-dom";
 
 type ReagentFormHeaderProps = {
   id: number;
+  handlePrint: () => void;
 };
 
-const ReagentFormHeader: FC<ReagentFormHeaderProps> = ({ id }) => {
+const ReagentFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint }) => {
   let navigate = useNavigate();
 
   return (
@@ -17,7 +18,7 @@ const ReagentFormHeader: FC<ReagentFormHeaderProps> = ({ id }) => {
       title={<HeaderTitle title="Catálogo de Reactivos" image="reagent" />}
       className="header-container"
       extra={[
-        <ImageButton key="print" title="Imprimir" image="print" />,
+        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
         <ImageButton key="doc" title="Informe" image="doc" />,
         <ImageButton
           key="back"

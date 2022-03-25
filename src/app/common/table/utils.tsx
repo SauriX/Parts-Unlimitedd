@@ -130,9 +130,4 @@ export const getDefaultColumnProps = (
   sorter: (a: any, b: any) => (a[dataIndex] > b[dataIndex] && 1) || -1,
   showSorterTooltip: false,
   width: !minWidth ? width : (windowSize ?? resizeWidth) < resizeWidth ? minWidth : width,
-  // onHeaderCell: (column) => ({
-  //   style: {
-  //     width: document!.querySelector("#content-layout")!.clientWidth < 600 ? minWidth : width,
-  //   },
-  // }),
 });

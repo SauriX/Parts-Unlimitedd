@@ -1,10 +1,14 @@
 import { PageHeader } from "antd";
-import React from "react";
+import React, { FC } from "react";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import ImageButton from "../../../app/common/button/ImageButton";
 import { useNavigate } from "react-router-dom";
 
-const UserFormHeader = () => {
+type UserFormHeaderProps = {
+  handlePrint: () => void;
+};
+
+const UserFormHeader: FC<UserFormHeaderProps> = ({ handlePrint }) => {
   let navigate = useNavigate();
 
   return (
@@ -13,7 +17,7 @@ const UserFormHeader = () => {
       title={<HeaderTitle title="Catálogo usuarios" image="user" />}
       className="header-container"
       extra={[
-        <ImageButton key="print" title="Imprimir" image="print" />,
+        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
         <ImageButton key="doc" title="Informe" image="doc" />,
         <ImageButton
           key="back"
