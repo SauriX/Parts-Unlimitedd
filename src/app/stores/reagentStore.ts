@@ -5,6 +5,7 @@ import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import messages from "../util/messages";
+import responses from "../util/responses";
 import { getErrors } from "../util/utils";
 
 export default class ReagentStore {
@@ -27,17 +28,17 @@ export default class ReagentStore {
     try {
       const scopes = await Reagent.access();
       this.scopes = scopes;
-    } catch (error) {
+    } catch (error: any) {
       alerts.warning(getErrors(error));
       history.push("/forbidden");
     }
   };
 
-  getAll = async () => {
+  getAll = async (search: string) => {
     try {
-      const reagents = await Reagent.getAll();
+      const reagents = await Reagent.getAll(search);
       this.reagents = reagents;
-    } catch (error) {
+    } catch (error: any) {
       alerts.warning(getErrors(error));
       this.reagents = [];
     }
@@ -47,9 +48,12 @@ export default class ReagentStore {
     try {
       const reagent = await Reagent.getById(id);
       return reagent;
-    } catch (error) {
-      console.log(error);
-      alerts.warning(getErrors(error));
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
     }
   };
 
@@ -57,9 +61,10 @@ export default class ReagentStore {
     try {
       await Reagent.create(reagent);
       alerts.success(messages.created);
-      history.push("/reagent");
-    } catch (error) {
+      return true;
+    } catch (error: any) {
       alerts.warning(getErrors(error));
+      return false;
     }
   };
 
@@ -67,9 +72,10 @@ export default class ReagentStore {
     try {
       await Reagent.update(reagent);
       alerts.success(messages.updated);
-      history.push("/reagent");
-    } catch (error) {
+      return true;
+    } catch (error: any) {
       alerts.warning(getErrors(error));
+      return false;
     }
   };
 }
