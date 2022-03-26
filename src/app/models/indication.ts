@@ -2,7 +2,7 @@ export interface IIndicationList {
     idIndicacion: number;
     clave: string;
     nombre: string;
-    descripcion: strint;
+    descripcion: string;
     activo: boolean
   }
   
@@ -10,18 +10,18 @@ export interface IIndicationList {
     idIndicacion: number;
     clave: string;
     nombre: string;
-    descripcion: strint;
+    descripcion: string;
     activo: boolean
   }
   
-  export class IndicationFormValues implements IIndicatonForm {
+  export class IndicationFormValues implements IIndicationForm {
     idIndicacion = 0;
     clave = "";
     nombre = "";
     descripcion = "";
     activo = true;
   
-    constructor(init?: IIndicatonForm) {
+    constructor(init?: IIndicationForm) {
       Object.assign(this, init);
     }
   }
