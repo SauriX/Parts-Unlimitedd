@@ -1,31 +1,31 @@
 import { makeAutoObservable } from "mobx";
-import Medics from "../api/medics";
-import { IMedicsForm, IMedicsList } from "../models/medics";
+import Indication from "../api/indication";
+import { IIndicationForm, IIndicationList } from "../models/indication";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 
-export default class MedicsStore {
+export default class IndicationStore {
   constructor() {
     makeAutoObservable(this);
   }
 
   scopes?: IScopes;
-  medics: IMedicsList[] = [];
+  indication: IIndicationList[] = [];
 
   clearScopes = () => {
     this.scopes = undefined;
   };
 
-  clearMedics = () => {
-    this.medics = [];
+  clearIndications = () => {
+    this.indication = [];
   };
 
   access = async () => {
     try {
-      const scopes = await Medics.access();
+      const scopes = await Indication.access();
       this.scopes = scopes;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -35,39 +35,39 @@ export default class MedicsStore {
 
   getAll = async () => {
     try {
-      const medics = await Medics.getAll();
-      this.medics = medics;
+      const indications = await Indication.getAll();
+      this.indication = indications;
     } catch (error) {
       alerts.warning(getErrors(error));
-      this.medics = [];
+      this.indication = [];
     }
   };
 
   getById = async (id: number) => {
     try {
-      const medics = await Medics.getById(id);
-      return medics;
+      const indication = await Indication.getById(id);
+      return indication;
     } catch (error) {
       console.log(error);
       alerts.warning(getErrors(error));
     }
   };
 
-  create = async (medics: IMedicsForm) => {
+  create = async (indication: IIndicationForm) => {
     try {
-      await Medics.create(medics);
+      await Indication.create(indication);
       alerts.success(messages.created);
-      history.push("/medics");
+      history.push("/indication");
     } catch (error) {
       alerts.warning(getErrors(error));
     }
   };
 
-  update = async (medics: IMedicsForm) => {
+  update = async (indication: IIndicationForm) => {
     try {
-      await Medics.update(medics);
+      await Indication.update(indication);
       alerts.success(messages.updated);
-      history.push("/medics");
+      history.push("/indication");
     } catch (error) {
       alerts.warning(getErrors(error));
     }

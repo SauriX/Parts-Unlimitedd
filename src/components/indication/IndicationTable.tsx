@@ -10,12 +10,12 @@ import useWindowDimensions, { resizeWidth } from "../../app/util/window";
 import { EditOutlined } from "@ant-design/icons";
 import IconButton from "../../app/common/button/IconButton";
 import { useNavigate } from "react-router-dom";
-import { IMedicsList } from "../../app/models/medics";
+import { IIndicationList } from "../../app/models/indication";
 import { useStore } from "../../app/stores/store";
 
-const MedicsTable = () => {
-  const { medicsStore } = useStore();
-  const { medics, getAll } = medicsStore;
+const IndicationTable = () => {
+  const { indicationStore } = useStore();
+  const { indication, getAll } = indicationStore;
 
   let navigate = useNavigate();
   const { width: windowWidth } = useWindowDimensions();
@@ -30,16 +30,16 @@ const MedicsTable = () => {
   console.log("Table");
 
   useEffect(() => {
-    const readMedics = async () => {
+    const readIndication = async () => {
       setLoading(true);
       await getAll();
       setLoading(false);
     };
 
-    readMedics();
+    readIndication();
   }, [getAll]);
 
-  const columns: IColumns<IMedicsList> = [
+  const columns: IColumns<IIndicationList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
@@ -52,7 +52,7 @@ const MedicsTable = () => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/medics/${user.id}`);
+            navigate(`/indiction/${user.idIndicacion}`);
           }}
         >
           {value}
@@ -69,7 +69,7 @@ const MedicsTable = () => {
       }),
     },
     {
-      ...getDefaultColumnProps("direccion", "correo","telefono","celular", "observaciones", "especialidad", {
+      ...getDefaultColumnProps("descripcion", "Descripcion", {
         searchState,
         setSearchState,
         width: "20%",
@@ -104,12 +104,12 @@ const MedicsTable = () => {
   ];
 
   return (
-    <Table<IMedicsList>
+    <Table<IIndicationList>
       loading={loading}
       size="small"
-      rowKey={(record) => record.id}
+      rowKey={(record) => record.idIndicacion}
       columns={columns}
-      dataSource={[...medics]}
+      dataSource={[...indication]}
       pagination={defaultPaginationProperties}
       sticky
       scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
@@ -117,4 +117,4 @@ const MedicsTable = () => {
   );
 };
 
-export default MedicsTable;
+export default IndicationTable;

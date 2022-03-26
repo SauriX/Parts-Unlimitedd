@@ -96,14 +96,105 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
               max={100}
               required
             />
-          </Col>
+            <Col md={12} sm={0}></Col>
+          <Col md={12} sm={24}>
+            <TextInput
+              formProps={{
+                name: "primerapellido",
+                label: "PrimerApellido",
+              }}
+              max={100}
+              required
+            />
+            <Col md={12} sm={0}></Col>
+          <Col md={12} sm={24}>
+            <TextInput
+              formProps={{
+                name: "segundoapellido",
+                label: "SegundoApellido",
+              }}
+              max={100}
+              required
+            />
           <Col md={12} sm={0}></Col>
           <Col md={12} sm={0}>
             <TextInput
               formProps={{
-                name: "idMedico",
-                label: "Id Medico",
+                name: "especialidad",
+                label: "Especialidad",
               }}
+              max={100}
+            />
+            <Col md={12} sm={0}></Col>
+          <Col md={12} sm={0}>
+            <TextInput
+              formProps={{
+                name: "observaciones",
+                label: "Observaciones",
+              }}
+              max={100}
+            />
+            <Col md={12} sm={0}></Col>
+          <Col md={12} sm={0}>
+            <TextInput
+              formProps={{
+                name: "codigo P",
+                label: "Codigo P",
+              }}
+              max={100}
+            />
+            <Col md={12} sm={0}></Col>
+          <Col md={12} sm={0}>
+            <TextInput
+              formProps={{
+                name: "estado",
+                label: "Estado",
+              }}
+              max={100}
+            />
+            <Col md={12} sm={0}></Col>
+          <Col md={12} sm={0}>
+            <TextInput
+              formProps={{
+                name: "ciudad",
+                label: "Ciudad",
+              }}
+              max={100}
+            />
+            <Col md={12} sm={0}></Col>
+          <Col md={12} sm={0}>
+            <TextInput
+              formProps={{
+                name: "numero exterior",
+                label: "Numero Exterior",
+              }}
+              max={100}
+            />
+            <Col md={12} sm={0}></Col>
+          <Col md={12} sm={0}>
+            <TextInput
+              formProps={{
+                name: "numero interior",
+                label: "Numero interior",
+              }}
+              max={100}
+            />
+            <Col md={12} sm={0}></Col>
+          <Col md={12} sm={0}>
+            <TextInput
+              formProps={{
+                name: "calle",
+                label: "Calle",
+              }}
+              <Col md={12} sm={0}></Col>
+          <Col md={12} sm={0}>
+            <TextInput
+              formProps={{
+                name: "colonia",
+                label: "Colonia",
+              }}
+              max={100}
+            />
               max={100}
             />
             <Col md={12} sm={0}></Col>
@@ -135,42 +226,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
               max={100}
             />
             </Col>
-          <Col md={12} sm={0}></Col>
-          <Col md={12} sm={0}>
-            <TextInput
-              formProps={{
-                name: "direccion",
-                label: "Direccion",
-              }}
-              max={100}
-            />
-            <Col md={12} sm={0}></Col>
-          <Col md={12} sm={0}>
-            <TextInput
-              formProps={{
-                name: "observaciones",
-                label: "Observaciones",
-              }}
-              max={100}
-            />
-            <Col md={12} sm={0}></Col>
-          <Col md={12} sm={0}>
-            <TextInput
-              formProps={{
-                name: "especialidad",
-                label: "Especialidad",
-              }}
-              max={100}
-            />
-          <Col md={12} sm={0}></Col>
-          <Col md={12} sm={24}>
-            <TextInput
-              formProps={{
-                name: "nombreSistema",
-                label: "Nombre",
-              }}
-              max={100}
-            />
+          
           </Col>
         </Row>
       </Form>

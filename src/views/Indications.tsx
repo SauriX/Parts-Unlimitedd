@@ -2,12 +2,12 @@ import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
 import React, { Fragment, useEffect } from "react";
 import { useStore } from "../app/stores/store";
-import MedicsHeader from "../components/medics/MedicsHeader";
-import MedicsTable from "../components/medics/MedicsTable";
+import IndicationHeader from "../components/indication/IndicationHeader";
+import IndicationTable from "../components/indication/IndicationTable";
 
-const Medics = () => {
-  const { medicsStore } = useStore();
-  const { scopes, access, clearScopes } = medicsStore;
+const Indication = () => {
+  const { indicationStore } = useStore();
+  const { scopes, access, clearScopes } = indicationStore;
 
   useEffect(() => {
     const checkAccess = async () => {
@@ -27,11 +27,11 @@ const Medics = () => {
 
   return (
     <Fragment>
-      <MedicsHeader />
+      <IndicationHeader />
       <Divider className="header-divider" />
-      <MedicsTable />
+      <IndicationTable />
     </Fragment>
   );
 };
 
-export default observer(Medics);
+export default observer(Indication);

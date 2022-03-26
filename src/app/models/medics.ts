@@ -17,7 +17,13 @@ export interface IMedicsList {
     nombre: string;
     especialidadId: number;
     observaciones: string;
-    direccion: string
+    codigoP: string
+    estado: string;
+    ciudad: string;
+    numeroExterior: number;
+    numeroInterior: number;
+    calle: string;
+    colonia: string;
     correo: string; 
     celular: number;
     telefono: number;
@@ -30,7 +36,13 @@ export interface IMedicsList {
     nombre = "";
     especialidadId = 0;
     observaciones = "";
-    direccion = "";
+    codigoP= ""
+    estado= "";
+    ciudad= "";
+    numeroExterior= 0;
+    numeroInterior= 0;
+    calle= "";
+    colonia= "";
     correo = "";
     celular = 0 ;
     telefono = 0 ;

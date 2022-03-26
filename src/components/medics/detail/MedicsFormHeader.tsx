@@ -32,4 +32,4 @@ const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({ id }) => {
   );
 };
 
-export default MedicosFormHeader;
+export default MedicsFormHeader;
