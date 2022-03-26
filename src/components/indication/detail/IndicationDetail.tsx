@@ -20,7 +20,7 @@ const IndicationDetail = () => {
 
   return (
     <Fragment>
-      <IndicationFormHeader />
+      <IndicationFormHeader id={indicationId!} />
       <Divider className="header-divider" />
       <IndicationForm id={indicationId!} />
     </Fragment>
