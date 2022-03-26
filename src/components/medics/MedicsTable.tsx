@@ -52,7 +52,7 @@ const MedicsTable = () => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/medics/${user.id}`);
+            navigate(`/medics/${user.idMedico}`);
           }}
         >
           {value}
@@ -69,7 +69,43 @@ const MedicsTable = () => {
       }),
     },
     {
-      ...getDefaultColumnProps("direccion", "correo","telefono","celular", "observaciones", "especialidad", {
+      ...getDefaultColumnProps("direccion", "Direccion", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("correo", "Correo", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("telefono", "Telefono", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("celular", "Celular", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps( "observaciones", "especialidad", {
         searchState,
         setSearchState,
         width: "20%",
@@ -107,7 +143,7 @@ const MedicsTable = () => {
     <Table<IMedicsList>
       loading={loading}
       size="small"
-      rowKey={(record) => record.id}
+      rowKey={(record) => record.idMedico}
       columns={columns}
       dataSource={[...medics]}
       pagination={defaultPaginationProperties}

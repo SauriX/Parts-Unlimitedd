@@ -2,9 +2,8 @@ import { configure } from "mobx";
 import { createContext, useContext } from "react";
 import ProfileStore from "./profileStore";
 import ReagentStore from "./reagentStore";
-import MedicstStore from "./medicsStore";
-import UserStore from "./userStore";
 import MedicsStore from "./medicsStore";
+import UserStore from "./userStore";
 import IndicationStore from "./indicationStore";
 
 configure({
