@@ -35,7 +35,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
 
   const onFinish = (newValues: IMedicsForm) => {
     const medics = { ...values, ...newValues };
-    if (medics.id) {
+    if (medics.idMedico) {
       create(medics);
     } else {
       update(medics);
@@ -96,7 +96,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
               max={100}
               required
             />
-            <Col md={12} sm={0}></Col>
+          </Col>
+          <Col md={12} sm={0}></Col>
           <Col md={12} sm={24}>
             <TextInput
               formProps={{
@@ -106,7 +107,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
               max={100}
               required
             />
-            <Col md={12} sm={0}></Col>
+          </Col>
+          <Col md={12} sm={0}></Col>
           <Col md={12} sm={24}>
             <TextInput
               formProps={{
@@ -116,6 +118,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
               max={100}
               required
             />
+          </Col>
           <Col md={12} sm={0}></Col>
           <Col md={12} sm={0}>
             <TextInput
@@ -125,7 +128,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
               }}
               max={100}
             />
-            <Col md={12} sm={0}></Col>
+          </Col>
+          <Col md={12} sm={0}></Col>
           <Col md={12} sm={0}>
             <TextInput
               formProps={{
@@ -134,7 +138,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
               }}
               max={100}
             />
-            <Col md={12} sm={0}></Col>
+          </Col>
+          <Col md={12} sm={0}></Col>
           <Col md={12} sm={0}>
             <TextInput
               formProps={{
@@ -143,7 +148,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
               }}
               max={100}
             />
-            <Col md={12} sm={0}></Col>
+          </Col>
+          <Col md={12} sm={0}></Col>
           <Col md={12} sm={0}>
             <TextInput
               formProps={{
@@ -152,7 +158,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
               }}
               max={100}
             />
-            <Col md={12} sm={0}></Col>
+          </Col>
+          <Col md={12} sm={0}></Col>
           <Col md={12} sm={0}>
             <TextInput
               formProps={{
@@ -161,7 +168,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
               }}
               max={100}
             />
-            <Col md={12} sm={0}></Col>
+          </Col>
+          <Col md={12} sm={0}></Col>
           <Col md={12} sm={0}>
             <TextInput
               formProps={{
@@ -170,7 +178,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
               }}
               max={100}
             />
-            <Col md={12} sm={0}></Col>
+          </Col>
+          <Col md={12} sm={0}></Col>
           <Col md={12} sm={0}>
             <TextInput
               formProps={{
@@ -179,14 +188,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
               }}
               max={100}
             />
-            <Col md={12} sm={0}></Col>
-          <Col md={12} sm={0}>
-            <TextInput
-              formProps={{
-                name: "calle",
-                label: "Calle",
-              }}
-              <Col md={12} sm={0}></Col>
+          </Col>
+          <Col md={12} sm={0}></Col>
           <Col md={12} sm={0}>
             <TextInput
               formProps={{
@@ -195,9 +198,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
               }}
               max={100}
             />
-              max={100}
-            />
-            <Col md={12} sm={0}></Col>
+          </Col>
+          <Col md={12} sm={0}></Col>
           <Col md={12} sm={0}>
             <TextInput
               formProps={{
@@ -207,26 +209,25 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
               max={100}
             />
             <Col md={12} sm={0}></Col>
-          <Col md={12} sm={0}>
-            <TextInput
-              formProps={{
-                name: "telefono",
-                label: "Telefono",
-              }}
-              max={100}
-            />
-          </Col>
-          <Col md={12} sm={0}></Col>
-          <Col md={12} sm={0}>
-            <TextInput
-              formProps={{
-                name: "celular",
-                label: "Celular",
-              }}
-              max={100}
-            />
+            <Col md={12} sm={0}>
+              <TextInput
+                formProps={{
+                  name: "telefono",
+                  label: "Telefono",
+                }}
+                max={100}
+              />
             </Col>
-          
+            <Col md={12} sm={0}></Col>
+            <Col md={12} sm={0}>
+              <TextInput
+                formProps={{
+                  name: "celular",
+                  label: "Celular",
+                }}
+                max={100}
+              />
+            </Col>
           </Col>
         </Row>
       </Form>
@@ -234,4 +235,4 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
   );
 };
 
-export default ReagentForm;
+export default MedicsForm;
