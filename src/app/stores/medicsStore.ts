@@ -1,3 +1,4 @@
+import Search from "antd/lib/transfer/search";
 import { makeAutoObservable } from "mobx";
 import Medics from "../api/medics";
 import { IMedicsForm, IMedicsList } from "../models/medics";
@@ -33,9 +34,9 @@ export default class MedicsStore {
     }
   };
 
-  getAll = async () => {
+  getAll = async (search: string) => {
     try {
-      const medics = await Medics.getAll();
+      const medics = await Medics.getAll(search);
       this.medics = medics;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -57,9 +58,10 @@ export default class MedicsStore {
     try {
       await Medics.create(medics);
       alerts.success(messages.created);
-      history.push("/medics");
+      return true;
     } catch (error) {
       alerts.warning(getErrors(error));
+      return false;
     }
   };
 
@@ -67,9 +69,10 @@ export default class MedicsStore {
     try {
       await Medics.update(medics);
       alerts.success(messages.updated);
-      history.push("/medics");
-    } catch (error) {
+      return true;
+    } catch (error: any) {
       alerts.warning(getErrors(error));
+      return false;
     }
   };
 }

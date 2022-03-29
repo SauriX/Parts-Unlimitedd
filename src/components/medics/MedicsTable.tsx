@@ -1,5 +1,5 @@
-import { Button, Table } from "antd";
-import React, { useEffect, useState } from "react";
+import { Button, Divider, PageHeader, Spin, Table } from "antd";
+import React, { FC, Fragment, useEffect, useRef, useState } from "react";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
@@ -9,15 +9,27 @@ import {
 import useWindowDimensions, { resizeWidth } from "../../app/util/window";
 import { EditOutlined } from "@ant-design/icons";
 import IconButton from "../../app/common/button/IconButton";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { IMedicsList } from "../../app/models/medics";
 import { useStore } from "../../app/stores/store";
+import { observer } from "mobx-react-lite";
+import { useReactToPrint } from "react-to-print";
+import HeaderTitle from "../../app/common/header/HeaderTitle";
+import Search from "antd/es/transfer/search";
 
-const MedicsTable = () => {
+type MedicsTableProps = {
+  componentRef: React.MutableRefObject<any>;
+  printing: boolean;
+};
+
+const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
   const { medicsStore } = useStore();
   const { medics, getAll } = medicsStore;
 
+  const [searchParams] = useSearchParams();
+
   let navigate = useNavigate();
+
   const { width: windowWidth } = useWindowDimensions();
 
   const [loading, setLoading] = useState(false);
@@ -32,12 +44,12 @@ const MedicsTable = () => {
   useEffect(() => {
     const readMedics = async () => {
       setLoading(true);
-      await getAll();
+      await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
     };
 
     readMedics();
-  }, [getAll]);
+  }, [getAll, searchParams]);
 
   const columns: IColumns<IMedicsList> = [
     {
@@ -139,18 +151,41 @@ const MedicsTable = () => {
     },
   ];
 
+  const MedicsTablePrint = () => {
+    return (
+      <div ref={componentRef}>
+        <PageHeader
+          ghost={false}
+          title={<HeaderTitle title="Catálogo de Medicos" image="reagent" />}
+          className="header-container"
+        ></PageHeader>
+        <Divider className="header-divider" />
+        <Table<IMedicsList>
+          size="small"
+          rowKey={(record) => record.idMedico}
+          columns={columns.slice(0, 4)}
+          pagination={false}
+          dataSource={[...medics]}
+        />
+      </div>
+    );
+  };
+
   return (
-    <Table<IMedicsList>
-      loading={loading}
-      size="small"
-      rowKey={(record) => record.idMedico}
-      columns={columns}
-      dataSource={[...medics]}
-      pagination={defaultPaginationProperties}
-      sticky
-      scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-    />
+    <Fragment>
+      <Table<IMedicsList>
+        loading={loading || printing}
+        size="small"
+        rowKey={(record) => record.idMedico}
+        columns={columns}
+        dataSource={[...medics]}
+        pagination={defaultPaginationProperties}
+        sticky
+        scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+      />
+      <div style={{ display: "none" }}>{<MedicsTablePrint />}</div>
+    </Fragment>
   );
 };
 
-export default MedicsTable;
+export default observer(MedicsTable);

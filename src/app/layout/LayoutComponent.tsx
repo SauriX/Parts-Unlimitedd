@@ -30,7 +30,7 @@ const menus: IMenu[] = [
   },
   {
     id: 5,
-    ruta: "medicos",
+    ruta: "medics",
     descripcion: "Medicos",
     icono: "medico",
   },

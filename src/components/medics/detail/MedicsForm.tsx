@@ -1,17 +1,27 @@
-import { Spin, Form, Row, Col, Pagination, Button } from "antd";
+import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
 import { useStore } from "../../../app/stores/store";
+import { IReagentForm, ReagentFormValues } from "../../../app/models/reagent";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { IMedicsForm, MedicsFormValues } from "../../../app/models/medics";
+import ImageButton from "../../../app/common/button/ImageButton";
+import HeaderTitle from "../../../app/common/header/HeaderTitle";
 
 type MedicsFormProps = {
   id: number;
+  componentRef: React.MutableRefObject<any>;
+  printing: boolean;
 };
 
-const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
+const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   const { medicsStore } = useStore();
   const { getById, create, update } = medicsStore;
+
+  const navigate = useNavigate();
+
+  const [searchParams] = useSearchParams();
 
   const [form] = Form.useForm<IMedicsForm>();
 
@@ -33,17 +43,24 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
     }
   }, [form, getById, id]);
 
-  const onFinish = (newValues: IMedicsForm) => {
+  const onFinish = async (newValues: IMedicsForm) => {
     const medics = { ...values, ...newValues };
-    if (medics.idMedico) {
-      create(medics);
+
+    let success = false; 
+
+    if (!medics.idMedico) {
+      success = await create(medics);
     } else {
-      update(medics);
+      success = await update(medics);
+    }
+
+    if (success) {
+      navigate(`/medics?search=${searchParams.get("search")}`);
     }
   };
 
   return (
-    <Spin spinning={loading}>
+    <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
         <Col md={12} sm={24} style={{ textAlign: "left" }}>
           <Pagination size="small" total={50} pageSize={1} current={9} />
@@ -62,175 +79,188 @@ const MedicsForm: FC<MedicsFormProps> = ({ id }) => {
           </Button>
         </Col>
       </Row>
-      <Form<IMedicsForm>
-        {...formItemLayout}
-        form={form}
-        name="medics"
-        initialValues={values}
-        onFinish={onFinish}
-        scrollToFirstError
-        onFieldsChange={() => {
-          setDisabled(
-            !form.isFieldsTouched() || form.getFieldsError().filter(({ errors }) => errors.length).length > 0
-          );
-        }}
-      >
-        <Row>
-          <Col md={12} sm={24}>
-            <TextInput
-              formProps={{
-                name: "clave",
-                label: "Clave",
-              }}
-              max={100}
-              required
-            />
-          </Col>
-          <Col md={12} sm={0}></Col>
-          <Col md={12} sm={24}>
-            <TextInput
-              formProps={{
-                name: "nombre",
-                label: "Nombre",
-              }}
-              max={100}
-              required
-            />
-          </Col>
-          <Col md={12} sm={0}></Col>
-          <Col md={12} sm={24}>
-            <TextInput
-              formProps={{
-                name: "primerapellido",
-                label: "PrimerApellido",
-              }}
-              max={100}
-              required
-            />
-          </Col>
-          <Col md={12} sm={0}></Col>
-          <Col md={12} sm={24}>
-            <TextInput
-              formProps={{
-                name: "segundoapellido",
-                label: "SegundoApellido",
-              }}
-              max={100}
-              required
-            />
-          </Col>
-          <Col md={12} sm={0}></Col>
-          <Col md={12} sm={0}>
-            <TextInput
-              formProps={{
-                name: "especialidad",
-                label: "Especialidad",
-              }}
-              max={100}
-            />
-          </Col>
-          <Col md={12} sm={0}></Col>
-          <Col md={12} sm={0}>
-            <TextInput
-              formProps={{
-                name: "observaciones",
-                label: "Observaciones",
-              }}
-              max={100}
-            />
-          </Col>
-          <Col md={12} sm={0}></Col>
-          <Col md={12} sm={0}>
-            <TextInput
-              formProps={{
-                name: "codigo P",
-                label: "Codigo P",
-              }}
-              max={100}
-            />
-          </Col>
-          <Col md={12} sm={0}></Col>
-          <Col md={12} sm={0}>
-            <TextInput
-              formProps={{
-                name: "estado",
-                label: "Estado",
-              }}
-              max={100}
-            />
-          </Col>
-          <Col md={12} sm={0}></Col>
-          <Col md={12} sm={0}>
-            <TextInput
-              formProps={{
-                name: "ciudad",
-                label: "Ciudad",
-              }}
-              max={100}
-            />
-          </Col>
-          <Col md={12} sm={0}></Col>
-          <Col md={12} sm={0}>
-            <TextInput
-              formProps={{
-                name: "numero exterior",
-                label: "Numero Exterior",
-              }}
-              max={100}
-            />
-          </Col>
-          <Col md={12} sm={0}></Col>
-          <Col md={12} sm={0}>
-            <TextInput
-              formProps={{
-                name: "numero interior",
-                label: "Numero interior",
-              }}
-              max={100}
-            />
-          </Col>
-          <Col md={12} sm={0}></Col>
-          <Col md={12} sm={0}>
-            <TextInput
-              formProps={{
-                name: "colonia",
-                label: "Colonia",
-              }}
-              max={100}
-            />
-          </Col>
-          <Col md={12} sm={0}></Col>
-          <Col md={12} sm={0}>
-            <TextInput
-              formProps={{
-                name: "correo",
-                label: "Correo",
-              }}
-              max={100}
-            />
-            <Col md={12} sm={0}></Col>
-            <Col md={12} sm={0}>
-              <TextInput
+        <div style={{ display: printing ? "none" : "" }}>
+          <div ref={componentRef}>
+            {printing && (
+               <PageHeader
+                  ghost={false}
+                  title={<HeaderTitle title="Catálogo de Medicos" image="reagent" />}
+                   className="header-container"
+                 ></PageHeader>
+             )}
+            {printing && <Divider className="header-divider" />}
+            <Form<IMedicsForm>
+              {...formItemLayout}
+              form={form}
+              name="medics"
+              initialValues={values}
+              onFinish={onFinish}
+              scrollToFirstError
+              onFieldsChange={() => {
+              setDisabled(
+             !form.isFieldsTouched() || 
+               form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+               );
+                 }}
+             >
+          <Row>
+            <Col md={12} sm={24}>
+             <TextInput
                 formProps={{
-                  name: "telefono",
-                  label: "Telefono",
+                 name: "clave",
+                 label: "Clave",
                 }}
                 max={100}
+               required
               />
-            </Col>
-            <Col md={12} sm={0}></Col>
-            <Col md={12} sm={0}>
-              <TextInput
+           </Col>
+           <Col md={12} sm={0}></Col>
+           <Col md={12} sm={24}>
+             <TextInput
                 formProps={{
-                  name: "celular",
-                  label: "Celular",
-                }}
+                 name: "nombre",
+                 label: "Nombre",
+               }}
+               max={100}
+               required
+             />
+           </Col>
+           <Col md={12} sm={0}></Col>
+           <Col md={12} sm={24}>
+             <TextInput
+               formProps={{
+                 name: "primerapellido",
+                 label: "PrimerApellido",
+               }}
+                max={100}
+               required
+             />
+           </Col>
+           <Col md={12} sm={0}></Col>
+           <Col md={12} sm={24}>
+             <TextInput
+               formProps={{
+                 name: "segundoapellido",
+                 label: "SegundoApellido",
+               }}
+               max={100}
+               required
+             />
+           </Col>
+           <Col md={12} sm={0}></Col>
+            <Col md={12} sm={0}>
+             <TextInput
+               formProps={{
+                 name: "especialidad",
+                 label: "Especialidad",
+               }}
+               max={100}
+             />
+           </Col>
+           <Col md={12} sm={0}></Col>
+           <Col md={12} sm={0}>
+             <TextInput
+               formProps={{
+                 name: "observaciones",
+                 label: "Observaciones",
+               }}
+               max={100}
+             />
+           </Col>
+           <Col md={12} sm={0}></Col>
+           <Col md={12} sm={0}>
+             <TextInput
+               formProps={{
+                 name: "codigo P",
+                 label: "Codigo P",
+               }}
+               max={100}
+             />
+           </Col>
+           <Col md={12} sm={0}></Col>
+           <Col md={12} sm={0}>
+             <TextInput
+               formProps={{
+                 name: "estado",
+                 label: "Estado",
+               }}
+               max={100}
+             />
+           </Col>
+           <Col md={12} sm={0}></Col>
+           <Col md={12} sm={0}>
+              <TextInput
+               formProps={{
+                 name: "ciudad",
+                 label: "Ciudad",
+               }}
+               max={100}
+               />
+           </Col>
+           <Col md={12} sm={0}></Col>
+           <Col md={12} sm={0}>
+             <TextInput
+               formProps={{
+                 name: "numero exterior",
+                 label: "Numero Exterior",
+               }}
+               max={100}
+             />
+           </Col>
+           <Col md={12} sm={0}></Col>
+           <Col md={12} sm={0}>
+             <TextInput
+               formProps={{
+                 name: "numero interior",
+                 label: "Numero interior",
+               }}
+               max={100}
+             />
+           </Col>
+           <Col md={12} sm={0}></Col>
+           <Col md={12} sm={0}>
+             <TextInput
+               formProps={{
+                 name: "colonia",
+                 label: "Colonia",
+               }}
+               max={100}
+             />
+           </Col>
+           <Col md={12} sm={0}></Col>
+           <Col md={12} sm={0}>
+              <TextInput
+               formProps={{
+                 name: "correo",
+                 label: "Correo",
+               }}
                 max={100}
               />
+             <Col md={12} sm={0}></Col>
+              <Col md={12} sm={0}>
+                <TextInput
+                  formProps={{
+                    name: "telefono",
+                    label: "Telefono",
+                  }}
+                 max={100}
+                />
+              </Col>
+              <Col md={12} sm={0}></Col>
+              <Col md={12} sm={0}>
+                <TextInput
+                  formProps={{
+                    name: "celular",
+                    label: "Celular",
+                  }}
+                  max={100}
+                />
+              </Col>
             </Col>
-          </Col>
-        </Row>
-      </Form>
+          </Row>
+        </Form>
+       </div>
+      </div>
     </Spin>
   );
 };

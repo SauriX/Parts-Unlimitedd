@@ -1,15 +1,22 @@
-import { PageHeader } from "antd";
+import { Button, PageHeader, Input } from "antd";
 import React, { FC } from "react";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
+import { PlusOutlined } from "@ant-design/icons";
 import ImageButton from "../../../app/common/button/ImageButton";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
+const { Search } = Input;
 type MedicsFormHeaderProps = {
-  id: number;
+  handlePrint: () => void;
+  id : number;
 };
 
-const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({ id }) => {
-  let navigate = useNavigate();
+const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({id, handlePrint }) => {
+  const navigate = useNavigate();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  console.log("Header");
 
   return (
     <PageHeader
@@ -17,16 +24,26 @@ const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({ id }) => {
       title={<HeaderTitle title="Catálogo de Medicos" image="reagent" />}
       className="header-container"
       extra={[
-        <ImageButton key="print" title="Imprimir" image="print" />,
+        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
         <ImageButton key="doc" title="Informe" image="doc" />,
-        <ImageButton
-          key="back"
-          title="Regresar"
-          image="back"
-          onClick={() => {
-            navigate("/reagent");
+        <Search
+          key="search"
+          placeholder="Buscar"
+          defaultValue={searchParams.get("search") ?? ""}
+          onSearch={(value) => {
+            setSearchParams({ search: !value ? "all" : value });
           }}
         />,
+        <Button
+          key="new"
+          type="primary"
+          onClick={() => {
+            navigate("/medics/0");
+          }}
+          icon={<PlusOutlined />}
+        >
+          Nuevo
+        </Button>,
       ]}
     ></PageHeader>
   );
