@@ -56,7 +56,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "5%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -72,10 +72,10 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       ),
     },
     {
-      ...getDefaultColumnProps("nombre", "Nombre", {
+      ...getDefaultColumnProps("nombreCompleto", "Nombre", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "15%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -84,7 +84,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("direccion", "Direccion", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "18%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -93,7 +93,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("correo", "Correo", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -102,7 +102,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("telefono", "Telefono", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "8%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -111,16 +111,25 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("celular", "Celular", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "8%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
     },
     {
-      ...getDefaultColumnProps( "observaciones", "especialidad", {
+      ...getDefaultColumnProps( "observaciones", "Observaciones", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "15%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps( "especialidadId", "Especialidad", {
+        searchState,
+        setSearchState,
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -130,21 +139,21 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       dataIndex: "activo",
       title: "Activo",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: windowWidth < resizeWidth ? 100 : "6%",
       render: (value) => (value ? "Sí" : "No"),
     },
     {
       key: "editar",
-      dataIndex: "id",
+      dataIndex: "idMedico",
       title: "Editar",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: windowWidth < resizeWidth ? 100 : "5%",
       render: (value) => (
         <IconButton
-          title="Editar usuario"
+          title="Editar Medico"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/users/${value}`);
+            navigate(`/medics/${value}`);
           }}
         />
       ),
@@ -161,9 +170,9 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
         ></PageHeader>
         <Divider className="header-divider" />
         <Table<IMedicsList>
-          size="small"
+          size="large"
           rowKey={(record) => record.idMedico}
-          columns={columns.slice(0, 4)}
+          columns={columns.slice(0, 9)}
           pagination={false}
           dataSource={[...medics]}
         />
