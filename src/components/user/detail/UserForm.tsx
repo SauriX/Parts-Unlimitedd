@@ -9,10 +9,16 @@ import { convertToTreeData, onTreeSearch, onTreeSelectChange } from "./utils";
 import { TreeData } from "../../../app/models/shared";
 import { DataNode } from "antd/lib/tree";
 import PasswordInput from "../../../app/common/form/PasswordInput";
-
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import IconButton from "../../../app/common/button/IconButton";
+import { EditOutlined, LockOutlined } from "@ant-design/icons";
+import ImageButton from "../../../app/common/button/ImageButton";
 type UserFormProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
+};
+type UrlParams = {
+  id: string;
 };
 
 const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
@@ -31,7 +37,9 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
 
   const [permissionsAddedFiltered, setPermissionsAddedFiltered] = useState<TreeData[]>([]);
   const [permissionsAvailableFiltered, setPermissionsAvailableFiltered] = useState<TreeData[]>([]);
+  let navigate = useNavigate();
 
+  const [searchParams, setSearchParams] = useSearchParams();
   useEffect(() => {
     setTargetKeys(user?.permisos?.filter((x) => x.asignado).map((x) => x.id.toString()) ?? []);
   }, []);
@@ -61,7 +69,14 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
       option.permiso.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
     );
   };
-
+  const CheckReadOnly =()=>{
+    let result = false;
+    const mode = searchParams.get("mode");
+    if(mode == "ReadOnly"){
+      result = true;
+    }
+    return result;
+  }
   const onChange = (nextTargetKeys: string[]) => {
     setTargetKeys(nextTargetKeys.sort((a, b) => a.length - b.length));
   };
@@ -73,11 +88,12 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
     targetKeys,
     setSelectedKeys
   );
-
+  const { id } = useParams<UrlParams>();
+  const userId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
   const onDeselectParent = (key: string | number, children: DataNode[]) => {
     setSelectedKeys(selectedKeys.filter((x) => !children.map((y) => y.key).includes(x)));
-  };
 
+  };
   return (
     <Spin spinning={loading || printing}>
       <div ref={componentRef}>
@@ -85,12 +101,20 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
             <Pagination size="small" total={50} pageSize={1} current={9} />
           </Col>
-          <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
-            <Button onClick={() => {}}>Cancelar</Button>
-            <Button type="primary" htmlType="submit" onClick={() => {}}>
-              Guardar
-            </Button>
-          </Col>
+          { !CheckReadOnly() &&
+              <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
+                <Button  onClick={() => {}} >Cancelar</Button>
+                  <Button type="primary" htmlType="submit" onClick={() => {navigate(`/users`);}}>
+                    Guardar
+                  </Button>
+              </Col>
+          }
+          {
+            CheckReadOnly() &&
+              <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
+                <ImageButton key="edit" title="Editar" image="edit" onClick={()=>{navigate(`/users/${userId}`);}}  />
+              </Col>
+          }
         </Row>
         <Form<IUser>
           {...formItemLayout}
@@ -114,6 +138,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
                 }}
                 max={100}
                 required
+                readonly={CheckReadOnly()}
               />
             </Col>
             <Col md={12} sm={24} xs={12}>
@@ -124,6 +149,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
                 }}
                 max={100}
                 required
+                readonly={CheckReadOnly()}
               />
             </Col>
             <Col md={12} sm={24} xs={12}>
@@ -134,6 +160,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
                 }}
                 max={100}
                 required
+                readonly={CheckReadOnly()}
               />
             </Col>
             <Col md={12} sm={24} xs={12}>
@@ -144,6 +171,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
                 }}
                 max={100}
                 required
+                readonly={CheckReadOnly()}
               />
             </Col>
             <Col md={12} sm={24} xs={12}>
@@ -154,10 +182,11 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
                 }}
                 max={100}
                 required
+                readonly={CheckReadOnly()}
               />
             </Col>
             <Col md={12} sm={24} xs={12}>
-              <SwitchInput name="activo" label="Activo" />
+              <SwitchInput name="activo" label="Activo" readonly={CheckReadOnly()}/>
             </Col>
             <Col md={12} sm={24} xs={12}>
               <TextInput
@@ -167,16 +196,18 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
                 }}
                 max={100}
                 required
+                readonly={CheckReadOnly()}
               />
             </Col>
             <Col md={12} sm={24} xs={12}>
-              <SelectInput formProps={{ name: "sucursalId", label: "Sucursal" }} required options={[]} />
+              <SelectInput formProps={{ name: "sucursalId", label: "Sucursal" }} readonly={CheckReadOnly()} required options={[]} />
             </Col>
             <Col md={12} sm={24} xs={12}>
               <SelectInput
                 formProps={{ name: "tipoUsuarioId", label: "Tipo de usuario" }}
                 required
                 options={[]}
+                readonly={CheckReadOnly()}
               />
             </Col>
           </Row>
@@ -210,7 +241,8 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
                 onSelectChange(sourceSelectedKeys, targetSelectedKeys);
                 setDisabled(false);
               }}
-              // disabled={readonly}
+              
+               disabled={CheckReadOnly()}
             >
               {({ direction, onItemSelect, selectedKeys, filteredItems }) => {
                 const data = direction === "left" ? permissionsAvailableFiltered : permissionsAddedFiltered;

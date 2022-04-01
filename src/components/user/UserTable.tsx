@@ -1,6 +1,5 @@
-import { Button, Table } from "antd";
-import { ColumnsType } from "antd/lib/table";
-import React, { useState } from "react";
+import { Button, Divider, PageHeader, Spin, Table } from "antd";
+import React, { FC, Fragment, useEffect, useRef, useState } from "react";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
@@ -11,31 +10,46 @@ import { IUserInfo } from "../../app/models/user";
 import useWindowDimensions, { resizeWidth } from "../../app/util/window";
 import { EditOutlined, LockOutlined } from "@ant-design/icons";
 import IconButton from "../../app/common/button/IconButton";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useSearchParams } from "react-router-dom";
+import { useStore } from "../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
-const users: IUserInfo[] = [
+/*const users: IUserInfo[] = [
   {
-    id: 1,
+    id: "asd",
     clave: "MFarias",
     nombre: "Miguel Farias",
     tipoUsuario: "Admin",
     activo: true,
   },
-];
-
-const UserTable = () => {
+];*/
+type UserTableProps = {
+  componentRef: React.MutableRefObject<any>;
+  printing: boolean;
+};
+const UserTable:FC<UserTableProps> = ({ componentRef, printing }) => {
+  const { userStore } = useStore();
+  const { users, getAll } = userStore;
   let navigate = useNavigate();
   const { width: windowWidth } = useWindowDimensions();
 
   const [loading, setLoading] = useState(false);
-
+  const [searchParams] = useSearchParams();
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
 
   console.log("Table");
+    useEffect(() => {
+      const readUsers = async () => {
+        setLoading(true);
+        await getAll(searchParams.get("search") ?? "all");
+        setLoading(false);
+      };
 
+      readUsers();
+    }, [getAll, searchParams]);
   const columns: IColumns<IUserInfo> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
@@ -49,7 +63,7 @@ const UserTable = () => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/users/${user.id}`);
+            navigate(`/users/${user.idUsuario}?mode=ReadOnly`);
           }}
         >
           {value}
@@ -101,7 +115,7 @@ const UserTable = () => {
           title="Editar usuario"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/users/${value}`);
+            navigate(`/users/"${value}"?mode=ReadOnly`);
           }}
         />
       ),
@@ -109,16 +123,18 @@ const UserTable = () => {
   ];
 
   return (
+    <div ref={componentRef}>
     <Table<IUserInfo>
       loading={loading}
       size="small"
-      rowKey={(record) => record.id}
+      rowKey={(record) => record.idUsuario}
       columns={columns}
       dataSource={[...users]}
       pagination={defaultPaginationProperties}
       sticky
       scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
     />
+    </div>
   );
 };
 
