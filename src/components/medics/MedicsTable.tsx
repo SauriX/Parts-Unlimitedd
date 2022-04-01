@@ -1,5 +1,5 @@
-import { Button, Divider, PageHeader, Spin, Table } from "antd";
-import React, { FC, Fragment, useEffect, useRef, useState } from "react";
+import { Button, Divider, PageHeader, Spin, Table, List, Typography, } from "antd";
+import React, { FC, Fragment, useEffect, useRef, useState, } from "react";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
@@ -21,6 +21,7 @@ type MedicsTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
+
 
 const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
   const { medicsStore } = useStore();
@@ -47,24 +48,24 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
     };
-
     readMedics();
   }, [getAll, searchParams]);
+
 
   const columns: IColumns<IMedicsList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "5%",
+        width: "3%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
-      render: (value, user) => (
+      render: (value, medics) => (
         <Button
           type="link"
           onClick={() => {
-            navigate(`/medics/${user.idMedico}`);
+            navigate(`/medics/${medics.idMedico}?${searchParams}&mode=readonly`);
           }}
         >
           {value}
@@ -75,7 +76,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("nombreCompleto", "Nombre", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "12%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -84,16 +85,25 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("direccion", "Direccion", {
         searchState,
         setSearchState,
-        width: "18%",
+        width: "16%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
-    },
+    },/*
+    {
+      ...getDefaultColumnProps("clinica", "Clinica", {
+        searchState,
+        setSearchState,
+        width: "2%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },*/
     {
       ...getDefaultColumnProps("correo", "Correo", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: "8%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -115,16 +125,16 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
         minWidth: 150,
         windowSize: windowWidth,
       }),
-    },
+    }, /*
     {
       ...getDefaultColumnProps( "observaciones", "Observaciones", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "12%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
-    },
+    },*/
     {
       ...getDefaultColumnProps( "especialidadId", "Especialidad", {
         searchState,
@@ -139,7 +149,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       dataIndex: "activo",
       title: "Activo",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "6%",
+      width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (value ? "Sí" : "No"),
     },
     {
@@ -147,13 +157,13 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       dataIndex: "idMedico",
       title: "Editar",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "5%",
+      width: windowWidth < resizeWidth ? 100 : "6%",
       render: (value) => (
         <IconButton
           title="Editar Medico"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/medics/${value}`);
+            navigate(`/medics/${value}?${searchParams}&mode=edit`);
           }}
         />
       ),
@@ -165,14 +175,14 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Medicos" image="reagent" />}
+          title={<HeaderTitle title="Catálogo de Medicos" image="doctor" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
         <Table<IMedicsList>
           size="large"
           rowKey={(record) => record.idMedico}
-          columns={columns.slice(0, 9)}
+          columns={columns.slice(0, 10)}
           pagination={false}
           dataSource={[...medics]}
         />

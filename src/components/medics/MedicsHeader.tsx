@@ -21,7 +21,7 @@ const MedicsHeader: FC<MedicsHeaderProps> = ({ handlePrint }) => {
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Medicos" image="reagent" />}
+      title={<HeaderTitle title="Catálogo de Medicos" image="doctor" />}
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
