@@ -37,6 +37,7 @@ const MedicsDetail = () => {
   const medicsId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
 
   useEffect(() => {
+    console.log(medicsId);
     if (medicsId === undefined) {
       navigate("/notFound");
     }
@@ -46,9 +47,13 @@ const MedicsDetail = () => {
 
   return (
     <Fragment>
-      <MedicsFormHeader id ={medicsId!} handlePrint={handlePrint}/>
+      <MedicsFormHeader id={medicsId!} handlePrint={handlePrint} />
       <Divider className="header-divider" />
-      <MedicsForm id={medicsId!} componentRef={componentRef} printing={printing} />
+      <MedicsForm
+        id={medicsId!}
+        componentRef={componentRef}
+        printing={printing}
+      />
     </Fragment>
   );
 };

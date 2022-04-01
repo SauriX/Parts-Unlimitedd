@@ -2,12 +2,13 @@ import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider } from "a
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
+import SwitchInput from "../../../app/common/form/SwitchInput";
 import { useStore } from "../../../app/stores/store";
-import { IReagentForm, ReagentFormValues } from "../../../app/models/reagent";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { IMedicsForm, MedicsFormValues } from "../../../app/models/medics";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
+import NumberInput from "../../../app/common/form/NumberInput";
 
 type MedicsFormProps = {
   id: number;
@@ -110,11 +111,11 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                  name: "clave",
                  label: "Clave",
                 }}
-                max={100}
+                max={9999999999}
                required
               />
            </Col>
-           <Col md={12} sm={0}></Col>
+           
            <Col md={12} sm={24}>
              <TextInput
                 formProps={{
@@ -125,7 +126,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                required
              />
            </Col>
-           <Col md={12} sm={0}></Col>
+           
            <Col md={12} sm={24}>
              <TextInput
                formProps={{
@@ -136,7 +137,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                required
              />
            </Col>
-           <Col md={12} sm={0}></Col>
+           
            <Col md={12} sm={24}>
              <TextInput
                formProps={{
@@ -147,17 +148,19 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                required
              />
            </Col>
-           <Col md={12} sm={0}></Col>
-            <Col md={12} sm={0}>
-             <TextInput
+           
+            <Col md={12} sm={24}>
+             <NumberInput
                formProps={{
-                 name: "especialidad",
+                 name: "especialidadId",
                  label: "Especialidad",
                }}
-               max={100}
+               max={9999999999}
+               min={9}
+               required
              />
            </Col>
-           <Col md={12} sm={0}></Col>
+           
            <Col md={12} sm={0}>
              <TextInput
                formProps={{
@@ -166,68 +169,88 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                }}
                max={100}
              />
-           </Col>
-           <Col md={12} sm={0}></Col>
-           <Col md={12} sm={0}>
+             </Col>
+           
+           <Col md={12} sm={24}>
              <TextInput
                formProps={{
-                 name: "codigo P",
-                 label: "Codigo P",
+                 name: "calle",
+                 label: "Calle",
                }}
                max={100}
+               required
              />
            </Col>
-           <Col md={12} sm={0}></Col>
-           <Col md={12} sm={0}>
-             <TextInput
+           
+           <Col md={12} sm={24}>
+             <NumberInput
                formProps={{
-                 name: "estado",
+                 name: "codigoPostal",
+                 label: "Codigo Postal",
+               }}
+               max={9999999999}
+               min={1111}
+               required
+             />
+           </Col>
+           
+           <Col md={12} sm={0}>
+             <NumberInput
+               formProps={{
+                 name: "estadoId",
                  label: "Estado",
                }}
-               max={100}
+               max={9999999999}
+               min={0}
              />
            </Col>
-           <Col md={12} sm={0}></Col>
+           
            <Col md={12} sm={0}>
-              <TextInput
+              <NumberInput
                formProps={{
-                 name: "ciudad",
+                 name: "ciudadId",
                  label: "Ciudad",
                }}
-               max={100}
+               max={9999999999}
+               min={1}
                />
            </Col>
-           <Col md={12} sm={0}></Col>
-           <Col md={12} sm={0}>
-             <TextInput
+           
+           <Col md={12} sm={24}>
+             <NumberInput
                formProps={{
-                 name: "numero exterior",
+                 name: "numeroExterior",
                  label: "Numero Exterior",
                }}
-               max={100}
+               max={9999999999}
+               min={1}
+               required
              />
            </Col>
-           <Col md={12} sm={0}></Col>
+           
            <Col md={12} sm={0}>
-             <TextInput
+             <NumberInput
                formProps={{
-                 name: "numero interior",
+                 name: "numeroInterior",
                  label: "Numero interior",
                }}
-               max={100}
+               max={9999999999}
+               min={1}
              />
            </Col>
-           <Col md={12} sm={0}></Col>
-           <Col md={12} sm={0}>
-             <TextInput
+           
+           <Col md={12} sm={24}>
+             <NumberInput
                formProps={{
-                 name: "colonia",
+                 name: "coloniaId",
                  label: "Colonia",
                }}
-               max={100}
+                max={9999999999}
+                min={1}
+               required
              />
            </Col>
-           <Col md={12} sm={0}></Col>
+           
            <Col md={12} sm={0}>
               <TextInput
                formProps={{
@@ -236,27 +259,32 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                }}
                 max={100}
               />
-             <Col md={12} sm={0}></Col>
+            </Col>
               <Col md={12} sm={0}>
-                <TextInput
+                <NumberInput
                   formProps={{
                     name: "telefono",
                     label: "Telefono",
                   }}
-                 max={100}
+                 max={9999999999}
+                 min={1111111111}
                 />
               </Col>
-              <Col md={12} sm={0}></Col>
+              
               <Col md={12} sm={0}>
-                <TextInput
+                <NumberInput
                   formProps={{
                     name: "celular",
                     label: "Celular",
                   }}
-                  max={100}
+                  max={9999999999}
+                 min={1111111111}
                 />
               </Col>
+              <Col md={12} sm={24} xs={12}>
+              <SwitchInput name="activo" label="Activo" />
             </Col>
+             
           </Row>
         </Form>
        </div>

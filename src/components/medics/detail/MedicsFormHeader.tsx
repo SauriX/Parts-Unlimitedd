@@ -26,6 +26,14 @@ const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({id, handlePrint }) => {
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
         <ImageButton key="doc" title="Informe" image="doc" />,
+        <ImageButton
+          key="back"
+          title="Regresar"
+          image="back"
+          onClick={() => {
+            navigate("/medics");
+          }}
+        />,
         <Search
           key="search"
           placeholder="Buscar"

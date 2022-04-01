@@ -16,12 +16,12 @@ interface IProps {
 const TextInput = ({ formProps: itemProps, max, required, prefix, type, placeholder, readonly }: IProps) => {
   let rules: Rule[] = [];
 
-  if (max) {
+  /*if (max) {
     rules.push({
       max,
       message: `La longitud máxima es de ${max}`,
     });
-  }
+  }*/
 
   if (required) {
     rules.push({
