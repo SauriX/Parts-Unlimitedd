@@ -63,7 +63,7 @@ const UserTable:FC<UserTableProps> = ({ componentRef, printing }) => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/users/${user.id}`);
+            navigate(`/users/${user.idUsuario}?mode=ReadOnly`);
           }}
         >
           {value}
@@ -115,7 +115,7 @@ const UserTable:FC<UserTableProps> = ({ componentRef, printing }) => {
           title="Editar usuario"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/users/${value}`);
+            navigate(`/users/"${value}"?mode=ReadOnly`);
           }}
         />
       ),
@@ -127,7 +127,7 @@ const UserTable:FC<UserTableProps> = ({ componentRef, printing }) => {
     <Table<IUserInfo>
       loading={loading}
       size="small"
-      rowKey={(record) => record.id}
+      rowKey={(record) => record.idUsuario}
       columns={columns}
       dataSource={[...users]}
       pagination={defaultPaginationProperties}

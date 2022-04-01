@@ -1,6 +1,6 @@
 
 export interface IUserInfo {
-  id: string;
+  idUsuario: string;
   clave:string;
   nombre: string;
   primerApellido: string,

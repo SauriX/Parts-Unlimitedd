@@ -58,7 +58,11 @@ const Login = () => {
   }
   return (
     <Fragment>
-      <div className={"vertical-line"}/>
+      <div className={"vertical-line"}>
+        <div className={"trapecio-top"}></div>
+        <div className={"trapecio-top"}></div>
+        <div className={"trapecio-top"}></div>
+      </div>
       <div className={"contenedor"}>
         <img src={`/${process.env.REACT_APP_NAME}/admin/assets/logologin.png`} alt="Logo" style={{width:534}} />
       </div>
