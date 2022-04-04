@@ -110,12 +110,12 @@ const UserTable:FC<UserTableProps> = ({ componentRef, printing }) => {
       title: "Editar",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => (
+      render: (value,user) => (
         <IconButton
           title="Editar usuario"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/users/"${value}"?mode=ReadOnly`);
+            navigate(`/users/${user.idUsuario}`);
           }}
         />
       ),

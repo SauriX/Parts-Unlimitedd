@@ -1,6 +1,6 @@
 import { Spin, Form, Row, Col, Transfer, Tooltip, Tree, Tag, Pagination, Button } from "antd";
 import React, { FC, useEffect, useMemo, useState } from "react";
-import { IUser, IUserPermission, UserFormValues } from "../../../app/models/user";
+import { IUserPermission, IUserForm,USerForm } from "../../../app/models/user";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
@@ -12,7 +12,9 @@ import PasswordInput from "../../../app/common/form/PasswordInput";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import IconButton from "../../../app/common/button/IconButton";
 import { EditOutlined, LockOutlined } from "@ant-design/icons";
+import { useStore } from "../../../app/stores/store";
 import ImageButton from "../../../app/common/button/ImageButton";
+import UserStore from "../../../app/stores/userStore";
 type UserFormProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
@@ -22,9 +24,10 @@ type UrlParams = {
 };
 
 const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
-  const user: IUser = new UserFormValues();
-
-  const [form] = Form.useForm();
+  
+	const { userStore } = useStore();
+	const { getById, create, update } = userStore;
+	const [form] = Form.useForm<IUserForm>();
 
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
@@ -38,12 +41,27 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
   const [permissionsAddedFiltered, setPermissionsAddedFiltered] = useState<TreeData[]>([]);
   const [permissionsAvailableFiltered, setPermissionsAvailableFiltered] = useState<TreeData[]>([]);
   let navigate = useNavigate();
+	const [values, setValues] = useState<IUserForm>(new USerForm());
 
   const [searchParams, setSearchParams] = useSearchParams();
+  const { id } = useParams<UrlParams>();
+  const userId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
+  let user : IUserForm = new USerForm();
   useEffect(() => {
-    setTargetKeys(user?.permisos?.filter((x) => x.asignado).map((x) => x.id.toString()) ?? []);
+    setTargetKeys(values.permisos?.filter((x) => x.asignado).map((x) => x.id.toString()) ?? []);
   }, []);
-
+  useEffect(() => {
+		const readuser = async (idUser: string) => {
+			setLoading(true);
+			const user = await getById(idUser);
+			form.setFieldsValue(user!);
+			setValues(user!);
+			setLoading(false);
+		};
+		if (id) {
+			readuser(id);
+		}
+	}, [form, getById,userId ]);
   const transform = useMemo(
     () =>
       convertToTreeData(
@@ -88,8 +106,23 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
     targetKeys,
     setSelectedKeys
   );
-  const { id } = useParams<UrlParams>();
-  const userId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
+
+  const onFinish = async (newValues: IUserForm) => {
+		const User = { ...values, ...newValues };
+
+		let success = false;
+
+		if (!User.id) {
+			success = await create(User);
+		} else {
+			success = await update(User);
+		}
+
+		if (success) {
+			navigate(`/reagent?search=${searchParams.get("search")}`);
+		}
+	};
+
   const onDeselectParent = (key: string | number, children: DataNode[]) => {
     setSelectedKeys(selectedKeys.filter((x) => !children.map((y) => y.key).includes(x)));
 
@@ -112,15 +145,15 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
           {
             CheckReadOnly() &&
               <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
-                <ImageButton key="edit" title="Editar" image="edit" onClick={()=>{navigate(`/users/${userId}`);}}  />
+                <ImageButton key="edit" title="Editar" image="edit" onClick={()=>{navigate(`/users/${id}`);}}  />
               </Col>
           }
         </Row>
-        <Form<IUser>
+        <Form<IUserForm>
           {...formItemLayout}
           form={form}
           name="user"
-          onFinish={() => {}}
+          onFinish={onFinish}
           scrollToFirstError
           onFieldsChange={() => {
             setDisabled(
@@ -166,7 +199,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
             <Col md={12} sm={24} xs={12}>
               <PasswordInput
                 formProps={{
-                  name: "contraseñaConfirmacion",
+                  name: "confirmaContraseña",
                   label: "Confirmar Contraseña",
                 }}
                 max={100}
@@ -200,11 +233,11 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
               />
             </Col>
             <Col md={12} sm={24} xs={12}>
-              <SelectInput formProps={{ name: "sucursalId", label: "Sucursal" }} readonly={CheckReadOnly()} required options={[]} />
+              <SelectInput formProps={{ name: "idSucursal", label: "Sucursal" }} readonly={CheckReadOnly()} required options={[]} />
             </Col>
             <Col md={12} sm={24} xs={12}>
               <SelectInput
-                formProps={{ name: "tipoUsuarioId", label: "Tipo de usuario" }}
+                formProps={{ name: "usertype", label: "Tipo de usuario" }}
                 required
                 options={[]}
                 readonly={CheckReadOnly()}
@@ -214,7 +247,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
         </Form>
         <Row justify="center" style={{ marginBottom: 24 }}>
           <Tag color="blue" style={{ fontSize: 14 }}>
-            Usuario: Miguel Farías
+            Usuario: {values.nombre}
           </Tag>
         </Row>
         <div style={{ width: "100%", overflowX: "auto" }}>

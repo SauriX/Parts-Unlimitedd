@@ -1,9 +1,11 @@
 import { makeAutoObservable } from "mobx";
 import User from "../api/user";
-import { IUser, IUserInfo, ILoginForm, ILoginResponse,IChangePasswordResponse, IChangePasswordForm } from "../models/user";
+import { IUser, IUserInfo, ILoginForm, ILoginResponse,IChangePasswordResponse, IChangePasswordForm,IUserForm } from "../models/user";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import { getErrors,tokenName } from "../util/utils";
+import responses from "../util/responses";
+import messages from "../util/messages";
 export default class UserStore {
   constructor() {
     makeAutoObservable(this);
@@ -59,6 +61,40 @@ export default class UserStore {
     }
   };
 
+  getById = async (id: string) => {
+    try {
+      const reagent = await User.getById(id);
+      return reagent;
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+    }
+  };
+
+  create = async (reagent: IUserForm) => {
+    try {
+      await User.create(reagent);
+      alerts.success(messages.created);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
+  update = async (reagent: IUserForm) => {
+    try {
+      await User.update(reagent);
+      alerts.success(messages.updated);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
   changePassordF=async()=>{
     return  await this.changePasswordFlag
   }

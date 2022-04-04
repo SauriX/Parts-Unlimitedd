@@ -77,6 +77,34 @@ export interface IChangePasswordResponse {
   lockoutEnabled: boolean,
   accessFailedCount: Number
 }
+export interface IUserForm{
+  id:string,
+  clave: string,
+  nombre: string,
+  primerApellido: string,
+  segundoApellido: string,
+  idSucursal: Number,
+  usertype: string,
+  contraseña: string,
+  confirmaContraseña:string
+  active:boolean
+  permisos?: IUserPermission[];
+}
+export class USerForm implements IUserForm {
+  id= "";
+  clave = "";
+  nombre = "";
+  primerApellido = "";
+  segundoApellido = "";
+  idSucursal = 0;
+  usertype= "";
+  contraseña= "";
+  confirmaContraseña = "";
+  active= false;
+  constructor(init?: IUserForm) {
+    Object.assign(this, init);
+  }
+}
 export class UserFormValues implements IUser {
   id ="";
   clave ="";

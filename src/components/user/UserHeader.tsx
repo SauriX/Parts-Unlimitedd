@@ -18,7 +18,7 @@ const UserHeader: FC<UserHeaderProps> = ({ handlePrint }) => {
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
         <ImageButton key="doc" title="Informe" image="doc" />,
-        <Search key="search" placeholder="Buscar" onSearch={() => {}} />,
+        <Search key="search" placeholder="Buscar" onSearch={(value) => {navigate(`/users?search=${value}`);}} />,
         <Button key="new" type="primary" onClick={() => {navigate("/new-user");}} icon={<PlusOutlined />}>
           Nuevo
         </Button>,
