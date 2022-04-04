@@ -2,6 +2,7 @@ import { Button, Tooltip, Image } from "antd";
 import React, { FC } from "react";
 
 interface IProps {
+  image: "back" | "doc" | "print"| "editar"| "agregar-archivo";
   image: "back" | "doc" | "print" | "edit";
   title?: string;
   onClick?: React.MouseEventHandler<HTMLElement>;

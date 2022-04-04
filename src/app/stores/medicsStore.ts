@@ -1,5 +1,6 @@
 import Search from "antd/lib/transfer/search";
 import { makeAutoObservable } from "mobx";
+import { getParsedCommandLineOfConfigFile } from "typescript";
 import Medics from "../api/medics";
 import { IMedicsForm, IMedicsList } from "../models/medics";
 import { IScopes } from "../models/shared";
