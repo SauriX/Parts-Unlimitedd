@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
-import Reagent from "../api/reagent";
-import { IReagentForm, IReagentList } from "../models/reagent";
+import Catalog from "../api/catalog";
+import { ICatalogForm, ICatalogList } from "../models/catalog";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
@@ -8,25 +8,25 @@ import messages from "../util/messages";
 import responses from "../util/responses";
 import { getErrors } from "../util/utils";
 
-export default class ReagentStore {
+export default class CatalogStore {
   constructor() {
     makeAutoObservable(this);
   }
 
   scopes?: IScopes;
-  reagents: IReagentList[] = [];
+  catalogs: ICatalogList[] = [];
 
   clearScopes = () => {
     this.scopes = undefined;
   };
 
-  clearReagents = () => {
-    this.reagents = [];
+  clearCatalogs = () => {
+    this.catalogs = [];
   };
 
   access = async () => {
     try {
-      const scopes = await Reagent.access();
+      const scopes = await Catalog.access();
       this.scopes = scopes;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -34,20 +34,20 @@ export default class ReagentStore {
     }
   };
 
-  getAll = async (search: string) => {
+  getAll = async (catalogName: string, search: string) => {
     try {
-      const reagents = await Reagent.getAll(search);
-      this.reagents = reagents;
+      const catalogs = await Catalog.getAll(catalogName, search);
+      this.catalogs = catalogs;
     } catch (error: any) {
       alerts.warning(getErrors(error));
-      this.reagents = [];
+      this.catalogs = [];
     }
   };
 
-  getById = async (id: number) => {
+  getById = async <Type extends ICatalogList>(catalogName: string, id: number): Promise<Type | undefined> => {
     try {
-      const reagent = await Reagent.getById(id);
-      return reagent;
+      const catalog = await Catalog.getById<Type>(catalogName, id);
+      return catalog;
     } catch (error: any) {
       if (error.status === responses.notFound) {
         history.push("/notFound");
@@ -57,10 +57,11 @@ export default class ReagentStore {
     }
   };
 
-  create = async (reagent: IReagentForm) => {
+  create = async (catalogName: string, catalog: ICatalogForm) => {
     try {
-      await Reagent.create(reagent);
+      const newCatalog = await Catalog.create(catalogName, catalog);
       alerts.success(messages.created);
+      this.catalogs.push(newCatalog);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -68,34 +69,18 @@ export default class ReagentStore {
     }
   };
 
-  update = async (reagent: IReagentForm) => {
+  update = async (catalogName: string, catalog: ICatalogForm) => {
     try {
-      await Reagent.update(reagent);
+      const updatedCatalog = await Catalog.update(catalogName, catalog);
       alerts.success(messages.updated);
+      const id = this.catalogs.findIndex((x) => x.id === catalog.id);
+      if (id !== -1) {
+        this.catalogs[id] = updatedCatalog;
+      }
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
-    }
-  };
-
-  exportList = async (search: string) => {
-    try {
-      await Reagent.exportList(search);
-    } catch (error: any) {
-      alerts.warning(getErrors(error));
-    }
-  };
-
-  exportForm = async (id: number) => {
-    try {
-      await Reagent.exportForm(id, "test@test.cim");
-    } catch (error: any) {
-      if (error.status === responses.notFound) {
-        history.push("/notFound");
-      } else {
-        alerts.warning(getErrors(error));
-      }
     }
   };
 }
