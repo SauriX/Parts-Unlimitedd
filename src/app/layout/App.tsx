@@ -16,9 +16,9 @@ import messages from "../util/messages";
 import ErrorComponent from "./ErrorComponent";
 import LayoutComponent from "./LayoutComponent";
 import PrivateRoute from "./PrivateRoute";
-import Indication from "../../views/Indications";
 import Catalog from "../../views/Catalog";
 import CatalogDetail from "../../components/catalog/detail/CatalogDetail";
+import Indication from "../../views/Indications";
 
 function App() {
   return (
