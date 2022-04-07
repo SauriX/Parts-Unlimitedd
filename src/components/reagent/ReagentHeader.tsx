@@ -4,6 +4,8 @@ import HeaderTitle from "../../app/common/header/HeaderTitle";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../app/common/button/ImageButton";
+import { observer } from "mobx-react-lite";
+import { useStore } from "../../app/stores/store";
 
 const { Search } = Input;
 
@@ -12,11 +14,18 @@ type ReagentHeaderProps = {
 };
 
 const ReagentHeader: FC<ReagentHeaderProps> = ({ handlePrint }) => {
+  const { reagentStore } = useStore();
+  const { exportList } = reagentStore;
+
   const navigate = useNavigate();
 
   const [searchParams, setSearchParams] = useSearchParams();
 
   console.log("Header");
+
+  const download = () => {
+    exportList(searchParams.get("search") ?? "all");
+  };
 
   return (
     <PageHeader
@@ -25,7 +34,7 @@ const ReagentHeader: FC<ReagentHeaderProps> = ({ handlePrint }) => {
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        <ImageButton key="doc" title="Informe" image="doc" />,
+        <ImageButton key="doc" title="Informe" image="doc" onClick={download} />,
         <Search
           key="search"
           placeholder="Buscar"

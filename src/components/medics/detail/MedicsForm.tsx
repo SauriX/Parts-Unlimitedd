@@ -90,7 +90,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
         </Col>
         <Col md={12} sm={24} style={{ textAlign: "right" }}>
         {readonly && (
-          <ImageButton key="edit" title="Editar" image="editar" onClick={() => {
+          <ImageButton key="edit" title="Editar" image="edit" onClick={() => {
               setReadonly(false);
                 }} />
             /*<Button

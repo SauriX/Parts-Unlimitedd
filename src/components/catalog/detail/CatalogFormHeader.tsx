@@ -3,22 +3,14 @@ import React, { FC } from "react";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import ImageButton from "../../../app/common/button/ImageButton";
 import { useNavigate } from "react-router-dom";
-import { useStore } from "../../../app/stores/store";
 
-type ReagentFormHeaderProps = {
+type CatalogFormHeaderProps = {
   id: number;
   handlePrint: () => void;
 };
 
-const ReagentFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint }) => {
-  const { reagentStore } = useStore();
-  const { exportForm } = reagentStore;
-
+const CatalogFormHeader: FC<CatalogFormHeaderProps> = ({ id, handlePrint }) => {
   let navigate = useNavigate();
-
-  const download = () => {
-    exportForm(id);
-  };
 
   return (
     <PageHeader
@@ -27,13 +19,13 @@ const ReagentFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint }) => {
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        <ImageButton key="doc" title="Informe" image="doc" onClick={download} />,
+        <ImageButton key="doc" title="Informe" image="doc" />,
         <ImageButton
           key="back"
           title="Regresar"
           image="back"
           onClick={() => {
-            navigate("/reagent");
+            navigate("/catalogs");
           }}
         />,
       ]}
@@ -41,4 +33,4 @@ const ReagentFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint }) => {
   );
 };
 
-export default ReagentFormHeader;
+export default CatalogFormHeader;
