@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import User from "../api/user";
-import { IUser, IUserInfo, ILoginForm, ILoginResponse,IChangePasswordResponse, IChangePasswordForm,IUserForm } from "../models/user";
+import { IUser, IUserInfo, ILoginForm, ILoginResponse,IChangePasswordResponse, IChangePasswordForm,IUserForm,IClave } from "../models/user";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import { getErrors,tokenName } from "../util/utils";
@@ -44,14 +44,22 @@ export default class UserStore {
     try{
       const response = await User.login(user);
       this.response = response;
-      if(this.response){
+      if(!this.response.code){
         window.localStorage.setItem(tokenName,response.token);
         this.Token= response.token;
         this.changePasswordFlag=response.changePassword;
         this.idUser = response.id;
         return true;
       }else{
-        alerts.error("Usuario/contraseña no coinciden");
+        switch(this.response.code){
+          case 1:
+            alerts.error("Usuario inactivo");
+            break;
+          case 2 :
+            alerts.error("Usuario/contraseña no coinciden");
+            break;
+        }
+        
       }
       return false;
     }catch(error: any){
@@ -62,6 +70,7 @@ export default class UserStore {
   };
 
   getById = async (id: string) => {
+    console.log(id);
     try {
       const reagent = await User.getById(id);
       return reagent;
@@ -85,9 +94,9 @@ export default class UserStore {
     }
   };
 
-  update = async (reagent: IUserForm) => {
+  update = async (user: IUserForm) => {
     try {
-      await User.update(reagent);
+      await User.update(user);
       alerts.success(messages.updated);
       return true;
     } catch (error: any) {
@@ -97,8 +106,16 @@ export default class UserStore {
   };
   changePassordF=async()=>{
     return  await this.changePasswordFlag
-  }
+  };
+  Clave =async(data:IClave)=>{
+    const response = await User.getClave(data);
+    return  await response;
+  };
   
+  generatePass = async ()=>{ 
+    const response = await User.gepass();
+    return await response;
+  }
   changePassword= async (form:IChangePasswordForm)=>{
     try {
       form.token= this.Token;

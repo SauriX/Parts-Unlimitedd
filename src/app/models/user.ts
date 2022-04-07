@@ -8,7 +8,8 @@ export interface IUserInfo {
   tipoUsuario:string,
   idRol: string,
   idSucursal: number,
-  activo: boolean
+  activo: boolean,
+  password:string
 } 
 
 export interface ILoginForm {
@@ -18,7 +19,8 @@ export interface ILoginForm {
 export interface ILoginResponse{
   token: string,
   changePassword: boolean,
-  id:string
+  id:string,
+  code:Number
 }
 export interface IUser {
   id: string;
@@ -45,6 +47,11 @@ export interface IUserPermission {
   permiso: string;
   asignado: boolean;
   tipo: number;
+}
+export interface IClave {
+  nombre : string
+  primerApllido : string
+  segundoApellido : string
 }
 export interface IChangePasswordResponse {
   idUsuario: string,
@@ -78,7 +85,7 @@ export interface IChangePasswordResponse {
   accessFailedCount: Number
 }
 export interface IUserForm{
-  id:string,
+  idUsuario:string,
   clave: string,
   nombre: string,
   primerApellido: string,
@@ -87,11 +94,11 @@ export interface IUserForm{
   usertype: string,
   contraseña: string,
   confirmaContraseña:string
-  active:boolean
+  activo:boolean
   permisos?: IUserPermission[];
 }
 export class USerForm implements IUserForm {
-  id= "";
+  idUsuario = "";
   clave = "";
   nombre = "";
   primerApellido = "";
@@ -100,7 +107,7 @@ export class USerForm implements IUserForm {
   usertype= "";
   contraseña= "";
   confirmaContraseña = "";
-  active= false;
+  activo= false;
   constructor(init?: IUserForm) {
     Object.assign(this, init);
   }
@@ -122,6 +129,15 @@ export class LoginFormValues implements ILoginForm{
   userName ="";
   password ="";
   constructor(init?: ILoginForm){
+    Object.assign(this,init);
+  }
+}
+
+export class claveValues implements IClave{
+  nombre = "";
+  primerApllido = "";
+  segundoApellido = "";
+  constructor(init?: IClave){
     Object.assign(this,init);
   }
 }

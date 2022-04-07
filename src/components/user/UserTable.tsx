@@ -1,4 +1,4 @@
-import { Button, Divider, PageHeader, Spin, Table } from "antd";
+import { Button, Divider, PageHeader, Spin, Table,Form, Row, Col,  Modal,  } from "antd";
 import React, { FC, Fragment, useEffect, useRef, useState } from "react";
 import {
   defaultPaginationProperties,
@@ -6,14 +6,15 @@ import {
   IColumns,
   ISearch,
 } from "../../app/common/table/utils";
-import { IUserInfo } from "../../app/models/user";
+import { formItemLayout } from "../../app/util/utils";
+import { IUserInfo,IChangePasswordForm } from "../../app/models/user";
 import useWindowDimensions, { resizeWidth } from "../../app/util/window";
 import { EditOutlined, LockOutlined } from "@ant-design/icons";
 import IconButton from "../../app/common/button/IconButton";
 import { useNavigate,useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
-
+import PasswordInput from "../../app/common/form/PasswordInput";
 /*const users: IUserInfo[] = [
   {
     id: "asd",
@@ -29,10 +30,35 @@ type UserTableProps = {
 };
 const UserTable:FC<UserTableProps> = ({ componentRef, printing }) => {
   const { userStore } = useStore();
-  const { users, getAll } = userStore;
+  const { users, getAll,changePassword  } = userStore;
   let navigate = useNavigate();
+  let id="";
   const { width: windowWidth } = useWindowDimensions();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [formPassword] = Form.useForm<IChangePasswordForm>();
+  const showModal = (ids:string) => {
+    id=ids;
+    setIsModalVisible(true);
+  };
 
+  const handleOk = () => {
+    formPassword.submit();
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+  const onFinishPass=async(newValues:IChangePasswordForm)=>{
+    let passForm ={... newValues};
+    let success = false;
+    let checkPass = false;
+		success = await changePassword(passForm);
+    console.log(success);
+    if (success) {
+      navigate(`/users`);
+    }
+  }
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const [searchState, setSearchState] = useState<ISearch>({
@@ -63,7 +89,7 @@ const UserTable:FC<UserTableProps> = ({ componentRef, printing }) => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/users/${user.idUsuario}?mode=ReadOnly`);
+            navigate(`/users/${user.idUsuario}?mode=ReadOnly&search=${searchParams.get("search") ?? "all"}`);
           }}
         >
           {value}
@@ -102,7 +128,7 @@ const UserTable:FC<UserTableProps> = ({ componentRef, printing }) => {
       title: "Contraseña",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: () => <IconButton title="Cambiar contraseña" icon={<LockOutlined />} />,
+      render: (value,user) => <IconButton title="Cambiar contraseña" onClick={()=>{showModal(user.idUsuario)}} icon={<LockOutlined />} />,
     },
     {
       key: "editar",
@@ -115,7 +141,7 @@ const UserTable:FC<UserTableProps> = ({ componentRef, printing }) => {
           title="Editar usuario"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/users/${user.idUsuario}`);
+            navigate(`/users/${user.idUsuario}?search=${searchParams.get("search") ?? "all"}`);
           }}
         />
       ),
@@ -134,7 +160,42 @@ const UserTable:FC<UserTableProps> = ({ componentRef, printing }) => {
       sticky
       scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
     />
+    <Modal title="Ingreso de contraseña" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+        <Form<IChangePasswordForm>
+          {...formItemLayout}
+          form={formPassword}
+          name="changepassword"
+          onFinish={onFinishPass}
+          scrollToFirstError
+        >
+          <Row>
+            <Col md={24} sm={24} xs={24}>
+              <PasswordInput
+                formProps={{
+                  name: "password",
+                  label: "Nueva Contraseña",
+                }}
+                max={8}
+                min={8}
+                required
+            />
+            </Col>
+            <Col md={24} sm={24} xs={24}>
+                <PasswordInput
+                  formProps={{
+                    name: "confirmPassword",
+                    label: "Confirmar Contraseña",
+                  }}
+                  max={8}
+                  min={8}
+                  required
+                />
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
     </div>
+    
   );
 };
 

@@ -27,7 +27,7 @@ export interface IMenu {
 
 export interface IOptions {
   label: string;
-  value: number;
+  value: string;
 }
 
 export type TreeData = {
