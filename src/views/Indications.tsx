@@ -1,6 +1,8 @@
 import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
 import IndicationHeader from "../components/indication/IndicationHeader";
 import IndicationTable from "../components/indication/IndicationTable";
@@ -9,13 +11,28 @@ const Indication = () => {
   const { indicationStore } = useStore();
   const { scopes, access, clearScopes } = indicationStore;
 
-  useEffect(() => {
-    const checkAccess = async () => {
-      await access();
-    };
+  const [printing, setPrinting] = useState(false);
 
-    checkAccess();
-  }, [access]);
+  const componentRef = useRef<any>();
+  const handlePrint = useReactToPrint({
+  content: () => componentRef.current,
+  onBeforeGetContent: () => {
+    setPrinting(true);
+  },
+  onAfterPrint: () => {
+    setPrinting(false);
+  },
+});
+
+  // useEffect(() => {
+  //   const checkAccess = async () => {
+  //     await access();
+  //   };
+
+  //   checkAccess();
+  // }, [access]);
+
+  console.log("Render");
 
   useEffect(() => {
     return () => {
@@ -23,13 +40,13 @@ const Indication = () => {
     };
   }, [clearScopes]);
 
-  if (!scopes?.acceder) return null;
+ //if (!scopes?.acceder) return null;
 
   return (
     <Fragment>
-      <IndicationHeader />
+      <IndicationHeader handlePrint={handlePrint} />
       <Divider className="header-divider" />
-      <IndicationTable />
+      <IndicationTable componentRef={componentRef} printing={printing} />
     </Fragment>
   );
 };

@@ -1,5 +1,5 @@
-import { Button, Table } from "antd";
-import React, { useEffect, useState } from "react";
+import { Button, Divider, PageHeader, Spin, Table, List, Typography, } from "antd";
+import React, { FC, Fragment, useEffect, useRef, useState, } from "react";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
@@ -9,15 +9,28 @@ import {
 import useWindowDimensions, { resizeWidth } from "../../app/util/window";
 import { EditOutlined } from "@ant-design/icons";
 import IconButton from "../../app/common/button/IconButton";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { IIndicationList } from "../../app/models/indication";
 import { useStore } from "../../app/stores/store";
+import { observer } from "mobx-react-lite";
+import { useReactToPrint } from "react-to-print";
+import HeaderTitle from "../../app/common/header/HeaderTitle";
+import Search from "antd/es/transfer/search";
+import Indications from "../../views/Indications";
 
-const IndicationTable = () => {
+type IndicationsTableProps = {
+  componentRef: React.MutableRefObject<any>;
+  printing: boolean;
+};
+
+const IndicationTable: FC<IndicationsTableProps> = ({ componentRef, printing }) => {
   const { indicationStore } = useStore();
   const { indication, getAll } = indicationStore;
 
+  const [searchParams] = useSearchParams();
+
   let navigate = useNavigate();
+
   const { width: windowWidth } = useWindowDimensions();
 
   const [loading, setLoading] = useState(false);
@@ -32,12 +45,12 @@ const IndicationTable = () => {
   useEffect(() => {
     const readIndication = async () => {
       setLoading(true);
-      await getAll();
+      await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
     };
 
     readIndication();
-  }, [getAll]);
+  }, [getAll, searchParams]);
 
   const columns: IColumns<IIndicationList> = [
     {
@@ -52,7 +65,7 @@ const IndicationTable = () => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/indiction/${user.idIndicacion}`);
+            navigate(`/indiction/${user.idIndicacion}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
           }}
         >
           {value}
@@ -96,16 +109,37 @@ const IndicationTable = () => {
           title="Editar usuario"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/users/${value}`);
+            navigate(`/indication/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`);
           }}
         />
       ),
     },
   ];
 
+  const IndicationsTablePrint = () => {
+    return (
+      <div ref={componentRef}>
+        <PageHeader
+          ghost={false}
+          title={<HeaderTitle title="Catálogo de Indicaciones" image="doctor" />}
+          className="header-container"
+        ></PageHeader>
+        <Divider className="header-divider" />
+        <Table<IIndicationList>
+          size="large"
+          rowKey={(record) => record.idIndicacion}
+          columns={columns.slice(0, 8)}
+          pagination={false}
+          dataSource={[...indication]}
+        />
+      </div>
+    );
+  };
+
   return (
-    <Table<IIndicationList>
-      loading={loading}
+    <Fragment>
+      <Table<IIndicationList>
+      loading={loading|| printing}
       size="small"
       rowKey={(record) => record.idIndicacion}
       columns={columns}
@@ -113,8 +147,12 @@ const IndicationTable = () => {
       pagination={defaultPaginationProperties}
       sticky
       scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-    />
+      />
+      <div style={{ display: "none" }}>{<IndicationsTablePrint />}</div>
+
+    </Fragment>
+    
   );
 };
 
-export default IndicationTable;
+export default observer (IndicationTable);
