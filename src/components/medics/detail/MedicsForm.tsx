@@ -7,10 +7,12 @@ import {
   Button,
   PageHeader,
   Divider,
+  Select,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
+import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
 import SelectInput from "../../../app/common/form/SelectInput";
 import { useStore } from "../../../app/stores/store";
@@ -21,19 +23,13 @@ import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import NumberInput from "../../../app/common/form/NumberInput";
 import { IClinicList } from "../../../app/models/clinic";
 import { List, Typography, } from 'antd';
+import TextArea from "antd/lib/input/TextArea";
 
 type MedicsFormProps = {
   id: number;
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
-const data = [
-  'Racing car sprays burning fuel into crowd.',
-  'Japanese princess to wed commoner.',
-  'Australian walks 100km after outback crash.',
-  'Man charged over missing wedding girl.',
-  'Los Angeles battles huge wildfires.',
-]; 
 const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   const { medicsStore } = useStore();
   const { getById, create, update } = medicsStore;
@@ -90,16 +86,9 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
         </Col>
         <Col md={12} sm={24} style={{ textAlign: "right" }}>
         {readonly && (
-          <ImageButton key="edit" title="Editar" image="editar" onClick={() => {
+          <ImageButton key="edit" title="Editar" image="edit" onClick={() => {
               setReadonly(false);
                 }} />
-            /*<Button
-            onClick={() => {
-           setReadonly(false);
-             }}
-            >
-              Editar
-            </Button>*/
             
           )}
           < Button
@@ -161,22 +150,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
-              </Col>
-              
-              <Col md={12} sm={24}>
-                <NumberInput
-                  formProps={{
-                    name: "codigoPostal",
-                    label: "Codigo Postal",
-                  }}
-                  max={9999999999}
-                  min={1111}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
 
-              <Col md={12} sm={24}>
                 <TextInput
                   formProps={{
                     name: "nombre",
@@ -186,66 +160,24 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
-              </Col>
-              <Col md={12} sm={0}>
-                <NumberInput
-                  formProps={{
-                    name: "estadoId",
-                    label: "Estado",
-                  }}
-                  max={9999999999}
-                  min={0}
-                  readonly={readonly}
-                />
-              </Col>
-
-              <Col md={12} sm={24}>
                 <TextInput
                   formProps={{
                     name: "primerApellido",
-                    label: "PrimerApellido",
+                    label: "Primer Apellido",
                   }}
                   max={100}
                   required
                   readonly={readonly}
                 />
-              </Col>
-              <Col md={12} sm={0}>
-                <NumberInput
-                  formProps={{
-                    name: "ciudadId",
-                    label: "Ciudad",
-                  }}
-                  max={9999999999}
-                  min={1}
-                  readonly={readonly}
-                />
-              </Col>
-
-              <Col md={12} sm={24}>
                 <TextInput
                   formProps={{
                     name: "segundoApellido",
-                    label: "SegundoApellido",
+                    label: "Segundo Apellido",
                   }}
                   max={100}
                   required
                   readonly={readonly}
                 />
-              </Col>
-              <Col md={12} sm={24}>
-                <NumberInput
-                  formProps={{
-                    name: "numeroExterior",
-                    label: "Numero Exterior",
-                  }}
-                  max={9999999999}
-                  min={1}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={12} sm={24}>
                 <NumberInput
                   formProps={{
                     name: "especialidadId",
@@ -256,33 +188,68 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
+                <TextAreaInput
+                  formProps={{
+                    name: "observaciones",
+                    label: "Observaciones", 
+                  }}
+                  max={100}
+                  rows ={12}
+                  readonly={readonly}
+                />
+
               </Col>
 
-              <Col md={12} sm={0}>
+              <Col md={12} sm={24}>
+              <NumberInput
+                  formProps={{
+                    name: "codigoPostal",
+                    label: "Código Postal",
+                  }}
+                  max={9999999999}
+                  min={1111}
+                  required
+                  readonly={readonly}
+                />
+                
                 <NumberInput
                   formProps={{
-                    name: "numeroInterior",
-                    label: "Numero interior",
+                    name: "estadoId",
+                    label: "Estado",
+                  }}
+                  max={9999999999}
+                  min={0}
+                  readonly={readonly}
+                />
+
+                <NumberInput
+                  formProps={{
+                    name: "ciudadId",
+                    label: "Ciudad",
                   }}
                   max={9999999999}
                   min={1}
                   readonly={readonly}
                 />
-              </Col>
-
-              <Col md={12} sm={0}>
-                <TextInput
+                <NumberInput
                   formProps={{
-                    name: "observaciones",
-                    label: "Observaciones",
+                    name: "numeroExterior",
+                    label: "Numero Exterior",
                   }}
-                  max={100}
+                  max={9999999999}
+                  min={1}
+                  required
                   readonly={readonly}
                 />
-              </Col>
-
-
-              <Col md={12} sm={12}>
+                <NumberInput
+                  formProps={{
+                    name: "numeroInterior",
+                    label: "Número interior",
+                  }}
+                  max={9999999999}
+                  min={1}
+                  readonly={readonly}
+                />
                 <TextInput
                   formProps={{
                     name: "calle",
@@ -292,10 +259,6 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
-              </Col>
-
-
-              <Col md={12} sm={12}>
                 <NumberInput
                   formProps={{
                     name: "coloniaId",
@@ -306,9 +269,6 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
-              </Col>
-
-              <Col md={12} sm={12}>
                 <TextInput
                   formProps={{
                     name: "correo",
@@ -318,20 +278,6 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   readonly={readonly}
                   type="email"
                 />
-              </Col>
-              <Col md={12} sm={12}>
-                <NumberInput
-                  formProps={{
-                    name: "telefono",
-                    label: "Telefono",
-                  }}
-                  max={9999999999}
-                  min={1111111111}
-                  readonly={readonly}
-                />
-              </Col>
-
-              <Col md={12} sm={0}>
                 <NumberInput
                   formProps={{
                     name: "celular",
@@ -341,9 +287,17 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   min={1000000000}
                   readonly={readonly}
                 />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <SwitchInput name="activo" label="Activo" readonly={readonly} />
+                <NumberInput
+                  formProps={{
+                    name: "telefono",
+                    label: "Teléfono",
+                  }}
+                  max={9999999999}
+                  min={1111111111}
+                  readonly={readonly}
+                />
+
+              <SwitchInput name="activo" label="Activo" readonly={readonly} />
               </Col>
             </Row>
           </Form>
@@ -354,30 +308,35 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
         </div>
       </div>
       
-         <Divider orientation="left">Default Size</Divider>
+         <Divider orientation="left">Clinica/Empresa</Divider>
          <List<IClinicList>
            header={<div>
-             <Col md={12} sm={24}>
-             <SelectInput
-              formProps={{ name: "nombre", label: "Clinica/Empresa" }}
-             options={[]}
-              readonly={readonly}
-               /></Col>
-               <Col md={2} sm={24}>
-            <ImageButton key="agregar" title="Agregar Clinica" image="agregar-archivo" onClick={ () => {} } />
+             <Col md={12} sm={24}> Clinica/Empresa 
+             <Select
+             options={[{label:"Clinica 1", value:1},
+             {label:"Clinica 2", value:2}, 
+             {label:"Clinica 3", value:3}]}
+             onChange={(value, option)=>{
+
+             }}
+               />
+               {!readonly && (
+                 <ImageButton key="agregar" title="Agregar Clinica" image="agregar-archivo" onClick={ () => {} } />
+              )}           
             </Col>
            </div>} 
             footer={<div></div>} 
             bordered
-            //dataSource={IClinicList}
+            dataSource={values.clinicas}
             renderItem={item => (
               <List.Item>
-              <Typography.Text mark>[ITEM]</Typography.Text> {item}
+              <Typography.Text mark>[ITEM] <ImageButton key="Eliminar" title="Eliminar Clinica" image="Eliminar_Clinica" onClick={ () => {} } />
+              </Typography.Text> {item}
               </List.Item>
               )}
-            />
-          );
+            />          
       </Spin>
+      
     );
  };
 

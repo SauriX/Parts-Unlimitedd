@@ -10,11 +10,13 @@ import Reagent from "../../views/Reagent";
 import Medics from "../../views/Medics";
 import Role from "../../views/Role";
 import User from "../../views/User";
-import Login from "../../views/Login"
+import Login from "../../views/Login";
 import messages from "../util/messages";
 import ErrorComponent from "./ErrorComponent";
 import LayoutComponent from "./LayoutComponent";
 import PrivateRoute from "./PrivateRoute";
+import Catalog from "../../views/Catalog";
+import CatalogDetail from "../../components/catalog/detail/CatalogDetail";
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
           <Route path="roles" element={<Role />} />
           <Route path="reagent" element={<Reagent />} />
           <Route path="reagent/:id" element={<ReagentDetail />} />
+          <Route path="catalogs" element={<Catalog />} />
+          <Route path="catalogs/:id" element={<CatalogDetail />} />
           <Route path="medics" element={<Medics />} />
           <Route path="medics/:id" element={<MedicsDetail />} />
           <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />

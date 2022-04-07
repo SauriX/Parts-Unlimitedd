@@ -57,7 +57,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "3%",
+        width: "8%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -82,7 +82,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-      ...getDefaultColumnProps("direccion", "Direccion", {
+      ...getDefaultColumnProps("direccion", "Dirección", {
         searchState,
         setSearchState,
         width: "16%",
@@ -109,7 +109,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-      ...getDefaultColumnProps("telefono", "Telefono", {
+      ...getDefaultColumnProps("telefono", "Teléfono", {
         searchState,
         setSearchState,
         width: "8%",
@@ -140,6 +140,15 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
         searchState,
         setSearchState,
         width: "10%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps( "activo", "Activo", {
+        searchState,
+        setSearchState,
+        width: "8%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -182,7 +191,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
         <Table<IMedicsList>
           size="large"
           rowKey={(record) => record.idMedico}
-          columns={columns.slice(0, 10)}
+          columns={columns.slice(0, 8)}
           pagination={false}
           dataSource={[...medics]}
         />

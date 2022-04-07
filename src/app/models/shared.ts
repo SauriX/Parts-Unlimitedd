@@ -27,7 +27,15 @@ export interface IMenu {
 
 export interface IOptions {
   label: string;
+<<<<<<< HEAD
   value: string;
+=======
+  value: number | string;
+}
+
+export interface IOptionsCatalog extends IOptions {
+  type: "normal" | "description" | "dimension" | "area";
+>>>>>>> d6e306b5ed46a6ffd6668b80d980c06d8b2ea54e
 }
 
 export type TreeData = {
