@@ -1,4 +1,6 @@
+import Search from "antd/lib/transfer/search";
 import { makeAutoObservable } from "mobx";
+import { getParsedCommandLineOfConfigFile } from "typescript";
 import Indication from "../api/indication";
 import { IIndicationForm, IIndicationList } from "../models/indication";
 import { IScopes } from "../models/shared";
@@ -33,9 +35,9 @@ export default class IndicationStore {
     }
   };
 
-  getAll = async () => {
+  getAll = async (search: string) => {
     try {
-      const indications = await Indication.getAll();
+      const indications = await Indication.getAll(search);
       this.indication = indications;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -57,9 +59,10 @@ export default class IndicationStore {
     try {
       await Indication.create(indication);
       alerts.success(messages.created);
-      history.push("/indication");
+      return true;
     } catch (error) {
       alerts.warning(getErrors(error));
+      return false;
     }
   };
 
@@ -67,9 +70,10 @@ export default class IndicationStore {
     try {
       await Indication.update(indication);
       alerts.success(messages.updated);
-      history.push("/indication");
+      return true;
     } catch (error) {
       alerts.warning(getErrors(error));
+      return false;
     }
   };
 }

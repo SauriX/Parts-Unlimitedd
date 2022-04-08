@@ -65,10 +65,11 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/medics/${medics.idMedico}?${searchParams}&mode=readonly`);
+            navigate(`/medics/${medics.idMedico}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
+          
           }}
-        >
-          {value}
+          >
+            {value}
         </Button>
       ),
     },
@@ -151,6 +152,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
         width: "8%",
         minWidth: 150,
         windowSize: windowWidth,
+        
       }),
     },
     {
@@ -172,8 +174,9 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
           title="Editar Medico"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/medics/${value}?${searchParams}&mode=edit`);
+            navigate(`/medics/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`);
           }}
+          
         />
       ),
     },

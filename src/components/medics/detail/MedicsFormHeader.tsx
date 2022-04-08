@@ -37,12 +37,12 @@ const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({id, handlePrint }) => {
         <Search
           key="search"
           placeholder="Buscar"
-          defaultValue={searchParams.get("search") ?? ""}
+          //defaultValue={searchParams.get("search") ?? ""}
           onSearch={(value) => {
             setSearchParams({ search: !value ? "all" : value });
           }}
         />,
-        <Button
+        /*<Button
           key="new"
           type="primary"
           onClick={() => {
@@ -51,7 +51,7 @@ const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({id, handlePrint }) => {
           icon={<PlusOutlined />}
         >
           Nuevo
-        </Button>,
+        </Button>,*/
       ]}
     ></PageHeader>
   );

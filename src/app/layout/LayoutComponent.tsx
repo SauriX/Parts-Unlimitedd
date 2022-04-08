@@ -34,6 +34,12 @@ const menus: IMenu[] = [
     descripcion: "Medicos",
     icono: "medico",
   },
+  {
+    id: 6,
+    ruta: "indication",
+    descripcion: "Indicaciones",
+    icono: "role",
+  },
 ];
 
 const LayoutComponent = () => {
