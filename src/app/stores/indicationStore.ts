@@ -7,6 +7,7 @@ import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import messages from "../util/messages";
+import responses from "../util/responses";
 import { getErrors } from "../util/utils";
 
 export default class IndicationStore {
@@ -74,6 +75,26 @@ export default class IndicationStore {
     } catch (error) {
       alerts.warning(getErrors(error));
       return false;
+    }
+  };
+
+  exportList = async (search: string) => {
+    try {
+      await Indication.exportList(search);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  exportForm = async (id: number) => {
+    try {
+      await Indication.exportForm(id, "Formulario");
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
     }
   };
 }

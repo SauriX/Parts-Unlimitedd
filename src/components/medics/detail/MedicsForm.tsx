@@ -22,6 +22,7 @@ import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import NumberInput from "../../../app/common/form/NumberInput";
 import { IClinicList } from "../../../app/models/clinic";
+import { observer } from "mobx-react-lite";
 import { List, Typography } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import Medics from "../../../views/Medics";
@@ -35,8 +36,9 @@ type MedicsFormProps = {
   printing: boolean;
 };
 const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
-  const { medicsStore } = useStore();
+  const { medicsStore, optionStore } = useStore();
   const { getById, create, update, getAll, medics } = medicsStore;
+  const { clinicOptions, getClinicOptions } = optionStore;
 
   const navigate = useNavigate();
 
@@ -65,6 +67,10 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
       readMedics(id);
     }
   }, [form, getById, id]);
+
+  useEffect(() => {
+    getClinicOptions();
+  }, [getClinicOptions]);
 
   useEffect(() => {
     const readMedics = async () => {
@@ -137,7 +143,6 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
     const clinics = values.clinicas.filter((x) => x.id !== id);
 
     setValues((prev) => ({ ...prev, clinicas: clinics }));
-   
   };
 
   return (
@@ -384,13 +389,9 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
         header={
           <div>
             <Col md={12} sm={24}>
-              Clinica/Empresa
-              <Select
-                options={[
-                  { label: "Clinica 1", value: 1 },
-                  { label: "Clinica 2", value: 2 },
-                  { label: "Clinica 3", value: 3 },
-                ]}
+              Clinica/Empresa 
+              < Select
+                options={clinicOptions}
                 onChange={(value, option: any) => {
                   if (value) {
                     setClinic({ id: value, clave: option.label });
@@ -398,6 +399,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                     setClinic(undefined);
                   }
                 }}
+                style={{ width: 240 }}
               />
               {!readonly && (
                 <ImageButton
@@ -433,4 +435,4 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   );
 };
 
-export default MedicsForm;
+export default observer(MedicsForm);

@@ -17,6 +17,7 @@ export interface IMedicsList {
   celular: number;
   telefono: number;
   activo: boolean;
+  clinicas: IClinicList[];
 }
 
 export interface IMedicsForm {

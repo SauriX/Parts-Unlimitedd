@@ -78,7 +78,7 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing  }
 
     let success = false;
 
-    if (indication.idIndicacion) {
+    if (!indication.id) {
       success = await create(indication);
     } else {
       success = await update(indication);
@@ -92,7 +92,7 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing  }
   const actualIndication =()=>{
     if(id){
       
-   const index =  indication.findIndex(x => x.idIndicacion === id);
+   const index =  indication.findIndex(x => x.id === id);
    return index + 1;
     }
     return 0;
@@ -100,7 +100,7 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing  }
 
   const prevnextIndication =(index:number)=>{
     const indi = indication[index];
-    navigate(`/indication/${indi?.idIndicacion}?mode=${searchParams.get("mode")}&search=${searchParams.get("search")}`);
+    navigate(`/indication/${indi?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search")}`);
   }
 
   useEffect(() => {
