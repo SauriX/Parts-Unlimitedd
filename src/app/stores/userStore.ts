@@ -1,9 +1,11 @@
 import { makeAutoObservable } from "mobx";
 import User from "../api/user";
-import { IUser, IUserInfo, ILoginForm, ILoginResponse,IChangePasswordResponse, IChangePasswordForm } from "../models/user";
+import { IUser, IUserInfo, ILoginForm, ILoginResponse,IChangePasswordResponse, IChangePasswordForm,IUserForm,IClave } from "../models/user";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import { getErrors,tokenName } from "../util/utils";
+import responses from "../util/responses";
+import messages from "../util/messages";
 export default class UserStore {
   constructor() {
     makeAutoObservable(this);
@@ -15,6 +17,7 @@ export default class UserStore {
   idUser: string = "";
   response?: ILoginResponse ;
   changepassResponse?: IChangePasswordResponse;
+  user?: IUserForm;
   access = async () => {
     try {
       //  await User.access();
@@ -35,21 +38,47 @@ export default class UserStore {
       this.users = [];
     }
   };
-
+  exportList = async (search: string) => {
+    try {
+      await User.exportList(search);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  exportForm = async (id: string,clave?:string) => {
+    try {
+      await User.exportForm(id, clave);
+      return true;
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+    }
+  };
   loginuser= async (user:ILoginForm) =>{
     this.Token="";
     
     try{
       const response = await User.login(user);
       this.response = response;
-      if(this.response){
+      if(!this.response.code){
         window.localStorage.setItem(tokenName,response.token);
         this.Token= response.token;
         this.changePasswordFlag=response.changePassword;
         this.idUser = response.id;
         return true;
       }else{
-        alerts.error("Usuario/contraseña no coinciden");
+        switch(this.response.code){
+          case 1:
+            alerts.error("Usuario inactivo");
+            break;
+          case 2 :
+            alerts.error("Usuario/contraseña no coinciden");
+            break;
+        }
+        
       }
       return false;
     }catch(error: any){
@@ -59,10 +88,54 @@ export default class UserStore {
     }
   };
 
+  getById = async (id: string) => {
+    console.log(id);
+    try {
+      const user = await User.getById(id);
+      this.user= user;
+      return user;
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+    }
+  };
+
+  create = async (reagent: IUserForm) => {
+    try {
+      await User.create(reagent);
+      alerts.success(messages.created);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
+  update = async (user: IUserForm) => {
+    try {
+      await User.update(user);
+      alerts.success(messages.updated);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
   changePassordF=async()=>{
     return  await this.changePasswordFlag
-  }
+  };
+  Clave =async(data:IClave)=>{
+    const response = await User.getClave(data);
+    return  await response;
+  };
   
+  generatePass = async ()=>{ 
+    const response = await User.gepass();
+    return await response;
+  }
   changePassword= async (form:IChangePasswordForm)=>{
     try {
       form.token= this.Token;

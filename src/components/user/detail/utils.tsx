@@ -1,6 +1,6 @@
 import IconSelector from "../../../app/common/icons/IconSelector";
 import { TreeData } from "../../../app/models/shared";
-import { IUser, IUserPermission } from "../../../app/models/user";
+import { IUserForm, IUserPermission } from "../../../app/models/user";
 
 export const convertToTreeData = (
   targetKeys: String[],
@@ -62,7 +62,7 @@ export const convertToTreeData = (
 export const onTreeSelectChange = (
   permissionsAvailableFiltered: TreeData[],
   permissionsAddedFiltered: TreeData[],
-  current: IUser | undefined,
+  current: IUserForm | undefined,
   targetKeys: string[],
   setSelectedKeys: React.Dispatch<React.SetStateAction<string[]>>
 ) => {
