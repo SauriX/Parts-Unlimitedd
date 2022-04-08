@@ -147,56 +147,70 @@ const UserTable:FC<UserTableProps> = ({ componentRef, printing }) => {
       ),
     },
   ];
-
-  return (
-    <div ref={componentRef}>
-    <Table<IUserInfo>
-      loading={loading}
-      size="small"
-      rowKey={(record) => record.idUsuario}
-      columns={columns}
-      dataSource={[...users]}
-      pagination={defaultPaginationProperties}
-      sticky
-      scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-    />
-    <Modal title="Ingreso de contraseña" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-        <Form<IChangePasswordForm>
-          {...formItemLayout}
-          form={formPassword}
-          name="changepassword"
-          onFinish={onFinishPass}
-          scrollToFirstError
-        >
-          <Row>
-            <Col md={24} sm={24} xs={24}>
-              <PasswordInput
-                formProps={{
-                  name: "password",
-                  label: "Nueva Contraseña",
-                }}
-                max={8}
-                min={8}
-                required
-            />
-            </Col>
-            <Col md={24} sm={24} xs={24}>
+  const UserTablePrint = () =>{
+    return (
+      <div ref={componentRef}>
+      <Table<IUserInfo>
+        loading={loading}
+        size="small"
+        rowKey={(record) => record.idUsuario}
+        columns={columns}
+        dataSource={[...users]}
+        pagination={defaultPaginationProperties}
+        sticky
+        scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+      />
+      <Modal title="Ingreso de contraseña" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+          <Form<IChangePasswordForm>
+            {...formItemLayout}
+            form={formPassword}
+            name="changepassword"
+            onFinish={onFinishPass}
+            scrollToFirstError
+          >
+            <Row>
+              <Col md={24} sm={24} xs={24}>
                 <PasswordInput
                   formProps={{
-                    name: "confirmPassword",
-                    label: "Confirmar Contraseña",
+                    name: "password",
+                    label: "Nueva Contraseña",
                   }}
                   max={8}
                   min={8}
                   required
-                />
-            </Col>
-          </Row>
-        </Form>
-      </Modal>
-    </div>
-    
-  );
+              />
+              </Col>
+              <Col md={24} sm={24} xs={24}>
+                  <PasswordInput
+                    formProps={{
+                      name: "confirmPassword",
+                      label: "Confirmar Contraseña",
+                    }}
+                    max={8}
+                    min={8}
+                    required
+                  />
+              </Col>
+            </Row>
+          </Form>
+        </Modal>
+      </div>
+      
+    );
+  }
+  return(<Fragment>
+                <Table<IUserInfo>
+        loading={loading}
+        size="small"
+        rowKey={(record) => record.idUsuario}
+        columns={columns}
+        dataSource={[...users]}
+        pagination={defaultPaginationProperties}
+        sticky
+        scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+      />
+          <div style={{ display: "none" }}>{<UserTablePrint />}</div>
+      </Fragment>);
 };
 
-export default UserTable;
+export default observer(UserTable);

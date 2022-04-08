@@ -17,13 +17,13 @@ import ImageButton from "../../../app/common/button/ImageButton";
 import UserStore from "../../../app/stores/userStore";
 type UserFormProps = {
   componentRef: React.MutableRefObject<any>;
-  printing: boolean;
+  load: boolean;
 };
 type UrlParams = {
   id: string;
 };
 
-const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
+const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
   
 	const { userStore } = useStore();
 	const { getById, create, update,Clave,generatePass,changePassordF,getAll,users } = userStore;
@@ -204,7 +204,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, printing }) => {
     navigate(`/users/${user?.idUsuario}?mode=${searchParams.get("mode")}&search=${searchParams.get("search")??"all"}`);
   }
   return (
-    <Spin spinning={loading || printing}>
+    <Spin spinning={loading || load}>
       <div ref={componentRef}>
         <Row style={{ marginBottom: 24 }}>
           {id&&

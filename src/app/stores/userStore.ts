@@ -17,6 +17,7 @@ export default class UserStore {
   idUser: string = "";
   response?: ILoginResponse ;
   changepassResponse?: IChangePasswordResponse;
+  user?: IUserForm;
   access = async () => {
     try {
       //  await User.access();
@@ -37,7 +38,25 @@ export default class UserStore {
       this.users = [];
     }
   };
-
+  exportList = async (search: string) => {
+    try {
+      await User.exportList(search);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  exportForm = async (id: string,clave?:string) => {
+    try {
+      await User.exportForm(id, clave);
+      return true;
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+    }
+  };
   loginuser= async (user:ILoginForm) =>{
     this.Token="";
     
@@ -72,8 +91,9 @@ export default class UserStore {
   getById = async (id: string) => {
     console.log(id);
     try {
-      const reagent = await User.getById(id);
-      return reagent;
+      const user = await User.getById(id);
+      this.user= user;
+      return user;
     } catch (error: any) {
       if (error.status === responses.notFound) {
         history.push("/notFound");

@@ -20,9 +20,9 @@ const NewUser = () => {
 
   return (
     <Fragment>
-      <UserFormHeader handlePrint={handlePrint} />
+      <UserFormHeader handlePrint={handlePrint} handleDownload={()=>{}}/>
       <Divider className="header-divider" />
-      <UserForm componentRef={componentRef} printing={printing} />
+      <UserForm componentRef={componentRef} load={printing} />
     </Fragment>
   );
 };

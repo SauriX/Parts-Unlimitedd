@@ -1,30 +1,55 @@
 import { Divider } from "antd";
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useRef, useState,useEffect  } from "react";
 import { useReactToPrint } from "react-to-print";
 import UserForm from "./UserForm";
 import UserFormHeader from "./UserFormHeader";
-
+import { useStore } from "../../../app/stores/store";
+import { useNavigate,useParams, useSearchParams } from "react-router-dom";
+import { observer } from "mobx-react-lite";
+type UrlParams = {
+  id: string;
+};
 const UserDetail = () => {
-  const [printing, setPrinting] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const componentRef = useRef<any>();
+  const { userStore } = useStore();
+  const { exportForm,getById,user} = userStore;
+  const [searchParams, setSearchParams] = useSearchParams();
+  let { id } = useParams<UrlParams>();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     onBeforeGetContent: () => {
-      setPrinting(true);
+      setLoading(true);
     },
     onAfterPrint: () => {
-      setPrinting(false);
+      setLoading(false);
     },
   });
 
+  useEffect( () => {
+		const readuser = async (idUser: string) => {
+			 await getById(idUser);
+		};
+		if (id) {
+			readuser(id);
+		}
+	}, [ getById,id ]);
+
+  const  handleDownload = async() => {
+    console.log(user);
+    const succes = await exportForm(id!,user!.clave);
+    setLoading(true);
+    if(succes){
+      setLoading(false);
+    }
+  };
   return (
     <Fragment>
-      <UserFormHeader handlePrint={handlePrint} />
+      <UserFormHeader handlePrint={handlePrint}  handleDownload={handleDownload} />
       <Divider className="header-divider" />
-      <UserForm componentRef={componentRef} printing={printing} />
+      <UserForm componentRef={componentRef} load={loading} />
     </Fragment>
   );
 };
 
-export default UserDetail;
+export default observer(UserDetail);
