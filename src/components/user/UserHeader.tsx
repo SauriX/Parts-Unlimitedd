@@ -9,15 +9,10 @@ import { useStore } from "../../app/stores/store";
 const { Search } = Input;
 type UserHeaderProps = {
   handlePrint: () => void;
+  handleList:() => void;
 };
-const UserHeader: FC<UserHeaderProps> = ({ handlePrint }) => {
-  const { userStore } = useStore();
-  const { exportList} = userStore;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const download = () => {
-    console.log("aqui");
-    exportList(searchParams.get("search") ?? "all");
-  };
+const UserHeader: FC<UserHeaderProps> = ({ handlePrint,handleList }) => {
+
   let navigate = useNavigate();
   return (
     <PageHeader
@@ -26,7 +21,7 @@ const UserHeader: FC<UserHeaderProps> = ({ handlePrint }) => {
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        <ImageButton key="doc" title="Informe" image="doc" onClick={download}/>,
+        <ImageButton key="doc" title="Informe" image="doc" onClick={handleList }/>,
         <Search key="search" placeholder="Buscar" onSearch={(value) => {navigate(`/users?search=${value}`);}} />,
         <Button key="new" type="primary" onClick={() => {navigate("/new-user");}} icon={<PlusOutlined />}>
           Nuevo

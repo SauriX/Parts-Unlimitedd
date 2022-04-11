@@ -8,7 +8,11 @@ type UserFormHeaderProps = {
   handlePrint: () => void;
   handleDownload:()=>void;
 };
+type UrlParams = {
+  id: string;
+};
 const UserFormHeader: FC<UserFormHeaderProps> = ({ handlePrint,handleDownload }) => {
+  let { id } = useParams<UrlParams>();
   let navigate = useNavigate();
   return (
     <PageHeader
@@ -17,7 +21,7 @@ const UserFormHeader: FC<UserFormHeaderProps> = ({ handlePrint,handleDownload })
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        <ImageButton key="doc" title="Informe" image="doc"  onClick={handleDownload}/>,
+        id?<ImageButton key="doc" title="Informe" image="doc"  onClick={handleDownload}/>:"",
         <ImageButton
           key="back"
           title="Regresar"

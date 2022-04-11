@@ -9,10 +9,14 @@ import UserTable from "../components/user/UserTable";
 
 const User = () => {
   const { userStore } = useStore();
-  const { access } = userStore;
+  const { access,exportList } = userStore;
   const [printing, setPrinting] = useState(false);
   const [accessing, setAccessing] = useState(true);
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const handleDownload = () => {
+    console.log("aqui");
+    exportList(searchParams.get("search") ?? "all");
+  };
   useEffect(() => {
     const checkAccess = async () => {
       await access();
@@ -41,7 +45,7 @@ const User = () => {
 
   return (
     <Fragment>
-      <UserHeader handlePrint={handlePrint}/>
+      <UserHeader handlePrint={handlePrint} handleList={handleDownload  }/>
       <Divider className="header-divider" />
       <UserTable componentRef={componentRef} printing={printing}/>
     </Fragment>

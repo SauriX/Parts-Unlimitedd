@@ -14,7 +14,6 @@ import IconButton from "../../../app/common/button/IconButton";
 import { EditOutlined, LockOutlined } from "@ant-design/icons";
 import { useStore } from "../../../app/stores/store";
 import ImageButton from "../../../app/common/button/ImageButton";
-import UserStore from "../../../app/stores/userStore";
 type UserFormProps = {
   componentRef: React.MutableRefObject<any>;
   load: boolean;
@@ -73,6 +72,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
 
     }
 	}, [form, getById,id ]);
+  console.log(values.permisos);
   const transform = useMemo(
     () =>
       convertToTreeData(
