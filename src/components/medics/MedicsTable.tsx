@@ -145,16 +145,16 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
         windowSize: windowWidth,
       }),
     },
-    {
-      ...getDefaultColumnProps( "activo", "Activo", {
-        searchState,
-        setSearchState,
-        width: "8%",
-        minWidth: 150,
-        windowSize: windowWidth,
+    // {
+    //   ...getDefaultColumnProps( "activo", "Activo", {
+    //     searchState,
+    //     setSearchState,
+    //     width: "8%",
+    //     minWidth: 150,
+    //     windowSize: windowWidth,
         
-      }),
-    },
+    //   }),
+    // },
     {
       key: "activo",
       dataIndex: "activo",

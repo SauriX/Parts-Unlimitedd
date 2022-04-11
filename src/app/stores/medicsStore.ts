@@ -2,7 +2,7 @@ import Search from "antd/lib/transfer/search";
 import { makeAutoObservable } from "mobx";
 import { getParsedCommandLineOfConfigFile } from "typescript";
 import Medics from "../api/medics";
-import { IMedicsForm, IMedicsList } from "../models/medics";
+import { IMedicsForm, IMedicsList, IClave } from "../models/medics";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
@@ -84,6 +84,11 @@ export default class MedicsStore {
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
+  };
+
+  Clave =async(data:IClave)=>{
+    const response = await Medics.getClave(data);
+    return  await response;
   };
 
   exportForm = async (id: number) => {

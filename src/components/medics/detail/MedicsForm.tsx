@@ -17,7 +17,7 @@ import SwitchInput from "../../../app/common/form/SwitchInput";
 import SelectInput from "../../../app/common/form/SelectInput";
 import { useStore } from "../../../app/stores/store";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { IMedicsForm, MedicsFormValues } from "../../../app/models/medics";
+import { IMedicsForm, MedicsFormValues, IClave, claveValues } from "../../../app/models/medics";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import NumberInput from "../../../app/common/form/NumberInput";
@@ -37,9 +37,9 @@ type MedicsFormProps = {
 };
 const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   const { medicsStore, optionStore } = useStore();
-  const { getById, create, update, getAll, medics } = medicsStore;
+  const { getById, create, Clave, update, getAll, medics } = medicsStore;
   const { clinicOptions, getClinicOptions } = optionStore;
-
+  let clave : IClave = new claveValues();
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
@@ -123,6 +123,49 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
     console.log(values);
   }, [values]);
 
+  const onValuesChange = (changeValues:any) =>{
+    const fields = Object.keys(changeValues)[0];
+ 
+    if(fields === "nombre" ){
+       const value = changeValues[fields];
+       clave.nombre = value;
+       if(id){
+         clave.primerApllido= values.nombre;
+         clave.segundoApellido = values.nombre;
+       }
+       
+    }
+    if(fields === "primerApellido"){
+       const value = changeValues[fields];
+       clave.primerApllido = value;
+       if(id){
+         console.log("mi loco yo tambien entre")
+         clave.nombre =values.nombre;
+         clave.segundoApellido = values.nombre;
+       }
+    }
+    if(fields === "segundoApellido"){
+     const value = changeValues[fields];
+     clave.segundoApellido = value;
+     if(id){
+       clave.nombre =values.nombre;
+       clave.primerApllido= values.nombre;
+     }
+     
+    }
+    newclave();
+  }
+  const newclave = async ()=>{
+   
+    if(clave.nombre != "" && clave.primerApllido != "" &&clave.segundoApellido!= ""){
+ 
+       let newclave= await Clave(clave);
+       form.setFieldsValue({clave:newclave.toString()});
+      
+    }
+    
+  }
+  
   const addClinic = () => {
     if (clinic) {
       const clinics: IClinicList[] = [
@@ -158,6 +201,20 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
               prevnextMedics(value - 1);
             }}
           />
+          <Form<IMedicsForm>
+          {...formItemLayout}
+          form={form}
+          name="medics"
+          onValuesChange={onValuesChange}
+          onFinish={onFinish}
+          scrollToFirstError
+          onFieldsChange={() => {
+            setDisabled(
+              !form.isFieldsTouched() ||
+                form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+            );
+          }}
+        ></Form>
         </Col>
         <Col md={12} sm={24} style={{ textAlign: "right" }}>
           {readonly && (
