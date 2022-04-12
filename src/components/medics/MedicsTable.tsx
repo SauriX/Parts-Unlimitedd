@@ -146,7 +146,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       }),
     },
     // {
-    //   ...getDefaultColumnProps( "activo", "Activo", {
+    //   ...getDefaultColumnProps( "ActivoDescripcion", "Activo", {
     //     searchState,
     //     setSearchState,
     //     width: "8%",

@@ -4,8 +4,8 @@ export interface IMedicsList {
   idMedico: number;
   clave: string;
   nombre: string;
-  // primerApellido : string
-  // segundoApellido : string
+  primerApellido : string
+  segundoApellido : string
   especialidadId: number;
   observaciones: string;
   codigoPostal: number;
@@ -26,8 +26,8 @@ export interface IMedicsForm {
   idMedico: number;
   clave: string;
   nombre: string;
-  // primerApellido : string
-  // segundoApellido : string
+  primerApellido : string
+  segundoApellido : string
   especialidadId?: number;
   observaciones: string;
   codigoPostal: number;
@@ -47,8 +47,8 @@ export class MedicsFormValues implements IMedicsForm {
   idMedico = 0;
   clave = "";
   nombre = "";
-  // primerApellido : string
-  // segundoApellido : string
+  primerApellido = "";
+  segundoApellido = "";
   especialidadId = undefined;
   observaciones = "";
   codigoPostal = 0;
@@ -69,17 +69,17 @@ export class MedicsFormValues implements IMedicsForm {
   }
 }
 
-export interface IClave {
-  nombre : string
-  primerApllido : string
-  segundoApellido : string
-}
+// export interface IClave {
+//   nombre : string
+//   primerApllido : string
+//   segundoApellido : string
+// }
 
-export class claveValues implements IClave{
-  nombre = "";
-  primerApllido = "";
-  segundoApellido = "";
-  constructor(init?: IClave){
-    Object.assign(this,init);
-  }
-}
+// export class claveValues implements IClave{
+//   nombre = "";
+//   primerApllido = "";
+//   segundoApellido = "";
+//   constructor(init?: IClave){
+//     Object.assign(this,init);
+//   }
+// }

@@ -17,7 +17,7 @@ import SwitchInput from "../../../app/common/form/SwitchInput";
 import SelectInput from "../../../app/common/form/SelectInput";
 import { useStore } from "../../../app/stores/store";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { IMedicsForm, MedicsFormValues, IClave, claveValues } from "../../../app/models/medics";
+import { IMedicsForm, MedicsFormValues } from "../../../app/models/medics";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import NumberInput from "../../../app/common/form/NumberInput";
@@ -28,6 +28,8 @@ import TextArea from "antd/lib/input/TextArea";
 import Medics from "../../../views/Medics";
 import { createSecureContext } from "tls";
 import Item from "antd/lib/list/Item";
+import alerts from "../../../app/util/alerts";
+import { claveValues } from "../../../app/models/user";
 // import { v4 as uuid } from "uuid";
 
 type MedicsFormProps = {
@@ -37,9 +39,9 @@ type MedicsFormProps = {
 };
 const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   const { medicsStore, optionStore } = useStore();
-  const { getById, create, Clave, update, getAll, medics } = medicsStore;
+  const { getById, create, update, getAll, medics } = medicsStore;
   const { clinicOptions, getClinicOptions } = optionStore;
-  let clave : IClave = new claveValues();
+  // let clave : IClave = new claveValues();
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
@@ -61,6 +63,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
       form.setFieldsValue(medics!);
       setValues(medics!);
       setLoading(false);
+      console.log(medics);
     };
 
     if (id) {
@@ -123,51 +126,23 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
     console.log(values);
   }, [values]);
 
-  const onValuesChange = (changeValues:any) =>{
-    const fields = Object.keys(changeValues)[0];
- 
-    if(fields === "nombre" ){
-       const value = changeValues[fields];
-       clave.nombre = value;
-       if(id){
-         clave.primerApllido= values.nombre;
-         clave.segundoApellido = values.nombre;
-       }
-       
-    }
-    if(fields === "primerApellido"){
-       const value = changeValues[fields];
-       clave.primerApllido = value;
-       if(id){
-         console.log("mi loco yo tambien entre")
-         clave.nombre =values.nombre;
-         clave.segundoApellido = values.nombre;
-       }
-    }
-    if(fields === "segundoApellido"){
-     const value = changeValues[fields];
-     clave.segundoApellido = value;
-     if(id){
-       clave.nombre =values.nombre;
-       clave.primerApllido= values.nombre;
-     }
-     
-    }
-    newclave();
-  }
-  const newclave = async ()=>{
-   
-    if(clave.nombre != "" && clave.primerApllido != "" &&clave.segundoApellido!= ""){
- 
-       let newclave= await Clave(clave);
-       form.setFieldsValue({clave:newclave.toString()});
-      
-    }
-    
-  }
-  
+  const onValuesChange = (changeValues: any, values: IMedicsForm) => {
+    // console.log(changeValues, values);
+
+    const code =
+      values.nombre.substring(0, 3) +
+      values.primerApellido?.substring(0, 1) +
+      values.segundoApellido?.substring(0, 1);
+
+    form.setFieldsValue({ clave: code.toUpperCase() });
+  };
+
   const addClinic = () => {
     if (clinic) {
+      if(values.clinicas.findIndex(x => x.id === clinic.id) > -1){
+        alerts.warning("Ya esta agregada esta clinica")
+        return ;
+      }
       const clinics: IClinicList[] = [
         ...values.clinicas,
         {
@@ -191,7 +166,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
-        <Col md={12} sm={24} style={{ textAlign: "left" }}>
+        <Col md={10} sm={24} style={{  marginRight: 20 }}>
           <Pagination
             size="small"
             total={medics.length}
@@ -202,21 +177,22 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
             }}
           />
           <Form<IMedicsForm>
-          {...formItemLayout}
-          form={form}
-          name="medics"
-          onValuesChange={onValuesChange}
-          onFinish={onFinish}
-          scrollToFirstError
-          onFieldsChange={() => {
-            setDisabled(
-              !form.isFieldsTouched() ||
-                form.getFieldsError().filter(({ errors }) => errors.length).length > 0
-            );
-          }}
-        ></Form>
+            {...formItemLayout}
+            form={form}
+            name="medics"
+            onValuesChange={onValuesChange}
+            onFinish={onFinish}
+            scrollToFirstError
+            onFieldsChange={() => {
+              setDisabled(
+                !form.isFieldsTouched() ||
+                  form.getFieldsError().filter(({ errors }) => errors.length)
+                    .length > 0
+              );
+            }}
+          ></Form>
         </Col>
-        <Col md={12} sm={24} style={{ textAlign: "right" }}>
+        <Col md={8} sm={24} style={{ marginRight: 20, textAlign: "right"}}>
           {readonly && (
             <ImageButton
               key="edit"
@@ -227,6 +203,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
               }}
             />
           )}
+          </Col>
+          <Col md={2} sm={24} style={{ marginRight: 20, textAlign: "right" }}>
           <Button
             onClick={() => {
               navigate("/medics");
@@ -234,14 +212,18 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
           >
             Cancelar
           </Button>
+        </Col>
+        <Col md={2} sm={24} style={{ marginRight: 10, textAlign: "right" }}>
           {!readonly && (
             <Button
               type="primary"
               htmlType="submit"
               disabled={disabled}
               onClick={() => {
-                form.submit();
+                form.submit();     
+                return ;
               }}
+              
             >
               Guardar
             </Button>
@@ -262,6 +244,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
             {...formItemLayout}
             form={form}
             name="medics"
+            onValuesChange={onValuesChange}
             initialValues={values}
             onFinish={onFinish}
             scrollToFirstError
@@ -282,7 +265,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   max={100}
                   required
-                  readonly={readonly}
+                  readonly={true}
                   type="string"
                 />
 
@@ -323,6 +306,15 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
+                {/* <NumberInput
+                  formProps={{
+                    name: "Clinicas",
+                    label: "Clinicas",
+                  }}
+                  max={9999999999}
+                  min={9}
+                  readonly={true}
+                /> */}
                 <TextAreaInput
                   formProps={{
                     name: "observaciones",
@@ -445,10 +437,10 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
       <List<IClinicList>
         header={
           <div>
-            <Col md={12} sm={24}>
-              Clinica/Empresa 
-              < Select
-                options={clinicOptions}
+            <Col md={12} sm={24} style={{ marginRight: 20  }}>
+              Nombre Clinica/Empresa
+              <Select
+                options={clinicOptions }
                 onChange={(value, option: any) => {
                   if (value) {
                     setClinic({ id: value, clave: option.label });
@@ -456,7 +448,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                     setClinic(undefined);
                   }
                 }}
-                style={{ width: 240 }}
+                style={{ width: 240, marginRight: 20  }}
               />
               {!readonly && (
                 <ImageButton
@@ -465,6 +457,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   image="agregar-archivo"
                   onClick={addClinic}
                 />
+
               )}
             </Col>
           </div>
@@ -474,17 +467,20 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
         dataSource={values.clinicas}
         renderItem={(item) => (
           <List.Item>
-            <Typography.Text mark></Typography.Text>
-            {item.nombre}
-
-            <ImageButton
-              key="Eliminar"
-              title="Eliminar Clinica"
-              image="Eliminar_Clinica"
-              onClick={() => {
-                deleteClinic(item.id);
-              }}
-            />
+            <Col md={12} sm={24} style={{ textAlign: "left" }}>
+              <Typography.Text mark></Typography.Text>
+              {item.nombre}
+              </Col>
+              <Col md={12} sm={24} style={{ textAlign: "left" }}>
+              <ImageButton
+                key="Eliminar"
+                title="Eliminar Clinica"
+                image="Eliminar_Clinica"
+                onClick={() => {
+                  deleteClinic(item.id);
+                }}
+              />
+            </Col>
           </List.Item>
         )}
       />

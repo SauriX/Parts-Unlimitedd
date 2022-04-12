@@ -1,4 +1,4 @@
-import { IMedicsForm, IMedicsList, IClave } from "../models/medics";
+import { IMedicsForm, IMedicsList } from "../models/medics";
 import { IScopes } from "../models/shared";
 import requests from "./agent";
 
@@ -9,7 +9,7 @@ const Medics = {
   getById: (id: number): Promise<IMedicsForm> => requests.get(`medics/${id}`),
   create: (medics: IMedicsForm): Promise<void> => requests.post("medics", medics),
   update: (medics: IMedicsForm): Promise<void> => requests.put("medics", medics),
-  getClave: (data: IClave): Promise<string> => requests.post("medics",data),
+  // getClave: (data: IClave): Promise<string> => requests.post("medics/GenerateCLave",data),
   exportList: (search: string): Promise<void> =>
     requests.download(`medics/export/list/${!search ? "all" : search}`, "Catálogo de Medicos.xlsx"),
   exportForm: (id: number, clave: string): Promise<void> =>
