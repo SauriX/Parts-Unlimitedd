@@ -13,10 +13,16 @@ const User = () => {
   const [printing, setPrinting] = useState(false);
   const [accessing, setAccessing] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
-  const handleDownload = () => {
+  const handleDownload = async () => {
     console.log("aqui");
-    exportList(searchParams.get("search") ?? "all");
-  };
+    setPrinting(true);
+    var succes= await exportList(searchParams.get("search") ?? "all");
+    if(succes){
+      setPrinting(false);
+    }
+  }
+
+  
   useEffect(() => {
     const checkAccess = async () => {
       await access();

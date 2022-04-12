@@ -7,10 +7,11 @@ import { useStore } from "../app/stores/store";
 import RoleHeader from "../components/role/RoleHeader";
 import RoleTable from "../components/role/RoleTable";
 const Role = () => {
-  const { userStore } = useStore();
-  const { access } = userStore;
+  const { roleStore } = useStore();
+  const { access,exportList } = roleStore;
   const [printing, setPrinting] = useState(false);
   const [accessing, setAccessing] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
   useEffect(() => {
     const checkAccess = async () => {
       await access();
@@ -26,6 +27,13 @@ const Role = () => {
     };
   }, []);
   const componentRef = useRef<any>();
+  const handleDownload = async () => {
+    setPrinting(true);
+    var succes= await exportList(searchParams.get("search") ?? "all");
+    if(succes){
+      setPrinting(false);
+    }
+  };
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     onBeforeGetContent: () => {
@@ -37,11 +45,10 @@ const Role = () => {
   });
   return (
     <Fragment>
-    <RoleHeader handlePrint={handlePrint}/>
+    <RoleHeader handlePrint={handlePrint} handleList={handleDownload}/>
     <Divider className="header-divider" />
     <RoleTable componentRef={componentRef} printing={printing}/>
     </Fragment>
   );
 };
-
 export default observer(Role);
