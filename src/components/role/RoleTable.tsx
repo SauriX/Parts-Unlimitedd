@@ -22,17 +22,8 @@ type RoleTableProps = {
   printing: boolean;
 };
 const RoleTable:FC<RoleTableProps> = ({ componentRef, printing })=> {
-  const roles: IRole[] = [
-    {
-      id: 1,
-      nombre: "test",
-      descripcion: "test",
-      activo: true,
-      permisos:[],
-    },
-  ];
-  const { userStore } = useStore();
-  const { users, getAll,changePassword  } = userStore;
+  const { roleStore } = useStore();
+  const { roles, getAll  } = roleStore;
   let navigate = useNavigate();
   const { width: windowWidth } = useWindowDimensions();
   const [loading, setLoading] = useState(false);
@@ -64,21 +55,12 @@ const RoleTable:FC<RoleTableProps> = ({ componentRef, printing })=> {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/users/${role.nombre}?mode=ReadOnly&search=${searchParams.get("search") ?? "all"}`);
+            navigate(`/roles/${role.id}?mode=ReadOnly&search=${searchParams.get("search") ?? "all"}`);
           }}
         >
           {value}
         </Button>
       ),
-    },
-    {
-      ...getDefaultColumnProps("nombre", "Nombre", {
-        searchState,
-        setSearchState,
-        width: "20%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
     },
     {
       key: "activo",
@@ -99,7 +81,7 @@ const RoleTable:FC<RoleTableProps> = ({ componentRef, printing })=> {
           title="Editar usuario"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/users/${rol.id}?search=${searchParams.get("search") ?? "all"}`);
+            navigate(`/roles/${rol.id}?search=${searchParams.get("search") ?? "all"}`);
           }}
         />
       ),

@@ -18,8 +18,8 @@ const RoleHeader: FC<RoleHeaderProps> = ({ handlePrint }) => {
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
         <ImageButton key="doc" title="Informe" image="doc" />,
-        <Search key="search" placeholder="Buscar" onSearch={(value) => {navigate(`/users?search=${value}`);}} />,
-        <Button key="new" type="primary" onClick={() => {navigate("/new-user");}} icon={<PlusOutlined />}>
+        <Search key="search" placeholder="Buscar" onSearch={(value) => {navigate(`/roles?search=${value}`);}} />,
+        <Button key="new" type="primary" onClick={() => {navigate("/roles/new-role");}} icon={<PlusOutlined />}>
           Nuevo
         </Button>,
       ]}

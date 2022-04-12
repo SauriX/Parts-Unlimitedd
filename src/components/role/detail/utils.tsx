@@ -1,7 +1,7 @@
 import IconSelector from "../../../app/common/icons/IconSelector";
 import { TreeData } from "../../../app/models/shared";
 import { IUserForm, IUserPermission } from "../../../app/models/user";
-
+import { IRoleForm, IRolePermission} from "../../../app/models/role";
 export const convertToTreeData = (
   targetKeys: String[],
   setPermissionsAdded: React.Dispatch<React.SetStateAction<TreeData[]>>,
@@ -62,7 +62,7 @@ export const convertToTreeData = (
 export const onTreeSelectChange = (
   permissionsAvailableFiltered: TreeData[],
   permissionsAddedFiltered: TreeData[],
-  current: IUserForm | undefined,
+  current: IUserForm | undefined | IRoleForm,
   targetKeys: string[],
   setSelectedKeys: React.Dispatch<React.SetStateAction<string[]>>
 ) => {

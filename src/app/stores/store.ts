@@ -7,7 +7,7 @@ import UserStore from "./userStore";
 import IndicationStore from "./indicationStore";
 import CatalogStore from "./catalogStore";
 import OptionStore from "./optionStore";
-
+import RoleStore from "./roleStore";
 configure({
   enforceActions: "never",
 });
@@ -20,6 +20,7 @@ interface Store {
   medicsStore: MedicsStore;
   indicationStore: IndicationStore;
   catalogStore: CatalogStore;
+  roleStore:RoleStore;
 }
 
 export const store: Store = {
@@ -30,6 +31,7 @@ export const store: Store = {
   medicsStore: new MedicsStore(),
   indicationStore: new IndicationStore(),
   catalogStore: new CatalogStore(),
+  roleStore: new RoleStore(),
 };
 
 export const StoreContext = createContext(store);
