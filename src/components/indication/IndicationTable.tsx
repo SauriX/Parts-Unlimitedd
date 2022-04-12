@@ -65,7 +65,7 @@ const IndicationTable: FC<IndicationsTableProps> = ({ componentRef, printing }) 
         <Button
           type="link"
           onClick={() => {
-            navigate(`/indiction/${user.idIndicacion}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
+            navigate(`/indication/${user.id}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
           }}
         >
           {value}
@@ -127,7 +127,7 @@ const IndicationTable: FC<IndicationsTableProps> = ({ componentRef, printing }) 
         <Divider className="header-divider" />
         <Table<IIndicationList>
           size="large"
-          rowKey={(record) => record.idIndicacion}
+          rowKey={(record) => record.id}
           columns={columns.slice(0, 8)}
           pagination={false}
           dataSource={[...indication]}
@@ -141,7 +141,7 @@ const IndicationTable: FC<IndicationsTableProps> = ({ componentRef, printing }) 
       <Table<IIndicationList>
       loading={loading|| printing}
       size="small"
-      rowKey={(record) => record.idIndicacion}
+      rowKey={(record) => record.id}
       columns={columns}
       dataSource={[...indication]}
       pagination={defaultPaginationProperties}

@@ -1,5 +1,6 @@
 import { Divider } from "antd";
 import React, { Fragment, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { IOptionsCatalog } from "../app/models/shared";
 import { useStore } from "../app/stores/store";
@@ -8,7 +9,9 @@ import CatalogTable from "../components/catalog/CatalogTable";
 
 const Catalog = () => {
   const { catalogStore } = useStore();
-  const { scopes, access, clearScopes } = catalogStore;
+  const { setCurrentCatalog, access, clearScopes } = catalogStore;
+
+  const [searchParams] = useSearchParams();
 
   const [printing, setPrinting] = useState(false);
   const [catalog, setCatalog] = useState<IOptionsCatalog>();
@@ -31,6 +34,11 @@ const Catalog = () => {
 
     checkAccess();
   }, [access]);
+
+  useEffect(() => {
+    setCurrentCatalog(searchParams.get("catalog") ?? undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   console.log("Render");
 

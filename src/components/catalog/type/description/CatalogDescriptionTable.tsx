@@ -27,7 +27,7 @@ const CatalogDescriptionTable: FC<CatalogDescriptionTableProps> = ({
   catalogName,
 }) => {
   const { catalogStore } = useStore();
-  const { catalogs, getAll } = catalogStore;
+  const { catalogs, currentCatalog, getAll } = catalogStore;
 
   const [searchParams] = useSearchParams();
 
@@ -36,23 +36,12 @@ const CatalogDescriptionTable: FC<CatalogDescriptionTableProps> = ({
   const { width: windowWidth } = useWindowDimensions();
 
   const [loading, setLoading] = useState(false);
-
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
 
   console.log("Table");
-
-  useEffect(() => {
-    const readCatalogs = async () => {
-      setLoading(true);
-      await getAll(catalogName, searchParams.get("search") ?? "all");
-      setLoading(false);
-    };
-
-    readCatalogs();
-  }, [catalogName, getAll, searchParams]);
 
   const columns: IColumns<ICatalogList> = [
     {

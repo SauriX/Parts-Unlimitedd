@@ -23,4 +23,16 @@ export default class OptionStore {
       this.departmentOptions = [];
     }
   };
+
+  clinicOptions: IOptions[] = [];
+
+  getClinicOptions = async () => {
+    try {
+      const clinics = await Catalog.getActive<ICatalogNormalList>("clinic");
+      console.log(clinics)
+      this.clinicOptions = clinics.map((x) => ({ value: x.id, label: x.nombre }));
+    } catch (error) {
+      this.clinicOptions = [];
+    }
+  };
 }

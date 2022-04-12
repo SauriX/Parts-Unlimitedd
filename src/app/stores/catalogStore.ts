@@ -15,6 +15,7 @@ export default class CatalogStore {
 
   scopes?: IScopes;
   catalogs: ICatalogList[] = [];
+  currentCatalog: string | undefined;
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -22,6 +23,10 @@ export default class CatalogStore {
 
   clearCatalogs = () => {
     this.catalogs = [];
+  };
+
+  setCurrentCatalog = (catalog?: string) => {
+    this.currentCatalog = catalog;
   };
 
   access = async () => {
@@ -34,7 +39,7 @@ export default class CatalogStore {
     }
   };
 
-  getAll = async (catalogName: string, search: string) => {
+  getAll = async (catalogName: string, search?: string) => {
     try {
       const catalogs = await Catalog.getAll(catalogName, search);
       this.catalogs = catalogs;

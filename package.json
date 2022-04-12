@@ -32,7 +32,8 @@
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "start": "env-cmd -f .env.development craco start"
+    "start": "env-cmd -f .env.development craco start",
+    "build:qa": "env-cmd -f .env.qa craco build"
   },
   "eslintConfig": {
     "extends": [

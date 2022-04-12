@@ -78,7 +78,7 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing  }
 
     let success = false;
 
-    if (indication.idIndicacion) {
+    if (!indication.id) {
       success = await create(indication);
     } else {
       success = await update(indication);
@@ -92,7 +92,7 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing  }
   const actualIndication =()=>{
     if(id){
       
-   const index =  indication.findIndex(x => x.idIndicacion === id);
+   const index =  indication.findIndex(x => x.id === id);
    return index + 1;
     }
     return 0;
@@ -100,7 +100,7 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing  }
 
   const prevnextIndication =(index:number)=>{
     const indi = indication[index];
-    navigate(`/indication/${indi?.idIndicacion}?mode=${searchParams.get("mode")}&search=${searchParams.get("search")}`);
+    navigate(`/indication/${indi?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search")}`);
   }
 
   useEffect(() => {
@@ -110,10 +110,10 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing  }
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
-        <Col md={12} sm={24} style={{ textAlign: "left" }}>
+        <Col md={10} sm={24} style={{ textAlign: "left" }}>
           <Pagination size="small" total={indication.length} pageSize={1} current={actualIndication()} onChange={(value) =>{prevnextIndication(value-1)}} />
         </Col>
-        <Col md={12} sm={24} style={{ textAlign: "right" }}>
+        <Col md={8} sm={24} style={{marginRight: 20, textAlign: "right" }}>
         {readonly && (
             <ImageButton
               key="edit"
@@ -124,21 +124,28 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing  }
               }}
             />
           )}
+          </Col>
+          <Col md={2} sm={24} style={{marginRight: 20, textAlign: "right" }}>
           <Button onClick={() => {
               navigate("/indication");
             }}
           >
             Cancelar</Button>
-          <Button
-            type="primary"
-            htmlType="submit"
-            disabled={disabled}
-            onClick={() => {
-              form.submit();
-            }}
-          >
-            Guardar
-          </Button>
+          </Col>
+            <Col md={2} sm={24} style={{marginRight: 10, textAlign: "right" }}>
+            {!readonly && (
+
+            <Button
+              type="primary"
+              htmlType="submit"
+              disabled={disabled}
+              onClick={() => {
+                form.submit();
+              }}
+            >
+              Guardar
+            </Button>
+          )}
         </Col>
       </Row>
 
@@ -195,6 +202,7 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing  }
                   }}
                   max={500}
                   rows={8}
+                  required
                   readonly={readonly}
                 />
     
@@ -212,6 +220,49 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing  }
 
     </Spin>
   );
+
+  // const columns: IColumns<IIndicationList> = [
+  //   {
+  //     ...getDefaultColumnProps("clave", "Clave", {
+  //       searchState,
+  //       setSearchState,
+  //       width: "15%",
+  //       minWidth: 150,
+  //       windowSize: windowWidth,
+  //     }),
+  //     render: (value, user) => (
+  //       <Button
+  //         type="link"
+  //         onClick={() => {
+  //           navigate(`/indication/${user.id}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
+  //         }}
+  //       >
+  //         {value}
+  //       </Button>
+  //     ),
+  //   },
+  //   {
+  //     ...getDefaultColumnProps("nombre", "Nombre", {
+  //       searchState,
+  //       setSearchState,
+  //       width: "20%",
+  //       minWidth: 150,
+  //       windowSize: windowWidth,
+  //     }),
+  //   },
+  //   {
+  //     ...getDefaultColumnProps("descripcion", "Descripcion", {
+  //       searchState,
+  //       setSearchState,
+  //       width: "20%",
+  //       minWidth: 150,
+  //       windowSize: windowWidth,
+  //     }),
+  //   },
+  // ];
+
 };
+
+
 
 export default IndicationForm;

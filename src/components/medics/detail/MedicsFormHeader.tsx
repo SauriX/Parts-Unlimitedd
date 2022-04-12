@@ -4,6 +4,7 @@ import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { PlusOutlined } from "@ant-design/icons";
 import ImageButton from "../../../app/common/button/ImageButton";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useStore } from "../../../app/stores/store";
 
 const { Search } = Input;
 type MedicsFormHeaderProps = {
@@ -12,7 +13,14 @@ type MedicsFormHeaderProps = {
 };
 
 const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({id, handlePrint }) => {
+  const { medicsStore } = useStore();
+  const { exportForm } = medicsStore;
+
   const navigate = useNavigate();
+
+  const download = () => {
+    exportForm(id);
+  };
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -25,7 +33,8 @@ const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({id, handlePrint }) => {
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        <ImageButton key="doc" title="Informe" image="doc" />,
+        id !=0 ?
+        <ImageButton key="doc" title="Informe" image="doc" onClick={download}  />:'',
         <ImageButton
           key="back"
           title="Regresar"
@@ -42,16 +51,7 @@ const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({id, handlePrint }) => {
             setSearchParams({ search: !value ? "all" : value });
           }}
         />,
-        /*<Button
-          key="new"
-          type="primary"
-          onClick={() => {
-            navigate("/medics/0");
-          }}
-          icon={<PlusOutlined />}
-        >
-          Nuevo
-        </Button>,*/
+        
       ]}
     ></PageHeader>
   );
