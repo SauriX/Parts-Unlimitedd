@@ -1,5 +1,5 @@
 export interface IIndicationList {
-    idIndicacion: number;
+    id: number;
     clave: string;
     nombre: string;
     descripcion: string;
@@ -7,7 +7,7 @@ export interface IIndicationList {
   }
   
   export interface IIndicationForm {
-    idIndicacion: number;
+    id: number;
     clave: string;
     nombre: string;
     descripcion: string;
@@ -15,7 +15,7 @@ export interface IIndicationList {
   }
   
   export class IndicationFormValues implements IIndicationForm {
-    idIndicacion = 0;
+    id = 0;
     clave = "";
     nombre = "";
     descripcion = "";

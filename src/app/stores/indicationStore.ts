@@ -1,10 +1,13 @@
+import Search from "antd/lib/transfer/search";
 import { makeAutoObservable } from "mobx";
+import { getParsedCommandLineOfConfigFile } from "typescript";
 import Indication from "../api/indication";
 import { IIndicationForm, IIndicationList } from "../models/indication";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import messages from "../util/messages";
+import responses from "../util/responses";
 import { getErrors } from "../util/utils";
 
 export default class IndicationStore {
@@ -33,9 +36,9 @@ export default class IndicationStore {
     }
   };
 
-  getAll = async () => {
+  getAll = async (search: string) => {
     try {
-      const indications = await Indication.getAll();
+      const indications = await Indication.getAll(search);
       this.indication = indications;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -57,9 +60,10 @@ export default class IndicationStore {
     try {
       await Indication.create(indication);
       alerts.success(messages.created);
-      history.push("/indication");
+      return true;
     } catch (error) {
       alerts.warning(getErrors(error));
+      return false;
     }
   };
 
@@ -67,9 +71,30 @@ export default class IndicationStore {
     try {
       await Indication.update(indication);
       alerts.success(messages.updated);
-      history.push("/indication");
+      return true;
     } catch (error) {
       alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
+  exportList = async (search: string) => {
+    try {
+      await Indication.exportList(search);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  exportForm = async (id: number) => {
+    try {
+      await Indication.exportForm(id, "Formulario");
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
     }
   };
 }

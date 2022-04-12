@@ -7,6 +7,7 @@ import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import messages from "../util/messages";
+import responses from "../util/responses";
 import { getErrors } from "../util/utils";
 
 export default class MedicsStore {
@@ -74,6 +75,31 @@ export default class MedicsStore {
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
+    }
+  };
+
+  exportList = async (search: string) => {
+    try {
+      await Medics.exportList(search);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  // Clave =async(data:IClave)=>{
+  //   const response = await Medics.getClave(data);
+  //   return  await response;
+  // };
+
+  exportForm = async (id: number) => {
+    try {
+      await Medics.exportForm(id, "Formulario");
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
     }
   };
 }
