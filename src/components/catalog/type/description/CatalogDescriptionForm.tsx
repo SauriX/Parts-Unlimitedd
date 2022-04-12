@@ -28,7 +28,7 @@ const CatalogDescriptionForm: FC<CatalogDescriptionFormProps> = ({
 
   const navigate = useNavigate();
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [form] = Form.useForm<ICatalogDescriptionForm>();
 
@@ -62,7 +62,9 @@ const CatalogDescriptionForm: FC<CatalogDescriptionFormProps> = ({
     }
 
     if (success) {
-      navigate(`/catalogs?search=${searchParams.get("search") ?? "all"}`);
+      searchParams.delete("mode");
+      setSearchParams(searchParams);
+      navigate(`/catalogs?${searchParams}`);
     }
   };
 

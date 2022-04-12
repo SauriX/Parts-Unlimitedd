@@ -4,7 +4,7 @@ import requests from "./agent";
 
 const Catalog = {
   access: (): Promise<IScopes> => requests.get("scopes/catalog"),
-  getAll: (catalogName: string, search: string): Promise<ICatalogList[]> =>
+  getAll: (catalogName: string, search?: string): Promise<ICatalogList[]> =>
     requests.get(`catalog/${catalogName}/all/${!search ? "all" : search}`),
   getActive: <Type extends ICatalogList>(catalogName: string): Promise<Type[]> =>
     requests.get(`catalog/${catalogName}/active`),
