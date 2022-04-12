@@ -26,7 +26,7 @@ export const convertToTreeData = (
         icon: <IconSelector name={x.menu} />,
         children: [],
       }));
-
+      
     const menusAvailable = permissions
       .filter((x) => !x.asignado)
       .filter((v, i, a) => a.findIndex((x) => x.menu === v.menu) === i)

@@ -1,4 +1,4 @@
- import { Divider } from "antd";
+import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -6,7 +6,7 @@ import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
 import RoleHeader from "../components/role/RoleHeader";
 import RoleTable from "../components/role/RoleTable";
-const Role = () => {
+const Branch = () => {
   const { userStore } = useStore();
   const { access } = userStore;
   const [printing, setPrinting] = useState(false);
@@ -44,4 +44,4 @@ const Role = () => {
   );
 };
 
-export default observer(Role);
+export default Branch;

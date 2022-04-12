@@ -70,6 +70,8 @@ export default class RolStore {
     console.log(id);
     try {
       const rol = await Rol.getById(id);
+      this.permisos = rol.permisos;
+      console.log(this.permisos);
       return rol;
     } catch (error: any) {
       if (error.status === responses.notFound) {

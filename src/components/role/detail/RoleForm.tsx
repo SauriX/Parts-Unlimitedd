@@ -16,6 +16,8 @@ import { EditOutlined, LockOutlined } from "@ant-design/icons";
 import { useStore } from "../../../app/stores/store";
 import ImageButton from "../../../app/common/button/ImageButton";
 import { IRoleForm, RoleFormValues,IRolePermission } from "../../../app/models/role";
+import alerts from "../../../app/util/alerts";
+import messages from "../../../app/util/messages";
 type UserFormProps = {
   componentRef: React.MutableRefObject<any>;
   load: boolean;
@@ -27,7 +29,7 @@ type UrlParams = {
 const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
   
 	const { roleStore } = useStore();
-	const { getPermission,permisos,create,getById,getAll,roles } = roleStore;
+	const { getPermission,permisos,create,getById,getAll,roles,update } = roleStore;
 	const [form] = Form.useForm<IRoleForm>();
 
   const [loading, setLoading] = useState(false);
@@ -69,6 +71,7 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
     }
 		if (id) {
 			readuser(id);
+      
 		}else{      
       permission();
     }
@@ -84,14 +87,15 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
       ),
     [targetKeys]
   );
-
+  useEffect(() => {
+    transform(permisos ?? []);
+  }, [permisos, targetKeys, transform]);
+  
   useEffect(() => {
     transform(values?.permisos ?? []);
   }, [values?.permisos, targetKeys, transform]);
 
-  useEffect(() => {
-    transform(permisos ?? []);
-  }, [permisos, targetKeys, transform]);
+
 
   const onSearch = onTreeSearch(
     setPermissionsAvailableFiltered,
@@ -137,20 +141,27 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
 
   const onFinish = async (newValues: IRoleForm) => {
 		const User = { ...values, ...newValues };
+  
+    const permissions = permisos?.map((x) => ({
+      ...x,asignado: targetKeys.includes(x.id.toString()), }));
+      User.permisos = permissions;
+      if (!User.permisos || User.permisos.filter((x) => x.asignado).length === 0 ) {
+         alerts.warning(messages.emptyPermissions); return; 
+        
+      }
+
 
 		let success = false;
 		if (!User.id) {
-      User.permisos=role.permisos 
 			success = await create(User);
 		} else {
-			//success = await update(User);
+			success = await update(User);
 		}
 
 		if (success) {
-			navigate(`/users?search=${searchParams.get("search")||"all"}`);
+			navigate(`/roles?search=${searchParams.get("search")||"all"}`);
 		}
 	};
-
   const onDeselectParent = (key: string | number, children: DataNode[]) => {
     setSelectedKeys(selectedKeys.filter((x) => !children.map((y) => y.key).includes(x)));
 
