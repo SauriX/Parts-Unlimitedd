@@ -11,7 +11,11 @@ import { observer } from "mobx-react-lite";
 import { IBranchForm } from "../../../app/models/branch";
 import { ILocation } from "../../../app/models/location";
 import { IOptions } from "../../../app/models/shared";
+import NumberInput from "../../../app/common/form/NumberInput";
+import SwitchInput from "../../../app/common/form/SwitchInput";
 import SelectInput from "../../../app/common/form/SelectInput";
+import alerts from "../../../app/util/alerts";
+import messages from "../../../app/util/messages";
 
 type BranchFormProps = {
   id: number;
@@ -117,7 +121,31 @@ const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
             onValuesChange={onValuesChange}
           >
             <Row>
-              <Col md={12} sm={24} xs={12}>
+            <Col md={12} sm={24}>
+              <TextInput
+                formProps={{
+                  name: "clave",
+                  label: "Clave",
+                }}
+                max={100}
+                required
+              />
+            
+              <TextInput
+                formProps={{
+                  name: "nombre",
+                  label: "Nombre",
+                }}
+                max={100}
+                required
+              />
+                <TextInput
+                  formProps={{
+                    name: "codigoPostal",
+                    label: "Codigo postal",
+                  }}
+                  max={100}
+                />
                 <TextInput
                   formProps={{
                     name: "estado",
@@ -126,9 +154,6 @@ const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
                   max={100}
                   required
                 />
-              </Col>
-              <Col md={12} sm={24} xs={12}></Col>
-              <Col md={12} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "ciudad",
@@ -137,9 +162,6 @@ const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
                   max={100}
                   required
                 />
-              </Col>
-              <Col md={12} sm={24} xs={12}></Col>
-              <Col md={12} sm={24} xs={12}>
                 <SelectInput
                   formProps={{
                     name: "coloniaId",
@@ -148,15 +170,75 @@ const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
                   required
                   options={colonies}
                 />
-              </Col>
-              <Col md={12} sm={24} xs={12}></Col>
-              <Col md={12} sm={24} xs={12}>
+              
+              <NumberInput
+                  formProps={{
+                    name: "numeroInterior",
+                    label: "Número interior",
+                  }}
+                  max={9999999999}
+                  min={1}
+                  //readonly={readonly}
+                />
                 <TextInput
                   formProps={{
-                    name: "codigoPostal",
-                    label: "Codigo postal",
+                    name: "calle",
+                    label: "Calle",
                   }}
                   max={100}
+                  required
+                  // readonly={readonly}
+                />
+                <SelectInput
+                  formProps={{
+                    name: "coloniaId",
+                    label: "Colonia",
+                  }}
+                  required
+                  //readonly={readonly}
+                  options={colonies}
+                  />
+                  </Col>
+                  <Col md={12} sm={24} xs={12}>
+                  <TextInput
+                  formProps={{
+                    name: "correo",
+                    label: "Correo",
+                  }}
+                  max={100}
+                  //readonly={readonly}
+                  type="email"
+                />
+                <NumberInput
+                  formProps={{
+                    name: "celular",
+                    label: "Celular",
+                  }}
+                  max={9999999999}
+                  min={1000000000}
+                  //readonly={readonly}
+                />
+                <NumberInput
+                  formProps={{
+                    name: "telefono",
+                    label: "Teléfono",
+                  }}
+                  max={9999999999}
+                  min={1111111111}
+                  //readonly={readonly}
+                />
+
+                <SwitchInput
+                  name="activo"
+                  onChange={(value) => {
+                    if (value) {
+                      alerts.info(messages.confirmations.enable);
+                    } else {
+                      alerts.info(messages.confirmations.disable);
+                    }
+                  }}
+                  label="Activo"
+                  //readonly={readonly}
                 />
               </Col>
             </Row>

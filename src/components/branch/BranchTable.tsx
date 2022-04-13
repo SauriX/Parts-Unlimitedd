@@ -101,7 +101,26 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-      ...getDefaultColumnProps("telefono", "Telefono", {
+      ...getDefaultColumnProps("Codigo Postal", "Codigo Postal", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("Localizacion", "Localizacion", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    
+    {
+      ...getDefaultColumnProps("clinicos", "Clinicos", {
         searchState,
         setSearchState,
         width: "20%",
