@@ -14,6 +14,8 @@ import IconButton from "../../../app/common/button/IconButton";
 import { EditOutlined, LockOutlined } from "@ant-design/icons";
 import { useStore } from "../../../app/stores/store";
 import ImageButton from "../../../app/common/button/ImageButton";
+import alerts from "../../../app/util/alerts";
+import messages from "../../../app/util/messages";
 type UserFormProps = {
   componentRef: React.MutableRefObject<any>;
   load: boolean;
@@ -21,11 +23,11 @@ type UserFormProps = {
 type UrlParams = {
   id: string;
 };
-
+ 
 const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
   
 	const { userStore } = useStore();
-	const { getById, create, update,Clave,generatePass,changePassordF,getAll,users } = userStore;
+	const { getById, create, update,Clave,generatePass,changePassordF,getAll,users,getPermission,permisos,getAllRoles,options,allRoles} = userStore;
 	const [form] = Form.useForm<IUserForm>();
 
   const [loading, setLoading] = useState(false);
@@ -54,6 +56,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
 		const readuser = async (idUser: string) => {
 			setLoading(true);
 			const user = await getById(idUser);
+      
 			form.setFieldsValue(user!);
       
 			setValues(user!);
@@ -63,16 +66,24 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
          let pass= await generatePass();
          form.setFieldsValue({confirmaContraseña:pass, contraseña:pass,});
     }
+    const permission = async () => {
+      await getPermission();
+      
+    }
 		if (id) {
 			readuser(id);
 		}else{
-      
       newpass();
+      permission();
       
-
     }
 	}, [form, getById,id ]);
-  console.log(values.permisos);
+  useEffect(()=>{
+    const options =async()=>{
+      await allRoles();
+    }
+    options();
+  },[allRoles]);
   const transform = useMemo(
     () =>
       convertToTreeData(
@@ -85,15 +96,26 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
     [targetKeys]
   );
 
-  useEffect(() => {
+/*   useEffect(() => {
     transform(values?.permisos ?? []);
-  }, [values?.permisos, targetKeys, transform]);
+  }, [values?.permisos, targetKeys, transform]); */
+  useEffect(() => {
+    if (permisos && permisos.length > 0) {
+      setTargetKeys(permisos.filter(x => x.asignado).map(x => x.id.toString()))
+    }
+  }, [permisos]);
+  useEffect(() => {
+    transform(permisos ?? []);
+  
+  }, [permisos, targetKeys, transform]);
+
   const onSearch = onTreeSearch(
     setPermissionsAvailableFiltered,
     permissionsAvailable,
     setPermissionsAddedFiltered,
     permissionsAdded
   );
+
   useEffect(() => {
     const readUsers = async () => {
       setLoading(true);
@@ -103,13 +125,16 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
 
     readUsers();
   }, [getAll, searchParams]);
+
   const filterOption = (inputValue: string, option: IUserPermission) => {
     return (
       option.menu.toLowerCase().indexOf(inputValue.toLowerCase()) > -1 ||
       option.permiso.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
     );
   };
+ 
   const CheckReadOnly =()=>{
+    
     let result = false;
     const mode = searchParams.get("mode");
     if(mode == "ReadOnly"){
@@ -173,7 +198,22 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
  }
   const onFinish = async (newValues: IUserForm) => {
 		const User = { ...values, ...newValues };
+    const permissions = permisos?.map((x) => ({
+      ...x,
+      asignado: targetKeys.includes(x.id.toString()),
 
+    }));
+    User.permisos = permissions;
+    if (
+      !User.permisos ||
+      User.permisos.filter((x) => x.asignado).length === 0
+    ) {
+
+      alerts.warning(messages.emptyPermissions);
+
+      return;
+
+    }
 		let success = false;
 		if (!User.idUsuario) {
 			success = await create(User);
@@ -298,7 +338,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
               />
             </Col>
             <Col md={12} sm={24} xs={12}>
-              <SwitchInput name="activo" label="Activo" readonly={CheckReadOnly()}/>
+              <SwitchInput name="activo" label="Activo" onChange={(value)=>{if(value){alerts.info(messages.confirmations.enable)}else{alerts.info(messages.confirmations.disable)}}} readonly={CheckReadOnly()}/>
             </Col>
             <Col md={12} sm={24} xs={12}>
               <TextInput
@@ -318,7 +358,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
               <SelectInput
                 formProps={{ name: "usertype", label: "Tipo de usuario" }}
                 required
-                options={[{value:"5d715039-d5ff-4ee5-d249-08da168bcf6a",label:"test"}]}
+                options={options}
                 readonly={CheckReadOnly()}
               />
             </Col>
@@ -332,7 +372,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
         <div style={{ width: "100%", overflowX: "auto" }}>
           <div style={{ width: "fit-content", margin: "auto" }}>
             <Transfer<IUserPermission>
-              dataSource={values.permisos}
+              dataSource={permisos}
               showSearch
               onSearch={onSearch}
               style={{ justifyContent: "flex-end" }}
@@ -361,8 +401,8 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
                 const checkedKeys = [...selectedKeys];
                 return (
                   <Tree
-                    // checkable={!readonly}
-                    // disabled={readonly}
+                     checkable={!CheckReadOnly()}
+                     disabled={CheckReadOnly()}
                     height={200}
                     onCheck={(_, { node: { key, children, checked } }) => {
                       if (children && children.length > 0 && checked) {

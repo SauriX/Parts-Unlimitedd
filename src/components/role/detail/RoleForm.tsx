@@ -50,10 +50,13 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   let { id } = useParams<UrlParams>();
   let role: IRoleForm = new RoleFormValues();
+
   useEffect(() => {
     setTargetKeys(values.permisos?.filter((x) => x.asignado).map((x) => x.id.toString()) ?? []);
   }, []);
+  
   useEffect(() => {
+
     const readuser = async (idUser: string) => {
       setLoading(true);
       const user = await getById(idUser);
@@ -64,16 +67,11 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
     };
 
     const permission = async () => {
-
       await getPermission();
-
-
     }
     if (id) {
       readuser(id);
-
     } else {
-      console.log("no hay id");
       permission();
     }
   }, [form, getById, id]);
@@ -97,12 +95,11 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
     if (permisos && permisos.length > 0) {
       setTargetKeys(permisos.filter(x => x.asignado).map(x => x.id.toString()))
     }
-
-  }, [permisos])
+  }, [permisos]);
 
   useEffect(() => {
     transform(permisos ?? []);
-    console.log(targetKeys);
+  
   }, [permisos, targetKeys, transform]);
 
   const onSearch = onTreeSearch(
@@ -113,19 +110,24 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
   );
   useEffect(() => {
     const readUsers = async () => {
+      console.log("soy el use efect");
       setLoading(true);
       await getAll(searchParams.get("search") ?? "all");
+      console.log("roles");
+      console.log(roles);
       setLoading(false);
     };
 
     readUsers();
   }, [getAll, searchParams]);
+
   const filterOption = (inputValue: string, option: IUserPermission) => {
     return (
       option.menu.toLowerCase().indexOf(inputValue.toLowerCase()) > -1 ||
       option.permiso.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
     );
   };
+  
   const CheckReadOnly = () => {
     let result = false;
     const mode = searchParams.get("mode");
@@ -183,11 +185,11 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
     return 0;
   }
   const siguienteUser = (index: number) => {
-    console.log(id);
+  
     const user = roles[index];
 
     navigate(`/roles/${user?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search") ?? "all"}`);
-  }
+  } 
   return (
     <Spin spinning={loading || load}>
       <div ref={componentRef}>

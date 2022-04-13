@@ -1,4 +1,5 @@
-import { IUser, IUserInfo,ILoginForm,ILoginResponse,IChangePasswordResponse,IChangePasswordForm, IUserForm,IClave } from "../models/user";
+import { IUserPermission, IUserInfo,ILoginForm,ILoginResponse,IChangePasswordResponse,IChangePasswordForm, IUserForm,IClave } from "../models/user";
+import { IRole,IRolePermission } from "../models/role";
 import requests from "./agent";
 
 const User = {
@@ -12,6 +13,8 @@ const User = {
   requests.download(`Account/export/list/${!search ? "all" : search}`, "Catálogo de Usuarios.xlsx"),
   exportForm: (id: string, clave?: string): Promise<void> =>
   requests.download(`Account/export/form/${id}`, `Catálogo de Usuarios (${clave}).xlsx`),
+  getPermission: (): Promise<IUserPermission[]> => requests.get(`Rol/permisos`),
+  getAllRoles: (search: string): Promise<IRole[]> => requests.get(`Rol/all/${!search ? "all" : search}`),
   update: (user: IUserForm): Promise<IUserInfo> => requests.put("Account", user),
   login:(user:ILoginForm):Promise<ILoginResponse>=>requests.post("Session/login",user),
   changePass:(form:IChangePasswordForm):Promise<IChangePasswordResponse>=>requests.put("Account/updatepassword",form),

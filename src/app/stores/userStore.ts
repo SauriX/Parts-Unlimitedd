@@ -1,6 +1,8 @@
 import { makeAutoObservable } from "mobx";
 import User from "../api/user";
-import { IUser, IUserInfo, ILoginForm, ILoginResponse,IChangePasswordResponse, IChangePasswordForm,IUserForm,IClave } from "../models/user";
+import {IUserPermission, IUser, IUserInfo, ILoginForm, ILoginResponse,IChangePasswordResponse, IChangePasswordForm,IUserForm,IClave } from "../models/user";
+import { IRole,IRolePermission } from "../models/role";
+import {IOptions} from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import { getErrors,tokenName } from "../util/utils";
@@ -10,8 +12,10 @@ export default class UserStore {
   constructor() {
     makeAutoObservable(this);
   }
-
+  permisos?:IUserPermission[]=[];
+  roles:IRole[]=[];
   users: IUserInfo[] = [];
+  options:IOptions[]=[];
   Token: string = "";
   changePasswordFlag: boolean = false;
   idUser: string = "";
@@ -26,6 +30,37 @@ export default class UserStore {
     } catch (error) {
       alerts.warning(getErrors(error));
       history.push("/forbidden");
+    }
+  };
+  getPermission = async () => {
+    try {
+      let permisos=await User.getPermission();
+      this.permisos = permisos;
+      return true;
+    } catch (error: any) {
+      return false;
+    }
+  };
+  
+   allRoles =async ()=>{
+     
+    let succes= await this.getAllRoles( "all");
+    if(succes){
+      this.roles.forEach(element => {
+         this.options.push({value:element.id,label:element.nombre});
+       });
+       console.log(this.options);
+    }
+
+   }
+  getAllRoles = async (search: string) => {
+    try {
+      const roles= await User.getAllRoles(search);
+      this.roles = roles;
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      this.roles = [];
     }
   };
 
@@ -93,6 +128,9 @@ export default class UserStore {
     console.log(id);
     try {
       const user = await User.getById(id);
+      console.log("hey cosas");
+      console.log(user.permisos);
+     this.permisos = user.permisos;
       this.user= user;
       return user;
     } catch (error: any) {

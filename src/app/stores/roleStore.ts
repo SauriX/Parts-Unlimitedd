@@ -29,8 +29,6 @@ export default class RolStore {
     try {
       let permisos=await Role.getPermission();
       this.permisos = permisos;
-      console.log("aqui andan los permisos wacho");
-      console.log(this.permisos);
       return true;
     } catch (error: any) {
       return false;
@@ -69,13 +67,11 @@ export default class RolStore {
   };
 
   getById = async (id: string) => {
-    console.log(id);
-    this.roles = [];
+   
     try {
       const rol = await Rol.getById(id);
       this.permisos = rol.permisos;
       this.role = rol;
-      console.log(this.permisos);
       return rol;
     } catch (error: any) {
       if (error.status === responses.notFound) {
@@ -83,6 +79,7 @@ export default class RolStore {
       } else {
         alerts.warning(getErrors(error));
       }
+      this.roles = [];
     }
   };
   exportList = async (search: string) => {

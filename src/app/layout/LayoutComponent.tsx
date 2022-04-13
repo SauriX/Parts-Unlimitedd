@@ -1,5 +1,5 @@
 import { Layout, Menu, Typography, Image, Avatar, Row, Col, Popover } from "antd";
-import React from "react";
+import React,{useEffect} from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import IconSelector from "../common/icons/IconSelector";
 import { IMenu } from "../models/shared";
@@ -45,10 +45,16 @@ const menus: IMenu[] = [
 
 const LayoutComponent = () => {
   const { profileStore } = useStore();
-  const { profile } = profileStore;
+  const { profile,getMenu,menu,getprofile } = profileStore;
 
   const location = useLocation();
-
+  useEffect(() => {
+    const readUsers = async () => {
+      await getMenu();
+      await getprofile();
+    };
+    readUsers();
+  }, [getMenu]);
   return (
     <Layout id="app-layout">
       <Header className="header">
@@ -88,7 +94,7 @@ const LayoutComponent = () => {
             selectedKeys={[location.pathname.substring(1)]}
             style={{ height: "100%", borderRight: 0 }}
           >
-            {menus.map((menu) =>
+            {menu.map((menu) =>
               menu.subMenus && menu.subMenus.length > 0 ? (
                 <SubMenu
                   className="menu-item"
