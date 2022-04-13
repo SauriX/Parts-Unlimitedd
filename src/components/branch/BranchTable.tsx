@@ -140,7 +140,7 @@ const RoleTable:FC<RoleTableProps> = ({ componentRef, printing })=> {
       size="small"
       rowKey={(record) => record.idSucursal}
       columns={columns}
-      dataSource={[...roles]}
+      dataSource={[...branches]}
       pagination={defaultPaginationProperties}
       sticky
       scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
