@@ -4,6 +4,7 @@ import {
   UserOutlined,
   IdcardOutlined,
   SafetyOutlined,
+  BankOutlined
 } from "@ant-design/icons";
 
 const IconSelector = ({ name }: { name: string }) => {
@@ -18,6 +19,8 @@ const IconSelector = ({ name }: { name: string }) => {
       return <IdcardOutlined />;
     case "medico":
       return <SafetyOutlined />;
+    case "laboratorio":
+      return <BankOutlined />;
     default:
       return null;
   }

@@ -12,6 +12,7 @@ import Medics from "../../views/Medics";
 import Role from "../../views/Role";
 import User from "../../views/User";
 import Login from "../../views/Login";
+import Branch from "../../views/Branch";
 import messages from "../util/messages";
 import ErrorComponent from "./ErrorComponent";
 import LayoutComponent from "./LayoutComponent";
@@ -20,6 +21,7 @@ import Catalog from "../../views/Catalog";
 import CatalogDetail from "../../components/catalog/detail/CatalogDetail";
 import Indication from "../../views/Indications";
 import NewRole from "../../components/role/detail/NewRole";
+import RoleDetail from "../../components/role/detail/RoleDetail";
 function App() {
   return (
     <Routes>
@@ -40,7 +42,8 @@ function App() {
           <Route path="indication" element={<Indication />} />
           <Route path="indication/:id" element={<IndicationDetail />} />
           <Route path="roles/new-role" element={<NewRole/>}/>
-          <Route path="roles/:id" element={<NewRole/>}/>
+          <Route path="roles/:id" element={<RoleDetail/>}/>
+          <Route path="sucursales"  element={<Branch/>}/>
           <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
           <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
           <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />

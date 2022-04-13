@@ -37,7 +37,7 @@ const Branch = () => {
   });
   return (
     <Fragment>
-    <RoleHeader handlePrint={handlePrint}/>
+    {/* <RoleHeader handlePrint={handlePrint}/> */}
     <Divider className="header-divider" />
     <RoleTable componentRef={componentRef} printing={printing}/>
     </Fragment>

@@ -26,6 +26,7 @@ const menus: IMenu[] = [
     subMenus: [
       { id: 3, ruta: "users", icono: "user", descripcion: "Usuarios" },
       { id: 4, ruta: "roles", icono: "role", descripcion: "Roles" },
+      { id: 7, ruta: "sucursales", icono: "laboratorio", descripcion: "Sucursales" },
     ],
   },
   {
