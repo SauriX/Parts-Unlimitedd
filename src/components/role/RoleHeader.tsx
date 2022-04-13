@@ -7,8 +7,9 @@ import ImageButton from "../../app/common/button/ImageButton";
 const { Search } = Input;
 type RoleHeaderProps = {
   handlePrint: () => void;
+  handleList:() => void;
 };
-const RoleHeader: FC<RoleHeaderProps> = ({ handlePrint }) => {
+const RoleHeader: FC<RoleHeaderProps> = ({ handlePrint,handleList }) => {
   let navigate = useNavigate();
   return (
     <PageHeader
@@ -17,7 +18,7 @@ const RoleHeader: FC<RoleHeaderProps> = ({ handlePrint }) => {
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        <ImageButton key="doc" title="Informe" image="doc" />,
+        <ImageButton key="doc" title="Informe" image="doc"onClick={handleList} />,
         <Search key="search" placeholder="Buscar" onSearch={(value) => {navigate(`/roles?search=${value}`);}} />,
         <Button key="new" type="primary" onClick={() => {navigate("/roles/new-role");}} icon={<PlusOutlined />}>
           Nuevo

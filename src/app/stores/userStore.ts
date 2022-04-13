@@ -41,6 +41,7 @@ export default class UserStore {
   exportList = async (search: string) => {
     try {
       await User.exportList(search);
+      return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }

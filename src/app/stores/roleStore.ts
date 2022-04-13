@@ -13,6 +13,8 @@ export default class RolStore {
   }
   permisos!:IRolePermission[];
   roles:IRole[]=[];
+  role!:IRoleForm;
+
   access = async () => {
     try {
       //  await User.access();
@@ -68,11 +70,33 @@ export default class RolStore {
 
   getById = async (id: string) => {
     console.log(id);
+    this.roles = [];
     try {
       const rol = await Rol.getById(id);
       this.permisos = rol.permisos;
+      this.role = rol;
       console.log(this.permisos);
       return rol;
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+    }
+  };
+  exportList = async (search: string) => {
+    try {
+      await Rol.exportList(search);
+      return true
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  exportForm = async (id: string,clave?:string) => {
+    try {
+      await Rol.exportForm(id,clave);
+      return true;
     } catch (error: any) {
       if (error.status === responses.notFound) {
         history.push("/notFound");

@@ -1,9 +1,11 @@
+import { IStudyList } from "./study";
 export interface IIndicationList {
     id: number;
     clave: string;
     nombre: string;
     descripcion: string;
     activo: boolean
+    estudios: IStudyList[];
   }
   
   export interface IIndicationForm {
@@ -12,6 +14,7 @@ export interface IIndicationList {
     nombre: string;
     descripcion: string;
     activo: boolean
+    estudios: IStudyList[];
   }
   
   export class IndicationFormValues implements IIndicationForm {
@@ -20,6 +23,7 @@ export interface IIndicationList {
     nombre = "";
     descripcion = "";
     activo = true;
+    estudios: IStudyList[] = [];
   
     constructor(init?: IIndicationForm) {
       Object.assign(this, init);

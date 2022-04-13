@@ -37,8 +37,9 @@ const UserDetail = () => {
 
   const  handleDownload = async() => {
     console.log(user);
-    const succes = await exportForm(id!,user!.clave);
     setLoading(true);
+    const succes = await exportForm(id!,user!.clave);
+    
     if(succes){
       setLoading(false);
     }
@@ -52,4 +53,4 @@ const UserDetail = () => {
   );
 };
 
-export default observer(UserDetail);
+export default  observer(UserDetail);
