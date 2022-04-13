@@ -22,6 +22,7 @@ import CatalogDetail from "../../components/catalog/detail/CatalogDetail";
 import Indication from "../../views/Indications";
 import NewRole from "../../components/role/detail/NewRole";
 import RoleDetail from "../../components/role/detail/RoleDetail";
+import BranchDetail from "../../components/branch/detail/BranchDetail";
 function App() {
   return (
     <Routes>
@@ -41,9 +42,10 @@ function App() {
           <Route path="medics/:id" element={<MedicsDetail />} />
           <Route path="indication" element={<Indication />} />
           <Route path="indication/:id" element={<IndicationDetail />} />
-          <Route path="roles/new-role" element={<NewRole/>}/>
-          <Route path="roles/:id" element={<RoleDetail/>}/>
-          <Route path="sucursales"  element={<Branch/>}/>
+          <Route path="roles/new-role" element={<NewRole />} />
+          <Route path="roles/:id" element={<RoleDetail />} />
+          <Route path="branches" element={<Branch />} />
+          <Route path="branches/:id" element={<BranchDetail />} />
           <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
           <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
           <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />

@@ -86,11 +86,6 @@ export default class MedicsStore {
     }
   };
 
-  // Clave =async(data:IClave)=>{
-  //   const response = await Medics.getClave(data);
-  //   return  await response;
-  // };
-
   exportForm = async (id: number) => {
     try {
       await Medics.exportForm(id, "Formulario");

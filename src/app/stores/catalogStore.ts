@@ -29,6 +29,10 @@ export default class CatalogStore {
     this.currentCatalog = catalog;
   };
 
+  getIndex = (id: number) => {
+    return this.catalogs.findIndex((x) => x.id === id);
+  };
+
   access = async () => {
     try {
       const scopes = await Catalog.access();

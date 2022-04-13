@@ -44,3 +44,8 @@ export interface ISearchParams {
   search: string;
   mode: "edit" | "readonly";
 }
+
+export interface ICatalog {
+  id: number;
+  nombre: string;
+}

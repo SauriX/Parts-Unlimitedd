@@ -13,16 +13,16 @@ type IndicationFormHeaderProps = {
 };
 
 const IndicationFormHeader: FC<IndicationFormHeaderProps> = ({ id, handlePrint, }) => {
-  const navigate = useNavigate();
   const { indicationStore } = useStore();
   const { exportForm } = indicationStore;
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const download = () => {
     exportForm(id);
   };
 
+  const [searchParams, setSearchParams] = useSearchParams();
 
   console.log("Header");
 
@@ -33,7 +33,8 @@ const IndicationFormHeader: FC<IndicationFormHeaderProps> = ({ id, handlePrint, 
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        <ImageButton key="doc" title="Informe" image="doc" onClick={download} />,
+        id !=0 ?
+        <ImageButton key="doc" title="Informe" image="doc" onClick={download} />:'',
         <ImageButton
           key="back"
           title="Regresar"
@@ -50,16 +51,6 @@ const IndicationFormHeader: FC<IndicationFormHeaderProps> = ({ id, handlePrint, 
             setSearchParams({ search: !value ? "all" : value });
           }}
         />,
-        /*<Button
-          key="new"
-          type="primary"
-          onClick={() => {
-            navigate("/medics/0");
-          }}
-          icon={<PlusOutlined />}
-        >
-          Nuevo
-        </Button>,*/
       ]}
     ></PageHeader>
   );

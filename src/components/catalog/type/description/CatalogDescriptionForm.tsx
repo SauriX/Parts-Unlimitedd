@@ -2,6 +2,7 @@ import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider } from "a
 import { observer } from "mobx-react-lite";
 import React, { FC, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import ImageButton from "../../../../app/common/button/ImageButton";
 import SwitchInput from "../../../../app/common/form/SwitchInput";
 import TextAreaInput from "../../../../app/common/form/TextAreaInput";
 import TextInput from "../../../../app/common/form/TextInput";
@@ -24,7 +25,7 @@ const CatalogDescriptionForm: FC<CatalogDescriptionFormProps> = ({
   printing,
 }) => {
   const { catalogStore } = useStore();
-  const { getById, create, update } = catalogStore;
+  const { catalogs, getIndex, getById, create, update } = catalogStore;
 
   const navigate = useNavigate();
 
@@ -34,6 +35,7 @@ const CatalogDescriptionForm: FC<CatalogDescriptionFormProps> = ({
 
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
+  const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
   const [values, setValues] = useState<ICatalogDescriptionForm>(new CatalogDescriptionFormValues());
 
   useEffect(() => {
@@ -62,30 +64,40 @@ const CatalogDescriptionForm: FC<CatalogDescriptionFormProps> = ({
     }
 
     if (success) {
-      searchParams.delete("mode");
-      setSearchParams(searchParams);
-      navigate(`/catalogs?${searchParams}`);
+      goBack();
     }
+  };
+
+  const goBack = () => {
+    searchParams.delete("mode");
+    setSearchParams(searchParams);
+    navigate(`/catalogs?${searchParams}`);
   };
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
         <Col md={12} sm={24} style={{ textAlign: "left" }}>
-          <Pagination size="small" total={50} pageSize={1} current={9} />
+          {id > 0 && (
+            <Pagination size="small" total={catalogs.length} pageSize={1} current={getIndex(id) + 1} />
+          )}
         </Col>
         <Col md={12} sm={24} style={{ textAlign: "right" }}>
-          <Button onClick={() => {}}>Cancelar</Button>
-          <Button
-            type="primary"
-            htmlType="submit"
-            disabled={disabled}
-            onClick={() => {
-              form.submit();
-            }}
-          >
-            Guardar
-          </Button>
+          <Button onClick={goBack}>Cancelar</Button>
+          {readonly ? (
+            <ImageButton title="Editar" image="edit" onClick={() => setReadonly(false)} />
+          ) : (
+            <Button
+              type="primary"
+              htmlType="submit"
+              disabled={disabled}
+              onClick={() => {
+                form.submit();
+              }}
+            >
+              Guardar
+            </Button>
+          )}
         </Col>
       </Row>
       <div style={{ display: printing ? "none" : "" }}>
@@ -121,6 +133,7 @@ const CatalogDescriptionForm: FC<CatalogDescriptionFormProps> = ({
                   }}
                   max={100}
                   required
+                  readonly={readonly}
                 />
               </Col>
               <Col md={12} sm={24} xs={12}></Col>
@@ -132,6 +145,7 @@ const CatalogDescriptionForm: FC<CatalogDescriptionFormProps> = ({
                   }}
                   max={100}
                   required
+                  readonly={readonly}
                 />
               </Col>
               <Col md={12} sm={24} xs={12}></Col>
@@ -144,11 +158,12 @@ const CatalogDescriptionForm: FC<CatalogDescriptionFormProps> = ({
                   rows={3}
                   max={100}
                   required
+                  readonly={readonly}
                 />
               </Col>
               <Col md={12} sm={24} xs={12}></Col>
               <Col md={12} sm={24} xs={12}>
-                <SwitchInput name="activo" label="Activo" />
+                <SwitchInput name="activo" label="Activo" readonly={readonly} />
               </Col>
             </Row>
           </Form>
