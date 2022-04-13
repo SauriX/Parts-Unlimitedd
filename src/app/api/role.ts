@@ -7,7 +7,7 @@ const Role = {
   getById: (id: string): Promise<IRoleForm> => requests.get(`Rol/rol/${id}`),
   getPermission: (): Promise<IRolePermission[]> => requests.get(`Rol/permisos`),
   create: (role: IRoleForm): Promise<boolean> => requests.post("/Rol", role),
-  update: (role: IRoleForm): Promise<boolean> => requests.put("/Rol  ", role),
+  update: (role: IRoleForm): Promise<boolean> => requests.put("/Rol", role),
   exportList: (search: string): Promise<void> =>
   requests.download(`Rol/export/list/${!search ? "all" : search}`, "Catálogo de Roles.xlsx"),
   exportForm: (id: string, clave?: string): Promise<void> =>
