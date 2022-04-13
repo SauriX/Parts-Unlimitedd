@@ -7,25 +7,24 @@ import {
   Button,
   PageHeader,
   Divider,
-  Select,
+  Table,
 } from "antd";
+import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
 import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
-import SelectInput from "../../../app/common/form/SelectInput";
 import { useStore } from "../../../app/stores/store";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { IIndicationForm, IndicationFormValues } from "../../../app/models/indication";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
-import NumberInput from "../../../app/common/form/NumberInput";
-import { List, Typography } from "antd";
-import TextArea from "antd/lib/input/TextArea";
-import Indications from "../../../views/Indications";
-import { createSecureContext } from "tls";
-import Item from "antd/lib/list/Item";
+import alerts from "../../../app/util/alerts";
+import messages from "../../../app/util/messages";
+import { getDefaultColumnProps, IColumns, defaultPaginationProperties, ISearch } from "../../../app/common/table/utils";
+import { IStudyList } from "../../../app/models/study";
+import { observer } from "mobx-react-lite";
 
 type IndicationFormProps = {
   id: number;
@@ -106,6 +105,68 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing  }
   useEffect(() => {
     console.log(values);
   }, [values]);
+
+//POpConfirm
+//   const {  Popconfirm, message  } = antd;
+
+// function confirm(e) {
+//   console.log(e);
+//   message.success('El registro ha sido activado');
+// }
+
+// function cancel(e) {
+//   console.log(e);
+//   message.error('Operacion Cancelada');
+// }
+
+// ReactDOM.render(
+//   <Popconfirm
+//     title="¿Desea activar el registro? El registro será activado"
+//     onConfirm={confirm}
+//     onCancel={cancel}
+//     okText="Si, Activar"
+//     cancelText="Cancelar"
+//   >
+//     <a href="#">Delete</a>
+//   </Popconfirm>,
+//   mountNode,
+// );
+console.log("Table");
+const { width: windowWidth } = useWindowDimensions();
+const [searchState, setSearchState] = useState<ISearch>({
+  searchedText: "",
+  searchedColumn: "",
+});
+
+const columns: IColumns<IStudyList> = [
+  {
+    ...getDefaultColumnProps("Id", "Id Estudio", {
+      searchState,
+      setSearchState,
+      width: "20%",
+      minWidth: 150,
+      windowSize: windowWidth,
+    }),
+  },
+  {
+    ...getDefaultColumnProps("nombre", "Estudio", {
+      searchState,
+      setSearchState,
+      width: "20%",
+      minWidth: 150,
+      windowSize: windowWidth,
+    }),
+  },
+  {
+    ...getDefaultColumnProps("descripcion", "Descripcion", {
+      searchState,
+      setSearchState,
+      width: "20%",
+      minWidth: 150,
+      windowSize: windowWidth,
+    }),
+  },
+];
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
@@ -208,6 +269,7 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing  }
     
               <SwitchInput 
               name="activo" 
+              onChange={(value)=>{if(value){alerts.info(messages.confirmations.enable)}else{alerts.info(messages.confirmations.disable)}}} 
               label="Activo" 
               readonly={readonly} 
               />
@@ -217,52 +279,13 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing  }
         </Form>
       </div>
     </div>
+    <Row>
+    </Row>
 
-    </Spin>
+  </Spin>
   );
 
-  // const columns: IColumns<IIndicationList> = [
-  //   {
-  //     ...getDefaultColumnProps("clave", "Clave", {
-  //       searchState,
-  //       setSearchState,
-  //       width: "15%",
-  //       minWidth: 150,
-  //       windowSize: windowWidth,
-  //     }),
-  //     render: (value, user) => (
-  //       <Button
-  //         type="link"
-  //         onClick={() => {
-  //           navigate(`/indication/${user.id}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
-  //         }}
-  //       >
-  //         {value}
-  //       </Button>
-  //     ),
-  //   },
-  //   {
-  //     ...getDefaultColumnProps("nombre", "Nombre", {
-  //       searchState,
-  //       setSearchState,
-  //       width: "20%",
-  //       minWidth: 150,
-  //       windowSize: windowWidth,
-  //     }),
-  //   },
-  //   {
-  //     ...getDefaultColumnProps("descripcion", "Descripcion", {
-  //       searchState,
-  //       setSearchState,
-  //       width: "20%",
-  //       minWidth: 150,
-  //       windowSize: windowWidth,
-  //     }),
-  //   },
-  // ];
 
 };
 
-
-
-export default IndicationForm;
+export default observer (IndicationForm);

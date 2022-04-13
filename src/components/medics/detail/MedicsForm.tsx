@@ -9,7 +9,7 @@ import {
   Divider,
   Select,
 } from "antd";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
 import TextAreaInput from "../../../app/common/form/TextAreaInput";
@@ -24,11 +24,13 @@ import NumberInput from "../../../app/common/form/NumberInput";
 import { IClinicList } from "../../../app/models/clinic";
 import { observer } from "mobx-react-lite";
 import { List, Typography } from "antd";
+import { IOptions } from "../../../app/models/shared";
 import TextArea from "antd/lib/input/TextArea";
 import Medics from "../../../views/Medics";
 import { createSecureContext } from "tls";
 import Item from "antd/lib/list/Item";
 import alerts from "../../../app/util/alerts";
+import messages from "../../../app/util/messages";
 import { claveValues } from "../../../app/models/user";
 // import { v4 as uuid } from "uuid";
 
@@ -38,10 +40,11 @@ type MedicsFormProps = {
   printing: boolean;
 };
 const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
-  const { medicsStore, optionStore } = useStore();
+  const { medicsStore, optionStore, locationStore } = useStore();
   const { getById, create, update, getAll, medics } = medicsStore;
   const { clinicOptions, getClinicOptions } = optionStore;
-  // let clave : IClave = new claveValues();
+  const { getColoniesByZipCode } = locationStore;
+
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
@@ -50,18 +53,54 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
 
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
+  const [colonies, setColonies] = useState<IOptions[]>([]);
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
   const [values, setValues] = useState<IMedicsForm>(new MedicsFormValues());
   const [clinic, setClinic] = useState<{ clave: ""; id: number }>();
 
+  const clearLocation = useCallback(() => {
+    form.setFieldsValue({
+      estado: undefined,
+      ciudad: undefined,
+      coloniaId: undefined,
+    });
+    setColonies([]);
+  }, [form]);
+
+  const getLocation = useCallback(
+    async (zipCode: string) => {
+      const location = await getColoniesByZipCode(zipCode);
+      if (location) {
+        form.setFieldsValue({
+          estado: location.estado,
+          ciudad: location.ciudad,
+        });
+        setColonies(
+          location.colonias.map((x) => ({
+            value: x.id,
+            label: x.nombre,
+          }))
+        );
+      } else {
+        clearLocation();
+      }
+    },
+    [clearLocation, form, getColoniesByZipCode]
+  );
+
   useEffect(() => {
     const readMedics = async (id: number) => {
       setLoading(true);
       const medics = await getById(id);
-      form.setFieldsValue(medics!);
-      setValues(medics!);
+
+      if (medics) {
+        form.setFieldsValue(medics);
+        getLocation(medics.codigoPostal.toString());
+        setValues(medics);
+      }
+
       setLoading(false);
       console.log(medics);
     };
@@ -69,7 +108,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
     if (id) {
       readMedics(id);
     }
-  }, [form, getById, id]);
+  }, [form, getById, getLocation, id]);
 
   useEffect(() => {
     getClinicOptions();
@@ -126,7 +165,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
     console.log(values);
   }, [values]);
 
-  const onValuesChange = (changeValues: any, values: IMedicsForm) => {
+  const onValuesChange = async (changeValues: any, values: IMedicsForm) => {
     // console.log(changeValues, values);
 
     const code =
@@ -135,13 +174,24 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
       values.segundoApellido?.substring(0, 1);
 
     form.setFieldsValue({ clave: code.toUpperCase() });
-  };
 
+    const field = Object.keys(changeValues)[0];
+
+    if (field === "codigoPostal") {
+      const zipCode = changeValues[field] as string;
+
+      if (zipCode && zipCode.toString().trim().length === 5) {
+        getLocation(zipCode);
+      } else {
+        clearLocation();
+      }
+    }
+  };
   const addClinic = () => {
     if (clinic) {
-      if(values.clinicas.findIndex(x => x.id === clinic.id) > -1){
-        alerts.warning("Ya esta agregada esta clinica")
-        return ;
+      if (values.clinicas.findIndex((x) => x.id === clinic.id) > -1) {
+        alerts.warning("Ya esta agregada esta clinica");
+        return;
       }
       const clinics: IClinicList[] = [
         ...values.clinicas,
@@ -166,7 +216,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
-        <Col md={10} sm={24} style={{  marginRight: 20 }}>
+        <Col md={10} sm={24} style={{ marginRight: 20 }}>
           <Pagination
             size="small"
             total={medics.length}
@@ -192,7 +242,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
             }}
           ></Form>
         </Col>
-        <Col md={8} sm={24} style={{ marginRight: 20, textAlign: "right"}}>
+        <Col md={8} sm={24} style={{ marginRight: 20, textAlign: "right" }}>
           {readonly && (
             <ImageButton
               key="edit"
@@ -203,8 +253,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
               }}
             />
           )}
-          </Col>
-          <Col md={2} sm={24} style={{ marginRight: 20, textAlign: "right" }}>
+        </Col>
+        <Col md={2} sm={24} style={{ marginRight: 20, textAlign: "right" }}>
           <Button
             onClick={() => {
               navigate("/medics");
@@ -220,10 +270,9 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
               htmlType="submit"
               disabled={disabled}
               onClick={() => {
-                form.submit();     
-                return ;
+                form.submit();
+                return;
               }}
-              
             >
               Guardar
             </Button>
@@ -338,23 +387,21 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   readonly={readonly}
                 />
 
-                <NumberInput
+                <TextInput
                   formProps={{
-                    name: "estadoId",
+                    name: "estado",
                     label: "Estado",
                   }}
-                  max={9999999999}
-                  min={0}
+                  max={100}
                   readonly={readonly}
                 />
 
-                <NumberInput
+                <TextInput
                   formProps={{
-                    name: "ciudadId",
+                    name: "ciudad",
                     label: "Ciudad",
                   }}
-                  max={9999999999}
-                  min={1}
+                  max={100}
                   readonly={readonly}
                 />
                 <NumberInput
@@ -385,15 +432,14 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
-                <NumberInput
+                <SelectInput
                   formProps={{
                     name: "coloniaId",
                     label: "Colonia",
                   }}
-                  max={9999999999}
-                  min={1}
                   required
                   readonly={readonly}
+                  options={colonies}
                 />
                 <TextInput
                   formProps={{
@@ -423,7 +469,18 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   readonly={readonly}
                 />
 
-                <SwitchInput name="activo" label="Activo" readonly={readonly} />
+                <SwitchInput
+                  name="activo"
+                  onChange={(value) => {
+                    if (value) {
+                      alerts.info(messages.confirmations.enable);
+                    } else {
+                      alerts.info(messages.confirmations.disable);
+                    }
+                  }}
+                  label="Activo"
+                  readonly={readonly}
+                />
               </Col>
             </Row>
           </Form>
@@ -437,10 +494,10 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
       <List<IClinicList>
         header={
           <div>
-            <Col md={12} sm={24} style={{ marginRight: 20  }}>
+            <Col md={12} sm={24} style={{ marginRight: 20 }}>
               Nombre Clinica/Empresa
               <Select
-                options={clinicOptions }
+                options={clinicOptions}
                 onChange={(value, option: any) => {
                   if (value) {
                     setClinic({ id: value, clave: option.label });
@@ -448,7 +505,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                     setClinic(undefined);
                   }
                 }}
-                style={{ width: 240, marginRight: 20  }}
+                style={{ width: 240, marginRight: 20 }}
               />
               {!readonly && (
                 <ImageButton
@@ -457,7 +514,6 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   image="agregar-archivo"
                   onClick={addClinic}
                 />
-
               )}
             </Col>
           </div>
@@ -470,8 +526,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
             <Col md={12} sm={24} style={{ textAlign: "left" }}>
               <Typography.Text mark></Typography.Text>
               {item.nombre}
-              </Col>
-              <Col md={12} sm={24} style={{ textAlign: "left" }}>
+            </Col>
+            <Col md={12} sm={24} style={{ textAlign: "left" }}>
               <ImageButton
                 key="Eliminar"
                 title="Eliminar Clinica"

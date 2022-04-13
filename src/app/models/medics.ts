@@ -9,8 +9,8 @@ export interface IMedicsList {
   especialidadId: number;
   observaciones: string;
   codigoPostal: number;
-  estadoId: number;
-  ciudadId: number;
+  estado: string;
+  ciudad: string;
   numeroExterior: number;
   numeroInterior: number;
   calle: string;
@@ -31,8 +31,8 @@ export interface IMedicsForm {
   especialidadId?: number;
   observaciones: string;
   codigoPostal: number;
-  estadoId?: number;
-  ciudadId?: number;
+  estado?: string;
+  ciudad?: string;
   numeroExterior: number;
   numeroInterior?: number;
   calle: string;
@@ -52,8 +52,8 @@ export class MedicsFormValues implements IMedicsForm {
   especialidadId = undefined;
   observaciones = "";
   codigoPostal = 0;
-  estadoId = undefined;
-  ciudadId = undefined;
+  estado = "";
+  ciudad = "";
   numeroExterior = 0;
   numeroInterior = undefined;
   calle = "";

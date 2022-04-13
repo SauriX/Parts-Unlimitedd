@@ -18,7 +18,7 @@ import HeaderTitle from "../../app/common/header/HeaderTitle";
 import Search from "antd/es/transfer/search";
 import Indications from "../../views/Indications";
 
-type IndicationsTableProps = {
+type IndicationsTableProps = { 
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
