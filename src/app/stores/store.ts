@@ -8,6 +8,7 @@ import IndicationStore from "./indicationStore";
 import CatalogStore from "./catalogStore";
 import OptionStore from "./optionStore";
 import RoleStore from "./roleStore";
+import LocationStore from "./locationStore";
 configure({
   enforceActions: "never",
 });
@@ -20,7 +21,8 @@ interface Store {
   medicsStore: MedicsStore;
   indicationStore: IndicationStore;
   catalogStore: CatalogStore;
-  roleStore:RoleStore;
+  roleStore: RoleStore;
+  locationStore: LocationStore;
 }
 
 export const store: Store = {
@@ -32,6 +34,7 @@ export const store: Store = {
   indicationStore: new IndicationStore(),
   catalogStore: new CatalogStore(),
   roleStore: new RoleStore(),
+  locationStore: new LocationStore(),
 };
 
 export const StoreContext = createContext(store);

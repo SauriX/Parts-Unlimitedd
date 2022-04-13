@@ -1,5 +1,4 @@
-
-import { Button, Divider, PageHeader, Spin, Table,Form, Row, Col,  Modal,  } from "antd";
+import { Button, Divider, PageHeader, Spin, Table, Form, Row, Col, Modal } from "antd";
 import React, { FC, Fragment, useEffect, useRef, useState } from "react";
 import {
   defaultPaginationProperties,
@@ -8,11 +7,11 @@ import {
   ISearch,
 } from "../../app/common/table/utils";
 import { formItemLayout } from "../../app/util/utils";
-import {IBranchForm,IBranchInfo} from "../../app/models/branch";
+import { IBranchForm, IBranchInfo } from "../../app/models/branch";
 import useWindowDimensions, { resizeWidth } from "../../app/util/window";
 import { EditOutlined, LockOutlined } from "@ant-design/icons";
 import IconButton from "../../app/common/button/IconButton";
-import { useNavigate,useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import PasswordInput from "../../app/common/form/PasswordInput";
@@ -21,19 +20,21 @@ type RoleTableProps = {
   printing: boolean;
 };
 
-const RoleTable:FC<RoleTableProps> = ({ componentRef, printing })=> {
-    const branches: IBranchInfo[] =[{
-        idSucursal:"string",
-        clave:"string",
-        nombre:"string" ,
-        correo:"string" ,
-        telefono:123456789,
-        ubicacion:"ubicacion",
-        clinico:"string" ,
-        activo:true
-    }]
+const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
+  const branches: IBranchInfo[] = [
+    {
+      idSucursal: "string",
+      clave: "string",
+      nombre: "string",
+      correo: "string",
+      telefono: 123456789,
+      ubicacion: "ubicacion",
+      clinico: "string",
+      activo: true,
+    },
+  ];
   const { roleStore } = useStore();
-  const { roles, getAll  } = roleStore;
+  const { roles, getAll } = roleStore;
   let navigate = useNavigate();
   const { width: windowWidth } = useWindowDimensions();
   const [loading, setLoading] = useState(false);
@@ -73,40 +74,40 @@ const RoleTable:FC<RoleTableProps> = ({ componentRef, printing })=> {
       ),
     },
     {
-        ...getDefaultColumnProps("nombre", "Nombre", {
-          searchState,
-          setSearchState,
-          width: "20%",
-          minWidth: 150,
-          windowSize: windowWidth,
-        }),
+      ...getDefaultColumnProps("nombre", "Nombre", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
     },
     {
-        ...getDefaultColumnProps("correo", "Correo", {
-          searchState,
-          setSearchState,
-          width: "20%",
-          minWidth: 150,
-          windowSize: windowWidth,
-        }),
+      ...getDefaultColumnProps("correo", "Correo", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
     },
     {
-        ...getDefaultColumnProps("telefono", "Telefono", {
-          searchState,
-          setSearchState,
-          width: "20%",
-          minWidth: 150,
-          windowSize: windowWidth,
-        }),
+      ...getDefaultColumnProps("telefono", "Telefono", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
     },
     {
-        ...getDefaultColumnProps("telefono", "Telefono", {
-          searchState,
-          setSearchState,
-          width: "20%",
-          minWidth: 150,
-          windowSize: windowWidth,
-        }),
+      ...getDefaultColumnProps("telefono", "Telefono", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
     },
     {
       key: "activo",
@@ -122,7 +123,7 @@ const RoleTable:FC<RoleTableProps> = ({ componentRef, printing })=> {
       title: "Editar",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value,rol) => (
+      render: (value, rol) => (
         <IconButton
           title="Editar usuario"
           icon={<EditOutlined />}
@@ -134,19 +135,20 @@ const RoleTable:FC<RoleTableProps> = ({ componentRef, printing })=> {
     },
   ];
 
-  return (<div ref={componentRef}>
-    <Table<IBranchInfo>
-      loading={loading}
-      size="small"
-      rowKey={(record) => record.idSucursal}
-      columns={columns}
-      dataSource={[...roles]}
-      pagination={defaultPaginationProperties}
-      sticky
-      scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-    />
+  return (
+    <div ref={componentRef}>
+      <Table<IBranchInfo>
+        loading={loading}
+        size="small"
+        rowKey={(record) => record.idSucursal}
+        columns={columns}
+        dataSource={[]}
+        pagination={defaultPaginationProperties}
+        sticky
+        scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+      />
     </div>
-);
+  );
 };
 
 export default RoleTable;
