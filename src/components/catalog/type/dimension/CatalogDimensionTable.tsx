@@ -41,15 +41,15 @@ const CatalogDimensionTable: FC<CatalogDimensionTableProps> = ({ componentRef, p
 
   console.log("Table");
 
-  useEffect(() => {
-    const readCatalogs = async () => {
-      setLoading(true);
-      await getAll(catalogName, searchParams.get("search") ?? "all");
-      setLoading(false);
-    };
+  // useEffect(() => {
+  //   const readCatalogs = async () => {
+  //     setLoading(true);
+  //     await getAll(catalogName, searchParams.get("search") ?? "all");
+  //     setLoading(false);
+  //   };
 
-    readCatalogs();
-  }, [getAll, searchParams]);
+  //   readCatalogs();
+  // }, [getAll, searchParams]);
 
   const columns: IColumns<ICatalogList> = [
     {

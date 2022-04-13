@@ -47,8 +47,11 @@ const CatalogNormalTable: FC<CatalogNormalTableProps> = ({ componentRef, printin
       setLoading(false);
     };
 
-    readCatalogs();
-  }, [catalogName, getAll, searchParams]);
+    if (catalogs.length === 0) {
+      readCatalogs();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const columns: IColumns<ICatalogList> = [
     {

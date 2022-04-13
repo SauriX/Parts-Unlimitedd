@@ -54,12 +54,12 @@ const CatalogHeader: FC<CatalogHeaderProps> = ({ catalog, setCatalog, handlePrin
   const search = async (search: string | undefined) => {
     search = search === "" ? undefined : search;
 
+    if (catalog) {
+      await getAll(catalog.value.toString(), search ?? "all");
+    }
+
     if (search) {
       searchParams.set("search", search);
-
-      if (catalog) {
-        await getAll(catalog.value.toString(), searchParams.get("search") ?? undefined);
-      }
     } else {
       searchParams.delete("search");
     }
