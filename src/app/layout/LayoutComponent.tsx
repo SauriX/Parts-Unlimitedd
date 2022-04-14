@@ -1,13 +1,12 @@
 import { Layout, Menu, Typography, Image, Avatar, Row, Col, Popover } from "antd";
 import React,{useEffect} from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet,useNavigate, useLocation } from "react-router-dom";
 import IconSelector from "../common/icons/IconSelector";
 import { IMenu } from "../models/shared";
 import { UserOutlined, DownOutlined, LogoutOutlined } from "@ant-design/icons";
 import DropdownOption from "../common/header/DropdownOption";
 import { useStore } from "../stores/store";
 import { observer } from "mobx-react-lite";
-
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
 const { Text } = Typography;
@@ -46,7 +45,7 @@ const menus: IMenu[] = [
 const LayoutComponent = () => {
   const { profileStore } = useStore();
   const { profile,getMenu,menu,getprofile } = profileStore;
-
+  let navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
     const readUsers = async () => {
@@ -76,6 +75,7 @@ const LayoutComponent = () => {
                     icon={<LogoutOutlined />}
                     onClick={() => {
                       alert("Sesión terminada");
+                      navigate(`login`);
                     }}
                   />
                 </Row>

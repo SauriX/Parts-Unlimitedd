@@ -30,16 +30,16 @@ import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import { getDefaultColumnProps, IColumns, defaultPaginationProperties, ISearch } from "../../../app/common/table/utils";
 type BranchFormProps = {
-
   componentRef: React.MutableRefObject<any>;
-  printing: boolean;
+  load: boolean;
 };
 type UrlParams = {
   id: string;
 };
-const BranchForm: FC<BranchFormProps> = ({ componentRef, printing }) => {
-  const { locationStore } = useStore();
+const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
+  const { locationStore,branchStore } = useStore();
   const { getColoniesByZipCode } = locationStore;
+  const { create,update,getAll,sucursales,getById }=branchStore;
   const [searchParams] = useSearchParams();
  
   const CheckReadOnly = () => {
@@ -69,6 +69,32 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, printing }) => {
     setColonies([]);
   };
 
+  useEffect(() => {
+
+    const readuser = async (idUser: string) => {
+      setLoading(true);
+      const user = await getById(idUser);
+      form.setFieldsValue(user!);
+
+      setValues(user!);
+      setLoading(false);
+    };
+    if (id) {
+      readuser(id);
+    }
+  }, [form, getById, id]);
+  useEffect(() => {
+    const readUsers = async () => {
+      console.log("soy el use efect");
+      setLoading(true);
+      await getAll(searchParams.get("search") ?? "all");
+      console.log("roles");
+      console.log(sucursales);
+      setLoading(false);
+    };
+
+    readUsers();
+  }, [getAll, searchParams]);
   const onValuesChange = async (changedValues: any) => {
     const field = Object.keys(changedValues)[0];
 
@@ -97,6 +123,28 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, printing }) => {
     }
   };
   console.log("Table");
+  const onFinish = async (newValues: IBranchForm) => {
+    const User = { ...values, ...newValues };
+
+/*     const permissions = permisos?.map((x) => ({
+      ...x, asignado: targetKeys.includes(x.id.toString()),
+    }));
+    User.permisos = permissions; */
+/*     if (!User.permisos || User.permisos.filter((x) => x.asignado).length === 0) {
+      alerts.warning(messages.emptyPermissions); return;
+
+    } */
+    let success = false;
+    if (!User.IdSucursal) {
+      success = await create(User);
+    } else {
+      success = await update(User);
+    }
+
+    if (success) {
+      navigate(`/sucursales?search=${searchParams.get("search") || "all"}`);
+    }
+  };
   const { width: windowWidth } = useWindowDimensions();
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
@@ -129,18 +177,30 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, printing }) => {
       }),
     },
   ];
+  const actualUser = () => {
+    if (id) {
+      const index = sucursales.findIndex(x => x.idSucursal === id);
+      return index + 1;
+    }
+    return 0;
+  }
+  const siguienteUser = (index: number) => {
   
+    const user = sucursales[index];
+
+    navigate(`/sucursales/${user?.idSucursal}?mode=${searchParams.get("mode")}&search=${searchParams.get("search") ?? "all"}`);
+  } 
   return (
-    <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
+    <Spin spinning={loading || load} tip={load ? "Imprimiendo" : ""}>
               <Row style={{ marginBottom: 24 }}>
           {id &&
             <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
-              <Pagination size="small" total={/* roles.length */9} pageSize={1} current={/* actualUser() */4} onChange={(value) => { /* siguienteUser(value - 1) */ }} />
+              <Pagination size="small" total={ sucursales.length} pageSize={1} current={actualUser()} onChange={(value) => { siguienteUser(value - 1) }} />
             </Col>
           }
           {!CheckReadOnly() &&
             <Col md={24} sm={24} xs={24} style={id ? { textAlign: "right" } : { marginLeft: "80%" }}>
-              <Button onClick={() => { navigate(`/roles`); }} >Cancelar</Button>
+              <Button onClick={() => { navigate(`/sucursales`); }} >Cancelar</Button>
               <Button type="primary" htmlType="submit" onClick={() => { form.submit() }}>
                 Guardar
               </Button>
@@ -153,22 +213,22 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, printing }) => {
             </Col>
           }
         </Row>
-      <div style={{ display: printing ? "none" : "" }}>
+      <div style={{ display: load ? "none" : "" }}>
         <div ref={componentRef}>
-          {printing && (
+          {load && (
             <PageHeader
               ghost={false}
               title={<HeaderTitle title="Sucursales" image="reagent" />}
               className="header-container"
             ></PageHeader>
           )}
-          {printing && <Divider className="header-divider" />}
+          {load && <Divider className="header-divider" />}
           <Form<IBranchForm>
             {...formItemLayout}
             form={form}
             name="branch"
             initialValues={values}
-            onFinish={() => {}}
+            onFinish={onFinish}
             scrollToFirstError
             onFieldsChange={() => {
               setDisabled(

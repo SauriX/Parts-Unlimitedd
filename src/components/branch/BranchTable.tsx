@@ -34,8 +34,8 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       activo: true,
     },
   ];
-  const { roleStore } = useStore();
-  const { roles, getAll } = roleStore;
+  const { branchStore } = useStore();
+  const { sucursales, getAll } = branchStore;
   let navigate = useNavigate();
   const { width: windowWidth } = useWindowDimensions();
   const [loading, setLoading] = useState(false);
@@ -51,7 +51,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
     };
-
+ 
     readUsers();
   }, [getAll, searchParams]);
   const columns: IColumns<IBranchInfo> = [
@@ -162,7 +162,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
         size="small"
         rowKey={(record) => record.idSucursal}
         columns={columns}
-        dataSource={branches}
+        dataSource={sucursales}
         pagination={defaultPaginationProperties}
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}

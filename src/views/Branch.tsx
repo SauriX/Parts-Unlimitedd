@@ -7,10 +7,11 @@ import { useStore } from "../app/stores/store";
 import BranchHeader from "../components/branch/BranchHeader";
 import BranchTable from "../components/branch/BranchTable";
 const Branch = () => {
-  const { userStore } = useStore();
-  const { access } = userStore;
+  const { branchStore } = useStore();
+  const { access,exportList } = branchStore;
   const [printing, setPrinting] = useState(false);
   const [accessing, setAccessing] = useState(true);
+  const [searchParams, setSearchParams] = useSearchParams();
   useEffect(() => {
     const checkAccess = async () => {
       await access();
@@ -26,6 +27,13 @@ const Branch = () => {
     };
   }, []);
   const componentRef = useRef<any>();
+  const handleDownload = async () => {
+    setPrinting(true);
+    var succes= await exportList(searchParams.get("search") ?? "all");
+    if(succes){
+      setPrinting(false);
+    }
+  };
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     onBeforeGetContent: () => {

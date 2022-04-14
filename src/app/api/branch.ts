@@ -1,17 +1,17 @@
-import { IRole, IRoleForm,IRolePermission } from "../models/role";
+import { IBranchForm,IBranchInfo } from "../models/branch";
 import requests from "./agent";
 
 const Role = {
   access: (): Promise<void> => requests.get("/user/scopes"),
-  getAll: (search: string): Promise<IRole[]> => requests.get(`Rol/all/${!search ? "all" : search}`),
-  getById: (id: string): Promise<IRoleForm> => requests.get(`Rol/rol/${id}`),
-  getPermission: (): Promise<IRolePermission[]> => requests.get(`Rol/permisos`),
-  create: (role: IRoleForm): Promise<boolean> => requests.post("/Rol", role),
-  update: (role: IRoleForm): Promise<boolean> => requests.put("/Rol", role),
+  getAll: (search: string): Promise<IBranchInfo[]> => requests.get(`Branch/all/${!search ? "all" : search}`),
+  getById: (id: string): Promise<IBranchForm> => requests.get(`Branch/rol/${id}`),
+  //getPermission: (): Promise<IRolePermission[]> => requests.get(`Rol/permisos`), */
+  create: (branch: IBranchForm): Promise<boolean> => requests.post("/Branch", branch),
+  update: (branch: IBranchForm): Promise<boolean> => requests.put("/Branch", branch), 
   exportList: (search: string): Promise<void> =>
-  requests.download(`Rol/export/list/${!search ? "all" : search}`, "Catálogo de Roles.xlsx"),
+  requests.download(`Branch/export/list/${!search ? "all" : search}`, "Catálogo de Sucursales.xlsx"),
   exportForm: (id: string, clave?: string): Promise<void> =>
-  requests.download(`Rol/export/form/${id}`, `Catálogo de Roles (${clave}).xlsx`),
+  requests.download(`Branch/export/form/${id}`, `Catálogo de Sucursales (${clave}).xlsx`),
 };
 
 export default Role;

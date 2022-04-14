@@ -9,6 +9,7 @@ import CatalogStore from "./catalogStore";
 import OptionStore from "./optionStore";
 import RoleStore from "./roleStore";
 import LocationStore from "./locationStore";
+import BranchStore from "./brancStore"
 configure({
   enforceActions: "never",
 });
@@ -23,6 +24,7 @@ interface Store {
   catalogStore: CatalogStore;
   roleStore: RoleStore;
   locationStore: LocationStore;
+  branchStore: BranchStore
 }
 
 export const store: Store = {
@@ -35,6 +37,7 @@ export const store: Store = {
   catalogStore: new CatalogStore(),
   roleStore: new RoleStore(),
   locationStore: new LocationStore(),
+  branchStore: new BranchStore()
 };
 
 export const StoreContext = createContext(store);
