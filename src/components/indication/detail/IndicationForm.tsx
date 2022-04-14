@@ -141,7 +141,7 @@ const [searchState, setSearchState] = useState<ISearch>({
 
 const columns: IColumns<IStudyList> = [
   {
-    ...getDefaultColumnProps("Id", "Id Estudio", {
+    ...getDefaultColumnProps("clave", "Id Estudio", {
       searchState,
       setSearchState,
       width: "30%",
@@ -278,14 +278,22 @@ const columns: IColumns<IStudyList> = [
       </div>
     </div>
     <Row>
+      <Col md={24} sm={12} style={{marginRight: 20, textAlign: "center" }}>
+      <PageHeader
+          ghost={false}
+          title={<HeaderTitle title="Estudios Donde se Encuentra la Indicacion"/>}
+          className="header-container"
+        ></PageHeader>
+        <Divider className="header-divider" />
     <Table<IStudyList>
-          size="large"
+          size="small"
           rowKey={(record) => record.id}
           columns={columns.slice(0, 3)}
           pagination={false}
           dataSource={[...(values.estudios??[])]}
           scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
         />
+        </Col>
     </Row>
 
   </Spin>
