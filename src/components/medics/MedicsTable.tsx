@@ -171,7 +171,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       width: windowWidth < resizeWidth ? 100 : "6%",
       render: (value) => (
         <IconButton
-          title="Editar Medico"
+          title="Editar Médico"
           icon={<EditOutlined />}
           onClick={() => {
             navigate(`/medics/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`);
@@ -187,7 +187,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Medicos" image="doctor" />}
+          title={<HeaderTitle title="Catálogo de Médicos" image="doctor" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />

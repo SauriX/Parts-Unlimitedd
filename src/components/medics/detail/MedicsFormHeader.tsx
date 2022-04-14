@@ -29,7 +29,7 @@ const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({id, handlePrint }) => {
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Medicos" image="doctor" />}
+      title={<HeaderTitle title="Catálogo de Médicos" image="doctor" />}
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

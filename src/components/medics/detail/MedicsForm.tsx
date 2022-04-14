@@ -43,6 +43,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   const { medicsStore, optionStore, locationStore } = useStore();
   const { getById, create, update, getAll, medics } = medicsStore;
   const { clinicOptions, getClinicOptions } = optionStore;
+  const { filesOptions, getfilesOptions } = optionStore;
   const { getColoniesByZipCode } = locationStore;
 
   const navigate = useNavigate();
@@ -113,6 +114,10 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   useEffect(() => {
     getClinicOptions();
   }, [getClinicOptions]);
+
+  useEffect(() => {
+    getfilesOptions();
+  }, [getfilesOptions]);
 
   useEffect(() => {
     const readMedics = async () => {
@@ -284,7 +289,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo de Medicos" image="doctor" />}
+              title={<HeaderTitle title="Catálogo de Médicos" image="doctor" />}
               className="header-container"
             ></PageHeader>
           )}
@@ -345,16 +350,17 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
-                <NumberInput
+
+                <SelectInput
                   formProps={{
                     name: "especialidadId",
                     label: "Especialidad",
                   }}
-                  max={9999999999}
-                  min={9}
                   required
                   readonly={readonly}
+                  options={filesOptions}
                 />
+
                 {/* <NumberInput
                   formProps={{
                     name: "Clinicas",
@@ -407,7 +413,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                 <NumberInput
                   formProps={{
                     name: "numeroExterior",
-                    label: "Numero Exterior",
+                    label: "Número Exterior",
                   }}
                   max={9999999999}
                   min={1}
@@ -490,12 +496,12 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
         <div></div>
       </div>
 
-      <Divider orientation="left">Clinica/Empresa</Divider>
+      <Divider orientation="left">Clínica/Empresa</Divider>
       <List<IClinicList>
         header={
           <div>
             <Col md={12} sm={24} style={{ marginRight: 20 }}>
-              Nombre Clinica/Empresa
+              Nombre Clínica/Empresa
               <Select
                 options={clinicOptions}
                 onChange={(value, option: any) => {
