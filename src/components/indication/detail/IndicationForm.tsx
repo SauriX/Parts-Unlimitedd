@@ -25,6 +25,7 @@ import messages from "../../../app/util/messages";
 import { getDefaultColumnProps, IColumns, defaultPaginationProperties, ISearch } from "../../../app/common/table/utils";
 import { IStudyList } from "../../../app/models/study";
 import { observer } from "mobx-react-lite";
+import Study from "../../../app/api/study";
 
 type IndicationFormProps = {
   id: number;
@@ -143,8 +144,7 @@ const columns: IColumns<IStudyList> = [
     ...getDefaultColumnProps("Id", "Id Estudio", {
       searchState,
       setSearchState,
-      width: "20%",
-      minWidth: 150,
+      width: "30%",
       windowSize: windowWidth,
     }),
   },
@@ -152,17 +152,15 @@ const columns: IColumns<IStudyList> = [
     ...getDefaultColumnProps("nombre", "Estudio", {
       searchState,
       setSearchState,
-      width: "20%",
-      minWidth: 150,
+      width: "30%",
       windowSize: windowWidth,
     }),
   },
   {
-    ...getDefaultColumnProps("descripcion", "Descripcion", {
+    ...getDefaultColumnProps("areaId", "AreaId", {
       searchState,
       setSearchState,
-      width: "20%",
-      minWidth: 150,
+      width: "30%",
       windowSize: windowWidth,
     }),
   },
@@ -259,7 +257,7 @@ const columns: IColumns<IStudyList> = [
               <TextAreaInput
                   formProps={{
                     name: "descripcion",
-                    label: "Descripcion",
+                    label: "Descripción",
                   }}
                   max={500}
                   rows={8}
@@ -280,6 +278,14 @@ const columns: IColumns<IStudyList> = [
       </div>
     </div>
     <Row>
+    <Table<IStudyList>
+          size="large"
+          rowKey={(record) => record.id}
+          columns={columns.slice(0, 3)}
+          pagination={false}
+          dataSource={[...(values.estudios??[])]}
+          scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+        />
     </Row>
 
   </Spin>

@@ -35,4 +35,16 @@ export default class OptionStore {
       this.clinicOptions = [];
     }
   };
+
+  filesOptions: IOptions[] = [];
+
+  getfilesOptions = async () => {
+    try {
+      const files = await Catalog.getActive<ICatalogNormalList>("file");
+      console.log(files)
+      this.filesOptions = files.map((x) => ({ value: x.id, label: x.nombre }));
+    } catch (error) {
+      this.filesOptions = [];
+    }
+  };
 }
