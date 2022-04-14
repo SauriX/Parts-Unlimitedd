@@ -78,7 +78,7 @@ const RoleTable:FC<RoleTableProps> = ({ componentRef, printing })=> {
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value,rol) => (
         <IconButton
-          title="Editar usuario"
+          title="Editar Rol"
           icon={<EditOutlined />}
           onClick={() => {
             navigate(`/roles/${rol.id}?search=${searchParams.get("search") ?? "all"}`);

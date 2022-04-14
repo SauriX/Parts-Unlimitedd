@@ -70,6 +70,8 @@ export default class RolStore {
    
     try {
       const rol = await Rol.getById(id);
+      console.log("hey cosas");
+      console.log(rol.permisos);
       this.permisos = rol.permisos;
       this.role = rol;
       return rol;

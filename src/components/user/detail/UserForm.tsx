@@ -356,7 +356,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
             </Col>
             <Col md={12} sm={24} xs={12}>
               <SelectInput
-                formProps={{ name: "usertype", label: "Tipo de usuario" }}
+                formProps={{ name: "tipoUsuario", label: "Tipo de usuario" }}
                 required
                 options={options}
                 readonly={CheckReadOnly()}

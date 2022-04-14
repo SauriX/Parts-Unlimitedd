@@ -14,4 +14,5 @@ export interface IBranchInfo {
   ubicacion: string;
   clinico: string;
   activo: boolean;
+  codigoPostal: string;
 }

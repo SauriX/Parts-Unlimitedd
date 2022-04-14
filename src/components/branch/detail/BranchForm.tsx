@@ -18,19 +18,19 @@ import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 
 type BranchFormProps = {
-  id: number;
+
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
 
-const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
+const BranchForm: FC<BranchFormProps> = ({ componentRef, printing }) => {
   const { locationStore } = useStore();
   const { getColoniesByZipCode } = locationStore;
-
-  const navigate = useNavigate();
-
   const [searchParams] = useSearchParams();
-
+  const [readonly, setReadonly] = useState(
+    searchParams.get("mode") === "ReadOnly"
+  );
+  const navigate = useNavigate();
   const [form] = Form.useForm<IBranchForm>();
 
   const [loading, setLoading] = useState(false);
@@ -129,6 +129,7 @@ const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
                 }}
                 max={100}
                 required
+                readonly={readonly}
               />
             
               <TextInput
@@ -138,6 +139,7 @@ const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
                 }}
                 max={100}
                 required
+                readonly={readonly}
               />
                 <TextInput
                   formProps={{
@@ -145,6 +147,7 @@ const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
                     label: "Codigo postal",
                   }}
                   max={100}
+                  readonly={readonly}
                 />
                 <TextInput
                   formProps={{
@@ -153,6 +156,7 @@ const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   max={100}
                   required
+                  readonly={readonly}
                 />
                 <TextInput
                   formProps={{
@@ -161,6 +165,7 @@ const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   max={100}
                   required
+                  readonly={readonly}
                 />
                 <SelectInput
                   formProps={{
@@ -169,6 +174,7 @@ const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   required
                   options={colonies}
+                  readonly={readonly}
                 />
               
               <NumberInput
@@ -178,7 +184,7 @@ const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   max={9999999999}
                   min={1}
-                  //readonly={readonly}
+                  readonly={readonly}
                 />
                 <TextInput
                   formProps={{
@@ -187,7 +193,7 @@ const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   max={100}
                   required
-                  // readonly={readonly}
+                   readonly={readonly}
                 />
                 <SelectInput
                   formProps={{
@@ -195,7 +201,7 @@ const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
                     label: "Colonia",
                   }}
                   required
-                  //readonly={readonly}
+                  readonly={readonly}
                   options={colonies}
                   />
                   </Col>
@@ -206,17 +212,9 @@ const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
                     label: "Correo",
                   }}
                   max={100}
-                  //readonly={readonly}
+                  required
+                  readonly={readonly}
                   type="email"
-                />
-                <NumberInput
-                  formProps={{
-                    name: "celular",
-                    label: "Celular",
-                  }}
-                  max={9999999999}
-                  min={1000000000}
-                  //readonly={readonly}
                 />
                 <NumberInput
                   formProps={{
@@ -225,9 +223,36 @@ const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   max={9999999999}
                   min={1111111111}
-                  //readonly={readonly}
-                />
+                  readonly={readonly}
 
+                />
+                <TextInput
+                  formProps={{
+                    name: "clinicos",
+                    label: "Clinicos",
+                  }}
+                  max={100}
+                  readonly={readonly}
+                  required
+                />
+                <TextInput
+                  formProps={{
+                    name: "presupuestos",
+                    label: "Presupuestos",
+                  }}
+                  max={100}
+                  readonly={readonly}
+                  required
+                />
+                <TextInput
+                  formProps={{
+                    name: "facturacion",
+                    label: "Facturacion",
+                  }}
+                  max={100}
+                  readonly={readonly}
+                  required
+                />
                 <SwitchInput
                   name="activo"
                   onChange={(value) => {
@@ -238,7 +263,7 @@ const BranchForm: FC<BranchFormProps> = ({ id, componentRef, printing }) => {
                     }
                   }}
                   label="Activo"
-                  //readonly={readonly}
+                  readonly={readonly}
                 />
               </Col>
             </Row>

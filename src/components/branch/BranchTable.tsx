@@ -28,6 +28,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       nombre: "string",
       correo: "string",
       telefono: 123456789,
+      codigoPostal:"17016",
       ubicacion: "ubicacion",
       clinico: "string",
       activo: true,
@@ -58,7 +59,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -66,7 +67,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/roles/${role.idSucursal}?mode=ReadOnly&search=${searchParams.get("search") ?? "all"}`);
+            navigate(`/sucursales/${role.idSucursal}?mode=ReadOnly&search=${searchParams.get("search") ?? "all"}`);
           }}
         >
           {value}
@@ -77,7 +78,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -86,7 +87,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("correo", "Correo", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "15%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -95,35 +96,35 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("telefono", "Telefono", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "15%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
     },
     {
-      ...getDefaultColumnProps("Codigo Postal", "Codigo Postal", {
+      ...getDefaultColumnProps("codigoPostal", "Codigo Postal", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
     },
     {
-      ...getDefaultColumnProps("Localizacion", "Localizacion", {
+      ...getDefaultColumnProps("ubicacion", "Localizacion", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
     },
     
     {
-      ...getDefaultColumnProps("clinicos", "Clinicos", {
+      ...getDefaultColumnProps("clinico", "Clinicos", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -147,7 +148,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
           title="Editar usuario"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/roles/${rol.idSucursal}?search=${searchParams.get("search") ?? "all"}`);
+            navigate(`/sucursales/${rol.idSucursal}?search=${searchParams.get("search") ?? "all"}`);
           }}
         />
       ),
@@ -161,7 +162,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
         size="small"
         rowKey={(record) => record.idSucursal}
         columns={columns}
-        dataSource={[]}
+        dataSource={branches}
         pagination={defaultPaginationProperties}
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}

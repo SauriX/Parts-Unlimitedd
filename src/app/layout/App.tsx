@@ -45,6 +45,7 @@ function App() {
           <Route path="roles/new-role" element={<NewRole />} />
           <Route path="roles/:id" element={<RoleDetail />} />
           <Route path="sucursales" element={<Branch />} />
+          <Route path="sucursales/new-sucursal" element={<BranchDetail />} />
           <Route path="sucursales/:id" element={<BranchDetail />} />
           <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
           <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />

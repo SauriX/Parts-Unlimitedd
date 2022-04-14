@@ -6,11 +6,10 @@ import { useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 
 type BranchFormHeaderProps = {
-  id: number;
   handlePrint: () => void;
 };
 
-const BranchFormHeader: FC<BranchFormHeaderProps> = ({ id, handlePrint }) => {
+const BranchFormHeader: FC<BranchFormHeaderProps> = ({ handlePrint }) => {
   let navigate = useNavigate();
 
   return (
@@ -26,7 +25,7 @@ const BranchFormHeader: FC<BranchFormHeaderProps> = ({ id, handlePrint }) => {
           title="Regresar"
           image="back"
           onClick={() => {
-            navigate("/reagent");
+            navigate("/sucursales");
           }}
         />,
       ]}

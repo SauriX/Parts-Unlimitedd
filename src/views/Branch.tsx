@@ -4,8 +4,8 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
-import RoleHeader from "../components/role/RoleHeader";
-import RoleTable from "../components/role/RoleTable";
+import BranchHeader from "../components/branch/BranchHeader";
+import BranchTable from "../components/branch/BranchTable";
 const Branch = () => {
   const { userStore } = useStore();
   const { access } = userStore;
@@ -37,9 +37,9 @@ const Branch = () => {
   });
   return (
     <Fragment>
-    {/* <RoleHeader handlePrint={handlePrint}/> */}
+    <BranchHeader handlePrint={handlePrint} handleList={()=>{}}/>
     <Divider className="header-divider" />
-    <RoleTable componentRef={componentRef} printing={printing}/>
+    <BranchTable componentRef={componentRef} printing={printing}/>
     </Fragment>
   );
 };

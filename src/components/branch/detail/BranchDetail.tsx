@@ -34,21 +34,13 @@ const BranchDetail = () => {
   });
 
   const { id } = useParams<UrlParams>();
-  const reagentId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
 
-  useEffect(() => {
-    if (reagentId === undefined) {
-      navigate("/notFound");
-    }
-  }, [navigate, reagentId]);
-
-  if (reagentId === undefined) return null;
 
   return (
     <Fragment>
-      <BranchFormHeader id={reagentId} handlePrint={handlePrint} />
+      <BranchFormHeader  handlePrint={handlePrint} />
       <Divider className="header-divider" />
-      <BranchForm id={reagentId} componentRef={componentRef} printing={printing} />
+      <BranchForm  componentRef={componentRef} printing={printing} />
     </Fragment>
   );
 };
