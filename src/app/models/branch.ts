@@ -1,8 +1,22 @@
+import { IStudyList } from "./study";
 export interface IBranchForm {
-  estado: string;
-  ciudad: string;
-  coloniaId: number;
-  codigoPostal: string;
+  IdSucursal:string;
+  Clave:string;
+  Nombre:string; 
+  Calle:string;
+  Correo:string;
+  Telefono:number;
+  NumeroExt:number;
+  NumeroInt:number;
+  PresupuestosId:string;
+  FacturaciónId:string;
+  ClinicosId:string;
+  Activo:boolean;
+  estado:string;
+  ciudad:string;
+  coloniaId:number;
+  codigoPostal:string;
+  estudios:IStudyList[];
 }
 
 export interface IBranchInfo {
@@ -15,4 +29,29 @@ export interface IBranchInfo {
   clinico: string;
   activo: boolean;
   codigoPostal: string;
+}
+
+export class BranchFormValues implements IBranchForm {
+  IdSucursal="";
+  Clave="";
+  Nombre=""; 
+  Calle="";
+  Correo="";
+  Telefono=0;
+  PresupuestosId="";
+  FacturaciónId="";
+  ClinicosId="";
+  ServicioId="";
+  Activo=false;
+  estado="";
+  ciudad="";
+  coloniaId=0;
+  codigoPostal="";
+  estudios=[];
+  NumeroInt =0;
+  NumeroExt=0;
+
+  constructor(init?: IBranchForm) {
+    Object.assign(this, init);
+  }
 }
