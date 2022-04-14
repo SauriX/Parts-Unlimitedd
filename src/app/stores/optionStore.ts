@@ -36,15 +36,15 @@ export default class OptionStore {
     }
   };
 
-  filesOptions: IOptions[] = [];
+  fieldOptions: IOptions[] = [];
 
-  getfilesOptions = async () => {
+  getfieldsOptions = async () => {
     try {
-      const files = await Catalog.getActive<ICatalogNormalList>("file");
-      console.log(files)
-      this.filesOptions = files.map((x) => ({ value: x.id, label: x.nombre }));
+      const field = await Catalog.getActive<ICatalogNormalList>("field");
+      console.log(field)
+      this.fieldOptions = field.map((x) => ({ value: x.id, label: x.nombre }));
     } catch (error) {
-      this.filesOptions = [];
+      this.fieldOptions = [];
     }
   };
 }

@@ -43,7 +43,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   const { medicsStore, optionStore, locationStore } = useStore();
   const { getById, create, update, getAll, medics } = medicsStore;
   const { clinicOptions, getClinicOptions } = optionStore;
-  const { filesOptions, getfilesOptions } = optionStore;
+  const { fieldOptions, getfieldsOptions } = optionStore;
   const { getColoniesByZipCode } = locationStore;
 
   const navigate = useNavigate();
@@ -116,8 +116,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   }, [getClinicOptions]);
 
   useEffect(() => {
-    getfilesOptions();
-  }, [getfilesOptions]);
+    getfieldsOptions();
+  }, [getfieldsOptions]);
 
   useEffect(() => {
     const readMedics = async () => {
@@ -358,7 +358,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   required
                   readonly={readonly}
-                  options={filesOptions}
+                  options={fieldOptions}
                 />
 
                 {/* <NumberInput
