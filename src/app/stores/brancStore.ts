@@ -6,7 +6,6 @@ import history from "../util/history";
 import { getErrors,tokenName } from "../util/utils";
 import responses from "../util/responses";
 import messages from "../util/messages";
-import Role from "../api/role";
 export default class BranchStore {
   constructor() {
     makeAutoObservable(this);
@@ -47,9 +46,12 @@ export default class BranchStore {
     }
   };
 
-  getAll = async (search: string) => {
+  getAll = async (search: string="all") => {
     try {
+      console.log("oe mira el search");
+      console.log(search);
       const roles= await Branch.getAll(search);
+      console.log(roles);
       this.sucursales = roles;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -61,10 +63,7 @@ export default class BranchStore {
    
     try {
       const rol = await Branch.getById(id);
-/*       console.log("hey cosas");
-      console.log(rol.permisos);
-      this.permisos = rol.permisos;
-       */
+      console.log("mira wacho la sucursal");
       console.log(rol);
       this.sucursal = rol;
       return rol;

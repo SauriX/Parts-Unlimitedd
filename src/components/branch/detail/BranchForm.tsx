@@ -1,3 +1,4 @@
+import React, { FC, useEffect, useState } from "react";
 import {
   Spin,
   Form,
@@ -7,28 +8,26 @@ import {
   Button,
   PageHeader,
   Divider,
-  Table,
+  Select,
 } from "antd";
-import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
-import { IStudyList } from "../../../app/models/study";
-import React, { FC, useEffect, useState } from "react";
+import { IDepartamenList } from "../../../app/models/departament";
+import { List, Typography } from "antd";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
 import { useStore } from "../../../app/stores/store";
-import { IReagentForm, ReagentFormValues } from "../../../app/models/reagent";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
 import { IBranchForm,BranchFormValues } from "../../../app/models/branch";
-import { ILocation } from "../../../app/models/location";
 import { IOptions } from "../../../app/models/shared";
 import NumberInput from "../../../app/common/form/NumberInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
 import SelectInput from "../../../app/common/form/SelectInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
-import { getDefaultColumnProps, IColumns, defaultPaginationProperties, ISearch } from "../../../app/common/table/utils";
+
+
 type BranchFormProps = {
   componentRef: React.MutableRefObject<any>;
   load: boolean;
@@ -37,11 +36,19 @@ type UrlParams = {
   id: string;
 };
 const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
-  const { locationStore,branchStore } = useStore();
+  const { locationStore,branchStore,optionStore } = useStore();
   const { getColoniesByZipCode } = locationStore;
   const { create,update,getAll,sucursales,getById }=branchStore;
   const [searchParams] = useSearchParams();
- 
+  const { getdepartamentoOptions, departamentOptions } = optionStore;
+  const [clinic, setClinic] = useState<{ clave: ""; id: number }>();
+  const navigate = useNavigate();
+  const [form] = Form.useForm<IBranchForm>();
+  const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState(true);
+  const [colonies, setColonies] = useState<IOptions[]>([]);
+  const [values, setValues] = useState<IBranchForm>(new BranchFormValues);
+  let { id } = useParams<UrlParams>();
   const CheckReadOnly = () => {
     let result = false;
     const mode = searchParams.get("mode");
@@ -50,16 +57,18 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
     }
     return result;
   }
+  useEffect(() => {
+    getdepartamentoOptions();
+  }, [getdepartamentoOptions]);
 
-  let { id } = useParams<UrlParams>();
-  const navigate = useNavigate();
-  const [form] = Form.useForm<IBranchForm>();
 
-  const [loading, setLoading] = useState(false);
-  const [disabled, setDisabled] = useState(true);
-  const [colonies, setColonies] = useState<IOptions[]>([]);
-  const [values, setValues] = useState<IBranchForm>(new BranchFormValues);
 
+  const deleteClinic = (id: number) => {
+    const clinics = values.departaments.filter((x) => x.id !== id);
+
+    setValues((prev) => ({ ...prev, clinicas: clinics }));
+  };
+  
   const clearLocation = () => {
     form.setFieldsValue({
       estado: undefined,
@@ -73,6 +82,9 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
 
     const readuser = async (idUser: string) => {
       setLoading(true);
+      console.log("here");
+      const all =await getAll("all");
+      console.log(all);
       const user = await getById(idUser);
       form.setFieldsValue(user!);
 
@@ -102,19 +114,8 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
       readuser(id);
     }
   }, [form, getById, id]);
-  useEffect(() => {
-    const readUsers = async () => {
-      console.log("soy el use efect");
-      setLoading(true);
-      await getAll(searchParams.get("search") ?? "all");
-      console.log("roles");
-      console.log(sucursales);
-      setLoading(false);
-    };
-
-    readUsers();
-  }, [getAll, searchParams]);
-  const onValuesChange = async (changedValues: any) => {
+  
+   const onValuesChange = async (changedValues: any) => {
     const field = Object.keys(changedValues)[0];
 
     if (field === "codigoPostal") {
@@ -140,19 +141,37 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
         clearLocation();
       }
     }
-  };
+  }; 
+   const addClinic = () => {
+
+    if (clinic) {
+    
+        if (values.departaments.findIndex((x) => x.id === clinic.id) > -1) {
+          alerts.warning("Ya esta agregada esta clinica");
+          return;
+        }
+        console.log("this the clinics");
+        console.log(clinic);
+      const clinics: IDepartamenList[] = [
+        ...values.departaments,
+        {
+          id: clinic.id,
+          clave: clinic.clave,
+          nombre: clinic.clave,
+          activo: true,
+        },
+      ];
+        
+      setValues((prev) => ({ ...prev, departaments: clinics }));
+      console.log(values);
+    }
+  }; 
+  useEffect(() => {
+    console.log(values);
+  }, [values]);
   console.log("Table");
-  const onFinish = async (newValues: IBranchForm) => {
+   const onFinish = async (newValues: IBranchForm) => {
     const User = { ...values, ...newValues };
-
-/*     const permissions = permisos?.map((x) => ({
-      ...x, asignado: targetKeys.includes(x.id.toString()),
-    }));
-    User.permisos = permissions; */
-/*     if (!User.permisos || User.permisos.filter((x) => x.asignado).length === 0) {
-      alerts.warning(messages.emptyPermissions); return;
-
-    } */
     let success = false;
     if (!User.idSucursal) {
       success = await create(User);
@@ -163,40 +182,8 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
     if (success) {
       navigate(`/sucursales?search=${searchParams.get("search") || "all"}`);
     }
-  };
-  const { width: windowWidth } = useWindowDimensions();
-  const [searchState, setSearchState] = useState<ISearch>({
-    searchedText: "",
-    searchedColumn: "",
-  });
-  
-  const columns: IColumns<IStudyList> = [
-    {
-      ...getDefaultColumnProps("id", "Id Estudio", {
-        searchState,
-        setSearchState,
-        width: "30%",
-        windowSize: windowWidth,
-      }),
-    },
-    {
-      ...getDefaultColumnProps("nombre", "Estudio", {
-        searchState,
-        setSearchState,
-        width: "30%",
-        windowSize: windowWidth,
-      }),
-    },
-    {
-      ...getDefaultColumnProps("areaId", "AreaId", {
-        searchState,
-        setSearchState,
-        width: "30%",
-        windowSize: windowWidth,
-      }),
-    },
-  ];
-  const actualUser = () => {
+  }; 
+   const actualUser = () => {
     if (id) {
       const index = sucursales.findIndex(x => x.idSucursal === id);
       return index + 1;
@@ -208,15 +195,15 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
     const user = sucursales[index];
 
     navigate(`/sucursales/${user?.idSucursal}?mode=${searchParams.get("mode")}&search=${searchParams.get("search") ?? "all"}`);
-  } 
+  }  
   return (
     <Spin spinning={loading || load} tip={load ? "Imprimiendo" : ""}>
               <Row style={{ marginBottom: 24 }}>
           {id &&
             <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
-              <Pagination size="small" total={ sucursales.length} pageSize={1} current={actualUser()} onChange={(value) => { siguienteUser(value - 1) }} />
+              <Pagination size="small" total={sucursales.length} pageSize={1} current={actualUser()} onChange={(value) => { siguienteUser(value - 1) }} />
             </Col>
-          }
+           }
           {!CheckReadOnly() &&
             <Col md={24} sm={24} xs={24} style={id ? { textAlign: "right" } : { marginLeft: "80%" }}>
               <Button onClick={() => { navigate(`/sucursales`); }} >Cancelar</Button>
@@ -247,7 +234,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
             form={form}
             name="branch"
             initialValues={values}
-            onFinish={onFinish}
+            onFinish={ onFinish }
             scrollToFirstError
             onFieldsChange={() => {
               setDisabled(
@@ -255,7 +242,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
                   form.getFieldsError().filter(({ errors }) => errors.length).length > 0
               );
             }}
-            onValuesChange={onValuesChange}
+            onValuesChange={ onValuesChange }
           >
             <Row>
             <Col md={12} sm={24}>
@@ -407,24 +394,59 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
           </Form>
         </div>
       </div>
-      <Row>
-      <Col md={24} sm={12} style={{marginRight: 20, textAlign: "center" }}>
-      <PageHeader
-          ghost={false}
-          title={<HeaderTitle title="Estudios Disponibles en la sucursal"/>}
-          className="header-container"
-        ></PageHeader>
-        <Divider className="header-divider" />
-       <Table<IStudyList>
-          size="small"
-          rowKey={(record) => record.id}
-          columns={columns.slice(0, 3)}
-          pagination={false}
-          dataSource={[...(values.estudios??[])]}
-          scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-        />
-        </Col>
-    </Row>
+      <div>
+        <div></div>
+      </div>
+      <Divider orientation="left">Departamentos</Divider>
+      <List<IDepartamenList>
+         header={
+         <div>
+           <Col md={12} sm={24} style={{ marginRight: 20 }}>
+            Nombre Departamento
+            <Select
+              options={departamentOptions}
+              onChange={(value, option: any) => {
+                if (value) {
+                  setClinic({ id: value, clave: option.label });
+                } else {
+                  setClinic(undefined);
+                }
+              }}
+              style={{ width: 240, marginRight: 20 }}
+            />
+             {!CheckReadOnly()&& (
+                <ImageButton
+                  key="agregar"
+                  title="Agregar Clinica"
+                  image="agregar-archivo"
+                  onClick={addClinic}
+                />
+              )}
+           </Col>
+         </div>
+         }
+         footer={<div></div>}
+         bordered
+         dataSource={values.departaments}
+         renderItem={(item) => (
+          <List.Item>
+              <Col md={12} sm={24} style={{ textAlign: "left" }}>
+                <Typography.Text mark></Typography.Text>
+                {item.nombre}
+              </Col>
+              <Col md={12} sm={24} style={{ textAlign: "left" }}>
+              <ImageButton
+                key="Eliminar"
+                title="Eliminar Clinica"
+                image="Eliminar_Clinica"
+                onClick={() => {
+                  deleteClinic(item.id);
+                }}
+              />
+            </Col>
+          </List.Item>
+         )}
+      />
     </Spin>
   );
 };

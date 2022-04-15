@@ -25,7 +25,7 @@ export default class OptionStore {
   };
 
   clinicOptions: IOptions[] = [];
-
+ 
   getClinicOptions = async () => {
     try {
       const clinics = await Catalog.getActive<ICatalogNormalList>("clinic");
@@ -33,6 +33,19 @@ export default class OptionStore {
       this.clinicOptions = clinics.map((x) => ({ value: x.id, label: x.nombre }));
     } catch (error) {
       this.clinicOptions = [];
+    }
+  };
+  departamentOptions:IOptions[]=[];
+  getdepartamentoOptions = async () => {
+    try {
+      const department = await Catalog.getActive<ICatalogNormalList>("department");
+      console.log("el depa1");
+      console.log(department)
+      this.departamentOptions = department.map((x) => ({ value: x.id, label: x.nombre }));
+      console.log("los depas mapeados");
+      console.log(this.departamentOptions);
+    } catch (error) {
+      this.departamentOptions = [];
     }
   };
 

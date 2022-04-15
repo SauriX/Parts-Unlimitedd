@@ -17,8 +17,6 @@ const BranchDetail = () => {
   const componentRef = useRef<any>();
   const { branchStore } = useStore();
   const { exportForm,getById,sucursal} = branchStore;
-  const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
   let { id } = useParams<UrlParams>();
    
  
@@ -63,4 +61,4 @@ const BranchDetail = () => {
   );
 };
 
-export default BranchDetail;
+export default observer(BranchDetail);
