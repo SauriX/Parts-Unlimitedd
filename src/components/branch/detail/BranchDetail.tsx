@@ -48,7 +48,7 @@ const BranchDetail = () => {
     console.log(sucursal);
     console.log("download");
     setLoading(true);
-    const succes = await exportForm(id!,sucursal!.Clave);
+    const succes = await exportForm(id!,"sucursal");
     
     if(succes){
       setLoading(false);

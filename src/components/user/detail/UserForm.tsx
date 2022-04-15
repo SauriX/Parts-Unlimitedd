@@ -16,6 +16,7 @@ import { useStore } from "../../../app/stores/store";
 import ImageButton from "../../../app/common/button/ImageButton";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
+import { observer } from "mobx-react-lite";
 type UserFormProps = {
   componentRef: React.MutableRefObject<any>;
   load: boolean;
@@ -27,7 +28,7 @@ type UrlParams = {
 const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
   
 	const { userStore } = useStore();
-	const { getById, create, update,Clave,generatePass,changePassordF,getAll,users,getPermission,permisos,getAllRoles,options,allRoles} = userStore;
+	const { getById, create, update,Clave,generatePass,changePassordF,getAll,users,getPermission,permisos,getAllRoles,options} = userStore;
 	const [form] = Form.useForm<IUserForm>();
 
   const [loading, setLoading] = useState(false);
@@ -55,6 +56,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
   useEffect( () => {
 		const readuser = async (idUser: string) => {
 			setLoading(true);
+      await getAllRoles("all");
 			const user = await getById(idUser);
       
 			form.setFieldsValue(user!);
@@ -78,12 +80,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
       
     }
 	}, [form, getById,id ]);
-  useEffect(()=>{
-    const options =async()=>{
-      await allRoles();
-    }
-    options();
-  },[allRoles]);
+
   const transform = useMemo(
     () =>
       convertToTreeData(
@@ -225,7 +222,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
 			navigate(`/users?search=${searchParams.get("search")||"all"}`);
 		}
 	};
-
+ console.log(options);
   const onDeselectParent = (key: string | number, children: DataNode[]) => {
     setSelectedKeys(selectedKeys.filter((x) => !children.map((y) => y.key).includes(x)));
 
@@ -375,6 +372,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
               dataSource={permisos}
               showSearch
               onSearch={onSearch}
+              onChange={onChange}
               style={{ justifyContent: "flex-end" }}
               listStyle={{
                 width: 300,
@@ -388,7 +386,6 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
               filterOption={filterOption}
               targetKeys={targetKeys}
               selectedKeys={selectedKeys}
-              onChange={onChange}
               onSelectChange={(sourceSelectedKeys: string[], targetSelectedKeys: string[]) => {
                 onSelectChange(sourceSelectedKeys, targetSelectedKeys);
                 setDisabled(false);
@@ -434,4 +431,4 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
   );
 };
 
-export default UserForm;
+export default observer(UserForm);

@@ -22,7 +22,7 @@ const BranchFormHeader: FC<BranchFormHeaderProps> = ({handlePrint,handleDownload
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        <ImageButton key="doc" title="Informe" image="doc" />,
+        <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload}/>,
         <ImageButton
           key="back"
           title="Regresar"

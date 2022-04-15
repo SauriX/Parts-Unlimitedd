@@ -65,11 +65,12 @@ export default class BranchStore {
       console.log(rol.permisos);
       this.permisos = rol.permisos;
        */
+      console.log(rol);
       this.sucursal = rol;
       return rol;
     } catch (error: any) {
       if (error.status === responses.notFound) {
-        history.push("/notFound");
+        //history.push("/notFound");
       } else {
         alerts.warning(getErrors(error));
       }

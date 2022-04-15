@@ -91,7 +91,7 @@ export interface IUserForm{
   primerApellido: string,
   segundoApellido: string,
   idSucursal: Number,
-  usertype: string,
+  tipoUsuario: string,
   contraseña: string,
   confirmaContraseña:string
   activo:boolean
@@ -104,7 +104,7 @@ export class USerForm implements IUserForm {
   primerApellido = "";
   segundoApellido = "";
   idSucursal = 0;
-  usertype= "";
+  tipoUsuario= "";
   contraseña= "";
   confirmaContraseña = "";
   activo= false;

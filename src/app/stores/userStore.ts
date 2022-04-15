@@ -41,22 +41,20 @@ export default class UserStore {
       return false;
     }
   };
-  
-   allRoles =async ()=>{
-     
-    let succes= await this.getAllRoles( "all");
-    if(succes){
-      this.roles.forEach(element => {
-         this.options.push({value:element.id,label:element.nombre});
-       });
-       console.log(this.options);
-    }
 
-   }
   getAllRoles = async (search: string) => {
     try {
       const roles= await User.getAllRoles(search);
+      console.log("los roles");
+      console.log(roles);
       this.roles = roles;
+      var options:IOptions[]=[];
+      roles.forEach(element => {
+        options.push({value:element.id,label:element.nombre});
+      });
+      this.options = options;
+      console.log("los optios");
+      console.log(this.options);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -161,6 +159,7 @@ export default class UserStore {
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
+      
     }
   };
   changePassordF=async()=>{

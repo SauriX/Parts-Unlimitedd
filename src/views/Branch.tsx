@@ -45,7 +45,7 @@ const Branch = () => {
   });
   return (
     <Fragment>
-    <BranchHeader handlePrint={handlePrint} handleList={()=>{}}/>
+    <BranchHeader handlePrint={handlePrint} handleList={handleDownload}/>
     <Divider className="header-divider" />
     <BranchTable componentRef={componentRef} printing={printing}/>
     </Fragment>

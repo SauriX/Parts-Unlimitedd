@@ -77,6 +77,25 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
       form.setFieldsValue(user!);
 
       setValues(user!);
+      if (user?.codigoPostal && user?.codigoPostal.trim().length === 5) {
+        const location = await getColoniesByZipCode(user?.codigoPostal);
+        if (location) {
+          form.setFieldsValue({
+            estado: location.estado,
+            ciudad: location.ciudad,
+          });
+          setColonies(
+            location.colonias.map((x) => ({
+              value: x.id,
+              label: x.nombre,
+            }))
+          );
+        } else {
+          clearLocation();
+        }
+      } else {
+        clearLocation();
+      }
       setLoading(false);
     };
     if (id) {
@@ -135,7 +154,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
 
     } */
     let success = false;
-    if (!User.IdSucursal) {
+    if (!User.idSucursal) {
       success = await create(User);
     } else {
       success = await update(User);
@@ -153,7 +172,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
   
   const columns: IColumns<IStudyList> = [
     {
-      ...getDefaultColumnProps("Id", "Id Estudio", {
+      ...getDefaultColumnProps("id", "Id Estudio", {
         searchState,
         setSearchState,
         width: "30%",
@@ -218,7 +237,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
           {load && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Sucursales" image="reagent" />}
+              title={<HeaderTitle title="sucursales" image="reagent" />}
               className="header-container"
             ></PageHeader>
           )}
@@ -242,7 +261,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
             <Col md={12} sm={24}>
               <TextInput
                 formProps={{
-                  name: "Clave",
+                  name: "clave",
                   label: "Clave",
                 }}
                 max={100}
@@ -252,7 +271,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
             
               <TextInput
                 formProps={{
-                  name: "Nombre",
+                  name: "nombre",
                   label: "Nombre",
                 }}
                 max={100}
@@ -296,7 +315,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
                 />
                             <NumberInput
                   formProps={{
-                    name: "NumeroExt",
+                    name: "numeroExt",
                     label: "Número Exterior",
                   }}
                   max={9999999999}
@@ -306,7 +325,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
                 />
               <NumberInput
                   formProps={{
-                    name: "NumeroInt",
+                    name: "numeroInt",
                     label: "Número interior",
                   }}
                   max={9999999999}
@@ -315,27 +334,18 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
                 />
                 <TextInput
                   formProps={{
-                    name: "Calle",
+                    name: "calle",
                     label: "Calle",
                   }}
                   max={100}
                   required
                    readonly={CheckReadOnly()}
                 />
-                <SelectInput
-                  formProps={{
-                    name: "coloniaId",
-                    label: "Colonia",
-                  }}
-                  required
-                  readonly={CheckReadOnly()}
-                  options={colonies}
-                  />
                   </Col>
                   <Col md={12} sm={24} xs={12}>
                   <TextInput
                   formProps={{
-                    name: "Correo",
+                    name: "correo",
                     label: "Correo",
                   }}
                   max={100}
@@ -345,7 +355,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
                 />
                 <NumberInput
                   formProps={{
-                    name: "Telefono",
+                    name: "telefono",
                     label: "Teléfono",
                   }}
                   max={9999999999}
@@ -355,7 +365,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
                 />
                 <TextInput
                   formProps={{
-                    name: "ClinicosId",
+                    name: "clinicosId",
                     label: "Clinicos",
                   }}
                   max={100}
@@ -364,7 +374,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
                 />
                 <TextInput
                   formProps={{
-                    name: "PresupuestosId",
+                    name: "presupuestosId",
                     label: "Presupuestos",
                   }}
                   max={100}
@@ -373,7 +383,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
                 />
                 <TextInput
                   formProps={{
-                    name: "FacturaciónId",
+                    name: "facturaciónId",
                     label: "Facturacion",
                   }}
                   max={100}
@@ -381,7 +391,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
                   required
                 />
                 <SwitchInput
-                  name="Activo"
+                  name="activo"
                   onChange={(value) => {
                     if (value) {
                       alerts.info(messages.confirmations.enable);
@@ -398,14 +408,22 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
         </div>
       </div>
       <Row>
-    <Table<IStudyList>
-          size="large"
+      <Col md={24} sm={12} style={{marginRight: 20, textAlign: "center" }}>
+      <PageHeader
+          ghost={false}
+          title={<HeaderTitle title="Estudios Disponibles en la sucursal"/>}
+          className="header-container"
+        ></PageHeader>
+        <Divider className="header-divider" />
+       <Table<IStudyList>
+          size="small"
           rowKey={(record) => record.id}
           columns={columns.slice(0, 3)}
           pagination={false}
           dataSource={[...(values.estudios??[])]}
           scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
         />
+        </Col>
     </Row>
     </Spin>
   );
