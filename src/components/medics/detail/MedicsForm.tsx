@@ -33,6 +33,9 @@ import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import { claveValues } from "../../../app/models/user";
 // import { v4 as uuid } from "uuid";
+import MaskInput from 'react-maskinput';
+
+<MaskInput alwaysShowMask mask={'(000)000-000-00'}  showMask maskChar="_" />;
 
 type MedicsFormProps = {
   id: number;
@@ -461,7 +464,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                     name: "celular",
                     label: "Celular",
                   }}
-                  max={9999999999}
+                  max={1000000000}
                   min={1000000000}
                   readonly={readonly}
                 />
@@ -470,8 +473,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                     name: "telefono",
                     label: "Teléfono",
                   }}
-                  max={9999999999}
-                  min={1111111111}
+                  max={1000000000}
+                  min={1000000000}
                   readonly={readonly}
                 />
 
