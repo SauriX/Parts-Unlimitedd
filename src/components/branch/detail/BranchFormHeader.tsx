@@ -18,7 +18,7 @@ const BranchFormHeader: FC<BranchFormHeaderProps> = ({handlePrint,handleDownload
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Sucursales" image="reagent" />}
+      title={<HeaderTitle title="Sucursales" image="laboratorio" />}
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
