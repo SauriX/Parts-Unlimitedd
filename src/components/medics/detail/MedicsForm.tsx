@@ -464,8 +464,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                     name: "celular",
                     label: "Celular",
                   }}
-                  max={1000000000}
-                  min={1000000000}
+                  max={10000000000}
+                  min={10}
                   readonly={readonly}
                 />
                 <NumberInput
@@ -473,8 +473,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                     name: "telefono",
                     label: "Teléfono",
                   }}
-                  max={1000000000}
-                  min={1000000000}
+                  max={10000000000}
+                  min={10}
                   readonly={readonly}
                 />
 
