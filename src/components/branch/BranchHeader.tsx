@@ -17,7 +17,7 @@ const BranchHeader: FC<UserHeaderProps> = ({ handlePrint,handleList }) => {
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo  Sucursales" image="reagent" />}
+      title={<HeaderTitle title="Catálogo  Sucursales" image="laboratorio" />}
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
