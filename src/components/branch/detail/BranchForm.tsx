@@ -147,7 +147,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
     if (clinic) {
     
         if (values.departaments.findIndex((x) => x.id === clinic.id) > -1) {
-          alerts.warning("Ya esta agregada esta clinica");
+          alerts.warning("Ya esta agregada este departamento");
           return;
         }
         console.log("this the clinics");
@@ -316,7 +316,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
                     label: "Número interior",
                   }}
                   max={9999999999}
-                  min={1}
+                  min={0}
                   readonly={CheckReadOnly()}
                 />
                 <TextInput
@@ -402,7 +402,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
          header={
          <div>
            <Col md={12} sm={24} style={{ marginRight: 20 }}>
-            Nombre Departamento
+            Nombre Departamento 
             <Select
               options={departamentOptions}
               onChange={(value, option: any) => {
@@ -412,7 +412,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
                   setClinic(undefined);
                 }
               }}
-              style={{ width: 240, marginRight: 20 }}
+              style={{ width: 240, marginRight: 20,marginLeft: 10 }}
             />
              {!CheckReadOnly()&& (
                 <ImageButton

@@ -1,6 +1,6 @@
 import { Spin, Form, Row, Col, Transfer, Tooltip, Tree, Tag, Pagination, Button } from "antd";
 import React, { FC, useEffect, useMemo, useState } from "react";
-import { IUserPermission, IUserForm,USerForm,IClave, claveValues} from "../../../app/models/user";
+import { IUserPermission, IUserForm, USerForm, IClave, claveValues } from "../../../app/models/user";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
@@ -24,12 +24,12 @@ type UserFormProps = {
 type UrlParams = {
   id: string;
 };
- 
+
 const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
-  
-	const { userStore } = useStore();
-	const { getById, create, update,Clave,generatePass,changePassordF,getAll,users,getPermission,permisos,getAllRoles,options} = userStore;
-	const [form] = Form.useForm<IUserForm>();
+
+  const { userStore } = useStore();
+  const { getById, create, update, Clave, generatePass, changePassordF, getAll, users, getPermission, permisos, getAllRoles, options } = userStore;
+  const [form] = Form.useForm<IUserForm>();
 
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
@@ -44,42 +44,42 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
   const [permissionsAvailableFiltered, setPermissionsAvailableFiltered] = useState<TreeData[]>([]);
   let navigate = useNavigate();
 
-	const [values, setValues] = useState<IUserForm>(new USerForm());
-  
+  const [values, setValues] = useState<IUserForm>(new USerForm());
+
   const [searchParams, setSearchParams] = useSearchParams();
   let { id } = useParams<UrlParams>();
-  let user : IUserForm = new USerForm();
-  let clave : IClave = new claveValues();
+  let user: IUserForm = new USerForm();
+  let clave: IClave = new claveValues();
   useEffect(() => {
     setTargetKeys(values.permisos?.filter((x) => x.asignado).map((x) => x.id.toString()) ?? []);
   }, []);
-  useEffect( () => {
-		const readuser = async (idUser: string) => {
-			setLoading(true);
+  useEffect(() => {
+    const readuser = async (idUser: string) => {
+      setLoading(true);
       await getAllRoles("all");
-			const user = await getById(idUser);
-      
-			form.setFieldsValue(user!);
-      
-			setValues(user!);
-			setLoading(false);
-		};
-    const newpass = async()=>{
-         let pass= await generatePass();
-         form.setFieldsValue({confirmaContraseña:pass, contraseña:pass,});
+      const user = await getById(idUser);
+
+      form.setFieldsValue(user!);
+
+      setValues(user!);
+      setLoading(false);
+    };
+    const newpass = async () => {
+      let pass = await generatePass();
+      form.setFieldsValue({ confirmaContraseña: pass, contraseña: pass, });
     }
     const permission = async () => {
       await getPermission();
-      
+
     }
-		if (id) {
-			readuser(id);
-		}else{
+    if (id) {
+      readuser(id);
+    } else {
       newpass();
       permission();
-      
+
     }
-	}, [form, getById,id ]);
+  }, [form, getById, id]);
 
   const transform = useMemo(
     () =>
@@ -93,9 +93,9 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
     [targetKeys]
   );
 
-/*   useEffect(() => {
-    transform(values?.permisos ?? []);
-  }, [values?.permisos, targetKeys, transform]); */
+  /*   useEffect(() => {
+      transform(values?.permisos ?? []);
+    }, [values?.permisos, targetKeys, transform]); */
   useEffect(() => {
     if (permisos && permisos.length > 0) {
       setTargetKeys(permisos.filter(x => x.asignado).map(x => x.id.toString()))
@@ -103,7 +103,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
   }, [permisos]);
   useEffect(() => {
     transform(permisos ?? []);
-  
+
   }, [permisos, targetKeys, transform]);
 
   const onSearch = onTreeSearch(
@@ -129,12 +129,12 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
       option.permiso.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
     );
   };
- 
-  const CheckReadOnly =()=>{
-    
+
+  const CheckReadOnly = () => {
+
     let result = false;
     const mode = searchParams.get("mode");
-    if(mode == "ReadOnly"){
+    if (mode == "ReadOnly") {
       result = true;
     }
     return result;
@@ -151,50 +151,50 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
     targetKeys,
     setSelectedKeys
   );
- const onValuesChange = (changeValues:any) =>{
-   const fields = Object.keys(changeValues)[0];
+  const onValuesChange = (changeValues: any) => {
+    const fields = Object.keys(changeValues)[0];
 
-   if(fields === "nombre" ){
+    if (fields === "nombre") {
       const value = changeValues[fields];
       clave.nombre = value;
-      if(id){
-        clave.primerApllido= values.primerApellido;
+      if (id) {
+        clave.primerApllido = values.primerApellido;
         clave.segundoApellido = values.segundoApellido;
       }
-      
-   }
-   if(fields === "primerApellido"){
+
+    }
+    if (fields === "primerApellido") {
       const value = changeValues[fields];
       clave.primerApllido = value;
-      if(id){
+      if (id) {
         console.log("mi loco entre")
-        clave.nombre =values.nombre;
+        clave.nombre = values.nombre;
         clave.segundoApellido = values.segundoApellido;
       }
-   }
-   if(fields === "segundoApellido"){
-    const value = changeValues[fields];
-    clave.segundoApellido = value;
-    if(id){
-      clave.nombre =values.nombre;
-      clave.primerApllido= values.primerApellido;
     }
-    
-   }
-   newclave();
- }
- const newclave = async ()=>{
-   
-   if(clave.nombre != "" && clave.primerApllido != "" &&clave.segundoApellido!= ""){
+    if (fields === "segundoApellido") {
+      const value = changeValues[fields];
+      clave.segundoApellido = value;
+      if (id) {
+        clave.nombre = values.nombre;
+        clave.primerApllido = values.primerApellido;
+      }
 
-      let newclave= await Clave(clave);
-      form.setFieldsValue({clave:newclave.toString()});
-     
-   }
-   
- }
+    }
+    newclave();
+  }
+  const newclave = async () => {
+
+    if (clave.nombre != "" && clave.primerApllido != "" && clave.segundoApellido != "") {
+
+      let newclave = await Clave(clave);
+      form.setFieldsValue({ clave: newclave.toString() });
+
+    }
+
+  }
   const onFinish = async (newValues: IUserForm) => {
-		const User = { ...values, ...newValues };
+    const User = { ...values, ...newValues };
     const permissions = permisos?.map((x) => ({
       ...x,
       asignado: targetKeys.includes(x.id.toString()),
@@ -211,57 +211,62 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
       return;
 
     }
-		let success = false;
-		if (!User.idUsuario) {
-			success = await create(User);
-		} else {
-			success = await update(User);
-		}
+    let success = false;
+    if (!User.idUsuario) {
+      success = await create(User);
+    } else {
+      success = await update(User);
+    }
 
-		if (success) {
-			navigate(`/users?search=${searchParams.get("search")||"all"}`);
-		}
-	};
- console.log(options);
+    if (success) {
+      navigate(`/users?search=${searchParams.get("search") || "all"}`);
+    }
+  };
+  console.log(options);
+
   const onDeselectParent = (key: string | number, children: DataNode[]) => {
     setSelectedKeys(selectedKeys.filter((x) => !children.map((y) => y.key).includes(x)));
-
   };
-  const actualUser=()=>{
-    if(id){
-     const index= users.findIndex(x=>x.idUsuario===id);
-      return index+1;
+
+  const onSelectParent = (key: string | number, children: DataNode[]) => {
+    setSelectedKeys([...selectedKeys, ...children.map((y) => y.key.toString())]);
+  };
+
+  const actualUser = () => {
+    if (id) {
+      const index = users.findIndex(x => x.idUsuario === id);
+      return index + 1;
     }
     return 0;
   }
-  const siguienteUser=(index:number)=>{
-      console.log(id);
+  const siguienteUser = (index: number) => {
+    console.log(id);
     const user = users[index];
-    
-    navigate(`/users/${user?.idUsuario}?mode=${searchParams.get("mode")}&search=${searchParams.get("search")??"all"}`);
+
+    navigate(`/users/${user?.idUsuario}?mode=${searchParams.get("mode")}&search=${searchParams.get("search") ?? "all"}`);
   }
   return (
     <Spin spinning={loading || load}>
       <div ref={componentRef}>
         <Row style={{ marginBottom: 24 }}>
-          {id&&
-          <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
-            <Pagination size="small" total={users.length} pageSize={1} current={actualUser()} onChange={(value)=>{siguienteUser(value-1)}}/>
-          </Col>
+          {id &&
+            <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
+              <Pagination size="small" total={users.length} pageSize={1} current={actualUser()} onChange={(value) => { siguienteUser(value - 1) }} />
+            </Col>
           }
-          { !CheckReadOnly() &&
-                <Col md={24} sm={24} xs={24} style={id?{ textAlign: "right" }:{marginLeft:"80%"}}>
-                  <Button  onClick={() => {navigate(`/users`);}} >Cancelar</Button>
-                    <Button type="primary" htmlType="submit" onClick={() => {form.submit()}}>
-                      Guardar
-                    </Button>
-                </Col>
+          {!CheckReadOnly() &&
+            <Col md={24} sm={24} xs={24} style={id ? { textAlign: "right" } : { marginLeft: "80%" }}>
+              <Button onClick={() => { navigate(`/users`); }} >Cancelar</Button>
+              <Button type="primary" htmlType="submit" onClick={() => { form.submit() }}>
+                Guardar
+              </Button>
+            </Col>
           }
           {
             CheckReadOnly() &&
-              <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
-                <ImageButton key="edit" title="Editar" image="editar" onClick={()=>{navigate(`/users/${id}?mode=edit&search=${searchParams.get("search")??"all"}`);}}  />
-              </Col>
+            <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
+              <ImageButton key="edit" title="Editar" image="editar" onClick={() => { navigate(`/users/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`); }} />
+            </Col>
           }
         </Row>
         <Form<IUserForm>
@@ -274,7 +279,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
           onFieldsChange={() => {
             setDisabled(
               !form.isFieldsTouched() ||
-                form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+              form.getFieldsError().filter(({ errors }) => errors.length).length > 0
             );
           }}
         >
@@ -335,7 +340,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
               />
             </Col>
             <Col md={12} sm={24} xs={12}>
-              <SwitchInput name="activo" label="Activo" onChange={(value)=>{if(value){alerts.info(messages.confirmations.enable)}else{alerts.info(messages.confirmations.disable)}}} readonly={CheckReadOnly()}/>
+              <SwitchInput name="activo" label="Activo" onChange={(value) => { if (value) { alerts.info(messages.confirmations.enable) } else { alerts.info(messages.confirmations.disable) } }} readonly={CheckReadOnly()} />
             </Col>
             <Col md={12} sm={24} xs={12}>
               <TextInput
@@ -349,7 +354,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
               />
             </Col>
             <Col md={12} sm={24} xs={12}>
-              <SelectInput formProps={{ name: "idSucursal", label: "Sucursal" }} options={[{value:"0",label:"test"}]} readonly={CheckReadOnly()} required  />
+              <SelectInput formProps={{ name: "idSucursal", label: "Sucursal" }} options={[{ value: "0", label: "test" }]} readonly={CheckReadOnly()} required />
             </Col>
             <Col md={12} sm={24} xs={12}>
               <SelectInput
@@ -390,20 +395,22 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
                 onSelectChange(sourceSelectedKeys, targetSelectedKeys);
                 setDisabled(false);
               }}
-              
-               disabled={CheckReadOnly()}
+
+              disabled={CheckReadOnly()}
             >
               {({ direction, onItemSelect, selectedKeys, filteredItems }) => {
                 const data = direction === "left" ? permissionsAvailableFiltered : permissionsAddedFiltered;
                 const checkedKeys = [...selectedKeys];
                 return (
                   <Tree
-                     checkable={!CheckReadOnly()}
-                     disabled={CheckReadOnly()}
+                    checkable={!CheckReadOnly()}
+                    disabled={CheckReadOnly()}
                     height={200}
                     onCheck={(_, { node: { key, children, checked } }) => {
                       if (children && children.length > 0 && checked) {
                         onDeselectParent(key, children);
+                      } else if (children && children.length > 0) {
+                        onSelectParent(key, children);
                       } else {
                         onItemSelect(key.toString(), !checked);
                       }
@@ -412,6 +419,8 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
                     onSelect={(_, { node: { key, checked, children } }) => {
                       if (children && children.length > 0 && checked) {
                         onDeselectParent(key, children);
+                      } else if (children && children.length > 0) {
+                        onSelectParent(key, children);
                       } else {
                         onItemSelect(key.toString(), !checked);
                       }
