@@ -348,7 +348,6 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
                   max={9999999999}
                   min={1111111111}
                   readonly={CheckReadOnly()}
-
                 />
                 <TextInput
                   formProps={{

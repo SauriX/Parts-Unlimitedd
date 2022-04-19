@@ -6,7 +6,7 @@ const { Title } = Typography;
 type Props = {
   title: string;
   icon?: ReactNode;
-  image?: "user" | "reagent" | "role"| "Indicaciones"| "doctor"|"laboratorio";
+  image?: "user" | "reagent" | "role"| "Indicaciones"| "doctor"|"laboratorio"|"parameters";
 };
 
 const HeaderTitle: FC<Props> = ({ title, icon, image }) => {

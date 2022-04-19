@@ -1,5 +1,5 @@
 import { makeAutoObservable } from "mobx";
-export default class UserStore {
+export default class ParameterStore {
     constructor() {
       makeAutoObservable(this);
     }

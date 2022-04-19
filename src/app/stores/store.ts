@@ -10,7 +10,7 @@ import OptionStore from "./optionStore";
 import RoleStore from "./roleStore";
 import LocationStore from "./locationStore";
 import BranchStore from "./brancStore"
-import ParameterStore from "./brancStore"
+import ParameterStore from "./parameterStore"
 configure({
   enforceActions: "never",
 });

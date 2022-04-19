@@ -4,31 +4,32 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
-
+import ParameterTable  from "../components/parameter/ParameterTable"
+import ParameterHeader from "../components/parameter/ParameterHeader";
 const Parameter = () => {
-  const { userStore } = useStore();
-  const { access,exportList } = userStore;
+  const { parameterStore } = useStore();
+  const {  } = parameterStore;
   const [printing, setPrinting] = useState(false);
   const [accessing, setAccessing] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const handleDownload = async () => {
     console.log("aqui");
     setPrinting(true);
-    var succes= await exportList(searchParams.get("search") ?? "all");
-    if(succes){
+    //var succes= await exportList(searchParams.get("search") ?? "all");
+/*     if(succes){
       setPrinting(false);
-    }
+    } */
   }
 
   
   useEffect(() => {
     const checkAccess = async () => {
-      await access();
+      //await access();
       setAccessing(false);
     };
 
     checkAccess();
-  }, [access]);
+  }, /* [access] */);
 
   useEffect(() => {
     return () => {
@@ -49,9 +50,9 @@ const Parameter = () => {
 
   return (
     <Fragment>
-      header
+      <ParameterHeader handlePrint={handlePrint} handleList={handleDownload}></ParameterHeader>
       <Divider className="header-divider" />
-      table
+      <ParameterTable componentRef={componentRef} printing={printing}></ParameterTable>
     </Fragment>
   );
 };
