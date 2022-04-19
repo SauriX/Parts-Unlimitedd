@@ -25,6 +25,8 @@ import RoleDetail from "../../components/role/detail/RoleDetail";
 import BranchDetail from "../../components/branch/detail/BranchDetail";
 import Company from "../../views/Company";
 import CompanyDetail from "../../components/company/detail/CompanyDetail";
+import Parameters from "../../views/Parameters";
+import ParameterDetail from "../../components/parameter/detail/ParameterDetail";
 function App() {
   return (
     <Routes>
@@ -51,6 +53,9 @@ function App() {
           <Route path="sucursales" element={<Branch />} />
           <Route path="sucursales/new-sucursal" element={<BranchDetail />} />
           <Route path="sucursales/:id" element={<BranchDetail />} />
+          <Route path="parameter" element={<Parameters />} />
+          <Route path="parameter/new-parameter" element={<ParameterDetail />} />
+          <Route path="parameter/:id" element={<ParameterDetail />} />
           <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
           <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
           <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />
