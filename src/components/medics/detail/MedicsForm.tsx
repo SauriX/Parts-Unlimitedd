@@ -33,9 +33,9 @@ import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import { claveValues } from "../../../app/models/user";
 // import { v4 as uuid } from "uuid";
-import MaskInput from 'react-maskinput';
+//import MaskInput from 'react-maskinput';
 
-<MaskInput alwaysShowMask mask={'(000)000-000-00'}  showMask maskChar="_" />;
+//<MaskInput alwaysShowMask mask={'(000)000-000-00'}  showMask maskChar="_" />;
 
 type MedicsFormProps = {
   id: number;
