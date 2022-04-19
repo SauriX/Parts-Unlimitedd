@@ -10,6 +10,7 @@ import OptionStore from "./optionStore";
 import RoleStore from "./roleStore";
 import LocationStore from "./locationStore";
 import BranchStore from "./brancStore"
+import CompanyStore from "./companyStore";
 configure({
   enforceActions: "never",
 });
@@ -20,6 +21,7 @@ interface Store {
   userStore: UserStore;
   reagentStore: ReagentStore;
   medicsStore: MedicsStore;
+  companyStore: CompanyStore;
   indicationStore: IndicationStore;
   catalogStore: CatalogStore;
   roleStore: RoleStore;
@@ -33,6 +35,7 @@ export const store: Store = {
   userStore: new UserStore(),
   reagentStore: new ReagentStore(),
   medicsStore: new MedicsStore(),
+  companyStore: new CompanyStore(),
   indicationStore: new IndicationStore(),
   catalogStore: new CatalogStore(),
   roleStore: new RoleStore(),
