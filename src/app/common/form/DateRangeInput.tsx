@@ -9,11 +9,7 @@ interface IProps {
   readonly?: boolean;
 }
 
-const DateRangeInput = ({
-  formProps: itemProps,
-  required,
-  readonly,
-}: IProps) => {
+const DateRangeInput = ({ formProps: itemProps, required, readonly }: IProps) => {
   let rules: Rule[] = [];
 
   if (required) {
@@ -35,11 +31,7 @@ const DateRangeInput = ({
       labelAlign={itemProps.labelAlign ?? "right"}
       rules={rules}
     >
-      <DatePicker.RangePicker
-        disabledDate={disabledDate}
-        disabled={readonly}
-        format="DD/MM/YYYY"
-      />
+      <DatePicker.RangePicker disabledDate={disabledDate} disabled={readonly} format="DD/MM/YYYY" />
     </Form.Item>
   );
 };
