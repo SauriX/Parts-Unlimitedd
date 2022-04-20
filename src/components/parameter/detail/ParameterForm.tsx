@@ -13,6 +13,7 @@ import { observer } from "mobx-react-lite";
 import { IParameterForm, ParameterFormValues } from "../../../app/models/parameter";
 import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import ValorType from "./ValorType/ValorType"
+import { IOptions } from "../../../app/models/shared";
 type ParameterFormProps = {
     componentRef: React.MutableRefObject<any>;
     load: boolean;
@@ -35,6 +36,17 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     const [values, setValues] = useState<IParameterForm>(new ParameterFormValues());
     const [searchParams, setSearchParams] = useSearchParams();
     let { id } = useParams<UrlParams>();
+    const tipodeValorList:IOptions[] =[
+        {value:1 ,label:"Numérico"},
+        {value:2 ,label:"Rango de edad"},
+        {value:3 ,label:"Numérico por sexo"},
+        {value:4 ,label:"Numérico por edad"},
+        {value:5 ,label:"Numérico por edad y sexo"},
+        {value:6 ,label:"Opción múltiple"},
+        {value:7 ,label:"Texto"},
+        {value:8 ,label:"Numérico con una columna"},
+        {value:9 ,label:"Etiqueta"},
+    ];
     useEffect(() => {
         const readuser = async (idUser: string) => {
           setLoading(true);
@@ -204,7 +216,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                             />
                         </Col>
                         <Col md={12} sm={24} xs={12}>
-                            <SelectInput formProps={{ name: "tipoValor", label: "Tipo de valor" }} options={[{ value: "0", label: "test" }]} readonly={CheckReadOnly()} required />
+                            <SelectInput formProps={{ name: "tipoValor", label: "Tipo de valor" }} options={tipodeValorList} readonly={CheckReadOnly()} required />
                         </Col>
                         <Col md={12} sm={24} xs={12}>
                             <TextInput
