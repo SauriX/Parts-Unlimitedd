@@ -157,7 +157,7 @@ const columns: IColumns<IStudyList> = [
     }),
   },
   {
-    ...getDefaultColumnProps("areaId", "Area", {
+    ...getDefaultColumnProps("area", "Área", {
       searchState,
       setSearchState,
       width: "30%",

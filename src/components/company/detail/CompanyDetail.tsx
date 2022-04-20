@@ -34,7 +34,7 @@ const CompanyDetail = () => {
   });
 
   const { id } = useParams<UrlParams>();
-  const companyId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
+  const companyId = !id ? 0 : isNaN(Number(parseInt(id))) ? undefined : parseInt(id);
 
   useEffect(() => {
     console.log(companyId);
