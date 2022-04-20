@@ -23,6 +23,8 @@ import Indication from "../../views/Indications";
 import NewRole from "../../components/role/detail/NewRole";
 import RoleDetail from "../../components/role/detail/RoleDetail";
 import BranchDetail from "../../components/branch/detail/BranchDetail";
+import Company from "../../views/Company";
+import CompanyDetail from "../../components/company/detail/CompanyDetail";
 import Parameters from "../../views/Parameters";
 import ParameterDetail from "../../components/parameter/detail/ParameterDetail";
 function App() {
@@ -42,6 +44,8 @@ function App() {
           <Route path="catalogs/:id" element={<CatalogDetail />} />
           <Route path="medics" element={<Medics />} />
           <Route path="medics/:id" element={<MedicsDetail />} />
+          <Route path="company" element={<Company />} />
+          <Route path="company/:id" element={<CompanyDetail />} />
           <Route path="indication" element={<Indication />} />
           <Route path="indication/:id" element={<IndicationDetail />} />
           <Route path="roles/new-role" element={<NewRole />} />

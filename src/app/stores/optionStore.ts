@@ -60,4 +60,52 @@ export default class OptionStore {
       this.fieldOptions = [];
     }
   };
+
+  bankOptions: IOptions[] = [];
+
+  getbankOptions = async () => {
+    try {
+      const bank = await Catalog.getActive<ICatalogNormalList>("bank");
+      console.log(bank)
+      this.bankOptions = bank.map((x) => ({ value: x.id, label: x.nombre }));
+    } catch (error) {
+      this.bankOptions = [];
+    }
+  };
+
+  cfdiOptions: IOptions[] = [];
+
+  getcfdiOptions = async () => {
+    try {
+      const cfdi = await Catalog.getActive<ICatalogNormalList>("useOfCFDI");
+      console.log(cfdi)
+      this.cfdiOptions = cfdi.map((x) => ({ value: x.id, label: x.nombre }));
+    } catch (error) {
+      this.cfdiOptions = [];
+    }
+  };
+
+  paymentMethodOptions: IOptions[] = [];
+
+  getpaymentMethodOptions = async () => {
+    try {
+      const paymentMethod = await Catalog.getActive<ICatalogNormalList>("paymentMethod");
+      console.log(paymentMethod)
+      this.paymentMethodOptions = paymentMethod.map((x) => ({ value: x.id, label: x.nombre }));
+    } catch (error) {
+      this.paymentMethodOptions = [];
+    }
+  };
+
+  paymentOptions: IOptions[] = [];
+
+  getpaymentOptions = async () => {
+    try {
+      const payment = await Catalog.getActive<ICatalogNormalList>("payment");
+      console.log(payment)
+      this.paymentOptions = payment.map((x) => ({ value: x.id, label: x.nombre }));
+    } catch (error) {
+      this.paymentOptions = [];
+    }
+  };
 }

@@ -157,7 +157,7 @@ const columns: IColumns<IStudyList> = [
     }),
   },
   {
-    ...getDefaultColumnProps("areaId", "AreaId", {
+    ...getDefaultColumnProps("areaId", "Area", {
       searchState,
       setSearchState,
       width: "30%",
@@ -281,7 +281,7 @@ const columns: IColumns<IStudyList> = [
       <Col md={24} sm={12} style={{marginRight: 20, textAlign: "center" }}>
       <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Estudios Donde se Encuentra la Indicacion"/>}
+          title={<HeaderTitle title="Estudios donde se encuentra la indicación"/>}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />

@@ -32,10 +32,8 @@ import Item from "antd/lib/list/Item";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import { claveValues } from "../../../app/models/user";
+import MaskInput from "../../../app/common/form/MaskInput";
 // import { v4 as uuid } from "uuid";
-//import MaskInput from 'react-maskinput';
-
-//<MaskInput alwaysShowMask mask={'(000)000-000-00'}  showMask maskChar="_" />;
 
 type MedicsFormProps = {
   id: number;
@@ -459,7 +457,29 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   readonly={readonly}
                   type="email"
                 />
-                <NumberInput
+                <MaskInput
+                  formProps={{
+                    name: "celular",
+                    label: "Celular",
+                  }}
+                  mask={[
+                    /[0-9]/,
+                    /[0-9]/,
+                    /[0-9]/,
+                    "-",
+                    /[0-9]/,
+                    /[0-9]/,
+                    /[0-9]/,
+                    "-",
+                    /[0-9]/,
+                    /[0-9]/,
+                    "-",
+                    /[0-9]/,
+                    /[0-9]/,
+                  ]}
+                  readonly={readonly}
+                />
+                {/* <NumberInput
                   formProps={{
                     name: "celular",
                     label: "Celular",
@@ -467,8 +487,30 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   max={10000000000}
                   min={10}
                   readonly={readonly}
+                /> */}
+                <MaskInput
+                  formProps={{
+                    name: "telefono",
+                    label: "Teléfono",
+                  }}
+                  mask={[
+                    /[0-9]/,
+                    /[0-9]/,
+                    /[0-9]/,
+                    "-",
+                    /[0-9]/,
+                    /[0-9]/,
+                    /[0-9]/,
+                    "-",
+                    /[0-9]/,
+                    /[0-9]/,
+                    "-",
+                    /[0-9]/,
+                    /[0-9]/,
+                  ]}
+                  readonly={readonly}
                 />
-                <NumberInput
+                {/* <NumberInput
                   formProps={{
                     name: "telefono",
                     label: "Teléfono",
@@ -476,7 +518,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   max={10000000000}
                   min={10}
                   readonly={readonly}
-                />
+                /> */}
 
                 <SwitchInput
                   name="activo"
@@ -504,7 +546,9 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
         header={
           <div>
             <Col md={12} sm={24} style={{ marginRight: 20 }}>
-              Nombre Clínica/Empresa
+            
+              Nombre Clínica/Empresa    .
+          
               <Select
                 options={clinicOptions}
                 onChange={(value, option: any) => {
