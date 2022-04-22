@@ -1,10 +1,12 @@
-import { Button, PageHeader, Input } from "antd";
-import React, { FC } from "react";
+import { Button, PageHeader, Input, Form } from "antd";
+import React, { FC, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
-
+import { IContactForm } from "../../../app/models/contact";
+import HeaderTitle from "../../../app/common/header/HeaderTitle";
 
 const { Search } = Input;
+
 
 type CompanyFormTableHeaderProps = {
   handleCompanyPrint: () => void;
@@ -13,7 +15,8 @@ type CompanyFormTableHeaderProps = {
 const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({ handleCompanyPrint, }) => {
   const navigate = useNavigate();
 
-
+  const [formContact] = Form.useForm<IContactForm>();
+  const [disabled, setDisabled] = useState(true);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -22,22 +25,41 @@ const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({ handleCompany
 
   return (
     <PageHeader
-      ghost={false}
+    ghost={false}
+      title={<HeaderTitle title="Contactos" image="doctor" />}
       className="header-container"
       extra={[
-        <Search
+        
+        <Search 
+          style={{marginRight: 20, textAlign: "left" }}         
           key="search"
           placeholder="Buscar"
           defaultValue={searchParams.get("search") ?? ""}
-          onSearch={(value) => {
-            setSearchParams({ search: !value ? "all" : value });
+          onSearch={(values) => {
+            setSearchParams({ search: !values ? "all" : values });
           }}
+         
         />,
+          <Button
+            style={{marginRight: 20, textAlign: "left" }}   
+            type="primary"
+            htmlType="submit"
+            disabled={disabled}
+            onClick={() => {
+              formContact.submit();
+              return;
+            }}
+          >
+            Guardar
+          </Button>
+        ,
+        
         <Button
           key="new"
+          style={{marginRight: 1, textAlign: "right" }}   
           type="primary"
           onClick={() => {
-            navigate("/contact/0");
+            navigate("");
           }}
           icon={<PlusOutlined />}
         >

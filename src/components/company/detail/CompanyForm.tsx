@@ -17,6 +17,7 @@ import SelectInput from "../../../app/common/form/SelectInput";
 import { useStore } from "../../../app/stores/store";
 import { Search, useNavigate, useSearchParams } from "react-router-dom";
 import { ICompanyForm, CompanyFormValues } from "../../../app/models/company";
+import { IContactForm, ContactFormValues } from "../../../app/models/contact";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import NumberInput from "../../../app/common/form/NumberInput";
@@ -34,6 +35,7 @@ import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/ta
 import IconButton from "../../../app/common/button/IconButton";
 import CompanyFormTableHeader from "./CompanyFormTableHeader";
 import { useReactToPrint } from "react-to-print";
+import { EditOutlined } from "@ant-design/icons";
 
 
 
@@ -62,6 +64,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [form] = Form.useForm<ICompanyForm>();
+  const [formContact] = Form.useForm<IContactForm>();
 
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
@@ -70,6 +73,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     searchParams.get("mode") === "readonly"
   );
   const [values, setValues] = useState<ICompanyForm>(new CompanyFormValues());
+  const [valuesContact, setValuesContact] = useState<IContactForm>(new ContactFormValues());
 
   const clearLocation = useCallback(() => {
     form.setFieldsValue({
@@ -104,11 +108,12 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     const readCompany = async (id: number) => {
       setLoading(true);
       const company = await getById(id);
-
+console.log(company);
       if (company) {
         form.setFieldsValue(company);
-        getLocation(company.codigoPostal.toString());
         setValues(company);
+        getLocation(company.codigoPostal.toString());
+        
       }
 
       setLoading(false);
@@ -131,6 +136,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     getcfdiOptions,
     getpaymentMethodOptions,
   ]);
+  console.log(values.contacts);
 
   useEffect(() => {
     const readCompany = async () => {
@@ -146,11 +152,11 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
 
     let success = false;
 
-    const contacts = [...company.contact];
+    const contacts = [...company.contacts];
     contacts.forEach((v, i, a) => {
-      a[i].id = typeof a[i].id === "string" ? 0 : v.id;
+      a[i].idContacto = typeof a[i].idContacto === "string" ? 0 : v.idContacto;
     });
-    company.contact = contacts;
+    company.contacts = contacts;
 
     if (!company.idCompania) {
       success = await create(company);
@@ -217,7 +223,7 @@ const handleCompanyPrint = useReactToPrint({
     setPrinting(false);
   },
 });
-
+console.log(values);
   console.log("Table");
 const { width: windowWidth } = useWindowDimensions();
 const [searchState, setSearchState] = useState<ISearch>({
@@ -251,12 +257,15 @@ const columns: IColumns<IContactList> = [
     }),
   },
   {
-    ...getDefaultColumnProps("activo", "Activo", {
-      searchState,
-      setSearchState,
-      width: "10%",
-      windowSize: windowWidth,
-    }),
+
+    key: "activo",
+    dataIndex: "activo",
+    title: "Activo",
+    align: "center",
+    width: windowWidth < resizeWidth ? 100 : "10%",
+
+    render: (value) => (value ? "Sí" : "No"),
+
   },
   {
     key: "editar",
@@ -264,16 +273,16 @@ const columns: IColumns<IContactList> = [
     title: "Editar",
     align: "center",
     width: windowWidth < resizeWidth ? 100 : "10%",
-    // render: (value) => (
-    //   <IconButton
-    //     title="Editar Contacto"
-    //     icon={<EditOutlined />}
-    //     onClick={() => {
-    //       navigate(`/company/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`);
-    //     }}
-        
-    //   />
-    // ),
+    render: (value) => (
+      <IconButton
+        title="Editar Contacto"
+        icon={<EditOutlined />}
+        onClick={() => {
+          navigate(`/company/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`);
+        }}
+        />
+    ),
+    
   },
 ];
 
@@ -399,6 +408,7 @@ const columns: IColumns<IContactList> = [
                   }}
                   max={100}
                   readonly={readonly}
+                  type="email"
                 />
                 <TextInput
                   formProps={{
@@ -460,13 +470,12 @@ const columns: IColumns<IContactList> = [
                   readonly={readonly}
                 />
 
-                <NumberInput
+                <TextInput
                   formProps={{
                     name: "codigoPostal",
                     label: "Código P: ",
                   }}
-                  max={9999999999}
-                  min={1000}
+                  max={1000000}
                   readonly={readonly}
                 />
 
@@ -564,28 +573,55 @@ const columns: IColumns<IContactList> = [
       <Col md={24} sm={12} style={{marginRight: 20, textAlign: "center" }}>
       
       <Fragment>
-      <CompanyFormTableHeader handleCompanyPrint={handleCompanyPrint} /> 
+      <CompanyFormTableHeader handleCompanyPrint={handleCompanyPrint} />         
       </Fragment>
-          {/*
+
+          <Form<IContactForm>
+            {...formItemLayout}
+            form={formContact}
+            name="contact"
+            initialValues={valuesContact}
+            scrollToFirstError
+            onFieldsChange={() => {
+              setDisabled(
+                !formContact.isFieldsTouched() ||
+                  formContact.getFieldsError().filter(({ errors }) => errors.length)
+                    .length > 0
+              );
+            }}
+          />
             <Row>
               <Col md={12} sm={24}>
                 <TextInput
                   formProps={{
                     name: "nombre",
-                    label: "Nombre. ",
+                    label: "Nombre ",
                   }}
                   max={100}
                   required
                   readonly={readonly}
                   type="string"
-                />
-                <TextInput
+                />.
+                 <MaskInput
                   formProps={{
                     name: "telefono",
-                    label: "Telefono. ",
+                    label: "Telefono",
                   }}
-                  max={100}
-                  required
+                  mask={[
+                    /[0-9]/,
+                    /[0-9]/,
+                    /[0-9]/,
+                    "-",
+                    /[0-9]/,
+                    /[0-9]/,
+                    /[0-9]/,
+                    "-",
+                    /[0-9]/,
+                    /[0-9]/,
+                    "-",
+                    /[0-9]/,
+                    /[0-9]/,
+                  ]}
                   readonly={readonly}
                 />
                 </Col>
@@ -593,26 +629,37 @@ const columns: IColumns<IContactList> = [
                 <TextInput
                   formProps={{
                     name: "correo",
-                    label: "Correo. ",
+                    label: "Correo ",
                   }}
                   max={100}
                   readonly={readonly}
+                  type="email"
+                />
+                <SwitchInput
+                  name="activo"
+                  onChange={(value) => {
+                    if (value) {
+                      alerts.info(messages.confirmations.enable);
+                    } else {
+                      alerts.info(messages.confirmations.disable);
+                    }
+                  }}
+                  label="Activo"
+                  readonly={readonly}
                 />
               </Col>
-          </Row>*/}
+          </Row>
 
-
-        <Divider className="header-divider" />
+        <Divider className="header-divider" style={{ marginLeft:40  }}/>
         <Table<IContactList>
           size="large"
-          rowKey={(record) => record.id}
+          rowKey={(record) => record.idContacto}
           columns={columns.slice(0, 5)}
-          pagination={false}
-          dataSource={[...(values.contact??[])]}
-          scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+          dataSource={[...(values.contacts??[])]}
         />
          </Col>
     </Row>  
+    
       </div>
     </Spin>
   );

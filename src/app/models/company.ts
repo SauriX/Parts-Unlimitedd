@@ -33,7 +33,7 @@ export interface ICompanyForm {
     numeroDeCuenta: string;
     bancoId?: number;
     activo: boolean;
-    contact: IContactList[];
+    contacts: IContactList[];
   }
   export class CompanyFormValues implements ICompanyForm {
    
@@ -58,7 +58,7 @@ export interface ICompanyForm {
     numeroDeCuenta= "";
     bancoId= undefined;
     activo= true;
-    contact: IContactList[] = [];
+    contacts: IContactList[] = [];
   
     constructor(init?: ICompanyForm) {
       Object.assign(this, init);
