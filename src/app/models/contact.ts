@@ -1,15 +1,13 @@
 export interface IContactList {
-    id: number;
-    CompañiaId: number;
+  idContacto: number;
     nombre: string;
-    apellidos: string;
     telefono: number;
     correo: string;
-    activo: boolean;
+    Activo: boolean;
   }
   
   export interface IContactForm {
-    id: number;
+    idContacto: number;
     CompañiaId: number;
     nombre: string;
     apellidos: string;
@@ -19,7 +17,7 @@ export interface IContactList {
   }
   
   export class ContactFormValues implements IContactForm {
-    id = 0;
+    idContacto = 0;
     CompañiaId= 0;
     nombre= "";
     apellidos= "";

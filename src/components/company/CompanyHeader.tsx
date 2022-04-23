@@ -29,7 +29,7 @@ const CompanyHeader: FC<CompanyHeaderProps> = ({ handlePrint, }) => {
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Compañias" image="doctor" />}
+      title={<HeaderTitle title="Catálogo de Compañias" image="Company" />}
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

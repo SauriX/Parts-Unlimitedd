@@ -4,8 +4,8 @@ export interface IMedicsList {
   idMedico: number;
   clave: string;
   nombre: string;
-  primerApellido : string
-  segundoApellido : string
+  primerApellido: string;
+  segundoApellido: string;
   especialidadId: number;
   observaciones: string;
   codigoPostal: number;
@@ -26,8 +26,8 @@ export interface IMedicsForm {
   idMedico: number;
   clave: string;
   nombre: string;
-  primerApellido : string
-  segundoApellido : string
+  primerApellido: string;
+  segundoApellido: string;
   especialidadId?: number;
   observaciones: string;
   codigoPostal: number;
@@ -39,7 +39,7 @@ export interface IMedicsForm {
   coloniaId: number;
   correo?: string;
   celular?: number;
-  telefono?: number;
+  telefono?: number | string;
   activo: boolean;
   clinicas: IClinicList[];
 }

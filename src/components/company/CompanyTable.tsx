@@ -65,7 +65,8 @@ type CompanyTableProps = {
           <Button
             type="link"
             onClick={() => {
-              navigate(`/company/${company.id}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
+              console.log(company);
+              navigate(`/company/${company.idCompania}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
             
             }}
             >
@@ -93,7 +94,7 @@ type CompanyTableProps = {
       },
      
       {
-        ...getDefaultColumnProps("Procedencia", "Procedencia", {
+        ...getDefaultColumnProps("procedencia", "Procedencia", {
           searchState,
           setSearchState,
           width: "8%",
@@ -102,7 +103,7 @@ type CompanyTableProps = {
         }),
       },
       {
-        ...getDefaultColumnProps("ListaPrecioId", "Precio", {
+        ...getDefaultColumnProps("listaPrecioId", "Precio", {
           searchState,
           setSearchState,
           width: "8%",
@@ -130,7 +131,7 @@ type CompanyTableProps = {
       },
       {
         key: "editar",
-        dataIndex: "id",
+        dataIndex: "idCompania",
         title: "Editar",
         align: "center",
         width: windowWidth < resizeWidth ? 100 : "6%",
@@ -158,7 +159,7 @@ type CompanyTableProps = {
           <Divider className="header-divider" />
           <Table<ICompanyList>
             size="large"
-            rowKey={(record) => record.id}
+            rowKey={(record) => record.idCompania}
             columns={columns.slice(0, 6)}
             pagination={false}
             dataSource={[...company]}
@@ -172,7 +173,7 @@ type CompanyTableProps = {
         <Table<ICompanyList>
           loading={loading || printing}
           size="small"
-          rowKey={(record) => record.id}
+          rowKey={(record) => record.idCompania}
           columns={columns}
           dataSource={[...company]}
           pagination={defaultPaginationProperties}

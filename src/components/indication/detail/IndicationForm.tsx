@@ -107,31 +107,6 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing  }
     console.log(values);
   }, [values]);
 
-//POpConfirm
-//   const {  Popconfirm, message  } = antd;
-
-// function confirm(e) {
-//   console.log(e);
-//   message.success('El registro ha sido activado');
-// }
-
-// function cancel(e) {
-//   console.log(e);
-//   message.error('Operacion Cancelada');
-// }
-
-// ReactDOM.render(
-//   <Popconfirm
-//     title="¿Desea activar el registro? El registro será activado"
-//     onConfirm={confirm}
-//     onCancel={cancel}
-//     okText="Si, Activar"
-//     cancelText="Cancelar"
-//   >
-//     <a href="#">Delete</a>
-//   </Popconfirm>,
-//   mountNode,
-// );
 console.log("Table");
 const { width: windowWidth } = useWindowDimensions();
 const [searchState, setSearchState] = useState<ISearch>({
@@ -157,7 +132,7 @@ const columns: IColumns<IStudyList> = [
     }),
   },
   {
-    ...getDefaultColumnProps("areaId", "Area", {
+    ...getDefaultColumnProps("area", "Área", {
       searchState,
       setSearchState,
       width: "30%",
