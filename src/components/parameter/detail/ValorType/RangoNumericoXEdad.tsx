@@ -74,7 +74,7 @@ const RangoNumericoXEdad = () => {
                     />
                 </Col>
             </Row>)}
-            <Button type="default" onClick={addRow} style={{marginLeft:"50%"}}>Agregar</Button>
+            <Button type="default" onClick={addRow} style={{marginLeft:"50%",marginTop:10}}>Agregar</Button>
         </div>
     );
 }
