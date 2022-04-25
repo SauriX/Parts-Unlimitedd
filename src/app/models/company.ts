@@ -5,7 +5,7 @@ export interface ICompanyList {
     clave: string;
     contrasena : string;
     nombreComercial: string;
-    procedencia : number;
+    procedenciaid : number;
     listaPrecioId: number;
     activo: boolean;
   }
@@ -17,7 +17,7 @@ export interface ICompanyForm {
     contrasena : string;
     nombreComercial: string;
     emailEmpresarial : string
-    procedencia : number;
+    procedenciaId : number;
     listaPrecioId?: number;
     promocionesId?: number;
     rfc: string;
@@ -42,7 +42,7 @@ export interface ICompanyForm {
     contrasena = "";
     nombreComercial= "";
     emailEmpresarial = "";
-    procedencia= 0;
+    procedenciaId= 0;
     listaPrecioId= undefined;
     promocionesId= undefined;
     rfc= "";
@@ -65,30 +65,4 @@ export interface ICompanyForm {
     }
   }
 
-  export interface IProcedenciaList {
-    id: number;
-    nombre: string;
-    Clave: string;
-    activo: boolean;
-  }
-  
-  export interface IProcedenciaForm {
-    id: number;
-    nombre: string;
-    Clave: string;
-    usuarioId: number;
-    activo: boolean;
-  }
-  
-  export class ProcedenciaFormValues implements IProcedenciaForm {
-    id = 0;
-    nombre = "";
-    Clave= "";
-    usuarioId = 0;
-    activo = true;
-  
-    constructor(init?: IProcedenciaForm) {
-      Object.assign(this, init);
-    }
-  }
   

@@ -1,6 +1,9 @@
 import { makeAutoObservable } from "mobx";
+import Company from "../../views/Company";
 import Catalog from "../api/catalog";
-import { ICatalogDescriptionList, ICatalogNormalList } from "../models/catalog";
+import Price from "../api/price";
+import { ICatalogDescriptionList, ICatalogNormalList, IProcedenciaList } from "../models/catalog";
+import { IPriceListList } from "../models/price";
 import { IOptions, IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
@@ -129,6 +132,36 @@ export default class OptionStore {
       }));
     } catch (error) {
       this.paymentOptions = [];
+    }
+  };
+
+  priceOptions: IOptions[] = [];
+
+  getpriceOptions = async () => {
+    try {
+      const price = await Price.getActive<IPriceListList>("price");
+      console.log(price);
+      this.priceOptions = price.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.priceOptions = [];
+    }
+  };
+
+  procedenciaOptions: IOptions[] = [];
+
+  getprovenanceOptions = async () => {
+    try {
+      const procedencia = await Catalog.getActive<IProcedenciaList>("price");
+      console.log(procedencia);
+      this.procedenciaOptions = procedencia.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.procedenciaOptions = [];
     }
   };
 }

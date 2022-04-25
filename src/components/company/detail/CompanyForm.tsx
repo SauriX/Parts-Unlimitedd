@@ -53,9 +53,13 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   const { getById, generatePass, create, update, getAll, company } =
     companyStore;
   const {
+    procedenciaOptions,
+    getprovenanceOptions,
     paymentOptions,
     getpaymentOptions,
-    bankOptions,
+    priceOptions,
+    getpriceOptions,
+    bankOptions,  
     getbankOptions,
     cfdiOptions,
     getcfdiOptions,
@@ -139,11 +143,15 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     getbankOptions();
     getcfdiOptions();
     getpaymentMethodOptions();
+    getpriceOptions();
+    getprovenanceOptions();
   }, [
     getpaymentOptions,
     getbankOptions,
     getcfdiOptions,
     getpaymentMethodOptions,
+    getpriceOptions,
+    getprovenanceOptions,
   ]);
   console.log(values.contacts);
 
@@ -463,22 +471,41 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
-                <TextInput
+                <SelectInput 
                   formProps={{
-                    name: "procedencia",
+                    name: "procedenciaId",
                     label: "Procedencia. ",
                   }}
-                  max={100}
+                  readonly={readonly}
+                  required
+                  options={procedenciaOptions}
+                />
+                <NumberInput
+                  formProps={{
+                    name: "procedenciaId",
+                    label: "",
+                  }}
+                  max={12}
+                  min={6}
                   required
                   readonly={readonly}
                 />
+                {/* <SelectInput 
+                  formProps={{
+                    name: "listaPrecioId",
+                    label: "Lista de precio: ",
+                  }}
+                  readonly={readonly}
+                  required
+                  options={priceOptions}
+                /> */}
                 <NumberInput
                   formProps={{
                     name: "listaPrecioId",
                     label: "Lista de precio: ",
                   }}
                   max={100000}
-                  min={1}
+                  min={10}
                   readonly={readonly}
                 />
                 <NumberInput
@@ -487,7 +514,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                     label: "Lista de promoción: ",
                   }}
                   max={100000}
-                  min={10000}
+                  min={10}
                   readonly={readonly}
                 />
                 <SwitchInput
@@ -549,7 +576,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
-                <SelectInput //Crear y cambier field option, store a Metodo de pago
+                <SelectInput 
                   formProps={{
                     name: "metodoDePagoId",
                     label: "Método de pago: ",
@@ -558,7 +585,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   required
                   options={paymentMethodOptions}
                 />
-                <SelectInput //Crear y cambier field option, store a Forma de pago
+                <SelectInput 
                   formProps={{
                     name: "formaDePagoId",
                     label: "Forma de pago: ",
@@ -583,7 +610,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   min={1}
                   readonly={readonly}
                 />
-                <SelectInput //Crear y cambier field option, store a CFDI
+                <SelectInput 
                   formProps={{
                     name: "cfdiId",
                     label: "CFDI: ",
@@ -599,7 +626,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   max={100}
                   readonly={readonly}
                 />
-                <SelectInput //Crear y cambier field option, store a Banco
+                <SelectInput 
                   formProps={{
                     name: "bancoId",
                     label: "Banco: ",
