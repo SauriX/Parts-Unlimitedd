@@ -1,4 +1,4 @@
-import { Spin, Form, Row, Col, Transfer, Tooltip, Tree, Tag, Pagination, Button, Divider } from "antd";
+import { Spin, Form, Row, Col, Transfer, Tooltip, Tree, Tag, Pagination, Button, Divider, PageHeader, Table } from "antd";
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
@@ -14,6 +14,10 @@ import { IParameterForm, ParameterFormValues } from "../../../app/models/paramet
 import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import ValorType from "./ValorType/ValorType"
 import { IOptions } from "../../../app/models/shared";
+import HeaderTitle from "../../../app/common/header/HeaderTitle";
+import { IStudyList } from "../../../app/models/study";
+import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
+import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 type ParameterFormProps = {
     componentRef: React.MutableRefObject<any>;
     load: boolean;
@@ -28,28 +32,32 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
 
     const [loading, setLoading] = useState(false);
     const [disabled, setDisabled] = useState(true);
-
+    const { width: windowWidth } = useWindowDimensions();
     const [targetKeys, setTargetKeys] = useState<string[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
     let navigate = useNavigate();
     const [values, setValues] = useState<IParameterForm>(new ParameterFormValues());
+    const [ValueType,setValueType] = useState(0);
     const [searchParams, setSearchParams] = useSearchParams();
     let { id } = useParams<UrlParams>();
     const tipodeValorList:IOptions[] =[
         {value:1 ,label:"Numérico"},
-        {value:2 ,label:"Rango de edad"},
-        {value:3 ,label:"Numérico por sexo"},
-        {value:4 ,label:"Numérico por edad"},
-        {value:5 ,label:"Numérico por edad y sexo"},
-        {value:6 ,label:"Opción múltiple"},
+        {value:2 ,label:"Numérico por sexo"},
+        {value:3 ,label:"Numérico por edad"},
+        {value:4 ,label:"Numérico por edad y sexo"},
+        {value:5 ,label:"Opción múltiple"},
+        {value:6 ,label:"Numérico con una columna"},
         {value:7 ,label:"Texto"},
-        {value:8 ,label:"Numérico con una columna"},
-        {value:9 ,label:"Etiqueta"},
+        {value:8 ,label:"Parrafo"},
+        {value:9 ,label:"etiqueta"},
+        {value:10 ,label:" observación"},
+
     ];
     useEffect(() => {
         const readuser = async (idUser: string) => {
           setLoading(true);
+          
 /*           const parameter = await getById(idUser);
           form.setFieldsValue(parameter!);
           setValues(parameter!); */
@@ -103,15 +111,42 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     };
     const onValuesChange = (changeValues: any) => {
         const fields = Object.keys(changeValues)[0]; 
-        if (fields === "nombre") {
+        if (fields === "tipoValor") {
           const value = changeValues[fields];
-/*           clave.nombre = value;
-          if (id) {
-            clave.primerApllido = values.primerApellido;
-            clave.segundoApellido = values.segundoApellido;
-          } */
+          setValueType(value);
         }
     }
+    const [searchState, setSearchState] = useState<ISearch>({
+        searchedText: "",
+        searchedColumn: "",
+      });
+    const columns: IColumns<IStudyList> = [
+        {
+          ...getDefaultColumnProps("clave", "Id Estudio", {
+            searchState,
+            setSearchState,
+            width: "30%",
+            windowSize: windowWidth,
+          }),
+        },
+        {
+          ...getDefaultColumnProps("nombre", "Estudio", {
+            searchState,
+            setSearchState,
+            width: "30%",
+            windowSize: windowWidth,
+          }),
+        },
+        {
+          ...getDefaultColumnProps("areaId", "Area", {
+            searchState,
+            setSearchState,
+            width: "30%",
+            windowSize: windowWidth,
+          }),
+        },
+      ];
+      
     return (
         <Spin spinning={loading || load}>
             <div ref={componentRef}>
@@ -217,6 +252,16 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                         </Col>
                         <Col md={12} sm={24} xs={12}>
                             <SelectInput formProps={{ name: "tipoValor", label: "Tipo de valor" }} options={tipodeValorList} readonly={CheckReadOnly()} required />
+                            <SelectInput formProps={{ name: "formatoImpresion", label: "Formato de impresion" }} options={[{ value: "0", label: "test" }]} readonly={CheckReadOnly()} required />
+                            <TextInput
+                                formProps={{
+                                name: "formula",
+                                label: "Formula",
+                                }}
+                                max={100}
+                                required
+                                readonly={CheckReadOnly()}
+                            />
                         </Col>
                         <Col md={12} sm={24} xs={12}>
                             <TextInput
@@ -257,7 +302,25 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                         </Col>
                     </Row>
                 </Form>
-                <ValorType></ValorType>
+                <ValorType value={ValueType}></ValorType>
+                <Row>
+                    <Col md={24} sm={12} style={{marginRight: 20, textAlign: "center" }}>
+                        <PageHeader
+                            ghost={false}
+                            title={<HeaderTitle title="Estudios donde se encuentra la indicación"/>}
+                            className="header-container"
+                            ></PageHeader>
+                            <Divider className="header-divider" />
+                        <Table<IStudyList>
+                            size="small"
+                            rowKey={(record) => record.id}
+                            columns={columns.slice(0, 3)}
+                            pagination={false}
+                            dataSource={[...(values.estudios??[])]}
+                            scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+                            />
+                    </Col>
+                </Row>
             </div>
         </Spin>
     );

@@ -1,4 +1,5 @@
 import { IOptions } from "./shared"
+import { IStudyList } from "./study";
 export interface IParameterList {
     id:string,
     clave:string,
@@ -24,7 +25,9 @@ export interface IParameterForm {
     reactivo:number,
     unidadSi:string,
     fcs:string,
-    activo:boolean
+    activo:boolean,
+    estudios:IStudyList[],
+    formatoImpresion:string
 }
 
 export class ParameterFormValues implements IParameterForm{
@@ -43,6 +46,8 @@ export class ParameterFormValues implements IParameterForm{
     unidadSi = "";
     fcs = "";
     activo = false;
+    estudios: IStudyList[]=[];
+    formatoImpresion ="";
 
     constructor(init?: IParameterForm) {
         Object.assign(this, init);

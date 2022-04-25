@@ -8,10 +8,13 @@ import SelectInput from "../../../../app/common/form/SelectInput";
 import MaskInput from "../../../../app/common/form/MaskInput";
 import { MinusCircleOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
-const RangoEdadXSexo = () => {
+import CheckInput from "../../../../app/common/form/CheckInput";
+import TextInput from "../../../../app/common/form/TextInput";
+
+const ReferenciaEtiqueta = () => {
     const [lista, setLista] = useState<any[]>([]);
     const addRow = ()=>{
-        setLista(prev => [...prev, { id: prev.length, nombre:  (prev.length + 1).toString() }])
+        setLista(prev => [...prev, { id: prev.length, nombre: (prev.length + 1).toString() }])
     }
     const removeRow = (id:number)=>{
         const list = lista.filter((x) => x.id !== id);
@@ -20,7 +23,7 @@ const RangoEdadXSexo = () => {
     }
     return (
         <div >
-            <Divider orientation="left">Valores de referencia (Numérico por sexo):</Divider>
+            <Divider orientation="left">Valores de referencia (Numérico con una columna):​</Divider>
 
             <Col md={24} sm={24} xs={24} style={{ marginLeft: "40%" }}>
                 <Button onClick={() => { }} type="default">Modificar</Button>
@@ -29,44 +32,25 @@ const RangoEdadXSexo = () => {
                 </Button>
             </Col>
             {lista.map(x => <Row key={x.nombre}>
-                <Col md={6} sm={24} xs={12} style={{ marginTop: 20 }}>
-                    <MaskInput
+                <Col md={12} sm={24} xs={12} style={{ marginTop: 20 }}>
+                    <TextInput
                         formProps={{
-                            name: "rangue",
-                            label: `Hombres Valores`
+                            name: "clave"+x.nombre,
+                            label: "Clave",
                         }}
-                        mask={[
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/
-                        ]}
-                    ></MaskInput>
+                        max={100}
+                    />
                 </Col>
-
-                <Col md={6} sm={24} xs={12} style={{ marginTop: 51 }}>
-                    
-                </Col>
-
-                <Col md={6} sm={24} xs={12} style={{ marginTop: 51 }}>
-                    <MaskInput
+                <Col md={12} sm={24} xs={12} style={{ marginTop: 20 }}>
+                    <TextInput
                         formProps={{
-                            name: "rangue2",
-                            label: "Mujeres valores"
+                            name: "nombre"+x.nombre,
+                            label: "Nombre",
                         }}
-                        mask={[
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/
-                        ]}
-                    ></MaskInput>
+                        max={100}
+                    />
                 </Col>
-                <Col md={6} sm={24} xs={12} style={{ marginTop: 51 }}>
+                <Col md={6} sm={24} xs={12} style={{ marginTop: 22 }}>
                     <IconButton
                         title="Remover"
                         icon={<MinusCircleOutlined />}
@@ -78,4 +62,4 @@ const RangoEdadXSexo = () => {
         </div>
     );
 }
-export default observer(RangoEdadXSexo);
+export default observer(ReferenciaEtiqueta);
