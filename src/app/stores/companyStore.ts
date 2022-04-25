@@ -95,4 +95,9 @@ export default class CompanyStore {
         }
       }
     };
+
+    generatePass = async ()=>{ 
+      const response = await Company.gepass();
+      return await response;
+    }
   }

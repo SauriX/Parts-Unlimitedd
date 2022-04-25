@@ -9,6 +9,7 @@ const Company = {
   getById: (id: number): Promise<ICompanyForm> => requests.get(`company/${id}`),
   create: (company: ICompanyForm): Promise<void> => requests.post("company", company),
   update: (company: ICompanyForm): Promise<void> => requests.put("company", company),
+  gepass: (): Promise<string> => requests.get(`company/paswwordgenerator`),
   exportList: (search: string): Promise<void> =>
     requests.download(`company/export/list/${!search ? "all" : search}`, "Catálogo de Medicos.xlsx"),
   exportForm: (id: number, clave: string): Promise<void> =>

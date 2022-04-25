@@ -1,7 +1,7 @@
-import { IContactList } from "./contact";
+import { IContactForm, IContactList } from "./contact";
 
 export interface ICompanyList {
-  idCompania: number;
+  id: number;
     clave: string;
     contrasena : string;
     nombreComercial: string;
@@ -12,7 +12,7 @@ export interface ICompanyList {
 
   
 export interface ICompanyForm {
-  idCompania: number;
+  id: number;
     clave: string;
     contrasena : string;
     nombreComercial: string;
@@ -20,7 +20,7 @@ export interface ICompanyForm {
     procedencia : number;
     listaPrecioId?: number;
     promocionesId?: number;
-    rFC: string;
+    rfc: string;
     codigoPostal: string;
     estado: string;
     ciudad: string;
@@ -29,15 +29,15 @@ export interface ICompanyForm {
     formaDePagoId?: number;
     limiteDeCredito: string;
     diasCredito?: number;
-    cFDIId?: number;
+    cfdiId?: number;
     numeroDeCuenta: string;
     bancoId?: number;
     activo: boolean;
-    contacts: IContactList[];
+    contacts: IContactForm[];
   }
   export class CompanyFormValues implements ICompanyForm {
    
-    idCompania= 0;
+    id= 0;
     clave= "";
     contrasena = "";
     nombreComercial= "";
@@ -45,7 +45,7 @@ export interface ICompanyForm {
     procedencia= 0;
     listaPrecioId= undefined;
     promocionesId= undefined;
-    rFC= "";
+    rfc= "";
     codigoPostal= "";
     estado= "";
     ciudad= "";
@@ -54,13 +54,41 @@ export interface ICompanyForm {
     formaDePagoId= undefined;
     limiteDeCredito= "";
     diasCredito= undefined;
-    cFDIId= undefined;
+    cfdiId= undefined;
     numeroDeCuenta= "";
     bancoId= undefined;
     activo= true;
-    contacts: IContactList[] = [];
+    contacts: IContactForm[] = [];
   
     constructor(init?: ICompanyForm) {
       Object.assign(this, init);
     }
   }
+
+  export interface IProcedenciaList {
+    id: number;
+    nombre: string;
+    Clave: string;
+    activo: boolean;
+  }
+  
+  export interface IProcedenciaForm {
+    id: number;
+    nombre: string;
+    Clave: string;
+    usuarioId: number;
+    activo: boolean;
+  }
+  
+  export class ProcedenciaFormValues implements IProcedenciaForm {
+    id = 0;
+    nombre = "";
+    Clave= "";
+    usuarioId = 0;
+    activo = true;
+  
+    constructor(init?: IProcedenciaForm) {
+      Object.assign(this, init);
+    }
+  }
+  

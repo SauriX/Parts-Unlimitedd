@@ -66,7 +66,7 @@ type CompanyTableProps = {
             type="link"
             onClick={() => {
               console.log(company);
-              navigate(`/company/${company.idCompania}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
+              navigate(`/company/${company.id}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
             
             }}
             >
@@ -131,7 +131,7 @@ type CompanyTableProps = {
       },
       {
         key: "editar",
-        dataIndex: "idCompania",
+        dataIndex: "id",
         title: "Editar",
         align: "center",
         width: windowWidth < resizeWidth ? 100 : "6%",
@@ -159,7 +159,7 @@ type CompanyTableProps = {
           <Divider className="header-divider" />
           <Table<ICompanyList>
             size="large"
-            rowKey={(record) => record.idCompania}
+            rowKey={(record) => record.id}
             columns={columns.slice(0, 6)}
             pagination={false}
             dataSource={[...company]}
@@ -173,7 +173,7 @@ type CompanyTableProps = {
         <Table<ICompanyList>
           loading={loading || printing}
           size="small"
-          rowKey={(record) => record.idCompania}
+          rowKey={(record) => record.id}
           columns={columns}
           dataSource={[...company]}
           pagination={defaultPaginationProperties}
