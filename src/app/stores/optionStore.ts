@@ -135,6 +135,21 @@ export default class OptionStore {
     }
   };
 
+  procedenciaOptions: IOptions[] = [];
+
+  getprovenanceOptions = async () => {
+    try {
+      const procedencia = await Catalog.getActive<ICatalogNormalList>("provenance");
+      console.log(procedencia);
+      this.procedenciaOptions = procedencia.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.procedenciaOptions = [];
+    }
+  };
+
   priceOptions: IOptions[] = [];
 
   getpriceOptions = async () => {
@@ -147,21 +162,6 @@ export default class OptionStore {
       }));
     } catch (error) {
       this.priceOptions = [];
-    }
-  };
-
-  procedenciaOptions: IOptions[] = [];
-
-  getprovenanceOptions = async () => {
-    try {
-      const procedencia = await Catalog.getActive<IProcedenciaList>("price");
-      console.log(procedencia);
-      this.procedenciaOptions = procedencia.map((x) => ({
-        value: x.id,
-        label: x.nombre,
-      }));
-    } catch (error) {
-      this.procedenciaOptions = [];
     }
   };
 }

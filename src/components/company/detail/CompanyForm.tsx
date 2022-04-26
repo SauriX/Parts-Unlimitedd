@@ -480,7 +480,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   required
                   options={procedenciaOptions}
                 />
-                <NumberInput
+                {/* <NumberInput
                   formProps={{
                     name: "procedenciaId",
                     label: "",
@@ -489,7 +489,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   min={6}
                   required
                   readonly={readonly}
-                />
+                /> */}
                 {/* <SelectInput 
                   formProps={{
                     name: "listaPrecioId",
