@@ -1,26 +1,26 @@
-import { IContactList } from "./contact";
+import { IContactForm, IContactList } from "./contact";
 
 export interface ICompanyList {
-  idCompania: number;
+  id: number;
     clave: string;
     contrasena : string;
     nombreComercial: string;
-    procedencia : number;
+    procedenciaid : number;
     listaPrecioId: number;
     activo: boolean;
   }
 
   
 export interface ICompanyForm {
-  idCompania: number;
+  id: number;
     clave: string;
     contrasena : string;
     nombreComercial: string;
     emailEmpresarial : string
-    procedencia : number;
+    procedenciaId : number;
     listaPrecioId?: number;
     promocionesId?: number;
-    rFC: string;
+    rfc: string;
     codigoPostal: string;
     estado: string;
     ciudad: string;
@@ -29,23 +29,23 @@ export interface ICompanyForm {
     formaDePagoId?: number;
     limiteDeCredito: string;
     diasCredito?: number;
-    cFDIId?: number;
+    cfdiId?: number;
     numeroDeCuenta: string;
     bancoId?: number;
     activo: boolean;
-    contacts: IContactList[];
+    contacts: IContactForm[];
   }
   export class CompanyFormValues implements ICompanyForm {
    
-    idCompania= 0;
+    id= 0;
     clave= "";
     contrasena = "";
     nombreComercial= "";
     emailEmpresarial = "";
-    procedencia= 0;
+    procedenciaId= 0;
     listaPrecioId= undefined;
     promocionesId= undefined;
-    rFC= "";
+    rfc= "";
     codigoPostal= "";
     estado= "";
     ciudad= "";
@@ -54,13 +54,15 @@ export interface ICompanyForm {
     formaDePagoId= undefined;
     limiteDeCredito= "";
     diasCredito= undefined;
-    cFDIId= undefined;
+    cfdiId= undefined;
     numeroDeCuenta= "";
     bancoId= undefined;
     activo= true;
-    contacts: IContactList[] = [];
+    contacts: IContactForm[] = [];
   
     constructor(init?: ICompanyForm) {
       Object.assign(this, init);
     }
   }
+
+  

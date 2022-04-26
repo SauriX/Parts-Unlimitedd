@@ -91,3 +91,31 @@ export class CatalogAreaFormValues implements ICatalogAreaForm {
     Object.assign(this, init);
   }
 }
+
+export interface IProcedenciaList {
+  id: number;
+  nombre: string;
+  Clave: string;
+  activo: boolean;
+}
+
+export interface IProcedenciaForm {
+  id: number;
+  nombre: string;
+  Clave: string;
+  usuarioId: number;
+  activo: boolean;
+}
+
+export class ProcedenciaFormValues implements IProcedenciaForm {
+  id = 0;
+  nombre = "";
+  Clave= "";
+  usuarioId = 0;
+  activo = true;
+
+  constructor(init?: IProcedenciaForm) {
+    Object.assign(this, init);
+  }
+}
+
