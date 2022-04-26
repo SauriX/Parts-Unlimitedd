@@ -78,7 +78,7 @@ export default class OptionStore {
       this.reagents = [];
     }
   };
-
+ 
   areas:IOptions[]=[];
   getareaOptions = async (id:number) => {
     console.log(id);
