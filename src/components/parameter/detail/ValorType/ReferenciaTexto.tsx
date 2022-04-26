@@ -14,7 +14,7 @@ import TextInput from "../../../../app/common/form/TextInput";
 const ReferenciaTexto = () => {
     const [lista, setLista] = useState<any[]>([]);
     const addRow = ()=>{
-        setLista(prev => [...prev, { id: prev.length, nombre: "Opción"+(prev.length + 1).toString() }])
+        setLista(prev => [...prev, { id: prev.length, nombre: "Opción "+(prev.length + 1).toString() }])
     }
     const removeRow = (id:number)=>{
         const list = lista.filter((x) => x.id !== id);
@@ -23,9 +23,9 @@ const ReferenciaTexto = () => {
     }
     return (
         <div >
-            <Divider orientation="left">Valores de referencia (Opción múltiple):</Divider>
+            <Divider orientation="left">Valores de referencia (Texto):</Divider>
 
-            <Col md={24} sm={24} xs={24} style={{ marginLeft: "40%" }}>
+            <Col md={24} sm={24} xs={24} style={{ marginLeft: "50%" }}>
                 <Button onClick={() => { }} type="default">Modificar</Button>
                 <Button type="primary" htmlType="submit" onClick={() => { }}>
                     Guardar
@@ -44,7 +44,10 @@ const ReferenciaTexto = () => {
                         max={100}
                     />
                 </Col>
-                <Col md={6} sm={24} xs={12} style={{ marginTop: 22 }}>
+                <Col md={1} sm={24} xs={12} style={{ marginTop: 22 }}>
+
+                </Col>
+                <Col md={5} sm={24} xs={12} style={{ marginTop: 22 }}>
                     <IconButton
                         title="Remover"
                         icon={<MinusCircleOutlined />}

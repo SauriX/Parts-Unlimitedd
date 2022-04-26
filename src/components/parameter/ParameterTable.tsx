@@ -14,14 +14,13 @@ import IconButton from "../../app/common/button/IconButton";
 import { useNavigate,useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import Parameters from "../../views/Parameters";
 type ParameterTableProps = {
     componentRef: React.MutableRefObject<any>;
     printing: boolean;
 };
 const ParameterTable:FC<ParameterTableProps> = ({  componentRef,  printing }) => {
     const {parameterStore } = useStore();
-    const {  } = parameterStore;
+    const { getAll,parameters } = parameterStore;
     let navigate = useNavigate();
     let id="";
     const { width: windowWidth } = useWindowDimensions();
@@ -36,23 +35,12 @@ const ParameterTable:FC<ParameterTableProps> = ({  componentRef,  printing }) =>
     useEffect(() => {
       const readUsers = async () => {
         setLoading(true);
-        //await getAll(searchParams.get("search") ?? "all");
+        await getAll(searchParams.get("search") ?? "all");
         setLoading(false);
       };
 
       readUsers();
-    }, [/* getAll, */ searchParams]);
-    const  parameters : IParameterList[] = [
-      {
-        id:"1",
-        clave:"test",
-        nombre:"test",
-        nombreCorto:"test",
-        area:"test",
-        departamento:"string",
-        activo:true,
-      }
-    ]
+    }, [getAll,  searchParams]);
     const columns: IColumns<IParameterList> = [
       //clave
       {
@@ -96,7 +84,7 @@ const ParameterTable:FC<ParameterTableProps> = ({  componentRef,  printing }) =>
       },
       //area
       {
-        ...getDefaultColumnProps("area", "Area", {
+        ...getDefaultColumnProps("area", "Área", {
           searchState,
           setSearchState,
           width: "20%",

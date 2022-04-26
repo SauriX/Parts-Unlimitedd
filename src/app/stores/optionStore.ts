@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx";
+import Reagent from "../api/reagent";
 import Catalog from "../api/catalog";
 import { ICatalogDescriptionList, ICatalogNormalList } from "../models/catalog";
 import { IOptions, IScopes } from "../models/shared";
@@ -59,6 +60,26 @@ export default class OptionStore {
       console.log(this.departamentOptions);
     } catch (error) {
       this.departamentOptions = [];
+    }
+  };
+
+  areas:IOptions[]=[];
+  getareaOptions = async (id:number) => {
+    console.log(id);
+    try {
+      const department = await Catalog.getActive<ICatalogNormalList>(
+        "area/departament/"+id
+      );
+      console.log("el depa1");
+      console.log(department);
+      this.areas = department.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+      console.log("los depas mapeados");
+      console.log(this.departamentOptions);
+    } catch (error) {
+      this.areas = [];
     }
   };
 
@@ -129,6 +150,20 @@ export default class OptionStore {
       }));
     } catch (error) {
       this.paymentOptions = [];
+    }
+  };
+
+  reagents:IOptions[]=[];
+  getReagentOptions = async () => {
+    try {
+      const payment = await Reagent.getAll("all");
+      console.log(payment);
+      this.reagents = payment.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.reagents = [];
     }
   };
 }

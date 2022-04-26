@@ -48,7 +48,6 @@ export default class BranchStore {
 
   getAll = async (search: string="all") => {
     try {
-      console.log("oe mira el search");
       console.log(search);
       const roles= await Branch.getAll(search);
       console.log(roles);
@@ -63,7 +62,6 @@ export default class BranchStore {
    
     try {
       const rol = await Branch.getById(id);
-      console.log("mira wacho la sucursal");
       console.log(rol);
       this.sucursal = rol;
       return rol;

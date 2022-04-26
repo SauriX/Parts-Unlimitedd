@@ -25,7 +25,7 @@ const RangoEdad:FC<Props> = ({description}) => {
         <div >
             <Divider orientation="left">{description}</Divider>
 
-            <Col md={24} sm={24} xs={24} style={{ marginLeft: "40%" }}>
+            <Col md={24} sm={24} xs={24} style={{ marginLeft: "50%" }}>
                 <Button onClick={() => { }} type="default">Modificar</Button>
                 <Button type="primary" htmlType="submit" onClick={() => { }}>
                     Guardar
@@ -47,12 +47,14 @@ const RangoEdad:FC<Props> = ({description}) => {
                         ]}
                     ></MaskInput>
                 </Col>
-
-                <Col md={6} sm={24} xs={12} style={{ marginTop: 51 }}>
-                    <SelectInput formProps={{ name: "", label: "" }} options={[{ value: 1, label: "meses" }, { value: 2, label: "años" }]} required />
+                <Col md={1} sm={24} xs={12} style={{ marginTop: 51 }}>
                 </Col>
-
-                <Col md={6} sm={24} xs={12} style={{ marginTop: 51 }}>
+                <Col md={5} sm={24} xs={12} style={{ marginTop: 51 }}>
+                    <SelectInput formProps={{ name: "", label: "" }} options={[{ value: 1, label: "Dias" },{ value: 2, label: "Meses" }, { value: 3, label: "Años" }]} required />
+                </Col>
+                <Col md={1} sm={24} xs={12} style={{ marginTop: 51 }}>
+                </Col>
+                <Col md={5} sm={24} xs={12} style={{ marginTop: 51 }}>
                     <MaskInput
                         formProps={{
                             name: "rangue2",
@@ -69,7 +71,9 @@ const RangoEdad:FC<Props> = ({description}) => {
                         ]}
                     ></MaskInput>
                 </Col>
-                <Col md={6} sm={24} xs={12} style={{ marginTop: 51 }}>
+                <Col md={1} sm={24} xs={12} style={{ marginTop: 51 }}>
+                </Col>
+                <Col md={5} sm={24} xs={12} style={{ marginTop: 51 }}>
                     <IconButton
                         title="Remover"
                         icon={<MinusCircleOutlined />}

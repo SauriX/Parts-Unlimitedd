@@ -10,7 +10,7 @@ const ValorRNumerico = ()=>{
         <div>
             <Divider orientation="left">Valores de referencia (Numérico):​</Divider>
             
-            <Col md={24} sm={24} xs={24} style={{ marginLeft: "40%" }}>
+            <Col md={24} sm={24} xs={24} style={{ marginLeft: "50%" }}>
             <Button onClick={()=>{}}  type="default">Modificar</Button>
                 <Button type="primary" htmlType="submit" onClick={() => {  }}>
                     Guardar
@@ -21,7 +21,7 @@ const ValorRNumerico = ()=>{
                     <NumberInput
                         formProps={{
                             name: "initialValuea",
-                            label: "ValorInicial",
+                            label: "Valor Inicial",
                         }}
                         max={9999999999}
                         min={0}
@@ -29,7 +29,7 @@ const ValorRNumerico = ()=>{
                                         <NumberInput
                         formProps={{
                             name: "initialValuea",
-                            label: "ValorFinal",
+                            label: "Valor Final",
                         }}
                         max={9999999999}
                         min={0}
