@@ -1,9 +1,5 @@
 import { makeAutoObservable } from "mobx";
-<<<<<<< HEAD
-import Reagent from "../api/reagent";
-=======
 import Company from "../../views/Company";
->>>>>>> 5d4d90786bc3989720fccd7d1c8ea0f94b35bbc0
 import Catalog from "../api/catalog";
 import Price from "../api/price";
 import { ICatalogDescriptionList, ICatalogNormalList, IProcedenciaList } from "../models/catalog";
@@ -159,14 +155,6 @@ export default class OptionStore {
     }
   };
 
-<<<<<<< HEAD
-  reagents:IOptions[]=[];
-  getReagentOptions = async () => {
-    try {
-      const payment = await Reagent.getAll("all");
-      console.log(payment);
-      this.reagents = payment.map((x) => ({
-=======
   priceOptions: IOptions[] = [];
 
   getpriceOptions = async () => {
@@ -174,14 +162,10 @@ export default class OptionStore {
       const price = await Price.getActive<IPriceListList>("price");
       console.log(price);
       this.priceOptions = price.map((x) => ({
->>>>>>> 5d4d90786bc3989720fccd7d1c8ea0f94b35bbc0
         value: x.id,
         label: x.nombre,
       }));
     } catch (error) {
-<<<<<<< HEAD
-      this.reagents = [];
-=======
       this.priceOptions = [];
     }
   };
@@ -198,7 +182,6 @@ export default class OptionStore {
       }));
     } catch (error) {
       this.procedenciaOptions = [];
->>>>>>> 5d4d90786bc3989720fccd7d1c8ea0f94b35bbc0
     }
   };
 }
