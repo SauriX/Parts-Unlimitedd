@@ -22,7 +22,7 @@ const RangoEdadXSexo = () => {
         <div >
             <Divider orientation="left">Valores de referencia (Numérico por sexo):</Divider>
 
-            <Col md={24} sm={24} xs={24} style={{ marginLeft: "40%" }}>
+            <Col md={24} sm={24} xs={24} style={{ marginLeft: "50%" }}>
                 <Button onClick={() => { }} type="default">Modificar</Button>
                 <Button type="primary" htmlType="submit" onClick={() => { }}>
                     Guardar
@@ -45,11 +45,11 @@ const RangoEdadXSexo = () => {
                     ></MaskInput>
                 </Col>
 
-                <Col md={6} sm={24} xs={12} style={{ marginTop: 51 }}>
+                <Col md={1} sm={24} xs={12}  style={{marginTop:20}}>
                     
                 </Col>
 
-                <Col md={6} sm={24} xs={12} style={{ marginTop: 51 }}>
+                <Col md={6} sm={24} xs={12} style={{marginTop:20}}>
                     <MaskInput
                         formProps={{
                             name: "rangue2",
@@ -66,7 +66,10 @@ const RangoEdadXSexo = () => {
                         ]}
                     ></MaskInput>
                 </Col>
-                <Col md={6} sm={24} xs={12} style={{ marginTop: 51 }}>
+                <Col md={1} sm={24} xs={12}  style={{marginTop:20}}>
+                    
+                </Col>
+                <Col md={6} sm={24} xs={12} style={{marginTop:55}}>
                     <IconButton
                         title="Remover"
                         icon={<MinusCircleOutlined />}

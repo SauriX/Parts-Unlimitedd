@@ -25,7 +25,7 @@ const ReferenciaEtiqueta = () => {
         <div >
             <Divider orientation="left">Valores de referencia (Numérico con una columna):​</Divider>
 
-            <Col md={24} sm={24} xs={24} style={{ marginLeft: "40%" }}>
+            <Col md={24} sm={24} xs={24} style={{ marginLeft: "50%" }}>
                 <Button onClick={() => { }} type="default">Modificar</Button>
                 <Button type="primary" htmlType="submit" onClick={() => { }}>
                     Guardar

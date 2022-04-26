@@ -65,6 +65,26 @@ export default class OptionStore {
     }
   };
 
+  areas:IOptions[]=[];
+  getareaOptions = async (id:number) => {
+    console.log(id);
+    try {
+      const department = await Catalog.getActive<ICatalogNormalList>(
+        "area/departament/"+id
+      );
+      console.log("el depa1");
+      console.log(department);
+      this.areas = department.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+      console.log("los depas mapeados");
+      console.log(this.departamentOptions);
+    } catch (error) {
+      this.areas = [];
+    }
+  };
+
   fieldOptions: IOptions[] = [];
 
   getfieldsOptions = async () => {

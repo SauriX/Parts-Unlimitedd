@@ -16,7 +16,7 @@ const ParameterHeader: FC<ParameterHeaderProps> = ({ handlePrint,handleList }) =
     return (
       <PageHeader
         ghost={false}
-        title={<HeaderTitle title="Catálogo Parametros" image="parameters" />}
+        title={<HeaderTitle title="Catálogo Parámetros" image="parameters" />}
         className="header-container"
         extra={[
           <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

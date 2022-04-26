@@ -14,7 +14,7 @@ import TextInput from "../../../../app/common/form/TextInput";
 const NumeroColumna = () => {
     const [lista, setLista] = useState<any[]>([]);
     const addRow = ()=>{
-        setLista(prev => [...prev, { id: prev.length, nombre: "Valor"+(prev.length + 1).toString() }])
+        setLista(prev => [...prev, { id: prev.length, nombre: "Valor "+(prev.length + 1).toString() }])
     }
     const removeRow = (id:number)=>{
         const list = lista.filter((x) => x.id !== id);
@@ -25,7 +25,7 @@ const NumeroColumna = () => {
         <div >
             <Divider orientation="left">Valores de referencia (Numérico con una columna):​</Divider>
 
-            <Col md={24} sm={24} xs={24} style={{ marginLeft: "40%" }}>
+            <Col md={24} sm={24} xs={24} style={{ marginLeft: "50%" }}>
                 <Button onClick={() => { }} type="default">Modificar</Button>
                 <Button type="primary" htmlType="submit" onClick={() => { }}>
                     Guardar
@@ -41,7 +41,10 @@ const NumeroColumna = () => {
                         max={100}
                     />
                 </Col>
-                <Col md={6} sm={24} xs={12} style={{ marginTop: 22 }}>
+                <Col md={1} sm={24} xs={12}  style={{marginTop:20}}>
+                    
+                </Col>
+                <Col md={5} sm={24} xs={12} style={{ marginTop: 22 }}>
                     <IconButton
                         title="Remover"
                         icon={<MinusCircleOutlined />}
