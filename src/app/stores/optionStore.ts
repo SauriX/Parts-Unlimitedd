@@ -3,6 +3,7 @@ import Company from "../../views/Company";
 import Catalog from "../api/catalog";
 import Price from "../api/price";
 import { ICatalogDescriptionList, ICatalogNormalList, IProcedenciaList } from "../models/catalog";
+import Reagent from "../api/reagent";
 import { IPriceListList } from "../models/price";
 import { IOptions, IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -62,6 +63,19 @@ export default class OptionStore {
       console.log(this.departamentOptions);
     } catch (error) {
       this.departamentOptions = [];
+    }
+  };
+  reagents:IOptions[]=[];
+  getReagentOptions = async () => {
+    try {
+      const payment = await Reagent.getAll("all");
+      console.log(payment);
+      this.reagents = payment.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.reagents = [];
     }
   };
 
