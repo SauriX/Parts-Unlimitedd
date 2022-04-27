@@ -188,7 +188,7 @@ const columns: IColumns<IStudyList> = [
           {printing && (
               <PageHeader
                 ghost={false}
-                title={<HeaderTitle title="Catálogo de Indicaciones" image="doctor" />}
+                title={<HeaderTitle title="Catálogo de Indicaciones" image="Indicaciones" />}
                 className="header-container"
               ></PageHeader>
             )}

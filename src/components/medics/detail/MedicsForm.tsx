@@ -400,7 +400,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                 <NumberInput
                   formProps={{
                     name: "codigoPostal",
-                    label: "Código Postal",
+                    label: "Código P",
                   }}
                   max={9999999999}
                   min={1111}

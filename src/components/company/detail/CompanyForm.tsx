@@ -232,6 +232,13 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     }
   };
 
+  const botonEdit = () => {
+    setReadonly(false);
+    navigate(`/company/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`) ;
+  }
+
+     
+
   //   const { Search } = Input;
 
   const [, setPrinting] = useState(false);
@@ -267,7 +274,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
       }),
     },
     {
-      ...getDefaultColumnProps("telefono", "Telefono", {
+      ...getDefaultColumnProps("telefono", "Teléfono", {
         searchState,
         setSearchState,
         width: "20%",
@@ -339,8 +346,9 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
-        <Col md={10} sm={24} style={{ marginRight: 20 }}>
-          <Pagination
+        {id!=0 &&
+            <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
+                    <Pagination
             size="small"
             total={company.length}
             pageSize={1}
@@ -348,7 +356,33 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
             onChange={(value) => {
               prevnextCompany(value - 1);
             }}
-          />
+            />
+            </Col>
+        }
+          {!readonly && (
+            <Col md={24} sm={24} style={id ? { textAlign: "right"} : { marginLeft: "80%" }}>
+              <Button onClick={() => { navigate("/company"); }}> Cancelar </Button>      
+              <Button  type="primary"  htmlType="submit"  disabled={disabled}  
+              onClick={() => { form.submit();  return; }}>
+                Guardar
+              </Button>          
+            </Col>            
+          )}
+        
+          {readonly && (
+            <Col md={12} sm={24} style={{ textAlign: "right" }}>
+            <ImageButton  key="edit"  title="Editar" image="editar"
+              //onClick={() => {  setReadonly(false); }}
+              //onClick={() =>  { navigate(`/company/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`) ; }}
+              onClick={() => {  botonEdit();}}
+            
+            />
+            
+            </Col>
+          )}
+      </Row>
+      <Row>
+      <Col md={10} sm={24} style={{ marginRight: 20 }}>
           <Form<ICompanyForm>
             {...formItemLayout}
             form={form}
@@ -365,43 +399,8 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
             }}
           ></Form>
         </Col>
-        <Col md={8} sm={24} style={{ marginRight: 20, textAlign: "right" }}>
-          {readonly && (
-            <ImageButton
-              key="edit"
-              title="Editar"
-              image="editar"
-              onClick={() => {
-                setReadonly(false);
-              }}
-            />
-          )}
-        </Col>
-        <Col md={2} sm={24} style={{ marginRight: 20, textAlign: "right" }}>
-          <Button
-            onClick={() => {
-              navigate("/company");
-            }}
-          >
-            Cancelar
-          </Button>
-        </Col>
-        <Col md={2} sm={24} style={{ marginRight: 10, textAlign: "right" }}>
-          {!readonly && (
-            <Button
-              type="primary"
-              htmlType="submit"
-              disabled={disabled}
-              onClick={() => {
-                form.submit();
-                return;
-              }}
-            >
-              Guardar
-            </Button>
-          )}
-        </Col>
       </Row>
+      
       <div style={{ display: printing ? "none" : "" }}>
         <div ref={componentRef}>
           {printing && (
@@ -435,7 +434,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 <TextInput
                   formProps={{
                     name: "clave",
-                    label: "Clave. ",
+                    label: "Clave ",
                   }}
                   max={100}
                   required
@@ -445,7 +444,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 <TextInput
                   formProps={{
                     name: "contrasena",
-                    label: "Contraseña. ",
+                    label: "Contraseña ",
                   }}
                   max={100}
                   required
@@ -454,7 +453,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 <TextInput
                   formProps={{
                     name: "emailEmpresarial",
-                    label: "E-mail empresarial. ",
+                    label: "E-mail empresarial ",
                   }}
                   max={100}
                   readonly={readonly}
@@ -463,7 +462,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 <TextInput
                   formProps={{
                     name: "nombreComercial",
-                    label: "Nombre comercial. ",
+                    label: "Nombre comercial ",
                   }}
                   max={100}
                   required
@@ -472,7 +471,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 <SelectInput
                   formProps={{
                     name: "procedenciaId",
-                    label: "Procedencia. ",
+                    label: "Procedencia ",
                   }}
                   readonly={readonly}
                   required
@@ -532,7 +531,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 <TextInput
                   formProps={{
                     name: "rfc",
-                    label: "RFC. ",
+                    label: "RFC ",
                   }}
                   max={100}
                   required
@@ -551,7 +550,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 <TextInput
                   formProps={{
                     name: "estado",
-                    label: "Estado. ",
+                    label: "Estado ",
                   }}
                   max={100}
                   readonly={readonly}
@@ -560,7 +559,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 <TextInput
                   formProps={{
                     name: "ciudad",
-                    label: "Municipio. ",
+                    label: "Municipio ",
                   }}
                   max={100}
                   readonly={readonly}
@@ -594,7 +593,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 <TextInput
                   formProps={{
                     name: "limiteDeCredito",
-                    label: "Limite de crédito: ",
+                    label: "Límite de crédito: ",
                   }}
                   max={100}
                   readonly={readonly}
@@ -602,7 +601,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 <NumberInput
                   formProps={{
                     name: "diasCredito",
-                    label: "Dias de crédito: ",
+                    label: "Días de crédito: ",
                   }}
                   max={99}
                   min={1}
@@ -694,7 +693,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                     <MaskInput
                       formProps={{
                         name: "telefono",
-                        label: "Telefono",
+                        label: "Teléfono",
                       }}
                       mask={[
                         /[0-9]/,

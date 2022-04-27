@@ -27,6 +27,7 @@ const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
   // const [disabled, setDisabled] = useState(true);
 
   const [searchParams, setSearchParams] = useSearchParams();
+ 
 
   console.log("Header");
 
@@ -40,7 +41,7 @@ const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
           style={{ marginRight: 20, textAlign: "left" }}
           key="search"
           placeholder="Buscar"
-          defaultValue={searchParams.get("search") ?? ""}
+          defaultValue={searchParams.get("search") ?? "all"}
           onSearch={(value) => {
             setFilteredContacts(
               contacts.filter(
@@ -61,7 +62,7 @@ const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
             return;
           }}
         >
-          Agregar/Editar
+          Agregar / Guardar
         </Button>,
         // <Button
         //   key="new"

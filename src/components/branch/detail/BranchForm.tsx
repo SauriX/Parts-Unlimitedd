@@ -268,7 +268,7 @@ const BranchForm: FC<BranchFormProps> = ({componentRef, load }) => {
                 <TextInput
                   formProps={{
                     name: "codigoPostal",
-                    label: "Codigo postal",
+                    label: "Código P",
                   }}
                   max={100}
                   readonly={CheckReadOnly()}
