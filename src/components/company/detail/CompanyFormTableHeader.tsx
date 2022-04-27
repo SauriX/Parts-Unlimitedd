@@ -2,24 +2,29 @@ import { Button, PageHeader, Input, Form, FormInstance } from "antd";
 import React, { FC, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { IContactForm } from "../../../app/models/contact";
+import { ContactFormValues, IContactForm } from "../../../app/models/contact";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 
 const { Search } = Input;
+//const contactos = contacts.filter(x => x.Nombre == value || x.activo == value || x.telefono == value);
 
 type CompanyFormTableHeaderProps = {
   handleCompanyPrint: () => void;
-
+  contacts: IContactForm[];
+  setFilteredContacts: React.Dispatch<React.SetStateAction<IContactForm[]>>;
   formContact: FormInstance<IContactForm>;
 };
 
 const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
   handleCompanyPrint,
   formContact,
+  contacts,
+  setFilteredContacts,
 }) => {
-  const navigate = useNavigate();
+  // const contactos = ;
+  // const navigate = useNavigate();
 
-  const [disabled, setDisabled] = useState(true);
+  // const [disabled, setDisabled] = useState(true);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -36,8 +41,14 @@ const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
           key="search"
           placeholder="Buscar"
           defaultValue={searchParams.get("search") ?? ""}
-          onSearch={(              ) => {
-            setSearchParams({      });
+          onSearch={(value) => {
+            setFilteredContacts(
+              contacts.filter(
+                (x) =>
+                  x.nombre.toLowerCase().includes(value.toLowerCase()) ||
+                  x.telefono?.toString()?.includes(value)
+              )
+            );
           }}
         />,
         <Button

@@ -250,9 +250,8 @@ const columns: IColumns<IStudyList> = [
             </Col>
           </Row>
         </Form>
-      </div>
-    </div>
-    <Row>
+
+        <Row>
       <Col md={24} sm={12} style={{marginRight: 20, textAlign: "center" }}>
       <PageHeader
           ghost={false}
@@ -270,6 +269,10 @@ const columns: IColumns<IStudyList> = [
         />
         </Col>
     </Row>
+      </div>
+      
+    </div>
+    
 
   </Spin>
   );

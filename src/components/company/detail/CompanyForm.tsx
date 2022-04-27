@@ -59,7 +59,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     getpaymentOptions,
     priceOptions,
     getpriceOptions,
-    bankOptions,  
+    bankOptions,
     getbankOptions,
     cfdiOptions,
     getcfdiOptions,
@@ -86,6 +86,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   //   new ContactFormValues()
   // );
   const [contacts, setContacts] = useState<IContactForm[]>([]);
+  const [filteredContacts, setFilteredContacts] = useState<IContactForm[]>([]);
   const [editContact, setEditContact] = useState<IContactForm>();
 
   const clearLocation = useCallback(() => {
@@ -126,6 +127,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
         form.setFieldsValue(company);
         setValues(company);
         setContacts(company.contacts);
+        setFilteredContacts(company.contacts);
         getLocation(company.codigoPostal?.toString());
       }
 
@@ -311,11 +313,10 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   const onFinishContact = (contact: IContactForm) => {
     contact.telefono = contact.telefono
       ? parseInt(
-        contact.telefono.toString()?.replaceAll("_", "0")?.replaceAll("-", "")
+          contact.telefono.toString()?.replaceAll("_", "0")?.replaceAll("-", "")
         )
       : undefined;
 
-    
     if (!editContact) {
       contact.id = 0;
       contact.tempId = uuid();
@@ -333,10 +334,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
 
     formContact.resetFields();
     setEditContact(undefined);
-
-    
   };
-
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
@@ -471,7 +469,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
-                <SelectInput 
+                <SelectInput
                   formProps={{
                     name: "procedenciaId",
                     label: "Procedencia. ",
@@ -576,7 +574,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
-                <SelectInput 
+                <SelectInput
                   formProps={{
                     name: "metodoDePagoId",
                     label: "Método de pago: ",
@@ -585,7 +583,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   required
                   options={paymentMethodOptions}
                 />
-                <SelectInput 
+                <SelectInput
                   formProps={{
                     name: "formaDePagoId",
                     label: "Forma de pago: ",
@@ -610,7 +608,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   min={1}
                   readonly={readonly}
                 />
-                <SelectInput 
+                <SelectInput
                   formProps={{
                     name: "cfdiId",
                     label: "CFDI: ",
@@ -626,7 +624,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   max={100}
                   readonly={readonly}
                 />
-                <SelectInput 
+                <SelectInput
                   formProps={{
                     name: "bancoId",
                     label: "Banco: ",
@@ -639,111 +637,112 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
           </Form>
 
           {/* <div> */}
-      <Row>
-        <Col md={24} sm={12}>
-          <Fragment>
-            <CompanyFormTableHeader
-              handleCompanyPrint={handleCompanyPrint}
-              formContact={formContact}
-            />
-          </Fragment>
-          <Divider className="header-divider" />
-          <Form<IContactForm>
-             {...formItemLayout}
-            form={formContact}
-            name="contact"
-            onFinish={onFinishContact}
-            layout="vertical"
-            // initialValues={valuesContact}
-            scrollToFirstError
-            onFieldsChange={() => {
-              setDisabled(
-                !formContact.isFieldsTouched() ||
-                  formContact
-                    .getFieldsError()
-                    .filter(({ errors }) => errors.length).length > 0
-              );
-            }}
-          >
-            <Row gutter={16}>
-              <Col md={6} sm={24}>
-                <TextInput
-                  formProps={{
-                    name: "nombre",
-                    label: "Nombre ",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                  type="string"
+          <Row>
+            <Divider className="header-divider" />
+            <Col md={24} sm={12}>
+              <Fragment>
+                <CompanyFormTableHeader
+                  handleCompanyPrint={handleCompanyPrint}
+                  formContact={formContact}
+                  contacts={contacts}
+                  setFilteredContacts={setFilteredContacts}
                 />
-              </Col>
-              <Col md={6} sm={24}>
-                <TextInput
-                  formProps={{
-                    name: "correo",
-                    label: "Correo ",
-                  }}
-                  max={100}
-                  readonly={readonly}
-                  type="email"
-                />
-              </Col>
-              <Col md={6} sm={24}>
-                <MaskInput
-                  formProps={{
-                    name: "telefono",
-                    label: "Telefono",
-                  }}
-                  mask={[
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                  ]}
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={6} sm={24}>
-                <SwitchInput
-                  name="activo"
-                  onChange={(value) => {
-                    if (value) {
-                      alerts.info(messages.confirmations.enable);
-                    } else {
-                      alerts.info(messages.confirmations.disable);
-                    }
-                  }}
-                  label="Activo"
-                  readonly={readonly}
-                />
-              </Col>
-            </Row>
-          </Form>
+              </Fragment>
+              <Divider className="header-divider" />
+              <Form<IContactForm>
+                {...formItemLayout}
+                form={formContact}
+                name="contact"
+                onFinish={onFinishContact}
+                layout="vertical"
+                // initialValues={valuesContact}
+                scrollToFirstError
+                onFieldsChange={() => {
+                  setDisabled(
+                    !formContact.isFieldsTouched() ||
+                      formContact
+                        .getFieldsError()
+                        .filter(({ errors }) => errors.length).length > 0
+                  );
+                }}
+              >
+                <Row gutter={16}>
+                  <Col md={6} sm={24}>
+                    <TextInput
+                      formProps={{
+                        name: "nombre",
+                        label: "Nombre ",
+                      }}
+                      max={100}
+                      required
+                      readonly={readonly}
+                      type="string"
+                    />
+                  </Col>
+                  <Col md={6} sm={24}>
+                    <TextInput
+                      formProps={{
+                        name: "correo",
+                        label: "Correo ",
+                      }}
+                      max={100}
+                      readonly={readonly}
+                      type="email"
+                    />
+                  </Col>
+                  <Col md={6} sm={24}>
+                    <MaskInput
+                      formProps={{
+                        name: "telefono",
+                        label: "Telefono",
+                      }}
+                      mask={[
+                        /[0-9]/,
+                        /[0-9]/,
+                        /[0-9]/,
+                        "-",
+                        /[0-9]/,
+                        /[0-9]/,
+                        /[0-9]/,
+                        "-",
+                        /[0-9]/,
+                        /[0-9]/,
+                        "-",
+                        /[0-9]/,
+                        /[0-9]/,
+                      ]}
+                      readonly={readonly}
+                    />
+                  </Col>
+                  <Col md={6} sm={24}>
+                    <SwitchInput
+                      name="activo"
+                      onChange={(value) => {
+                        if (value) {
+                          alerts.info(messages.confirmations.enable);
+                        } else {
+                          alerts.info(messages.confirmations.disable);
+                        }
+                      }}
+                      label="Activo"
+                      readonly={readonly}
+                    />
+                  </Col>
+                </Row>
+              </Form>
 
-          <Table<IContactForm>
-            size="large"
-            rowKey={(record) => record.tempId ?? record.id}
-            columns={columns.slice(0, 5)}
-            dataSource={[...contacts]}
-          />
-          
-        </Col>
-      </Row>
-      {/* </div> */}
-        </div>   
+              <Table<IContactForm>
+                size="large"
+                rowKey={(record) => record.tempId ?? record.id}
+                columns={columns.slice(0, 5)}
+                dataSource={[...filteredContacts]}
+              />
+            </Col>
+          </Row>
+          {/* </div> */}
+        </div>
       </div>
       <Divider />
-     
     </Spin>
   );
 };
