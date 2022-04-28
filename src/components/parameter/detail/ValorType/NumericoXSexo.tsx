@@ -8,6 +8,7 @@ import SelectInput from "../../../../app/common/form/SelectInput";
 import MaskInput from "../../../../app/common/form/MaskInput";
 import { MinusCircleOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
+import { max } from "moment";
 const RangoEdadXSexo = () => {
     const [lista, setLista] = useState<any[]>([]);
     const addRow = ()=>{
@@ -29,42 +30,52 @@ const RangoEdadXSexo = () => {
                 </Button>
             </Col>
             {lista.map(x => <Row key={x.nombre}>
-                <Col md={6} sm={24} xs={12} style={{ marginTop: 20 }}>
-                    <MaskInput
+                <Col md={4} sm={24} xs={12} style={{ marginTop: 20 }}>
+                    <NumberInput
                         formProps={{
-                            name: "rangue",
-                            label: `Hombres Valores`
+                            name:"hombre1",
+                            label:"Hombre valor"
                         }}
-                        mask={[
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/
-                        ]}
-                    ></MaskInput>
+                        max={999999999}
+                        min={0}
+                    ></NumberInput>
+
                 </Col>
 
+                <Col md={3} sm={24} xs={12}  style={{marginTop:20}}>
+                <NumberInput
+                        formProps={{
+                            name:"hombre2",
+                            label:"Hombre valor"
+                        }}
+                        max={999999999}
+                        min={0}
+                    ></NumberInput>
+                </Col>
                 <Col md={1} sm={24} xs={12}  style={{marginTop:20}}>
                     
                 </Col>
-
-                <Col md={6} sm={24} xs={12} style={{marginTop:20}}>
-                    <MaskInput
+                <Col md={4} sm={24} xs={12} style={{ marginTop: 20 }}>
+                    <NumberInput
                         formProps={{
-                            name: "rangue2",
-                            label: "Mujeres valores"
+                            name:"mujer1",
+                            label:"Mujer valor"
                         }}
-                        mask={[
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/
-                        ]}
-                    ></MaskInput>
+                        max={999999999}
+                        min={0}
+                    ></NumberInput>
+
+                </Col>
+
+                <Col md={3} sm={24} xs={12}  style={{marginTop:20}}>
+                <NumberInput
+                        formProps={{
+                            name:"mujer2",
+                            label:"Mujer valor"
+                        }}
+                        max={999999999}
+                        min={0}
+                    ></NumberInput>
                 </Col>
                 <Col md={1} sm={24} xs={12}  style={{marginTop:20}}>
                     

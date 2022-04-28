@@ -32,48 +32,60 @@ const RangoEdad:FC<Props> = ({description}) => {
                 </Button>
             </Col>
             {lista.map(x => <Row key={x.nombre}>
-                <Col md={6} sm={24} xs={12} style={{ marginTop: 20 }}>
-                    <MaskInput
+                <Col md={4} sm={24} xs={12} style={{ marginTop: 20 }}>
+                    <NumberInput
                         formProps={{
-                            name: "rangue",
-                            label: `${x.nombre} Rango de edad`
+                            name:"valores1",
+                            label:"edad"
                         }}
-                        mask={[
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/
-                        ]}
-                    ></MaskInput>
+                        max={999999999}
+                        min={0}
+                    ></NumberInput>
+
+                </Col>
+
+                <Col md={3} sm={24} xs={12}  style={{marginTop:51}}>
+                <NumberInput
+                        formProps={{
+                            name:"valores2",
+                            label:""
+                        }}
+                        max={999999999}
+                        min={0}
+                    ></NumberInput>
                 </Col>
                 <Col md={1} sm={24} xs={12} style={{ marginTop: 51 }}>
                 </Col>
-                <Col md={5} sm={24} xs={12} style={{ marginTop: 51 }}>
+                <Col md={4} sm={24} xs={12} style={{ marginTop: 51 }}>
                     <SelectInput formProps={{ name: "", label: "" }} options={[{ value: 1, label: "Dias" },{ value: 2, label: "Meses" }, { value: 3, label: "Años" }]} required />
                 </Col>
                 <Col md={1} sm={24} xs={12} style={{ marginTop: 51 }}>
                 </Col>
-                <Col md={5} sm={24} xs={12} style={{ marginTop: 51 }}>
-                    <MaskInput
+                <Col md={4} sm={24} xs={12} style={{ marginTop: 20 }}>
+                    <NumberInput
                         formProps={{
-                            name: "rangue2",
-                            label: ""
+                            name:"hombre1",
+                            label:"Valores"
                         }}
-                        mask={[
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/
-                        ]}
-                    ></MaskInput>
+                        max={999999999}
+                        min={0}
+                    ></NumberInput>
+
+                </Col>
+
+                <Col md={3} sm={24} xs={12}  style={{marginTop:51}}>
+                <NumberInput
+                        formProps={{
+                            name:"hombre2",
+                            label:""
+                        }}
+                        max={999999999}
+                        min={0}
+                    ></NumberInput>
                 </Col>
                 <Col md={1} sm={24} xs={12} style={{ marginTop: 51 }}>
                 </Col>
-                <Col md={5} sm={24} xs={12} style={{ marginTop: 51 }}>
+                <Col md={3} sm={24} xs={12} style={{ marginTop: 51 }}>
                     <IconButton
                         title="Remover"
                         icon={<MinusCircleOutlined />}

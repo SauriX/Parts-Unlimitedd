@@ -12,14 +12,14 @@ import ReferenciaParrafo from "./ReferenciaParrafo";
 import NumericoColumna from "./NumericoColumna"
 import RangoObservacion from "./RangoObservacion";
 interface ValorProps {
-    value:Number;
+    value:number;
 }
 const ValorType:FC<ValorProps> = ({value})=>{
-    function LayoutContendio(value:Number) {
+    function LayoutContendio(value:number) {
 
         switch(value) {
    
-         case 1: return <ValorRNumerico></ValorRNumerico>; break;
+         case 1: return <ValorRNumerico idTipeVAlue={value}></ValorRNumerico>; break;
          case 2: return <RangoEdadXSexo></RangoEdadXSexo>; break;
          case 3: return <RangoNumericoXEdad></RangoNumericoXEdad>; break;
          case 4: return <RangoNumericoXEdadSexo></RangoNumericoXEdadSexo>; break;

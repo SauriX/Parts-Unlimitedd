@@ -27,16 +27,16 @@ type UrlParams = {
 };
 const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     const { parameterStore,optionStore } = useStore();
-    const { getAll,parameters,getById,parameter  } = parameterStore;
-    const { getdepartamentoOptions,departamentOptions,getareaOptions,areas,getReagentOptions,reagents } = optionStore;
+    const { getAll,parameters,getById,create,update } = parameterStore;
+    const { getdepartamentoOptions,departamentOptions,getareaOptions,areas,getReagentOptions,reagents,getPrintFormatsOptions,printFormat } = optionStore;
     const [form] = Form.useForm<IParameterForm>();
-
+    const [flag,setFlag] = useState(0);
     const [loading, setLoading] = useState(false);
     const [disabled, setDisabled] = useState(true);
     const { width: windowWidth } = useWindowDimensions();
     const [targetKeys, setTargetKeys] = useState<string[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
-
+    const parameter:IParameterForm = new ParameterFormValues();
     let navigate = useNavigate();
     const [values, setValues] = useState<IParameterForm>(new ParameterFormValues());
     const [ValueType,setValueType] = useState(0);
@@ -60,6 +60,9 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
           setLoading(true);
           
           const parameter = await getById(idUser);
+          await getareaOptions(parameter?.area);
+          let val = parameter!.tipoValor|0;
+          setValueType(val);
           form.setFieldsValue(parameter!);
           setValues(parameter!);
           setLoading(false);
@@ -80,6 +83,13 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
         }
         readReagents();
     },[getareaOptions]);
+    useEffect(()=>{
+        const readPrint= async ()=>{
+            await getPrintFormatsOptions();
+        }
+
+        readPrint();
+    },[getPrintFormatsOptions]);
     useEffect(() => {
         const readUsers = async () => {
           setLoading(true);
@@ -111,14 +121,18 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
         navigate(`/parameter/${parameter?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search") ?? "all"}`);
     }
     const onFinish = async (newValues: IParameterForm) => {
+        console.log("sumit");
+        console.log(newValues);
         const Parameter = { ...values, ...newValues };
+        console.log(Parameter);
         let success = false;
         if (!Parameter.id) {
-          //success = await create(User);
+          success = await create(Parameter);
         } else {
-          //success = await update(User);
+            console.log("update");
+          success = await update(Parameter);
         }
-        if (success) {
+        if (success && flag==0) {
           navigate(`/parameter?search=${searchParams.get("search") || "all"}`);
         }
     };
@@ -126,7 +140,9 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
         const fields = Object.keys(changeValues)[0]; 
         if (fields === "tipoValor") {
           const value = changeValues[fields];
+          console.log("onchange");
           setValueType(value);
+          setFlag(1);
         }
         if(fields==="departamento"){
             const value = changeValues[fields];
@@ -139,7 +155,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
       });
     const columns: IColumns<IStudyList> = [
         {
-          ...getDefaultColumnProps("clave", "Id Estudio", {
+          ...getDefaultColumnProps("id", "Id Estudio", {
             searchState,
             setSearchState,
             width: "30%",
@@ -154,14 +170,14 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
             windowSize: windowWidth,
           }),
         },
-        {
+/*         {
           ...getDefaultColumnProps("areaId", "Área", {
             searchState,
             setSearchState,
             width: "30%",
             windowSize: windowWidth,
           }),
-        },
+        }, */
       ];
       
     return (
@@ -267,9 +283,9 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                                 readonly={CheckReadOnly()}
                             />
                         </Col>
-                        <Col md={12} sm={24} xs={12}>
+                        {id&&<Col md={12} sm={24} xs={12}>
                             <SelectInput formProps={{ name: "tipoValor", label: "Tipo de valor" }} options={tipodeValorList} readonly={CheckReadOnly()} required />
-                            <SelectInput formProps={{ name: "formatoImpresion", label: "Formato de impresión" }} options={[{ value: "0", label: "test" }]} readonly={CheckReadOnly()} required />
+                            <SelectInput formProps={{ name: "formatoImpresion", label: "Formato de impresión" }} options={printFormat} readonly={CheckReadOnly()} required />
                             <TextInput
                                 formProps={{
                                 name: "formula",
@@ -279,7 +295,8 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                                 required
                                 readonly={CheckReadOnly()}
                             />
-                        </Col>
+                            <SelectInput formProps={{ name: "funciones", label: "Funciones" }} options={[]} readonly={CheckReadOnly()}/>
+                        </Col>}
                         <Col md={12} sm={24} xs={12}>
                             <TextInput
                                 formProps={{
@@ -312,7 +329,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                                 label: "Valor Inicial",
                                 }}
                                 rows={4}
-                                max={100}
                                 required
                                 readonly={CheckReadOnly()}
                             />
@@ -324,7 +340,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                     <Col md={24} sm={12} style={{marginRight: 20, textAlign: "center" }}>
                         <PageHeader
                             ghost={false}
-                            title={<HeaderTitle title="Estudios donde se encuentra la indicación"/>}
+                            title={<HeaderTitle title="Estudios donde se encuentra el parámetro"/>}
                             className="header-container"
                             ></PageHeader>
                             <Divider className="header-divider" />

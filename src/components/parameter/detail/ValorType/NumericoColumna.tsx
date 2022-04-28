@@ -31,12 +31,12 @@ const NumeroColumna = () => {
                     Guardar
                 </Button>
             </Col>
-            {lista.map(x => <Row key={x.nombre}>
+            {lista.map((x,i) => <Row key={x.nombre}>
                 <Col md={12} sm={24} xs={12} style={{ marginTop: 20 }}>
                     <TextInput
                         formProps={{
                             name: x.nombre,
-                            label: x.nombre,
+                            label: "valor "+(i+1),
                         }}
                         max={100}
                     />

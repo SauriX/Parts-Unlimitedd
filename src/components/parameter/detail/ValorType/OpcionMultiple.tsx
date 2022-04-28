@@ -14,7 +14,7 @@ import TextInput from "../../../../app/common/form/TextInput";
 const OpcionMUltiple = () => {
     const [lista, setLista] = useState<any[]>([]);
     const addRow = ()=>{
-        setLista(prev => [...prev, { id: prev.length, nombre: "Opción "+(prev.length + 1).toString() }])
+        setLista(prev => [...prev, { id: prev.length }])
     }
     const removeRow = (id:number)=>{
         const list = lista.filter((x) => x.id !== id);
@@ -31,7 +31,7 @@ const OpcionMUltiple = () => {
                     Guardar
                 </Button>
             </Col>
-            {lista.map(x => <Row key={x.nombre}>
+            {lista.map((x, i) => <Row key={x.nombre}>
                 <Col md={1} sm={24} xs={12} style={{ marginTop: 20}}>
                     <CheckInput name={"cheker"+x.id} ></CheckInput>
                 </Col>
@@ -39,7 +39,7 @@ const OpcionMUltiple = () => {
                     <TextInput
                         formProps={{
                             name: x.nombre,
-                            label: x.nombre,
+                            label: "Opcion"+(i+1),
                         }}
                         max={100}
                     />

@@ -31,7 +31,7 @@ const RangoObservacion = () => {
                     Guardar
                 </Button>
             </Col>
-            {lista.map(x => <Row key={x.nombre}>
+            {lista.map((x,i) => <Row key={x.nombre}>
                 <Col md={1} sm={24} xs={12} style={{ marginTop: 20}}>
                     <CheckInput name={"cheker"+x.id} ></CheckInput>
                 </Col>
@@ -39,7 +39,7 @@ const RangoObservacion = () => {
                     <TextInput
                         formProps={{
                             name: x.nombre,
-                            label: x.nombre,
+                            label: "Opción "+(i+1),
                         }}
                         max={100}
                     />
