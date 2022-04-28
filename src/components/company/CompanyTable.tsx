@@ -153,7 +153,7 @@ type CompanyTableProps = {
         <div ref={componentRef}>
           <PageHeader
             ghost={false}
-            title={<HeaderTitle title="Catálogo de Compañias" image="doctor" />}
+            title={<HeaderTitle title="Catálogo de Compañias" image="Company" />}
             className="header-container"
           ></PageHeader>
           <Divider className="header-divider" />
@@ -183,6 +183,6 @@ type CompanyTableProps = {
         <div style={{ display: "none" }}>{<CompanyTablePrint />}</div>
       </Fragment>
     );
-  };
+  }; 
   
   export default observer(CompanyTable);

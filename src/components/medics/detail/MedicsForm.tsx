@@ -400,7 +400,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                 <NumberInput
                   formProps={{
                     name: "codigoPostal",
-                    label: "Código Postal",
+                    label: "Código P",
                   }}
                   max={9999999999}
                   min={1111}
@@ -549,13 +549,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
               </Col>
             </Row>
           </Form>
-        </div>
-      </div>
-      <div>
-        <div></div>
-      </div>
 
-      <Divider orientation="left">Clínica/Empresa</Divider>
+          <Divider orientation="left">Clínica/Empresa</Divider>
       <List<IClinicList>
         header={
           <div>
@@ -605,6 +600,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
           </List.Item>
         )}
       />
+        </div>
+      </div>  
     </Spin>
   );
 };

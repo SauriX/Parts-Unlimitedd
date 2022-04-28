@@ -188,7 +188,7 @@ const columns: IColumns<IStudyList> = [
           {printing && (
               <PageHeader
                 ghost={false}
-                title={<HeaderTitle title="Catálogo de Indicaciones" image="doctor" />}
+                title={<HeaderTitle title="Catálogo de Indicaciones" image="Indicaciones" />}
                 className="header-container"
               ></PageHeader>
             )}
@@ -250,9 +250,8 @@ const columns: IColumns<IStudyList> = [
             </Col>
           </Row>
         </Form>
-      </div>
-    </div>
-    <Row>
+
+        <Row>
       <Col md={24} sm={12} style={{marginRight: 20, textAlign: "center" }}>
       <PageHeader
           ghost={false}
@@ -270,6 +269,10 @@ const columns: IColumns<IStudyList> = [
         />
         </Col>
     </Row>
+      </div>
+      
+    </div>
+    
 
   </Spin>
   );

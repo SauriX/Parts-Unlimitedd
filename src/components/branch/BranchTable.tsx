@@ -102,7 +102,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-      ...getDefaultColumnProps("codigoPostal", "Codigo Postal", {
+      ...getDefaultColumnProps("codigoPostal", "Código P", {
         searchState,
         setSearchState,
         width: "10%",
