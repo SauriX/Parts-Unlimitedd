@@ -635,7 +635,6 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
             </Row>
           </Form>
 
-          {/* <div> */}
           <Row>
             <Divider className="header-divider" />
             <Col md={24} sm={12}>
@@ -738,7 +737,6 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
               />
             </Col>
           </Row>
-          {/* </div> */}
         </div>
       </div>
       <Divider />

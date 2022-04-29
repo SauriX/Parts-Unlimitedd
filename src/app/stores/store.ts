@@ -12,6 +12,7 @@ import LocationStore from "./locationStore";
 import BranchStore from "./brancStore"
 import CompanyStore from "./companyStore";
 import ParameterStore from "./parameterStore"
+import MaquiladorStore from "./maquiladorStore";
 configure({
   enforceActions: "never",
 });
@@ -28,7 +29,8 @@ interface Store {
   roleStore: RoleStore;
   locationStore: LocationStore;
   branchStore: BranchStore;
-  parameterStore:ParameterStore;
+  parameterStore:ParameterStore; 
+  maquiladorStore: MaquiladorStore;
 }
 
 export const store: Store = {
@@ -43,7 +45,8 @@ export const store: Store = {
   roleStore: new RoleStore(),
   locationStore: new LocationStore(),
   branchStore: new BranchStore(),
-  parameterStore: new ParameterStore()
+  parameterStore: new ParameterStore(),
+  maquiladorStore: new MaquiladorStore(),
 };
 
 export const StoreContext = createContext(store);
