@@ -8,7 +8,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ItipoValorForm, tipoValorFormValues } from "../../../../app/models/parameter";
 import { useStore } from "../../../../app/stores/store";
 type Props = {
-    idTipeVAlue: number;
+    idTipeVAlue: string;
 };
 type UrlParams = {
     id: string;
@@ -26,8 +26,10 @@ const ValorRNumerico:FC<Props> = ({idTipeVAlue})=>{
     useEffect(() => {
         const readuser = async (idUser: string) => {
           const value = await getvalue(idUser);
+          console.log("her");
           formValue.setFieldsValue(value!);
           setValuesValor(value!);
+          console.log(valuesValor)
    
         };
         if (id) {

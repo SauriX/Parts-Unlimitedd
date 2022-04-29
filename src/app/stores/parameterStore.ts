@@ -5,6 +5,7 @@ import alerts from "../util/alerts";
 import messages from "../util/messages";
 import responses from "../util/responses";
 import { getErrors } from "../util/utils";
+import history from "../util/history";
 export default class ParameterStore {
   constructor() {
     makeAutoObservable(this);
@@ -12,6 +13,7 @@ export default class ParameterStore {
   parameters:IParameterList[]=[];
   parameter?:IParameterForm;
   ValueTipe?:ItipoValorForm;
+  ValuesTipe:ItipoValorForm[]=[];
   getAll = async (search: string="all") => {
     try {
       console.log(search);
@@ -22,7 +24,17 @@ export default class ParameterStore {
       this.parameters = [];
     }
   };
-  
+  getAllvalues = async (search: string,tipo="") => {
+    try {
+      console.log(search);
+      const parameters= await Parameter.getAllValues(search,tipo);
+      console.log(parameters);
+      return parameters;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      this.ValuesTipe = [];
+    }
+  };
   getById = async (id: string) => {
    
     try {
@@ -102,4 +114,35 @@ export default class ParameterStore {
       return false;
     }
   }
+  addvalues = async (values:ItipoValorForm[],idParametro="")=>{
+    try{
+      await Parameter.deletevalue(idParametro);
+      values.forEach(async value => {await Parameter.addValue(value)});
+      alerts.success(messages.created);
+      return true;
+    }catch(error:any){
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  }
+  exportList = async (search: string) => {
+    try {
+      await Parameter.exportList(search);
+      return true
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  exportForm = async (id: string,clave?:string) => {
+    try {
+      await Parameter.exportForm(id,clave);
+      return true;
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+    }
+  }; 
 }

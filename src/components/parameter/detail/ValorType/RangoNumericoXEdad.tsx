@@ -9,11 +9,16 @@ import MaskInput from "../../../../app/common/form/MaskInput";
 import { MinusCircleOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
 import RangoEdad from "./RangoEdad";
-const RangoNumericoXEdad = () => {
+import { IParameterForm } from "../../../../app/models/parameter";
+type Props = {
+    idTipeVAlue: string;
+    parameter:IParameterForm;
+};
+const RangoNumericoXEdad:FC<Props> = ({idTipeVAlue,parameter})  => {
     return (
         <div >
             <Divider orientation="left"></Divider>
-            <RangoEdad description="Valores de referencia (Numérico por edad):"></RangoEdad>
+            <RangoEdad auto={false} idTipeVAlue={idTipeVAlue} parameter={parameter} description="Valores de referencia (Numérico por edad):"></RangoEdad>
         </div>
     );
 }

@@ -8,6 +8,13 @@ const Parameter={
     update: (parameter: IParameterForm): Promise<void> => requests.put("/Parameter", parameter),
     addValue:(value:ItipoValorForm): Promise<void> => requests.post("/Parameter/addValue",value),
     getValue:(id:string):Promise<ItipoValorForm> => requests.get(`Parameter/valuetipe/${id}`),
-    updateValue: (value:ItipoValorForm) => requests.put("Parameter/valuetipe",value)
+    updateValue: (value:ItipoValorForm) => requests.put("Parameter/valuetipe",value),
+    getAllValues: (id:string,tipo:string): Promise<ItipoValorForm[]> => requests.get(`Parameter/all/values/${id}/${tipo}`),
+    deletevalue:(id:string):Promise<ItipoValorForm> => requests.delete(`Parameter/${id}`),
+    exportList: (search: string): Promise<void> =>
+    requests.download(`Parameter/export/list/${!search ? "all" : search}`, "Catálogo de Sucursales.xlsx"),
+    exportForm: (id: string, clave?: string): Promise<void> =>
+    requests.download(`Parameter/export/form/${id}`, `Catálogo de Parametros (${clave}).xlsx`),
+
 }
 export default Parameter;

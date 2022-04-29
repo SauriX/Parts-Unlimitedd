@@ -55,6 +55,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
         {value:10 ,label:" Observación"},
 
     ];
+
     useEffect(() => {
         const readuser = async (idUser: string) => {
           setLoading(true);
@@ -140,13 +141,18 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
         const fields = Object.keys(changeValues)[0]; 
         if (fields === "tipoValor") {
           const value = changeValues[fields];
+          values.tipoValor=value;
           console.log("onchange");
+          form.submit();
           setValueType(value);
           setFlag(1);
         }
         if(fields==="departamento"){
             const value = changeValues[fields];
             await getareaOptions(value);
+        }
+        if(fields==="funciones"){
+
         }
     }
     const [searchState, setSearchState] = useState<ISearch>({
@@ -190,7 +196,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                     </Col>
                 }
                 {!CheckReadOnly() &&
-                    <Col md={24} sm={24} xs={24} style={id ? { textAlign: "right" } : { marginLeft: "80%" }}>
+                    <Col md={12} sm={24} xs={12} style={id ? { textAlign: "right" } : { marginLeft: "80%" }}>
                     <Button onClick={() => { navigate(`/parameter`); }} >Cancelar</Button>
                     <Button type="primary" htmlType="submit" onClick={() => { form.submit() }}>
                         Guardar
@@ -295,7 +301,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                                 required
                                 readonly={CheckReadOnly()}
                             />
-                            <SelectInput formProps={{ name: "funciones", label: "Funciones" }} options={[]} readonly={CheckReadOnly()}/>
+                            <SelectInput formProps={{ name: "funciones", label: "Funciones" }} options={[{label:"ROUND()",value:"ROUND([VALOR]\u200E)"},{label:"FORMAT()",value:"FORMAT([VALOR]\u200E)"}]} readonly={CheckReadOnly()}/>
                         </Col>}
                         <Col md={12} sm={24} xs={12}>
                             <TextInput
@@ -335,7 +341,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                         </Col>
                     </Row>
                 </Form>
-                <ValorType value={ValueType}></ValorType>
+                <ValorType form={values} value={ValueType}></ValorType>
                 <Row>
                     <Col md={24} sm={12} style={{marginRight: 20, textAlign: "center" }}>
                         <PageHeader
