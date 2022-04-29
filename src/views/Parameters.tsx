@@ -8,17 +8,17 @@ import ParameterTable  from "../components/parameter/ParameterTable"
 import ParameterHeader from "../components/parameter/ParameterHeader";
 const Parameter = () => {
   const { parameterStore } = useStore();
-  const {  } = parameterStore;
+  const { exportList } = parameterStore;
   const [printing, setPrinting] = useState(false);
   const [accessing, setAccessing] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const handleDownload = async () => {
     console.log("aqui");
     setPrinting(true);
-    //var succes= await exportList(searchParams.get("search") ?? "all");
-/*     if(succes){
+    var succes= await exportList(searchParams.get("search") ?? "all");
+     if(succes){
       setPrinting(false);
-    } */
+    } 
   }
 
   

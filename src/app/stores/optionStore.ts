@@ -80,7 +80,7 @@ export default class OptionStore {
   };
  
   areas:IOptions[]=[];
-  getareaOptions = async (id:number) => {
+  getareaOptions = async (id?:number) => {
     console.log(id);
     try {
       const department = await Catalog.getActive<ICatalogNormalList>(
@@ -96,6 +96,25 @@ export default class OptionStore {
       console.log(this.departamentOptions);
     } catch (error) {
       this.areas = [];
+    }
+  };
+
+  printFormat:IOptions[]=[];
+  getPrintFormatsOptions = async (id?:number) => {
+    console.log(id);
+    try {
+      const department = await Catalog.getActive<ICatalogNormalList>(
+        "format"
+      );
+      console.log("el depa1");
+      console.log(department);
+      this.printFormat = department.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+      console.log("los depas mapeados");
+    } catch (error) {
+      this.printFormat = [];
     }
   };
 

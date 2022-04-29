@@ -13,7 +13,7 @@ const ParameterDetail = () => {
     const [loading, setLoading] = useState(false);
     const componentRef = useRef<any>();
     const { parameterStore } = useStore();
-    const { } = parameterStore;
+    const {getById,exportForm,parameter } = parameterStore;
     const [searchParams, setSearchParams] = useSearchParams();
     let { id } = useParams<UrlParams>();
     const handlePrint = useReactToPrint({
@@ -27,19 +27,19 @@ const ParameterDetail = () => {
     });
     useEffect( () => {
 		const readuser = async (idUser: string) => {
-			// await getById(idUser);
+			await getById(idUser);
 		};
 		if (id) {
 			readuser(id);
 		}
-	}, [ /* getById */,id ]);
+	}, [  getById ,id ]);
     const  handleDownload = async() => {
         setLoading(true);
-        const succes = true//await exportForm(id!,user!.clave);
+        const succes = await exportForm(id!,parameter!.clave);
         
         if(succes){
           setLoading(false);
-        }
+        } 
     };
     return (
         <Fragment>

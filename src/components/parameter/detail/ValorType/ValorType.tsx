@@ -12,22 +12,23 @@ import ReferenciaParrafo from "./ReferenciaParrafo";
 import NumericoColumna from "./NumericoColumna"
 import RangoObservacion from "./RangoObservacion";
 interface ValorProps {
-    value:Number;
+    value:number;
+    form:any;
 }
-const ValorType:FC<ValorProps> = ({value})=>{
-    function LayoutContendio(value:Number) {
+const ValorType:FC<ValorProps> = ({value,form})=>{
+    function LayoutContendio(value:number) {
 
         switch(value) {
    
-         case 1: return <ValorRNumerico></ValorRNumerico>; break;
-         case 2: return <RangoEdadXSexo></RangoEdadXSexo>; break;
-         case 3: return <RangoNumericoXEdad></RangoNumericoXEdad>; break;
-         case 4: return <RangoNumericoXEdadSexo></RangoNumericoXEdadSexo>; break;
-         case 5: return <OpcionMultiple></OpcionMultiple> ; break;
-         case 6: return <NumericoColumna></NumericoColumna> ; break;
-         case 7: return <ReferenciaTexto></ReferenciaTexto> ; break;
-         case 8: return <ReferenciaParrafo></ReferenciaParrafo> ; break;
-         case 10: return <RangoObservacion></RangoObservacion> ; break;
+         case 1: return <ValorRNumerico idTipeVAlue={value.toString()}></ValorRNumerico>; break;
+         case 2: return <RangoEdadXSexo parameter={form} idTipeVAlue={value.toString()}></RangoEdadXSexo>; break;
+         case 3: return <RangoNumericoXEdad parameter={form} idTipeVAlue={value.toString()}></RangoNumericoXEdad>; break;
+         case 4: return <RangoNumericoXEdadSexo parameter={form} idTipeVAlue={value.toLocaleString()}></RangoNumericoXEdadSexo>; break;
+         case 5: return <OpcionMultiple parameter={form} idTipeVAlue={value.toLocaleString()}></OpcionMultiple> ; break;
+         case 6: return <NumericoColumna parameter={form} idTipeVAlue={value.toLocaleString()}></NumericoColumna> ; break;
+         case 7: return <ReferenciaTexto parameter={form} idTipeVAlue={value.toLocaleString()}></ReferenciaTexto> ; break;
+         case 8: return <ReferenciaParrafo parameter={form} idTipeVAlue={value.toLocaleString()}></ReferenciaParrafo> ; break;
+         case 10: return <RangoObservacion parameter={form} idTipeVAlue={value.toLocaleString()}></RangoObservacion> ; break;
          default: return    ; break;
    
        } 
