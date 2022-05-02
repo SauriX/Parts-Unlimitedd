@@ -5,13 +5,13 @@ export interface IMaquiladorList {
   codigoPostal: number;
   estado: string;
   ciudad: string;
-  numeroExterior: number;
-  numeroInterior: number;
+  numeroExterior: string;
+  numeroInterior: string;
   calle: string;
   coloniaId: number;
   correo: string;
   paginaWeb: string;
-  telefono: number;
+  telefono: string;
   activo: boolean;
 }
 
@@ -22,13 +22,13 @@ export interface IMaquiladorForm {
     codigoPostal: number;
     estado?: string;
     ciudad?: string;
-    numeroExterior: number;
-    numeroInterior?: number;
+    numeroExterior: string;
+    numeroInterior: string;
     calle: string;
     coloniaId: number;
     correo?: string;
     paginaWeb?: string;
-    telefono?: number;
+    telefono: string;
     activo: boolean;
 }
 export class MaquiladorFormValues implements IMaquiladorForm {
@@ -38,13 +38,13 @@ export class MaquiladorFormValues implements IMaquiladorForm {
   codigoPostal = 0;
   estado = undefined;
   ciudad = undefined;
-  numeroExterior = 0;
-  numeroInterior = undefined;
+  numeroExterior = "";
+  numeroInterior = "undefined";
   calle = "";
   coloniaId = 0;
   correo = undefined;
   paginaWeb: undefined;
-  telefono = undefined;
+  telefono = "";
   activo = true;
 
   constructor(init?: IMaquiladorForm) {

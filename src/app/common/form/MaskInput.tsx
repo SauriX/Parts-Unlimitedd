@@ -1,18 +1,19 @@
 import { Form, FormItemProps } from "antd";
-import { Rule } from "antd/lib/form";
+import { Rule, RuleObject } from "antd/lib/form";
 import React from "react";
 import MaskedInput, { Mask } from "react-text-mask";
 
 interface IProps {
   formProps: FormItemProps<any>;
   required?: boolean;
+  validator?: (_: RuleObject, value: any) => Promise<any>;
   prefix?: React.ReactNode;
   placeholder?: string;
   readonly?: boolean;
   mask: Mask | ((value: string) => Mask);
 }
 
-const MaskInput = ({ formProps: itemProps, required, prefix, placeholder, readonly, mask }: IProps) => {
+const MaskInput = ({ formProps: itemProps, required, validator, prefix, placeholder, readonly, mask }: IProps) => {
   let rules: Rule[] = [];
 
   if (required) {
@@ -21,6 +22,10 @@ const MaskInput = ({ formProps: itemProps, required, prefix, placeholder, readon
       message: "El campo es requerido",
       whitespace: true,
     });
+  }
+  
+  if(validator){
+    rules.push({ validator })
   }
 
   return (
