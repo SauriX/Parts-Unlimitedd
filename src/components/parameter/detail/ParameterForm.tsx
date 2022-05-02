@@ -329,6 +329,11 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                                     const position = e.target.selectionStart ?? 0;
                                     setCursorPosition(position);
                                 }}
+                                onKeyUp={(e: any) => {
+                                    const position = e.target.selectionStart ?? 0;
+                                    setCursorPosition(position);
+                                }}
+                                
                             />
                             <SelectInput formProps={{ name: "funciones", label: "Funciones" }} options={functionOptions} readonly={CheckReadOnly()} />
                             <SelectInput formProps={{ name: "parametros", label: "Parametros" }} options={parameterOptions} readonly={CheckReadOnly()} />
