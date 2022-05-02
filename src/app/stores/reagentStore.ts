@@ -28,6 +28,7 @@ export default class ReagentStore {
     try {
       const scopes = await Reagent.access();
       this.scopes = scopes;
+      return scopes;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       history.push("/forbidden");
@@ -89,7 +90,7 @@ export default class ReagentStore {
 
   exportForm = async (id: number) => {
     try {
-      await Reagent.exportForm(id, "test@test.cim");
+      await Reagent.exportForm(id);
     } catch (error: any) {
       if (error.status === responses.notFound) {
         history.push("/notFound");

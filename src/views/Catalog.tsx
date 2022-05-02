@@ -9,7 +9,7 @@ import CatalogTable from "../components/catalog/CatalogTable";
 
 const Catalog = () => {
   const { catalogStore } = useStore();
-  const { setCurrentCatalog, access, clearScopes } = catalogStore;
+  const { scopes, setCurrentCatalog, access, clearScopes } = catalogStore;
 
   const [searchParams] = useSearchParams();
 
@@ -39,8 +39,6 @@ const Catalog = () => {
     setCurrentCatalog(searchParams.get("catalog") ?? undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  console.log("Render");
 
   useEffect(() => {
     return () => {

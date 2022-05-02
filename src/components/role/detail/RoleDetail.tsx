@@ -1,57 +1,53 @@
 import { Divider } from "antd";
-import React, { Fragment, useRef, useState,useEffect } from "react";
+import React, { Fragment, useRef, useState, useEffect } from "react";
 import { useReactToPrint } from "react-to-print";
 import RoleForm from "./RoleForm";
 import RoleFormHeader from "./RoleFormHeader";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
-import { useNavigate,useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 type UrlParams = {
   id: string;
 };
 const RoleDetail = () => {
-    const [loading, setLoading] = useState(false);
-    const componentRef = useRef<any>();
-    const { roleStore } = useStore();
-    const { exportForm,getById,role} = roleStore;
-    const [searchParams, setSearchParams] = useSearchParams();
-    let { id } = useParams<UrlParams>();
-   
-    const handlePrint = useReactToPrint({
-      content: () => componentRef.current,
-      onBeforeGetContent: () => {
-        setLoading(true);
-      },
-      onAfterPrint: () => {
-        setLoading(false);
-      },
-    });
-    useEffect( () => {
-      const readuser = async (idUser: string) => {
-         await getById(idUser);
-      };
-      if (id) {
-        readuser(id);
-      }
-    }, [ getById,id ]);
-    const  handleDownload = async() => {
-      console.log(role);
-      console.log("download");
-      setLoading(true);
-      const succes = await exportForm(id!,role!.nombre);
-      
-      if(succes){
-        setLoading(false);
-      }
-    };
-    return (
-      <Fragment>
-        <RoleFormHeader handlePrint={handlePrint} handleDownload={handleDownload}/>
-        <Divider className="header-divider" />
-        <RoleForm componentRef={componentRef} load={loading} />
-      </Fragment>
-    );
-  };
+  const [loading, setLoading] = useState(false);
+  const componentRef = useRef<any>();
+  const { roleStore } = useStore();
+  const { exportForm, getById, role } = roleStore;
+  const [searchParams, setSearchParams] = useSearchParams();
+  let { id } = useParams<UrlParams>();
 
-  
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    onBeforeGetContent: () => {
+      setLoading(true);
+    },
+    onAfterPrint: () => {
+      setLoading(false);
+    },
+  });
+  useEffect(() => {
+    const readuser = async (idUser: string) => {
+      await getById(idUser);
+    };
+    if (id) {
+      readuser(id);
+    }
+  }, [getById, id]);
+  const handleDownload = async () => {
+    console.log(role);
+    console.log("download");
+    setLoading(true);
+    const succes = await exportForm(id!, role!.nombre);
+    setLoading(false);
+  };
+  return (
+    <Fragment>
+      <RoleFormHeader handlePrint={handlePrint} handleDownload={handleDownload} />
+      <Divider className="header-divider" />
+      <RoleForm componentRef={componentRef} load={loading} />
+    </Fragment>
+  );
+};
+
 export default observer(RoleDetail);

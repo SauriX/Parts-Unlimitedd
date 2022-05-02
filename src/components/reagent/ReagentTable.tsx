@@ -15,6 +15,7 @@ import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import { useReactToPrint } from "react-to-print";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
+import views from "../../app/util/view";
 
 type ReagentTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -47,8 +48,11 @@ const ReagentTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
       setLoading(false);
     };
 
-    readReagents();
-  }, [getAll, searchParams]);
+    if (reagents.length === 0) {
+      readReagents();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const columns: IColumns<IReagentList> = [
     {
@@ -63,7 +67,7 @@ const ReagentTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/reagent/${reagent.id}?${searchParams}&mode=readonly`);
+            navigate(`/${views.reagent}/${reagent.id}?${searchParams}&mode=readonly`);
           }}
         >
           {value}
@@ -107,7 +111,7 @@ const ReagentTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
           title="Editar reactivo"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/reagent/${value}?${searchParams}&mode=edit`);
+            navigate(`/${views.reagent}/${value}?${searchParams}&mode=edit`);
           }}
         />
       ),

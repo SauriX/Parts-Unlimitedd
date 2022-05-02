@@ -34,6 +34,12 @@ axios.interceptors.response.use(undefined, async (error) => {
     throw new Error(messages.login);
   }
 
+  if (status === responses.unauthorized && headers["www-authenticate"] === "Bearer") {
+    window.localStorage.removeItem(tokenName);
+    history.push("/login");
+    throw new Error(messages.login);
+  }
+
   if (status === responses.forbidden) {
     throw new Error(messages.forbidden);
   }
@@ -88,20 +94,35 @@ const requests = {
         baseURL,
       })
       .then(responseBody),
-  download: (url: string, name: string, data?: {} | FormData) =>
+  // download: (url: string, data?: Object | FormData) =>
+  download: (url: string) =>
     axios
-      .post(url, data, {
-        baseURL,
-        responseType: "blob",
-        headers:
-          data instanceof FormData
-            ? { "Content-Type": "multipart/form-data" }
-            : { "Content-Type": "application/json" },
-      })
+      .post(
+        url,
+        {},
+        {
+          baseURL,
+          responseType: "blob",
+          headers:
+            {} instanceof FormData
+              ? { "Content-Type": "multipart/form-data" }
+              : { "Content-Type": "application/json" },
+        }
+      )
       .then((response) => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement("a");
         link.href = url;
+
+        let name = "file.txt";
+
+        const contentDisposition = response.headers["content-disposition"];
+        if (contentDisposition) {
+          if (contentDisposition.includes("filename*=UTF-8''")) {
+            name = decodeURI(contentDisposition.split("filename*=UTF-8''")[1].split(";")[0]);
+          }
+        }
+
         link.setAttribute("download", name);
         document.body.appendChild(link);
         link.click();

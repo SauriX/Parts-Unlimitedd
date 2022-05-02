@@ -46,6 +46,63 @@
   width: auto;
 }
 
+// Disabled
+input:disabled {
+  color: rgba(0, 0, 0, 0.85) !important;
+}
+
+.ant-input[disabled] {
+  color: rgba(0, 0, 0, 0.85) !important;
+}
+
+.ant-switch-disabled {
+  opacity: 1 !important;
+}
+
+.ant-switch-disabled * {
+  cursor: default !important;
+}
+
+.ant-select-disabled.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  cursor: default !important;
+  color: rgba(0, 0, 0, 0.85) !important;
+}
+
+.ant-picker.ant-picker-disabled {
+  cursor: default !important;
+}
+
+.ant-picker-disabled .ant-picker-range-separator .ant-picker-separator {
+  cursor: default !important;
+}
+
+// Navbar
+.ant-layout-sider {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+// Scrollbar
+*::-webkit-scrollbar {
+  width: 5px; /* width of the entire scrollbar */
+  height: 5px; /* height of the entire scrollbar */
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent; /* color of the tracking area */
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #999; /* color of the scroll thumb */
+  border-radius: 20px; /* roundness of the scroll thumb */
+}
+
+.ant-table-sticky-scroll-bar {
+  height: 5px;
+  border-radius: 20px;
+}
+
 // Table
 .ant-table-container table > thead > tr:first-child th:first-child {
   border-top-left-radius: 0;
@@ -104,6 +161,7 @@
     img {
       height: 100%;
       width: auto;
+      vertical-align: text-top;
     }
   }
 }

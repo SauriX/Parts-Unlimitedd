@@ -1,25 +1,34 @@
 import { makeAutoObservable } from "mobx";
 import User from "../api/user";
-import {IUserPermission, IUser, IUserInfo, ILoginForm, ILoginResponse,IChangePasswordResponse, IChangePasswordForm,IUserForm,IClave } from "../models/user";
-import { IRole,IRolePermission } from "../models/role";
-import {IOptions} from "../models/shared";
+import {
+  IUserPermission,
+  IUserList,
+  ILoginForm,
+  ILoginResponse,
+  IChangePasswordResponse,
+  IChangePasswordForm,
+  IUserForm,
+  IClave,
+} from "../models/user";
+import { IRole, IRolePermission } from "../models/role";
+import { IOptions } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
-import { getErrors,tokenName } from "../util/utils";
+import { getErrors, tokenName } from "../util/utils";
 import responses from "../util/responses";
 import messages from "../util/messages";
+import Role from "../api/role";
 export default class UserStore {
   constructor() {
     makeAutoObservable(this);
   }
-  permisos?:IUserPermission[]=[];
-  roles:IRole[]=[];
-  users: IUserInfo[] = [];
-  options:IOptions[]=[];
+  roles: IRole[] = [];
+  users: IUserList[] = [];
+  options: IOptions[] = [];
   Token: string = "";
   changePasswordFlag: boolean = false;
   idUser: string = "";
-  response?: ILoginResponse ;
+  response?: ILoginResponse;
   changepassResponse?: IChangePasswordResponse;
   user?: IUserForm;
   access = async () => {
@@ -34,31 +43,10 @@ export default class UserStore {
   };
   getPermission = async () => {
     try {
-      let permisos=await User.getPermission();
-      this.permisos = permisos;
-      return true;
-    } catch (error: any) {
-      return false;
-    }
-  };
-
-  getAllRoles = async (search: string) => {
-    try {
-      const roles= await User.getAllRoles(search);
-      console.log("los roles");
-      console.log(roles);
-      this.roles = roles;
-      var options:IOptions[]=[];
-      roles.forEach(element => {
-        options.push({value:element.id,label:element.nombre});
-      });
-      this.options = options;
-      console.log("los optios");
-      console.log(this.options);
-      return true;
+      let permisos = await User.getPermission();
+      return permisos;
     } catch (error: any) {
       alerts.warning(getErrors(error));
-      this.roles = [];
     }
   };
 
@@ -79,9 +67,9 @@ export default class UserStore {
       alerts.warning(getErrors(error));
     }
   };
-  exportForm = async (id: string,clave?:string) => {
+  exportForm = async (id: string) => {
     try {
-      await User.exportForm(id, clave);
+      await User.exportForm(id);
       return true;
     } catch (error: any) {
       if (error.status === responses.notFound) {
@@ -91,36 +79,6 @@ export default class UserStore {
       }
     }
   };
-  loginuser= async (user:ILoginForm) =>{
-    this.Token="";
-    
-    try{
-      const response = await User.login(user);
-      this.response = response;
-      if(!this.response.code){
-        window.localStorage.setItem(tokenName,response.token);
-        this.Token= response.token;
-        this.changePasswordFlag=response.changePassword;
-        this.idUser = response.id;
-        return true;
-      }else{
-        switch(this.response.code){
-          case 1:
-            alerts.error("Usuario inactivo");
-            break;
-          case 2 :
-            alerts.error("Usuario/contraseña no coinciden");
-            break;
-        }
-        
-      }
-      return false;
-    }catch(error: any){
-      alerts.warning(getErrors(error));
-      this.Token = "";
-      return false;
-    }
-  };
 
   getById = async (id: string) => {
     console.log(id);
@@ -128,8 +86,8 @@ export default class UserStore {
       const user = await User.getById(id);
       console.log("hey cosas");
       console.log(user.permisos);
-     this.permisos = user.permisos;
-      this.user= user;
+      // this.permisos = user.permisos;
+      this.user = user;
       return user;
     } catch (error: any) {
       if (error.status === responses.notFound) {
@@ -159,35 +117,29 @@ export default class UserStore {
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
-      
     }
   };
-  changePassordF=async()=>{
-    return  await this.changePasswordFlag
+  changePassordF = async () => {
+    return await this.changePasswordFlag;
   };
-  Clave =async(data:IClave)=>{
-    const response = await User.getClave(data);
-    return  await response;
-  };
-  
-  generatePass = async ()=>{ 
-    const response = await User.gepass();
+  Clave = async (data: IClave) => {
+    const response = await User.getCode(data);
     return await response;
-  }
-  changePassword= async (form:IChangePasswordForm)=>{
+  };
+
+  generatePass = async () => {
+    const response = await User.getPassword();
+    return await response;
+  };
+
+  changePassword = async (form: IChangePasswordForm) => {
     try {
-      form.token= this.Token;
-      const response = await User.changePass(form);
-      this.changepassResponse = response;
-      if(this.changepassResponse){
-        return this.changepassResponse.flagpassword;
-      }else{
-        alerts.error("Las contraseñas deben ser iguales");
-      }
-      return false;
-    } catch (error:any) {
+      await User.changePass(form);
+      alerts.success(messages.updated);
+      return true;
+    } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
     }
-  }
+  };
 }

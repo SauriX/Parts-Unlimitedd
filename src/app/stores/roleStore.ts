@@ -3,40 +3,75 @@ import Rol from "../api/role";
 import { IRole, IRoleForm, IRolePermission } from "../models/role";
 import alerts from "../util/alerts";
 import history from "../util/history";
-import { getErrors,tokenName } from "../util/utils";
+import { getErrors, tokenName } from "../util/utils";
 import responses from "../util/responses";
 import messages from "../util/messages";
 import Role from "../api/role";
+import { IScopes } from "../models/shared";
+
 export default class RolStore {
   constructor() {
     makeAutoObservable(this);
   }
-  permisos!:IRolePermission[];
-  roles:IRole[]=[];
-  role!:IRoleForm;
+
+  scopes?: IScopes;
+  roles: IRole[] = [];
+  role?: IRoleForm;
 
   access = async () => {
     try {
-      //  await User.access();
-      if (Date.now() > 100) return;
-      else throw new Error("Test");
-    } catch (error) {
+      const scopes = await Role.access();
+      this.scopes = scopes;
+    } catch (error: any) {
       alerts.warning(getErrors(error));
       history.push("/forbidden");
     }
   };
-  getPermission = async () => {
+
+  getAll = async (search: string) => {
     try {
-      let permisos=await Role.getPermission();
-      this.permisos = permisos;
-      return true;
+      const roles = await Rol.getAll(search);
+      this.roles = roles;
     } catch (error: any) {
-      return false;
+      alerts.warning(getErrors(error));
+      this.roles = [];
     }
   };
+
+  getById = async (id: string) => {
+    try {
+      const role = await Rol.getById(id);
+      this.role = role;
+      return role;
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+    }
+  };
+
+  getPermission = async () => {
+    try {
+      return await Role.getPermission();
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return [];
+    }
+  };
+
+  getPermissionById = async (id: string) => {
+    try {
+      return await Role.getPermissionById(id);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return [];
+    }
+  };
+
   create = async (reagent: IRoleForm) => {
     try {
-        
       await Role.create(reagent);
       alerts.success(messages.created);
       return true;
@@ -45,6 +80,7 @@ export default class RolStore {
       return false;
     }
   };
+
   update = async (user: IRoleForm) => {
     try {
       await Rol.update(user);
@@ -56,46 +92,17 @@ export default class RolStore {
     }
   };
 
-  getAll = async (search: string) => {
-    try {
-      const roles= await Rol.getAll(search);
-      this.roles = roles;
-    } catch (error: any) {
-      alerts.warning(getErrors(error));
-      this.roles = [];
-    }
-  };
-
-  getById = async (id: string) => {
-   
-    try {
-      const rol = await Rol.getById(id);
-      console.log("hey cosas");
-      console.log(rol.permisos);
-      this.permisos = rol.permisos;
-      this.role = rol;
-      return rol;
-    } catch (error: any) {
-      if (error.status === responses.notFound) {
-        history.push("/notFound");
-      } else {
-        alerts.warning(getErrors(error));
-      }
-      this.roles = [];
-    }
-  };
   exportList = async (search: string) => {
     try {
       await Rol.exportList(search);
-      return true
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
   };
-  exportForm = async (id: string,clave?:string) => {
+
+  exportForm = async (id: string, clave?: string) => {
     try {
-      await Rol.exportForm(id,clave);
-      return true;
+      await Rol.exportForm(id, clave);
     } catch (error: any) {
       if (error.status === responses.notFound) {
         history.push("/notFound");

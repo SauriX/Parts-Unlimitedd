@@ -1,9 +1,11 @@
-import { ILogin, IProfile,IMenu } from "../models/shared";
+import { ILogin, IProfile, IMenu } from "../models/shared";
+import { ILoginForm } from "../models/user";
 import requests from "./agent";
 
 const Profile = {
-  getmenus: (): Promise<IMenu[]> => requests.get(`Account/menu`),
-  getProfile:():Promise<IProfile>=>requests.get(`Account/profile`),
+  getMenu: (): Promise<IMenu[]> => requests.get(`profile/menu`),
+  getProfile: (): Promise<IProfile> => requests.get(`profile/me`),
+  login: (creds: ILoginForm): Promise<IProfile> => requests.post("profile/login", creds),
 };
 
 export default Profile;

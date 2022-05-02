@@ -45,7 +45,7 @@ const IndicationHeader: FC<IndicationsHeaderProps> = ({ handlePrint }) => {
           key="new"
           type="primary"
           onClick={() => {
-            navigate("/indication/0");
+            navigate("/indications/0");
           }}
           icon={<PlusOutlined />}
         >

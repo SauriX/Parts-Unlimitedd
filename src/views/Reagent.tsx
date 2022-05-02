@@ -9,20 +9,29 @@ import ReagentTable from "../components/reagent/ReagentTable";
 
 const Reagent = () => {
   const { reagentStore } = useStore();
-  const { scopes, access, clearScopes } = reagentStore;
+  const { scopes, access, clearScopes, exportList } = reagentStore;
 
-  const [printing, setPrinting] = useState(false);
+  const [searchParams] = useSearchParams();
+
+  const [loading, setLoading] = useState(false);
 
   const componentRef = useRef<any>();
+
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     onBeforeGetContent: () => {
-      setPrinting(true);
+      setLoading(true);
     },
     onAfterPrint: () => {
-      setPrinting(false);
+      setLoading(false);
     },
   });
+
+  const handleDownload = async () => {
+    setLoading(true);
+    await exportList(searchParams.get("search") ?? "all");
+    setLoading(false);
+  };
 
   useEffect(() => {
     const checkAccess = async () => {
@@ -31,8 +40,6 @@ const Reagent = () => {
 
     checkAccess();
   }, [access]);
-
-  console.log("Render");
 
   useEffect(() => {
     return () => {
@@ -44,9 +51,9 @@ const Reagent = () => {
 
   return (
     <Fragment>
-      <ReagentHeader handlePrint={handlePrint} />
+      <ReagentHeader handlePrint={handlePrint} handleDownload={handleDownload} />
       <Divider className="header-divider" />
-      <ReagentTable componentRef={componentRef} printing={printing} />
+      <ReagentTable componentRef={componentRef} printing={loading} />
     </Fragment>
   );
 };

@@ -1,59 +1,50 @@
-import { Layout, Menu, Typography, Image, Avatar, Row, Col, Popover } from "antd";
-import React,{useEffect} from "react";
-import { Link, Outlet,useNavigate, useLocation } from "react-router-dom";
+import { Layout, Menu, Typography, Image, Avatar, Row, Col, Popover, Tooltip, Modal, Form } from "antd";
+import React, { useEffect } from "react";
+import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import IconSelector from "../common/icons/IconSelector";
 import { IMenu } from "../models/shared";
 import { UserOutlined, DownOutlined, LogoutOutlined } from "@ant-design/icons";
 import DropdownOption from "../common/header/DropdownOption";
 import { useStore } from "../stores/store";
 import { observer } from "mobx-react-lite";
+import { IChangePasswordForm } from "../models/user";
+import { formItemLayout } from "../util/utils";
+import PasswordInput from "../common/form/PasswordInput";
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
 const { Text } = Typography;
 
-const menus: IMenu[] = [
-  {
-    id: 1,
-    ruta: "",
-    icono: "home",
-    descripcion: "Inicio",
-  },
-  {
-    id: 2,
-    icono: "admin",
-    descripcion: "Administración",
-    subMenus: [
-      { id: 3, ruta: "users", icono: "user", descripcion: "Usuarios" },
-      { id: 4, ruta: "roles", icono: "role", descripcion: "Roles" },
-      { id: 7, ruta: "sucursales", icono: "laboratorio", descripcion: "Sucursales" },
-    ],
-  },
-  {
-    id: 5,
-    ruta: "medics",
-    descripcion: "Medicos",
-    icono: "medico",
-  },
-  {
-    id: 6,
-    ruta: "indication",
-    descripcion: "Indicaciones",
-    icono: "role",
-  },
-];
-
 const LayoutComponent = () => {
-  const { profileStore } = useStore();
-  const { profile,getMenu,menu,getprofile } = profileStore;
+  const { profileStore, userStore } = useStore();
+  const { profile, menu, logout, setProfile, getProfile, getMenu } = profileStore;
+  const { changePassword } = userStore;
+
   let navigate = useNavigate();
   const location = useLocation();
+
+  const [formPassword] = Form.useForm<IChangePasswordForm>();
+
   useEffect(() => {
     const readUsers = async () => {
       await getMenu();
-      await getprofile();
+      await getProfile();
     };
     readUsers();
-  }, [getMenu]);
+  }, [getMenu, getProfile]);
+
+  const handleOk = () => {
+    formPassword.submit();
+  };
+
+  const onFinishPass = async (newValues: IChangePasswordForm) => {
+    let passForm = { ...newValues };
+    let success = false;
+    let checkPass = false;
+    await changePassword(passForm);
+    setProfile({ ...profile!, requiereCambio: false });
+    // console.log(success);
+  };
+
   return (
     <Layout id="app-layout">
       <Header className="header">
@@ -70,14 +61,7 @@ const LayoutComponent = () => {
               placement="topLeft"
               content={
                 <Row style={{ width: 150 }}>
-                  <DropdownOption
-                    option="Cerrar sesión"
-                    icon={<LogoutOutlined />}
-                    onClick={() => {
-                      alert("Sesión terminada");
-                      navigate(`login`);
-                    }}
-                  />
+                  <DropdownOption option="Cerrar sesión" icon={<LogoutOutlined />} onClick={logout} />
                 </Row>
               }
               trigger="click"
@@ -88,7 +72,7 @@ const LayoutComponent = () => {
         </Row>
       </Header>
       <Layout>
-        <Sider width={200}>
+        <Sider width={250}>
           <Menu
             mode="inline"
             selectedKeys={[location.pathname.substring(1)]}
@@ -105,16 +89,20 @@ const LayoutComponent = () => {
                   {menu.subMenus.map((subMenu) => (
                     <Menu.Item
                       className="menu-item"
-                      key={subMenu.ruta}
+                      key={subMenu.ruta ?? subMenu.descripcion}
                       icon={<IconSelector name={subMenu.icono} />}
                     >
-                      <Link to={subMenu.ruta!}>{subMenu.descripcion}</Link>
+                      <Link to={subMenu.ruta ?? subMenu.descripcion}>{subMenu.descripcion}</Link>
                     </Menu.Item>
                   ))}
                 </SubMenu>
               ) : (
-                <Menu.Item className="menu-item" key={menu.ruta} icon={<IconSelector name={menu.icono} />}>
-                  <Link to={menu.ruta!}>{menu.descripcion}</Link>
+                <Menu.Item
+                  className="menu-item"
+                  key={menu.ruta ?? menu.descripcion}
+                  icon={<IconSelector name={menu.icono} />}
+                >
+                  <Link to={menu.ruta ?? menu.descripcion}>{menu.descripcion}</Link>
                 </Menu.Item>
               )
             )}
@@ -130,6 +118,46 @@ const LayoutComponent = () => {
               overflowY: "auto",
             }}
           >
+            <Modal
+              title="Ingreso de contraseña"
+              visible={profile && profile.requiereCambio}
+              onOk={handleOk}
+              closable={false}
+              cancelButtonProps={{ style: { display: "none" } }}
+            >
+              <Form<IChangePasswordForm>
+                {...formItemLayout}
+                form={formPassword}
+                name="changepassword"
+                onFinish={onFinishPass}
+                scrollToFirstError
+              >
+                <Row>
+                  <Col md={24} sm={24} xs={24}>
+                    <PasswordInput
+                      formProps={{
+                        name: "contraseña",
+                        label: "Nueva Contraseña",
+                      }}
+                      max={8}
+                      min={8}
+                      required
+                    />
+                  </Col>
+                  <Col md={24} sm={24} xs={24}>
+                    <PasswordInput
+                      formProps={{
+                        name: "confirmaContraseña",
+                        label: "Confirmar Contraseña",
+                      }}
+                      max={8}
+                      min={8}
+                      required
+                    />
+                  </Col>
+                </Row>
+              </Form>
+            </Modal>
             <Outlet />
           </Content>
         </Layout>

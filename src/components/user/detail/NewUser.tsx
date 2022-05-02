@@ -1,7 +1,7 @@
 import { Divider } from "antd";
 import React, { Fragment, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
-import UserForm from "./UserForm";
+import UserFormValues from "./UserForm";
 import UserFormHeader from "./UserFormHeader";
 
 const NewUser = () => {
@@ -22,7 +22,7 @@ const NewUser = () => {
     <Fragment>
       <UserFormHeader handlePrint={handlePrint} handleDownload={()=>{}}/>
       <Divider className="header-divider" />
-      <UserForm componentRef={componentRef} load={printing} />
+      <UserFormValues componentRef={componentRef} load={printing} />
     </Fragment>
   );
 };

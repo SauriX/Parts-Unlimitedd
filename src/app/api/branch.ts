@@ -1,4 +1,4 @@
-import { IBranchForm,IBranchInfo } from "../models/branch";
+import { IBranchForm, IBranchInfo } from "../models/branch";
 import requests from "./agent";
 
 const Role = {
@@ -7,11 +7,10 @@ const Role = {
   getById: (id: string): Promise<IBranchForm> => requests.get(`Branch/${id}`),
   //getPermission: (): Promise<IRolePermission[]> => requests.get(`Rol/permisos`), */
   create: (branch: IBranchForm): Promise<boolean> => requests.post("/Branch", branch),
-  update: (branch: IBranchForm): Promise<boolean> => requests.put("/Branch", branch), 
+  update: (branch: IBranchForm): Promise<boolean> => requests.put("/Branch", branch),
   exportList: (search: string): Promise<void> =>
-  requests.download(`Branch/export/list/${!search ? "all" : search}`, "Catálogo de Sucursales.xlsx"),
-  exportForm: (id: string, clave?: string): Promise<void> =>
-  requests.download(`Branch/export/form/${id}`, `Catálogo de Sucursales (${clave}).xlsx`),
+    requests.download(`Branch/export/list/${!search ? "all" : search}`), //, "Catálogo de Sucursales.xlsx"
+  exportForm: (id: string, clave?: string): Promise<void> => requests.download(`Branch/export/form/${id}`), //, `Catálogo de Sucursales (${clave}).xlsx`
 };
 
 export default Role;

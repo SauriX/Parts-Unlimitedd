@@ -1,10 +1,10 @@
 import { Divider } from "antd";
-import React, { Fragment, useRef, useState,useEffect  } from "react";
+import React, { Fragment, useRef, useState, useEffect } from "react";
 import { useReactToPrint } from "react-to-print";
-import UserForm from "./UserForm";
+import UserFormValues from "./UserForm";
 import UserFormHeader from "./UserFormHeader";
 import { useStore } from "../../../app/stores/store";
-import { useNavigate,useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 type UrlParams = {
   id: string;
@@ -13,7 +13,7 @@ const UserDetail = () => {
   const [loading, setLoading] = useState(false);
   const componentRef = useRef<any>();
   const { userStore } = useStore();
-  const { exportForm,getById,user} = userStore;
+  const { exportForm, getById, user } = userStore;
   const [searchParams, setSearchParams] = useSearchParams();
   let { id } = useParams<UrlParams>();
   const handlePrint = useReactToPrint({
@@ -26,31 +26,31 @@ const UserDetail = () => {
     },
   });
 
-  useEffect( () => {
-		const readuser = async (idUser: string) => {
-			 await getById(idUser);
-		};
-		if (id) {
-			readuser(id);
-		}
-	}, [ getById,id ]);
+  useEffect(() => {
+    const readuser = async (idUser: string) => {
+      await getById(idUser);
+    };
+    if (id) {
+      readuser(id);
+    }
+  }, [getById, id]);
 
-  const  handleDownload = async() => {
+  const handleDownload = async () => {
     console.log(user);
     setLoading(true);
-    const succes = await exportForm(id!,user!.clave);
-    
-    if(succes){
+    const succes = await exportForm(id!);
+
+    if (succes) {
       setLoading(false);
     }
   };
   return (
     <Fragment>
-      <UserFormHeader handlePrint={handlePrint}  handleDownload={handleDownload} />
+      <UserFormHeader handlePrint={handlePrint} handleDownload={handleDownload} />
       <Divider className="header-divider" />
-      <UserForm componentRef={componentRef} load={loading} />
+      <UserFormValues componentRef={componentRef} load={loading} />
     </Fragment>
   );
 };
 
-export default  observer(UserDetail);
+export default observer(UserDetail);

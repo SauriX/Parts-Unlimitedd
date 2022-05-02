@@ -1,4 +1,4 @@
- import { Divider } from "antd";
+import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -8,7 +8,7 @@ import RoleHeader from "../components/role/RoleHeader";
 import RoleTable from "../components/role/RoleTable";
 const Role = () => {
   const { roleStore } = useStore();
-  const { access,exportList } = roleStore;
+  const { access, exportList } = roleStore;
   const [printing, setPrinting] = useState(false);
   const [accessing, setAccessing] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -29,10 +29,8 @@ const Role = () => {
   const componentRef = useRef<any>();
   const handleDownload = async () => {
     setPrinting(true);
-    var succes= await exportList(searchParams.get("search") ?? "all");
-    if(succes){
-      setPrinting(false);
-    }
+    var succes = await exportList(searchParams.get("search") ?? "all");
+    setPrinting(false);
   };
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -45,9 +43,9 @@ const Role = () => {
   });
   return (
     <Fragment>
-    <RoleHeader handlePrint={handlePrint} handleList={handleDownload}/>
-    <Divider className="header-divider" />
-    <RoleTable componentRef={componentRef} printing={printing}/>
+      <RoleHeader handlePrint={handlePrint} handleList={handleDownload} />
+      <Divider className="header-divider" />
+      <RoleTable componentRef={componentRef} printing={printing} />
     </Fragment>
   );
 };

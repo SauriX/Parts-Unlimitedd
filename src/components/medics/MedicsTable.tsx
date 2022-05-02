@@ -1,5 +1,5 @@
-import { Button, Divider, PageHeader, Spin, Table, List, Typography, } from "antd";
-import React, { FC, Fragment, useEffect, useRef, useState, } from "react";
+import { Button, Divider, PageHeader, Spin, Table, List, Typography } from "antd";
+import React, { FC, Fragment, useEffect, useRef, useState } from "react";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
@@ -21,7 +21,6 @@ type MedicsTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
-
 
 const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
   const { medicsStore } = useStore();
@@ -51,7 +50,6 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
     readMedics();
   }, [getAll, searchParams]);
 
-
   const columns: IColumns<IMedicsList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
@@ -65,11 +63,14 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/medics/${medics.idMedico}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
-          
+            navigate(
+              `/medics/${medics.idMedico}?${searchParams}&mode=readonly&search=${
+                searchParams.get("search") ?? "all"
+              }`
+            );
           }}
-          >
-            {value}
+        >
+          {value}
         </Button>
       ),
     },
@@ -90,7 +91,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
         minWidth: 150,
         windowSize: windowWidth,
       }),
-    },/*
+    } /*
     {
       ...getDefaultColumnProps("clinica", "Clinica", {
         searchState,
@@ -99,7 +100,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
         minWidth: 150,
         windowSize: windowWidth,
       }),
-    },*/
+    },*/,
     {
       ...getDefaultColumnProps("correo", "Correo", {
         searchState,
@@ -126,7 +127,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
         minWidth: 150,
         windowSize: windowWidth,
       }),
-    }, /*
+    } /*
     {
       ...getDefaultColumnProps( "observaciones", "Observaciones", {
         searchState,
@@ -135,9 +136,9 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
         minWidth: 150,
         windowSize: windowWidth,
       }),
-    },*/
+    },*/,
     {
-      ...getDefaultColumnProps( "especialidadId", "Especialidad", {
+      ...getDefaultColumnProps("especialidad", "Especialidad", {
         searchState,
         setSearchState,
         width: "10%",
@@ -152,7 +153,7 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
     //     width: "8%",
     //     minWidth: 150,
     //     windowSize: windowWidth,
-        
+
     //   }),
     // },
     {
@@ -174,9 +175,10 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
           title="Editar Médico"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/medics/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`);
+            navigate(
+              `/medics/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`
+            );
           }}
-          
         />
       ),
     },

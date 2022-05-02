@@ -9,20 +9,19 @@ import UserTable from "../components/user/UserTable";
 
 const User = () => {
   const { userStore } = useStore();
-  const { access,exportList } = userStore;
+  const { access, exportList } = userStore;
   const [printing, setPrinting] = useState(false);
   const [accessing, setAccessing] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const handleDownload = async () => {
     console.log("aqui");
     setPrinting(true);
-    var succes= await exportList(searchParams.get("search") ?? "all");
-    if(succes){
-      setPrinting(false);
-    }
-  }
+    var succes = await exportList(searchParams.get("search") ?? "all");
+    // if(succes){
+    setPrinting(false);
+    // }
+  };
 
-  
   useEffect(() => {
     const checkAccess = async () => {
       await access();
@@ -51,9 +50,9 @@ const User = () => {
 
   return (
     <Fragment>
-      <UserHeader handlePrint={handlePrint} handleList={handleDownload  }/>
+      <UserHeader handlePrint={handlePrint} handleList={handleDownload} />
       <Divider className="header-divider" />
-      <UserTable componentRef={componentRef} printing={printing}/>
+      <UserTable componentRef={componentRef} printing={printing} />
     </Fragment>
   );
 };

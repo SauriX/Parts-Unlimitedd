@@ -40,7 +40,7 @@ const IndicationFormHeader: FC<IndicationFormHeaderProps> = ({ id, handlePrint, 
           title="Regresar"
           image="back"
           onClick={() => {
-            navigate("/indication");
+            navigate("/indications");
           }}
         />,
         <Search

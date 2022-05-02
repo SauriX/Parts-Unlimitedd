@@ -1,5 +1,5 @@
-import { Button, Divider, PageHeader, Spin, Table, List, Typography, } from "antd";
-import React, { FC, Fragment, useEffect, useRef, useState, } from "react";
+import { Button, Divider, PageHeader, Spin, Table, List, Typography } from "antd";
+import React, { FC, Fragment, useEffect, useRef, useState } from "react";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
@@ -18,7 +18,7 @@ import HeaderTitle from "../../app/common/header/HeaderTitle";
 import Search from "antd/es/transfer/search";
 import Indications from "../../views/Indications";
 
-type IndicationsTableProps = { 
+type IndicationsTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
@@ -65,7 +65,11 @@ const IndicationTable: FC<IndicationsTableProps> = ({ componentRef, printing }) 
         <Button
           type="link"
           onClick={() => {
-            navigate(`/indication/${user.id}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
+            navigate(
+              `/indications/${user.id}?${searchParams}&mode=readonly&search=${
+                searchParams.get("search") ?? "all"
+              }`
+            );
           }}
         >
           {value}
@@ -109,7 +113,9 @@ const IndicationTable: FC<IndicationsTableProps> = ({ componentRef, printing }) 
           title="Editar usuario"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/indication/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`);
+            navigate(
+              `/indications/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`
+            );
           }}
         />
       ),
@@ -121,7 +127,7 @@ const IndicationTable: FC<IndicationsTableProps> = ({ componentRef, printing }) 
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Indicaciones" image="doctor" />}
+          title={<HeaderTitle title="Catálogo de Indicaciones" image="Indicaciones" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
@@ -139,20 +145,18 @@ const IndicationTable: FC<IndicationsTableProps> = ({ componentRef, printing }) 
   return (
     <Fragment>
       <Table<IIndicationList>
-      loading={loading|| printing}
-      size="small"
-      rowKey={(record) => record.id}
-      columns={columns}
-      dataSource={[...indication]}
-      pagination={defaultPaginationProperties}
-      sticky
-      scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+        loading={loading || printing}
+        size="small"
+        rowKey={(record) => record.id}
+        columns={columns}
+        dataSource={[...indication]}
+        pagination={defaultPaginationProperties}
+        sticky
+        scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />
       <div style={{ display: "none" }}>{<IndicationsTablePrint />}</div>
-
     </Fragment>
-    
   );
 };
 
-export default observer (IndicationTable);
+export default observer(IndicationTable);

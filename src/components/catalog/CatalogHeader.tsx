@@ -25,8 +25,6 @@ const CatalogHeader: FC<CatalogHeaderProps> = ({ catalog, setCatalog, handlePrin
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  console.log("Header");
-
   useEffect(() => {
     const name = searchParams.get("catalog");
     if (name) {
@@ -70,7 +68,7 @@ const CatalogHeader: FC<CatalogHeaderProps> = ({ catalog, setCatalog, handlePrin
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Reactivos" image="reagent" />}
+      title={<HeaderTitle title="Catálogo General" image="catalog" />}
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

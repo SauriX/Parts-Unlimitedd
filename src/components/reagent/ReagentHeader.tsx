@@ -6,25 +6,35 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../app/common/button/ImageButton";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../app/stores/store";
+import views from "../../app/util/view";
 
 const { Search } = Input;
 
 type ReagentHeaderProps = {
   handlePrint: () => void;
+  handleDownload: () => Promise<void>;
 };
 
-const ReagentHeader: FC<ReagentHeaderProps> = ({ handlePrint }) => {
+const ReagentHeader: FC<ReagentHeaderProps> = ({ handlePrint, handleDownload }) => {
   const { reagentStore } = useStore();
-  const { exportList } = reagentStore;
+  const { scopes, getAll, exportList } = reagentStore;
 
   const navigate = useNavigate();
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  console.log("Header");
+  const search = async (search: string | undefined) => {
+    search = search === "" ? undefined : search;
 
-  const download = () => {
-    exportList(searchParams.get("search") ?? "all");
+    await getAll(search ?? "all");
+
+    if (search) {
+      searchParams.set("search", search);
+    } else {
+      searchParams.delete("search");
+    }
+
+    setSearchParams(searchParams);
   };
 
   return (
@@ -33,26 +43,26 @@ const ReagentHeader: FC<ReagentHeaderProps> = ({ handlePrint }) => {
       title={<HeaderTitle title="Catálogo de Reactivos" image="reagent" />}
       className="header-container"
       extra={[
-        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        <ImageButton key="doc" title="Informe" image="doc" onClick={download} />,
+        scopes?.imprimir && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+        scopes?.descargar && <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />,
         <Search
           key="search"
           placeholder="Buscar"
           defaultValue={searchParams.get("search") ?? ""}
-          onSearch={(value) => {
-            setSearchParams({ search: !value ? "all" : value });
-          }}
+          onSearch={search}
         />,
-        <Button
-          key="new"
-          type="primary"
-          onClick={() => {
-            navigate("/reagent/0");
-          }}
-          icon={<PlusOutlined />}
-        >
-          Nuevo
-        </Button>,
+        scopes?.crear && (
+          <Button
+            key="new"
+            type="primary"
+            onClick={() => {
+              navigate(`/${views.reagent}/new?${searchParams}&mode=edit`);
+            }}
+            icon={<PlusOutlined />}
+          >
+            Nuevo
+          </Button>
+        ),
       ]}
     ></PageHeader>
   );

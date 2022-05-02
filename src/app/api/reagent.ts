@@ -10,9 +10,8 @@ const Reagent = {
   create: (reagent: IReagentForm): Promise<void> => requests.post("reagent", reagent),
   update: (reagent: IReagentForm): Promise<void> => requests.put("reagent", reagent),
   exportList: (search: string): Promise<void> =>
-    requests.download(`reagent/export/list/${!search ? "all" : search}`, "Catálogo de Reactivos.xlsx"),
-  exportForm: (id: number, clave: string): Promise<void> =>
-    requests.download(`reagent/export/form/${id}`, `Catálogo de Reactivos (${clave}).xlsx`),
+    requests.download(`reagent/export/list/${!search ? "all" : search}`),
+  exportForm: (id: number): Promise<void> => requests.download(`reagent/export/form/${id}`),
 };
 
 export default Reagent;

@@ -28,7 +28,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       nombre: "string",
       correo: "string",
       telefono: 123456789,
-      codigoPostal:"17016",
+      codigoPostal: "17016",
       ubicacion: "ubicacion",
       clinico: "string",
       activo: true,
@@ -51,7 +51,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
     };
- 
+
     readUsers();
   }, [getAll, searchParams]);
   const columns: IColumns<IBranchInfo> = [
@@ -59,74 +59,62 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "10%",
-        minWidth: 150,
-        windowSize: windowWidth,
+        width: 120,
       }),
       render: (value, role) => (
         <Button
           type="link"
           onClick={() => {
-            navigate(`/sucursales/${role.idSucursal}?mode=ReadOnly&search=${searchParams.get("search") ?? "all"}`);
+            navigate(
+              `/branches/${role.idSucursal}?mode=ReadOnly&search=${searchParams.get("search") ?? "all"}`
+            );
           }}
         >
           {value}
         </Button>
       ),
+      fixed: "left",
     },
     {
       ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
-        width: "10%",
-        minWidth: 150,
-        windowSize: windowWidth,
+        width: 180,
       }),
     },
     {
       ...getDefaultColumnProps("correo", "Correo", {
         searchState,
         setSearchState,
-        width: "15%",
-        minWidth: 150,
-        windowSize: windowWidth,
+        width: 180,
       }),
     },
     {
-      ...getDefaultColumnProps("telefono", "Telefono", {
+      ...getDefaultColumnProps("telefono", "Teléfono", {
         searchState,
         setSearchState,
-        width: "15%",
-        minWidth: 150,
-        windowSize: windowWidth,
+        width: 150,
       }),
     },
     {
-      ...getDefaultColumnProps("codigoPostal", "Codigo Postal", {
+      ...getDefaultColumnProps("codigoPostal", "Código Postal", {
         searchState,
         setSearchState,
-        width: "10%",
-        minWidth: 150,
-        windowSize: windowWidth,
+        width: 150,
       }),
     },
     {
-      ...getDefaultColumnProps("ubicacion", "Localizacion", {
+      ...getDefaultColumnProps("ubicacion", "Localización", {
         searchState,
         setSearchState,
-        width: "10%",
-        minWidth: 150,
-        windowSize: windowWidth,
+        width: 250,
       }),
     },
-    
     {
-      ...getDefaultColumnProps("clinico", "Clinicos", {
+      ...getDefaultColumnProps("clinico", "Clínicos", {
         searchState,
         setSearchState,
-        width: "10%",
-        minWidth: 150,
-        windowSize: windowWidth,
+        width: 150,
       }),
     },
     {
@@ -134,7 +122,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       dataIndex: "activo",
       title: "Activo",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: 100,
       render: (value) => (value ? "Sí" : "No"),
     },
     {
@@ -142,13 +130,14 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       dataIndex: "id",
       title: "Editar",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: 100,
+      fixed: "right",
       render: (value, rol) => (
         <IconButton
           title="Editar usuario"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/sucursales/${rol.idSucursal}?search=${searchParams.get("search") ?? "all"}`);
+            navigate(`/branches/${rol.idSucursal}?search=${searchParams.get("search") ?? "all"}`);
           }}
         />
       ),
@@ -165,7 +154,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
         dataSource={sucursales}
         pagination={defaultPaginationProperties}
         sticky
-        scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+        scroll={{ x: "max-content" }}
       />
     </div>
   );

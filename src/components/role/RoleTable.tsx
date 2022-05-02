@@ -1,5 +1,4 @@
-
-import { Button, Divider, PageHeader, Spin, Table,Form, Row, Col,  Modal,  } from "antd";
+import { Button, Divider, PageHeader, Spin, Table, Form, Row, Col, Modal } from "antd";
 import React, { FC, Fragment, useEffect, useRef, useState } from "react";
 import {
   defaultPaginationProperties,
@@ -8,12 +7,12 @@ import {
   ISearch,
 } from "../../app/common/table/utils";
 import { formItemLayout } from "../../app/util/utils";
-import { IUserInfo,IChangePasswordForm } from "../../app/models/user";
-import {IRole} from "../../app/models/role";
+import { IUserList, IChangePasswordForm } from "../../app/models/user";
+import { IRole } from "../../app/models/role";
 import useWindowDimensions, { resizeWidth } from "../../app/util/window";
 import { EditOutlined, LockOutlined } from "@ant-design/icons";
 import IconButton from "../../app/common/button/IconButton";
-import { useNavigate,useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import PasswordInput from "../../app/common/form/PasswordInput";
@@ -21,9 +20,9 @@ type RoleTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
-const RoleTable:FC<RoleTableProps> = ({ componentRef, printing })=> {
+const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
   const { roleStore } = useStore();
-  const { roles, getAll  } = roleStore;
+  const { roles, getAll } = roleStore;
   let navigate = useNavigate();
   const { width: windowWidth } = useWindowDimensions();
   const [loading, setLoading] = useState(false);
@@ -47,7 +46,7 @@ const RoleTable:FC<RoleTableProps> = ({ componentRef, printing })=> {
       ...getDefaultColumnProps("nombre", "Rol de usuario", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "80%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -63,11 +62,14 @@ const RoleTable:FC<RoleTableProps> = ({ componentRef, printing })=> {
       ),
     },
     {
-      key: "activo",
-      dataIndex: "activo",
-      title: "Activo",
+      ...getDefaultColumnProps("activo", "Activo", {
+        searchState,
+        setSearchState,
+        width: "10%",
+        minWidth: 80,
+        windowSize: windowWidth,
+      }),
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (value ? "Sí" : "No"),
     },
     {
@@ -75,8 +77,8 @@ const RoleTable:FC<RoleTableProps> = ({ componentRef, printing })=> {
       dataIndex: "id",
       title: "Editar",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value,rol) => (
+      width: windowWidth < resizeWidth ? 80 : "10%",
+      render: (value, rol) => (
         <IconButton
           title="Editar Rol"
           icon={<EditOutlined />}
@@ -88,19 +90,20 @@ const RoleTable:FC<RoleTableProps> = ({ componentRef, printing })=> {
     },
   ];
 
-  return (<div ref={componentRef}>
-    <Table<IRole>
-      loading={loading}
-      size="small"
-      rowKey={(record) => record.id}
-      columns={columns}
-      dataSource={[...roles]}
-      pagination={defaultPaginationProperties}
-      sticky
-      scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-    />
+  return (
+    <div ref={componentRef}>
+      <Table<IRole>
+        loading={printing}
+        size="small"
+        rowKey={(record) => record.id}
+        columns={columns}
+        dataSource={[...roles]}
+        pagination={defaultPaginationProperties}
+        sticky
+        scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+      />
     </div>
-);
+  );
 };
 
 export default RoleTable;

@@ -1,35 +1,32 @@
 import { Spin, Form, Row, Col, Transfer, Tooltip, Tree, Tag, Pagination, Button } from "antd";
-import React, { FC, useEffect, useMemo, useState, } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { IUserPermission, IUserForm, USerForm, IClave, claveValues } from "../../../app/models/user";
+import { IUserPermission } from "../../../app/models/user";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
-import SelectInput from "../../../app/common/form/SelectInput";
 import { convertToTreeData, onTreeSearch, onTreeSelectChange } from "./utils";
 import { TreeData } from "../../../app/models/shared";
 import { DataNode } from "antd/lib/tree";
-import PasswordInput from "../../../app/common/form/PasswordInput";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import IconButton from "../../../app/common/button/IconButton";
-import { EditOutlined, LockOutlined } from "@ant-design/icons";
 import { useStore } from "../../../app/stores/store";
 import ImageButton from "../../../app/common/button/ImageButton";
 import { IRoleForm, RoleFormValues, IRolePermission } from "../../../app/models/role";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
+
 type UserFormProps = {
   componentRef: React.MutableRefObject<any>;
   load: boolean;
 };
+
 type UrlParams = {
   id: string;
 };
 
 const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
-
   const { roleStore } = useStore();
-  const { getPermission, permisos, create, getById, getAll, roles, update } = roleStore;
+  const { getPermission, create, getById, getAll, roles, update } = roleStore;
   const [form] = Form.useForm<IRoleForm>();
 
   const [loading, setLoading] = useState(false);
@@ -54,10 +51,9 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
   useEffect(() => {
     setTargetKeys(values.permisos?.filter((x) => x.asignado).map((x) => x.id.toString()) ?? []);
   }, []);
-  
-  useEffect(() => {
 
-    const readuser = async (idUser: string) => {
+  useEffect(() => {
+    const readRole = async (idUser: string) => {
       setLoading(true);
       const user = await getById(idUser);
       form.setFieldsValue(user!);
@@ -66,15 +62,16 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
       setLoading(false);
     };
 
-    const permission = async () => {
-      await getPermission();
-    }
+    const readPermission = async () => {
+      const permissions = await getPermission();
+      setValues({ ...values, permisos: permissions });
+    };
     if (id) {
-      readuser(id);
+      readRole(id);
     } else {
-      permission();
+      readPermission();
     }
-  }, [form, getById, id]);
+  }, [form, getById, getPermission, id]);
   const transform = useMemo(
     () =>
       convertToTreeData(
@@ -92,15 +89,14 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
     }, [values?.permisos, targetKeys, transform]);
    */
   useEffect(() => {
-    if (permisos && permisos.length > 0) {
-      setTargetKeys(permisos.filter(x => x.asignado).map(x => x.id.toString()))
+    if (values.permisos && values.permisos.length > 0) {
+      setTargetKeys(values.permisos.filter((x) => x.asignado).map((x) => x.id.toString()));
     }
-  }, [permisos]);
+  }, [values.permisos]);
 
   useEffect(() => {
-    transform(permisos ?? []);
-  
-  }, [permisos, targetKeys, transform]);
+    transform(values.permisos ?? []);
+  }, [values.permisos, targetKeys, transform]);
 
   const onSearch = onTreeSearch(
     setPermissionsAvailableFiltered,
@@ -127,7 +123,7 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
       option.permiso.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
     );
   };
-  
+
   const CheckReadOnly = () => {
     let result = false;
     const mode = searchParams.get("mode");
@@ -135,11 +131,10 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
       result = true;
     }
     return result;
-  }
+  };
   const onChange = (nextTargetKeys: string[]) => {
     setTargetKeys(nextTargetKeys.sort((a, b) => a.length - b.length));
   };
-
 
   const onSelectChange = onTreeSelectChange(
     permissionsAvailableFiltered,
@@ -152,15 +147,15 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
   const onFinish = async (newValues: IRoleForm) => {
     const User = { ...values, ...newValues };
 
-    const permissions = permisos?.map((x) => ({
-      ...x, asignado: targetKeys.includes(x.id.toString()),
+    const permissions = values.permisos?.map((x) => ({
+      ...x,
+      asignado: targetKeys.includes(x.id.toString()),
     }));
     User.permisos = permissions;
     if (!User.permisos || User.permisos.filter((x) => x.asignado).length === 0) {
-      alerts.warning(messages.emptyPermissions); return;
-
+      alerts.warning(messages.emptyPermissions);
+      return;
     }
-
 
     let success = false;
     if (!User.id) {
@@ -175,44 +170,73 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
   };
   const onDeselectParent = (key: string | number, children: DataNode[]) => {
     setSelectedKeys(selectedKeys.filter((x) => !children.map((y) => y.key).includes(x)));
-
+  };
+  const onSelectParent = (key: string | number, children: DataNode[]) => {
+    setSelectedKeys([...selectedKeys, ...children.map((y) => y.key.toString())]);
   };
   const actualUser = () => {
     if (id) {
-      const index = roles.findIndex(x => x.id === id);
+      const index = roles.findIndex((x) => x.id === id);
       return index + 1;
     }
     return 0;
-  }
+  };
   const siguienteUser = (index: number) => {
-  
     const user = roles[index];
 
-    navigate(`/roles/${user?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search") ?? "all"}`);
-  } 
+    navigate(
+      `/roles/${user?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search") ?? "all"}`
+    );
+  };
   return (
     <Spin spinning={loading || load}>
       <div ref={componentRef}>
         <Row style={{ marginBottom: 24 }}>
-          {id &&
+          {id && (
             <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
-              <Pagination size="small" total={roles.length} pageSize={1} current={actualUser()} onChange={(value) => { siguienteUser(value - 1) }} />
+              <Pagination
+                size="small"
+                total={roles.length}
+                pageSize={1}
+                current={actualUser()}
+                onChange={(value) => {
+                  siguienteUser(value - 1);
+                }}
+              />
             </Col>
-          }
-          {!CheckReadOnly() &&
-            <Col md={24} sm={24} xs={24} style={id ? { textAlign: "right" } : { marginLeft: "80%" }}>
-              <Button onClick={() => { navigate(`/roles`); }} >Cancelar</Button>
-              <Button type="primary" htmlType="submit" onClick={() => { form.submit() }}>
+          )}
+          {!CheckReadOnly() && (
+            <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
+              <Button
+                onClick={() => {
+                  navigate(`/roles`);
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                onClick={() => {
+                  form.submit();
+                }}
+              >
                 Guardar
               </Button>
             </Col>
-          }
-          {
-            CheckReadOnly() &&
+          )}
+          {CheckReadOnly() && (
             <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
-              <ImageButton key="edit" title="Editar" image="editar" onClick={() => { navigate(`/roles/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`); }} />
+              <ImageButton
+                key="edit"
+                title="Editar"
+                image="editar"
+                onClick={() => {
+                  navigate(`/roles/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`);
+                }}
+              />
             </Col>
-          }
+          )}
         </Row>
         <Form<IRoleForm>
           {...formItemLayout}
@@ -223,7 +247,7 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
           onFieldsChange={() => {
             setDisabled(
               !form.isFieldsTouched() ||
-              form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+                form.getFieldsError().filter(({ errors }) => errors.length).length > 0
             );
           }}
         >
@@ -239,8 +263,20 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
                 readonly={CheckReadOnly()}
               />
             </Col>
-            <Col md={24} sm={24} xs={24}>
-              <SwitchInput name="activo" onChange={(value)=>{if(value){alerts.info(messages.confirmations.enable)}else{alerts.info(messages.confirmations.disable)}}} label="Activo" readonly={CheckReadOnly()} />
+            <Col md={12} sm={24} xs={12}></Col>
+            <Col md={12} sm={24} xs={12}>
+              <SwitchInput
+                name="activo"
+                onChange={(value) => {
+                  if (value) {
+                    alerts.info(messages.confirmations.enable);
+                  } else {
+                    alerts.info(messages.confirmations.disable);
+                  }
+                }}
+                label="Activo"
+                readonly={CheckReadOnly()}
+              />
             </Col>
           </Row>
         </Form>
@@ -252,7 +288,7 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
         <div style={{ width: "100%", overflowX: "auto" }}>
           <div style={{ width: "fit-content", margin: "auto" }}>
             <Transfer<IRolePermission>
-              dataSource={permisos}
+              dataSource={values.permisos}
               showSearch
               onSearch={onSearch}
               style={{ justifyContent: "flex-end" }}
@@ -273,7 +309,6 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
                 onSelectChange(sourceSelectedKeys, targetSelectedKeys);
                 setDisabled(false);
               }}
-
               disabled={CheckReadOnly()}
             >
               {({ direction, onItemSelect, selectedKeys, filteredItems }) => {
@@ -287,6 +322,8 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
                     onCheck={(_, { node: { key, children, checked } }) => {
                       if (children && children.length > 0 && checked) {
                         onDeselectParent(key, children);
+                      } else if (children && children.length > 0) {
+                        onSelectParent(key, children);
                       } else {
                         onItemSelect(key.toString(), !checked);
                       }
@@ -295,6 +332,8 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
                     onSelect={(_, { node: { key, checked, children } }) => {
                       if (children && children.length > 0 && checked) {
                         onDeselectParent(key, children);
+                      } else if (children && children.length > 0) {
+                        onSelectParent(key, children);
                       } else {
                         onItemSelect(key.toString(), !checked);
                       }

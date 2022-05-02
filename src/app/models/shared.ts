@@ -1,14 +1,18 @@
 export interface IProfile {
   nombre: string;
   token?: string;
+  requiereCambio: boolean;
 }
 
 export interface IScopes {
   pantalla: string;
   acceder: boolean;
   crear: boolean;
-  editar: boolean;
+  modificar: boolean;
   descargar: boolean;
+  imprimir: boolean;
+  enviarCorreo: boolean;
+  enviarWapp: boolean;
 }
 
 export interface ILogin {

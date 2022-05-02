@@ -2,22 +2,29 @@ import { PageHeader } from "antd";
 import React, { FC } from "react";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import ImageButton from "../../../app/common/button/ImageButton";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
+import views from "../../../app/util/view";
 
 type ReagentFormHeaderProps = {
   id: number;
   handlePrint: () => void;
+  handleDownload: () => Promise<void>;
 };
 
-const ReagentFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint }) => {
+const ReagentFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint, handleDownload }) => {
   const { reagentStore } = useStore();
-  const { exportForm } = reagentStore;
+  const { scopes, exportForm } = reagentStore;
 
   let navigate = useNavigate();
 
-  const download = () => {
-    exportForm(id);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const getBack = () => {
+    searchParams.delete("mode");
+    setSearchParams(searchParams);
+    navigate(`/${views.reagent}?${searchParams}`);
   };
 
   return (
@@ -26,19 +33,14 @@ const ReagentFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint }) => {
       title={<HeaderTitle title="Catálogo de Reactivos" image="reagent" />}
       className="header-container"
       extra={[
-        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        <ImageButton key="doc" title="Informe" image="doc" onClick={download} />,
-        <ImageButton
-          key="back"
-          title="Regresar"
-          image="back"
-          onClick={() => {
-            navigate("/reagent");
-          }}
-        />,
+        scopes?.imprimir && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+        !!id && scopes?.descargar && (
+          <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />
+        ),
+        <ImageButton key="back" title="Regresar" image="back" onClick={getBack} />,
       ]}
     ></PageHeader>
   );
 };
 
-export default ReagentFormHeader;
+export default observer(ReagentFormHeader);

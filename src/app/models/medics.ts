@@ -4,17 +4,18 @@ export interface IMedicsList {
   idMedico: number;
   clave: string;
   nombre: string;
-  primerApellido : string
-  segundoApellido : string
+  primerApellido: string;
+  segundoApellido: string;
+  especialidad: string;
   especialidadId: number;
   observaciones: string;
-  codigoPostal: number;
+  codigoPostal?: number;
   estado: string;
   ciudad: string;
-  numeroExterior: number;
-  numeroInterior: number;
+  numeroExterior: string;
+  numeroInterior: string;
   calle: string;
-  coloniaId: number;
+  coloniaId?: number;
   correo: string;
   celular: number;
   telefono: number;
@@ -26,17 +27,17 @@ export interface IMedicsForm {
   idMedico: number;
   clave: string;
   nombre: string;
-  primerApellido : string
-  segundoApellido : string
+  primerApellido: string;
+  segundoApellido: string;
   especialidadId?: number;
   observaciones: string;
-  codigoPostal: number;
+  codigoPostal?: number;
   estado?: string;
   ciudad?: string;
-  numeroExterior: number;
-  numeroInterior?: number;
+  numeroExterior: string;
+  numeroInterior?: string;
   calle: string;
-  coloniaId: number;
+  coloniaId?: number;
   correo?: string;
   celular?: number;
   telefono?: number;
@@ -51,13 +52,13 @@ export class MedicsFormValues implements IMedicsForm {
   segundoApellido = "";
   especialidadId = undefined;
   observaciones = "";
-  codigoPostal = 0;
+  codigoPostal = undefined;
   estado = "";
   ciudad = "";
-  numeroExterior = 0;
-  numeroInterior = undefined;
+  numeroExterior = "";
+  numeroInterior = "";
   calle = "";
-  coloniaId = 0;
+  coloniaId = undefined;
   correo = "";
   celular = undefined;
   telefono = undefined;

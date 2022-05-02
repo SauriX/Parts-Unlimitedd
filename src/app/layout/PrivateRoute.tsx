@@ -6,6 +6,7 @@ import messages from "../util/messages";
 const PrivateRoute = () => {
   const { profileStore } = useStore();
   const { isLoggedIn } = profileStore;
+
   let location = useLocation();
 
   if (!isLoggedIn) {

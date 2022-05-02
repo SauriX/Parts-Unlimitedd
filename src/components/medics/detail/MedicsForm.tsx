@@ -1,14 +1,4 @@
-import {
-  Spin,
-  Form,
-  Row,
-  Col,
-  Pagination,
-  Button,
-  PageHeader,
-  Divider,
-  Select,
-} from "antd";
+import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Select } from "antd";
 import React, { FC, useCallback, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
@@ -56,9 +46,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [colonies, setColonies] = useState<IOptions[]>([]);
-  const [readonly, setReadonly] = useState(
-    searchParams.get("mode") === "readonly"
-  );
+  const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
   const [values, setValues] = useState<IMedicsForm>(new MedicsFormValues());
   const [clinic, setClinic] = useState<{ clave: ""; id: number }>();
 
@@ -99,7 +87,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
 
       if (medics) {
         form.setFieldsValue(medics);
-        getLocation(medics.codigoPostal.toString());
+        getLocation(medics.codigoPostal!.toString());
         setValues(medics);
       }
 
@@ -161,9 +149,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   const prevnextMedics = (index: number) => {
     const medic = medics[index];
     navigate(
-      `/medics/${medic?.idMedico}?mode=${searchParams.get(
-        "mode"
-      )}&search=${searchParams.get("search")}`
+      `/medics/${medic?.idMedico}?mode=${searchParams.get("mode")}&search=${searchParams.get("search")}`
     );
   };
 
@@ -222,55 +208,28 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
-        <Col md={10} sm={24} style={{ marginRight: 20 }}>
-          <Pagination
-            size="small"
-            total={medics.length}
-            pageSize={1}
-            current={actualmedic()}
-            onChange={(value) => {
-              prevnextMedics(value - 1);
-            }}
-          />
-          <Form<IMedicsForm>
-            {...formItemLayout}
-            form={form}
-            name="medics"
-            onValuesChange={onValuesChange}
-            onFinish={onFinish}
-            scrollToFirstError
-            onFieldsChange={() => {
-              setDisabled(
-                !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length)
-                    .length > 0
-              );
-            }}
-          ></Form>
-        </Col>
-        <Col md={8} sm={24} style={{ marginRight: 20, textAlign: "right" }}>
-          {readonly && (
-            <ImageButton
-              key="edit"
-              title="Editar"
-              image="editar"
-              onClick={() => {
-                setReadonly(false);
+        {!!id && (
+          <Col md={12} sm={24} style={{ textAlign: "left" }}>
+            <Pagination
+              size="small"
+              total={medics.length}
+              pageSize={1}
+              current={actualmedic()}
+              onChange={(value) => {
+                prevnextMedics(value - 1);
               }}
             />
-          )}
-        </Col>
-        <Col md={2} sm={24} style={{ marginRight: 20, textAlign: "right" }}>
-          <Button
-            onClick={() => {
-              navigate("/medics");
-            }}
-          >
-            Cancelar
-          </Button>
-        </Col>
-        <Col md={2} sm={24} style={{ marginRight: 10, textAlign: "right" }}>
-          {!readonly && (
+          </Col>
+        )}
+        {!readonly && (
+          <Col md={id ? 12 : 24} sm={24} style={{ textAlign: "right" }}>
+            <Button
+              onClick={() => {
+                navigate("/medics");
+              }}
+            >
+              Cancelar
+            </Button>
             <Button
               type="primary"
               htmlType="submit"
@@ -282,8 +241,22 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
             >
               Guardar
             </Button>
-          )}
-        </Col>
+          </Col>
+        )}
+        {readonly && (
+          <Col md={12} sm={24} style={{ textAlign: "right" }}>
+            {readonly && (
+              <ImageButton
+                key="edit"
+                title="Editar"
+                image="editar"
+                onClick={() => {
+                  setReadonly(false);
+                }}
+              />
+            )}
+          </Col>
+        )}
       </Row>
       <div style={{ display: printing ? "none" : "" }}>
         <div ref={componentRef}>
@@ -306,8 +279,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
             onFieldsChange={() => {
               setDisabled(
                 !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length)
-                    .length > 0
+                  form.getFieldsError().filter(({ errors }) => errors.length).length > 0
               );
             }}
           >
@@ -388,8 +360,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                     name: "codigoPostal",
                     label: "Código Postal",
                   }}
-                  max={9999999999}
-                  min={1111}
+                  max={99999}
+                  min={11111}
                   required
                   readonly={readonly}
                 />
@@ -411,23 +383,21 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   max={100}
                   readonly={readonly}
                 />
-                <NumberInput
+                <TextInput
                   formProps={{
                     name: "numeroExterior",
                     label: "Número Exterior",
                   }}
-                  max={9999999999}
-                  min={1}
+                  max={9999}
                   required
                   readonly={readonly}
                 />
-                <NumberInput
+                <TextInput
                   formProps={{
                     name: "numeroInterior",
                     label: "Número interior",
                   }}
-                  max={9999999999}
-                  min={1}
+                  max={9999}
                   readonly={readonly}
                 />
                 <TextInput
@@ -477,6 +447,12 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                     /[0-9]/,
                     /[0-9]/,
                   ]}
+                  validator={(_, value: any) => {
+                    if (!value || value.indexOf("_") === -1) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject("El campo debe contener 10 dígitos");
+                  }}
                   readonly={readonly}
                 />
                 {/* <NumberInput
@@ -508,6 +484,12 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                     /[0-9]/,
                     /[0-9]/,
                   ]}
+                  validator={(_, value: any) => {
+                    if (!value || value.indexOf("_") === -1) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject("El campo debe contener 10 dígitos");
+                  }}
                   readonly={readonly}
                 />
                 {/* <NumberInput
@@ -546,9 +528,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
         header={
           <div>
             <Col md={12} sm={24} style={{ marginRight: 20 }}>
-            
-              Nombre Clínica/Empresa    .
-          
+              Nombre Clínica/Empresa .
               <Select
                 options={clinicOptions}
                 onChange={(value, option: any) => {

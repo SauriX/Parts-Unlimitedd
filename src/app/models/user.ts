@@ -1,44 +1,26 @@
-
-export interface IUserInfo {
-  idUsuario: string;
-  clave:string;
-  nombre: string;
-  primerApellido: string,
-  segundoApellido: string,
-  tipoUsuario:string,
-  idRol: string,
-  idSucursal: number,
-  activo: boolean,
-  password:string
-} 
-
-export interface ILoginForm {
-  userName:string,
-  password:string
-}
-export interface ILoginResponse{
-  token: string,
-  changePassword: boolean,
-  id:string,
-  code:Number
-}
-export interface IUser {
+export interface IUserList {
   id: string;
   clave: string;
   nombre: string;
-  primerApellido: string;
-  segundoApellido: string;
-  rolId?: number;
-  contraseña?: string;
-  contraseñaConfirmacion?: string;
+  tipoUsuario: string;
   activo: boolean;
-  sucursalId?: number;
-  permisos?: IUserPermission[];
+}
+
+export interface ILoginForm {
+  usuario: string;
+  contraseña: string;
+}
+
+export interface ILoginResponse {
+  token: string;
+  changePassword: boolean;
+  id: string;
+  code: Number;
 }
 export interface IChangePasswordForm {
-  token:string,
-  password:string,
-  confirmPassword: string;
+  token: string;
+  contraseña: string;
+  confirmaContraseña: string;
 }
 export interface IUserPermission {
   id: number;
@@ -49,104 +31,85 @@ export interface IUserPermission {
   tipo: number;
 }
 export interface IClave {
-  nombre : string
-  primerApllido : string
-  segundoApellido : string
+  nombre: string;
+  primerApellido: string;
+  segundoApellido: string;
 }
 export interface IChangePasswordResponse {
-  idUsuario: string,
-  clave: string,
-  nombre: string,
-  primerApellido: string,
-  segundoApellido: string,
-  idRol: string,
-  idSucursal: Number,
-  contraseña: string,
-  activo: boolean,
-  usuarioCreoId: string,
-  fechaCreo: string,
-  usuarioModId: string,
-  fechaMod: string,
-  flagpassword: true,
-  id: string,
-  userName: string,
-  normalizedUserName: string,
-  email: string,
-  normalizedEmail: string,
-  emailConfirmed: true,
-  passwordHash: string,
-  securityStamp: string,
-  concurrencyStamp: string,
-  phoneNumber: string,
-  phoneNumberConfirmed: boolean,
-  twoFactorEnabled: boolean,
-  lockoutEnd: string,
-  lockoutEnabled: boolean,
-  accessFailedCount: Number
+  idUsuario: string;
+  clave: string;
+  nombre: string;
+  primerApellido: string;
+  segundoApellido: string;
+  idRol: string;
+  idSucursal: Number;
+  contraseña: string;
+  activo: boolean;
+  usuarioCreoId: string;
+  fechaCreo: string;
+  usuarioModId: string;
+  fechaMod: string;
+  flagpassword: true;
+  id: string;
+  userName: string;
+  normalizedUserName: string;
+  email: string;
+  normalizedEmail: string;
+  emailConfirmed: true;
+  passwordHash: string;
+  securityStamp: string;
+  concurrencyStamp: string;
+  phoneNumber: string;
+  phoneNumberConfirmed: boolean;
+  twoFactorEnabled: boolean;
+  lockoutEnd: string;
+  lockoutEnabled: boolean;
+  accessFailedCount: Number;
 }
-export interface IUserForm{
-  idUsuario:string,
-  clave: string,
-  nombre: string,
-  primerApellido: string,
-  segundoApellido: string,
-  idSucursal: Number,
-  tipoUsuario: string,
-  contraseña: string,
-  confirmaContraseña:string
-  activo:boolean
+export interface IUserForm {
+  id: string;
+  clave: string;
+  nombre: string;
+  primerApellido: string;
+  segundoApellido: string;
+  sucursalId?: number;
+  rolId?: string;
+  contraseña: string;
+  confirmaContraseña: string;
+  activo: boolean;
   permisos?: IUserPermission[];
 }
-export class USerForm implements IUserForm {
-  idUsuario = "";
+export class UserFormValues implements IUserForm {
+  id = "";
   clave = "";
   nombre = "";
   primerApellido = "";
   segundoApellido = "";
-  idSucursal = 0;
-  tipoUsuario= "";
-  contraseña= "";
+  sucursalId = undefined;
+  rolId = undefined;
+  contraseña = "";
   confirmaContraseña = "";
-  activo= false;
+  activo = true;
+
   constructor(init?: IUserForm) {
     Object.assign(this, init);
   }
 }
-export class UserFormValues implements IUser {
-  id ="";
-  clave ="";
-  nombre ="";
-  primerApellido ="";
-  segundoApellido ="";
-  activo = true;
 
-  constructor(init?: IUser) {
+export class claveValues implements IClave {
+  nombre = "";
+  primerApellido = "";
+  segundoApellido = "";
+  constructor(init?: IClave) {
     Object.assign(this, init);
   }
 }
 
-export class LoginFormValues implements ILoginForm{
-  userName ="";
-  password ="";
-  constructor(init?: ILoginForm){
-    Object.assign(this,init);
-  }
-}
-
-export class claveValues implements IClave{
-  nombre = "";
-  primerApllido = "";
-  segundoApellido = "";
-  constructor(init?: IClave){
-    Object.assign(this,init);
-  }
-}
-
-export class ChangePasswordValues implements IChangePasswordForm{
-  token="";
-  password="";
-  confirmPassword ="";
-  constructor(init?: IChangePasswordForm){
-    Object.assign(this,init);
+export class ChangePasswordValues implements IChangePasswordForm {
+  token = "";
+  contraseña = "";
+  confirmaContraseña = "";
+  constructor(init?: IChangePasswordForm) {
+    Object.assign(this, init);
   }
 }

@@ -1,23 +1,29 @@
-import { IUserPermission, IUserInfo,ILoginForm,ILoginResponse,IChangePasswordResponse,IChangePasswordForm, IUserForm,IClave } from "../models/user";
-import { IRole,IRolePermission } from "../models/role";
+import {
+  IUserPermission,
+  IUserList,
+  ILoginForm,
+  ILoginResponse,
+  IChangePasswordResponse,
+  IChangePasswordForm,
+  IUserForm,
+  IClave,
+} from "../models/user";
+import { IRole, IRolePermission } from "../models/role";
 import requests from "./agent";
 
 const User = {
   access: (): Promise<void> => requests.get("/user/scopes"),
-  getAll: (search: string): Promise<IUserInfo[]> => requests.get(`Account/all/${!search ? "all" : search}`),
-  getById: (id: string): Promise<IUserForm> => requests.get(`Account/user/${id}`),
-  getClave: (data: IClave): Promise<string> => requests.post(`Account/user/clave`,data),
-  gepass: (): Promise<string> => requests.get(`Account/user/paswwordgenerator`),
-  create: (user: IUserForm): Promise<IUserInfo> => requests.post("Account", user),
+  getAll: (search: string): Promise<IUserList[]> => requests.get(`user/all/${!search ? "all" : search}`),
+  getById: (id: string): Promise<IUserForm> => requests.get(`user/${id}`),
+  getCode: (data: IClave): Promise<string> => requests.post(`user/code`, data),
+  getPassword: (): Promise<string> => requests.get(`user/passwordGenerator`),
+  create: (user: IUserForm): Promise<IUserList> => requests.post("user", user),
   exportList: (search: string): Promise<void> =>
-  requests.download(`Account/export/list/${!search ? "all" : search}`, "Catálogo de Usuarios.xlsx"),
-  exportForm: (id: string, clave?: string): Promise<void> =>
-  requests.download(`Account/export/form/${id}`, `Catálogo de Usuarios (${clave}).xlsx`),
-  getPermission: (): Promise<IUserPermission[]> => requests.get(`Rol/permisos`),
-  getAllRoles: (search: string): Promise<IRole[]> => requests.get(`Rol/all/${!search ? "all" : search}`),
-  update: (user: IUserForm): Promise<IUserInfo> => requests.put("Account", user),
-  login:(user:ILoginForm):Promise<ILoginResponse>=>requests.post("Session/login",user),
-  changePass:(form:IChangePasswordForm):Promise<IChangePasswordResponse>=>requests.put("Account/updatepassword",form),
+    requests.download(`user/export/list/${!search ? "all" : search}`), // , "Catálogo de Usuarios.xlsx"
+  exportForm: (id: string): Promise<void> => requests.download(`user/export/form/${id}`), // , `Catálogo de Usuarios (${clave}).xlsx`
+  getPermission: (): Promise<IUserPermission[]> => requests.get(`user/permission`),
+  update: (user: IUserForm): Promise<IUserList> => requests.put("user", user),
+  changePass: (form: IChangePasswordForm): Promise<void> => requests.put("user/password", form),
 };
 
 export default User;

@@ -1,24 +1,22 @@
-
-import {IDepartamenList} from "./departament";
+import { IDepartamenList } from "./departament";
 export interface IBranchForm {
-  idSucursal:string;
-  clave:string;
-  nombre:string; 
-  calle:string;
-  correo:string;
-  telefono:number;
-  numeroExt:number;
-  numeroInt:number;
-  presupuestosId:string;
-  facturaciónId:string;
-  clinicosId:string;
-  activo:boolean;
-  estado:string;
-  ciudad:string;
-  coloniaId:number;
-  codigoPostal:string;
-  departaments: IDepartamenList[] ;
- 
+  idSucursal: string;
+  clave: string;
+  nombre: string;
+  calle: string;
+  correo: string;
+  telefono?: number;
+  numeroExt?: number;
+  numeroInt?: number;
+  presupuestosId: string;
+  facturaciónId: string;
+  clinicosId: string;
+  activo: boolean;
+  estado: string;
+  ciudad: string;
+  coloniaId?: number;
+  codigoPostal: string;
+  departamentos: IBranchDepartment[];
 }
 
 export interface IBranchInfo {
@@ -33,25 +31,30 @@ export interface IBranchInfo {
   codigoPostal: string;
 }
 
+export interface IBranchDepartment {
+  departamentoId: number;
+  departamento: string;
+}
+
 export class BranchFormValues implements IBranchForm {
-  idSucursal="";
-  clave="";
-  nombre=""; 
-  calle="";
-  correo="";
-  telefono=0;
-  presupuestosId="";
-  facturaciónId="";
-  clinicosId="";
-  servicioId="";
-  activo=false;
-  estado="";
-  ciudad="";
-  coloniaId=0;
-  codigoPostal="";
-  numeroInt =0;
-  numeroExt=0;
-  departaments:IDepartamenList[] = [] ;
+  idSucursal = "";
+  clave = "";
+  nombre = "";
+  calle = "";
+  correo = "";
+  telefono = undefined;
+  presupuestosId = "";
+  facturaciónId = "";
+  clinicosId = "";
+  servicioId = "";
+  activo = false;
+  estado = "";
+  ciudad = "";
+  coloniaId = undefined;
+  codigoPostal = "";
+  numeroInt = undefined;
+  numeroExt = undefined;
+  departamentos: IBranchDepartment[] = [];
   constructor(init?: IBranchForm) {
     Object.assign(this, init);
   }
