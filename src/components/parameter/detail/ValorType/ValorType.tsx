@@ -20,7 +20,7 @@ const ValorType:FC<ValorProps> = ({value,form})=>{
 
         switch(value) {
    
-         case 1: return <ValorRNumerico idTipeVAlue={value.toString()}></ValorRNumerico>; break;
+         case 1: return <ValorRNumerico parameter={form} idTipeVAlue={value.toString()}></ValorRNumerico>; break;
          case 2: return <RangoEdadXSexo parameter={form} idTipeVAlue={value.toString()}></RangoEdadXSexo>; break;
          case 3: return <RangoNumericoXEdad parameter={form} idTipeVAlue={value.toString()}></RangoNumericoXEdad>; break;
          case 4: return <RangoNumericoXEdadSexo parameter={form} idTipeVAlue={value.toLocaleString()}></RangoNumericoXEdadSexo>; break;

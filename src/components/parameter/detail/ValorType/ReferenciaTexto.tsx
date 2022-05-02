@@ -23,6 +23,7 @@ type UrlParams = {
 };
 const ReferenciaTexto : FC<Props> = ({ idTipeVAlue,parameter }) => {
     const [lista, setLista] = useState<any[]>([]);
+    const [disabled, setDisabled] = useState(true);
     const [formValue] = Form.useForm<ItipoValorForm[]>();
     let { id } = useParams<UrlParams>();
     const { parameterStore } = useStore();
@@ -37,8 +38,9 @@ const ReferenciaTexto : FC<Props> = ({ idTipeVAlue,parameter }) => {
            value?.map(item=>lista.push(item));
          //setLista(prev=>[...prev,...value!]);
           formValue.setFieldsValue(value!);
-        
-   
+        if(lista?.length>0){
+            setDisabled(true);
+        }
         };
         if (id) {
           readuser(id);
@@ -88,7 +90,7 @@ const ReferenciaTexto : FC<Props> = ({ idTipeVAlue,parameter }) => {
         <div >
             <Divider orientation="left">Valores de referencia (Texto):</Divider>
             <Col md={24} sm={24} xs={24} style={{ marginLeft: "50%" }}>
-                <Button onClick={() => { }} type="default">Modificar</Button>
+            {disabled&&<Button onClick={()=>{setDisabled(false)}}  type="default">Modificar</Button>}
                 <Button type="primary" htmlType="submit" onClick={() => { formValue.submit();}}>
                     Guardar
                 </Button>
@@ -104,8 +106,9 @@ const ReferenciaTexto : FC<Props> = ({ idTipeVAlue,parameter }) => {
                                         label={"Observación"+(name+1)}
                                         name={[name, 'descripcionTexto']}
                                         rules={[{ required: true, message: 'Missing valor' }]}
+                                        
                                     >
-                                        <TextArea rows={5}  placeholder={"Observación"} />
+                                        <TextArea readOnly={disabled} rows={5}  placeholder={"Observación"} />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>

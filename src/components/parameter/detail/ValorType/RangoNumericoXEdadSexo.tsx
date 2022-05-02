@@ -8,19 +8,20 @@ type Props = {
 };
 const RangoNumericoXEdadSexo:FC<Props> = ({idTipeVAlue,parameter})=>{
     const [flag, setFlag] = useState<boolean>(false);
+    const [disabled, setDisabled] = useState(false);
     const handle =(value:boolean)=>{
         setFlag(value);
     }
     return(
         <Fragment>
             <Col md={24} sm={24} xs={24} style={{ marginLeft: "50%" }}>
-                <Button onClick={() => { }} type="default">Modificar</Button>
+                <Button onClick={() => { setDisabled(false) }} type="default">Modificar</Button>
                 <Button type="primary" htmlType="submit" onClick={() => { handle(true) }}>
                     Guardar
                 </Button>
             </Col>
-             <RangoEdad auto={flag} idTipeVAlue={"hombre"} parameter={parameter} description="Valores de referencia Hombre (Numérico por edad y sexo):"></RangoEdad>
-             <RangoEdad auto={flag} idTipeVAlue={"mujer"} parameter={parameter} description="Valores de referencia Mujer (Numérico por edad y sexo):"></RangoEdad>
+             <RangoEdad disabled={disabled} auto={flag} idTipeVAlue={"hombre"} parameter={parameter} description="Valores de referencia Hombre (Numérico por edad y sexo):"></RangoEdad>
+             <RangoEdad disabled={disabled} auto={flag} idTipeVAlue={"mujer"} parameter={parameter} description="Valores de referencia Mujer (Numérico por edad y sexo):"></RangoEdad>
 
         </Fragment>
     );

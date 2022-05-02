@@ -4,6 +4,7 @@ import Catalog from "../api/catalog";
 import Price from "../api/price";
 import { ICatalogDescriptionList, ICatalogNormalList, IProcedenciaList } from "../models/catalog";
 import Reagent from "../api/reagent";
+
 import { IPriceListList } from "../models/price";
 import { IOptions, IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -11,6 +12,7 @@ import history from "../util/history";
 import messages from "../util/messages";
 import responses from "../util/responses";
 import { getErrors } from "../util/utils";
+import Parameter from "../api/parameter";
 
 export default class OptionStore {
   constructor() {
@@ -215,6 +217,22 @@ export default class OptionStore {
       }));
     } catch (error) {
       this.priceOptions = [];
+    }
+  };
+
+  parameterOptions:IOptions[]=[];
+
+  getParameterOptions= async()=>{
+    try {
+      const parameter = await Parameter.getAll("all");
+      console.log("parameters");
+      console.log(parameter);
+      this.parameterOptions = parameter.map((x) => ({
+        value: x.clave,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.parameterOptions = [];
     }
   };
 }

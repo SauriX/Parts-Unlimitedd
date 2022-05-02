@@ -18,7 +18,7 @@ const RangoNumericoXEdad:FC<Props> = ({idTipeVAlue,parameter})  => {
     return (
         <div >
             <Divider orientation="left"></Divider>
-            <RangoEdad auto={false} idTipeVAlue={idTipeVAlue} parameter={parameter} description="Valores de referencia (Numérico por edad):"></RangoEdad>
+            <RangoEdad disabled={false} auto={false} idTipeVAlue={idTipeVAlue} parameter={parameter} description="Valores de referencia (Numérico por edad):"></RangoEdad>
         </div>
     );
 }

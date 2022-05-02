@@ -5,20 +5,21 @@ import { IColumns } from "../../../../app/common/table/utils";
 import IconButton from "../../../../app/common/button/IconButton";
 import NumberInput from "../../../../app/common/form/NumberInput";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { ItipoValorForm, tipoValorFormValues } from "../../../../app/models/parameter";
+import { IParameterForm, ItipoValorForm, tipoValorFormValues } from "../../../../app/models/parameter";
 import { useStore } from "../../../../app/stores/store";
 type Props = {
     idTipeVAlue: string;
+    parameter:IParameterForm;
 };
 type UrlParams = {
     id: string;
 };
-const ValorRNumerico:FC<Props> = ({idTipeVAlue})=>{
+const ValorRNumerico:FC<Props> = ({idTipeVAlue,parameter})=>{
     const { width: windowWidth } = useWindowDimensions();
     const [formValue] = Form.useForm<ItipoValorForm>();
     const [disabled, setDisabled] = useState(true);
     const { parameterStore } = useStore();
-    const { addValue,getvalue,updatevalue  } = parameterStore;
+    const { addValue,getvalue,updatevalue,update  } = parameterStore;
     let { id } = useParams<UrlParams>();
     const [valuesValor, setValuesValor] = useState<ItipoValorForm>(new tipoValorFormValues());
     let navigate = useNavigate();
@@ -30,7 +31,9 @@ const ValorRNumerico:FC<Props> = ({idTipeVAlue})=>{
           formValue.setFieldsValue(value!);
           setValuesValor(value!);
           console.log(valuesValor)
-   
+            if(value?.id){
+                setDisabled(true);
+            }
         };
         if (id) {
           readuser(id);
@@ -56,8 +59,11 @@ const ValorRNumerico:FC<Props> = ({idTipeVAlue})=>{
             value.nombre = idTipeVAlue;
             value.idParametro=id||"";
             success = await addValue(value);
+            success = await update(parameter);
         } else {
           success = await updatevalue(value);
+          success = await update(parameter);
+          
         }
         if (success) {
           navigate(`/parameter?search=${searchParams.get("search") || "all"}`);
@@ -68,7 +74,7 @@ const ValorRNumerico:FC<Props> = ({idTipeVAlue})=>{
             <Divider orientation="left">Valores de referencia (Numérico):</Divider>
             
             <Col md={24} sm={24} xs={24} style={{ marginLeft: "50%" }}>
-            <Button onClick={()=>{}}  type="default">Modificar</Button>
+            {disabled&&<Button onClick={()=>{setDisabled(false)}}  type="default">Modificar</Button>}
                 <Button type="primary" htmlType="submit" onClick={() => { formValue.submit() }}>
                     Guardar
                 </Button>
@@ -95,14 +101,16 @@ const ValorRNumerico:FC<Props> = ({idTipeVAlue})=>{
                             }}
                             max={9999999999}
                             min={0}
+                            readonly={disabled}
                         /> 
-                                            <NumberInput
+                        <NumberInput
                             formProps={{
                                 name: "valorFinal",
                                 label: "Valor Final",
                             }}
                             max={9999999999}
                             min={0}
+                            readonly={disabled}
                         /> 
                     </Col>
                 </Row>

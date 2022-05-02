@@ -25,100 +25,111 @@ type ParameterFormProps = {
 type UrlParams = {
     id: string;
 };
+
+const functionOptions: IOptions[] = [{ label: "ROUND()", value: "ROUND([VALOR])" }, { label: "FORMAT()", value: "FORMAT([VALOR])" }]
+
 const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
-    const { parameterStore,optionStore } = useStore();
-    const { getAll,parameters,getById,create,update } = parameterStore;
-    const { getdepartamentoOptions,departamentOptions,getareaOptions,areas,getReagentOptions,reagents,getPrintFormatsOptions,printFormat } = optionStore;
+    const { parameterStore, optionStore } = useStore();
+    const { getAll, parameters, getById, create, update } = parameterStore;
+    const { getdepartamentoOptions, departamentOptions, getareaOptions, areas, getReagentOptions, reagents, getPrintFormatsOptions, printFormat,getParameterOptions,parameterOptions } = optionStore;
     const [form] = Form.useForm<IParameterForm>();
-    const [flag,setFlag] = useState(0);
+    const [flag, setFlag] = useState(0);
     const [loading, setLoading] = useState(false);
     const [disabled, setDisabled] = useState(true);
     const { width: windowWidth } = useWindowDimensions();
     const [targetKeys, setTargetKeys] = useState<string[]>([]);
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
-    const parameter:IParameterForm = new ParameterFormValues();
+    const parameter: IParameterForm = new ParameterFormValues();
     let navigate = useNavigate();
     const [values, setValues] = useState<IParameterForm>(new ParameterFormValues());
-    const [ValueType,setValueType] = useState(0);
+    const [ValueType, setValueType] = useState(0);
     const [searchParams, setSearchParams] = useSearchParams();
+    const [cursorPosition, setCursorPosition] = useState(0);
     let { id } = useParams<UrlParams>();
-    const tipodeValorList:IOptions[] =[
-        {value:1 ,label:"Numérico"},
-        {value:2 ,label:"Numérico por sexo"},
-        {value:3 ,label:"Numérico por edad"},
-        {value:4 ,label:"Numérico por edad y sexo"},
-        {value:5 ,label:"Opción múltiple"},
-        {value:6 ,label:"Numérico con una columna"},
-        {value:7 ,label:"Texto"},
-        {value:8 ,label:"Párrafo"},
-        {value:9 ,label:"Etiqueta"},
-        {value:10 ,label:" Observación"},
+    const tipodeValorList: IOptions[] = [
+        { value: 1, label: "Numérico" },
+        { value: 2, label: "Numérico por sexo" },
+        { value: 3, label: "Numérico por edad" },
+        { value: 4, label: "Numérico por edad y sexo" },
+        { value: 5, label: "Opción múltiple" },
+        { value: 6, label: "Numérico con una columna" },
+        { value: 7, label: "Texto" },
+        { value: 8, label: "Párrafo" },
+        { value: 9, label: "Etiqueta" },
+        { value: 10, label: " Observación" },
 
     ];
 
     useEffect(() => {
         const readuser = async (idUser: string) => {
-          setLoading(true);
-          
-          const parameter = await getById(idUser);
-          await getareaOptions(parameter?.area);
-          let val = parameter!.tipoValor|0;
-          setValueType(val);
-          form.setFieldsValue(parameter!);
-          setValues(parameter!);
-          setLoading(false);
+            setLoading(true);
+
+            const parameter = await getById(idUser);
+            await getareaOptions(parameter?.area);
+            let val = parameter!.tipoValor | 0;
+            setValueType(val);
+            form.setFieldsValue(parameter!);
+            setValues(parameter!);
+            setLoading(false);
         };
         if (id) {
-          readuser(id);
+            readuser(id);
         }
     }, [form, getById, id]);
-    useEffect(()=>{
-        const readdepartments= async () =>{
+    useEffect(() => {
+        const readdepartments = async () => {
             await getdepartamentoOptions();
         }
         readdepartments();
-    },[getdepartamentoOptions]);
-    useEffect(()=>{
-        const readReagents=async()=>{
+    }, [getdepartamentoOptions]);
+    useEffect(() => {
+        const readReagents = async () => {
             await getReagentOptions();
         }
         readReagents();
-    },[getareaOptions]);
-    useEffect(()=>{
-        const readPrint= async ()=>{
+    }, [getareaOptions]);
+    useEffect(() => {
+        const readPrint = async () => {
             await getPrintFormatsOptions();
         }
 
         readPrint();
-    },[getPrintFormatsOptions]);
+    }, [getPrintFormatsOptions]);
     useEffect(() => {
         const readUsers = async () => {
-          setLoading(true);
-          await getAll(searchParams.get("search") ?? "all");
-          setLoading(false);
+            setLoading(true);
+            await getAll(searchParams.get("search") ?? "all");
+            setLoading(false);
         };
         readUsers();
-    }, [ getAll , searchParams]);
+    }, [getAll, searchParams]);
+    useEffect(() => {
+        const read = async () => {
+            await getParameterOptions();
+            
+        }
+        read();
+    }, [getParameterOptions]);
     const CheckReadOnly = () => {
         let result = false;
         const mode = searchParams.get("mode");
         if (mode == "ReadOnly") {
-          result = true;
+            result = true;
         }
         return result;
     }
     const actualParameter = () => {
         if (id) {
-          const index = parameters.findIndex(x => x.id === id);
-          return index + 1;
-          return 1;
+            const index = parameters.findIndex(x => x.id === id);
+            return index + 1;
+            return 1;
         }
         return 0;
     }
     const siguienteParameter = (index: number) => {
         console.log(id);
         const parameter = parameters[index];
-    
+
         navigate(`/parameter/${parameter?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search") ?? "all"}`);
     }
     const onFinish = async (newValues: IParameterForm) => {
@@ -128,87 +139,101 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
         console.log(Parameter);
         let success = false;
         if (!Parameter.id) {
-          success = await create(Parameter);
+            success = await create(Parameter);
         } else {
             console.log("update");
-          success = await update(Parameter);
+            success = await update(Parameter);
         }
-        if (success && flag==0) {
-          navigate(`/parameter?search=${searchParams.get("search") || "all"}`);
+        if (success && flag == 0) {
+            navigate(`/parameter?search=${searchParams.get("search") || "all"}`);
         }
     };
-    const onValuesChange = async (changeValues: any) => {
-        const fields = Object.keys(changeValues)[0]; 
+    const onValuesChange = async (changeValues: any, values: any) => {
+        const fields = Object.keys(changeValues)[0];
         if (fields === "tipoValor") {
-          const value = changeValues[fields];
-          values.tipoValor=value;
-          console.log("onchange");
-          form.submit();
-          setValueType(value);
-          setFlag(1);
+            const value = changeValues[fields];
+            values.tipoValor = value;
+            console.log("onchange");
+            form.submit();
+            setValueType(value);
+            setFlag(1);
         }
-        if(fields==="departamento"){
+        if (fields === "departamento") {
             const value = changeValues[fields];
             await getareaOptions(value);
         }
-        if(fields==="funciones"){
+        if (fields === "funciones") {
+            console.log("Formula")
+            const value = changeValues[fields];
+            const original = values.formula.split("");
+            original.splice(cursorPosition, 0, value);
+            const newString = original.join("");
+            form.setFieldsValue({ formula: newString, funciones: undefined });
+        }
 
+        if(fields === "parametros"){
+            console.log("Formula")
+            const value = changeValues[fields];
+            const original = values.formula.split("");
+            original.splice(cursorPosition, 0, value);
+            const newString = original.join("");
+            form.setFieldsValue({ formula: newString, parametros: undefined });
         }
     }
     const [searchState, setSearchState] = useState<ISearch>({
         searchedText: "",
         searchedColumn: "",
-      });
+    });
     const columns: IColumns<IStudyList> = [
         {
-          ...getDefaultColumnProps("id", "Id Estudio", {
-            searchState,
-            setSearchState,
-            width: "30%",
-            windowSize: windowWidth,
-          }),
+            ...getDefaultColumnProps("id", "Id Estudio", {
+                searchState,
+                setSearchState,
+                width: "30%",
+                windowSize: windowWidth,
+            }),
         },
         {
-          ...getDefaultColumnProps("nombre", "Estudio", {
-            searchState,
-            setSearchState,
-            width: "30%",
-            windowSize: windowWidth,
-          }),
+            ...getDefaultColumnProps("nombre", "Estudio", {
+                searchState,
+                setSearchState,
+                width: "30%",
+                windowSize: windowWidth,
+            }),
         },
-/*         {
-          ...getDefaultColumnProps("areaId", "Área", {
-            searchState,
-            setSearchState,
-            width: "30%",
-            windowSize: windowWidth,
-          }),
-        }, */
-      ];
-      
+        /*         {
+                  ...getDefaultColumnProps("areaId", "Área", {
+                    searchState,
+                    setSearchState,
+                    width: "30%",
+                    windowSize: windowWidth,
+                  }),
+                }, */
+    ];
+
     return (
         <Spin spinning={loading || load}>
             <div ref={componentRef}>
                 <Row style={{ marginBottom: 24 }}>
-                {id &&
-                    <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
-                    <Pagination size="small" total={parameters.length} pageSize={1} current={actualParameter()} onChange={(value) => { siguienteParameter(value - 1) }} />
-                    </Col>
-                }
-                {!CheckReadOnly() &&
-                    <Col md={12} sm={24} xs={12} style={id ? { textAlign: "right" } : { marginLeft: "80%" }}>
-                    <Button onClick={() => { navigate(`/parameter`); }} >Cancelar</Button>
-                    <Button type="primary" htmlType="submit" onClick={() => { form.submit() }}>
-                        Guardar
-                    </Button>
-                    </Col>
-                }
-                {
-                    CheckReadOnly() &&
-                    <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
-                    <ImageButton key="edit" title="Editar" image="editar" onClick={() => { navigate(`/parameter/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`); }} />
-                    </Col>
-                }
+                    {id &&
+                        <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
+                            <Pagination size="small" total={parameters.length} pageSize={1} current={actualParameter()} onChange={(value) => { siguienteParameter(value - 1) }} />
+                        </Col>
+                    }
+                    {!CheckReadOnly() &&
+                        <Col md={12} sm={24} xs={12} style={id ? { textAlign: "right" } : { marginLeft: "80%" }}>
+                            <Button onClick={() => { navigate(`/parameter`); }} >Cancelar</Button>
+                            <Button type="primary" htmlType="submit" onClick={() => { form.submit() }}>
+                                Guardar
+                            </Button>
+                        </Col>
+                    }
+                    {
+                        CheckReadOnly() &&
+                        <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
+                            <ImageButton key="edit" title="Editar" image="editar" onClick={() => { navigate(`/parameter/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`); }} />
+                        </Col>
+                    }
                 </Row>
                 <Form<IParameterForm>
                     {...formItemLayout}
@@ -219,8 +244,8 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                     scrollToFirstError
                     onFieldsChange={() => {
                         setDisabled(
-                        !form.isFieldsTouched() ||
-                        form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+                            !form.isFieldsTouched() ||
+                            form.getFieldsError().filter(({ errors }) => errors.length).length > 0
                         );
                     }}
                 >
@@ -228,8 +253,8 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                         <Col md={12} sm={24} xs={12}>
                             <TextInput
                                 formProps={{
-                                name: "clave",
-                                label: "Clave",
+                                    name: "clave",
+                                    label: "Clave",
                                 }}
                                 max={100}
                                 required
@@ -242,8 +267,8 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                         <Col md={12} sm={24} xs={12}>
                             <TextInput
                                 formProps={{
-                                name: "nombre",
-                                label: "Nombre",
+                                    name: "nombre",
+                                    label: "Nombre",
                                 }}
                                 max={100}
                                 required
@@ -256,8 +281,8 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                         <Col md={12} sm={24} xs={12}>
                             <TextInput
                                 formProps={{
-                                name: "nombreCorto",
-                                label: "Nombre corto",
+                                    name: "nombreCorto",
+                                    label: "Nombre corto",
                                 }}
                                 max={100}
                                 required
@@ -270,8 +295,8 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                         <Col md={12} sm={24} xs={12}>
                             <TextInput
                                 formProps={{
-                                name: "unidades",
-                                label: "Unidades",
+                                    name: "unidades",
+                                    label: "Unidades",
                                 }}
                                 max={100}
                                 required
@@ -281,33 +306,39 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                         <Col md={12} sm={24} xs={12}>
                             <TextInput
                                 formProps={{
-                                name: "unidadSi",
-                                label: "Unidad SI",
+                                    name: "unidadSi",
+                                    label: "Unidad SI",
                                 }}
                                 max={100}
                                 required
                                 readonly={CheckReadOnly()}
                             />
                         </Col>
-                        {id&&<Col md={12} sm={24} xs={12}>
+                        {id && <Col md={12} sm={24} xs={12}>
                             <SelectInput formProps={{ name: "tipoValor", label: "Tipo de valor" }} options={tipodeValorList} readonly={CheckReadOnly()} required />
                             <SelectInput formProps={{ name: "formatoImpresion", label: "Formato de impresión" }} options={printFormat} readonly={CheckReadOnly()} required />
                             <TextInput
                                 formProps={{
-                                name: "formula",
-                                label: "Fórmula",
+                                    name: "formula",
+                                    label: "Fórmula",
                                 }}
                                 max={100}
                                 required
                                 readonly={CheckReadOnly()}
+                                onClick={(e: any) => {
+                                    const position = e.target.selectionStart ?? 0;
+                                    setCursorPosition(position);
+                                }}
                             />
-                            <SelectInput formProps={{ name: "funciones", label: "Funciones" }} options={[{label:"ROUND()",value:"ROUND([VALOR]\u200E)"},{label:"FORMAT()",value:"FORMAT([VALOR]\u200E)"}]} readonly={CheckReadOnly()}/>
+                            <SelectInput formProps={{ name: "funciones", label: "Funciones" }} options={functionOptions} readonly={CheckReadOnly()} />
+                            <SelectInput formProps={{ name: "parametros", label: "Parametros" }} options={parameterOptions} readonly={CheckReadOnly()} />
+                        
                         </Col>}
                         <Col md={12} sm={24} xs={12}>
                             <TextInput
                                 formProps={{
-                                name: "fcs",
-                                label: "FCSI",
+                                    name: "fcs",
+                                    label: "FCSI",
                                 }}
                                 max={100}
                                 required
@@ -317,8 +348,8 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                         <Col md={12} sm={24} xs={12}>
                             <TextInput
                                 formProps={{
-                                name: "formato",
-                                label: "Formato",
+                                    name: "formato",
+                                    label: "Formato",
                                 }}
                                 max={100}
                                 required
@@ -331,8 +362,8 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                         <Col md={12} sm={24} xs={12}>
                             <TextAreaInput
                                 formProps={{
-                                name: "valorInicial",
-                                label: "Valor Inicial",
+                                    name: "valorInicial",
+                                    label: "Valor Inicial",
                                 }}
                                 rows={4}
                                 required
@@ -343,21 +374,21 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                 </Form>
                 <ValorType form={values} value={ValueType}></ValorType>
                 <Row>
-                    <Col md={24} sm={12} style={{marginRight: 20, textAlign: "center" }}>
+                    <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
                         <PageHeader
                             ghost={false}
-                            title={<HeaderTitle title="Estudios donde se encuentra el parámetro"/>}
+                            title={<HeaderTitle title="Estudios donde se encuentra el parámetro" />}
                             className="header-container"
-                            ></PageHeader>
-                            <Divider className="header-divider" />
+                        ></PageHeader>
+                        <Divider className="header-divider" />
                         <Table<IStudyList>
                             size="small"
                             rowKey={(record) => record.id}
                             columns={columns.slice(0, 3)}
                             pagination={false}
-                            dataSource={[...(values.estudios??[])]}
+                            dataSource={[...(values.estudios ?? [])]}
                             scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-                            />
+                        />
                     </Col>
                 </Row>
             </div>
@@ -365,4 +396,3 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     );
 }
 export default observer(ParameterForm);
-  
