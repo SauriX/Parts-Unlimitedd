@@ -11,9 +11,10 @@ interface IProps {
   type?: RuleType;
   placeholder?: string;
   readonly?: boolean;
+  onClick?: React.MouseEventHandler<HTMLInputElement> | undefined;
 }
 
-const TextInput = ({ formProps: itemProps, max, required, prefix, type, placeholder, readonly }: IProps) => {
+const TextInput = ({ formProps: itemProps, max, required, prefix, type, placeholder, readonly, onClick }: IProps) => {
   let rules: Rule[] = [];
 
   /*if (max) {
@@ -52,6 +53,7 @@ const TextInput = ({ formProps: itemProps, max, required, prefix, type, placehol
         prefix={prefix}
         type={type ?? "text"}
         placeholder={placeholder ?? itemProps.label?.toString()}
+        onClick={onClick}
       />
     </Form.Item>
   );

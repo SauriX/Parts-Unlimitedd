@@ -22,6 +22,7 @@ type UrlParams = {
 const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue,parameter }) => {
     const [lista, setLista] = useState<any[]>([]);
     const [formValue] = Form.useForm<ItipoValorForm[]>();
+    const [disabled, setDisabled] = useState(false);
     let { id } = useParams<UrlParams>();
     const { parameterStore } = useStore();
     const { addvalues,getAllvalues,update  } = parameterStore;
@@ -35,8 +36,9 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue,parameter }) => {
            value?.map(item=>lista.push(item));
          //setLista(prev=>[...prev,...value!]);
           formValue.setFieldsValue(value!);
-        
-   
+          if(lista?.length>0){
+            setDisabled(true);
+            }
         };
         if (id) {
           readuser(id);
@@ -92,7 +94,7 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue,parameter }) => {
             <Divider orientation="left">Valores de referencia (Numérico por sexo):</Divider>
 
             <Col md={24} sm={24} xs={24} style={{ marginLeft: "50%" }}>
-                <Button onClick={() => { }} type="default">Modificar</Button>
+            {disabled&&<Button onClick={()=>{setDisabled(false)}}  type="default">Modificar</Button>}
                 <Button type="primary" htmlType="submit" onClick={() => { formValue.submit();}}>
                     Guardar
                 </Button>
@@ -109,28 +111,28 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue,parameter }) => {
                                         name={[name, 'hombreValorInicial']}
                                         rules={[{ required: true, message: 'Missing Hombre valor' }]}
                                     >
-                                        <Input placeholder={"Hombre valor"} />
+                                        <Input readOnly={disabled} placeholder={"Hombre valor"} />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
                                         name={[name, 'hombreValorFinal']}
                                         rules={[{ required: true, message: 'Missing Hombre valor' }]}
                                     >
-                                        <Input placeholder="Hombre valor" />
+                                        <Input readOnly={disabled} placeholder="Hombre valor" />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
                                         name={[name, 'mujerValorInicial']}
                                         rules={[{ required: true, message: 'Mujer valor' }]}
                                     >
-                                        <Input placeholder={"Mujer valor"} />
+                                        <Input readOnly={disabled} placeholder={"Mujer valor"} />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
                                         name={[name, 'mujerValorFinal']}
                                         rules={[{ required: true, message: 'Missing Mujer valor' }]}
                                     >
-                                        <Input placeholder="Mujer valor" />
+                                        <Input readOnly={disabled} placeholder="Mujer valor" />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>

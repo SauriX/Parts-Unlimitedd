@@ -23,6 +23,7 @@ type UrlParams = {
 const OpcionMUltiple : FC<Props> = ({ idTipeVAlue,parameter }) => {
     const [lista, setLista] = useState<any[]>([]);
     const [formValue] = Form.useForm<ItipoValorForm[]>();
+    const [disabled, setDisabled] = useState(false);
     let { id } = useParams<UrlParams>();
     const { parameterStore } = useStore();
     const { addvalues,getAllvalues,update  } = parameterStore;
@@ -36,7 +37,9 @@ const OpcionMUltiple : FC<Props> = ({ idTipeVAlue,parameter }) => {
            value?.map(item=>lista.push(item));
          //setLista(prev=>[...prev,...value!]);
           formValue.setFieldsValue(value!);
-        
+          if(lista?.length>0){
+            setDisabled(true);
+            }
    
         };
         if (id) {
@@ -87,7 +90,7 @@ const OpcionMUltiple : FC<Props> = ({ idTipeVAlue,parameter }) => {
         <div >
             <Divider orientation="left">Valores de referencia (Opción múltiple): </Divider>
             <Col md={24} sm={24} xs={24} style={{ marginLeft: "50%" }}>
-                <Button onClick={() => { }} type="default">Modificar</Button>
+            {disabled&&<Button onClick={()=>{setDisabled(false)}}  type="default">Modificar</Button>}
                 <Button type="primary" htmlType="submit" onClick={() => { formValue.submit();}}>
                     Guardar
                 </Button>
@@ -104,7 +107,7 @@ const OpcionMUltiple : FC<Props> = ({ idTipeVAlue,parameter }) => {
                                         name={[name, 'opcion']}
                                         rules={[{ required: true, message: 'Missing valor' }]}
                                     >
-                                        <Input placeholder={"Opción"} />
+                                        <Input readOnly={disabled} placeholder={"Opción"} />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>

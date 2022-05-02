@@ -66,7 +66,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
     };
     const newpass = async () => {
       let pass = await generatePass();
-      form.setFieldsValue({ confirmaContraseña: pass, contraseña: pass, });
+      form.setFieldsValue({  contraseña: pass, });
     }
     const permission = async () => {
       await getPermission();
@@ -317,17 +317,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
                 readonly={CheckReadOnly()}
               />
             </Col>
-            <Col md={12} sm={24} xs={12}>
-              <PasswordInput
-                formProps={{
-                  name: "confirmaContraseña",
-                  label: "Confirmar Contraseña",
-                }}
-                max={8}
-                min={8}
-                readonly={CheckReadOnly()}
-              />
-            </Col>
+
             <Col md={12} sm={24} xs={12}>
               <TextInput
                 formProps={{

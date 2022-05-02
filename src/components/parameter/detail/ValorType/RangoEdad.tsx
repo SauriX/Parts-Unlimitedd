@@ -17,13 +17,15 @@ type Props = {
     idTipeVAlue: string;
     parameter:IParameterForm;
     auto:boolean;
+    disabled:boolean;
 };
 type UrlParams = {
     id: string|"";
 };
-const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto}) => {
+const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto,disabled}) => {
     const [lista, setLista] = useState<any[]>([]);
     const [formValue] = Form.useForm<ItipoValorForm[]>();
+    const [disable, setDisable] = useState(disabled);
     let { id } = useParams<UrlParams>();
     const { parameterStore } = useStore();
     const { addvalues,getAllvalues,update  } = parameterStore;
@@ -47,7 +49,9 @@ const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto}) => {
            value?.map(item=>lista.push(item));
          //setLista(prev=>[...prev,...value!]);
           formValue.setFieldsValue(value!);
-        
+            if(lista.length>0){
+                setDisable(true);
+            }
    
         };
         if (id) {
@@ -104,7 +108,7 @@ const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto}) => {
             <Divider orientation="left">{description}</Divider>
 
             {idTipeVAlue!="hombre"&& idTipeVAlue!="mujer"&&<Col md={24} sm={24} xs={24} style={{ marginLeft: "50%" }}>
-                <Button onClick={() => { }} type="default">Modificar</Button>
+                <Button onClick={() => { setDisable(false) }} type="default">Modificar</Button>
                 <Button type="primary" htmlType="submit" onClick={() => { formValue.submit();}}>
                     Guardar
                 </Button>
@@ -121,35 +125,35 @@ const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto}) => {
                                         name={[name, 'rangoEdadInicial']}
                                         rules={[{ required: true, message: 'Missing Hombre valor' }]}
                                     >
-                                        <Input placeholder={"Rango Edad"} />
+                                        <Input readOnly={disable} placeholder={"Rango Edad"} />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
                                         name={[name, 'rangoEdadFinal']}
                                         rules={[{ required: true, message: 'Missing Rango de edad' }]}
                                     >
-                                        <Input placeholder="Rango Edad" />
+                                        <Input readOnly={disable} placeholder="Rango Edad" />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
                                         name={[name, 'medidaTiempo']}
                                         rules={[{ required: true, message: 'Missing Unidad de medida' }]}
                                     >
-                                     <Select defaultValue={0}  options={[{label:"Unidad de tiempo",value:0},{label:"Días",value:1},{label:"Meses",value:2},{label:"Años",value:3}]}  />
+                                     <Select  defaultValue={0} disabled={disable}  options={[{label:"Unidad de tiempo",value:0},{label:"Días",value:1},{label:"Meses",value:2},{label:"Años",value:3}]}  />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
                                         name={[name, 'valorInicialNumerico']}
                                         rules={[{ required: true, message: 'valor inicial' }]}
                                     >
-                                        <Input placeholder={"Valor inicial"} />
+                                        <Input readOnly={disable} placeholder={"Valor inicial"} />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
                                         name={[name, 'valorFinalNumerico']}
                                         rules={[{ required: true, message: 'Missing Valor final' }]}
                                     >
-                                        <Input placeholder="Valor final" />
+                                        <Input readOnly={disable} placeholder="Valor final" />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>

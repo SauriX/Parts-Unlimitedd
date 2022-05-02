@@ -28,6 +28,8 @@ export interface IParameterForm {
     activo:boolean,
     estudios:IStudyList[],
     formatoImpresion:number;
+    funciones?:string;
+    parametros?:string;
 }
 export interface ItipoValorForm{
     id?:string,

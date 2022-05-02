@@ -8,7 +8,7 @@ import ParameterTable  from "../components/parameter/ParameterTable"
 import ParameterHeader from "../components/parameter/ParameterHeader";
 const Parameter = () => {
   const { parameterStore } = useStore();
-  const { exportList } = parameterStore;
+  const { exportList   } = parameterStore;
   const [printing, setPrinting] = useState(false);
   const [accessing, setAccessing] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
