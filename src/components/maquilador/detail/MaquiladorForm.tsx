@@ -8,11 +8,11 @@ import {
     PageHeader,
     Divider,
     Select,
+    FormItemProps,
   } from "antd";
   import React, { FC, useCallback, useEffect, useState } from "react";
   import { formItemLayout } from "../../../app/util/utils";
   import TextInput from "../../../app/common/form/TextInput";
-  import TextAreaInput from "../../../app/common/form/TextAreaInput";
   import SwitchInput from "../../../app/common/form/SwitchInput";
   import SelectInput from "../../../app/common/form/SelectInput";
   import { useStore } from "../../../app/stores/store";
@@ -22,17 +22,14 @@ import {
   import HeaderTitle from "../../../app/common/header/HeaderTitle";
   import NumberInput from "../../../app/common/form/NumberInput";
   import { observer } from "mobx-react-lite";
-  import { List, Typography } from "antd";
   import { IOptions } from "../../../app/models/shared";
-  import TextArea from "antd/lib/input/TextArea";
-  import maquilador from "../../../views/Maquilador";
-  import { createSecureContext } from "tls";
-  import Item from "antd/lib/list/Item";
   import alerts from "../../../app/util/alerts";
   import messages from "../../../app/util/messages";
-  import { claveValues } from "../../../app/models/user";
+  import { RuleObject } from "antd/lib/form";
+  import { RoleValues } from "../../../app/models/role";
   import MaskInput from "../../../app/common/form/MaskInput";
-  // import { v4 as uuid } from "uuid";
+  import { Mask } from "react-text-mask";
+  //import { v4 as uuid } from "uuid";
   
   type MaquiladorFormProps = {
     id: number;
@@ -119,11 +116,11 @@ import {
     const onFinish = async (newValues: IMaquiladorForm) => {
       const maquilador = { ...values, ...newValues };
   
-      maquilador.telefono = maquilador.telefono
-        ? parseInt(
-            maquilador.telefono.toString()?.replaceAll("_", "0")?.replaceAll("-", "")
-          )
-        : undefined;  
+      // maquilador.telefono = maquilador.telefono
+      //   ? parseInt(
+      //       maquilador.telefono.toString()?.replaceAll("_", "0")?.replaceAll("-", "")
+      //     )
+      //   : undefined;  
         
       let success = false;
   
@@ -177,7 +174,9 @@ import {
           clearLocation();
         }
       }
-    };
+    }; 
+
+   
   
     return (
       <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
@@ -195,23 +194,23 @@ import {
                 />
                 </Col>
             }
+            
+            <Col md={12} sm={24} style={id ? { textAlign: "right"} : { marginLeft: "80%" }}>
             {!readonly && (
-                <Col md={24} sm={24} style={id ? { textAlign: "right"} : { marginLeft: "80%" }}>
-                <Button onClick={() => { navigate("/maquilador"); }}> Cancelar </Button>      
-                <Button  type="primary"  htmlType="submit"  disabled={disabled}  
-                onClick={() => { form.submit();  return; }}>
-                    Guardar
-                </Button>          
-                </Col>            
+            <Button onClick={() => { navigate("/maquilador"); }}> Cancelar </Button>     
             )}
-        
-            {readonly && (
-                <Col md={12} sm={24} style={{ textAlign: "right" }}>
+            {readonly ? (
                 <ImageButton  key="edit"  title="Editar" image="editar"
                 onClick={() => {  botonEdit();}}        
                 />           
-                </Col>
+                
+            ): (
+              <Button  type="primary"  htmlType="submit"  disabled={disabled}  
+                onClick={() => { form.submit();  return; }}>
+                    Guardar
+                </Button>
             )}
+            </Col>
         </Row>
           <Row>
             <Col md={10} sm={24} style={{ marginRight: 20 }}>
@@ -309,6 +308,12 @@ import {
                       /[0-9]/,
                       /[0-9]/,
                     ]}
+                    validator={(_, value: any) =>{
+                      if (!value || value.indexOf("_") === -1){
+                        return Promise.resolve();
+                      }
+                      return Promise.reject("El campo debe contener 10 dígitos");
+                    }}
                     readonly={readonly}
                   />
                   <TextInput
@@ -318,6 +323,7 @@ import {
                     }}
                     max={100}
                     readonly={readonly}
+                    type="url" 
                   />
                   <SwitchInput
                     name="activo"
@@ -362,23 +368,21 @@ import {
                     max={100}
                     readonly={readonly}
                   />
-                  <NumberInput
+                  <TextInput
                     formProps={{
                       name: "numeroExterior",
                       label: "Número Exterior",
                     }}
-                    max={9999999999}
-                    min={1}
+                    max={100}
                     required
                     readonly={readonly}
                   />
-                  <NumberInput
+                  <TextInput
                     formProps={{
                       name: "numeroInterior",
                       label: "Número interior",
                     }}
-                    max={9999999999}
-                    min={1}
+                    max={100}
                     readonly={readonly}
                   />
                   <TextInput

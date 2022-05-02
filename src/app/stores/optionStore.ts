@@ -126,7 +126,7 @@ export default class OptionStore {
     try {
       const field = await Catalog.getActive<ICatalogNormalList>("field");
       console.log(field);
-      this.fieldOptions = field.map((x) => ({ value: x.id, label: x.nombre }));
+      this.fieldOptions = field.map((x) => ({ value: x.nombre, label: x.nombre }));
     } catch (error) {
       this.fieldOptions = [];
     }
