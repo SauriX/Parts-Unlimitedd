@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx";
+import Company from "../../views/Company";
 import Catalog from "../api/catalog";
 import Role from "../api/role";
 import { ICatalogNormalList } from "../models/catalog";
@@ -8,6 +9,8 @@ import history from "../util/history";
 import messages from "../util/messages";
 import responses from "../util/responses";
 import { getErrors } from "../util/utils";
+import Parameter from "../api/parameter";
+import Reagent from "../api/reagent";
 
 export default class OptionStore {
   constructor() {
@@ -19,7 +22,10 @@ export default class OptionStore {
   getDepartmentOptions = async () => {
     try {
       const departments = await Catalog.getActive<ICatalogNormalList>("department");
-      this.departmentOptions = departments.map((x) => ({ value: x.id, label: x.clave }));
+      this.departmentOptions = departments.map((x) => ({
+        value: x.id,
+        label: x.clave,
+      }));
     } catch (error) {
       this.departmentOptions = [];
     }
@@ -47,6 +53,54 @@ export default class OptionStore {
       console.log(this.departamentOptions);
     } catch (error) {
       this.departamentOptions = [];
+    }
+  };
+  reagents: IOptions[] = [];
+  getReagentOptions = async () => {
+    try {
+      const payment = await Reagent.getAll("all");
+      console.log(payment);
+      this.reagents = payment.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.reagents = [];
+    }
+  };
+
+  areas: IOptions[] = [];
+  getareaOptions = async (id?: number) => {
+    console.log(id);
+    try {
+      const department = await Catalog.getActive<ICatalogNormalList>("area/departament/" + id);
+      console.log("el depa1");
+      console.log(department);
+      this.areas = department.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+      console.log("los depas mapeados");
+      console.log(this.departamentOptions);
+    } catch (error) {
+      this.areas = [];
+    }
+  };
+
+  printFormat: IOptions[] = [];
+  getPrintFormatsOptions = async (id?: number) => {
+    console.log(id);
+    try {
+      const department = await Catalog.getActive<ICatalogNormalList>("format");
+      console.log("el depa1");
+      console.log(department);
+      this.printFormat = department.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+      console.log("los depas mapeados");
+    } catch (error) {
+      this.printFormat = [];
     }
   };
 

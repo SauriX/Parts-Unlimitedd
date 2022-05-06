@@ -64,5 +64,8 @@
   "devDependencies": {
     "@types/react-highlight-words": "^0.16.4",
     "@types/react-text-mask": "^5.4.11"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.3.2"
   }
 }

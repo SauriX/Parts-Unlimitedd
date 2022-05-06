@@ -11,14 +11,14 @@ import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
 
 type ReagentFormProps = {
-  id: number;
+  id: string;
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
 
 const ReagentForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
   const { reagentStore } = useStore();
-  const { reagents, getById, create, update } = reagentStore;
+  const { reagents, getById, getAll, create, update } = reagentStore;
 
   const navigate = useNavigate();
 
@@ -27,12 +27,11 @@ const ReagentForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
   const [form] = Form.useForm<IReagentForm>();
 
   const [loading, setLoading] = useState(false);
-  const [disabled, setDisabled] = useState(true);
   const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
   const [values, setValues] = useState<IReagentForm>(new ReagentFormValues());
 
   useEffect(() => {
-    const readReagent = async (id: number) => {
+    const readReagent = async (id: string) => {
       setLoading(true);
       const reagent = await getById(id);
       form.setFieldsValue(reagent!);
@@ -45,7 +44,15 @@ const ReagentForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
     }
   }, [form, getById, id]);
 
+  useEffect(() => {
+    if (reagents.length === 0) {
+      getAll(searchParams.get("search") ?? "all");
+    }
+  }, [getAll, reagents.length, searchParams]);
+
   const onFinish = async (newValues: IReagentForm) => {
+    setLoading(true);
+
     const reagent = { ...values, ...newValues };
 
     let success = false;
@@ -56,6 +63,8 @@ const ReagentForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
       success = await update(reagent);
     }
 
+    setLoading(false);
+
     if (success) {
       goBack();
     }
@@ -64,12 +73,21 @@ const ReagentForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
   const goBack = () => {
     searchParams.delete("mode");
     setSearchParams(searchParams);
-    navigate(`/reagents?${searchParams}`);
+    navigate(`/${views.reagent}?${searchParams}`);
   };
 
   const setEditMode = () => {
     navigate(`/${views.reagent}/${id}?${searchParams}&mode=edit`);
     setReadonly(false);
+  };
+
+  const getPage = (id: string) => {
+    return reagents.findIndex((x) => x.id === id) + 1;
+  };
+
+  const setPage = (page: number) => {
+    const reagent = reagents[page - 1];
+    navigate(`/${views.reagent}/${reagent.id}?${searchParams}`);
   };
 
   return (
@@ -81,8 +99,8 @@ const ReagentForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
               size="small"
               total={reagents?.length ?? 0}
               pageSize={1}
-              current={1}
-              onChange={(value) => {}}
+              current={getPage(id)}
+              onChange={setPage}
             />
           </Col>
         )}
@@ -124,12 +142,6 @@ const ReagentForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
             initialValues={values}
             onFinish={onFinish}
             scrollToFirstError
-            onFieldsChange={() => {
-              setDisabled(
-                !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length).length > 0
-              );
-            }}
           >
             <Row>
               <Col md={12} sm={24} xs={12}>

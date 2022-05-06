@@ -14,14 +14,14 @@ import IconButton from "../../app/common/button/IconButton";
 import { useNavigate,useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import Parameters from "../../views/Parameters";
+import HeaderTitle from "../../app/common/header/HeaderTitle";
 type ParameterTableProps = {
     componentRef: React.MutableRefObject<any>;
     printing: boolean;
 };
 const ParameterTable:FC<ParameterTableProps> = ({  componentRef,  printing }) => {
     const {parameterStore } = useStore();
-    const {  } = parameterStore;
+    const { getAll,parameters } = parameterStore;
     let navigate = useNavigate();
     let id="";
     const { width: windowWidth } = useWindowDimensions();
@@ -36,23 +36,12 @@ const ParameterTable:FC<ParameterTableProps> = ({  componentRef,  printing }) =>
     useEffect(() => {
       const readUsers = async () => {
         setLoading(true);
-        //await getAll(searchParams.get("search") ?? "all");
+        await getAll(searchParams.get("search") ?? "all");
         setLoading(false);
       };
 
       readUsers();
-    }, [/* getAll, */ searchParams]);
-    const  parameters : IParameterList[] = [
-      {
-        id:"1",
-        clave:"test",
-        nombre:"test",
-        nombreCorto:"test",
-        area:"test",
-        departamento:"string",
-        activo:true,
-      }
-    ]
+    }, [getAll,  searchParams]);
     const columns: IColumns<IParameterList> = [
       //clave
       {
@@ -86,7 +75,7 @@ const ParameterTable:FC<ParameterTableProps> = ({  componentRef,  printing }) =>
       },
       //nombre corto
       {
-        ...getDefaultColumnProps("nombre", "Nombre", {
+        ...getDefaultColumnProps("nombreCorto", "Nombre corto", {
           searchState,
           setSearchState,
           width: "15%",
@@ -96,7 +85,7 @@ const ParameterTable:FC<ParameterTableProps> = ({  componentRef,  printing }) =>
       },
       //area
       {
-        ...getDefaultColumnProps("area", "Area", {
+        ...getDefaultColumnProps("area", "Área", {
           searchState,
           setSearchState,
           width: "20%",
@@ -144,22 +133,25 @@ const ParameterTable:FC<ParameterTableProps> = ({  componentRef,  printing }) =>
   const ParameterTablePrint = () =>{
     return(
       <div ref={componentRef}>
-        <Table<IParameterList>
-          loading={loading}
-          size="small"
-          rowKey={(record) => record.id}
-          columns={columns}
-          dataSource={[...parameters]}
-          pagination={defaultPaginationProperties}
-          sticky
-          scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-        />
+          <PageHeader
+            ghost={false}
+            title={<HeaderTitle title="Catálogo de Parametros" image="parameters" />}
+            className="header-container"
+          ></PageHeader>
+          <Divider className="header-divider" />
+          <Table<IParameterList>
+            size="large"
+            rowKey={(record) => record.id}
+            columns={columns.slice(0, 6)}
+            pagination={false}
+            dataSource={[...parameters]}
+          />
       </div>
     );
   }
 
   return(
-    <div ref={componentRef}>
+    <Fragment>
       <Table<IParameterList>
         loading={loading}
         size="small"
@@ -170,7 +162,8 @@ const ParameterTable:FC<ParameterTableProps> = ({  componentRef,  printing }) =>
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />
-    </div>
+      <div style={{ display: "none" }}>{< ParameterTablePrint  />}</div>
+    </Fragment>
   );
 }
 

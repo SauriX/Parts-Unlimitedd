@@ -29,7 +29,7 @@ const CompanyHeader: FC<CompanyHeaderProps> = ({ handlePrint, }) => {
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Compañias" image="doctor" />}
+      title={<HeaderTitle title="Catálogo de Compañias" image="Company" />}
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
@@ -46,7 +46,7 @@ const CompanyHeader: FC<CompanyHeaderProps> = ({ handlePrint, }) => {
           key="new"
           type="primary"
           onClick={() => {
-            navigate("/company/0");
+            navigate("/companies/0");
           }}
           icon={<PlusOutlined />}
         >

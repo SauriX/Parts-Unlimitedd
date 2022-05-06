@@ -45,7 +45,7 @@ export default class ReagentStore {
     }
   };
 
-  getById = async (id: number) => {
+  getById = async (id: string) => {
     try {
       const reagent = await Reagent.getById(id);
       return reagent;
@@ -60,8 +60,9 @@ export default class ReagentStore {
 
   create = async (reagent: IReagentForm) => {
     try {
-      await Reagent.create(reagent);
+      const newReagent = await Reagent.create(reagent);
       alerts.success(messages.created);
+      this.reagents.push(newReagent);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -71,8 +72,12 @@ export default class ReagentStore {
 
   update = async (reagent: IReagentForm) => {
     try {
-      await Reagent.update(reagent);
+      const updatedReagent = await Reagent.update(reagent);
       alerts.success(messages.updated);
+      const id = this.reagents.findIndex((x) => x.id === reagent.id);
+      if (id !== -1) {
+        this.reagents[id] = updatedReagent;
+      }
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -88,7 +93,7 @@ export default class ReagentStore {
     }
   };
 
-  exportForm = async (id: number) => {
+  exportForm = async (id: string) => {
     try {
       await Reagent.exportForm(id);
     } catch (error: any) {

@@ -1,4 +1,5 @@
 import { IOptions } from "./shared"
+import { IStudyList } from "./study";
 export interface IParameterList {
     id:string,
     clave:string,
@@ -15,7 +16,7 @@ export interface IParameterForm {
     nombre:string,
     nombreCorto:string,
     unidades:string,
-    tipoValor:string,
+    tipoValor:number,
     formula:string,
     formato:string,
     valorInicial:string,
@@ -24,7 +25,30 @@ export interface IParameterForm {
     reactivo:number,
     unidadSi:string,
     fcs:string,
-    activo:boolean
+    activo:boolean,
+    estudios:IStudyList[],
+    formatoImpresion:number;
+    funciones?:string;
+    parametros?:string;
+}
+export interface ItipoValorForm{
+    id?:string,
+    idParametro?:string,
+    nombre?:string,
+    valorInicial?:number, 
+    valorFinal?:number,
+    valorInicialNumerico?:number,
+    valorFinalNumerico?:number,
+    rangoEdadInicial?:number,
+    rangoEdadFinal?:number,
+    hombreValorInicial?:number, 
+    hombreValorFinal?:number,
+    mujerValorInicial?:number,
+    mujerValorFinal?:number,
+    medidaTiempo?:number,
+    opcion?:string|"",
+    descripcionTexto?:string|"",
+    descripcionParrafo?:string|"",
 }
 
 export class ParameterFormValues implements IParameterForm{
@@ -33,7 +57,7 @@ export class ParameterFormValues implements IParameterForm{
     nombre = "";
     nombreCorto = "";
     unidades = "";
-    tipoValor = "";
+    tipoValor = 0;
     formula = "";
     formato = "";
     valorInicial = "";
@@ -43,8 +67,33 @@ export class ParameterFormValues implements IParameterForm{
     unidadSi = "";
     fcs = "";
     activo = false;
+    estudios: IStudyList[]=[];
+    formatoImpresion =0;
 
     constructor(init?: IParameterForm) {
+        Object.assign(this, init);
+    }
+}
+
+export class tipoValorFormValues implements ItipoValorForm {
+    id="";
+    idParametro="";
+    nombre="";
+    valorInicial=0; 
+    valorFinal=0;
+    valorInicialNumerico=0;
+    valorFinalNumerico=0;
+    rangoEdadInicial=0;
+    rangoEdadFinal=0;
+    hombreValorInicial=0; 
+    hombreValorFinal=0;
+    mujerValorInicial=0;
+    mujerValorFinal=0;
+    medidaTiempo=0;
+    opcion="";
+    descripcionTexto="";
+    descripcionParrafo="";
+    constructor(init?: ItipoValorForm) {
         Object.assign(this, init);
     }
 }

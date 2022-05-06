@@ -1,8 +1,9 @@
-import { Divider } from "antd";
+import { Divider, Table } from "antd";
 import { resolve } from "path";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
+import { IContactForm } from "../../../app/models/contact";
 import CompanyForm from "./CompanyForm";
 import CompanyFormHeader from "./CompanyFormHeader";
 
@@ -12,7 +13,7 @@ type UrlParams = {
 
 const CompanyDetail = () => {
   let navigate = useNavigate();
-
+  const [contacts, setContacts] = useState<IContactForm[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [printing, setPrinting] = useState(false);
@@ -34,7 +35,7 @@ const CompanyDetail = () => {
   });
 
   const { id } = useParams<UrlParams>();
-  const companyId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
+  const companyId = !id ? 0 : isNaN(Number(parseInt(id))) ? undefined : parseInt(id);
 
   useEffect(() => {
     console.log(companyId);
@@ -45,6 +46,7 @@ const CompanyDetail = () => {
 
   if (companyId === undefined) return null;
 
+  
   return (
     <Fragment>
       <CompanyFormHeader id={companyId!} handlePrint={handlePrint} />
@@ -54,6 +56,13 @@ const CompanyDetail = () => {
         componentRef={componentRef}
         printing={printing}
       />
+      <Divider className="header-divider" />
+      {/* <Table<IContactForm>
+            size="large"
+            rowKey={(record) => record.tempId ?? record.id}
+            columns={columns.slice(0, 5)}
+            dataSource={[...contacts]}
+          /> */}
     </Fragment>
   );
 };

@@ -10,8 +10,8 @@ const Indication = {
   create: (indication: IIndicationForm): Promise<void> => requests.post("indication", indication),
   update: (indication: IIndicationForm): Promise<void> => requests.put("indication", indication),
   exportList: (search: string): Promise<void> =>
-    requests.download(`indication/export/list/${!search ? "all" : search}`), //, "Catálogo de Indicaciones.xlsx"
-  exportForm: (id: number, clave: string): Promise<void> => requests.download(`indication/export/form/${id}`), //, `Catálogo de Indicaciones (${clave}).xlsx`
+    requests.download(`indication/export/list/${!search ? "all" : search}`),
+  exportForm: (id: number): Promise<void> => requests.download(`indication/export/form/${id}`),
 };
 
 export default Indication;

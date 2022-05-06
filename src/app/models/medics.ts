@@ -40,7 +40,7 @@ export interface IMedicsForm {
   coloniaId?: number;
   correo?: string;
   celular?: number;
-  telefono?: number;
+  telefono?: number | string;
   activo: boolean;
   clinicas: IClinicList[];
 }

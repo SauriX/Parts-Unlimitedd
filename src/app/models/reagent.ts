@@ -1,5 +1,5 @@
 export interface IReagentList {
-  id: number;
+  id: string;
   clave: string;
   nombre: string;
   claveSistema: string;
@@ -8,7 +8,7 @@ export interface IReagentList {
 }
 
 export interface IReagentForm {
-  id: number;
+  id?: string;
   clave: string;
   nombre: string;
   claveSistema: string;
@@ -17,7 +17,6 @@ export interface IReagentForm {
 }
 
 export class ReagentFormValues implements IReagentForm {
-  id = 0;
   clave = "";
   nombre = "";
   claveSistema = "";

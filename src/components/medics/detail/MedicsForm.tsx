@@ -120,7 +120,21 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   const onFinish = async (newValues: IMedicsForm) => {
     const medics = { ...values, ...newValues };
 
+    medics.telefono = medics.telefono
+      ? parseInt(
+          medics.telefono.toString()?.replaceAll("_", "0")?.replaceAll("-", "")
+        )
+      : undefined;
+      medics.celular = medics.celular
+      ? parseInt(
+          medics.celular.toString()?.replaceAll("_", "0")?.replaceAll("-", "")
+        )
+      : undefined;   
+      
     let success = false;
+
+   
+
 
     const clinics = [...medics.clinicas];
     clinics.forEach((v, i, a) => {
@@ -358,7 +372,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                 <NumberInput
                   formProps={{
                     name: "codigoPostal",
-                    label: "Código Postal",
+                    label: "Código P",
                   }}
                   max={99999}
                   min={11111}
@@ -517,13 +531,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
               </Col>
             </Row>
           </Form>
-        </div>
-      </div>
-      <div>
-        <div></div>
-      </div>
 
-      <Divider orientation="left">Clínica/Empresa</Divider>
+          <Divider orientation="left">Clínica/Empresa</Divider>
       <List<IClinicList>
         header={
           <div>
@@ -573,6 +582,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
           </List.Item>
         )}
       />
+        </div>
+      </div>  
     </Spin>
   );
 };

@@ -1,23 +1,13 @@
-import {
-  Spin,
-  Form,
-  Row,
-  Col,
-  Pagination,
-  Button,
-  PageHeader,
-  Divider,
-  Select,
-} from "antd";
-import React, { FC, useCallback, useEffect, useState } from "react";
+import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Table, FormInstance } from "antd";
+import React, { FC, Fragment, useCallback, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
-import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
 import SelectInput from "../../../app/common/form/SelectInput";
 import { useStore } from "../../../app/stores/store";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Search, useNavigate, useSearchParams } from "react-router-dom";
 import { ICompanyForm, CompanyFormValues } from "../../../app/models/company";
+import { IContactForm, ContactFormValues } from "../../../app/models/contact";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import NumberInput from "../../../app/common/form/NumberInput";
@@ -25,14 +15,18 @@ import { IContactList } from "../../../app/models/contact";
 import { observer } from "mobx-react-lite";
 import { List, Typography } from "antd";
 import { IOptions } from "../../../app/models/shared";
-import TextArea from "antd/lib/input/TextArea";
 import Company from "../../../views/Company";
-import { createSecureContext } from "tls";
 import Item from "antd/lib/list/Item";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
-import { claveValues } from "../../../app/models/user";
 import MaskInput from "../../../app/common/form/MaskInput";
+import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
+import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
+import IconButton from "../../../app/common/button/IconButton";
+import CompanyFormTableHeader from "./CompanyFormTableHeader";
+import { useReactToPrint } from "react-to-print";
+import { EditOutlined } from "@ant-design/icons";
+import { v4 as uuid } from "uuid";
 
 type CompanyFormProps = {
   id: number;
@@ -41,86 +35,109 @@ type CompanyFormProps = {
 };
 const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   const { companyStore, optionStore, locationStore } = useStore();
-  const { getById, create, update, getAll, company } = companyStore;
-  const { paymentOptions, getpaymentOptions,
-          bankOptions, getbankOptions,
-          cfdiOptions, getcfdiOptions,
-          paymentMethodOptions, getpaymentMethodOptions
+  const { getById, generatePass, create, update, getAll, company } = companyStore;
+  const {
+    // procedenciaOptions,
+    // getprovenanceOptions,
+    paymentOptions,
+    getpaymentOptions,
+    // priceOptions,
+    // getpriceOptions,
+    bankOptions,
+    getbankOptions,
+    cfdiOptions,
+    getcfdiOptions,
+    paymentMethodOptions,
+    getpaymentMethodOptions,
   } = optionStore;
   const { getColoniesByZipCode } = locationStore;
 
   const navigate = useNavigate();
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [form] = Form.useForm<ICompanyForm>();
+  const [formContact] = Form.useForm<IContactForm>();
 
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [colonies, setColonies] = useState<IOptions[]>([]);
-  const [readonly, setReadonly] = useState(
-    searchParams.get("mode") === "readonly"
-  );
+  const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
   const [values, setValues] = useState<ICompanyForm>(new CompanyFormValues());
-
-  // const clearLocation = useCallback(() => {
-  //   form.setFieldsValue({
-  //     estado: undefined,
-  //     ciudad: undefined,
-  //     coloniaId: undefined,
-  //   });
-  //   setColonies([]);
-  // }, [form]);
-
-  // const getLocation = useCallback(
-  //   async (zipCode: string) => {
-  //     const location = await getColoniesByZipCode(zipCode);
-  //     if (location) {
-  //       form.setFieldsValue({
-  //         estado: location.estado,
-  //         ciudad: location.ciudad,
-  //       });
-  //       setColonies(
-  //         location.colonias.map((x) => ({
-  //           value: x.id,
-  //           label: x.nombre,
-  //         }))
-  //       );
-  //     } else {
-  //       clearLocation();
-  //     }
-  //   },
-  //   [clearLocation, form, getColoniesByZipCode]
+  // const [valuesContact, setValuesContact] = useState<IContactForm>(
+  //   new ContactFormValues()
   // );
+  const [contacts, setContacts] = useState<IContactForm[]>([]);
+  const [filteredContacts, setFilteredContacts] = useState<IContactForm[]>([]);
+  const [editContact, setEditContact] = useState<IContactForm>();
 
-  // useEffect(() => {
-  //   const readCompany = async (id: number) => {
-  //     setLoading(true);
-  //     const company = await getById(id);
+  const clearLocation = useCallback(() => {
+    form.setFieldsValue({
+      estado: undefined,
+      ciudad: undefined,
+    });
+    setColonies([]);
+  }, [form]);
 
-  //     if (company) {
-  //       form.setFieldsValue(company);
-  //       getLocation(company.CodigoPostal.toString());
-  //       setValues(company);
-  //     }
+  const getLocation = useCallback(
+    async (zipCode: string) => {
+      const location = await getColoniesByZipCode(zipCode);
+      if (location) {
+        form.setFieldsValue({
+          estado: location.estado,
+          ciudad: location.ciudad,
+        });
+        setColonies(
+          location.colonias.map((x) => ({
+            value: x.id,
+            label: x.nombre,
+          }))
+        );
+      } else {
+        clearLocation();
+      }
+    },
+    [clearLocation, form, getColoniesByZipCode]
+  );
 
-  //     setLoading(false);
-  //     console.log(company);
-  //   };
-
-  //   if (id) {
-  //     readCompany(id);
-  //   }
-  // }, [form, getById, getLocation, id]);
-
-  
   useEffect(() => {
-    getpaymentOptions(); getbankOptions(); 
-    getcfdiOptions(); getpaymentMethodOptions();
-  }, [getpaymentOptions,
-     getbankOptions,
-     getcfdiOptions,
-     getpaymentMethodOptions]);
+    const readCompany = async (id: number) => {
+      setLoading(true);
+      const company = await getById(id);
+      console.log(company);
+      if (company) {
+        form.setFieldsValue(company);
+        setValues(company);
+        setContacts(company.contacts);
+        setFilteredContacts(company.contacts);
+        getLocation(company.codigoPostal?.toString());
+      }
+
+      setLoading(false);
+      console.log(company);
+    };
+
+    if (id) {
+      readCompany(id);
+    }
+  }, [form, getById, getLocation, id]);
+
+  useEffect(() => {
+    getpaymentOptions();
+    getbankOptions();
+    getcfdiOptions();
+    getpaymentMethodOptions();
+    // getpriceOptions();
+    // getprovenanceOptions();
+  }, [
+    getpaymentOptions,
+    getbankOptions,
+    getcfdiOptions,
+    getpaymentMethodOptions,
+    // getpriceOptions,
+    // getprovenanceOptions,
+  ]);
+  console.log(values.contacts);
 
   useEffect(() => {
     const readCompany = async () => {
@@ -133,14 +150,15 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
 
   const onFinish = async (newValues: ICompanyForm) => {
     const company = { ...values, ...newValues };
+    company.contacts = contacts;
 
     let success = false;
 
-    const contacts = [...company.contact];
-    contacts.forEach((v, i, a) => {
-      a[i].id = typeof a[i].id === "string" ? 0 : v.id;
-    });
-    company.contact = contacts;
+    // const contacts = [...company.contacts];
+    // contacts.forEach((v, i, a) => {
+    //   a[i].idContacto = typeof a[i].idContacto === "string" ? 0 : v.idContacto;
+    // });
+    // company.contacts = contacts;
 
     if (!company.id) {
       success = await create(company);
@@ -149,7 +167,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     }
 
     if (success) {
-      navigate(`/company?search=${searchParams.get("search") || "all"}`);
+      navigate(`/companies?search=${searchParams.get("search") || "all"}`);
     }
   };
   const actualcompany = () => {
@@ -163,92 +181,168 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   const prevnextCompany = (index: number) => {
     const companys = company[index];
     navigate(
-      `/company/${companys?.id}?mode=${searchParams.get(
-        "mode"
-      )}&search=${searchParams.get("search")}`
+      `/companies/${companys?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search")}`
     );
   };
 
   useEffect(() => {
+    const newpass = async () => {
+      let pass = await generatePass();
+      form.setFieldsValue({ contrasena: pass });
+    };
     console.log(values);
+    if (id == null || id == 0) {
+      newpass();
+    }
   }, [values]);
 
   const onValuesChange = async (changeValues: any, values: ICompanyForm) => {
     console.log(changeValues, values);
 
-    //   const code =
-    //     values.nombre.substring(0, 3) +
-    //     values.primerApellido?.substring(0, 1) +
-    //     values.segundoApellido?.substring(0, 1);
+    const field = Object.keys(changeValues)[0];
 
-    //   form.setFieldsValue({ clave: code.toUpperCase() });
+    if (field === "codigoPostal") {
+      const zipCode = changeValues[field] as string;
 
-    //   const field = Object.keys(changeValues)[0];
-
-    //   if (field === "codigoPostal") {
-    //     const zipCode = changeValues[field] as string;
-
-    //     if (zipCode && zipCode.toString().trim().length === 5) {
-    //       getLocation(zipCode);
-    //     } else {
-    //       clearLocation();
-    //     }
-    //   }
+      if (zipCode && zipCode.toString().trim().length === 5) {
+        getLocation(zipCode);
+      } else {
+        clearLocation();
+      }
+    }
   };
- 
+
+  const botonEdit = () => {
+    setReadonly(false);
+    navigate(`/companies/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`);
+  };
+
+  //   const { Search } = Input;
+
+  const [, setPrinting] = useState(false);
+  const handleCompanyPrint = useReactToPrint({
+    content: () => componentRef.current,
+    onBeforeGetContent: () => {
+      setPrinting(true);
+      return new Promise((resolve: any) => {
+        setTimeout(() => {
+          resolve();
+        }, 200);
+      });
+    },
+    onAfterPrint: () => {
+      setPrinting(false);
+    },
+  });
+  console.log(values);
+  console.log("Table");
+  const { width: windowWidth } = useWindowDimensions();
+  const [searchState, setSearchState] = useState<ISearch>({
+    searchedText: "",
+    searchedColumn: "",
+  });
+
+  const columns: IColumns<IContactForm> = [
+    {
+      ...getDefaultColumnProps("nombre", "Nombre", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("telefono", "Teléfono", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("correo", "Correo", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      key: "activo",
+      dataIndex: "activo",
+      title: "Activo",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+
+      render: (value) => (value ? "Sí" : "No"),
+    },
+    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Editar",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value, contact) => (
+        <IconButton
+          title="Editar Contacto"
+          icon={<EditOutlined />}
+          onClick={() => {
+            formContact.setFieldsValue(contact);
+            setEditContact(contact);
+          }}
+        />
+      ),
+    },
+  ];
+
+  const onFinishContact = (contact: IContactForm) => {
+    contact.telefono = contact.telefono
+      ? parseInt(contact.telefono.toString()?.replaceAll("_", "0")?.replaceAll("-", ""))
+      : undefined;
+
+    if (!editContact) {
+      contact.id = 0;
+      contact.tempId = uuid();
+      setContacts((prev) => [...prev, contact]);
+    } else {
+      const index = contacts.findIndex((x) => x.id === editContact.id && x.tempId === editContact.tempId);
+      if (index > -1) {
+        const all = [...contacts];
+        all[index] = { ...editContact, ...contact };
+        setContacts(all);
+      }
+    }
+
+    formContact.resetFields();
+    setEditContact(undefined);
+  };
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
-        <Col md={10} sm={24} style={{ marginRight: 20 }}>
-          <Pagination
-            size="small"
-            total={company.length}
-            pageSize={1}
-            current={actualcompany()}
-            onChange={(value) => {
-              prevnextCompany(value - 1);
-            }}
-          />
-          <Form<ICompanyForm>
-            {...formItemLayout}
-            form={form}
-            name="company"
-            onValuesChange={onValuesChange}
-            onFinish={onFinish}
-            scrollToFirstError
-            onFieldsChange={() => {
-              setDisabled(
-                !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length)
-                    .length > 0
-              );
-            }}
-          ></Form>
-        </Col>
-        <Col md={8} sm={24} style={{ marginRight: 20, textAlign: "right" }}>
-          {readonly && (
-            <ImageButton
-              key="edit"
-              title="Editar"
-              image="editar"
-              onClick={() => {
-                setReadonly(false);
+        {id != 0 && (
+          <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
+            <Pagination
+              size="small"
+              total={company.length}
+              pageSize={1}
+              current={actualcompany()}
+              onChange={(value) => {
+                prevnextCompany(value - 1);
               }}
             />
-          )}
-        </Col>
-        <Col md={2} sm={24} style={{ marginRight: 20, textAlign: "right" }}>
-          <Button
-            onClick={() => {
-              navigate("/company");
-            }}
-          >
-            Cancelar
-          </Button>
-        </Col>
-        <Col md={2} sm={24} style={{ marginRight: 10, textAlign: "right" }}>
-          {!readonly && (
+          </Col>
+        )}
+        {!readonly && (
+          <Col md={24} sm={24} style={id ? { textAlign: "right" } : { marginLeft: "80%" }}>
+            <Button
+              onClick={() => {
+                navigate("/companies");
+              }}
+            >
+              {" "}
+              Cancelar{" "}
+            </Button>
             <Button
               type="primary"
               htmlType="submit"
@@ -260,17 +354,49 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
             >
               Guardar
             </Button>
-          )}
+          </Col>
+        )}
+
+        {readonly && (
+          <Col md={12} sm={24} style={{ textAlign: "right" }}>
+            <ImageButton
+              key="edit"
+              title="Editar"
+              image="editar"
+              //onClick={() => {  setReadonly(false); }}
+              //onClick={() =>  { navigate(`/companies/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`) ; }}
+              onClick={() => {
+                botonEdit();
+              }}
+            />
+          </Col>
+        )}
+      </Row>
+      <Row>
+        <Col md={10} sm={24} style={{ marginRight: 20 }}>
+          <Form<ICompanyForm>
+            {...formItemLayout}
+            form={form}
+            name="company"
+            onValuesChange={onValuesChange}
+            onFinish={onFinish}
+            scrollToFirstError
+            onFieldsChange={() => {
+              setDisabled(
+                !form.isFieldsTouched() ||
+                  form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+              );
+            }}
+          ></Form>
         </Col>
       </Row>
+
       <div style={{ display: printing ? "none" : "" }}>
         <div ref={componentRef}>
           {printing && (
             <PageHeader
               ghost={false}
-              title={
-                <HeaderTitle title="Catálogo de Compañias" image="doctor" />
-              }
+              title={<HeaderTitle title="Catálogo de Compañias" image="Company" />}
               className="header-container"
             ></PageHeader>
           )}
@@ -286,8 +412,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
             onFieldsChange={() => {
               setDisabled(
                 !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length)
-                    .length > 0
+                  form.getFieldsError().filter(({ errors }) => errors.length).length > 0
               );
             }}
           >
@@ -296,7 +421,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 <TextInput
                   formProps={{
                     name: "clave",
-                    label: "Clave. ",
+                    label: "Clave ",
                   }}
                   max={100}
                   required
@@ -306,54 +431,74 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 <TextInput
                   formProps={{
                     name: "contrasena",
-                    label: "Contraseña. ",
+                    label: "Contraseña ",
                   }}
                   max={100}
                   required
                   readonly={readonly}
                 />
-                 <TextInput
+                <TextInput
                   formProps={{
                     name: "emailEmpresarial",
-                    label: "E-mail empresarial. ",
+                    label: "E-mail empresarial ",
                   }}
                   max={100}
                   readonly={readonly}
+                  type="email"
                 />
                 <TextInput
                   formProps={{
                     name: "nombreComercial",
-                    label: "Nombre comercial. ",
+                    label: "Nombre comercial ",
                   }}
                   max={100}
                   required
                   readonly={readonly}
                 />
-                <TextInput
+                <SelectInput
                   formProps={{
-                    name: "Procedencia",
-                    label: "Procedencia. ",
+                    name: "procedenciaId",
+                    label: "Procedencia ",
                   }}
-                  max={100}
+                  readonly={readonly}
+                  required
+                  options={[]}
+                />
+                {/* <NumberInput
+                  formProps={{
+                    name: "procedenciaId",
+                    label: "",
+                  }}
+                  max={12}
+                  min={6}
                   required
                   readonly={readonly}
-                />
+                /> */}
+                {/* <SelectInput 
+                  formProps={{
+                    name: "listaPrecioId",
+                    label: "Lista de precio: ",
+                  }}
+                  readonly={readonly}
+                  required
+                  options={priceOptions}
+                /> */}
                 <NumberInput
                   formProps={{
-                    name: "ListaPrecioId",
+                    name: "listaPrecioId",
                     label: "Lista de precio: ",
                   }}
                   max={100000}
-                  min={10000}
+                  min={10}
                   readonly={readonly}
                 />
                 <NumberInput
                   formProps={{
-                    name: "PromocionesId",
+                    name: "promocionesId",
                     label: "Lista de promoción: ",
                   }}
                   max={100000}
-                  min={10000}
+                  min={10}
                   readonly={readonly}
                 />
                 <SwitchInput
@@ -368,66 +513,65 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   label="Activo"
                   readonly={readonly}
                 />
-                </Col>
-                <Col md={12} sm={24}>
+              </Col>
+              <Col md={12} sm={24}>
                 <TextInput
                   formProps={{
-                    name: "RFC",
-                    label: "RFC. ",
+                    name: "rfc",
+                    label: "RFC ",
                   }}
                   max={100}
                   required
                   readonly={readonly}
                 />
 
-                <NumberInput
+                <TextInput
                   formProps={{
-                    name: "CodigoPostal",
+                    name: "codigoPostal",
                     label: "Código P: ",
                   }}
-                  max={9999999999}
-                  min={1000}
+                  max={1000000}
                   readonly={readonly}
                 />
 
                 <TextInput
                   formProps={{
-                    name: "EstadoId",
-                    label: "Estado. ",
+                    name: "estado",
+                    label: "Estado ",
                   }}
                   max={100}
                   readonly={readonly}
                 />
-                
+
                 <TextInput
                   formProps={{
-                    name: "MunicipioId",
-                    label: "Municipio. ",
+                    name: "ciudad",
+                    label: "Municipio ",
                   }}
                   max={100}
                   readonly={readonly}
                 />
                 <TextInput
                   formProps={{
-                    name: "RazonSocial",
+                    name: "razonSocial",
                     label: "Razón social: ",
                   }}
                   max={100}
                   required
                   readonly={readonly}
                 />
-                <SelectInput //Crear y cambier field option, store a Metodo de pago
+                <SelectInput
                   formProps={{
-                    name: "MetodoDePagoId",
+                    name: "metodoDePagoId",
                     label: "Método de pago: ",
                   }}
                   readonly={readonly}
                   required
                   options={paymentMethodOptions}
                 />
-                <SelectInput //Crear y cambier field option, store a Forma de pago
+                <SelectInput
                   formProps={{
-                    name: "FormaDePagoId",
+                    name: "formaDePagoId",
                     label: "Forma de pago: ",
                   }}
                   readonly={readonly}
@@ -435,24 +579,24 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 />
                 <TextInput
                   formProps={{
-                    name: "LimiteDeCredito",
-                    label: "Limite de crédito: ",
+                    name: "limiteDeCredito",
+                    label: "Límite de crédito: ",
                   }}
                   max={100}
                   readonly={readonly}
                 />
                 <NumberInput
                   formProps={{
-                    name: "DiasCredito",
-                    label: "Dias de crédito: ",
+                    name: "diasCredito",
+                    label: "Días de crédito: ",
                   }}
                   max={99}
                   min={1}
-                  readonly={readonly} 
+                  readonly={readonly}
                 />
-                <SelectInput //Crear y cambier field option, store a CFDI
+                <SelectInput
                   formProps={{
-                    name: "CFDIId",
+                    name: "cfdiId",
                     label: "CFDI: ",
                   }}
                   readonly={readonly}
@@ -460,15 +604,15 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 />
                 <TextInput
                   formProps={{
-                    name: "NumeroDeCuenta",
+                    name: "numeroDeCuenta",
                     label: "Número de cuenta: ",
                   }}
                   max={100}
                   readonly={readonly}
                 />
-                <SelectInput //Crear y cambier field option, store a Banco
+                <SelectInput
                   formProps={{
-                    name: "BancoId",
+                    name: "bancoId",
                     label: "Banco: ",
                   }}
                   readonly={readonly}
@@ -477,9 +621,110 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
               </Col>
             </Row>
           </Form>
+
+          <Row>
+            <Divider className="header-divider" />
+            <Col md={24} sm={12}>
+              <Fragment>
+                <CompanyFormTableHeader
+                  handleCompanyPrint={handleCompanyPrint}
+                  formContact={formContact}
+                  contacts={contacts}
+                  setFilteredContacts={setFilteredContacts}
+                />
+              </Fragment>
+              <Divider className="header-divider" />
+              <Form<IContactForm>
+                {...formItemLayout}
+                form={formContact}
+                name="contact"
+                onFinish={onFinishContact}
+                layout="vertical"
+                // initialValues={valuesContact}
+                scrollToFirstError
+                onFieldsChange={() => {
+                  setDisabled(
+                    !formContact.isFieldsTouched() ||
+                      formContact.getFieldsError().filter(({ errors }) => errors.length).length > 0
+                  );
+                }}
+              >
+                <Row gutter={16}>
+                  <Col md={6} sm={24}>
+                    <TextInput
+                      formProps={{
+                        name: "nombre",
+                        label: "Nombre ",
+                      }}
+                      max={100}
+                      required
+                      readonly={readonly}
+                      type="string"
+                    />
+                  </Col>
+                  <Col md={6} sm={24}>
+                    <TextInput
+                      formProps={{
+                        name: "correo",
+                        label: "Correo ",
+                      }}
+                      max={100}
+                      readonly={readonly}
+                      type="email"
+                    />
+                  </Col>
+                  <Col md={6} sm={24}>
+                    <MaskInput
+                      formProps={{
+                        name: "telefono",
+                        label: "Teléfono",
+                      }}
+                      mask={[
+                        /[0-9]/,
+                        /[0-9]/,
+                        /[0-9]/,
+                        "-",
+                        /[0-9]/,
+                        /[0-9]/,
+                        /[0-9]/,
+                        "-",
+                        /[0-9]/,
+                        /[0-9]/,
+                        "-",
+                        /[0-9]/,
+                        /[0-9]/,
+                      ]}
+                      readonly={readonly}
+                    />
+                  </Col>
+                  <Col md={6} sm={24}>
+                    <SwitchInput
+                      name="activo"
+                      onChange={(value) => {
+                        if (value) {
+                          alerts.info(messages.confirmations.enable);
+                        } else {
+                          alerts.info(messages.confirmations.disable);
+                        }
+                      }}
+                      label="Activo"
+                      readonly={readonly}
+                    />
+                  </Col>
+                </Row>
+              </Form>
+
+              <Table<IContactForm>
+                size="large"
+                rowKey={(record) => record.tempId ?? record.id}
+                columns={columns.slice(0, 5)}
+                dataSource={[...filteredContacts]}
+              />
+            </Col>
+          </Row>
         </div>
       </div>
-      <div></div>
+      <Divider />
     </Spin>
   );
 };

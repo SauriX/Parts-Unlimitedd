@@ -65,7 +65,8 @@ type CompanyTableProps = {
           <Button
             type="link"
             onClick={() => {
-              navigate(`/company/${company.id}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
+              console.log(company);
+              navigate(`/companies/${company.id}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
             
             }}
             >
@@ -93,7 +94,7 @@ type CompanyTableProps = {
       },
      
       {
-        ...getDefaultColumnProps("Procedencia", "Procedencia", {
+        ...getDefaultColumnProps("procedencia", "Procedencia", {
           searchState,
           setSearchState,
           width: "8%",
@@ -102,7 +103,7 @@ type CompanyTableProps = {
         }),
       },
       {
-        ...getDefaultColumnProps("ListaPrecioId", "Precio", {
+        ...getDefaultColumnProps("listaPrecioId", "Precio", {
           searchState,
           setSearchState,
           width: "8%",
@@ -139,7 +140,7 @@ type CompanyTableProps = {
             title="Editar Compañia"
             icon={<EditOutlined />}
             onClick={() => {
-              navigate(`/company/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`);
+              navigate(`/companies/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`);
             }}
             
           />
@@ -152,7 +153,7 @@ type CompanyTableProps = {
         <div ref={componentRef}>
           <PageHeader
             ghost={false}
-            title={<HeaderTitle title="Catálogo de Compañias" image="doctor" />}
+            title={<HeaderTitle title="Catálogo de Compañias" image="Company" />}
             className="header-container"
           ></PageHeader>
           <Divider className="header-divider" />
@@ -182,6 +183,6 @@ type CompanyTableProps = {
         <div style={{ display: "none" }}>{<CompanyTablePrint />}</div>
       </Fragment>
     );
-  };
+  }; 
   
   export default observer(CompanyTable);

@@ -5,6 +5,7 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../../../app/stores/store";
+import { guidPattern } from "../../../app/util/utils";
 import ReagentForm from "./ReagentForm";
 import ReagentFormHeader from "./ReagentFormHeader";
 
@@ -21,7 +22,7 @@ const ReagentDetail = () => {
   const [printing, setPrinting] = useState(false);
 
   const { id } = useParams<UrlParams>();
-  const reagentId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
+  const reagentId = !id ? "" : !guidPattern.test(id) ? undefined : id;
 
   const componentRef = useRef<any>();
 
@@ -53,10 +54,11 @@ const ReagentDetail = () => {
       const permissions = await access();
 
       if (reagentId === undefined) {
+        console.log("undefined");
         navigate("/notFound");
-      } else if (!permissions?.crear && reagentId === 0) {
+      } else if (!permissions?.crear && reagentId === "") {
         navigate(`/forbidden`);
-      } else if (!permissions?.modificar && reagentId > 0) {
+      } else if (!permissions?.modificar && reagentId !== "") {
         navigate(`/forbidden`);
       }
     };

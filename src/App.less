@@ -1,5 +1,11 @@
 @import "~antd/dist/antd.less";
 
+// Mover
+.ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+  line-height: 0;
+}
+// Mover
+
 #root {
   height: 100%;
 }
@@ -258,5 +264,21 @@ input:disabled {
     margin: 40px auto;
     border-radius: 4px;
     margin-left: 35%;
+  }
+  .dynamic-delete-button {
+    position: relative;
+    top: 4px;
+    margin: 0 8px;
+    color: #999;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .dynamic-delete-button:hover {
+    color: #777;
+  }
+  .dynamic-delete-button[disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 }

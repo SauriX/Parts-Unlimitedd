@@ -11,17 +11,33 @@ interface IProps {
   type?: RuleType;
   placeholder?: string;
   readonly?: boolean;
+  onClick?: React.MouseEventHandler<HTMLInputElement> | undefined;
+  onKeyUp?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
 }
 
-const TextInput = ({ formProps: itemProps, max, required, prefix, type, placeholder, readonly }: IProps) => {
+const TextInput = ({
+  formProps: itemProps,
+  max,
+  required,
+  prefix,
+  type,
+  placeholder,
+  readonly,
+  onClick,
+  onKeyUp,
+}: IProps) => {
   let rules: Rule[] = [];
 
-  // if (max) {
-  //   rules.push({
-  //     max,
-  //     message: `La longitud máxima es de ${max}`,
-  //   });
-  // }
+  if (max) {
+    rules.push({
+      validator: (_, value: string) => {
+        if (!value || value.length <= max) {
+          return Promise.resolve();
+        }
+        return Promise.reject(`La longitud máxima es de ${max}`);
+      },
+    });
+  }
 
   if (required) {
     rules.push({
@@ -52,6 +68,8 @@ const TextInput = ({ formProps: itemProps, max, required, prefix, type, placehol
         prefix={prefix}
         type={type ?? "text"}
         placeholder={placeholder ?? itemProps.label?.toString()}
+        onClick={onClick}
+        onKeyUp={onKeyUp}
       />
     </Form.Item>
   );

@@ -8,14 +8,14 @@ import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
 
 type ReagentFormHeaderProps = {
-  id: number;
+  id: string;
   handlePrint: () => void;
   handleDownload: () => Promise<void>;
 };
 
 const ReagentFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint, handleDownload }) => {
   const { reagentStore } = useStore();
-  const { scopes, exportForm } = reagentStore;
+  const { scopes } = reagentStore;
 
   let navigate = useNavigate();
 
