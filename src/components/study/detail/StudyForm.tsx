@@ -22,6 +22,7 @@ import { IParameterList } from "../../../app/models/parameter";
 import { IIndicationList } from "../../../app/models/indication";
 import { IReagentList } from "../../../app/models/reagent";
 import { IPacketList } from "../../../app/models/packet";
+import views from "../../../app/util/view";
 
 type StudyFormProps = {
     componentRef: React.MutableRefObject<any>;
@@ -161,7 +162,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
         console.log(index);
         const estudio = study[index];
     
-        navigate(`/study/${estudio?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search") ?? "all"}`);
+        navigate(`/${views.study}/${estudio?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search") ?? "all"}`);
       } 
       const onFinish = async (newValues: IStudyForm) => {
         const User = { ...values, ...newValues };
@@ -173,7 +174,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
         }
     
         if (success) {
-          navigate(`/study?search=${searchParams.get("search") || "all"}`);
+          navigate(`/${views.study}?search=${searchParams.get("search") || "all"}`);
         }
       }; 
     const onValuesChange = async (changeValues: any, values: any) => {
@@ -357,7 +358,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                         </Col>
                     {!disabled &&
                         <Col md={12} sm={24} xs={12} style={id ? { textAlign: "right" } : { marginLeft: "84%" }}>
-                            <Button onClick={() => { navigate(`/study`); }} >Cancelar</Button>
+                            <Button onClick={() => { navigate(`/${views.study}`); }} >Cancelar</Button>
                             <Button type="primary" htmlType="submit" onClick={() => { form.submit() }}>
                                 Guardar
                             </Button>

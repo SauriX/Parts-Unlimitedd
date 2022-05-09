@@ -33,6 +33,8 @@ import { Spin } from "antd";
 import { observer } from "mobx-react-lite";
 import Maquilador from "../../views/Maquilador";
 import MaquiladorDetail from "../../components/maquilador/detail/MaquiladorDetail";
+import StudyDetail from "../../components/study/detail/StudyDetail";
+import Study from "../../views/Study";
 
 function App() {
   const { profileStore } = useStore();
@@ -99,6 +101,9 @@ function App() {
           <Route path="parameters/:id" element={<ParameterDetail />} />
           <Route path="maquila" element={<Maquilador />} />
           <Route path="maquila/:id" element={<MaquiladorDetail />} />
+          <Route path="studies" element={<Study/>} />
+          <Route path="studies/new-study" element={<StudyDetail/>} />
+          <Route path="studies/:id" element={<StudyDetail/>} />
           <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
           <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
           <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />
