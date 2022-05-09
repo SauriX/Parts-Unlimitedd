@@ -461,6 +461,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
                     treeData={data}
                     showIcon
                     checkedKeys={checkedKeys}
+                    virtual={false}
                   />
                 );
               }}
