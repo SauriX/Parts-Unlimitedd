@@ -30,6 +30,7 @@ export default class StudyStore {
     try {
       const scopes = await Study.access();
       this.scopes = scopes;
+      console.log(scopes);
     } catch (error) {
       alerts.warning(getErrors(error));
       history.push("/forbidden");
@@ -56,5 +57,45 @@ export default class StudyStore {
     }
   };
 
-  
+  create = async (study: IStudyForm) => {
+    try {
+        console.log("here");
+      await Study.create(study);
+      alerts.success(messages.created);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+   update = async (study: IStudyForm) => {
+    try {
+      await Study.update(study);
+      alerts.success(messages.updated);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+  exportList = async (search: string) => {
+    try {
+      await Study.exportList(search);
+      return true
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  exportForm = async (id: number,clave?:string) => {
+    try {
+      await Study.exportForm(id,clave);
+      return true;
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+    }
+  };
 }

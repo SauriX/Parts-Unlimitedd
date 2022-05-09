@@ -11,6 +11,9 @@ import responses from "../util/responses";
 import { getErrors } from "../util/utils";
 import Parameter from "../api/parameter";
 import Reagent from "../api/reagent";
+import Maquilador from "../api/maquilador";
+import Tapon from "../api/tapon";
+import Indication from "../api/indication";
 
 export default class OptionStore {
   constructor() {
@@ -188,6 +191,93 @@ export default class OptionStore {
       }));
     } catch (error) {
       this.parameterOptions = [];
+    }
+  };
+  MaquiladorOptions:IOptions[]=[];
+  getMaquiladorOptions=async()=>{
+    try{
+      const maquilador = Maquilador.getAll("");
+      this.MaquiladorOptions= (await maquilador).map((x)=>({
+        value:x.id,
+        label:x.nombre
+      }));
+    }catch(error){
+      this.MaquiladorOptions=[];
+    }
+  };
+  MethodOptions: IOptions[] = [];
+
+  getMethodOptions = async () => {
+    try {
+      const Method = await Catalog.getActive<ICatalogNormalList>(
+        "Method"
+      );
+      console.log(Method);
+      this.MethodOptions = Method.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.MethodOptions = [];
+    }
+  };
+  taponOption:IOptions[]=[];
+  getTaponOption = async () =>{
+    try {
+      const tapon = await Tapon.getAll();
+      this.taponOption = tapon.map((x) => ({
+        value: x.id,
+        label: x.name,
+      }));
+    } catch (error) {
+      this.taponOption = [];
+    }
+  };
+  indicationOptions:IOptions[] = [];
+  getIndication = async () =>{
+    try {
+      const indication = await Indication.getAll("");
+      console.log(indication);
+      this.indicationOptions = indication.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.indicationOptions = [];
+    }
+  };
+
+  workListOptions: IOptions[] = [];
+
+  getworkListOptions = async () => {
+    try {
+      const workList = await Catalog.getActive<ICatalogNormalList>(
+        "workList"
+      );
+      console.log(workList);
+      this.workListOptions = workList.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.workListOptions = [];
+    }
+  };
+
+  sampleTypeOptions: IOptions[] = [];
+
+  getsampleTypeOptions = async () => {
+    try {
+      const sampleType = await Catalog.getActive<ICatalogNormalList>(
+        "sampleType"
+      );
+      console.log(sampleType);
+      this.sampleTypeOptions = sampleType.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.sampleTypeOptions = [];
     }
   };
 }
