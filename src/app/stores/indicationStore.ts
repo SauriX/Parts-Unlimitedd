@@ -88,7 +88,7 @@ export default class IndicationStore {
 
   exportForm = async (id: number) => {
     try {
-      await Indication.exportForm(id, "Formulario");
+      await Indication.exportForm(id);
     } catch (error: any) {
       if (error.status === responses.notFound) {
         history.push("/notFound");

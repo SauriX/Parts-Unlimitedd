@@ -32,6 +32,7 @@ import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { IStudyList } from "../../../app/models/study";
 import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
+import NumberInput from "../../../app/common/form/NumberInput";
 type ParameterFormProps = {
   componentRef: React.MutableRefObject<any>;
   load: boolean;
@@ -57,8 +58,8 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     reagents,
     getPrintFormatsOptions,
     printFormat,
-    // getParameterOptions,
-    // parameterOptions,
+    getParameterOptions,
+    parameterOptions,
   } = optionStore;
   const [form] = Form.useForm<IParameterForm>();
   const [flag, setFlag] = useState(0);
@@ -92,7 +93,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
       setLoading(true);
 
       const parameter = await getById(idUser);
-      await getareaOptions(parameter?.area);
+      await getareaOptions(parameter?.areaId);
       let val = parameter!.tipoValor | 0;
       setValueType(val);
       form.setFieldsValue(parameter!);
@@ -130,12 +131,12 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     };
     readUsers();
   }, [getAll, searchParams]);
-  //   useEffect(() => {
-  //     const read = async () => {
-  //       await getParameterOptions();
-  //     };
-  //     read();
-  //   }, [getParameterOptions]);
+  useEffect(() => {
+    const read = async () => {
+      await getParameterOptions();
+    };
+    read();
+  }, [getParameterOptions]);
   const CheckReadOnly = () => {
     let result = false;
     const mode = searchParams.get("mode");
@@ -157,16 +158,18 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     const parameter = parameters[index];
 
     navigate(
-      `/parameter/${parameter?.id}?mode=${searchParams.get("mode")}&search=${
+      `/parameters/${parameter?.id}?mode=${searchParams.get("mode")}&search=${
         searchParams.get("search") ?? "all"
       }`
     );
   };
   const onFinish = async (newValues: IParameterForm) => {
+    setLoading(true);
     console.log("sumit");
     console.log(newValues);
     const Parameter = { ...values, ...newValues };
     console.log(Parameter);
+    Parameter.tipoValor = Parameter.tipoValor.toString();
     let success = false;
     if (!Parameter.id) {
       success = await create(Parameter);
@@ -174,8 +177,9 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
       console.log("update");
       success = await update(Parameter);
     }
+    setLoading(false);
     if (success && flag == 0) {
-      navigate(`/parameter?search=${searchParams.get("search") || "all"}`);
+      navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
     }
   };
   const onValuesChange = async (changeValues: any, values: any) => {
@@ -188,7 +192,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
       setValueType(value);
       setFlag(1);
     }
-    if (fields === "departamento") {
+    if (fields === "departamentoId") {
       const value = changeValues[fields];
       await getareaOptions(value);
     }
@@ -259,10 +263,10 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
             </Col>
           )}
           {!CheckReadOnly() && (
-            <Col md={12} sm={24} xs={12} style={id ? { textAlign: "right" } : { marginLeft: "80%" }}>
+            <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
               <Button
                 onClick={() => {
-                  navigate(`/parameter`);
+                  navigate(`/parameters`);
                 }}
               >
                 Cancelar
@@ -285,7 +289,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                 title="Editar"
                 image="editar"
                 onClick={() => {
-                  navigate(`/parameter/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`);
+                  navigate(`/parameters/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`);
                 }}
               />
             </Col>
@@ -319,7 +323,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
             </Col>
             <Col md={12} sm={24} xs={12}>
               <SelectInput
-                formProps={{ name: "departamento", label: "Departamento" }}
+                formProps={{ name: "departamentoId", label: "Departamento" }}
                 options={departamentOptions}
                 readonly={CheckReadOnly()}
                 required
@@ -338,7 +342,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
             </Col>
             <Col md={12} sm={24} xs={12}>
               <SelectInput
-                formProps={{ name: "area", label: "Área" }}
+                formProps={{ name: "areaId", label: "Área" }}
                 options={areas}
                 readonly={CheckReadOnly()}
                 required
@@ -357,19 +361,20 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
             </Col>
             <Col md={12} sm={24} xs={12}>
               <SelectInput
-                formProps={{ name: "reactivo", label: "Reactivo" }}
+                formProps={{ name: "reactivoId", label: "Reactivo" }}
                 options={reagents}
                 readonly={CheckReadOnly()}
                 required
               />
             </Col>
             <Col md={12} sm={24} xs={12}>
-              <TextInput
+              <NumberInput
                 formProps={{
                   name: "unidades",
                   label: "Unidades",
                 }}
                 max={100}
+                min={0}
                 required
                 readonly={CheckReadOnly()}
               />
@@ -385,6 +390,14 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                 readonly={CheckReadOnly()}
               />
             </Col>
+            <Col md={12} sm={24} xs={12}>
+              <SelectInput
+                formProps={{ name: "formatoImpresionId", label: "Formato de impresión" }}
+                options={printFormat}
+                readonly={CheckReadOnly()}
+                required
+              />
+            </Col>
             {id && (
               <Col md={12} sm={24} xs={12}>
                 <SelectInput
@@ -393,12 +406,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                   readonly={CheckReadOnly()}
                   required
                 />
-                <SelectInput
-                  formProps={{ name: "formatoImpresion", label: "Formato de impresión" }}
-                  options={printFormat}
-                  readonly={CheckReadOnly()}
-                  required
-                />
+
                 <TextInput
                   formProps={{
                     name: "formula",
@@ -423,7 +431,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                 />
                 <SelectInput
                   formProps={{ name: "parametros", label: "Parametros" }}
-                  options={[]}
+                  options={parameterOptions}
                   readonly={CheckReadOnly()}
                 />
               </Col>
@@ -431,7 +439,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
             <Col md={12} sm={24} xs={12}>
               <TextInput
                 formProps={{
-                  name: "fcs",
+                  name: "fcsi",
                   label: "FCSI",
                 }}
                 max={100}

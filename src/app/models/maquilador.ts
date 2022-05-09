@@ -2,7 +2,7 @@ export interface IMaquiladorList {
   id: number;
   clave: string;
   nombre: string;
-  codigoPostal: number;
+  codigoPostal: string;
   estado: string;
   ciudad: string;
   numeroExterior: string;
@@ -16,32 +16,32 @@ export interface IMaquiladorList {
 }
 
 export interface IMaquiladorForm {
-    id: number;
-    clave: string;
-    nombre: string;
-    codigoPostal: number;
-    estado?: string;
-    ciudad?: string;
-    numeroExterior: string;
-    numeroInterior: string;
-    calle: string;
-    coloniaId: number;
-    correo?: string;
-    paginaWeb?: string;
-    telefono: string;
-    activo: boolean;
+  id: number;
+  clave: string;
+  nombre: string;
+  codigoPostal?: string;
+  estado?: string;
+  ciudad?: string;
+  numeroExterior: string;
+  numeroInterior: string;
+  calle: string;
+  coloniaId?: number;
+  correo?: string;
+  paginaWeb?: string;
+  telefono: string;
+  activo: boolean;
 }
 export class MaquiladorFormValues implements IMaquiladorForm {
   id = 0;
   clave = "";
   nombre = "";
-  codigoPostal = 0;
+  codigoPostal = "";
   estado = undefined;
   ciudad = undefined;
   numeroExterior = "";
-  numeroInterior = "undefined";
+  numeroInterior = "";
   calle = "";
-  coloniaId = 0;
+  coloniaId = undefined;
   correo = undefined;
   paginaWeb: undefined;
   telefono = "";

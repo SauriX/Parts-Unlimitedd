@@ -40,7 +40,7 @@ const MaquiladorFormHeader: FC<MaquiladorFormHeaderProps> = ({id, handlePrint })
           title="Regresar"
           image="back"
           onClick={() => {
-            navigate("/maquilador");
+            navigate("/maquila");
           }}
         />,
         <Search

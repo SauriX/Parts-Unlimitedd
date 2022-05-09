@@ -65,7 +65,7 @@ const MaquiladorTable: FC<MaquiladorTableProps> = ({ componentRef, printing }) =
         <Button
           type="link"
           onClick={() => {
-            navigate(`/maquilador/${maquilador.id}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
+            navigate(`/maquila/${maquilador.id}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
           
           }}
           >
@@ -128,7 +128,7 @@ const MaquiladorTable: FC<MaquiladorTableProps> = ({ componentRef, printing }) =
           title="Editar Maquilador"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/maquilador/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`);
+            navigate(`/maquila/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`);
           }}
           
         />

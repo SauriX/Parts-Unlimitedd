@@ -56,7 +56,7 @@ const ParameterTable:FC<ParameterTableProps> = ({  componentRef,  printing }) =>
           <Button
             type="link"
             onClick={() => {
-              navigate(`/parameter/${parameter.id}?mode=ReadOnly&search=${searchParams.get("search") ?? "all"}`);
+              navigate(`/parameters/${parameter.id}?mode=ReadOnly&search=${searchParams.get("search") ?? "all"}`);
             }}
           >
             {value}
@@ -123,7 +123,7 @@ const ParameterTable:FC<ParameterTableProps> = ({  componentRef,  printing }) =>
             title="Editar usuario"
             icon={<EditOutlined />}
             onClick={() => {
-              navigate(`/parameter/${parameter.id}?search=${searchParams.get("search") ?? "all"}`);
+              navigate(`/parameters/${parameter.id}?search=${searchParams.get("search") ?? "all"}`);
             }}
           />
         ),

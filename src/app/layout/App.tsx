@@ -97,8 +97,8 @@ function App() {
           <Route path="parameters" element={<Parameters />} />
           <Route path="parameters/new-parameter" element={<ParameterDetail />} />
           <Route path="parameters/:id" element={<ParameterDetail />} />
-          <Route path="maquilador" element={<Maquilador />} />
-          <Route path="maquilador/:id" element={<MaquiladorDetail />} />
+          <Route path="maquila" element={<Maquilador />} />
+          <Route path="maquila/:id" element={<MaquiladorDetail />} />
           <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
           <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
           <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />

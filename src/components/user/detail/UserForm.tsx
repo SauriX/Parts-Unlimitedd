@@ -344,12 +344,39 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
                 readonly={CheckReadOnly()}
               />
             </Col>
-
+            <Col md={12} sm={24} xs={12}>
+              <SelectInput
+                formProps={{ name: "sucursalId", label: "Sucursal" }}
+                options={[{ value: "0", label: "test" }]}
+                readonly={CheckReadOnly()}
+                required
+              />
+            </Col>
             <Col md={12} sm={24} xs={12}>
               <TextInput
                 formProps={{
                   name: "primerApellido",
                   label: "Primer Apellido",
+                }}
+                max={100}
+                required
+                readonly={CheckReadOnly()}
+              />
+            </Col>
+            <Col md={12} sm={24} xs={12}>
+              <SelectInput
+                formProps={{ name: "rolId", label: "Tipo de usuario" }}
+                required
+                options={roleOptions}
+                readonly={CheckReadOnly()}
+              />
+            </Col>
+
+            <Col md={12} sm={24} xs={12}>
+              <TextInput
+                formProps={{
+                  name: "segundoApellido",
+                  label: "Segundo Apellido",
                 }}
                 max={100}
                 required
@@ -367,33 +394,6 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
                     alerts.info(messages.confirmations.disable);
                   }
                 }}
-                readonly={CheckReadOnly()}
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <TextInput
-                formProps={{
-                  name: "segundoApellido",
-                  label: "Segundo Apellido",
-                }}
-                max={100}
-                required
-                readonly={CheckReadOnly()}
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <SelectInput
-                formProps={{ name: "sucursalId", label: "Sucursal" }}
-                options={[{ value: "0", label: "test" }]}
-                readonly={CheckReadOnly()}
-                required
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <SelectInput
-                formProps={{ name: "rolId", label: "Tipo de usuario" }}
-                required
-                options={roleOptions}
                 readonly={CheckReadOnly()}
               />
             </Col>

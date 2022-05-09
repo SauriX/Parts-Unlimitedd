@@ -73,7 +73,7 @@ export default class OptionStore {
   getareaOptions = async (id?: number) => {
     console.log(id);
     try {
-      const department = await Catalog.getActive<ICatalogNormalList>("area/departament/" + id);
+      const department = await Catalog.getActive<ICatalogNormalList>("area/department/" + id);
       console.log("el depa1");
       console.log(department);
       this.areas = department.map((x) => ({
@@ -172,6 +172,22 @@ export default class OptionStore {
       this.roleOptions = roles.map((x) => ({ value: x.id, label: x.nombre }));
     } catch (error) {
       this.paymentOptions = [];
+    }
+  };
+
+  parameterOptions: IOptions[] = [];
+
+  getParameterOptions = async () => {
+    try {
+      const parameter = await Parameter.getAll("all");
+      console.log("parameters");
+      console.log(parameter);
+      this.parameterOptions = parameter.map((x) => ({
+        value: x.clave,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.parameterOptions = [];
     }
   };
 }

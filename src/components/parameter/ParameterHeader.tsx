@@ -21,7 +21,7 @@ const ParameterHeader: FC<ParameterHeaderProps> = ({ handlePrint,handleList }) =
         extra={[
           <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
           <ImageButton key="doc" title="Informe" image="doc" onClick={handleList }/>,
-          <Search key="search" placeholder="Buscar" onSearch={(value) => {navigate(`/parameter?search=${value}`);}} />,
+          <Search key="search" placeholder="Buscar" onSearch={(value) => {navigate(`/parameters?search=${value}`);}} />,
           <Button key="new" type="primary" onClick={() => {navigate("new-parameter");}} icon={<PlusOutlined />}>
             Nuevo
           </Button>,

@@ -16,6 +16,7 @@ import {
   LikeOutlined,
   TagsOutlined,
   CarOutlined,
+  ToolOutlined,
 } from "@ant-design/icons";
 
 const IconSelector = ({ name }: { name: string }) => {
@@ -52,6 +53,8 @@ const IconSelector = ({ name }: { name: string }) => {
       return <TagsOutlined />;
     case "route":
       return <CarOutlined />;
+    case "maquila":
+      return <ToolOutlined />;
     default:
       return null;
   }

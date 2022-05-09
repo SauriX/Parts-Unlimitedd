@@ -10,24 +10,24 @@ export default class ParameterStore {
   constructor() {
     makeAutoObservable(this);
   }
-  parameters:IParameterList[]=[];
-  parameter?:IParameterForm;
-  ValueTipe?:ItipoValorForm;
-  ValuesTipe:ItipoValorForm[]=[];
-  getAll = async (search: string="all") => {
+  parameters: IParameterList[] = [];
+  parameter?: IParameterForm;
+  ValueTipe?: ItipoValorForm;
+  ValuesTipe: ItipoValorForm[] = [];
+  getAll = async (search: string = "all") => {
     try {
       console.log(search);
-      const parameters= await Parameter.getAll(search);
+      const parameters = await Parameter.getAll(search);
       this.parameters = parameters;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       this.parameters = [];
     }
   };
-  getAllvalues = async (search: string,tipo="") => {
+  getAllvalues = async (search: string, tipo = "") => {
     try {
       console.log(search);
-      const parameters= await Parameter.getAllValues(search,tipo);
+      const parameters = await Parameter.getAllValues(search, tipo);
       console.log(parameters);
       return parameters;
     } catch (error: any) {
@@ -36,10 +36,9 @@ export default class ParameterStore {
     }
   };
   getById = async (id: string) => {
-   
     try {
       const rol = await Parameter.getById(id);
-    
+      rol.tipoValor = rol.tipoValor == null ? 0 : parseInt(rol.tipoValor);
       console.log(rol);
       this.parameter = rol;
       return rol;
@@ -53,8 +52,7 @@ export default class ParameterStore {
     }
   };
 
-  getvalue= async (id: string) => {
-   
+  getvalue = async (id: string) => {
     try {
       const value = await Parameter.getValue(id);
       this.ValueTipe = value;
@@ -72,7 +70,8 @@ export default class ParameterStore {
   create = async (parameter: IParameterForm) => {
     try {
       console.log(parameter);
-        console.log("here");
+      console.log("here");
+      parameter.tipoValor = parameter.tipoValor?.toString();
       await Parameter.create(parameter);
       alerts.success(messages.created);
       return true;
@@ -84,6 +83,7 @@ export default class ParameterStore {
 
   update = async (parameter: IParameterForm) => {
     try {
+      parameter.tipoValor = parameter.tipoValor?.toString();
       await Parameter.update(parameter);
       alerts.success(messages.updated);
       return true;
@@ -93,7 +93,7 @@ export default class ParameterStore {
     }
   };
 
-  updatevalue = async (value:ItipoValorForm) => {
+  updatevalue = async (value: ItipoValorForm) => {
     try {
       await Parameter.updateValue(value);
       alerts.success(messages.updated);
@@ -105,37 +105,39 @@ export default class ParameterStore {
   };
 
   addValue = async (value: ItipoValorForm) => {
-    try{
+    try {
       await Parameter.addValue(value);
       alerts.success(messages.created);
       return true;
-    }catch(error:any){
+    } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
     }
-  }
-  addvalues = async (values:ItipoValorForm[],idParametro="")=>{
-    try{
-      await Parameter.deletevalue(idParametro);
-      values.forEach(async value => {await Parameter.addValue(value)});
+  };
+  addvalues = async (values: ItipoValorForm[], parametroId = "") => {
+    try {
+      await Parameter.deletevalue(parametroId);
+      values.forEach(async (value) => {
+        await Parameter.addValue(value);
+      });
       alerts.success(messages.created);
       return true;
-    }catch(error:any){
+    } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
     }
-  }
+  };
   exportList = async (search: string) => {
     try {
       await Parameter.exportList(search);
-      return true
+      return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
   };
-  exportForm = async (id: string,clave?:string) => {
+  exportForm = async (id: string) => {
     try {
-      await Parameter.exportForm(id,clave);
+      await Parameter.exportForm(id);
       return true;
     } catch (error: any) {
       if (error.status === responses.notFound) {
@@ -144,5 +146,5 @@ export default class ParameterStore {
         alerts.warning(getErrors(error));
       }
     }
-  }; 
+  };
 }

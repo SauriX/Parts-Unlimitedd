@@ -75,7 +75,7 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue,parameter }) => {
                 opcion:"",
                 descripcionTexto:"",
                 descripcionParrafo:"",
-                idParametro:id,
+                parametroId:id,
                 id:x.id
             }
             return data;
@@ -84,7 +84,7 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue,parameter }) => {
        var succes = await addvalues(val,id);
        succes = await update(parameter);
         if (succes) {
-            navigate(`/parameter?search=${searchParams.get("search") || "all"}`);
+            navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
         }
 
     };

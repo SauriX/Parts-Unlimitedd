@@ -35,7 +35,7 @@ const ParameterDetail = () => {
 	}, [  getById ,id ]);
     const  handleDownload = async() => {
         setLoading(true);
-        const succes = await exportForm(id!,parameter!.clave);
+        const succes = await exportForm(id!);
         
         if(succes){
           setLoading(false);

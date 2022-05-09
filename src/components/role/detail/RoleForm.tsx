@@ -145,6 +145,7 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
   );
 
   const onFinish = async (newValues: IRoleForm) => {
+    setLoading(true);
     const User = { ...values, ...newValues };
 
     const permissions = values.permisos?.map((x) => ({
@@ -163,7 +164,7 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
     } else {
       success = await update(User);
     }
-
+    setLoading(false);
     if (success) {
       navigate(`/roles?search=${searchParams.get("search") || "all"}`);
     }

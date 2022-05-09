@@ -27,7 +27,7 @@ const ParameterFormHeader: FC<ParameterFormHeaderProps> = ({ handlePrint,handleD
                   title="Regresar"
                   image="back"
                   onClick={() => {
-                    navigate("/parameter");
+                    navigate("/parameters");
                   }}
                 />,
             ]}

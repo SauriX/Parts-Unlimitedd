@@ -57,7 +57,7 @@ const ValorRNumerico:FC<Props> = ({idTipeVAlue,parameter})=>{
         let success = false;
         if (!value.id) {
             value.nombre = idTipeVAlue;
-            value.idParametro=id||"";
+            value.parametroId=id||"";
             success = await addValue(value);
             success = await update(parameter);
         } else {
@@ -66,7 +66,7 @@ const ValorRNumerico:FC<Props> = ({idTipeVAlue,parameter})=>{
           
         }
         if (success) {
-          navigate(`/parameter?search=${searchParams.get("search") || "all"}`);
+          navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
         }
     };
     return(

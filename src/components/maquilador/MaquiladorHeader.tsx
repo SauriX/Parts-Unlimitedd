@@ -45,7 +45,7 @@ const MaquiladorHeader: FC<MaquiladorHeaderProps> = ({ handlePrint, }) => {
           key="new"
           type="primary"
           onClick={() => {
-            navigate("/maquilador/0");
+            navigate("/maquila/0");
           }}
           icon={<PlusOutlined />}
         >
