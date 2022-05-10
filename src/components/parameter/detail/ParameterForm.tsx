@@ -251,8 +251,8 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
 
   return (
     <Spin spinning={loading || load}>
-      <div ref={componentRef}>
-        <Row style={{ marginBottom: 24 }}>
+      
+      <Row style={{ marginBottom: 24 }}>
           {id && (
             <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
               <Pagination
@@ -299,6 +299,15 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
             </Col>
           )}
         </Row>
+        <div style={{ display: load ? "none" : "" }}>
+        <div ref={componentRef}>
+        {load && (
+            <PageHeader
+              ghost={false}
+              title={<HeaderTitle title="Catálogo Parámetros" image="parameters" />}
+              className="header-container"
+            ></PageHeader>
+          )}
         <Form<IParameterForm>
           {...formItemLayout}
           form={form}
@@ -508,6 +517,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
             />
           </Col>
         </Row>
+      </div>
       </div>
     </Spin>
   );
