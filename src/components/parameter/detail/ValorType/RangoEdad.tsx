@@ -125,14 +125,14 @@ const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto,disabled}) 
                                         name={[name, 'rangoEdadInicial']}
                                         rules={[{ required: true, message: 'Missing Hombre valor' }]}
                                     >
-                                        <Input readOnly={disable} placeholder={"Rango Edad"} />
+                                        <Input type={"number"} disabled={disable} placeholder={"Rango Edad"} />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
                                         name={[name, 'rangoEdadFinal']}
                                         rules={[{ required: true, message: 'Missing Rango de edad' }]}
                                     >
-                                        <Input readOnly={disable} placeholder="Rango Edad" />
+                                        <Input type={"number"} disabled={disable} placeholder="Rango Edad" />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
@@ -146,14 +146,14 @@ const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto,disabled}) 
                                         name={[name, 'valorInicialNumerico']}
                                         rules={[{ required: true, message: 'valor inicial' }]}
                                     >
-                                        <Input readOnly={disable} placeholder={"Valor inicial"} />
+                                        <Input type={"number"} disabled={disable} placeholder={"Valor inicial"} />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
                                         name={[name, 'valorFinalNumerico']}
                                         rules={[{ required: true, message: 'Missing Valor final' }]}
                                     >
-                                        <Input readOnly={disable} placeholder="Valor final" />
+                                        <Input type={"number"} disabled={disable} placeholder="Valor final" />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>
