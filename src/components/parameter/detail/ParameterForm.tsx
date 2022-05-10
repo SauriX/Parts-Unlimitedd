@@ -434,7 +434,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                   readonly={CheckReadOnly()}
                 />
                 <SelectInput
-                  formProps={{ name: "parametros", label: "Parametros" }}
+                  formProps={{ name: "parametros", label: "Parámetros" }}
                   options={parameterOptions}
                   readonly={CheckReadOnly()}
                 />
