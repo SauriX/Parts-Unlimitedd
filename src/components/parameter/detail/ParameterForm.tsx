@@ -172,6 +172,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     Parameter.tipoValor = Parameter.tipoValor.toString();
     let success = false;
     if (!Parameter.id) {
+      console.log("create");
       success = await create(Parameter);
     } else {
       console.log("update");
@@ -187,9 +188,12 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     if (fields === "tipoValor") {
       const value = changeValues[fields];
       values.tipoValor = value;
-      console.log("onchange");
-      form.submit();
+      values.id=id;
       setValueType(value);
+      
+        setValues(values);
+        console.log("values");
+        console.log(values);
       setFlag(1);
     }
     if (fields === "departamentoId") {
@@ -247,8 +251,8 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
 
   return (
     <Spin spinning={loading || load}>
-      <div ref={componentRef}>
-        <Row style={{ marginBottom: 24 }}>
+      
+      <Row style={{ marginBottom: 24 }}>
           {id && (
             <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
               <Pagination
@@ -295,6 +299,15 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
             </Col>
           )}
         </Row>
+        <div style={{ display: load ? "none" : "" }}>
+        <div ref={componentRef}>
+        {load && (
+            <PageHeader
+              ghost={false}
+              title={<HeaderTitle title="Catálogo Parámetros" image="parameters" />}
+              className="header-container"
+            ></PageHeader>
+          )}
         <Form<IParameterForm>
           {...formItemLayout}
           form={form}
@@ -430,7 +443,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                   readonly={CheckReadOnly()}
                 />
                 <SelectInput
-                  formProps={{ name: "parametros", label: "Parametros" }}
+                  formProps={{ name: "parametros", label: "Parámetros" }}
                   options={parameterOptions}
                   readonly={CheckReadOnly()}
                 />
@@ -504,6 +517,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
             />
           </Col>
         </Row>
+      </div>
       </div>
     </Spin>
   );

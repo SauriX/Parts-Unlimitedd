@@ -15,6 +15,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import PasswordInput from "../../app/common/form/PasswordInput";
+import HeaderTitle from "../../app/common/header/HeaderTitle";
 /*const users: IUserInfo[] = [
   {
     id: "asd",
@@ -162,6 +163,11 @@ const UserTable: FC<UserTableProps> = ({ componentRef, printing }) => {
   const UserTablePrint = () => {
     return (
       <div ref={componentRef}>
+        <PageHeader
+            ghost={false} 
+            title={<HeaderTitle title="Catálogo usuarios" image="user" />}
+            className="header-container"
+        ></PageHeader>
         <Table<IUserList>
           loading={loading}
           size="small"

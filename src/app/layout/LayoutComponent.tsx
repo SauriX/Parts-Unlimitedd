@@ -40,8 +40,10 @@ const LayoutComponent = () => {
     let passForm = { ...newValues };
     let success = false;
     let checkPass = false;
-    await changePassword(passForm);
+   let succeded= await changePassword(passForm);
+   if(succeded){
     setProfile({ ...profile!, requiereCambio: false });
+   }
     // console.log(success);
   };
 
