@@ -15,6 +15,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import PasswordInput from "../../app/common/form/PasswordInput";
+import HeaderTitle from "../../app/common/header/HeaderTitle";
 type RoleTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
@@ -143,9 +144,28 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       ),
     },
   ];
-
+  const TablePrint=() =>{
+    return(
+      <div ref={componentRef}>
+      <PageHeader
+      ghost={false} 
+      title={<HeaderTitle title="sucursales" image="laboratorio" />}
+      className="header-container"
+  ></PageHeader>
+  <Divider className="header-divider" />
+    <Table<IBranchInfo>
+    loading={loading}
+    size="small"
+    dataSource={sucursales}
+    rowKey={(record) => record.idSucursal}
+    columns={columns.slice(0, 6)}
+    pagination={false}
+    />
+  </div>
+    );
+  }
   return (
-    <div ref={componentRef}>
+    <Fragment>
       <Table<IBranchInfo>
         loading={loading}
         size="small"
@@ -156,7 +176,8 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
         sticky
         scroll={{ x: "max-content" }}
       />
-    </div>
+      <div style={{ display: "none" }}>{< TablePrint  />}</div>
+    </Fragment>
   );
 };
 
