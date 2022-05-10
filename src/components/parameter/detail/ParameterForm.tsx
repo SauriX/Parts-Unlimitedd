@@ -172,6 +172,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     Parameter.tipoValor = Parameter.tipoValor.toString();
     let success = false;
     if (!Parameter.id) {
+      console.log("create");
       success = await create(Parameter);
     } else {
       console.log("update");
@@ -187,9 +188,12 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     if (fields === "tipoValor") {
       const value = changeValues[fields];
       values.tipoValor = value;
-      console.log("onchange");
-      form.submit();
+      values.id=id;
       setValueType(value);
+      
+        setValues(values);
+        console.log("values");
+        console.log(values);
       setFlag(1);
     }
     if (fields === "departamentoId") {
