@@ -8,33 +8,11 @@ import StudyHeader from "../components/study/StudyHeader";
 import StudyTable from "../components/study/StudyTable";
 const Study = () => {
   const { studyStore} = useStore();
-  const { access,exportList } = studyStore;
+  const { scopes, access, clearScopes,exportList } = studyStore;
   const [printing, setPrinting] = useState(false);
   const [accessing, setAccessing] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
-  useEffect(() => {
-    const checkAccess = async () => {
-      await access();
-      setAccessing(false);
-    };
-
-    checkAccess();
-  }, [access]);
-
-  useEffect(() => {
-    return () => {
-      setAccessing(true);
-    };
-  }, []);
   const componentRef = useRef<any>();
-  const handleDownload = async () => {
-    console.log("here");
-    setPrinting(true);
-    var succes=true; await exportList(searchParams.get("search") ?? "all");
-    if(succes){
-      setPrinting(false);
-    }
-  };
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     onBeforeGetContent: () => {
@@ -44,6 +22,36 @@ const Study = () => {
       setPrinting(false);
     },
   });
+  useEffect(() => {
+    const checkAccess = async () => {
+      await access();
+      setAccessing(false);
+    };
+
+    checkAccess();
+  }, [access]);
+  useEffect(() => {
+    return () => {
+      clearScopes();
+    };
+  }, [clearScopes]);
+  useEffect(() => {
+    return () => {
+      setAccessing(true);
+    };
+  }, []);
+  if (!scopes?.acceder) return null;
+
+
+  const handleDownload = async () => {
+    console.log("here");
+    setPrinting(true);
+    var succes=true; await exportList(searchParams.get("search") ?? "all");
+    if(succes){
+      setPrinting(false);
+    }
+  };
+
   return (
     <Fragment>
         <StudyHeader handlePrint={handlePrint} handleList={handleDownload}></StudyHeader>
