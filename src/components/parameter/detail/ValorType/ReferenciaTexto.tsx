@@ -108,7 +108,7 @@ const ReferenciaTexto : FC<Props> = ({ idTipeVAlue,parameter }) => {
                                         rules={[{ required: true, message: 'Missing valor' }]}
                                         
                                     >
-                                        <TextArea readOnly={disabled} rows={5}  placeholder={"Observación"} />
+                                        <TextArea disabled={disabled} rows={5}  placeholder={"Observación"} />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>

@@ -111,28 +111,28 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue,parameter }) => {
                                         name={[name, 'hombreValorInicial']}
                                         rules={[{ required: true, message: 'Missing Hombre valor' }]}
                                     >
-                                        <Input readOnly={disabled} placeholder={"Hombre valor"} />
+                                        <Input type={"number"} disabled={disabled} placeholder={"Hombre valor"} />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
                                         name={[name, 'hombreValorFinal']}
                                         rules={[{ required: true, message: 'Missing Hombre valor' }]}
                                     >
-                                        <Input readOnly={disabled} placeholder="Hombre valor" />
+                                        <Input type={"number"} disabled={disabled} placeholder="Hombre valor" />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
                                         name={[name, 'mujerValorInicial']}
                                         rules={[{ required: true, message: 'Mujer valor' }]}
                                     >
-                                        <Input readOnly={disabled} placeholder={"Mujer valor"} />
+                                        <Input type={"number"} disabled={disabled} placeholder={"Mujer valor"} />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
                                         name={[name, 'mujerValorFinal']}
                                         rules={[{ required: true, message: 'Missing Mujer valor' }]}
                                     >
-                                        <Input readOnly={disabled} placeholder="Mujer valor" />
+                                        <Input type={"number"} disabled={disabled} placeholder="Mujer valor" />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>

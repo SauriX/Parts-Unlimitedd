@@ -48,6 +48,7 @@ const ReferenciaEtiqueta = () => {
                             label: "Nombre",
                         }}
                         max={100}
+                        
                     />
                 </Col>
                 <Col md={6} sm={24} xs={12} style={{ marginTop: 22 }}>

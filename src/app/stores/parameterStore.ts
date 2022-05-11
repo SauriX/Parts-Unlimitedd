@@ -96,7 +96,6 @@ export default class ParameterStore {
   updatevalue = async (value: ItipoValorForm) => {
     try {
       await Parameter.updateValue(value);
-      alerts.success(messages.updated);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -107,7 +106,7 @@ export default class ParameterStore {
   addValue = async (value: ItipoValorForm) => {
     try {
       await Parameter.addValue(value);
-      alerts.success(messages.created);
+
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -120,7 +119,6 @@ export default class ParameterStore {
       values.forEach(async (value) => {
         await Parameter.addValue(value);
       });
-      alerts.success(messages.created);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));

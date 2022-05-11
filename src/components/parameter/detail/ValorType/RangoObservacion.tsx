@@ -107,7 +107,7 @@ const RangoObservacion : FC<Props> = ({ idTipeVAlue,parameter }) => {
                                         name={[name, 'descripcionTexto']}
                                         rules={[{ required: true, message: 'Missing valor' }]}
                                     >
-                                        <Input readOnly={disabled} placeholder={"Observación"} />
+                                        <Input disabled={disabled} placeholder={"Observación"} />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>
