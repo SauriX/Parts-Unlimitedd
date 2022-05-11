@@ -6,7 +6,7 @@ const { Title } = Typography;
 type Props = {
   title: string;
   icon?: ReactNode;
-  image?: "user" | "reagent" | "role"| "Indicaciones"| "doctor"|
+  image?: "user" | "reagent" | "role"| "Indicaciones"| "doctor"| "ListaPrecio"|
   "laboratorio"|"parameters"|"Company"|"contactos"|"maquilador"|"estudios";
 };
 

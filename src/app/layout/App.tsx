@@ -35,6 +35,8 @@ import Maquilador from "../../views/Maquilador";
 import MaquiladorDetail from "../../components/maquilador/detail/MaquiladorDetail";
 import StudyDetail from "../../components/study/detail/StudyDetail";
 import Study from "../../views/Study";
+import PriceList from "../../views/PriceList";
+import PriceListDetail from "../../components/priceList/detail/PriceListDetail";
 
 function App() {
   const { profileStore } = useStore();
@@ -101,6 +103,9 @@ function App() {
           <Route path="parameters/:id" element={<ParameterDetail />} />
           <Route path="maquila" element={<Maquilador />} />
           <Route path="maquila/:id" element={<MaquiladorDetail />} />
+          <Route path="prices" element={<PriceList />} />
+          <Route path="prices/:id" element={<PriceListDetail />} />
+          <Route path="prices/new" element={<PriceListDetail />} />
           <Route path="studies" element={<Study/>} />
           <Route path="studies/new-study" element={<StudyDetail/>} />
           <Route path="studies/:id" element={<StudyDetail/>} />
