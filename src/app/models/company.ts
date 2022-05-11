@@ -1,4 +1,4 @@
-import { IContactForm, IContactList } from "./contact";
+import { IContactForm, } from "./contact";
 
 export interface ICompanyList {
   id: number;

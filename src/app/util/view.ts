@@ -1,7 +1,8 @@
 const views = {
   reagent: "reagents",
   study: "studies",
-  pack:"packs"
+  pack:"packs",
+  price: "prices",
 };
 
 export default views;
