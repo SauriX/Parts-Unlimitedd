@@ -35,6 +35,8 @@ import Maquilador from "../../views/Maquilador";
 import MaquiladorDetail from "../../components/maquilador/detail/MaquiladorDetail";
 import StudyDetail from "../../components/study/detail/StudyDetail";
 import Study from "../../views/Study";
+import Pack from "../../views/Pack";
+import PackDetail from "../../components/pack/detail/PackDetail";
 
 function App() {
   const { profileStore } = useStore();
@@ -104,6 +106,9 @@ function App() {
           <Route path="studies" element={<Study/>} />
           <Route path="studies/new-study" element={<StudyDetail/>} />
           <Route path="studies/:id" element={<StudyDetail/>} />
+          <Route path="packs" element={<Pack/>} />
+          <Route path="packs/new-pack" element={<PackDetail/>} />
+          <Route path="packs/:id" element={<PackDetail/>} />
           <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
           <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
           <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />
