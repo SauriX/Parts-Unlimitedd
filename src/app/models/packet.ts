@@ -18,7 +18,14 @@ export interface IPackForm {
     idDepartamento:number,
     activo: boolean,
     visible:boolean,
-    estudios:IStudyList[]
+    estudio: IPackEstudioList[];
+}
+export interface IPackEstudioList {
+    id: string;
+    clave: string;
+    nombre: string;
+    precio:number;
+    area:string;
 }
 
 export class PackFormValues implements IPackForm{
@@ -31,7 +38,7 @@ export class PackFormValues implements IPackForm{
     idDepartamento=0;
     activo=false;
     visible=false;
-    estudios:IStudyList[]=[];
+    estudio: IPackEstudioList[]=[]  ;
     constructor(init?: IPackForm) {
         Object.assign(this, init);
       }

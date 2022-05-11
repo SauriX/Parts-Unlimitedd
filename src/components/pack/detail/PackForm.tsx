@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Select, Input } from "antd";
+import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Select, Input, Table } from "antd";
 import { List, Typography } from "antd";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
@@ -14,8 +14,10 @@ import SelectInput from "../../../app/common/form/SelectInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import MaskInput from "../../../app/common/form/MaskInput";
-import { IPackForm, PackFormValues } from "../../../app/models/packet";
+import { IPackEstudioList, IPackForm, PackFormValues } from "../../../app/models/packet";
 import views from "../../../app/util/view";
+import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
+import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
 
 const { Search } = Input;
 type PackFormProps = {
@@ -38,6 +40,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
   const [colonies, setColonies] = useState<IOptions[]>([]);
   const [values, setValues] = useState<IPackForm>(new PackFormValues());
   let { id } = useParams<UrlParams>();
+  const { width: windowWidth } = useWindowDimensions();
   const CheckReadOnly = () => {
     let result = false;
     const mode = searchParams.get("mode");
@@ -69,6 +72,37 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
       readuser(id);
     }
   }, [/* form */, getById, id]);
+  const [searchState, setSearchState] = useState<ISearch>({
+    searchedText: "",
+    searchedColumn: "",
+  });
+  const columnsEstudios: IColumns<IPackEstudioList> = [
+    {
+      ...getDefaultColumnProps("clave", "Clave", {
+        searchState,
+        setSearchState,
+        width: "10%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("nombre", "Nombre", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+        ...getDefaultColumnProps("", "Área", {
+          searchState,
+          setSearchState,
+          width: "30%",
+          windowSize: windowWidth,
+        }),
+      },
+  ];
+
 
   const onValuesChange = async (changedValues: any) => {
     const field = Object.keys(changedValues)[0];
@@ -207,7 +241,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
                 <TextInput
                   formProps={{
                     name: "nombreLargo",
-                    label: "Nombre",
+                    label: "Nombre Largo",
                   }}
                   max={100}
                   required
@@ -228,7 +262,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
               </Col>
               <Col md={12} sm={24} xs={12}>
               <SwitchInput
-                name="activo"
+                name="visible"
                 label="Visible"
                 onChange={(value) => {
                   if (value) {
@@ -257,26 +291,21 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
           </Form>
           <Divider orientation="left">Estudios</Divider>
           <Row>
-          <Col md={6} sm={24} xs={12}>
-            <label htmlFor="">Búsqueda por:</label>
-          </Col>
-          <Col md={9} sm={24} xs={12}>
+          <Col md={12} sm={24} xs={12}>
           <SelectInput
-                formProps={{ name: "departamentoId", label: "Departamento" }}
+                formProps={{ name: "departamentoId", label: "Búsqueda por :   Departamento" }}
                 options={departamentOptions}
                 readonly={CheckReadOnly()}
-                required
               />
               </Col>
-              <Col md={9} sm={24} xs={12}>
+              <Col md={12} sm={24} xs={12}>
                 <SelectInput
                 formProps={{ name: "areaId", label: "Área" }}
                 options={/* areas */[]}
                 readonly={CheckReadOnly()}
-                required
               />
               </Col>
-              <Col md={6} sm={24} xs={12}></Col>
+              <Col md={15} sm={24} xs={12}></Col>
               <Col md={9} sm={24} xs={12}>
               <Search
           key="search"
@@ -285,6 +314,16 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
             navigate(`/${views.pack}?search=${value}`);
           }}
         />,</Col>
+            <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
+                <Table<IPackEstudioList>
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columnsEstudios.slice(0, 4)}
+                pagination={false}
+                dataSource={[...(values.estudio ?? [])]}
+                scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+                />
+            </Col>
           </Row>
         </div>
       </div>
