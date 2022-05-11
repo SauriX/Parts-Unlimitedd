@@ -109,7 +109,7 @@ const NumeroColumna: FC<Props> = ({ idTipeVAlue,parameter }) => {
                                         name={[name, 'valorInicial']}
                                         rules={[{ required: true, message: 'Missing valor' }]}
                                     >
-                                        <Input readOnly={disabled} placeholder={"Valor"} />
+                                        <Input type={"number"} readOnly={disabled} placeholder={"Valor"} />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>

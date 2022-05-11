@@ -108,7 +108,7 @@ const ReferenciaParrafo : FC<Props> = ({ idTipeVAlue,parameter }) => {
                                         name={[name, 'descripcionParrafo']}
                                         rules={[{ required: true, message: 'Missing valor' }]}
                                     >
-                                        <Input readOnly={disabled} placeholder={"Párrafo"} />
+                                        <Input disabled={disabled} placeholder={"Párrafo"} />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>

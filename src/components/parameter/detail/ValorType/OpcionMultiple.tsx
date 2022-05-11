@@ -107,7 +107,7 @@ const OpcionMUltiple : FC<Props> = ({ idTipeVAlue,parameter }) => {
                                         name={[name, 'opcion']}
                                         rules={[{ required: true, message: 'Missing valor' }]}
                                     >
-                                        <Input readOnly={disabled} placeholder={"Opción"} />
+                                        <Input disabled={disabled} placeholder={"Opción"} />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>
