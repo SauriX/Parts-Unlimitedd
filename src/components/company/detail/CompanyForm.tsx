@@ -37,8 +37,8 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   const { companyStore, optionStore, locationStore } = useStore();
   const { getById, generatePass, create, update, getAll, company } = companyStore;
   const {
-    // procedenciaOptions,
-    // getprovenanceOptions,
+    provenanceOptions,
+    getprovenanceOptions,
     paymentOptions,
     getpaymentOptions,
     // priceOptions,
@@ -128,14 +128,14 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     getcfdiOptions();
     getpaymentMethodOptions();
     // getpriceOptions();
-    // getprovenanceOptions();
+    getprovenanceOptions();
   }, [
     getpaymentOptions,
     getbankOptions,
     getcfdiOptions,
     getpaymentMethodOptions,
     // getpriceOptions,
-    // getprovenanceOptions,
+    getprovenanceOptions,
   ]);
   console.log(values.contacts);
 
@@ -191,7 +191,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
       form.setFieldsValue({ contrasena: pass });
     };
     console.log(values);
-    if (id == null || id == 0) {
+    if (id == null || id === 0) {
       newpass();
     }
   }, [values]);
@@ -320,7 +320,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
-        {id != 0 && (
+        {id !== 0 && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
             <Pagination
               size="small"
@@ -455,6 +455,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
+                
                 <SelectInput
                   formProps={{
                     name: "procedenciaId",
@@ -462,27 +463,8 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   readonly={readonly}
                   required
-                  options={[]}
+                  options={provenanceOptions}
                 />
-                {/* <NumberInput
-                  formProps={{
-                    name: "procedenciaId",
-                    label: "",
-                  }}
-                  max={12}
-                  min={6}
-                  required
-                  readonly={readonly}
-                /> */}
-                {/* <SelectInput 
-                  formProps={{
-                    name: "listaPrecioId",
-                    label: "Lista de precio: ",
-                  }}
-                  readonly={readonly}
-                  required
-                  options={priceOptions}
-                /> */}
                 <NumberInput
                   formProps={{
                     name: "listaPrecioId",

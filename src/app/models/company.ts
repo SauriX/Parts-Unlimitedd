@@ -17,7 +17,7 @@ export interface ICompanyForm {
     contrasena : string;
     nombreComercial: string;
     emailEmpresarial : string
-    procedenciaId : number;
+    procedenciaId?: number;
     listaPrecioId?: number;
     promocionesId?: number;
     rfc: string;
@@ -25,7 +25,7 @@ export interface ICompanyForm {
     estado: string;
     ciudad: string;
     razonSocial: string;
-    metodoDePagoId: number;
+    metodoDePagoId?: number;
     formaDePagoId?: number;
     limiteDeCredito: string;
     diasCredito?: number;
@@ -42,7 +42,7 @@ export interface ICompanyForm {
     contrasena = "";
     nombreComercial= "";
     emailEmpresarial = "";
-    procedenciaId= 0;
+    procedenciaId= undefined;
     listaPrecioId= undefined;
     promocionesId= undefined;
     rfc= "";
@@ -50,7 +50,7 @@ export interface ICompanyForm {
     estado= "";
     ciudad= "";
     razonSocial= "";
-    metodoDePagoId= 0;
+    metodoDePagoId= undefined;
     formaDePagoId= undefined;
     limiteDeCredito= "";
     diasCredito= undefined;

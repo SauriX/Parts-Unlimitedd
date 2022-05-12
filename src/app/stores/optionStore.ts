@@ -1,14 +1,8 @@
 import { makeAutoObservable } from "mobx";
-import Company from "../../views/Company";
 import Catalog from "../api/catalog";
 import Role from "../api/role";
 import { ICatalogNormalList } from "../models/catalog";
-import { IOptions, IScopes } from "../models/shared";
-import alerts from "../util/alerts";
-import history from "../util/history";
-import messages from "../util/messages";
-import responses from "../util/responses";
-import { getErrors } from "../util/utils";
+import { IOptions,  } from "../models/shared";
 import Parameter from "../api/parameter";
 import Reagent from "../api/reagent";
 import Maquilador from "../api/maquilador";
@@ -164,6 +158,21 @@ export default class OptionStore {
       this.paymentOptions = payment.map((x) => ({ value: x.id, label: x.nombre }));
     } catch (error) {
       this.paymentOptions = [];
+    }
+  };
+
+  provenanceOptions: IOptions[] = [];
+
+  getprovenanceOptions = async () => {
+    try {
+      const procedencia = await Catalog.getActive<ICatalogNormalList>("provenance");
+      console.log(procedencia);
+      this.provenanceOptions = procedencia.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.provenanceOptions = [];
     }
   };
 
