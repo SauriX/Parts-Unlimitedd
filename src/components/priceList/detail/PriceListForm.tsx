@@ -59,7 +59,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
 }) => {
   const { priceListStore, optionStore} = useStore();
   const { priceLists, getById, getAll, create, update, getAllBranch, getAllMedics, getAllCompany } = priceListStore;
-  const { getdepartamentoOptions, departamentOptions, getareaOptions, areas, } = optionStore;
+  const { getDepartmentOptions, departmentOptions, getareaOptions, areas, } = optionStore;
 
   const navigate = useNavigate();
 
@@ -114,11 +114,11 @@ const PriceListForm: FC<PriceListFormProps> = ({
 
 useEffect(() => {
   const readdepartments = async () => {
-    await getdepartamentoOptions();
+    await getDepartmentOptions();
     await getareaOptions();
   };
   readdepartments();
-}, [getdepartamentoOptions, getareaOptions]);
+}, [getDepartmentOptions, getareaOptions]);
 // useEffect(() => {
 //   const readReagents = async () => {
 //     await getReagentOptions();
