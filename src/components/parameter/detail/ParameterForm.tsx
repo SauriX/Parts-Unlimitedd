@@ -382,6 +382,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
             </Col>
             <Col md={12} sm={24} xs={12}>
               <NumberInput
+              type="number"
                 formProps={{
                   name: "unidades",
                   label: "Unidades",
@@ -389,6 +390,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                 max={100}
                 min={0}
                 required
+
                 readonly={CheckReadOnly()}
               />
             </Col>

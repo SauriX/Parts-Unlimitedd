@@ -56,6 +56,7 @@ const NumberInput = ({
         autoComplete="off"
         placeholder={placeholder ?? itemProps.label?.toString()}
         disabled={readonly}
+        type={"number"}
       />
     </Form.Item>
   );
