@@ -16,7 +16,7 @@ const ReferenciaEtiqueta = () => {
     const addRow = ()=>{
         setLista(prev => [...prev, { id: prev.length, nombre: (prev.length + 1).toString() }])
     }
-    const removeRow = (id:number)=>{
+    const removeRow = (id:number)=>{    
         const list = lista.filter((x) => x.id !== id);
         console.log(list);
         setLista(prev => list );

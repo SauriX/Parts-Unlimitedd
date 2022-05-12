@@ -45,19 +45,6 @@ export default class OptionStore {
       this.clinicOptions = [];
     }
   };
-  departamentOptions: IOptions[] = [];
-  getdepartamentoOptions = async () => {
-    try {
-      const department = await Catalog.getActive<ICatalogNormalList>("department");
-      console.log("el depa1");
-      console.log(department);
-      this.departamentOptions = department.map((x) => ({ value: x.id, label: x.nombre }));
-      console.log("los depas mapeados");
-      console.log(this.departamentOptions);
-    } catch (error) {
-      this.departamentOptions = [];
-    }
-  };
   reagents: IOptions[] = [];
   getReagentOptions = async () => {
     try {
@@ -76,15 +63,17 @@ export default class OptionStore {
   getareaOptions = async (id?: number) => {
     console.log(id);
     try {
-      const department = await Catalog.getActive<ICatalogNormalList>("area/department/" + id);
+      let ruta =`area/department/${id}`
+      if(id==0){
+        ruta="area"
+      }
+      const area = await Catalog.getActive<ICatalogNormalList>(ruta);
       console.log("el depa1");
-      console.log(department);
-      this.areas = department.map((x) => ({
+      console.log(area);
+      this.areas = area.map((x) => ({
         value: x.id,
         label: x.nombre,
       }));
-      console.log("los depas mapeados");
-      console.log(this.departamentOptions);
     } catch (error) {
       this.areas = [];
     }

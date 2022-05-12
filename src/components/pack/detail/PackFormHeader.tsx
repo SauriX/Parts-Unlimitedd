@@ -29,7 +29,7 @@ const PackFormHeader: FC<BranchFormHeaderProps> = ({ handlePrint, handleDownload
           title="Regresar"
           image="back"
           onClick={() => {
-            navigate(`${views.pack}`);
+            navigate(`/${views.pack}`);
           }}
         />,
       ]}
