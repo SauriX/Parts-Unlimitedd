@@ -357,7 +357,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                         {id &&<Pagination size="small" total={study.length} pageSize={1} current={actualStudy()} onChange={(value) => { siguienteStudy(value-1) }} />}
                         </Col>
                     {!disabled &&
-                        <Col md={12} sm={24} xs={12} style={id ? { textAlign: "right" } : { marginLeft: "84%" }}>
+                        <Col md={12} sm={24} xs={12} style={ { textAlign: "right" } }>
                             <Button onClick={() => { navigate(`/${views.study}`); }} >Cancelar</Button>
                             <Button type="primary" htmlType="submit" onClick={() => { form.submit() }}>
                                 Guardar
@@ -366,7 +366,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                     }
                     {disabled &&
                         <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
-                            <ImageButton key="edit" title="Editar" image="editar" onClick={() => { setDisabled(false); navigate(`/study/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`); }} />
+                            <ImageButton key="edit" title="Editar" image="editar" onClick={() => { setDisabled(false); navigate(`/${views.study}/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`); }} />
                         </Col>
                     }
                 </Row>
@@ -450,7 +450,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                             <SelectInput formProps={{ name: "metodo", label: "Método" }} options={MethodOptions} readonly={disabled} required />
                         </Col>
                         <Col md={9} sm={24} xs={8}>
-                            <SwitchInput name="visible" label="Visible" onChange={(value) => { if (value) { alerts.info(messages.confirmations.enable) } else { alerts.info(messages.confirmations.disable) } }} readonly={disabled} />
+                            <SwitchInput name="visible" label="Visible"  readonly={disabled} />
                         </Col>
                         <Col md={3} sm={24} xs={4}>
                             <NumberInput
@@ -503,8 +503,8 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                 max={9999999999999999}
                                 readonly={disabled}
                             />
-                            <SwitchInput name="prioridad" label="Prioridad" onChange={(value) => { if (value) { alerts.info(messages.confirmations.enable) } else { alerts.info(messages.confirmations.disable) } }} readonly={disabled} />
-                            <SwitchInput name="urgencia" label="Urgencia" onChange={(value) => { if (value) { alerts.info(messages.confirmations.enable) } else { alerts.info(messages.confirmations.disable) } }} readonly={disabled} />
+                            <SwitchInput name="prioridad" label="Prioridad"  readonly={disabled} />
+                            <SwitchInput name="urgencia" label="Urgencia"  readonly={disabled} />
                         </Col>
                         
                     </Row>
