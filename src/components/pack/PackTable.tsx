@@ -64,7 +64,7 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/${views.reagent}/${reagent.id}?${searchParams}&mode=readonly`);
+            navigate(`/${views.pack}/${reagent.id}?${searchParams}&mode=ReadOnly`);
           }}
         >
           {value}
@@ -108,7 +108,7 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
           title="Editar reactivo"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/${views.reagent}/${value}?${searchParams}&mode=edit`);
+            navigate(`/${views.pack}/${value}?${searchParams}&mode=edit`);
           }}
         />
       ),
