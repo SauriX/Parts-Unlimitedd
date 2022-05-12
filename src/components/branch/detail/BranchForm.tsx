@@ -30,7 +30,7 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
   const { getColoniesByZipCode } = locationStore;
   const { create, update, getAll, sucursales, getById } = branchStore;
   const [searchParams] = useSearchParams();
-  const { getdepartamentoOptions, departamentOptions } = optionStore;
+  const { getDepartmentOptions, departmentOptions } = optionStore;
   const [department, setDepartment] = useState<IBranchDepartment>();
   const navigate = useNavigate();
   const [form] = Form.useForm<IBranchForm>();
@@ -48,8 +48,8 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
     return result;
   };
   useEffect(() => {
-    getdepartamentoOptions();
-  }, [getdepartamentoOptions]);
+    getDepartmentOptions();
+  }, [getDepartmentOptions]);
 
   const deleteClinic = (id: number) => {
     const clinics = values.departamentos.filter((x) => x.departamentoId !== id);
@@ -434,7 +434,7 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
             <Col md={12} sm={24} style={{ marginRight: 20 }}>
               Nombre Departamento
               <Select
-                options={departamentOptions}
+                options={departmentOptions}
                 onChange={(value, option: any) => {
                   if (value) {
                     setDepartment({ departamentoId: value, departamento: option.label });

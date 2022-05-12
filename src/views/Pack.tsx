@@ -9,9 +9,8 @@ import PackTable from "../components/pack/PackTable";
 
 
 const Pack = () => {
-  const {  } = useStore();
-
-
+  const { packStore  } = useStore();
+  const { exportList,access,clearScopes,scopes }=packStore;
   const [searchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);
@@ -30,23 +29,23 @@ const Pack = () => {
 
   const handleDownload = async () => {
     setLoading(true);
-    //await exportList(searchParams.get("search") ?? "all");
+    await exportList(searchParams.get("search") ?? "all");
     setLoading(false);
   };
 
   useEffect(() => {
     const checkAccess = async () => {
-      //await access();
+      await access();
     };
 
     checkAccess();
-  }, [/* access */]);
+  }, [access]);
 
   useEffect(() => {
     return () => {
-      //clearScopes();
+      clearScopes();
     };
-  }, [/* clearScopes */]);
+  }, [clearScopes]);
 
   //if (!scopes?.acceder) return null;
 

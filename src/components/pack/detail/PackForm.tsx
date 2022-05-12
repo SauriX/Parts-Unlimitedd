@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Select, Input, Table } from "antd";
+import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Select, Input, Table, Checkbox } from "antd";
 import { List, Typography } from "antd";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
@@ -18,6 +18,8 @@ import { IPackEstudioList, IPackForm, PackFormValues } from "../../../app/models
 import views from "../../../app/util/view";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
+import Item from "antd/lib/list/Item";
+import Study from "../../../views/Study";
 
 const { Search } = Input;
 type PackFormProps = {
@@ -28,16 +30,16 @@ type UrlParams = {
   id: string;
 };
 const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
-  const { locationStore, branchStore, optionStore } = useStore();
-  const { getColoniesByZipCode } = locationStore;
-  const { create, update, getAll, sucursales, getById } = branchStore;
+  const { optionStore,packStore } = useStore();
+  const {getAll,getById,create,update,getAllStudy,packs,studies} = packStore;
+  const [lista, setLista] = useState(studies);
   const [searchParams] = useSearchParams();
-  const { getdepartamentoOptions, departamentOptions } = optionStore;
+  const { getDepartmentOptions, departmentOptions,getareaOptions,areas } = optionStore;
   const navigate = useNavigate();
   const [form] = Form.useForm<IPackForm>();
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
-  const [colonies, setColonies] = useState<IOptions[]>([]);
+  const [aeraSearch, setAreaSearch] = useState(areas);
   const [values, setValues] = useState<IPackForm>(new PackFormValues());
   let { id } = useParams<UrlParams>();
   const { width: windowWidth } = useWindowDimensions();
@@ -49,29 +51,47 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
     }
     return result;
   };
-  useEffect(() => {
-    getdepartamentoOptions();
-  }, [getdepartamentoOptions]);
-
-
 
   useEffect(() => {
-    const readuser = async (idUser: string) => {
+    getDepartmentOptions();
+  }, [getDepartmentOptions]);
+
+  useEffect(()=> {
+    const areareader = async () => {
+    await getareaOptions(0);
+    setAreaSearch(areas);
+    }
+      areareader();
+  }, [ getareaOptions]);
+  useEffect(() => {
+    const readStudy = async () =>{
+      console.log("inicio");
+      await getAllStudy();
+      console.log("fin");
+      console.log(studies);
+      setLista(studies);
+      
+      console.log(lista);
+    }
+    readStudy();
+  }, []);
+  useEffect(() => {
+    const readuser = async (idUser: number) => {
       setLoading(true);
       console.log("here");
-      const all = await getAll("all");
+       const all = await getAll("all");
       console.log(all);
       const user = await getById(idUser);
-      //form.setFieldsValue(user!);
-
-      //setValues(user!);
+      form.setFieldsValue(user!);
+      
+      setValues(user!);
       
       setLoading(false);
     };
     if (id) {
-      readuser(id);
+      readuser(Number(id));
     }
-  }, [/* form */, getById, id]);
+  }, [form, getById , id]);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -94,54 +114,100 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
       }),
     },
     {
-        ...getDefaultColumnProps("", "Área", {
+        ...getDefaultColumnProps("area", "Área", {
           searchState,
           setSearchState,
           width: "30%",
           windowSize: windowWidth,
         }),
-      },
+    },
+    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Añadir",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value,item) => (
+        <Checkbox
+          name="activo"
+          checked={item.activo}
+          onChange={(value)=>{ console.log(value.target.checked); var active= false; if(value.target.checked){ console.log("here"); active= true;}setStudy(active,item)}}
+        />
+      ),
+    }
   ];
 
+  const setStudy = (active:boolean,item:IPackEstudioList) =>{
 
+        var index = lista.findIndex(x=>x.id==item.id);
+        var list = lista;
+        item.activo=active;
+        list[index]=item;
+        setLista(list);
+        var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+        var val =values.estudio;
+        val[indexVal]=item;
+        setValues((prev) => ({ ...prev, estudio: val }));
+       
+  }
   const onValuesChange = async (changedValues: any) => {
     const field = Object.keys(changedValues)[0];
 
-    if (field === "codigoPostal") {
+    if (field === "departamentoId") {
       const value = changedValues[field];
+      await getareaOptions(value);
     }
   };
+  const filterByDepartament = (departament:string) => {
+    var departamento=departmentOptions.filter(x=>x.value===departament)[0].label;
 
+    var estudios = lista.filter(x=>x.departamento === departamento)
+    setValues((prev) => ({ ...prev, estudio: estudios }));
+  }
+  const filterByArea = (area:string) => {
+    var area=areas.filter(x=>x.value===area)[0].label;
+    var estudios = lista.filter(x=>x.area === area)
+    setValues((prev) => ({ ...prev, estudio: estudios }));
+  }
+  const filterBySearch = (search:string)=>{
+    var estudios = lista.filter(x=>x.clave.includes(search) || x.nombre.includes(search))
+    setValues((prev) => ({ ...prev, estudio: estudios }));
+  }
   const onFinish = async (newValues: IPackForm) => {
     setLoading(true);
-    //const User = { ...values, ...newValues };
-/*     let success = false;
-    if (!User.idSucursal) {
+    const User = { ...values, ...newValues };
+      User.estudio=lista.filter(x=>x.activo==true);
+      console.log(lista);
+      console.log(User);
+     let success = false;
+    if (!User.id) {
       success = await create(User);
     } else {
       success = await update(User);
-    } */
+    } 
 
     setLoading(false);
-/*     if (success) {
-      navigate(`/branches?search=${searchParams.get("search") || "all"}`);
-    } */
+    
+    if (success) {
+      navigate(`/${views.pack}?search=${searchParams.get("search") || "all"}`);
+    }
   };
   const actualUser = () => {
+    
     if (id) {
-      const index = sucursales.findIndex((x) => x.idSucursal === id);
-      return index + 1;
+      const index = packs.findIndex((x) => x.id === Number(id));
+      return  index +  1;
     }
     return 0;
   };
   const siguienteUser = (index: number) => {
-    const user = sucursales[index];
+     const user = packs[index];
 
     navigate(
-      `/branches/${user?.idSucursal}?mode=${searchParams.get("mode")}&search=${
+      `/${views.pack}/${user?.id}?mode=${searchParams.get("mode")}&search=${
         searchParams.get("search") ?? "all"
       }`
-    );
+    ); 
   };
   return (
     <Spin spinning={loading || load} tip={load ? "Imprimiendo" : ""}>
@@ -150,7 +216,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
             <Pagination
               size="small"
-              total={sucursales?.length ?? 0}
+              total={ packs?.length  ??  0}
               pageSize={1}
               current={actualUser()}
               onChange={(value) => {
@@ -163,7 +229,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
           <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
             <Button
               onClick={() => {
-                navigate(`/branches`);
+                navigate(`/${views.pack}`);
               }}
             >
               Cancelar
@@ -172,7 +238,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
               type="primary"
               htmlType="submit"
               onClick={() => {
-                //form.submit();
+                form.submit();
               }}
             >
               Guardar
@@ -186,7 +252,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
               title="Editar"
               image="editar"
               onClick={() => {
-                navigate(`/branches/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`);
+                navigate(`/${views.pack}/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`);
               }}
             />
           </Col>
@@ -209,12 +275,6 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
             initialValues={values}
             onFinish={onFinish}
             scrollToFirstError
-            onFieldsChange={() => {
-              setDisabled(
-                !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length).length > 0
-              );
-            }}
             onValuesChange={onValuesChange}
           >
             <Row>
@@ -248,14 +308,14 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
                   readonly={CheckReadOnly()}
                 />
                 <SelectInput
-                formProps={{ name: "departamentoId", label: "Departamento" }}
-                options={departamentOptions}
+                formProps={{ name: "idDepartamento", label: "Departamento" }}
+                options={departmentOptions}
                 readonly={CheckReadOnly()}
                 required
               />
                             <SelectInput
-                formProps={{ name: "areaId", label: "Área" }}
-                options={/* areas */[]}
+                formProps={{ name: "idArea", label: "Área" }}
+                options={areas}
                 readonly={CheckReadOnly()}
                 required
               />
@@ -293,16 +353,18 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
           <Row>
           <Col md={12} sm={24} xs={12}>
           <SelectInput
-                formProps={{ name: "departamentoId", label: "Búsqueda por :   Departamento" }}
-                options={departamentOptions}
+                formProps={{ name: "departamentoSearch", label: "Búsqueda por :   Departamento" }}
+                options={departmentOptions}
                 readonly={CheckReadOnly()}
+                onChange={(value)=>{filterByDepartament(value)}}
               />
               </Col>
               <Col md={12} sm={24} xs={12}>
                 <SelectInput
-                formProps={{ name: "areaId", label: "Área" }}
-                options={/* areas */[]}
+                formProps={{ name: "areaSearch", label: "Área" }}
+                options={aeraSearch}
                 readonly={CheckReadOnly()}
+                onChange={(value)=>{filterByArea(value)}}
               />
               </Col>
               <Col md={15} sm={24} xs={12}></Col>
@@ -311,7 +373,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
           key="search"
           placeholder="Buscar"
           onSearch={(value) => {
-            navigate(`/${views.pack}?search=${value}`);
+           filterBySearch(value)
           }}
         />,</Col>
             <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>

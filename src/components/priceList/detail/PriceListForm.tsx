@@ -409,7 +409,7 @@ const columns: IColumns<ISucMedComList> = [
 
           <Row justify="center">
             <Col md={12} sm={24} xs={12} >
-                <SelectInput  formProps={{ name: "departamento", label: "Busqueda por:   Departamento" }} options={departamentOptions} readonly={readonly} required />
+                <SelectInput  formProps={{ name: "departamento", label: "Busqueda por:   Departamento" }} options={departmentOptions} readonly={readonly} required />
                 </Col>
             <Col md={12} sm={24} xs={12}>
                 <SelectInput  formProps={{ name: "area", label: "Área" }} options={areas} readonly={readonly}  />

@@ -15,8 +15,8 @@ type UrlParams = {
 const PackDetail = () => {
   const [loading, setLoading] = useState(false);
   const componentRef = useRef<any>();
-  const {  } = useStore();
-
+  const { packStore } = useStore();
+  const { getById,exportForm } = packStore;
   let { id } = useParams<UrlParams>();
    
  
@@ -35,22 +35,22 @@ const PackDetail = () => {
     },
   });
   useEffect( () => {
-    const readuser = async (idUser: string) => {
-       //await getById(idUser);
+    const readuser = async (idUser: number) => {
+       await getById(idUser);
     };
     if (id) {
-      readuser(id);
+      readuser(Number(id));
     }
-  }, [/*  getById,id  */]);
+  }, [  getById,id  ]);
   const  handleDownload = async() => {
     
     console.log("download");
     setLoading(true);
-    //const succes = await exportForm(id!,"sucursal");
+    const succes = await exportForm(Number(id)!);
     
-/*     if(succes){
+     if(succes){
       setLoading(false);
-    } */
+    } 
   };
   return (
     <Fragment>

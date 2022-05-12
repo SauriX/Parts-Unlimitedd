@@ -50,8 +50,8 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
   const { parameterStore, optionStore } = useStore();
   const { getAll, parameters, getById, create, update } = parameterStore;
   const {
-    getdepartamentoOptions,
-    departamentOptions,
+    getDepartmentOptions,
+    departmentOptions,
     getareaOptions,
     areas,
     getReagentOptions,
@@ -106,10 +106,10 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
   }, [form, getById, id]);
   useEffect(() => {
     const readdepartments = async () => {
-      await getdepartamentoOptions();
+      await getDepartmentOptions();
     };
     readdepartments();
-  }, [getdepartamentoOptions]);
+  }, [getDepartmentOptions]);
   useEffect(() => {
     const readReagents = async () => {
       await getReagentOptions();
@@ -337,7 +337,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
             <Col md={12} sm={24} xs={12}>
               <SelectInput
                 formProps={{ name: "departamentoId", label: "Departamento" }}
-                options={departamentOptions}
+                options={departmentOptions}
                 readonly={CheckReadOnly()}
                 required
               />

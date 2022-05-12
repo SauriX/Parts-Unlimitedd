@@ -15,6 +15,7 @@ import ParameterStore from "./parameterStore"
 import MaquiladorStore from "./maquiladorStore";
 import StudyStore from "./studyStore";
 import PriceListStore from "./priceListStore";
+import PackStore from "./packStore";
 configure({
   enforceActions: "never",
 });
@@ -35,6 +36,7 @@ interface Store {
   maquiladorStore: MaquiladorStore;
   studyStore:StudyStore;
   priceListStore:PriceListStore;
+  packStore:PackStore
 }
 
 export const store: Store = {
@@ -52,7 +54,8 @@ export const store: Store = {
   parameterStore: new ParameterStore(),
   maquiladorStore: new MaquiladorStore(),
   studyStore: new StudyStore(),
-  priceListStore: new PriceListStore()
+  priceListStore: new PriceListStore(),
+  packStore: new PackStore()
 };
 
 export const StoreContext = createContext(store);
