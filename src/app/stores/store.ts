@@ -55,7 +55,7 @@ export const store: Store = {
   maquiladorStore: new MaquiladorStore(),
   studyStore: new StudyStore(),
   priceListStore: new PriceListStore(),
-  packStore: new PackStore()
+  packStore: new PackStore(),
 };
 
 export const StoreContext = createContext(store);

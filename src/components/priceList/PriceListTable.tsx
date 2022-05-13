@@ -113,14 +113,14 @@ const PriceListTable: FC<PriceListTableProps> = ({ componentRef, printing }) => 
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Lista de Precios" image="reagent" />}
+          title={<HeaderTitle title="Catálogo de Lista de Precios" image="ListaPrecio" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
         <Table<IPriceListList>
           size="small"
           rowKey={(record) => record.id}
-          columns={columns.slice(0, 4)}
+          columns={columns.slice(0, 3)}
           pagination={false}
           dataSource={[...priceLists]}
         />

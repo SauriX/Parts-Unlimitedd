@@ -1,7 +1,7 @@
 import { IBranchInfo } from "../models/branch";
 import { ICompanyList } from "../models/company";
 import { IMedicsList } from "../models/medics";
-import { IPriceListForm, IPriceListList } from "../models/priceList";
+import { IPriceListForm, IPriceListList, ISucMedComList } from "../models/priceList";
 import { IScopes } from "../models/shared";
 import requests from "./agent";
 
@@ -10,12 +10,12 @@ const PriceList = {
   getAll: (search: string): Promise<IPriceListList[]> => 
   requests.get(`price/all/${!search ? "all" : search}`),
 
-  getAllBrench: (search: string): Promise<IBranchInfo[]> => 
-  requests.get(`price/all/${!search ? "all" : search}`),
-  getAllMedics: (search: string): Promise<IMedicsList[]> => 
-  requests.get(`price/all/${!search ? "all" : search}`),
-  getAllCompany: (search: string): Promise<ICompanyList[]> => 
-  requests.get(`price/all/${!search ? "all" : search}`),
+  getAllBranch: (): Promise<ISucMedComList[]> => 
+  requests.get(`price/branch/`),
+  getAllMedics: (): Promise<ISucMedComList[]> => 
+  requests.get(`price/medics/`),
+  getAllCompany: (): Promise<ISucMedComList[]> => 
+  requests.get(`price/company/`),
 
   getActive: <Type extends IPriceListList>(catalogName: string): Promise<Type[]> =>
     requests.get(`price/${catalogName}/active`),
