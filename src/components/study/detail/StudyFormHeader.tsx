@@ -4,6 +4,7 @@ import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import {  PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
+import views from "../../../app/util/view";
 type StudyFormHeaderProps = {
   handlePrint: () => void;
   handleList:() => void;
@@ -27,7 +28,7 @@ const StudyFormHeader: FC<StudyFormHeaderProps> = ({ handlePrint,handleList }) =
                 title="Regresar"
                 image="back"
                 onClick={() => {
-                    navigate("/study");
+                    navigate(`/${views.study}`);
                 }}
             />,
         ]}

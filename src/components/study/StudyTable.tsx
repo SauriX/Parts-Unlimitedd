@@ -16,6 +16,7 @@ import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import { IStudyList } from "../../app/models/study";
+import views from "../../app/util/view";
 type StudyTableProps = {
     componentRef: React.MutableRefObject<any>;
     printing: boolean;
@@ -57,7 +58,7 @@ const StudyTable:FC<StudyTableProps> = ({  componentRef,  printing }) => {
           <Button
             type="link"
             onClick={() => {
-              navigate(`/study/${estudio.id}?mode=ReadOnly&search=${searchParams.get("search") ?? "all"}`);
+              navigate(`/${views.study}/${estudio.id}?mode=ReadOnly&search=${searchParams.get("search") ?? "all"}`);
             }}
           >
             {value}
@@ -152,7 +153,7 @@ const StudyTable:FC<StudyTableProps> = ({  componentRef,  printing }) => {
             title="Editar estudio"
             icon={<EditOutlined />}
             onClick={() => {
-              navigate(`/study/${parameter.id}?search=${searchParams.get("search") ?? "all"}`);
+              navigate(`/${views.study}/${parameter.id}?search=${searchParams.get("search") ?? "all"}`);
             }}
           />
         ),

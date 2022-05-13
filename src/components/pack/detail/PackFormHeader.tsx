@@ -22,14 +22,14 @@ const PackFormHeader: FC<BranchFormHeaderProps> = ({ handlePrint, handleDownload
       title={<HeaderTitle title="Catálogo Paquetes" image="paquete" />}
       className="header-container"
       extra={[
-        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />,
+        id?<ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />:"",
+        id?<ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />:"",
         <ImageButton
           key="back"
           title="Regresar"
           image="back"
           onClick={() => {
-            navigate(`${views.pack}`);
+            navigate(`/${views.pack}`);
           }}
         />,
       ]}

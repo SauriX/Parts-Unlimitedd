@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import PriceList from "../api/priceList";
-import { IPriceListForm, IPriceListList } from "../models/priceList";
+import { IPriceListForm, IPriceListList, ISucMedComList } from "../models/priceList";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
@@ -15,6 +15,7 @@ export default class PriceListStore {
 
   scopes?: IScopes;
   priceLists: IPriceListList[] = [];
+  sucMedCom: ISucMedComList[] = [];
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -102,6 +103,32 @@ export default class PriceListStore {
       } else {
         alerts.warning(getErrors(error));
       }
+    }
+  };
+
+  getAllBranch = async () => {
+    try {
+      PriceList.getAllBranch();
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return await PriceList.getAllBranch();
+    }
+    
+  };
+  getAllMedics = async () => {
+    try {
+      PriceList.getAllMedics();
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return await PriceList.getAllMedics();
+    }
+  };
+  getAllCompany = async () => {
+    try {
+      PriceList.getAllCompany();
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return await PriceList.getAllCompany();
     }
   };
 }

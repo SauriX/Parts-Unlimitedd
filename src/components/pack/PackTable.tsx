@@ -22,23 +22,8 @@ type ReagentTableProps = {
   printing: boolean;
 };
 const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
-  const  paquetes:IPacketList[] = [
-        {
-            id: 0,
-            clave: "test",
-            nombre: "test",
-            nombreCorto:"test",
-            activo: true
-        },
-        {
-            id: 0,
-            clave: "test",
-            nombre: "test",
-            nombreCorto:"test",
-            activo: true
-        }
-    ]
-  const {  } = useStore();
+  const { packStore } = useStore();
+  const { getAll,packs } = packStore;
   const [searchParams] = useSearchParams();
 
   let navigate = useNavigate();
@@ -57,15 +42,14 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
   useEffect(() => {
     const readReagents = async () => {
       setLoading(true);
-      //await getAll(searchParams.get("search") ?? "all");
+      await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
     };
 
- /*    if (reagents.length === 0) {
+     
       readReagents();
-    } */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+     
+  }, [getAll, searchParams]);
 
   const columns: IColumns<IPacketList> = [
     {
@@ -80,7 +64,7 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/${views.reagent}/${reagent.id}?${searchParams}&mode=readonly`);
+            navigate(`/${views.pack}/${reagent.id}?${searchParams}&mode=ReadOnly`);
           }}
         >
           {value}
@@ -97,7 +81,7 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-      ...getDefaultColumnProps("nombreCorto", "Nombre Corto", {
+      ...getDefaultColumnProps("nombreLargo", "Nombre largo", {
         searchState,
         setSearchState,
         width: "30%",
@@ -124,7 +108,7 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
           title="Editar reactivo"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/${views.reagent}/${value}?${searchParams}&mode=edit`);
+            navigate(`/${views.pack}/${value}?${searchParams}&mode=edit`);
           }}
         />
       ),
@@ -145,7 +129,7 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
           rowKey={(record) => record.clave}
           columns={columns.slice(0, 4)}
           pagination={false}
-          dataSource={[...paquetes]}
+          dataSource={packs}
         />
       </div>
     );
@@ -158,7 +142,7 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
         size="small"
         rowKey={(record) => record.clave}
         columns={columns}
-        dataSource={[...paquetes]}
+        dataSource={packs}
         pagination={defaultPaginationProperties}
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}

@@ -1,14 +1,8 @@
 import { makeAutoObservable } from "mobx";
-import Company from "../../views/Company";
 import Catalog from "../api/catalog";
 import Role from "../api/role";
 import { ICatalogNormalList } from "../models/catalog";
-import { IOptions, IScopes } from "../models/shared";
-import alerts from "../util/alerts";
-import history from "../util/history";
-import messages from "../util/messages";
-import responses from "../util/responses";
-import { getErrors } from "../util/utils";
+import { IOptions,  } from "../models/shared";
 import Parameter from "../api/parameter";
 import Reagent from "../api/reagent";
 import Maquilador from "../api/maquilador";
@@ -45,19 +39,6 @@ export default class OptionStore {
       this.clinicOptions = [];
     }
   };
-  departamentOptions: IOptions[] = [];
-  getdepartamentoOptions = async () => {
-    try {
-      const department = await Catalog.getActive<ICatalogNormalList>("department");
-      console.log("el depa1");
-      console.log(department);
-      this.departamentOptions = department.map((x) => ({ value: x.id, label: x.nombre }));
-      console.log("los depas mapeados");
-      console.log(this.departamentOptions);
-    } catch (error) {
-      this.departamentOptions = [];
-    }
-  };
   reagents: IOptions[] = [];
   getReagentOptions = async () => {
     try {
@@ -76,15 +57,19 @@ export default class OptionStore {
   getareaOptions = async (id?: number) => {
     console.log(id);
     try {
-      const department = await Catalog.getActive<ICatalogNormalList>("area/department/" + id);
+      let ruta =`area/department/${id}`
+      if(id==0){
+        ruta="area"
+      }
+      const area = await Catalog.getActive<ICatalogNormalList>(ruta);
       console.log("el depa1");
-      console.log(department);
-      this.areas = department.map((x) => ({
+      console.log(area);
+       var areas= area.map((x) => ({
         value: x.id,
         label: x.nombre,
       }));
-      console.log("los depas mapeados");
-      console.log(this.departamentOptions);
+      this.areas = areas;
+      return areas;
     } catch (error) {
       this.areas = [];
     }
@@ -164,6 +149,21 @@ export default class OptionStore {
       this.paymentOptions = payment.map((x) => ({ value: x.id, label: x.nombre }));
     } catch (error) {
       this.paymentOptions = [];
+    }
+  };
+
+  provenanceOptions: IOptions[] = [];
+
+  getprovenanceOptions = async () => {
+    try {
+      const procedencia = await Catalog.getActive<ICatalogNormalList>("provenance");
+      console.log(procedencia);
+      this.provenanceOptions = procedencia.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.provenanceOptions = [];
     }
   };
 

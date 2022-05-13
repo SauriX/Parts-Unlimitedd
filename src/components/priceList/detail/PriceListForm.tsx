@@ -32,6 +32,7 @@ import messages from "../../../app/util/messages";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
 import SelectInput from "../../../app/common/form/SelectInput";
+import NumberInput from "../../../app/common/form/NumberInput";
 
 type PriceListFormProps = {
   id: string;
@@ -46,9 +47,9 @@ const visibleOptions = [
 
 
 const radioOptions = [
-  { label: 'Sucursales', value: 'sucursal' },
-  { label: 'Medicos', value: 'medico' },
-  { label: 'Compañias', value: 'compañia' },
+  { label: 'Sucursales', value: 'branch' },
+  { label: 'Medicos', value: 'medic' },
+  { label: 'Compañias', value: 'company' },
 ];
 
 const PriceListForm: FC<PriceListFormProps> = ({
@@ -57,8 +58,8 @@ const PriceListForm: FC<PriceListFormProps> = ({
   printing,
 }) => {
   const { priceListStore, optionStore} = useStore();
-  const { priceLists, getById, getAll, create, update } = priceListStore;
-  const { getdepartamentoOptions, departamentOptions, /*getareaOptions,*/ areas, } = optionStore;
+  const { priceLists, getById, getAll, create, update, getAllBranch, getAllMedics, getAllCompany } = priceListStore;
+  const { getDepartmentOptions, departmentOptions, getareaOptions, areas, } = optionStore;
 
   const navigate = useNavigate();
 
@@ -79,6 +80,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
     const readPriceList = async (id: string) => {
       setLoading(true);
       const priceList = await getById(id);
+      // await getareaOptions(priceList?.estudio.area);
       form.setFieldsValue(priceList!);
       setValues(priceList!);
       setLoading(false);
@@ -89,18 +91,39 @@ const PriceListForm: FC<PriceListFormProps> = ({
     }
   }, [form, getById, id]);
 
-  useEffect(() => {
-    const readdepartments = async () => {
-        await getdepartamentoOptions();
-    }
-    readdepartments();
-});
+  // useEffect(() => {
+  //   const readdepartments = async () => {
+  //       await getdepartamentoOptions();
+  //   }
+  //   readdepartments();
+  // });
+  // useEffect(() => {
+  //   const readarea = async () => {
+  //       await getareaOptions();
+  //   }
+  //   readarea();
+  // });
+// },
 // [getdepartamentoOptions]);
 // useEffect(() => {
 //     const readdepartments = async () => {
 //         await getdepartamentoOptions();
 //     }
 //     readdepartments();
+// }, [getareaOptions]);
+
+useEffect(() => {
+  const readdepartments = async () => {
+    await getDepartmentOptions();
+    await getareaOptions();
+  };
+  readdepartments();
+}, [getDepartmentOptions, getareaOptions]);
+// useEffect(() => {
+//   const readReagents = async () => {
+//     await getReagentOptions();
+//   };
+//   readReagents();
 // }, [getareaOptions]);
 
   useEffect(() => {
@@ -128,22 +151,6 @@ const PriceListForm: FC<PriceListFormProps> = ({
       goBack();
     }
   };
-
-//   const onChange = (newValues: IPriceListForm) => {
-
-//   }
-
-  //   onChange = e => {
-  //   getAll(MedicList);
-  //   };
-
-  // onChange2 = e => {
-  //   getAll(SucursalList);
-  // };
-
-  // onChange3 = e => {
-  //   getAll(CompanyList);
-  // };
 
   const goBack = () => {
     searchParams.delete("mode");
@@ -199,9 +206,9 @@ const columns: IColumns<ISucMedComList> = [
       windowSize: windowWidth,
     })
     ,
-      render: (value, priceList) => (
+      render: () => (
         <Checkbox>
-          
+
         </Checkbox>
          
       ),
@@ -230,15 +237,26 @@ const columns: IColumns<ISucMedComList> = [
       }),
     },
     {
-      ...getDefaultColumnProps("", "Precio", {
+      ...getDefaultColumnProps("precio", "Precio", {
         searchState,
         setSearchState,
         width: "30%",
         windowSize: windowWidth,
       }),
+      render: () => (
+        <NumberInput
+          formProps={{
+          name: "cantidad"
+          }}
+          min={0}
+          max={9999999999999999}
+          readonly={readonly}
+          />
+         
+      ),
     },
     {
-        ...getDefaultColumnProps("", "Area", {
+        ...getDefaultColumnProps("area", "Area", {
           searchState,
           setSearchState,
           width: "30%",
@@ -321,9 +339,6 @@ const columns: IColumns<ISucMedComList> = [
                   required
                   readonly={readonly}
                 />
-              </Col>
-              <Col md={12} sm={24} xs={12}></Col>
-              <Col md={12} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "nombre",
@@ -333,19 +348,7 @@ const columns: IColumns<ISucMedComList> = [
                   required
                   readonly={readonly}
                 />
-              </Col>
-              <Col md={12} sm={24} xs={12}></Col>
-              <Col md={12} sm={24} xs={12}>
-                <Radio.Group
-                  options={visibleOptions}
-                  onChange={(e) => {
-                    setVisibleType(e.target.value);
-                  }}
-                  value={visibleType}
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}></Col>
-              <Col md={12} sm={24} xs={12}>
+                
                 <SwitchInput
                   name="activo"
                   onChange={(value) => {
@@ -359,13 +362,33 @@ const columns: IColumns<ISucMedComList> = [
                   readonly={readonly}
                 />
               </Col>
+              <Col md={12} sm={24} xs={12}>
+
+                <Radio.Group
+                  options={visibleOptions}
+                  onChange={(e) => {
+                    setVisibleType(e.target.value);
+                  }}
+                  value={visibleType}
+                />
+              </Col>
             </Row>
           </Form>
           <Row justify="center">
             <Radio.Group
             options={radioOptions}
-            //onChange={this.onChange}
-            value={values}
+            onChange={ (e) =>{ 
+              if (e.target.value === "branch" ){
+              getAllBranch();
+            }
+             if (e.target.value === "medic" ){
+              getAllMedics();
+            }
+            if (e.target.value === "company" ){
+              getAllCompany();
+            }
+            
+          }}
             optionType="button"
             buttonStyle="solid"
             />
@@ -386,10 +409,10 @@ const columns: IColumns<ISucMedComList> = [
 
           <Row justify="center">
             <Col md={12} sm={24} xs={12} >
-                <SelectInput  formProps={{ name: "departamento", label: "Busqueda por:   Departamento" }} options={departamentOptions} readonly={readonly} required />
+                <SelectInput  formProps={{ name: "departamento", label: "Busqueda por:   Departamento" }} options={departmentOptions} readonly={readonly} required />
                 </Col>
             <Col md={12} sm={24} xs={12}>
-                <SelectInput  formProps={{ name: "area", label: "Área" }} options={areas} readonly={readonly} required />
+                <SelectInput  formProps={{ name: "area", label: "Área" }} options={areas} readonly={readonly}  />
                 </Col>
           </Row>
           

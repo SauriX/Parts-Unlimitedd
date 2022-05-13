@@ -28,7 +28,7 @@ export interface IMaquiladorForm {
   coloniaId?: number;
   correo?: string;
   paginaWeb?: string;
-  telefono: string;
+  telefono?: string;
   activo: boolean;
 }
 export class MaquiladorFormValues implements IMaquiladorForm {
@@ -42,9 +42,9 @@ export class MaquiladorFormValues implements IMaquiladorForm {
   numeroInterior = "";
   calle = "";
   coloniaId = undefined;
-  correo = undefined;
+  correo = "";
   paginaWeb: undefined;
-  telefono = "";
+  telefono = undefined;
   activo = true;
 
   constructor(init?: IMaquiladorForm) {
