@@ -350,7 +350,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
     ];
     return(
         <Spin spinning={loading || load}>
-            <div ref={componentRef}>
+            
             <Row style={{ marginBottom: 24 }}>
                     
                         <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
@@ -370,6 +370,16 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                         </Col>
                     }
                 </Row>
+                <div style={{ display: load ? "none" : "" }}>
+                <div ref={componentRef}>
+                {load && (
+                    <PageHeader
+                    ghost={false}
+                    title={<HeaderTitle title="Catálogo Estudios" image="estudios" />}
+                    className="header-container"
+                    ></PageHeader>
+                )}
+                {load && <Divider className="header-divider" />}
                 <Form<IStudyForm>
                     {...formItemLayout}
                     form={form}
@@ -527,7 +537,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                     }}
                                     style={{ width: 240, marginRight: 20,marginLeft: 10 }}
                                 />
-                                {!disabled&& (
+                                {!disabled||!load&& (
                                     <ImageButton
                                         key="agregar"
                                         title="Agregar lista de trabajo"
@@ -578,7 +588,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                     }}
                                     style={{ width: 240, marginRight: 20,marginLeft: 10 }}
                                 />
-                                {!disabled&& (
+                                {!disabled||!load&& (
                                     <ImageButton
                                         key="agregar"
                                         title="Agregar Parametro"
@@ -629,7 +639,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                     }}
                                     style={{ width: 240, marginRight: 20,marginLeft: 10 }}
                                 />
-                                {!disabled&& (
+                                {!disabled||!load&& (
                                     <ImageButton
                                         key="agregar"
                                         title="Agregar Clinica"
@@ -680,7 +690,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                     }}
                                     style={{ width: 240, marginRight: 20,marginLeft: 10 }}
                                 />
-                                {!disabled&& (
+                                {!disabled||!load&& (
                                     <ImageButton
                                         key="agregar"
                                         title="Agregar Reactivo"
@@ -730,6 +740,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                         />
                     </Col>
                 </Row>
+            </div>
             </div>
         </Spin>
     );

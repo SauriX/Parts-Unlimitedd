@@ -40,6 +40,8 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [aeraSearch, setAreaSearch] = useState(areas);
+  const [areaForm, setAreaForm] = useState<IOptions[]>([]);
+  const [areaId, setAreaId] = useState<number>();
   const [values, setValues] = useState<IPackForm>(new PackFormValues());
   let { id } = useParams<UrlParams>();
   const { width: windowWidth } = useWindowDimensions();
@@ -63,39 +65,70 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
     }
       areareader();
   }, [ getareaOptions]);
-  useEffect(() => {
+  const setStudy = (active:boolean,item:IPackEstudioList) =>{
+
+    var index = lista.findIndex(x=>x.id==item.id);
+    var list = lista;
+    item.activo=active;
+    list[index]=item;
+    setLista(list);
+    var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+    var val =values.estudio;
+    val[indexVal]=item;
+    setValues((prev) => ({ ...prev, estudio: val }));
+   
+}
+useEffect(() => {
+  const readuser = async (idUser: number) => {
+    setLoading(true);
+    console.log("here");
+     const all = await getAll("all");
+    console.log(all);
+    var studis =await getAllStudy();
+    var areaForm=await getareaOptions(values.idDepartamento);
+      
+    const user = await getById(idUser);
+    form.setFieldsValue(user!);
+    studis=studis?.map(x=>{
+      var activo = user?.estudio.find(y=>y.id===x.id)!=null;
+      return ({...x,activo})
+    });
+    setAreaForm(areaForm!);
+    setValues(user!);
+    setLista(studis!);
+    setLoading(false);
+    console.log(studis);
+  };
+  if (id) {
+    readuser(Number(id));
+  }
+}, [form, getById , id]);
+  /* useEffect(() => {
     const readStudy = async () =>{
       console.log("inicio");
       await getAllStudy();
       console.log("fin");
       console.log(studies);
       setLista(studies);
-      
+      console.log("useeffect");
+      values.estudio.forEach(x=>{
+        if(x.activo){
+          console.log("entro");
+          console.log(x);
+          setStudy(x.activo,x);
+        }
+      });
       console.log(lista);
     }
     readStudy();
-  }, []);
-  useEffect(() => {
-    const readuser = async (idUser: number) => {
-      setLoading(true);
-      console.log("here");
-       const all = await getAll("all");
-      console.log(all);
-      const user = await getById(idUser);
-      form.setFieldsValue(user!);
-      
-      setValues(user!);
-      
-      setLoading(false);
-    };
-    if (id) {
-      readuser(Number(id));
-    }
-  }, [form, getById , id]);
+  }, []); */
+  
+
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
+  
   const columnsEstudios: IColumns<IPackEstudioList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
@@ -137,36 +170,36 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
     }
   ];
 
-  const setStudy = (active:boolean,item:IPackEstudioList) =>{
 
-        var index = lista.findIndex(x=>x.id==item.id);
-        var list = lista;
-        item.activo=active;
-        list[index]=item;
-        setLista(list);
-        var indexVal= values.estudio.findIndex(x=>x.id==item.id);
-        var val =values.estudio;
-        val[indexVal]=item;
-        setValues((prev) => ({ ...prev, estudio: val }));
-       
-  }
   const onValuesChange = async (changedValues: any) => {
     const field = Object.keys(changedValues)[0];
 
-    if (field === "departamentoId") {
+    if (field === "idDepartamento") {
+      console.log("deparatemento");
       const value = changedValues[field];
-      await getareaOptions(value);
+      var areaForm=await getareaOptions(value);
+      setAreaForm(areaForm!);
+      form.setFieldsValue({idArea:undefined});
+
     }
   };
-  const filterByDepartament = (departament:string) => {
+  const filterByDepartament = async (departament:number) => {
+    if(departament){
     var departamento=departmentOptions.filter(x=>x.value===departament)[0].label;
-
+    var areaSearch=await getareaOptions(departament);
+    
     var estudios = lista.filter(x=>x.departamento === departamento)
     setValues((prev) => ({ ...prev, estudio: estudios }));
+    setAreaSearch(areaSearch!);}else{
+      var estudios = lista.filter(x=>x.activo === true);
+      setValues((prev) => ({ ...prev, estudio: estudios }));
+     
+    }
+    
   }
-  const filterByArea = (area:string) => {
-    var area=areas.filter(x=>x.value===area)[0].label;
-    var estudios = lista.filter(x=>x.area === area)
+  const filterByArea = (area:number) => {
+    var areaActive=areas.filter(x=>x.value===area)[0].label;
+    var estudios = lista.filter(x=>x.area === areaActive)
     setValues((prev) => ({ ...prev, estudio: estudios }));
   }
   const filterBySearch = (search:string)=>{
@@ -176,7 +209,10 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
   const onFinish = async (newValues: IPackForm) => {
     setLoading(true);
     const User = { ...values, ...newValues };
+
       User.estudio=lista.filter(x=>x.activo==true);
+
+      console.log("finish ");
       console.log(lista);
       console.log(User);
      let success = false;
@@ -315,7 +351,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
               />
                             <SelectInput
                 formProps={{ name: "idArea", label: "Área" }}
-                options={areas}
+                options={areaForm}
                 readonly={CheckReadOnly()}
                 required
               />
@@ -326,7 +362,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
                 label="Visible"
                 onChange={(value) => {
                   if (value) {
-                    alerts.info("El paquete sera visble en la web");
+                    alerts.info("El paquete será visble en la web");
                   } else {
                     alerts.info("El paquete ya no visble en la web");
                   }
@@ -351,20 +387,28 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
           </Form>
           <Divider orientation="left">Estudios</Divider>
           <Row>
-          <Col md={12} sm={24} xs={12}>
-          <SelectInput
-                formProps={{ name: "departamentoSearch", label: "Búsqueda por :   Departamento" }}
+          <Col md={4} sm={24} xs={12}>
+          Búsqueda por :   
+          </Col>
+          <Col md={9} sm={24} xs={12}>
+          <SelectInput 
+                formProps={{ name: "departamentoSearch", label: "Departamento" }}
                 options={departmentOptions}
                 readonly={CheckReadOnly()}
-                onChange={(value)=>{filterByDepartament(value)}}
+                onChange={(value)=>{setAreaId(undefined); filterByDepartament(value)}}
               />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <SelectInput
-                formProps={{ name: "areaSearch", label: "Área" }}
+
+              </Col> 
+              <Col md={2} sm={24} xs={12}></Col>
+              <Col md={9} sm={24} xs={12}>
+                <label htmlFor="">Área: </label>
+                <Select
+                /* formProps={{ name: "areaSearch", label: "Área" }} */
                 options={aeraSearch}
-                readonly={CheckReadOnly()}
-                onChange={(value)=>{filterByArea(value)}}
+                disabled={CheckReadOnly()}
+                onChange={(value)=>{ setAreaId(value); filterByArea(value)}}
+                value={areaId}
+                style={{width:"400px"}}
               />
               </Col>
               <Col md={15} sm={24} xs={12}></Col>

@@ -49,7 +49,7 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
      
       readReagents();
      
-  }, []);
+  }, [getAll, searchParams]);
 
   const columns: IColumns<IPacketList> = [
     {

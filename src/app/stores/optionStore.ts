@@ -70,10 +70,12 @@ export default class OptionStore {
       const area = await Catalog.getActive<ICatalogNormalList>(ruta);
       console.log("el depa1");
       console.log(area);
-      this.areas = area.map((x) => ({
+       var areas= area.map((x) => ({
         value: x.id,
         label: x.nombre,
       }));
+      this.areas = areas;
+      return areas;
     } catch (error) {
       this.areas = [];
     }

@@ -68,7 +68,7 @@ export default class PackStore {
         const roles= await Study.getAll("all");
         console.log(roles);
         console.log(roles);
-        this.studies= roles.map((x) => {
+        var studies= roles.map((x) => {
             let data:IPackEstudioList = {
                 id: x.id,
                 clave: x.clave,
@@ -78,7 +78,8 @@ export default class PackStore {
                 activo: false,
             }
             return data;});
-
+            this.studies=studies;
+            return studies
             console.log("estudios");
             console.log(this.studies);
       } catch (error: any) {
