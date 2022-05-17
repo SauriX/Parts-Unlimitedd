@@ -16,6 +16,8 @@ export interface IPriceListForm {
     clave: string;
     nombre: string;
     visibilidad: boolean;
+    idArea:number,
+    idDepartamento:number,
     activo: boolean;
     estudio: IPriceListEstudioList[];
     sucMedCom: ISucMedComList[];
@@ -26,6 +28,8 @@ export interface IPriceListForm {
     clave= "";
     nombre= "";
     visibilidad= true
+    idArea=0;
+    idDepartamento=0;
     activo= true;
     estudio: IPriceListEstudioList[] = [];
     sucMedCom: ISucMedComList[] = [];
@@ -39,13 +43,18 @@ export interface ISucMedComList {
   id: string;
   clave: string;
   nombre: string;
+  area:string;
+  activo: boolean;
+  departamento: string;
 }
 
 
 export interface IPriceListEstudioList {
-  id: string;
+  id:number | string;
   clave: string;
   nombre: string;
-  precio:number;
+  precio?:number;
   area:string;
+  activo: boolean;
+  departamento: string;
 }
