@@ -92,7 +92,7 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
     {
       key: "activo",
       dataIndex: "activo",
-      title: "Activo",
+      title: "Áctivo",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (value ? "Sí" : "No"),
