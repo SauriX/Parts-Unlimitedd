@@ -35,16 +35,16 @@ const CompanyDetail = () => {
   });
 
   const { id } = useParams<UrlParams>();
-  const companyId = !id ? 0 : isNaN(Number(parseInt(id))) ? undefined : parseInt(id);
+  const companyId = !id ? undefined : (id);
 
   useEffect(() => {
     console.log(companyId);
-    if (companyId === undefined) {
-      navigate("/notFound");
-    }
+    // if (companyId === undefined) {
+    //   navigate("/notFound");
+    // }
   }, [navigate, companyId]);
 
-  if (companyId === undefined) return null;
+  //if (companyId === undefined) return null;
 
   
   return (

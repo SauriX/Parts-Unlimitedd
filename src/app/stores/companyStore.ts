@@ -44,7 +44,7 @@ export default class CompanyStore {
       }
     };
   
-    getById = async (id: number) => {
+    getById = async (id: string) => {
       try {
         const company = await Company.getById(id);
         return company;
@@ -84,7 +84,7 @@ export default class CompanyStore {
       }
     };
   
-    exportForm = async (id: number) => {
+    exportForm = async (id: string) => {
       try {
         await Company.exportForm(id, "Formulario");
       } catch (error: any) {

@@ -45,7 +45,7 @@ const MedicsHeader: FC<MedicsHeaderProps> = ({ handlePrint, }) => {
           key="new"
           type="primary"
           onClick={() => {
-            navigate("/medics/0");
+            navigate("/medics/new");
           }}
           icon={<PlusOutlined />}
         >
