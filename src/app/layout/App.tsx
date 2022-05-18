@@ -39,6 +39,8 @@ import Pack from "../../views/Pack";
 import PackDetail from "../../components/pack/detail/PackDetail";
 import PriceList from "../../views/PriceList";
 import PriceListDetail from "../../components/priceList/detail/PriceListDetail";
+import Promotion from "../../views/Promotion";
+import PromotionDetail from "../../components/promotion/detail/PromotionDetail";
 
 function App() {
   const { profileStore } = useStore();
@@ -114,6 +116,9 @@ function App() {
           <Route path="packs" element={<Pack/>} />
           <Route path="packs/new-pack" element={<PackDetail/>} />
           <Route path="packs/:id" element={<PackDetail/>} />
+          <Route path="promos" element={<Promotion/>} />
+          <Route path="promos/new" element={<PromotionDetail/>} />
+          <Route path="promos/:id" element={<PromotionDetail/>} />
           <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
           <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
           <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />

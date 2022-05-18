@@ -8,6 +8,7 @@ import Reagent from "../api/reagent";
 import Maquilador from "../api/maquilador";
 import Tapon from "../api/tapon";
 import Indication from "../api/indication";
+import PriceList from "../api/priceList";
 
 export default class OptionStore {
   constructor() {
@@ -278,6 +279,20 @@ export default class OptionStore {
       }));
     } catch (error) {
       this.sampleTypeOptions = [];
+    }
+  };
+
+  priceListOptions:IOptions[]=[];
+
+  getPriceListOptions = async () => {
+    try{
+      const priceListOptions =await PriceList.getActive();
+      this.priceListOptions= priceListOptions.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+    }catch(error){
+      this.priceListOptions=[]
     }
   };
 }
