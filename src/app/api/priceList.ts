@@ -17,8 +17,8 @@ const PriceList = {
   getAllCompany: (): Promise<ISucMedComList[]> => 
   requests.get(`price/company/`),
 
-  getActive: <Type extends IPriceListList>(catalogName: string): Promise<Type[]> =>
-    requests.get(`price/${catalogName}/active`),
+  getActive: <Type extends IPriceListList>(): Promise<Type[]> =>
+    requests.get(`price/active`),
   getById: (id: string): Promise<IPriceListForm> => requests.get(`price/${id}`),
   create: (priceList: IPriceListForm): Promise<IPriceListList> => requests.post("price", priceList),
   update: (priceList: IPriceListForm): Promise<IPriceListList> => requests.put("price", priceList),
