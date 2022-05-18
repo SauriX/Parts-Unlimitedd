@@ -9,7 +9,7 @@ import { useStore } from "../../../app/stores/store";
 const { Search } = Input;
 type MedicsFormHeaderProps = {
   handlePrint: () => void;
-  id : number;
+  id : string;
 };
 
 const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({id, handlePrint }) => {
@@ -33,7 +33,7 @@ const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({id, handlePrint }) => {
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        id !=0 ?
+        id !== "0" ?
         <ImageButton key="doc" title="Informe" image="doc" onClick={download}  />:'',
         <ImageButton
           key="back"

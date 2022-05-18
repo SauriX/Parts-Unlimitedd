@@ -11,6 +11,7 @@ import {
   Table,
   Input,
   Checkbox,
+  Select,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
@@ -135,7 +136,10 @@ useEffect(() => {
   setAreaForm(areaForm!);
   console.log(studis);
   };
-}, []);
+  if (id) {
+    readuser(String(id));
+  }
+}, [form, getById , id]);
 
   useEffect(() => {
     if (priceLists.length === 0) {
@@ -228,6 +232,38 @@ const columns: IColumns<ISucMedComList> = [
   },
 ];
 
+const onValuesChange = async (changedValues: any) => {
+  const field = Object.keys(changedValues)[0];
+
+  if (field === "idDepartamento") {
+    console.log("deparatemento");
+    const value = changedValues[field];
+    var areaForm=await getareaOptions(value);
+    setAreaForm(areaForm!);
+    form.setFieldsValue({idArea:undefined});
+
+  }
+};
+
+const filterByDepartament = async (departament:number) => {
+  if(departament){
+  var departamento=departmentOptions.filter(x=>x.value===departament)[0].label;
+  var areaSearch=await getareaOptions(departament);
+  
+  var estudios = lista.filter(x=>x.departamento === departamento)
+  setValues((prev) => ({ ...prev, estudio: estudios }));
+  setAreaSearch(areaSearch!);}else{
+    var estudios = lista.filter(x=>x.activo === true);
+    setValues((prev) => ({ ...prev, estudio: estudios }));
+   
+  }
+  
+}
+const filterByArea = (area:number) => {
+  var areaActive=areas.filter(x=>x.value===area)[0].label;
+  var estudios = lista.filter(x=>x.area === areaActive)
+  setValues((prev) => ({ ...prev, estudio: estudios }));
+}
 
   ///tabla Estudios/paquete
   console.log("Table");
@@ -345,6 +381,7 @@ const columns: IColumns<ISucMedComList> = [
             initialValues={values}
             onFinish={onFinish}
             scrollToFirstError
+            onValuesChange={onValuesChange}
           >
             <Row>
               <Col md={12} sm={24} xs={12}>
@@ -431,12 +468,31 @@ const columns: IColumns<ISucMedComList> = [
             </Col>
           </Row>
 
+          
+          <Divider orientation="left">Estudios</Divider>
           <Row justify="center">
-            <Col md={12} sm={24} xs={12} >
-                <SelectInput  formProps={{ name: "departamento", label: "Busqueda por:   Departamento" }} options={departmentOptions} readonly={readonly} required />
+          <Col md={4} sm={24} xs={12}>
+          Búsqueda por :   
+          </Col>
+          <Col md={9} sm={24} xs={12}>
+                <SelectInput  
+                formProps={{ name: "departamento", label: "Departamento" }} 
+                options={departmentOptions} 
+                readonly={readonly} 
+                required 
+                onChange={(value)=>{setAreaId(undefined); filterByDepartament(value)}}
+                />
                 </Col>
-            <Col md={12} sm={24} xs={12}>
-                <SelectInput  formProps={{ name: "area", label: "Área" }} options={areas} readonly={readonly}  />
+            <Col md={2} sm={24} xs={12}></Col>
+            <Col md={9} sm={24} xs={12}>
+              <label htmlFor="">Área: </label>
+                <Select
+                //formProps={{ name: "area", label: "Área" }} 
+                options={areas} 
+                onChange={(value)=>{ setAreaId(value); filterByArea(value)}}
+                value={areaId}
+                style={{width:"400px"}}
+                disabled={readonly}  />
                 </Col>
           </Row>
           

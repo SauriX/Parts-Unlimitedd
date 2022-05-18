@@ -91,8 +91,10 @@ function App() {
           <Route path="catalogs/:id" element={<CatalogDetail />} />
           <Route path="medics" element={<Medics />} />
           <Route path="medics/:id" element={<MedicsDetail />} />
+          <Route path="medics/new" element={<MedicsDetail />} />
           <Route path="companies" element={<Company />} />
           <Route path="companies/:id" element={<CompanyDetail />} />
+          <Route path="companies/new" element={<CompanyDetail />} />
           <Route path="indications" element={<Indication />} />
           <Route path="indications/:id" element={<IndicationDetail />} />
           <Route path="roles/new-role" element={<NewRole />} />
