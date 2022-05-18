@@ -9,6 +9,7 @@ import {
   Divider,
   Radio,
   Table,
+  Input,
   Checkbox,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
@@ -33,6 +34,9 @@ import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
 import SelectInput from "../../../app/common/form/SelectInput";
 import NumberInput from "../../../app/common/form/NumberInput";
+import user from "../../../app/api/user";
+import { IOptions } from "../../../app/models/shared";
+const { Search } = Input;
 
 type PriceListFormProps = {
   id: string;
@@ -58,13 +62,15 @@ const PriceListForm: FC<PriceListFormProps> = ({
   printing,
 }) => {
   const { priceListStore, optionStore} = useStore();
-  const { priceLists, getById, getAll, create, update, getAllBranch, getAllMedics, getAllCompany } = priceListStore;
+  const { priceLists, getById, getAll, create, update,getAllStudy, getAllBranch, getAllMedics, getAllCompany, studies } = priceListStore;
   const { getDepartmentOptions, departmentOptions, getareaOptions, areas, } = optionStore;
-
+  const [aeraSearch, setAreaSearch] = useState(areas);
+  const [areaForm, setAreaForm] = useState<IOptions[]>([]);
+  const [areaId, setAreaId] = useState<number>();
   const navigate = useNavigate();
 
   const [searchParams, setSearchParams] = useSearchParams();
-
+  const [lista, setLista] = useState(studies);
   const [form] = Form.useForm<IPriceListForm>();
 
   const [loading, setLoading] = useState(false);
@@ -75,7 +81,19 @@ const PriceListForm: FC<PriceListFormProps> = ({
     new PriceListFormValues()
   );
   const [visibleType, setVisibleType] = useState<"visible" | "web">("visible");
+  const setStudy = (active:boolean,item:IPriceListEstudioList) =>{
 
+    var index = lista.findIndex(x=>x.id===item.id);
+    var list = lista;
+    item.activo=active;
+    list[index]=item;
+    setLista(list);
+    var indexVal= values.estudio.findIndex(x=>x.id===item.id);
+    var val =values.estudio;
+    val[indexVal]=item;
+    setValues((prev) => ({ ...prev, estudio: val }));
+   
+}
   useEffect(() => {
     const readPriceList = async (id: string) => {
       setLoading(true);
@@ -91,40 +109,33 @@ const PriceListForm: FC<PriceListFormProps> = ({
     }
   }, [form, getById, id]);
 
-  // useEffect(() => {
-  //   const readdepartments = async () => {
-  //       await getdepartamentoOptions();
-  //   }
-  //   readdepartments();
-  // });
-  // useEffect(() => {
-  //   const readarea = async () => {
-  //       await getareaOptions();
-  //   }
-  //   readarea();
-  // });
-// },
-// [getdepartamentoOptions]);
-// useEffect(() => {
-//     const readdepartments = async () => {
-//         await getdepartamentoOptions();
-//     }
-//     readdepartments();
-// }, [getareaOptions]);
+  useEffect(() => {
+    getDepartmentOptions();
+  }, [getDepartmentOptions]);
+
+  useEffect(()=> {
+    const areareader = async () => {
+    await getareaOptions(0);
+    setAreaSearch(areas);
+    }
+      areareader();
+  }, [ getareaOptions]);
 
 useEffect(() => {
-  const readdepartments = async () => {
-    await getDepartmentOptions();
-    await getareaOptions();
+  const readuser = async (idUser: string) => {
+  var studis = await getAllStudy();
+  var areaForm=await getareaOptions(values.idDepartamento);
+  const user = await getById(idUser);
+  form.setFieldsValue(user!);
+  studis=studis?.map(x=>{
+    var activo = user?.estudio.find(y=>y.id===x.id)!=null;
+    return ({...x,activo})
+  });
+  setLista(studis!);  
+  setAreaForm(areaForm!);
+  console.log(studis);
   };
-  readdepartments();
-}, [getDepartmentOptions, getareaOptions]);
-// useEffect(() => {
-//   const readReagents = async () => {
-//     await getReagentOptions();
-//   };
-//   readReagents();
-// }, [getareaOptions]);
+}, []);
 
   useEffect(() => {
     if (priceLists.length === 0) {
@@ -206,10 +217,12 @@ const columns: IColumns<ISucMedComList> = [
       windowSize: windowWidth,
     })
     ,
-      render: () => (
-        <Checkbox>
-
-        </Checkbox>
+      render: (value, item) => (
+        <Checkbox
+        name="activo"
+        checked={item.activo}
+        onChange={(value)=>{ console.log(value.target.checked); var active= false; if(value.target.checked){ console.log("here"); active= true;}setStudy(active,item)}}
+      />
          
       ),
   },
@@ -264,6 +277,11 @@ const columns: IColumns<ISucMedComList> = [
         }),
       },
   ];
+
+  const filterBySearch = (search:string)=>{
+    var estudios = lista.filter(x=>x.clave.includes(search) || x.nombre.includes(search))
+    setValues((prev) => ({ ...prev, estudio: estudios }));
+  }
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
@@ -339,6 +357,7 @@ const columns: IColumns<ISucMedComList> = [
                   required
                   readonly={readonly}
                 />
+                <Col md={12} sm={24} xs={12}></Col>
                 <TextInput
                   formProps={{
                     name: "nombre",
@@ -348,7 +367,7 @@ const columns: IColumns<ISucMedComList> = [
                   required
                   readonly={readonly}
                 />
-                
+                <Col md={12} sm={24} xs={12}></Col>
                 <SwitchInput
                   name="activo"
                   onChange={(value) => {
@@ -370,6 +389,7 @@ const columns: IColumns<ISucMedComList> = [
                     setVisibleType(e.target.value);
                   }}
                   value={visibleType}
+                  
                 />
               </Col>
             </Row>
@@ -394,16 +414,20 @@ const columns: IColumns<ISucMedComList> = [
             />
 
             </Row>
+            <Row><Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}></Col></Row>
+            <Row><Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}></Col></Row>
             <Row>
             <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
                 <Table<ISucMedComList>
-                size="small"
+                size="large"
                 rowKey={(record) => record.id}
                 columns={columns.slice(0, 3)}
                 pagination={false}
                 dataSource={[...(values.sucMedCom ?? [])]}
                 scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
                 />
+                {/* <Divider className="header-divider"/>
+                <Divider className="header-divider"/> */}
             </Col>
           </Row>
 
@@ -416,11 +440,20 @@ const columns: IColumns<ISucMedComList> = [
                 </Col>
           </Row>
           
-
           <Row>
+            <Col md={15} sm={24} xs={12}></Col>
+              <Col md={9} sm={24} xs={12}>
+              <Search
+              key="search"
+              placeholder="Buscar"
+              onSearch={(value) => {
+              filterBySearch(value)
+              }}
+                />,</Col>
+
             <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
                 <Table<IPriceListEstudioList>
-                size="small"
+                size="large"
                 rowKey={(record) => record.id}
                 columns={columnsEstudios.slice(0, 4)}
                 pagination={false}
