@@ -39,6 +39,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
   const [form] = Form.useForm<IPackForm>();
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
+
   const [aeraSearch, setAreaSearch] = useState(areas);
   const [areaForm, setAreaForm] = useState<IOptions[]>([]);
   const [areaId, setAreaId] = useState<number>();

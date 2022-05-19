@@ -20,6 +20,13 @@ export interface IPromotionEstudioList{
     precio:number,
     paquete:boolean,
 }
+export interface IPromotionBranch{
+    id:string,
+    clave:string,
+    active:string,
+    nombre:string,
+    precio:number,
+}
 export interface IPromotionForm{
     id:number,
     clave:string,
@@ -31,8 +38,9 @@ export interface IPromotionForm{
     idListaPrecios:string,
     activo:boolean,
     lealtad:boolean
-    estudio: IPromotionEstudioList[];
-    sucMedCom: ISucMedComList[];
+    estudio: IPromotionEstudioList[],
+    sucMedCom: ISucMedComList[],
+    branch:IPromotionBranch[],
 }
 
 export class IPromotionFormValues implements IPromotionForm{
@@ -46,7 +54,7 @@ export class IPromotionFormValues implements IPromotionForm{
     lealtad=false;
     estudio: IPromotionEstudioList[] =[];
     sucMedCom: ISucMedComList[]=[];
-
+    branch:IPromotionBranch[]=[];
     constructor(init?:IPromotionForm) {
         Object.assign(this, init);
       }

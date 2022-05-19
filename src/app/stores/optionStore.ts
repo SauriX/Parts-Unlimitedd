@@ -24,6 +24,10 @@ export default class OptionStore {
         value: x.id,
         label: x.clave,
       }));
+      return  departments.map((x) => ({
+        value: x.id,
+        label: x.clave,
+      }));
     } catch (error) {
       this.departmentOptions = [];
     }

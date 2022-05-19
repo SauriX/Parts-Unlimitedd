@@ -18,6 +18,7 @@ import { IBranchDepartment } from "../../../app/models/branch";
 import { IPackEstudioList } from "../../../app/models/packet";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
+import { IOptions } from "../../../app/models/shared";
 type ReagentFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
@@ -35,7 +36,8 @@ const { width: windowWidth } = useWindowDimensions();
   const [searchParams, setSearchParams] = useSearchParams();
   const [areaId, setAreaId] = useState<number>();
   const [discunt, setDiscunt] = useState<number>();
-
+  const [departament,setDepartment] = useState<IOptions[]>();
+  const [departamento,setDepartmento] = useState<IOptions[]>();
   const [form] = Form.useForm<IReagentForm>();
   const [aeraSearch, setAreaSearch] = useState(areas);
   const [loading, setLoading] = useState(false);
@@ -69,7 +71,11 @@ const { width: windowWidth } = useWindowDimensions();
     readPriceList();
   },[getPriceListOptions]);
   useEffect(() => {
-    getDepartmentOptions();
+    const readDepartaments = async () =>{
+      var departaments= await getDepartmentOptions();
+      setDepartment(departaments!);
+    }
+    readDepartaments();
   }, [getDepartmentOptions]);
   useEffect(()=> {
     const areareader = async () => {
@@ -379,7 +385,7 @@ const { width: windowWidth } = useWindowDimensions();
             <Col md={12} sm={24} style={{ marginRight: 20 }}>
             Clave/Nombre:
               <Select
-                options={[]}
+                options={departament}
                 onChange={(value, option: any) => {
                   if (value) {
                     //setDepartment({ departamentoId: value, departamento: option.label });
