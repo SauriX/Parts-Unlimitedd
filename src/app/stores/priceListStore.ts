@@ -140,6 +140,7 @@ export default class PriceListStore {
       return await PriceList.getAllBranch();
     } catch (error: any) {
       alerts.warning(getErrors(error));
+      return [];
     }    
   };
 
@@ -149,6 +150,7 @@ export default class PriceListStore {
       return await PriceList.getAllMedics();
     } catch (error) {
       alerts.warning(getErrors(error));
+      return [];
     }
   };
   getAllCompany = async () => {
@@ -157,6 +159,7 @@ export default class PriceListStore {
       return await PriceList.getAllCompany();
     } catch (error: any) {
       alerts.warning(getErrors(error));
+      return [];
     }
   };
 }

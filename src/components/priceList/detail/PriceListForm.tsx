@@ -32,7 +32,11 @@ import SwitchInput from "../../../app/common/form/SwitchInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
-import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
+import {
+  getDefaultColumnProps,
+  IColumns,
+  ISearch,
+} from "../../../app/common/table/utils";
 import SelectInput from "../../../app/common/form/SelectInput";
 import NumberInput from "../../../app/common/form/NumberInput";
 import user from "../../../app/api/user";
@@ -50,11 +54,10 @@ const visibleOptions = [
   { label: "VisibleWeb", value: "web" },
 ];
 
-
 const radioOptions = [
-  { label: 'Sucursales', value: 'branch' },
-  { label: 'Medicos', value: 'medic' },
-  { label: 'Compañias', value: 'company' },
+  { label: "Sucursales", value: "branch" },
+  { label: "Medicos", value: "medic" },
+  { label: "Compañias", value: "company" },
 ];
 
 const PriceListForm: FC<PriceListFormProps> = ({
@@ -62,9 +65,21 @@ const PriceListForm: FC<PriceListFormProps> = ({
   componentRef,
   printing,
 }) => {
-  const { priceListStore, optionStore} = useStore();
-  const { priceLists, getById, getAll, create, update,getAllStudy, getAllBranch, getAllMedics, getAllCompany, studies } = priceListStore;
-  const { getDepartmentOptions, departmentOptions, getareaOptions, areas, } = optionStore;
+  const { priceListStore, optionStore } = useStore();
+  const {
+    priceLists,
+    getById,
+    getAll,
+    create,
+    update,
+    getAllStudy,
+    getAllBranch,
+    getAllMedics,
+    getAllCompany,
+    studies,
+  } = priceListStore;
+  const { getDepartmentOptions, departmentOptions, getareaOptions, areas } =
+    optionStore;
   const [aeraSearch, setAreaSearch] = useState(areas);
   const [areaForm, setAreaForm] = useState<IOptions[]>([]);
   const [areaId, setAreaId] = useState<number>();
@@ -74,6 +89,8 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const [lista, setLista] = useState(studies);
   const [form] = Form.useForm<IPriceListForm>();
 
+  const [list, setList] = useState<ISucMedComList[]>([]);
+
   const [loading, setLoading] = useState(false);
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
@@ -82,19 +99,57 @@ const PriceListForm: FC<PriceListFormProps> = ({
     new PriceListFormValues()
   );
   const [visibleType, setVisibleType] = useState<"visible" | "web">("visible");
-  const setStudy = (active:boolean,item:IPriceListEstudioList) =>{
 
-    var index = lista.findIndex(x=>x.id===item.id);
+  useEffect(() => {
+    getDepartmentOptions();
+  }, [getDepartmentOptions]);
+
+  useEffect(() => {
+    const areareader = async () => {
+      await getareaOptions(0);
+      setAreaSearch(areas);
+    };
+    areareader();
+  }, [getareaOptions]);
+
+  const setStudy = (active: boolean, item: IPriceListEstudioList) => {
+    var index = lista.findIndex((x) => x.id === item.id);
     var list = lista;
-    item.activo=active;
-    list[index]=item;
+    item.activo = active;
+    list[index] = item;
     setLista(list);
-    var indexVal= values.estudio.findIndex(x=>x.id===item.id);
-    var val =values.estudio;
-    val[indexVal]=item;
+    var indexVal = values.estudio.findIndex((x) => x.id === item.id);
+    var val = values.estudio;
+    val[indexVal] = item;
     setValues((prev) => ({ ...prev, estudio: val }));
-   
-}
+  };
+  useEffect(() => {
+    const readuser = async (idUser: string) => {
+      setLoading(true);
+      console.log("here");
+      const all = await getAll("all");
+      console.log(all);
+      var studis = await getAllStudy();
+      var areaForm = await getareaOptions(values.idDepartamento);
+
+      const user = await getById(idUser);
+      form.setFieldsValue(user!);
+      studis = studis?.map((x) => {
+        var activo = user?.estudio.find((y) => y.id === x.id) != null;
+        return { ...x, activo };
+      });
+
+      setAreaForm(areaForm!);
+      setValues(user!);
+      setLista(studis!);
+      setLoading(false);
+      console.log(studis);
+    };
+    if (id) {
+      readuser(String(id));
+    }
+  }, [form, getById, id]);
+
   useEffect(() => {
     const readPriceList = async (id: string) => {
       setLoading(true);
@@ -111,36 +166,24 @@ const PriceListForm: FC<PriceListFormProps> = ({
     }
   }, [form, getById, id]);
 
-  useEffect(() => {
-    getDepartmentOptions();
-  }, [getDepartmentOptions]);
-
-  useEffect(()=> {
-    const areareader = async () => {
-    await getareaOptions(0);
-    setAreaSearch(areas);
-    }
-      areareader();
-  }, [ getareaOptions]);
-
-useEffect(() => {
-  const readuser = async (idUser: string) => {
-  var studis = await getAllStudy();
-  var areaForm=await getareaOptions(values.idDepartamento);
-  const user = await getById(idUser);
-  form.setFieldsValue(user!);
-  studis=studis?.map(x=>{
-    var activo = user?.estudio.find(y=>y.id===x.id)!=null;
-    return ({...x,activo})
-  });
-  setLista(studis!);  
-  setAreaForm(areaForm!);
-  console.log(studis);
-  };
-  if (id) {
-    readuser(String(id));
-  }
-}, [form, getById , id]);
+  // useEffect(() => {
+  //   const readuser = async (idUser: string) => {
+  //   var studis = await getAllStudy();
+  //   var areaForm=await getareaOptions(values.idDepartamento);
+  //   const user = await getById(idUser);
+  //   form.setFieldsValue(user!);
+  //   studis=studis?.map(x=>{
+  //     var activo = user?.estudio.find(y=>y.id===x.id)!=null;
+  //     return ({...x,activo})
+  //   });
+  //   setLista(studis!);
+  //   setAreaForm(areaForm!);
+  //   console.log(studis);
+  //   };
+  //   if (id) {
+  //     readuser(String(id));
+  //   }
+  // }, [form, getById , id]);
 
   useEffect(() => {
     if (priceLists.length === 0) {
@@ -148,26 +191,6 @@ useEffect(() => {
     }
     console.log(values);
   }, [getAll, priceLists.length, searchParams]);
-
-  const onFinish = async (newValues: IPriceListForm) => {
-    setLoading(true);
-
-    const priceList = { ...values, ...newValues };
-    console.log(values.sucMedCom);
-    let success = false;
-
-    if (!priceList.id) {
-      success = await create(priceList);
-    } else {
-      success = await update(priceList);
-    }
-
-    setLoading(false);
-
-    if (success) {
-      goBack();
-    }
-  };
 
   const goBack = () => {
     searchParams.delete("mode");
@@ -189,83 +212,118 @@ useEffect(() => {
     navigate(`/${views.price}/${priceList.id}?${searchParams}`);
   };
 
-///Primera tabla Sucursal
-console.log("Table");
+  ///Primera tabla Sucursal
+  //console.log("Table");
 
-const { width: windowWidth } = useWindowDimensions();
-const [searchState, setSearchState] = useState<ISearch>({
-  searchedText: "",
-  searchedColumn: "",
-});
+  const { width: windowWidth } = useWindowDimensions();
+  const [searchState, setSearchState] = useState<ISearch>({
+    searchedText: "",
+    searchedColumn: "",
+  });
 
-const columns: IColumns<ISucMedComList> = [
-  {
-    ...getDefaultColumnProps("clave", "Clave", {
+  const columns: IColumns<ISucMedComList> = [
+    {
+      ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-      width: "30%",
-      windowSize: windowWidth,
-    }),
-  },
-  {
-    ...getDefaultColumnProps("nombre", "Nombre", {
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
-      width: "30%",
-      windowSize: windowWidth,
-    }),
-  },
-  {
-    ...getDefaultColumnProps("", "Agregar", {
-        searchState,
-        setSearchState,
-      width: "30%",
-      windowSize: windowWidth,
-    })
-    ,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Añadir",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value, item) => (
         <Checkbox
-        name="activo"
-        checked={item.activo}
-        onChange={(value)=>{ console.log(value.target.checked); var active= false; if(value.target.checked){ console.log("here"); active= true;}setStudy(active,item)}}
-      />
-         
+          name="activo"
+          checked={item.activo}
+          onChange={(value) => {
+            console.log(value.target.checked);
+            var active = false;
+            if (value.target.checked) {
+              console.log("here");
+              active = true;
+            }
+            setStudy(active, item);
+          }}
+        />
       ),
-  },
-];
+    },
+  ];
 
-const onValuesChange = async (changedValues: any) => {
-  const field = Object.keys(changedValues)[0];
+  const onValuesChange = async (changedValues: any) => {
+    const field = Object.keys(changedValues)[0];
 
-  if (field === "idDepartamento") {
-    console.log("deparatemento");
-    const value = changedValues[field];
-    var areaForm=await getareaOptions(value);
-    setAreaForm(areaForm!);
-    form.setFieldsValue({idArea:undefined});
+    if (field === "idDepartamento") {
+      console.log("deparatemento");
+      const value = changedValues[field];
+      var areaForm = await getareaOptions(value);
+      setAreaForm(areaForm!);
+      form.setFieldsValue({ idArea: undefined });
+    }
+  };
 
-  }
-};
+  const filterByDepartament = async (departament: number) => {
+    if (departament) {
+      var departamento = departmentOptions.filter(
+        (x) => x.value === departament
+      )[0].label;
+      var areaSearch = await getareaOptions(departament);
 
-const filterByDepartament = async (departament:number) => {
-  if(departament){
-  var departamento=departmentOptions.filter(x=>x.value===departament)[0].label;
-  var areaSearch=await getareaOptions(departament);
-  
-  var estudios = lista.filter(x=>x.departamento === departamento)
-  setValues((prev) => ({ ...prev, estudio: estudios }));
-  setAreaSearch(areaSearch!);}else{
-    var estudios = lista.filter(x=>x.activo === true);
+      var estudios = lista.filter((x) => x.departamento === departamento);
+      setValues((prev) => ({ ...prev, estudio: estudios }));
+      setAreaSearch(areaSearch!);
+    } else {
+      var estudios = lista.filter((x) => x.activo === true);
+      setValues((prev) => ({ ...prev, estudio: estudios }));
+    }
+  };
+  const filterByArea = (area: number) => {
+    var areaActive = areas.filter((x) => x.value === area)[0].label;
+    var estudios = lista.filter((x) => x.area === areaActive);
     setValues((prev) => ({ ...prev, estudio: estudios }));
-   
-  }
-  
-}
-const filterByArea = (area:number) => {
-  var areaActive=areas.filter(x=>x.value===area)[0].label;
-  var estudios = lista.filter(x=>x.area === areaActive)
-  setValues((prev) => ({ ...prev, estudio: estudios }));
-}
+  };
+
+  const filterBySearch = (search: string) => {
+    var estudios = lista.filter(
+      (x) => x.clave.includes(search) || x.nombre.includes(search)
+    );
+    setValues((prev) => ({ ...prev, estudio: estudios }));
+  };
+
+  const onFinish = async (newValues: IPriceListForm) => {
+    setLoading(true);
+
+    const priceList = { ...values, ...newValues };
+
+    priceList.estudio = lista.filter((x) => x.activo == true);
+
+    console.log(priceList);
+    let success = false;
+
+    if (!priceList.id) {
+      success = await create(priceList);
+    } else {
+      success = await update(priceList);
+    }
+
+    setLoading(false);
+
+    if (success) {
+      goBack();
+    }
+  };
 
   ///tabla Estudios/paquete
   console.log("Table");
@@ -297,29 +355,23 @@ const filterByArea = (area:number) => {
       render: () => (
         <NumberInput
           formProps={{
-          name: "cantidad"
+            name: "precio",
           }}
           min={0}
           max={9999999999999999}
           readonly={readonly}
-          />
-         
+        />
       ),
     },
     {
-        ...getDefaultColumnProps("area", "Area", {
-          searchState,
-          setSearchState,
-          width: "30%",
-          windowSize: windowWidth,
-        }),
-      },
+      ...getDefaultColumnProps("area", "Area", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
   ];
-
-  const filterBySearch = (search:string)=>{
-    var estudios = lista.filter(x=>x.clave.includes(search) || x.nombre.includes(search))
-    setValues((prev) => ({ ...prev, estudio: estudios }));
-  }
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
@@ -421,104 +473,134 @@ const filterByArea = (area:number) => {
                 />
               </Col>
               <Col md={12} sm={24} xs={12}>
-
                 <Radio.Group
                   options={visibleOptions}
                   onChange={(e) => {
                     setVisibleType(e.target.value);
                   }}
                   value={visibleType}
-                  
                 />
               </Col>
             </Row>
           </Form>
           <Row justify="center">
             <Radio.Group
-            options={radioOptions}
-            onChange={ (e) =>{ 
-              if (e.target.value === "branch" ){
-              getAllBranch();
-              console.log(values.sucMedCom);
-            }
-             if (e.target.value === "medic" ){
-              getAllMedics();
-            }
-            if (e.target.value === "company" ){
-              getAllCompany();
-            }
-            
-          }}
-            optionType="button"
-            buttonStyle="solid"
+              options={radioOptions}
+              onChange={async (e) => {
+                if (e.target.value === "branch") {
+                  const branches = await getAllBranch();
+                  setList(branches);
+                }
+                if (e.target.value === "medic") {
+                  const medics = await getAllMedics();
+                  setList(medics);
+                }
+                if (e.target.value === "company") {
+                  const Companies = await getAllCompany();
+                  setList (Companies);
+                }
+              }}
+              optionType="button"
+              buttonStyle="solid"
             />
-
-            </Row>
-            <Row><Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}></Col></Row>
-            <Row><Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}></Col></Row>
-            <Row>
-            <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
-                <Table<ISucMedComList>
+          </Row>
+          <Row>
+            <Col
+              md={24}
+              sm={12}
+              style={{ marginRight: 20, textAlign: "center" }}
+            ></Col>
+          </Row>
+          <Row>
+            <Col
+              md={24}
+              sm={12}
+              style={{ marginRight: 20, textAlign: "center" }}
+            ></Col>
+          </Row>
+          <Row>
+            <Col
+              md={24}
+              sm={12}
+              style={{ marginRight: 20, textAlign: "center" }}
+            >
+              <Table<ISucMedComList>
                 size="large"
                 rowKey={(record) => record.id}
                 columns={columns.slice(0, 3)}
                 pagination={false}
-                dataSource={[...(values.sucMedCom ?? [])]}
-                scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-                />
-                {/* <Divider className="header-divider"/>
+                dataSource={list}
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
+              />
+              {/* <Divider className="header-divider"/>
                 <Divider className="header-divider"/> */}
             </Col>
           </Row>
 
-          
           <Divider orientation="left">Estudios</Divider>
           <Row justify="center">
-          <Col md={4} sm={24} xs={12}>
-          Búsqueda por :   
-          </Col>
-          <Col md={9} sm={24} xs={12}>
-                <SelectInput  
-                formProps={{ name: "departamento", label: "Departamento" }} 
-                options={departmentOptions} 
-                readonly={readonly} 
-                required 
-                onChange={(value)=>{setAreaId(undefined); filterByDepartament(value)}}
-                />
-                </Col>
+            <Col md={4} sm={24} xs={12}>
+              Búsqueda por :
+            </Col>
+            <Col md={9} sm={24} xs={12}>
+              <SelectInput
+                formProps={{ name: "departamento", label: "Departamento" }}
+                options={departmentOptions}
+                readonly={readonly}
+                required
+                onChange={(value) => {
+                  setAreaId(undefined);
+                  filterByDepartament(value);
+                }}
+              />
+            </Col>
             <Col md={2} sm={24} xs={12}></Col>
             <Col md={9} sm={24} xs={12}>
               <label htmlFor="">Área: </label>
-                <Select
-                //formProps={{ name: "area", label: "Área" }} 
-                options={areas} 
-                onChange={(value)=>{ setAreaId(value); filterByArea(value)}}
+              <Select
+                //formProps={{ name: "area", label: "Área" }}
+                options={areas}
+                onChange={(value) => {
+                  setAreaId(value);
+                  filterByArea(value);
+                }}
                 value={areaId}
-                style={{width:"400px"}}
-                disabled={readonly}  />
-                </Col>
+                style={{ width: "400px" }}
+                disabled={readonly}
+              />
+            </Col>
           </Row>
-          
+
           <Row>
             <Col md={15} sm={24} xs={12}></Col>
-              <Col md={9} sm={24} xs={12}>
+            <Col md={9} sm={24} xs={12}>
               <Search
-              key="search"
-              placeholder="Buscar"
-              onSearch={(value) => {
-              filterBySearch(value)
-              }}
-                />,</Col>
+                key="search"
+                placeholder="Buscar"
+                onSearch={(value) => {
+                  filterBySearch(value);
+                }}
+              />
+              ,
+            </Col>
 
-            <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
-                <Table<IPriceListEstudioList>
+            <Col
+              md={24}
+              sm={12}
+              style={{ marginRight: 20, textAlign: "center" }}
+            >
+              <Table<IPriceListEstudioList>
                 size="large"
                 rowKey={(record) => record.id}
                 columns={columnsEstudios.slice(0, 4)}
                 pagination={false}
                 dataSource={[...(values.estudio ?? [])]}
-                scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-                />
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
+              />
             </Col>
           </Row>
         </div>
