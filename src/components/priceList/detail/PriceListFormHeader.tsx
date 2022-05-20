@@ -33,8 +33,9 @@ const PriceListFormHeader: FC<PriceListFormHeaderProps> = ({ id, handlePrint, ha
       title={<HeaderTitle title="Catálogo de Listas de Precios" image="ListaPrecio" />}
       className="header-container"
       extra={[
-        scopes?.imprimir && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+        
         !!id && scopes?.descargar && (
+          scopes?.imprimir && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
           <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />
         ),
         <ImageButton key="back" title="Regresar" image="back" onClick={getBack} />,
