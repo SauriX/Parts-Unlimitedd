@@ -51,10 +51,7 @@ export default class PriceListStore {
                 area:x.area,
                 departamento:x.departamento,
                 activo: false,
-<<<<<<< HEAD
                 precio:0,
-=======
->>>>>>> 82eb5dff4a822d1f2e0dc3d71d0980f00092f9c9
             }
             return data;});
             this.studies=studies;
