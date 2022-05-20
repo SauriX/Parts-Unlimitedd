@@ -1,7 +1,7 @@
 import { IContactForm, } from "./contact";
 
 export interface ICompanyList {
-  id: number;
+  id:string;
     clave: string;
     contrasena : string;
     nombreComercial: string;
@@ -12,7 +12,7 @@ export interface ICompanyList {
 
   
 export interface ICompanyForm {
-  id: number;
+  id:string;
     clave: string;
     contrasena : string;
     nombreComercial: string;
@@ -37,7 +37,7 @@ export interface ICompanyForm {
   }
   export class CompanyFormValues implements ICompanyForm {
    
-    id= 0;
+    id= "";
     clave= "";
     contrasena = "";
     nombreComercial= "";

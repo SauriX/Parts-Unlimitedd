@@ -46,7 +46,7 @@ export default class MedicsStore {
     }
   };
 
-  getById = async (id: number) => {
+  getById = async (id: string) => {
     try {
       const medics = await Medics.getById(id);
       return medics;
@@ -86,7 +86,7 @@ export default class MedicsStore {
     }
   };
 
-  exportForm = async (id: number) => {
+  exportForm = async (id: string) => {
     try {
       await Medics.exportForm(id, "Formulario");
     } catch (error: any) {

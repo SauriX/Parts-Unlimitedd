@@ -29,7 +29,7 @@ import { EditOutlined } from "@ant-design/icons";
 import { v4 as uuid } from "uuid";
 
 type CompanyFormProps = {
-  id: number;
+  id: string;
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
@@ -101,7 +101,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   );
 
   useEffect(() => {
-    const readCompany = async (id: number) => {
+    const readCompany = async (id: string) => {
       setLoading(true);
       const company = await getById(id);
       console.log(company);
@@ -161,6 +161,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     // company.contacts = contacts;
 
     if (!company.id) {
+      company.id= "00000000-0000-0000-0000-000000000000"
       success = await create(company);
     } else {
       success = await update(company);
@@ -184,14 +185,17 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
       `/companies/${companys?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search")}`
     );
   };
-
+  console.log("Aqui esta el console");
+  console.log(id);
   useEffect(() => {
     const newpass = async () => {
       let pass = await generatePass();
       form.setFieldsValue({ contrasena: pass });
     };
     console.log(values);
-    if (id == null || id === 0) {
+    if (!id ) {
+      console.log(id);
+      console.log(id);
       newpass();
     }
   }, [values]);
@@ -320,7 +324,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
-        {id !== 0 && (
+        {!id  && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
             <Pagination
               size="small"

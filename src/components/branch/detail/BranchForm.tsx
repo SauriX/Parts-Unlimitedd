@@ -238,7 +238,7 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
           {load && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="sucursales" image="reagent" />}
+              title={<HeaderTitle title="sucursales" image="laboratorio" />}
               className="header-container"
             ></PageHeader>
           )}

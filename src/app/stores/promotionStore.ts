@@ -9,7 +9,7 @@ import messages from "../util/messages";
 import responses from "../util/responses";
 import { getErrors } from "../util/utils";
 
-export default class PriceListStore {
+export default class PromotionStore {
   constructor() {
     makeAutoObservable(this);
   }
@@ -51,7 +51,7 @@ export default class PriceListStore {
                 area:x.area,
                 departamento:x.departamento,
                 activo: false,
-                precio:0,
+                precio: 0
             }
             return data;});
             this.studies=studies;
@@ -75,6 +75,19 @@ export default class PriceListStore {
   };
 
   getById = async (id: string) => {
+    try {
+      const priceList = await PriceList.getById(id);
+      return priceList;
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+    }
+  };
+
+  getPriceById = async (id: string) => {
     try {
       const priceList = await PriceList.getById(id);
       return priceList;
@@ -134,29 +147,5 @@ export default class PriceListStore {
     }
   };
 
-  getAllBranch = async () => {
-    try {
-      PriceList.getAllBranch();
-    } catch (error: any) {
-      alerts.warning(getErrors(error));
-      return await PriceList.getAllBranch();
-    }
-    
-  };
-  getAllMedics = async () => {
-    try {
-      PriceList.getAllMedics();
-    } catch (error) {
-      alerts.warning(getErrors(error));
-      return await PriceList.getAllMedics();
-    }
-  };
-  getAllCompany = async () => {
-    try {
-      PriceList.getAllCompany();
-    } catch (error: any) {
-      alerts.warning(getErrors(error));
-      return await PriceList.getAllCompany();
-    }
-  };
+
 }

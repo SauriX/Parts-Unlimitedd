@@ -343,7 +343,6 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
                     treeData={data}
                     showIcon
                     checkedKeys={checkedKeys}
-                    virtual={false}
                   />
                 );
               }}

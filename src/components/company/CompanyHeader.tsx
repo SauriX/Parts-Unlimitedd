@@ -46,7 +46,7 @@ const CompanyHeader: FC<CompanyHeaderProps> = ({ handlePrint, }) => {
           key="new"
           type="primary"
           onClick={() => {
-            navigate("/companies/0");
+            navigate("/companies/new");
           }}
           icon={<PlusOutlined />}
         >

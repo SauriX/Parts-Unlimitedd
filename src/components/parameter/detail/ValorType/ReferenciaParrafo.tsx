@@ -13,6 +13,7 @@ import TextInput from "../../../../app/common/form/TextInput";
 import { IParameterForm, ItipoValorForm } from "../../../../app/models/parameter";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../../app/stores/store";
+import TextArea from "antd/lib/input/TextArea";
 type Props = {
     idTipeVAlue: string;
     parameter:IParameterForm;
@@ -108,7 +109,7 @@ const ReferenciaParrafo : FC<Props> = ({ idTipeVAlue,parameter }) => {
                                         name={[name, 'descripcionParrafo']}
                                         rules={[{ required: true, message: 'Missing valor' }]}
                                     >
-                                        <Input disabled={disabled} placeholder={"Párrafo"} />
+                                        <TextArea disabled={disabled} rows={5} autoSize placeholder={"Párrafo"} />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>
