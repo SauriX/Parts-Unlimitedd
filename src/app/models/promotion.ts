@@ -30,6 +30,7 @@ export interface IPromotionBranch{
     nombre:string,
     precio:number,
 }
+''
 
 export interface IDias{
     id:number,
@@ -39,8 +40,6 @@ export interface IPromotionForm{
     id:number,
     clave:string,
     nombre:string,
-    tipoDescuento:string,
-    cantidad:number,
     fechaInicial?:Date
     fechaFinal?:Date,
     idListaPrecios:string,

@@ -103,6 +103,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       form.setFieldsValue(priceList!);
       setValues(priceList!);
       setLoading(false);
+      console.log(values.sucMedCom);
     };
 
     if (id) {
@@ -145,13 +146,14 @@ useEffect(() => {
     if (priceLists.length === 0) {
       getAll(searchParams.get("search") ?? "all");
     }
+    console.log(values);
   }, [getAll, priceLists.length, searchParams]);
 
   const onFinish = async (newValues: IPriceListForm) => {
     setLoading(true);
 
     const priceList = { ...values, ...newValues };
-
+    console.log(values.sucMedCom);
     let success = false;
 
     if (!priceList.id) {
@@ -437,6 +439,7 @@ const filterByArea = (area:number) => {
             onChange={ (e) =>{ 
               if (e.target.value === "branch" ){
               getAllBranch();
+              console.log(values.sucMedCom);
             }
              if (e.target.value === "medic" ){
               getAllMedics();

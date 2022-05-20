@@ -51,7 +51,10 @@ export default class PriceListStore {
                 area:x.area,
                 departamento:x.departamento,
                 activo: false,
+<<<<<<< HEAD
                 precio:0,
+=======
+>>>>>>> 82eb5dff4a822d1f2e0dc3d71d0980f00092f9c9
             }
             return data;});
             this.studies=studies;
@@ -134,29 +137,30 @@ export default class PriceListStore {
     }
   };
 
+
   getAllBranch = async () => {
     try {
-      PriceList.getAllBranch();
+      //PriceList.getAllBranch();      
+      return await PriceList.getAllBranch();
     } catch (error: any) {
       alerts.warning(getErrors(error));
-      return await PriceList.getAllBranch();
-    }
-    
+    }    
   };
+
   getAllMedics = async () => {
     try {
-      PriceList.getAllMedics();
+      //PriceList.getAllMedics();      
+      return await PriceList.getAllMedics();
     } catch (error) {
       alerts.warning(getErrors(error));
-      return await PriceList.getAllMedics();
     }
   };
   getAllCompany = async () => {
     try {
-      PriceList.getAllCompany();
+      //PriceList.getAllCompany();
+      return await PriceList.getAllCompany();
     } catch (error: any) {
       alerts.warning(getErrors(error));
-      return await PriceList.getAllCompany();
     }
   };
 }

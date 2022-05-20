@@ -54,7 +54,7 @@ export interface IPriceListEstudioList {
   id:number;
   clave: string;
   nombre: string;
-  precio:number;
+  precio?:number;
   area:string;
   activo: boolean;
   departamento: string;
