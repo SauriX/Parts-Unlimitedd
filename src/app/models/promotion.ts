@@ -14,6 +14,7 @@ export interface IPromotionEstudioList{
     id:number,
     clave:string,
     nombre:string,
+    area?:string,
     descuentoPorcentaje:number,
     descuentoCantidad:number,
     lealtad:boolean,
@@ -21,6 +22,7 @@ export interface IPromotionEstudioList{
     fechaFinal:Date,
     activo:boolean,
     precio:number,
+    precioFinal:number,
     paquete:boolean,
 }
 export interface IPromotionBranch{
@@ -30,7 +32,6 @@ export interface IPromotionBranch{
     nombre:string,
     precio:number,
 }
-''
 
 export interface IDias{
     id:number,
@@ -43,6 +44,8 @@ export interface IPromotionForm{
     fechaInicial?:Date
     fechaFinal?:Date,
     idListaPrecios:string,
+    tipoDescuento:string,
+    cantidad:number,
     activo:boolean,
     lealtad:boolean
     estudio: IPromotionEstudioList[],

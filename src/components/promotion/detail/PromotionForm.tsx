@@ -82,15 +82,17 @@ const { width: windowWidth } = useWindowDimensions();
        var estudios = priceList?.estudios.map(x=> {
         let data:IPromotionEstudioList = {
           id:x.id,
+          area:"default",
           clave:x.clave,
           nombre:x.nombre,
-          descuentoPorcentaje:0,
-          descuentoCantidad:0,
+          descuentoPorcentaje:(values.tipoDescuento=="porcent"? values.cantidad:0),
+          descuentoCantidad:(values.tipoDescuento!="porcent"? values.cantidad:0),
+          precioFinal: 0,
           lealtad:false,
           fechaInicial: moment().toDate(),
           fechaFinal:moment().toDate(),
           activo:false,
-          precio: x.precio ,
+          precio: x.precio! ,
           paquete:false,
         }
       return data;
@@ -124,6 +126,100 @@ const { width: windowWidth } = useWindowDimensions();
     setValues((prev) => ({ ...prev, estudio: val })); */
    
 }
+
+const setStudyL = (active:boolean,item:IPromotionEstudioList) =>{
+  /* 
+      var index = lista.findIndex(x=>x.id==item.id);
+      var list = lista;
+      item.activo=active;
+      list[index]=item;
+      setLista(list);
+      var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+      var val =values.estudio;
+      val[indexVal]=item;
+      setValues((prev) => ({ ...prev, estudio: val })); */
+     
+  }
+  const setStudyFi = (fechainical:moment.Moment,item:IPromotionEstudioList) =>{
+    /* 
+        var index = lista.findIndex(x=>x.id==item.id);
+        var list = lista;
+        item.activo=active;
+        list[index]=item;
+        setLista(list);
+        var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+        var val =values.estudio;
+        val[indexVal]=item;
+        setValues((prev) => ({ ...prev, estudio: val })); */
+       
+    }
+    const setStudyFf = (fechafinal:moment.Moment,item:IPromotionEstudioList) =>{
+      /* 
+          var index = lista.findIndex(x=>x.id==item.id);
+          var list = lista;
+          item.activo=active;
+          list[index]=item;
+          setLista(list);
+          var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+          var val =values.estudio;
+          val[indexVal]=item;
+          setValues((prev) => ({ ...prev, estudio: val })); */
+         
+      }
+const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
+  /* 
+      var index = lista.findIndex(x=>x.id==item.id);
+      var list = lista;
+      item.activo=active;
+      list[index]=item;
+      setLista(list);
+      var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+      var val =values.estudio;
+      val[indexVal]=item;
+      setValues((prev) => ({ ...prev, estudio: val })); */
+     
+  }
+
+  const setStudydiscuntc = (decuento:number,item:IPromotionEstudioList) =>{
+    /* 
+        var index = lista.findIndex(x=>x.id==item.id);
+        var list = lista;
+        item.activo=active;
+        list[index]=item;
+        setLista(list);
+        var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+        var val =values.estudio;
+        val[indexVal]=item;
+        setValues((prev) => ({ ...prev, estudio: val })); */
+       
+    }
+    const setStudyPricefinal = (decuento:number,item:IPromotionEstudioList) =>{
+      /* 
+          var index = lista.findIndex(x=>x.id==item.id);
+          var list = lista;
+          item.activo=active;
+          list[index]=item;
+          setLista(list);
+          var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+          var val =values.estudio;
+          val[indexVal]=item;
+          setValues((prev) => ({ ...prev, estudio: val })); */
+         
+      }
+
+      const setStudyday= (decuento:number,item:IPromotionEstudioList) =>{
+        /* 
+            var index = lista.findIndex(x=>x.id==item.id);
+            var list = lista;
+            item.activo=active;
+            list[index]=item;
+            setLista(list);
+            var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+            var val =values.estudio;
+            val[indexVal]=item;
+            setValues((prev) => ({ ...prev, estudio: val })); */
+           
+        }
   useEffect(()=>{
     const readPriceList = async ()=>{
       await getPriceListOptions();
@@ -156,18 +252,38 @@ const { width: windowWidth } = useWindowDimensions();
       ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "10%",
         windowSize: windowWidth,
       }),
     },
     {
-      key: "editar",
+      key: "editarp",
       dataIndex: "id",
-      title: "Añadir",
+      title: "Desc %",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value,item) => (
-        Number
+        <input type={"number"}  value={item.descuentoPorcentaje}  onChange={(value)=>setStudydiscunt(Number(value.target.value),item)}></input>
+      ),
+    },
+    {
+      key: "editarc",
+      dataIndex: "id",
+      title: "desccantidad",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value,item) => (
+        <input type={"number"}  value={item.descuentoPorcentaje}  onChange={(value)=>setStudydiscuntc(Number(value.target.value),item)}></input>
+      ),
+    },
+    {
+      key: "editarc",
+      dataIndex: "id",
+      title: "Precio final",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value,item) => (
+        <input type={"number"}  value={item.descuentoPorcentaje}  onChange={(value)=>setStudyPricefinal(Number(value.target.value),item)}></input>
       ),
     },
     {
@@ -179,9 +295,42 @@ const { width: windowWidth } = useWindowDimensions();
         }),
     },
     {
+      key: "editarl",
+      dataIndex: "id",
+      title: "Lealtad",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value,item) => (
+        <Checkbox
+          name="Lealtad"
+          checked={item.activo}
+          onChange={(value)=>{ console.log(value.target.checked); var active= false; if(value.target.checked){ console.log("here"); active= true;}setStudyL(active,item)}}
+        />
+      ),
+    },
+    {
+      key: "editarc",
+      dataIndex: "id",
+      title: "fecha inicio",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value,item) => (
+        <DatePicker style={{marginLeft:"10px"}} value={moment(item.fechaInicial)} onChange={(value)=>{setStudyFi(value!,item)}} />
+      ),
+    },    {
+      key: "editarc",
+      dataIndex: "id",
+      title: "fecha final",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value,item) => (
+        <DatePicker style={{marginLeft:"10px"}} value={moment(item.fechaInicial)} onChange={(value)=>{setStudyFf(value!,item)}} />
+      ),
+    },
+    {
       key: "editar",
       dataIndex: "id",
-      title: "Añadir",
+      title: "Activo",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value,item) => (
@@ -191,7 +340,34 @@ const { width: windowWidth } = useWindowDimensions();
           onChange={(value)=>{ console.log(value.target.checked); var active= false; if(value.target.checked){ console.log("here"); active= true;}setStudy(active,item)}}
         />
       ),
-    }
+    },
+    {
+      ...getDefaultColumnProps("precio", "Precio", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+  },    {
+    key: "editar",
+    dataIndex: "id",
+    title: "Dias",
+    align: "center",
+    width: windowWidth < resizeWidth ? 100 : "10%",
+    render: (value,item) => (
+      <>
+                {tagsData.map(tag => (
+                  <CheckableTag
+                    key={tag.id}
+                    checked={selectedTags.filter(x=>x.id===tag.id).length>0}
+                    onChange={checked => handleChange(tag, checked) }
+                  >
+                    {tag.dia}
+                  </CheckableTag>
+                ))}
+              </>
+    ),
+  },
   ];
   const filterByDepartament = async (departament:number) => {
     if(departament){
@@ -560,7 +736,7 @@ const { width: windowWidth } = useWindowDimensions();
                 <Table<IPromotionEstudioList>
                 size="small"
                 rowKey={(record) => record.id}
-                columns={columnsEstudios.slice(0, 4)}
+                columns={columnsEstudios}
                 pagination={false}
                 dataSource={[...( values.estudio)]}
                 scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
