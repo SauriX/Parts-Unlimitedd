@@ -7,15 +7,15 @@ import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
 
-type PriceListFormHeaderProps = {
+type ReagentFormHeaderProps = {
   id: string;
   handlePrint: () => void;
   handleDownload: () => Promise<void>;
 };
 
-const PriceListFormHeader: FC<PriceListFormHeaderProps> = ({ id, handlePrint, handleDownload }) => {
-  const { priceListStore } = useStore();
-  const { scopes } = priceListStore;
+const PromotionFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint, handleDownload }) => {
+  const {  } = useStore();
+/*   const { scopes } = ; */
 
   let navigate = useNavigate();
 
@@ -24,18 +24,17 @@ const PriceListFormHeader: FC<PriceListFormHeaderProps> = ({ id, handlePrint, ha
   const getBack = () => {
     searchParams.delete("mode");
     setSearchParams(searchParams);
-    navigate(`/${views.price}?${searchParams}`);
+    navigate(`/${views.promo}?${searchParams}`);
   };
 
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Listas de Precios" image="ListaPrecio" />}
+      title={<HeaderTitle title="Catálogo de Promociones en listas de precios​" image="promo" />}
       className="header-container"
       extra={[
-        
-        !!id && scopes?.descargar && (
-          scopes?.imprimir && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+        /* scopes?.imprimir && */ <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+       /*  !!id && scopes?.descargar && */ (
           <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />
         ),
         <ImageButton key="back" title="Regresar" image="back" onClick={getBack} />,
@@ -44,4 +43,4 @@ const PriceListFormHeader: FC<PriceListFormHeaderProps> = ({ id, handlePrint, ha
   );
 };
 
-export default observer(PriceListFormHeader);
+export default observer(PromotionFormHeader);

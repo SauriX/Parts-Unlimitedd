@@ -10,20 +10,38 @@ import useWindowDimensions, { resizeWidth } from "../../app/util/window";
 import { EditOutlined } from "@ant-design/icons";
 import IconButton from "../../app/common/button/IconButton";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { IReagentList } from "../../app/models/reagent";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import { useReactToPrint } from "react-to-print";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import views from "../../app/util/view";
-import { IPacketList } from "../../app/models/packet";
-
-type ReagentTableProps = {
+import { IPromotionList } from "../../app/models/promotion";
+const promotions:IPromotionList[]=[
+    {
+        id:1,
+        nombre:"test",
+        clave:"test",
+        periodo:"test",
+        nombreListaPrecio:"test",
+        activo:true
+    },{
+        id:2,
+        nombre:"test1",
+        clave:"test1",
+        periodo:"test1",
+        nombreListaPrecio:"test1",
+        activo:true
+    }];
+type PromotionTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
-const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
-  const { packStore } = useStore();
-  const { getAll,packs } = packStore;
+
+const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => {
+  const {  } = useStore();
+ /*  const {  getAll } =; */
+
   const [searchParams] = useSearchParams();
 
   let navigate = useNavigate();
@@ -40,31 +58,32 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
   console.log("Table");
 
   useEffect(() => {
-    const readReagents = async () => {
+    const readPromotions = async () => {
       setLoading(true);
-      await getAll(searchParams.get("search") ?? "all");
+      //await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
     };
 
-     
-      readReagents();
-     
-  }, [getAll, searchParams]);
+/*     if (reagents.length === 0) {
+       readPromotions
+    } */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const columns: IColumns<IPacketList> = [
+  const columns: IColumns<IPromotionList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
-      render: (value, reagent) => (
+      render: (value, promotion) => (
         <Button
           type="link"
           onClick={() => {
-            navigate(`/${views.pack}/${reagent.id}?${searchParams}&mode=ReadOnly`);
+            navigate(`/${views.promo}/${promotion.id}?${searchParams}&mode=readonly`);
           }}
         >
           {value}
@@ -72,27 +91,36 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
       ),
     },
     {
-      ...getDefaultColumnProps("nombre", "Nombre", {
+      ...getDefaultColumnProps("nombre", "Nombre promocion", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "20%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
     },
     {
-      ...getDefaultColumnProps("nombreLargo", "Nombre largo", {
+      ...getDefaultColumnProps("periodo", "Periodo", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "15%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
+    },
+    {
+        ...getDefaultColumnProps("nombreListaPrecio", "Nombre Lista", {
+          searchState,
+          setSearchState,
+          width: "15%",
+          minWidth: 150,
+          windowSize: windowWidth,
+        }),
     },
     {
       key: "activo",
       dataIndex: "activo",
-      title: "Áctivo",
+      title: "Activo",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (value ? "Sí" : "No"),
@@ -105,10 +133,10 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (
         <IconButton
-          title="Editar reactivo"
+          title="Editar promoción"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/${views.pack}/${value}?${searchParams}&mode=edit`);
+            navigate(`/${views.promo}/${value}?${searchParams}&mode=edit`);
           }}
         />
       ),
@@ -120,16 +148,16 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Paquetes" image="paquete" />}
+          title={<HeaderTitle title="Catálogo de Reactivos" image="reagent" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
-        <Table<IPacketList>
+        <Table<IPromotionList>
           size="small"
-          rowKey={(record) => record.clave}
+          rowKey={(record) => record.id}
           columns={columns.slice(0, 4)}
           pagination={false}
-          dataSource={packs}
+          dataSource={[...promotions]}
         />
       </div>
     );
@@ -137,12 +165,12 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
 
   return (
     <Fragment>
-      <Table<IPacketList>
+      <Table<IPromotionList>
         loading={loading || printing}
         size="small"
-        rowKey={(record) => record.clave}
+        rowKey={(record) => record.id}
         columns={columns}
-        dataSource={packs}
+        dataSource={[...promotions]}
         pagination={defaultPaginationProperties}
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
@@ -152,4 +180,4 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
   );
 };
 
-export default observer(PackTable);
+export default observer(PromotionTable);

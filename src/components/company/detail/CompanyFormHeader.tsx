@@ -10,7 +10,7 @@ import { useStore } from "../../../app/stores/store";
 const { Search } = Input;
 type CompanyFormHeaderProps = {
   handlePrint: () => void;
-  id : number;
+  id : string;
 };
 
 const CompanyFormHeader: FC<CompanyFormHeaderProps> = ({id, handlePrint }) => {
@@ -34,7 +34,7 @@ const CompanyFormHeader: FC<CompanyFormHeaderProps> = ({id, handlePrint }) => {
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        id !=0 ?
+        !id  ?
         <ImageButton key="doc" title="Informe" image="doc" onClick={download}  />:'',
         <ImageButton
           key="back"

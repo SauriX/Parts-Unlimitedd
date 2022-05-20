@@ -1,6 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import PriceList from "../api/priceList";
-import { IPriceListForm, IPriceListList, ISucMedComList } from "../models/priceList";
+import Study from "../api/study";
+import { IPriceListEstudioList, IPriceListForm, IPriceListList, ISucMedComList } from "../models/priceList";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
@@ -16,6 +17,7 @@ export default class PriceListStore {
   scopes?: IScopes;
   priceLists: IPriceListList[] = [];
   sucMedCom: ISucMedComList[] = [];
+  studies:IPriceListEstudioList[]=[];
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -34,6 +36,31 @@ export default class PriceListStore {
       alerts.warning(getErrors(error));
       history.push("/forbidden");
     }
+  };
+  getAllStudy = async () =>{
+    try {
+        
+        const roles= await Study.getAll("all");
+        console.log(roles);
+        console.log(roles);
+        var studies= roles.map((x) => {
+            let data:IPriceListEstudioList = {
+                id: x.id,
+                clave: x.clave,
+                nombre: x.nombre,
+                area:x.area,
+                departamento:x.departamento,
+                activo: false,
+            }
+            return data;});
+            this.studies=studies;
+            return studies
+            console.log("estudios");
+            console.log(this.studies);
+      } catch (error: any) {
+        alerts.warning(getErrors(error));
+        this.studies = [];
+      }
   };
 
   getAll = async (search: string) => {
@@ -106,29 +133,33 @@ export default class PriceListStore {
     }
   };
 
+
   getAllBranch = async () => {
     try {
-      PriceList.getAllBranch();
+      //PriceList.getAllBranch();      
+      return await PriceList.getAllBranch();
     } catch (error: any) {
       alerts.warning(getErrors(error));
-      return await PriceList.getAllBranch();
-    }
-    
+      return [];
+    }    
   };
+
   getAllMedics = async () => {
     try {
-      PriceList.getAllMedics();
+      //PriceList.getAllMedics();      
+      return await PriceList.getAllMedics();
     } catch (error) {
       alerts.warning(getErrors(error));
-      return await PriceList.getAllMedics();
+      return [];
     }
   };
   getAllCompany = async () => {
     try {
-      PriceList.getAllCompany();
+      //PriceList.getAllCompany();
+      return await PriceList.getAllCompany();
     } catch (error: any) {
       alerts.warning(getErrors(error));
-      return await PriceList.getAllCompany();
+      return [];
     }
   };
 }

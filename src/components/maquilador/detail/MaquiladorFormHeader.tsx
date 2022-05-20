@@ -32,7 +32,8 @@ const MaquiladorFormHeader: FC<MaquiladorFormHeaderProps> = ({id, handlePrint })
       title={<HeaderTitle title="Catálogo de Maquilador" image="maquilador" />}
       className="header-container"
       extra={[
-        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+        id !=0 ?
+        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />:"",
         id !=0 ?
         <ImageButton key="doc" title="Informe" image="doc" onClick={download}  />:'',
         <ImageButton

@@ -3,6 +3,7 @@ const views = {
   study: "studies",
   pack:"packs",
   price: "prices",
+  promo:"promos",
 };
 
 export default views;

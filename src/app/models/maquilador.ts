@@ -42,7 +42,7 @@ export class MaquiladorFormValues implements IMaquiladorForm {
   numeroInterior = "";
   calle = "";
   coloniaId = undefined;
-  correo = "";
+  correo = undefined;
   paginaWeb: undefined;
   telefono = undefined;
   activo = true;

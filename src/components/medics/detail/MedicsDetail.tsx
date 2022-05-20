@@ -34,20 +34,20 @@ const MedicsDetail = () => {
   });
 
   const { id } = useParams<UrlParams>();
-  const medicsId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
+  const medicsId = !id ? undefined  : (id);
 
   useEffect(() => {
     console.log(medicsId);
-    if (medicsId === undefined) {
-      navigate("/notFound");
-    }
+    // if (medicsId === undefined) {
+    //   navigate("/notFound");
+    // }
   }, [navigate, medicsId]);
 
-  if (medicsId === undefined) return null;
+  //if (medicsId === undefined) return null;
 
   return (
     <Fragment>
-      <MedicsFormHeader id={medicsId!} handlePrint={handlePrint} />
+       <MedicsFormHeader id={medicsId!} handlePrint={handlePrint} /> 
       <Divider className="header-divider" />
       <MedicsForm
         id={medicsId!}

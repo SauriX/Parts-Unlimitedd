@@ -26,7 +26,7 @@ import MaskInput from "../../../app/common/form/MaskInput";
 // import { v4 as uuid } from "uuid";
 
 type MedicsFormProps = {
-  id: number;
+  id: string;
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
@@ -81,7 +81,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   );
 
   useEffect(() => {
-    const readMedics = async (id: number) => {
+    const readMedics = async (id: string) => {
       setLoading(true);
       const medics = await getById(id);
 
@@ -133,7 +133,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
       
     let success = false;
 
-   
+   console.log(medics);
 
 
     const clinics = [...medics.clinicas];
@@ -143,6 +143,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
     medics.clinicas = clinics;
 
     if (!medics.idMedico) {
+      medics.idMedico = "00000000-0000-0000-0000-000000000000"
       success = await create(medics);
     } else {
       success = await update(medics);
