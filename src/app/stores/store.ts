@@ -16,6 +16,7 @@ import MaquiladorStore from "./maquiladorStore";
 import StudyStore from "./studyStore";
 import PriceListStore from "./priceListStore";
 import PackStore from "./packStore";
+import LoyaltyStore from "./loyaltyStore";
 configure({
   enforceActions: "never",
 });
@@ -36,7 +37,8 @@ interface Store {
   maquiladorStore: MaquiladorStore;
   studyStore:StudyStore;
   priceListStore:PriceListStore;
-  packStore:PackStore
+  packStore:PackStore;
+  loyaltyStore:LoyaltyStore;
 }
 
 export const store: Store = {
@@ -56,6 +58,7 @@ export const store: Store = {
   studyStore: new StudyStore(),
   priceListStore: new PriceListStore(),
   packStore: new PackStore(),
+  loyaltyStore: new LoyaltyStore(),
 };
 
 export const StoreContext = createContext(store);

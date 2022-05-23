@@ -1,18 +1,18 @@
 import { IStudyForm, IStudyList } from "./study";
 
 export interface IPriceListList {
-    id: string;
+    id: number | string;
     clave: string;
     nombre: string;
     visibilidad: boolean;
     activo: boolean;
-    estudios: IStudyList[];
+    estudios: IPriceListEstudioList[];
     compañia: ISucMedComList[];
   }
 
   
 export interface IPriceListForm {
-  id: string;
+  id: number | string;
     clave: string;
     nombre: string;
     visibilidad: boolean;
@@ -40,12 +40,13 @@ export interface IPriceListForm {
 }
 
 export interface ISucMedComList {
-  id: string;
+  id: number | string;
   clave: string;
   nombre: string;
-  area:string;
-  activo: boolean;
-  departamento: string;
+  precio?:number;
+  area?:string;
+  activo?: boolean;
+  departamento?: string;
 }
 
 
@@ -54,7 +55,7 @@ export interface IPriceListEstudioList {
   clave: string;
   nombre: string;
   precio?:number;
-  area:string;
-  activo: boolean;
-  departamento: string;
+  area?:string;
+  activo?: boolean;
+  departamento?: string;
 }

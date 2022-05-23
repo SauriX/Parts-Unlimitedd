@@ -4,6 +4,7 @@ const views = {
   pack:"packs",
   price: "prices",
   promo:"promos",
+  loyalty: "loyalties",
 };
 
 export default views;

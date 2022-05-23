@@ -41,6 +41,7 @@ import SelectInput from "../../../app/common/form/SelectInput";
 import NumberInput from "../../../app/common/form/NumberInput";
 import user from "../../../app/api/user";
 import { IOptions } from "../../../app/models/shared";
+import Study from "../../../views/Study";
 const { Search } = Input;
 
 type PriceListFormProps = {
@@ -77,6 +78,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
     getAllMedics,
     getAllCompany,
     studies,
+    sucMedCom,
   } = priceListStore;
   const { getDepartmentOptions, departmentOptions, getareaOptions, areas } =
     optionStore;
@@ -90,6 +92,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const [form] = Form.useForm<IPriceListForm>();
 
   const [list, setList] = useState<ISucMedComList[]>([]);
+  const [estudy, setEstudy] = useState<{ clave: ""; id: string; nombre: ""; precio:number; }>();
 
   const [loading, setLoading] = useState(false);
   const [readonly, setReadonly] = useState(
@@ -112,6 +115,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
     areareader();
   }, [getareaOptions]);
 
+
   const setStudy = (active: boolean, item: IPriceListEstudioList) => {
     var index = lista.findIndex((x) => x.id === item.id);
     var list = lista;
@@ -122,7 +126,24 @@ const PriceListForm: FC<PriceListFormProps> = ({
     var val = values.estudio;
     val[indexVal] = item;
     setValues((prev) => ({ ...prev, estudio: val }));
+    console.log("entra")
   };
+
+  const setSucMedCom = (active: boolean, item: ISucMedComList) => {
+    var index = sucMedCom.findIndex((x) => x.id === item.id);
+    var list = sucMedCom;
+    item.activo = active;
+    list[index] = item;
+    setLista(list);
+    var indexVal = values.sucMedCom.findIndex((x) => x.id === item.id);
+    var val = values.sucMedCom;
+    val[indexVal] = item;
+    setValues((prev) => ({ ...prev, sucMedCom: val }));
+    console.log("entra")
+  };
+
+
+
   useEffect(() => {
     const readuser = async (idUser: string) => {
       setLoading(true);
@@ -133,6 +154,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       var areaForm = await getareaOptions(values.idDepartamento);
 
       const user = await getById(idUser);
+      console.log("Lista de precio", user);
       form.setFieldsValue(user!);
       studis = studis?.map((x) => {
         var activo = user?.estudio.find((y) => y.id === x.id) != null;
@@ -244,6 +266,8 @@ const PriceListForm: FC<PriceListFormProps> = ({
       title: "Añadir",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
+      //Aqui es lo mismo que con el estudio
+      //Pero no vinculado al setstudy
       render: (value, item) => (
         <Checkbox
           name="activo"
@@ -255,7 +279,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
               console.log("here");
               active = true;
             }
-            setStudy(active, item);
+            setSucMedCom(active, item);
           }}
         />
       ),
@@ -285,32 +309,40 @@ const PriceListForm: FC<PriceListFormProps> = ({
       setValues((prev) => ({ ...prev, estudio: estudios }));
       setAreaSearch(areaSearch!);
     } else {
-      var estudios = lista.filter((x) => x.activo === true);
+      estudios = lista.filter((x) => x.activo === true);
       setValues((prev) => ({ ...prev, estudio: estudios }));
     }
-  };
+    // console.log("departament");
+    // console.log(values);
+  }
   const filterByArea = (area: number) => {
     var areaActive = areas.filter((x) => x.value === area)[0].label;
     var estudios = lista.filter((x) => x.area === areaActive);
     setValues((prev) => ({ ...prev, estudio: estudios }));
-  };
-
+  }
   const filterBySearch = (search: string) => {
     var estudios = lista.filter(
-      (x) => x.clave.includes(search) || x.nombre.includes(search)
-    );
+      (x) => x.clave.includes(search) || x.nombre.includes(search) );
     setValues((prev) => ({ ...prev, estudio: estudios }));
-  };
+  }
 
   const onFinish = async (newValues: IPriceListForm) => {
     setLoading(true);
 
     const priceList = { ...values, ...newValues };
 
-    priceList.estudio = lista.filter((x) => x.activo == true);
-
+    priceList.estudio = lista.filter(x=> x.activo == true);
+    console.log("finish ");
+    console.log(lista);
     console.log(priceList);
+    
     let success = false;
+
+    // const estudy = [...priceList.estudio];
+    // estudy.forEach((v, i, a) => {
+    //   a[i].id = typeof a[i].id === "string" ? 0 : v.id;
+    // });
+    // priceList.estudio = estudy;
 
     if (!priceList.id) {
       success = await create(priceList);
@@ -327,6 +359,26 @@ const PriceListForm: FC<PriceListFormProps> = ({
 
   ///tabla Estudios/paquete
   console.log("Table");
+
+  // const addEstudio = () => {
+  //   if (estudy) {
+  //     if (values.estudio.findIndex((x) => x.id === estudy.id) > -1) {
+  //       alerts.warning("Ya esta agregado este estudio");
+  //       return;
+  //     }
+  //     const study: IPriceListEstudioList[] = [
+  //       ...values.estudio,
+  //       {
+  //         id: estudy.id,
+  //         clave: estudy.clave,
+  //         nombre: estudy.nombre,
+  //         precio: estudy.precio
+  //       },
+  //     ];
+
+  //     setValues((prev) => ({ ...prev, estudio: study }));
+  //   }
+  // };
 
   const columnsEstudios: IColumns<IPriceListEstudioList> = [
     {
@@ -371,6 +423,20 @@ const PriceListForm: FC<PriceListFormProps> = ({
         windowSize: windowWidth,
       }),
     },
+    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Añadir",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value,item) => (
+        <Checkbox
+          name="activo"
+          checked={item.activo}
+          onChange={(value)=>{ console.log(value.target.checked); var active= false; if(value.target.checked){ console.log("here"); active= true;}setStudy(active,item)}}
+        />
+      ),
+    }
   ];
 
   return (
@@ -473,13 +539,25 @@ const PriceListForm: FC<PriceListFormProps> = ({
                 />
               </Col>
               <Col md={12} sm={24} xs={12}>
-                <Radio.Group
+              <SwitchInput
+                  name="visibilidad"
+                  onChange={(value) => {
+                    if (value) {
+                      alerts.info(messages.confirmations.visible);
+                    } else {
+                      alerts.info(messages.confirmations.visibleweb);
+                    }
+                  }}
+                  label="Visible"
+                  readonly={readonly}
+                />
+                {/* <Radio.Group
                   options={visibleOptions}
                   onChange={(e) => {
                     setVisibleType(e.target.value);
                   }}
                   value={visibleType}
-                />
+                /> */}
               </Col>
             </Row>
           </Form>
@@ -594,7 +672,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
               <Table<IPriceListEstudioList>
                 size="large"
                 rowKey={(record) => record.id}
-                columns={columnsEstudios.slice(0, 4)}
+                columns={columnsEstudios.slice(0, 5)}
                 pagination={false}
                 dataSource={[...(values.estudio ?? [])]}
                 scroll={{
