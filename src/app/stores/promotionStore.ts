@@ -1,7 +1,9 @@
 import { makeAutoObservable } from "mobx";
 import PriceList from "../api/priceList";
+import Promotion from "../api/promotion";
 import Study from "../api/study";
 import { IPriceListEstudioList, IPriceListForm, IPriceListList, ISucMedComList } from "../models/priceList";
+import { IPromotionForm, IPromotionList } from "../models/promotion";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
@@ -15,7 +17,7 @@ export default class PromotionStore {
   }
 
   scopes?: IScopes;
-  priceLists: IPriceListList[] = [];
+  promotionLists: IPromotionList[] = [];
   sucMedCom: ISucMedComList[] = [];
   studies:IPriceListEstudioList[]=[];
 
@@ -24,12 +26,12 @@ export default class PromotionStore {
   };
 
   clearPriceList = () => {
-    this.priceLists = [];
+    this.promotionLists = [];
   };
 
   access = async () => {
     try {
-      const scopes = await PriceList.access();
+      const scopes = await Promotion.access();
       this.scopes = scopes;
       return scopes;
     } catch (error: any) {
@@ -66,17 +68,17 @@ export default class PromotionStore {
 
   getAll = async (search: string) => {
     try {
-      const priceLists = await PriceList.getAll(search);
-      this.priceLists = priceLists;
+      const priceLists = await Promotion.getAll(search);
+      this.promotionLists = priceLists;
     } catch (error: any) {
       alerts.warning(getErrors(error));
-      this.priceLists = [];
+      this.promotionLists = [];
     }
   };
 
-  getById = async (id: string) => {
+  getById = async (id: number) => {
     try {
-      const priceList = await PriceList.getById(id);
+      const priceList = await Promotion.getById(id);
       return priceList;
     } catch (error: any) {
       if (error.status === responses.notFound) {
@@ -100,11 +102,11 @@ export default class PromotionStore {
     }
   };
 
-  create = async (priceList: IPriceListForm) => {
+  create = async (priceList: IPromotionForm) => {
     try {
-      const newPriceList = await PriceList.create(priceList);
+      const newPriceList = await Promotion.create(priceList);
       alerts.success(messages.created);
-      this.priceLists.push(newPriceList);
+      this.promotionLists.push(newPriceList);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -112,13 +114,13 @@ export default class PromotionStore {
     }
   };
 
-  update = async (priceList: IPriceListForm) => {
+  update = async (priceList: IPromotionForm) => {
     try {
-      const updatedPriceList = await PriceList.update(priceList);
+      const updatedPriceList = await Promotion.update(priceList);
       alerts.success(messages.updated);
-      const id = this.priceLists.findIndex((x) => x.id === priceList.id);
+      const id = this.promotionLists.findIndex((x) => x.id === priceList.id);
       if (id !== -1) {
-        this.priceLists[id] = updatedPriceList;
+        this.promotionLists[id] = updatedPriceList;
       }
       return true;
     } catch (error: any) {

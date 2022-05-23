@@ -31,11 +31,9 @@ type ReagentFormProps = {
 const { Search } = Input;
 const { CheckableTag } = Tag;
 
-/* const priceListOptions:IOptions[] = [{value:"C50DDF00-3698-40A1-6D76-08DA39B72022",label:"test1"}]
- */
 const PromotionForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
   const { optionStore,promotionStore } = useStore();
-  const { getPriceById, getById, getAll, create, update } =promotionStore;
+  const { getPriceById, getById, getAll, create, update,promotionLists } =promotionStore;
 const {priceListOptions,getPriceListOptions, getDepartmentOptions, departmentOptions,getareaOptions,areas} = optionStore;
 const { width: windowWidth } = useWindowDimensions();
   const navigate = useNavigate();
@@ -64,7 +62,56 @@ const { width: windowWidth } = useWindowDimensions();
     searchedText: "",
     searchedColumn: "",
   });
-  
+  const setFechaInicial=(fecha:moment.Moment)=>{
+    console.log("fecha1");
+    let estudio = estudios.map(x=> {
+      let data:IPromotionEstudioList = {
+        id:x.id,
+        area:x.area,
+        clave:x.clave,
+        nombre:x.nombre,
+        descuentoPorcentaje:x.descuentoPorcentaje,
+        descuentoCantidad:x.descuentoPorcentaje,
+        precioFinal: x.precioFinal,
+        lealtad:x.lealtad,
+        fechaInicial: fecha.toDate(),
+        fechaFinal: x.fechaFinal,
+        activo:x.activo,
+        precio: x.precio! ,
+        paquete:x.paquete,
+        selectedTags:x.selectedTags
+      }
+    return data;
+     });
+
+     setEstudios(estudio!);
+     setValues((prev) => ({ ...prev, estudio: estudio!,fechaInicial:fecha.toDate() }));
+  }
+
+  const setFechaFinal=(fecha:moment.Moment)=>{
+    let estudio = estudios.map(x=> {
+      let data:IPromotionEstudioList = {
+        id:x.id,
+        area:x.area,
+        clave:x.clave,
+        nombre:x.nombre,
+        descuentoPorcentaje:x.descuentoPorcentaje,
+        descuentoCantidad:x.descuentoPorcentaje,
+        precioFinal: x.precioFinal,
+        lealtad:x.lealtad,
+        fechaInicial: x.fechaInicial,
+        fechaFinal: fecha.toDate(),
+        activo:x.activo,
+        precio: x.precio! ,
+        paquete:x.paquete,
+        selectedTags:x.selectedTags,
+      }
+    return data;
+     });
+
+     setEstudios(estudio!);
+     setValues((prev) => ({ ...prev, estudio: estudio!,fechaFinal:fecha.toDate() }));
+  }
   const onValuesChange = async (changedValues: any) => {
     const field = Object.keys(changedValues)[0];
 
@@ -79,10 +126,10 @@ const { width: windowWidth } = useWindowDimensions();
         label: x.nombre,
        })); 
        setBranch(sucursalesOptions);
-       var estudios = priceList?.estudios.map(x=> {
+       let estudio = priceList?.estudios.map(x=> {
         let data:IPromotionEstudioList = {
           id:x.id,
-          area:"default",
+          area:x.area,
           clave:x.clave,
           nombre:x.nombre,
           descuentoPorcentaje:(values.tipoDescuento=="porcent"? values.cantidad:0),
@@ -94,116 +141,174 @@ const { width: windowWidth } = useWindowDimensions();
           activo:false,
           precio: x.precio! ,
           paquete:false,
+          selectedTags:[]
         }
       return data;
        });
 
-       setEstudios(estudios!);
-       setValues((prev) => ({ ...prev, estudio: estudios! }));
+       setEstudios(estudio!);
+       setValues((prev) => ({ ...prev, estudio: estudio! }));
        
     }
 
+    if (field === "cantidad") {
+      const cantidad = changedValues[field] as number;
+       console.log("cambio la cantidad");
+       console.log(values.tipoDescuento);
+       setValues((prev) => ({ ...prev, cantidad: cantidad! }));
+       let estudio:IPromotionEstudioList[] = estudios!.map(x=> {
+        let data:IPromotionEstudioList = {
+          id:x.id,
+          area:x.area,
+          clave:x.clave,
+          nombre:x.nombre,
+          descuentoPorcentaje:(values.tipoDescuento==="porcent"? cantidad: ((cantidad*100)/x.precio)),
+          descuentoCantidad:(values.tipoDescuento!=="porcent"? cantidad:((cantidad*x.precio)/100)),
+          precioFinal:(values.tipoDescuento!=="porcent"? (x.precio-cantidad):x.precio-((cantidad*x.precio)/100)) ,
+          lealtad:x.lealtad,
+          fechaInicial: moment().toDate(),
+          fechaFinal:moment().toDate(),
+          activo:x.activo,
+          precio: x.precio! ,
+          paquete:x.paquete,
+          selectedTags:x.selectedTags
+        }
+      return data;
+       });
+
+       setEstudios(estudio!);
+       setValues((prev) => ({ ...prev, estudio: estudio! }));
+       
+    }
 
     
   };
+  const editStudy = (typos:string)=>{
+    var estudio:IPromotionEstudioList[] = estudios.map(x=> {
+      let data:IPromotionEstudioList = {
+        id:x.id,
+        area:x.area,
+        clave:x.clave,
+        nombre:x.nombre,
+        descuentoPorcentaje:(typos=="porcent"? values.cantidad: ((values.cantidad*100)/x.precio)),
+        descuentoCantidad:(typos!="porcent"? values.cantidad:((values.cantidad*x.precio)/100)),
+        precioFinal:(typos!="porcent"? x.precio-values.cantidad:x.precio-((values.cantidad*x.precio)/100)) ,
+        lealtad:x.lealtad,
+        fechaInicial: moment().toDate(),
+        fechaFinal:moment().toDate(),
+        activo:x.activo,
+        precio: x.precio! ,
+        paquete:x.paquete,
+        selectedTags:x.selectedTags
+      }
+    return data;
+     });
 
+     setEstudios(estudio!);
+     setValues((prev) => ({ ...prev, estudio: estudio! }));
+
+  }
   const handleChange=(tag:IDias, checked:Boolean)=>{
+
+// setValues({...values, [tag.dia]: checked})
 
     const nextSelectedTags = checked ? [...selectedTags!, tag] : selectedTags.filter(t => t.id !== tag.id);
     console.log('You are interested in: ', nextSelectedTags);
     setSelectedTags( nextSelectedTags! );
   };
   const setStudy = (active:boolean,item:IPromotionEstudioList) =>{
-/* 
-    var index = lista.findIndex(x=>x.id==item.id);
-    var list = lista;
+ 
+    var index = estudios.findIndex(x=>x.id==item.id);
+    var list = estudios;
     item.activo=active;
     list[index]=item;
-    setLista(list);
+   // setLista(list); 
     var indexVal= values.estudio.findIndex(x=>x.id==item.id);
     var val =values.estudio;
     val[indexVal]=item;
-    setValues((prev) => ({ ...prev, estudio: val })); */
+    setValues((prev) => ({ ...prev, estudio: val })); 
    
 }
 
 const setStudyL = (active:boolean,item:IPromotionEstudioList) =>{
-  /* 
-      var index = lista.findIndex(x=>x.id==item.id);
-      var list = lista;
-      item.activo=active;
-      list[index]=item;
-      setLista(list);
-      var indexVal= values.estudio.findIndex(x=>x.id==item.id);
-      var val =values.estudio;
-      val[indexVal]=item;
-      setValues((prev) => ({ ...prev, estudio: val })); */
+  var index = estudios.findIndex(x=>x.id==item.id);
+  var list = estudios;
+  item.lealtad=active;
+  list[index]=item;
+ // setLista(list); 
+  var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+  var val =values.estudio;
+  val[indexVal]=item;
+  setValues((prev) => ({ ...prev, estudio: val })); 
      
   }
   const setStudyFi = (fechainical:moment.Moment,item:IPromotionEstudioList) =>{
-    /* 
-        var index = lista.findIndex(x=>x.id==item.id);
-        var list = lista;
-        item.activo=active;
-        list[index]=item;
-        setLista(list);
-        var indexVal= values.estudio.findIndex(x=>x.id==item.id);
-        var val =values.estudio;
-        val[indexVal]=item;
-        setValues((prev) => ({ ...prev, estudio: val })); */
+    
+    var index = estudios.findIndex(x=>x.id==item.id);
+    var list = estudios;
+    item.fechaInicial=fechainical.toDate();
+    list[index]=item;
+   // setLista(list); 
+    var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+    var val =values.estudio;
+    val[indexVal]=item;
+    setValues((prev) => ({ ...prev, estudio: val })); 
        
     }
     const setStudyFf = (fechafinal:moment.Moment,item:IPromotionEstudioList) =>{
-      /* 
-          var index = lista.findIndex(x=>x.id==item.id);
-          var list = lista;
-          item.activo=active;
-          list[index]=item;
-          setLista(list);
-          var indexVal= values.estudio.findIndex(x=>x.id==item.id);
-          var val =values.estudio;
-          val[indexVal]=item;
-          setValues((prev) => ({ ...prev, estudio: val })); */
-         
-      }
-const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
-  /* 
-      var index = lista.findIndex(x=>x.id==item.id);
-      var list = lista;
-      item.activo=active;
+      var index = estudios.findIndex(x=>x.id==item.id);
+      var list = estudios;
+      item.fechaFinal=fechafinal.toDate();
       list[index]=item;
-      setLista(list);
+     // setLista(list); 
       var indexVal= values.estudio.findIndex(x=>x.id==item.id);
       var val =values.estudio;
       val[indexVal]=item;
-      setValues((prev) => ({ ...prev, estudio: val })); */
+      setValues((prev) => ({ ...prev, estudio: val })); 
+         
+      }
+const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
+  
+      var index = estudios.findIndex(x=>x.id==item.id);
+      var list = estudios;
+      item.descuentoPorcentaje=decuento;
+      item.descuentoCantidad=(item.precio*decuento/100);
+      item.precioFinal = item.precio-item.descuentoCantidad;
+      list[index]=item;
+     // setLista(list); 
+      var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+      var val =values.estudio;
+      val[indexVal]=item;
+      setValues((prev) => ({ ...prev, estudio: val })); 
      
   }
 
   const setStudydiscuntc = (decuento:number,item:IPromotionEstudioList) =>{
-    /* 
-        var index = lista.findIndex(x=>x.id==item.id);
-        var list = lista;
-        item.activo=active;
-        list[index]=item;
-        setLista(list);
-        var indexVal= values.estudio.findIndex(x=>x.id==item.id);
-        var val =values.estudio;
-        val[indexVal]=item;
-        setValues((prev) => ({ ...prev, estudio: val })); */
+    var index = estudios.findIndex(x=>x.id==item.id);
+    var list = estudios;
+    item.descuentoPorcentaje=(100*decuento/item.precio);
+    item.descuentoCantidad=decuento;
+    item.precioFinal= item.precio-decuento;
+    list[index]=item;
+   // setLista(list); 
+    var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+    var val =values.estudio;
+    val[indexVal]=item;
+    setValues((prev) => ({ ...prev, estudio: val })); 
        
     }
-    const setStudyPricefinal = (decuento:number,item:IPromotionEstudioList) =>{
-      /* 
-          var index = lista.findIndex(x=>x.id==item.id);
-          var list = lista;
-          item.activo=active;
-          list[index]=item;
-          setLista(list);
-          var indexVal= values.estudio.findIndex(x=>x.id==item.id);
-          var val =values.estudio;
-          val[indexVal]=item;
-          setValues((prev) => ({ ...prev, estudio: val })); */
+    const setStudyPricefinal = (preciofinal:number,item:IPromotionEstudioList) =>{
+      var index = estudios.findIndex(x=>x.id==item.id);
+      var list = estudios;
+      item.descuentoCantidad=preciofinal-item.precio;
+      item.descuentoPorcentaje=(100*item.descuentoCantidad/item.precio);
+      item.precioFinal= preciofinal;
+      list[index]=item;
+     // setLista(list); 
+      var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+      var val =values.estudio;
+      val[indexVal]=item;
+      setValues((prev) => ({ ...prev, estudio: val })); 
          
       }
 
@@ -269,11 +374,11 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
     {
       key: "editarc",
       dataIndex: "id",
-      title: "desccantidad",
+      title: "Desc cantidad",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value,item) => (
-        <input type={"number"}  value={item.descuentoPorcentaje}  onChange={(value)=>setStudydiscuntc(Number(value.target.value),item)}></input>
+        <input type={"number"}  value={item.descuentoCantidad}  onChange={(value)=>setStudydiscuntc(Number(value.target.value),item)}></input>
       ),
     },
     {
@@ -283,7 +388,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value,item) => (
-        <input type={"number"}  value={item.descuentoPorcentaje}  onChange={(value)=>setStudyPricefinal(Number(value.target.value),item)}></input>
+        <input type={"number"}  value={item.precioFinal}  onChange={(value)=>setStudyPricefinal(Number(value.target.value),item)}></input>
       ),
     },
     {
@@ -324,7 +429,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value,item) => (
-        <DatePicker style={{marginLeft:"10px"}} value={moment(item.fechaInicial)} onChange={(value)=>{setStudyFf(value!,item)}} />
+        <DatePicker style={{marginLeft:"10px"}} value={moment(item.fechaFinal)} onChange={(value)=>{setStudyFf(value!,item)}} />
       ),
     },
     {
@@ -359,7 +464,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
                 {tagsData.map(tag => (
                   <CheckableTag
                     key={tag.id}
-                    checked={selectedTags.filter(x=>x.id===tag.id).length>0}
+                    checked={item.selectedTags.filter((x:IDias) =>x.id===tag.id).length>0}
                     onChange={checked => handleChange(tag, checked) }
                   >
                     {tag.dia}
@@ -373,27 +478,27 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
     if(departament){
     var departamento=departmentOptions.filter(x=>x.value===departament)[0].label;
     var areaSearch=await getareaOptions(departament);
-/*     
-    var estudios = lista!.filter(x=>x.departamento === departamento) */
- /*    setValues((prev) => ({ ...prev, estudio: estudios })); */
+     
+    var estudio = estudios!.filter((x:IPromotionEstudioList) =>x.departamento === departamento) 
+    setValues((prev) => ({ ...prev, estudio: estudio })); 
     setAreaSearch(areaSearch!);}else{
- /*      var estudios = lista!.filter(x=>x.activo === true);
-      setValues((prev) => ({ ...prev, estudio: estudios })); */
+      var estudi = estudios!.filter(x=>x.activo === true);
+      setValues((prev) => ({ ...prev, estudio: estudi })); 
      
     }
     
   }
   const filterByArea = (area:number) => {
     var areaActive=areas.filter(x=>x.value===area)[0].label;
-/*     var estudios = lista.filter(x=>x.area === areaActive) */
-  /*   setValues((prev) => ({ ...prev, estudio: estudios })); */
+     var estudio = estudios.filter(x=>x.area === areaActive) 
+     setValues((prev) => ({ ...prev, estudio: estudios })); 
   }
   const filterBySearch = (search:string)=>{
-/*     var estudios = lista.filter(x=>x.clave.includes(search) || x.nombre.includes(search))
-    setValues((prev) => ({ ...prev, estudio: estudios })); */
+     var estudio = estudios.filter(x=>x.clave.includes(search) || x.nombre.includes(search))
+    setValues((prev) => ({ ...prev, estudio: estudio })); 
   }
-/*   useEffect(() => {
-    const readReagent = async (id: string) => {
+   useEffect(() => {
+    const readReagent = async (id: number) => {
       setLoading(true);
       const reagent = await getById(id);
       form.setFieldsValue(reagent!);
@@ -402,19 +507,19 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
     };
 
     if (id) {
-      readReagent(id);
+      readReagent(Number(id));
     }
   }, [form, getById, id]);
- */
-/*   useEffect(() => {
-    if (reagents.length === 0) {
+ 
+   useEffect(() => {
+    if (promotionLists.length === 0) {
       getAll(searchParams.get("search") ?? "all");
     }
-  }, [getAll, reagents.length, searchParams]); */
+  }, [getAll, promotionLists.length, searchParams]); 
   const deleteClinic = (id: string) => {
-/*     const clinics = values.departamentos.filter((x) => x.departamentoId !== id);
+     const clinics = values.branchs.filter((x) => x.id !== id);
 
-    setValues((prev) => ({ ...prev, departamentos: clinics })); */
+    setValues((prev) => ({ ...prev, branchs: clinics })); 
   };
   const addClinic = () => {
      if (sucursal) {
@@ -447,9 +552,9 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
     let success = false;
 
     if (!reagent.id) {
-      //success = await create(reagent);
+      success = await create(reagent);
     } else {
-      //success = await update(reagent);
+      success = await update(reagent);
     }
 
     setLoading(false);
@@ -462,21 +567,21 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
   const goBack = () => {
     searchParams.delete("mode");
     setSearchParams(searchParams);
-    navigate(`/${views.reagent}?${searchParams}`);
+    navigate(`/${views.promo}?${searchParams}`);
   };
 
   const setEditMode = () => {
-    navigate(`/${views.reagent}/${id}?${searchParams}&mode=edit`);
+    navigate(`/${views.promo}/${id}?${searchParams}&mode=edit`);
     setReadonly(false);
   };
 
   const getPage = (id: string) => {
-    //return reagents.findIndex((x) => x.id === id) + 1;
+    return promotionLists.findIndex((x) => x.id === Number(id)) + 1;
   };
 
   const setPage = (page: number) => {
-    //const reagent = reagents[page - 1];
-    //navigate(`/${views.reagent}/${reagent.id}?${searchParams}`);
+    const reagent = promotionLists[page - 1];
+    navigate(`/${views.promo}/${reagent.id}?${searchParams}`);
   };
 
   return (
@@ -484,13 +589,13 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
       <Row style={{ marginBottom: 24 }}>
         {!!id && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
-{/*             <Pagination
+             <Pagination
               size="small"
-              total={reagents?.length ?? 0}
+              total={promotionLists?.length ?? 0}
               pageSize={1}
               current={getPage(id)}
               onChange={setPage}
-            /> */}
+            /> 
           </Col>
         )}
         {!readonly && (
@@ -587,7 +692,12 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
                   <Radio.Group  style={{marginLeft:"10px"}}
                     options={radioOptions}
                     onChange={(e) => {
-                    setDiscunt(e.target.value);
+                      setValues((prev) => ({ ...prev, tipoDescuento: e.target.value }));
+                      setDiscunt(e.target.value);
+                      console.log(values.cantidad);
+                    if(values.cantidad!==0){
+                      console.log("cambio de tipo");
+                    editStudy(e.target.value);}
                     }}
                     value={discunt}
                   />
@@ -597,7 +707,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
               <Col md={12} sm={24} xs={12}>
                   <NumberInput
                       formProps={{
-                        name: "descuento",
+                        name: "cantidad",
                         label: "Descuento",
                       }}
                       max={100}
@@ -623,8 +733,8 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
               <Col md={12} sm={24} xs={12}>
               <div style={{marginLeft:"98px",marginBottom:"20px"}}>
                 Descuento entre: 
-                <DatePicker style={{marginLeft:"10px"}} value={moment(values.fechaInicial)} onChange={(value)=>{console.log(value)}} />
-                <DatePicker style={{marginLeft:"10px"}} value={moment(values.fechaFinal)} onChange={(value)=>{console.log(value)}} />
+                <DatePicker style={{marginLeft:"10px"}} value={moment(values.fechaInicial)} onChange={(value)=>{setFechaInicial(value!)}} />
+                <DatePicker style={{marginLeft:"10px"}} value={moment(values.fechaFinal)} onChange={(value)=>{setFechaFinal(value!)}} />
               </div>
               </Col>
               <Col md={12} sm={24} xs={12}>

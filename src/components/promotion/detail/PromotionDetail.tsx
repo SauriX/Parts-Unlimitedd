@@ -14,8 +14,8 @@ type UrlParams = {
 };
 
 const PromotionDetail = () => {
-  const {  } = useStore();
- /*  const { scopes, access, clearScopes, exportForm } = ; */
+  const { promotionStore } = useStore();
+  const { scopes, access, clearScopes, exportForm } = promotionStore; 
 
   const navigate = useNavigate();
 
@@ -44,34 +44,34 @@ const PromotionDetail = () => {
   const handleDownload = async () => {
     if (reagentId) {
       setPrinting(true);
-      //await exportForm(reagentId);
+      await exportForm(reagentId);
       setPrinting(false);
     }
   };
 
-  useEffect(() => {
+/*   useEffect(() => {
     const checkAccess = async () => {
-      //const permissions = await access();
+      const permissions = await access();
 
- /*      if (reagentId === undefined) {
+       if (id === undefined) {
         console.log("undefined");
         navigate("/notFound");
-      } else if (!permissions?.crear && reagentId === "") {
+      } else if (!permissions?.crear && id === "") {
         navigate(`/forbidden`);
-      } else if (!permissions?.modificar && reagentId !== "") {
+      } else if (!permissions?.modificar && id!== "") {
         navigate(`/forbidden`);
-      } */
+      } 
     };
 
     checkAccess();
-  }, [/* access */, navigate, reagentId]);
+  }, [ access , navigate, id]); */
 
-/*   useEffect(() => {
+   useEffect(() => {
     return () => {
       clearScopes();
     };
   }, [clearScopes]);
- */
+ 
   //if (reagentId == null) return null;
 
 /*   if (!scopes?.acceder) return null; */

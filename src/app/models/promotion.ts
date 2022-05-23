@@ -24,6 +24,8 @@ export interface IPromotionEstudioList{
     precio:number,
     precioFinal:number,
     paquete:boolean,
+    departamento?:string
+    selectedTags:IDias[],
 }
 export interface IPromotionBranch{
     id:string,
@@ -50,7 +52,7 @@ export interface IPromotionForm{
     lealtad:boolean
     estudio: IPromotionEstudioList[],
     branchs: ISucMedComList[],
-    dias?:string,
+    dias:IDias[],
 }
 
 
@@ -67,6 +69,7 @@ export class PromotionFormValues implements IPromotionForm{
     lealtad=false;
     estudio: IPromotionEstudioList[] =[];
     branchs: ISucMedComList[]=[];
+    dias: IDias[]=[];
     constructor(init?:IPromotionForm) {
         Object.assign(this, init);
       }

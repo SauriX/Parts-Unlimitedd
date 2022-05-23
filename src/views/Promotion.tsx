@@ -8,8 +8,8 @@ import PromotionHeader from "../components/promotion/PromotionHeader";
 import PromotionTable from "../components/promotion/PromotionTable";
 
 const Promotion = () => {
-  const {  } = useStore();
-  //const { scopes, access, clearScopes, exportList } = ;
+  const { promotionStore } = useStore();
+  const { scopes, access, clearScopes, exportList } =promotionStore ;
 
   const [searchParams] = useSearchParams();
 
@@ -29,23 +29,23 @@ const Promotion = () => {
 
   const handleDownload = async () => {
     setLoading(true);
-    //await exportList(searchParams.get("search") ?? "all");
+    await exportList(searchParams.get("search") ?? "all");
     setLoading(false);
   };
 
   useEffect(() => {
     const checkAccess = async () => {
-     // await access();
+      await access();
     };
 
     checkAccess();
-  }, [/* access */]);
+  }, [ access ]);
 
   useEffect(() => {
     return () => {
-      //clearScopes();
+      clearScopes();
     };
-  }, [/* clearScopes */]);
+  }, [ clearScopes ]);
 
   //if (!scopes?.acceder) return null;
 
