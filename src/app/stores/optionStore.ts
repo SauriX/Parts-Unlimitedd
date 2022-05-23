@@ -291,6 +291,7 @@ export default class OptionStore {
   getPriceListOptions = async () => {
     try{
       const priceListOptions =await PriceList.getActive();
+      console.log(priceListOptions);
       this.priceListOptions= priceListOptions.map((x) => ({
         value: x.id,
         label: x.nombre,

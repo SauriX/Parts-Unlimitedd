@@ -39,8 +39,8 @@ type PromotionTableProps = {
 };
 
 const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => {
-  const {  } = useStore();
- /*  const {  getAll } =; */
+  const { promotionStore } = useStore();
+   const {  getAll,promotionLists } = promotionStore; 
 
   const [searchParams] = useSearchParams();
 
@@ -60,15 +60,15 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
   useEffect(() => {
     const readPromotions = async () => {
       setLoading(true);
-      //await getAll(searchParams.get("search") ?? "all");
+      await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
     };
 
-/*     if (reagents.length === 0) {
-       readPromotions
-    } */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+     if (promotionLists.length === 0) {
+       readPromotions()
+    } 
+     
+  }, [getAll]);
 
   const columns: IColumns<IPromotionList> = [
     {
@@ -170,7 +170,7 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
         size="small"
         rowKey={(record) => record.id}
         columns={columns}
-        dataSource={[...promotions]}
+        dataSource={[...promotionLists]}
         pagination={defaultPaginationProperties}
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}

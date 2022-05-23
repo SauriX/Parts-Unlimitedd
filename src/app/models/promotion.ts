@@ -1,3 +1,5 @@
+import moment from "moment";
+import { Interface } from "readline";
 import { ISucMedComList } from "./priceList";
 
 export interface IPromotionList {
@@ -9,8 +11,10 @@ export interface IPromotionList {
     activo:boolean
 }
 export interface IPromotionEstudioList{
+    id:number,
     clave:string,
     nombre:string,
+    area?:string,
     descuentoPorcentaje:number,
     descuentoCantidad:number,
     lealtad:boolean,
@@ -18,7 +22,10 @@ export interface IPromotionEstudioList{
     fechaFinal:Date,
     activo:boolean,
     precio:number,
+    precioFinal:number,
     paquete:boolean,
+    departamento?:string
+    selectedTags:IDias[],
 }
 export interface IPromotionBranch{
     id:string,
@@ -27,23 +34,31 @@ export interface IPromotionBranch{
     nombre:string,
     precio:number,
 }
+
+export interface IDias{
+    id:number,
+    dia:string,
+}
 export interface IPromotionForm{
     id:number,
     clave:string,
     nombre:string,
-    tipoDescuento:string,
-    cantidad:number,
     fechaInicial?:Date
     fechaFinal?:Date,
     idListaPrecios:string,
+    tipoDescuento:string,
+    cantidad:number,
     activo:boolean,
     lealtad:boolean
     estudio: IPromotionEstudioList[],
-    sucMedCom: ISucMedComList[],
-    branch:IPromotionBranch[],
+    branchs: ISucMedComList[],
+    dias:IDias[],
 }
 
-export class IPromotionFormValues implements IPromotionForm{
+
+
+export class PromotionFormValues implements IPromotionForm{
+
     id=0;
     clave="";
     nombre="";
@@ -53,8 +68,8 @@ export class IPromotionFormValues implements IPromotionForm{
     activo=false;
     lealtad=false;
     estudio: IPromotionEstudioList[] =[];
-    sucMedCom: ISucMedComList[]=[];
-    branch:IPromotionBranch[]=[];
+    branchs: ISucMedComList[]=[];
+    dias: IDias[]=[];
     constructor(init?:IPromotionForm) {
         Object.assign(this, init);
       }

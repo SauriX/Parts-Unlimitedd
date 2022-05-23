@@ -19,8 +19,9 @@ export interface IPriceListForm {
     idArea:number,
     idDepartamento:number,
     activo: boolean;
-    estudio: IPriceListEstudioList[];
+    estudios: IPriceListEstudioList[];
     sucMedCom: ISucMedComList[];
+    sucursales: ISucMedComList[];
   }
   export class PriceListFormValues implements IPriceListForm {
    
@@ -31,9 +32,9 @@ export interface IPriceListForm {
     idArea=0;
     idDepartamento=0;
     activo= true;
-    estudio: IPriceListEstudioList[] = [];
+    estudios: IPriceListEstudioList[] = [];
     sucMedCom: ISucMedComList[] = [];
-  
+    sucursales: ISucMedComList[]=[];
     constructor(init?: IPriceListForm) {
       Object.assign(this, init);
     }
@@ -51,7 +52,7 @@ export interface ISucMedComList {
 
 
 export interface IPriceListEstudioList {
-  id:number | string;
+  id:number;
   clave: string;
   nombre: string;
   precio?:number;

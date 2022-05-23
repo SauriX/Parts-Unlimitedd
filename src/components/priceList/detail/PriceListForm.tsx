@@ -122,9 +122,9 @@ const PriceListForm: FC<PriceListFormProps> = ({
     item.activo = active;
     list[index] = item;
     setLista(list);
-    var indexVal = values.estudio.findIndex((x) => x.id === item.id);
-    var val = values.estudio;
-    val[indexVal] = item;
+    var indexVal= values.estudios.findIndex(x=>x.id===item.id);
+    var val =values.estudios;
+    val[indexVal]=item;
     setValues((prev) => ({ ...prev, estudio: val }));
     console.log("entra")
   };
@@ -157,7 +157,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       console.log("Lista de precio", user);
       form.setFieldsValue(user!);
       studis = studis?.map((x) => {
-        var activo = user?.estudio.find((y) => y.id === x.id) != null;
+        var activo = user?.estudios.find((y) => y.id === x.id) != null;
         return { ...x, activo };
       });
 
@@ -188,24 +188,36 @@ const PriceListForm: FC<PriceListFormProps> = ({
     }
   }, [form, getById, id]);
 
-  // useEffect(() => {
-  //   const readuser = async (idUser: string) => {
-  //   var studis = await getAllStudy();
-  //   var areaForm=await getareaOptions(values.idDepartamento);
-  //   const user = await getById(idUser);
-  //   form.setFieldsValue(user!);
-  //   studis=studis?.map(x=>{
-  //     var activo = user?.estudio.find(y=>y.id===x.id)!=null;
-  //     return ({...x,activo})
-  //   });
-  //   setLista(studis!);
-  //   setAreaForm(areaForm!);
-  //   console.log(studis);
-  //   };
-  //   if (id) {
-  //     readuser(String(id));
-  //   }
-  // }, [form, getById , id]);
+  useEffect(() => {
+    getDepartmentOptions();
+  }, [getDepartmentOptions]);
+
+  useEffect(()=> {
+    const areareader = async () => {
+    await getareaOptions(0);
+    setAreaSearch(areas);
+    }
+      areareader();
+  }, [ getareaOptions]);
+
+useEffect(() => {
+  const readuser = async (idUser: string) => {
+  var studis = await getAllStudy();
+  var areaForm=await getareaOptions(values.idDepartamento);
+  const user = await getById(idUser);
+  form.setFieldsValue(user!);
+  studis=studis?.map(x=>{
+    var activo = user?.estudios.find(y=>y.id===x.id)!=null;
+    return ({...x,activo})
+  });
+  setLista(studis!);  
+  setAreaForm(areaForm!);
+  console.log(studis);
+  };
+  if (id) {
+    readuser(String(id));
+  }
+}, [form, getById , id]);
 
   useEffect(() => {
     if (priceLists.length === 0) {
@@ -674,11 +686,9 @@ const PriceListForm: FC<PriceListFormProps> = ({
                 rowKey={(record) => record.id}
                 columns={columnsEstudios.slice(0, 5)}
                 pagination={false}
-                dataSource={[...(values.estudio ?? [])]}
-                scroll={{
-                  x: windowWidth < resizeWidth ? "max-content" : "auto",
-                }}
-              />
+                dataSource={[...(values.estudios ?? [])]}
+                scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+                />
             </Col>
           </Row>
         </div>

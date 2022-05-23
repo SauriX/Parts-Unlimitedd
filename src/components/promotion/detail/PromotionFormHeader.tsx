@@ -14,8 +14,8 @@ type ReagentFormHeaderProps = {
 };
 
 const PromotionFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint, handleDownload }) => {
-  const {  } = useStore();
-/*   const { scopes } = ; */
+  const { promotionStore } = useStore();
+   const { scopes } = promotionStore; 
 
   let navigate = useNavigate();
 
@@ -33,8 +33,8 @@ const PromotionFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint, hand
       title={<HeaderTitle title="Catálogo de Promociones en listas de precios​" image="promo" />}
       className="header-container"
       extra={[
-        /* scopes?.imprimir && */ <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-       /*  !!id && scopes?.descargar && */ (
+        !!id &&scopes?.imprimir &&  <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+         !!id && scopes?.descargar &&  (
           <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />
         ),
         <ImageButton key="back" title="Regresar" image="back" onClick={getBack} />,
