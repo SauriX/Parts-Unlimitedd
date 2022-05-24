@@ -50,6 +50,7 @@ export default class PromotionStore {
             let data:IPriceListEstudioList = {
                 id: x.id,
                 clave: x.clave,
+                estudioId: x.id,
                 nombre: x.nombre,
                 area:x.area,
                 departamento:x.departamento,

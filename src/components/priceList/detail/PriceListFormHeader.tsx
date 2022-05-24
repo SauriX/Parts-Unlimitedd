@@ -6,6 +6,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
+import { idText } from "typescript";
 
 type PriceListFormHeaderProps = {
   id: string;
@@ -34,10 +35,14 @@ const PriceListFormHeader: FC<PriceListFormHeaderProps> = ({ id, handlePrint, ha
       className="header-container"
       extra={[
         
-        !!id && scopes?.descargar && (
-          scopes?.imprimir && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-          <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />
-        ),
+        // !!id && scopes?.descargar && (
+        //   scopes?.imprimir && 
+        //   <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+        //   <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />
+        // ),
+        id?<ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />:"",
+        id?<ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />:"",
+
         <ImageButton key="back" title="Regresar" image="back" onClick={getBack} />,
       ]}
     ></PageHeader>
