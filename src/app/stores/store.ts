@@ -40,7 +40,6 @@ interface Store {
   priceListStore:PriceListStore;
   packStore:PackStore;
   promotionStore:PromotionStore;
-  packStore:PackStore;
   loyaltyStore:LoyaltyStore;
 }
 

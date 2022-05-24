@@ -41,7 +41,7 @@ export interface IPriceListForm {
 }
 
 export interface ISucMedComList {
-  id: number | string;
+  id: string;
   clave: string;
   nombre: string;
   precio?:number;
@@ -53,6 +53,7 @@ export interface ISucMedComList {
 
 export interface IPriceListEstudioList {
   id:number;
+  estudioId: number;
   clave: string;
   nombre: string;
   precio?:number;

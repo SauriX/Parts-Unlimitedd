@@ -67,7 +67,7 @@ export default class OptionStore {
         ruta="area"
       }
       const area = await Catalog.getActive<ICatalogNormalList>(ruta);
-      console.log("el depa1");
+      console.log("el depaAreas");
       console.log(area);
        var areas= area.map((x) => ({
         value: x.id,
@@ -85,7 +85,7 @@ export default class OptionStore {
     console.log(id);
     try {
       const department = await Catalog.getActive<ICatalogNormalList>("format");
-      console.log("el depa1");
+      console.log("el depa optionStore");
       console.log(department);
       this.printFormat = department.map((x) => ({
         value: x.id,

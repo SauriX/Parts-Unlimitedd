@@ -46,6 +46,7 @@ export default class PriceListStore {
         var studies= roles.map((x) => {
             let data:IPriceListEstudioList = {
                 id: x.id,
+                estudioId: x.id,
                 clave: x.clave,
                 nombre: x.nombre,
                 area:x.area,
