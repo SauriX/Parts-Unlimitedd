@@ -22,7 +22,7 @@ const PromotionDetail = () => {
   const [printing, setPrinting] = useState(false);
 
   const { id } = useParams<UrlParams>();
-  const reagentId = !id ? "" : !guidPattern.test(id) ? undefined : id;
+  const reagentId = id;//!id ? "" : !guidPattern.test(id) ? undefined : id;
 
   const componentRef = useRef<any>();
 

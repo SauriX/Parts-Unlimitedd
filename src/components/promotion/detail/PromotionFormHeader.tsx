@@ -16,7 +16,8 @@ type ReagentFormHeaderProps = {
 const PromotionFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint, handleDownload }) => {
   const { promotionStore } = useStore();
    const { scopes } = promotionStore; 
-
+  console.log("el id de la promo");
+  console.log(id);
   let navigate = useNavigate();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -26,15 +27,15 @@ const PromotionFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint, hand
     setSearchParams(searchParams);
     navigate(`/${views.promo}?${searchParams}`);
   };
-
+  console.log(scopes);
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Promociones en listas de precios​" image="promo" />}
+      title={<HeaderTitle title="Catálogo de Promociones en listas de precios" image="promo" />}
       className="header-container"
       extra={[
-        !!id &&scopes?.imprimir &&  <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-         !!id && scopes?.descargar &&  (
+        id &&scopes?.imprimir &&  <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+         id && scopes?.descargar &&  (
           <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />
         ),
         <ImageButton key="back" title="Regresar" image="back" onClick={getBack} />,

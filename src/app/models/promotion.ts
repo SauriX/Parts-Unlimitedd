@@ -26,6 +26,13 @@ export interface IPromotionEstudioList{
     paquete:boolean,
     departamento?:string
     selectedTags:IDias[],
+    lunes?:boolean,
+    martes?:boolean,
+    miercoles?:boolean,
+    jueves?:boolean,
+    viernes?:boolean,
+    sabado?:boolean,
+    domingo?:boolean,
 }
 export interface IPromotionBranch{
     id:string,

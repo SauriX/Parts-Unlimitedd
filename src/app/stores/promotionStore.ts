@@ -3,7 +3,7 @@ import PriceList from "../api/priceList";
 import Promotion from "../api/promotion";
 import Study from "../api/study";
 import { IPriceListEstudioList, IPriceListForm, IPriceListList, ISucMedComList } from "../models/priceList";
-import { IPromotionForm, IPromotionList } from "../models/promotion";
+import { IDias, IPromotionForm, IPromotionList } from "../models/promotion";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
@@ -32,6 +32,7 @@ export default class PromotionStore {
   access = async () => {
     try {
       const scopes = await Promotion.access();
+      console.log(scopes);
       this.scopes = scopes;
       return scopes;
     } catch (error: any) {
@@ -79,6 +80,35 @@ export default class PromotionStore {
   getById = async (id: number) => {
     try {
       const priceList = await Promotion.getById(id);
+     var estudios= priceList.estudio.map((x)=>{
+        var dia: IDias[]=[];
+        if(x.lunes){
+          dia.push({id:1,dia:"L"});
+        }
+        if(x.martes){
+          dia.push({id:2,dia:"M"});
+        }
+        if(x.miercoles){
+          dia.push({id:3,dia:"M"});
+        }
+        if(x.jueves){
+          dia.push({id:4,dia:"J"});
+        }
+        if(x.viernes){
+          dia.push({id:5,dia:"V"});
+        }
+        if(x.sabado){
+          dia.push({id:6,dia:"S"});
+        }
+        if(x.domingo){
+          dia.push({id:7,dia:"D"});
+        }
+        x.selectedTags = dia;
+        return x;
+      }); 
+      console.log("estudios");
+      console.log(estudios);
+      priceList.estudio=estudios;
       return priceList;
     } catch (error: any) {
       if (error.status === responses.notFound) {
@@ -104,6 +134,48 @@ export default class PromotionStore {
 
   create = async (priceList: IPromotionForm) => {
     try {
+     var estudios = priceList.estudio.map(x=>{
+        x.selectedTags.map(t=>{
+          if(t.id==1){
+            x.lunes= true;
+          }
+        });
+        x.selectedTags.map(t=>{
+          if(t.id==2){
+            x.martes= true;
+          }
+        });
+        x.selectedTags.map(t=>{
+          if(t.id==3){
+            x.miercoles= true;
+          }
+        });
+        x.selectedTags.map(t=>{
+          if(t.id==4){
+            x.jueves= true;
+          }
+        });
+        x.selectedTags.map(t=>{
+          if(t.id==5){
+            x.viernes= true;
+          }
+        });
+        x.selectedTags.map(t=>{
+          if(t.id==6){
+            x.sabado= true;
+          }
+        });
+        x.selectedTags.map(t=>{
+          if(t.id== 7){
+            x.domingo= true;
+          }
+        });
+
+        return x;
+      });
+
+      priceList.estudio = estudios;
+      console.log(priceList);
       const newPriceList = await Promotion.create(priceList);
       alerts.success(messages.created);
       this.promotionLists.push(newPriceList);
@@ -116,6 +188,46 @@ export default class PromotionStore {
 
   update = async (priceList: IPromotionForm) => {
     try {
+      var estudios = priceList.estudio.map(x=>{
+        x.selectedTags.map(t=>{
+          if(t.id==1){
+            x.lunes= true;
+          }
+        });
+        x.selectedTags.map(t=>{
+          if(t.id==2){
+            x.martes= true;
+          }
+        });
+        x.selectedTags.map(t=>{
+          if(t.id==3){
+            x.miercoles= true;
+          }
+        });
+        x.selectedTags.map(t=>{
+          if(t.id==4){
+            x.jueves= true;
+          }
+        });
+        x.selectedTags.map(t=>{
+          if(t.id==5){
+            x.viernes= true;
+          }
+        });
+        x.selectedTags.map(t=>{
+          if(t.id==6){
+            x.sabado= true;
+          }
+        });
+        x.selectedTags.map(t=>{
+          if(t.id== 7){
+            x.domingo= true;
+          }
+        });
+
+        return x;
+      });
+      priceList.estudio = estudios;
       const updatedPriceList = await Promotion.update(priceList);
       alerts.success(messages.updated);
       const id = this.promotionLists.findIndex((x) => x.id === priceList.id);
@@ -131,7 +243,7 @@ export default class PromotionStore {
 
   exportList = async (search: string) => {
     try {
-      await PriceList.exportList(search);
+      await Promotion.exportList(search);
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
@@ -139,7 +251,7 @@ export default class PromotionStore {
 
   exportForm = async (id: string) => {
     try {
-      await PriceList.exportForm(id);
+      await Promotion.exportForm(id);
     } catch (error: any) {
       if (error.status === responses.notFound) {
         history.push("/notFound");

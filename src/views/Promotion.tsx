@@ -40,12 +40,13 @@ const Promotion = () => {
 
     checkAccess();
   }, [ access ]);
-
-  useEffect(() => {
+  console.log("el escope en principal");
+  console.log(scopes);
+/*   useEffect(() => {
     return () => {
       clearScopes();
     };
-  }, [ clearScopes ]);
+  }, [ clearScopes ]); */
 
   //if (!scopes?.acceder) return null;
 

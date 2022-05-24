@@ -149,7 +149,7 @@ const StudyTable:FC<StudyTableProps> = ({  componentRef,  printing }) => {
         width:  100 ,
         fixed:"right",
         render: (value,parameter) => (
-          <IconButton
+          <IconButton 
             title="Editar estudio"
             icon={<EditOutlined />}
             onClick={() => {

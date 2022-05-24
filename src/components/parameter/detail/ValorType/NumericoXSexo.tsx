@@ -111,7 +111,7 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue,parameter }) => {
                                         name={[name, 'hombreValorInicial']}
                                         rules={[{ required: true, message: 'Missing Hombre valor' }]}
                                     >
-                                        <Input type={"number"} disabled={disabled} placeholder={"Hombre valor"} />
+                                        <Input type={"number"} disabled={disabled} min={0} placeholder={"Hombre valor"} />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}

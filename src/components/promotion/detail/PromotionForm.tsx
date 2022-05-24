@@ -1,4 +1,4 @@
-import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Radio, DatePicker, List, Typography, Select, Table, Checkbox, Input, Tag } from "antd";
+import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Radio, DatePicker, List, Typography, Select, Table, Checkbox, Input, Tag, InputNumber } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
@@ -41,7 +41,7 @@ const { width: windowWidth } = useWindowDimensions();
   const [lista, setLista] = useState(/* studies */);
   const [searchParams, setSearchParams] = useSearchParams();
   const [areaId, setAreaId] = useState<number>();
-  const [discunt, setDiscunt] = useState<number>();
+  const [discunt, setDiscunt] = useState<string>();
   const [branch,setBranch] = useState<IOptions[]>();
   const [sucursal,setSucursal] = useState<ISucMedComList>();
   const [sucursales,setSucursales] = useState<ISucMedComList[]>([]);
@@ -86,7 +86,7 @@ const { width: windowWidth } = useWindowDimensions();
 
      setEstudios(estudio!);
      setValues((prev) => ({ ...prev, estudio: estudio!,fechaInicial:fecha.toDate() }));
-  }
+  };
 
   const setFechaFinal=(fecha:moment.Moment)=>{
     let estudio = estudios.map(x=> {
@@ -111,7 +111,7 @@ const { width: windowWidth } = useWindowDimensions();
 
      setEstudios(estudio!);
      setValues((prev) => ({ ...prev, estudio: estudio!,fechaFinal:fecha.toDate() }));
-  }
+  };
   const onValuesChange = async (changedValues: any) => {
     const field = Object.keys(changedValues)[0];
 
@@ -119,7 +119,6 @@ const { width: windowWidth } = useWindowDimensions();
       const id = changedValues[field] as string;
        const priceList = await getPriceById(id);
        var sucursales:ISucMedComList[] = priceList!.sucursales;
-    console.log(priceList);
         setSucursales(sucursales);
        var sucursalesOptions:IOptions[] = sucursales.map((x)=>({
         value: x.id,
@@ -147,6 +146,7 @@ const { width: windowWidth } = useWindowDimensions();
        });
 
        setEstudios(estudio!);
+
        setValues((prev) => ({ ...prev, estudio: estudio! }));
        
     }
@@ -207,13 +207,35 @@ const { width: windowWidth } = useWindowDimensions();
      setEstudios(estudio!);
      setValues((prev) => ({ ...prev, estudio: estudio! }));
 
-  }
+  };
   const handleChange=(tag:IDias, checked:Boolean)=>{
 
 // setValues({...values, [tag.dia]: checked})
-
+console.log(tag,"el tag");
     const nextSelectedTags = checked ? [...selectedTags!, tag] : selectedTags.filter(t => t.id !== tag.id);
     console.log('You are interested in: ', nextSelectedTags);
+    let estudio:IPromotionEstudioList[] = estudios!.map(x=> {
+      let data:IPromotionEstudioList = {
+        id:x.id,
+        area:x.area,
+        clave:x.clave,
+        nombre:x.nombre,
+        descuentoPorcentaje:x.descuentoPorcentaje,
+        descuentoCantidad:x.descuentoCantidad,
+        precioFinal:x.precioFinal ,
+        lealtad:x.lealtad,
+        fechaInicial: x.fechaInicial,
+        fechaFinal: x.fechaFinal,
+        activo:x.activo,
+        precio: x.precio! ,
+        paquete:x.paquete,
+        selectedTags:nextSelectedTags
+      }
+    return data;
+     });
+
+     setEstudios(estudio!);
+     setValues((prev) => ({ ...prev, estudio: estudio! }));
     setSelectedTags( nextSelectedTags! );
   };
   const setStudy = (active:boolean,item:IPromotionEstudioList) =>{
@@ -228,7 +250,7 @@ const { width: windowWidth } = useWindowDimensions();
     val[indexVal]=item;
     setValues((prev) => ({ ...prev, estudio: val })); 
    
-}
+};
 
 const setStudyL = (active:boolean,item:IPromotionEstudioList) =>{
   var index = estudios.findIndex(x=>x.id==item.id);
@@ -241,7 +263,7 @@ const setStudyL = (active:boolean,item:IPromotionEstudioList) =>{
   val[indexVal]=item;
   setValues((prev) => ({ ...prev, estudio: val })); 
      
-  }
+  };
   const setStudyFi = (fechainical:moment.Moment,item:IPromotionEstudioList) =>{
     
     var index = estudios.findIndex(x=>x.id==item.id);
@@ -254,7 +276,7 @@ const setStudyL = (active:boolean,item:IPromotionEstudioList) =>{
     val[indexVal]=item;
     setValues((prev) => ({ ...prev, estudio: val })); 
        
-    }
+    };
     const setStudyFf = (fechafinal:moment.Moment,item:IPromotionEstudioList) =>{
       var index = estudios.findIndex(x=>x.id==item.id);
       var list = estudios;
@@ -266,7 +288,7 @@ const setStudyL = (active:boolean,item:IPromotionEstudioList) =>{
       val[indexVal]=item;
       setValues((prev) => ({ ...prev, estudio: val })); 
          
-      }
+      };
 const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
   
       var index = estudios.findIndex(x=>x.id==item.id);
@@ -281,7 +303,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
       val[indexVal]=item;
       setValues((prev) => ({ ...prev, estudio: val })); 
      
-  }
+  };
 
   const setStudydiscuntc = (decuento:number,item:IPromotionEstudioList) =>{
     var index = estudios.findIndex(x=>x.id==item.id);
@@ -296,7 +318,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
     val[indexVal]=item;
     setValues((prev) => ({ ...prev, estudio: val })); 
        
-    }
+    };
     const setStudyPricefinal = (preciofinal:number,item:IPromotionEstudioList) =>{
       var index = estudios.findIndex(x=>x.id==item.id);
       var list = estudios;
@@ -310,21 +332,24 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
       val[indexVal]=item;
       setValues((prev) => ({ ...prev, estudio: val })); 
          
-      }
+      };
 
-      const setStudyday= (decuento:number,item:IPromotionEstudioList) =>{
-        /* 
-            var index = lista.findIndex(x=>x.id==item.id);
-            var list = lista;
-            item.activo=active;
-            list[index]=item;
-            setLista(list);
-            var indexVal= values.estudio.findIndex(x=>x.id==item.id);
-            var val =values.estudio;
-            val[indexVal]=item;
-            setValues((prev) => ({ ...prev, estudio: val })); */
+      const setStudyday= (item:IPromotionEstudioList,checked:boolean,tag:IDias) =>{
+        
+        var index = estudios.findIndex(x=>x.id==item.id);
+        var list = estudios;
+
+        const nextSelectedTags = checked ? [...item.selectedTags!, tag] : item.selectedTags.filter(t => t.id !== tag.id);
+        console.log('You are interested in: ', nextSelectedTags);
+        item.selectedTags  = nextSelectedTags;
+        list[index]=item;
+       // setLista(list); 
+        var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+        var val =values.estudio;
+        val[indexVal]=item;
+        setValues((prev) => ({ ...prev, estudio: val })); 
            
-        }
+        };
   useEffect(()=>{
     const readPriceList = async ()=>{
       await getPriceListOptions();
@@ -349,15 +374,16 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: 100,
         windowSize: windowWidth,
       }),
+      fixed:"left"
     },
     {
       ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: 200,
         windowSize: windowWidth,
       }),
     },
@@ -366,9 +392,9 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
       dataIndex: "id",
       title: "Desc %",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width:  100,
       render: (value,item) => (
-        <input type={"number"}  value={item.descuentoPorcentaje}  onChange={(value)=>setStudydiscunt(Number(value.target.value),item)}></input>
+        <InputNumber type={"number"} min={0}  value={item.descuentoPorcentaje}  onChange={(value)=>setStudydiscunt(value,item)}></InputNumber>
       ),
     },
     {
@@ -376,9 +402,9 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
       dataIndex: "id",
       title: "Desc cantidad",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width:  100 ,
       render: (value,item) => (
-        <input type={"number"}  value={item.descuentoCantidad}  onChange={(value)=>setStudydiscuntc(Number(value.target.value),item)}></input>
+        <InputNumber type={"number"} min={0}  value={item.descuentoCantidad}  onChange={(value)=>setStudydiscuntc(value,item)}></InputNumber>
       ),
     },
     {
@@ -386,16 +412,16 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
       dataIndex: "id",
       title: "Precio final",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width:  100 ,
       render: (value,item) => (
-        <input type={"number"}  value={item.precioFinal}  onChange={(value)=>setStudyPricefinal(Number(value.target.value),item)}></input>
+        <InputNumber type={"number"} min={0} value={item.precioFinal}  onChange={(value)=>setStudyPricefinal(value,item)}></InputNumber>
       ),
     },
     {
         ...getDefaultColumnProps("area", "Área", {
           searchState,
           setSearchState,
-          width: "30%",
+          width: 100,
           windowSize: windowWidth,
         }),
     },
@@ -404,11 +430,11 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
       dataIndex: "id",
       title: "Lealtad",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width:  100 ,
       render: (value,item) => (
         <Checkbox
           name="Lealtad"
-          checked={item.activo}
+          checked={item.lealtad}
           onChange={(value)=>{ console.log(value.target.checked); var active= false; if(value.target.checked){ console.log("here"); active= true;}setStudyL(active,item)}}
         />
       ),
@@ -418,7 +444,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
       dataIndex: "id",
       title: "fecha inicio",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: 200,
       render: (value,item) => (
         <DatePicker style={{marginLeft:"10px"}} value={moment(item.fechaInicial)} onChange={(value)=>{setStudyFi(value!,item)}} />
       ),
@@ -427,7 +453,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
       dataIndex: "id",
       title: "fecha final",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: 200,
       render: (value,item) => (
         <DatePicker style={{marginLeft:"10px"}} value={moment(item.fechaFinal)} onChange={(value)=>{setStudyFf(value!,item)}} />
       ),
@@ -437,7 +463,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
       dataIndex: "id",
       title: "Activo",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width:  100 ,
       render: (value,item) => (
         <Checkbox
           name="activo"
@@ -450,7 +476,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
       ...getDefaultColumnProps("precio", "Precio", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: 100,
         windowSize: windowWidth,
       }),
   },    {
@@ -458,14 +484,14 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
     dataIndex: "id",
     title: "Dias",
     align: "center",
-    width: windowWidth < resizeWidth ? 100 : "10%",
+    width:  200 ,
     render: (value,item) => (
       <>
                 {tagsData.map(tag => (
                   <CheckableTag
                     key={tag.id}
                     checked={item.selectedTags.filter((x:IDias) =>x.id===tag.id).length>0}
-                    onChange={checked => handleChange(tag, checked) }
+                    onChange={checked => setStudyday(item,checked,tag)}
                   >
                     {tag.dia}
                   </CheckableTag>
@@ -478,8 +504,9 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
     if(departament){
     var departamento=departmentOptions.filter(x=>x.value===departament)[0].label;
     var areaSearch=await getareaOptions(departament);
-     
-    var estudio = estudios!.filter((x:IPromotionEstudioList) =>x.departamento === departamento) 
+
+    var estudio = estudios!.filter((x:IPromotionEstudioList) =>x.departamento === departamento) ;
+    console.log(estudio);
     setValues((prev) => ({ ...prev, estudio: estudio })); 
     setAreaSearch(areaSearch!);}else{
       var estudi = estudios!.filter(x=>x.activo === true);
@@ -487,25 +514,40 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
      
     }
     
-  }
+  };
   const filterByArea = (area:number) => {
     var areaActive=areas.filter(x=>x.value===area)[0].label;
      var estudio = estudios.filter(x=>x.area === areaActive) 
-     setValues((prev) => ({ ...prev, estudio: estudios })); 
-  }
+     setValues((prev) => ({ ...prev, estudio: estudio })); 
+  };
   const filterBySearch = (search:string)=>{
      var estudio = estudios.filter(x=>x.clave.includes(search) || x.nombre.includes(search))
     setValues((prev) => ({ ...prev, estudio: estudio })); 
-  }
+  };
    useEffect(() => {
     const readReagent = async (id: number) => {
       setLoading(true);
+
       const reagent = await getById(id);
+      console.log("el promotion");
+      console.log(reagent);
+      const priceList = await getPriceById(reagent?.idListaPrecios!);
+      var sucursales:ISucMedComList[] = priceList!.sucursales;
+       setSucursales(sucursales);
+      var sucursalesOptions:IOptions[] = sucursales.map((x)=>({
+       value: x.id,
+       label: x.nombre,
+      })); 
+      setBranch(sucursalesOptions);
       form.setFieldsValue(reagent!);
       setValues(reagent!);
+      setSelectedTags(reagent?.dias!);
       setLoading(false);
+      setDiscunt(reagent?.tipoDescuento!);
+      setEstudios(reagent?.estudio!);
     };
-
+    console.log("el id");
+    console.log(id);
     if (id) {
       readReagent(Number(id));
     }
@@ -548,6 +590,8 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
     setLoading(true);
 
     const reagent = { ...values, ...newValues };
+    reagent.dias= selectedTags; 
+    console.log(reagent,"en el onfish")
     console.log(reagent);
     let success = false;
 
@@ -587,7 +631,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
-        {!!id && (
+        {id && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
              <Pagination
               size="small"
@@ -721,9 +765,9 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
                   name="lealtad"
                   onChange={(value) => {
                     if (value) {
-                      alerts.info("se aplicara lealtad");
+                      alerts.info("Se aplicará lealtad");
                     } else {
-                      alerts.info("ya no se aplicara lealtad");
+                      alerts.info("Ya no se aplicará lealtad");
                     }
                   }}
                   label="Lealtad"
@@ -797,7 +841,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
             <Col md={12} sm={24} style={{ textAlign: "left" }}>
               <ImageButton
                 key="Eliminar"
-                title="Eliminar Clinica"
+                title="Eliminar"
                 image="Eliminar_Clinica"
                 onClick={() => {
                   deleteClinic(item.id);
@@ -849,7 +893,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
                 columns={columnsEstudios}
                 pagination={false}
                 dataSource={[...( values.estudio)]}
-                scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+                scroll={{ x: "max-content" }}
                 />
             </Col>
           </Row>

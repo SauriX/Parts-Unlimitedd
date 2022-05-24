@@ -10,6 +10,8 @@ interface IProps {
   onChange?: (value: any) => void;
   options: IOptions[];
   readonly?: boolean;
+  defaultValue?:any;
+  value?:any;
 }
 
 const SelectInput = ({
@@ -19,6 +21,7 @@ const SelectInput = ({
   onChange,
   options,
   readonly,
+  defaultValue,value
 }: IProps) => {
   let rules: Rule[] = [];
 
@@ -45,6 +48,8 @@ const SelectInput = ({
         allowClear
         options={options}
         disabled={readonly}
+        defaultValue={defaultValue}
+        value={value}
       ></Select>
     </Form.Item>
   );

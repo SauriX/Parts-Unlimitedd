@@ -66,6 +66,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
     }
       areareader();
   }, [ getareaOptions]);
+
   const setStudy = (active:boolean,item:IPackEstudioList) =>{
 
     var index = lista.findIndex(x=>x.id==item.id);
@@ -78,8 +79,9 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
     val[indexVal]=item;
     setValues((prev) => ({ ...prev, estudio: val }));
    
-}
+  };
 useEffect(() => {
+  console.log("use");
   const readuser = async (idUser: number) => {
     setLoading(true);
     console.log("here");
@@ -232,7 +234,7 @@ useEffect(() => {
   const actualUser = () => {
     
     if (id) {
-      const index = packs.findIndex((x) => x.id === Number(id));
+      const index = packs?.findIndex((x) => x.id === Number(id));
       return  index +  1;
     }
     return 0;
@@ -365,7 +367,7 @@ useEffect(() => {
                   if (value) {
                     alerts.info("El paquete será visble en la web");
                   } else {
-                    alerts.info("El paquete ya no visble en la web");
+                    alerts.info("El paquete ya no será visble en la web");
                   }
                 }}
                 readonly={CheckReadOnly()}
@@ -414,7 +416,9 @@ useEffect(() => {
               </Col>
               <Col md={15} sm={24} xs={12}></Col>
               <Col md={9} sm={24} xs={12}>
+              <label htmlFor="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
               <Search
+              style={{width:"400px"}}
           key="search"
           placeholder="Buscar"
           onSearch={(value) => {
