@@ -100,12 +100,13 @@ const CatalogDescriptionForm: FC<CatalogDescriptionFormProps> = ({
           )}
         </Col>
       </Row>
+      <div style={{ display: printing ? "" : "none", height: 300 }}></div>
       <div style={{ display: printing ? "none" : "" }}>
         <div ref={componentRef}>
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo de Reactivos" image="reagent" />}
+              title={<HeaderTitle title="Catálogo General" image="catalog" />}
               className="header-container"
             ></PageHeader>
           )}

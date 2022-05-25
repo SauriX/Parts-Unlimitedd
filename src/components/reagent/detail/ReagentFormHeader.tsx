@@ -33,7 +33,9 @@ const ReagentFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint, handle
       title={<HeaderTitle title="Catálogo de Reactivos" image="reagent" />}
       className="header-container"
       extra={[
-        scopes?.imprimir && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+        !!id && scopes?.imprimir && (
+          <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />
+        ),
         !!id && scopes?.descargar && (
           <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />
         ),

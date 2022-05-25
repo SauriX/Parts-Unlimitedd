@@ -12,8 +12,8 @@ const Role = {
   create: (role: IRoleForm): Promise<boolean> => requests.post("/role", role),
   update: (role: IRoleForm): Promise<boolean> => requests.put("/role", role),
   exportList: (search: string): Promise<void> =>
-    requests.download(`role/export/list/${!search ? "all" : search}`), //, "Catálogo de Roles.xlsx"
-  exportForm: (id: string, clave?: string): Promise<void> => requests.download(`role/export/form/${id}`), //, `Catálogo de Roles (${clave}).xlsx`
+    requests.download(`role/export/list/${!search ? "all" : search}`),
+  exportForm: (id: string, clave?: string): Promise<void> => requests.download(`role/export/form/${id}`),
 };
 
 export default Role;

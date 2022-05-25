@@ -9,6 +9,9 @@ import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
+import SwitchInput from "../../../app/common/form/SwitchInput";
+import alerts from "../../../app/util/alerts";
+import messages from "../../../app/util/messages";
 
 type ReagentFormProps = {
   id: string;
@@ -186,6 +189,21 @@ const ReagentForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
                     label: "Nombre",
                   }}
                   max={100}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={12} sm={24} xs={12}></Col>
+              <Col md={12} sm={24} xs={12}>
+                <SwitchInput
+                  name="activo"
+                  onChange={(value) => {
+                    if (value) {
+                      alerts.info(messages.confirmations.enable);
+                    } else {
+                      alerts.info(messages.confirmations.disable);
+                    }
+                  }}
+                  label="Activo"
                   readonly={readonly}
                 />
               </Col>

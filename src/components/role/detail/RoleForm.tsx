@@ -1,4 +1,17 @@
-import { Spin, Form, Row, Col, Transfer, Tooltip, Tree, Tag, Pagination, Button } from "antd";
+import {
+  Spin,
+  Form,
+  Row,
+  Col,
+  Transfer,
+  Tooltip,
+  Tree,
+  Tag,
+  Pagination,
+  Button,
+  PageHeader,
+  Divider,
+} from "antd";
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { IUserPermission } from "../../../app/models/user";
@@ -14,6 +27,7 @@ import ImageButton from "../../../app/common/button/ImageButton";
 import { IRoleForm, RoleFormValues, IRolePermission } from "../../../app/models/role";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
+import HeaderTitle from "../../../app/common/header/HeaderTitle";
 
 type UserFormProps = {
   componentRef: React.MutableRefObject<any>;
@@ -24,7 +38,7 @@ type UrlParams = {
   id: string;
 };
 
-const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
+const RoleForm: FC<UserFormProps> = ({ componentRef, load: printing }) => {
   const { roleStore } = useStore();
   const { getPermission, create, getById, getAll, roles, update } = roleStore;
   const [form] = Form.useForm<IRoleForm>();
@@ -190,163 +204,175 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load }) => {
     );
   };
   return (
-    <Spin spinning={loading || load}>
-      <div ref={componentRef}>
-        <Row style={{ marginBottom: 24 }}>
-          {id && (
-            <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
-              <Pagination
-                size="small"
-                total={roles.length}
-                pageSize={1}
-                current={actualUser()}
-                onChange={(value) => {
-                  siguienteUser(value - 1);
-                }}
-              />
-            </Col>
-          )}
-          {!CheckReadOnly() && (
-            <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
-              <Button
-                onClick={() => {
-                  navigate(`/roles`);
-                }}
-              >
-                Cancelar
-              </Button>
-              <Button
-                type="primary"
-                htmlType="submit"
-                onClick={() => {
-                  form.submit();
-                }}
-              >
-                Guardar
-              </Button>
-            </Col>
-          )}
-          {CheckReadOnly() && (
-            <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
-              <ImageButton
-                key="edit"
-                title="Editar"
-                image="editar"
-                onClick={() => {
-                  navigate(`/roles/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`);
-                }}
-              />
-            </Col>
-          )}
-        </Row>
-        <Form<IRoleForm>
-          {...formItemLayout}
-          form={form}
-          name="rol"
-          onFinish={onFinish}
-          scrollToFirstError
-          onFieldsChange={() => {
-            setDisabled(
-              !form.isFieldsTouched() ||
-                form.getFieldsError().filter(({ errors }) => errors.length).length > 0
-            );
-          }}
-        >
-          <Row>
-            <Col md={12} sm={24} xs={12}>
-              <TextInput
-                formProps={{
-                  name: "nombre",
-                  label: "Rol Usuario",
-                }}
-                max={100}
-                required
-                readonly={CheckReadOnly()}
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}></Col>
-            <Col md={12} sm={24} xs={12}>
-              <SwitchInput
-                name="activo"
-                onChange={(value) => {
-                  if (value) {
-                    alerts.info(messages.confirmations.enable);
-                  } else {
-                    alerts.info(messages.confirmations.disable);
-                  }
-                }}
-                label="Activo"
-                readonly={CheckReadOnly()}
-              />
-            </Col>
-          </Row>
-        </Form>
-        <Row justify="center" style={{ marginBottom: 24 }}>
-          <Tag color="blue" style={{ fontSize: 14 }}>
-            Tipo Usuario: {values.nombre}
-          </Tag>
-        </Row>
-        <div style={{ width: "100%", overflowX: "auto" }}>
-          <div style={{ width: "fit-content", margin: "auto" }}>
-            <Transfer<IRolePermission>
-              dataSource={values.permisos}
-              showSearch
-              onSearch={onSearch}
-              style={{ justifyContent: "flex-end" }}
-              listStyle={{
-                width: 300,
-                height: 300,
+    <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
+      <Row style={{ marginBottom: 24 }}>
+        {id && (
+          <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
+            <Pagination
+              size="small"
+              total={roles.length}
+              pageSize={1}
+              current={actualUser()}
+              onChange={(value) => {
+                siguienteUser(value - 1);
               }}
-              rowKey={(x) => x.id.toString()}
-              titles={[
-                <Tooltip title="Permisos que pueden ser asignados">Disponibles</Tooltip>,
-                <Tooltip title="Permisos asignados al tipo de usuario">Agregados</Tooltip>,
-              ]}
-              filterOption={filterOption}
-              targetKeys={targetKeys}
-              selectedKeys={selectedKeys}
-              onChange={onChange}
-              onSelectChange={(sourceSelectedKeys: string[], targetSelectedKeys: string[]) => {
-                onSelectChange(sourceSelectedKeys, targetSelectedKeys);
-                setDisabled(false);
+            />
+          </Col>
+        )}
+        {!CheckReadOnly() && (
+          <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
+            <Button
+              onClick={() => {
+                navigate(`/roles`);
               }}
-              disabled={CheckReadOnly()}
             >
-              {({ direction, onItemSelect, selectedKeys, filteredItems }) => {
-                const data = direction === "left" ? permissionsAvailableFiltered : permissionsAddedFiltered;
-                const checkedKeys = [...selectedKeys];
-                return (
-                  <Tree
-                    checkable={!CheckReadOnly()}
-                    disabled={CheckReadOnly()}
-                    height={200}
-                    onCheck={(_, { node: { key, children, checked } }) => {
-                      if (children && children.length > 0 && checked) {
-                        onDeselectParent(key, children);
-                      } else if (children && children.length > 0) {
-                        onSelectParent(key, children);
-                      } else {
-                        onItemSelect(key.toString(), !checked);
-                      }
-                      setDisabled(false);
-                    }}
-                    onSelect={(_, { node: { key, checked, children } }) => {
-                      if (children && children.length > 0 && checked) {
-                        onDeselectParent(key, children);
-                      } else if (children && children.length > 0) {
-                        onSelectParent(key, children);
-                      } else {
-                        onItemSelect(key.toString(), !checked);
-                      }
-                      setDisabled(false);
-                    }}
-                    treeData={data}
-                    showIcon
-                    checkedKeys={checkedKeys}
-                  />
-                );
+              Cancelar
+            </Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              onClick={() => {
+                form.submit();
               }}
-            </Transfer>
+            >
+              Guardar
+            </Button>
+          </Col>
+        )}
+        {CheckReadOnly() && (
+          <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
+            <ImageButton
+              key="edit"
+              title="Editar"
+              image="editar"
+              onClick={() => {
+                navigate(`/roles/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`);
+              }}
+            />
+          </Col>
+        )}
+      </Row>
+      <div style={{ display: printing ? "" : "none", height: 300 }}></div>
+      <div style={{ display: printing ? "none" : "" }}>
+        <div ref={componentRef}>
+          {printing && (
+            <PageHeader
+              ghost={false}
+              title={<HeaderTitle title="Catálogo Roles" image="role" />}
+              className="header-container"
+            ></PageHeader>
+          )}
+          {printing && <Divider className="header-divider" />}
+          <Form<IRoleForm>
+            {...formItemLayout}
+            form={form}
+            name="rol"
+            onFinish={onFinish}
+            scrollToFirstError
+            onFieldsChange={() => {
+              setDisabled(
+                !form.isFieldsTouched() ||
+                  form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+              );
+            }}
+          >
+            <Row>
+              <Col md={12} sm={24} xs={12}>
+                <TextInput
+                  formProps={{
+                    name: "nombre",
+                    label: "Rol Usuario",
+                  }}
+                  max={100}
+                  required
+                  readonly={CheckReadOnly()}
+                />
+              </Col>
+              <Col md={12} sm={24} xs={12}></Col>
+              <Col md={12} sm={24} xs={12}>
+                <SwitchInput
+                  name="activo"
+                  onChange={(value) => {
+                    if (value) {
+                      alerts.info(messages.confirmations.enable);
+                    } else {
+                      alerts.info(messages.confirmations.disable);
+                    }
+                  }}
+                  label="Activo"
+                  readonly={CheckReadOnly()}
+                />
+              </Col>
+            </Row>
+          </Form>
+          <Row justify="center" style={{ marginBottom: 24 }}>
+            <Tag color="blue" style={{ fontSize: 14 }}>
+              Tipo Usuario: {values.nombre}
+            </Tag>
+          </Row>
+          <div style={{ width: "100%", overflowX: "auto" }}>
+            <div style={{ width: "fit-content", margin: "auto" }}>
+              <Transfer<IRolePermission>
+                dataSource={values.permisos}
+                showSearch
+                onSearch={onSearch}
+                style={{ justifyContent: "flex-end" }}
+                listStyle={{
+                  width: 300,
+                  height: 300,
+                }}
+                rowKey={(x) => x.id.toString()}
+                titles={[
+                  <Tooltip title="Permisos que pueden ser asignados">Disponibles</Tooltip>,
+                  <Tooltip title="Permisos asignados al tipo de usuario">Agregados</Tooltip>,
+                ]}
+                filterOption={filterOption}
+                targetKeys={targetKeys}
+                selectedKeys={selectedKeys}
+                onChange={onChange}
+                onSelectChange={(sourceSelectedKeys: string[], targetSelectedKeys: string[]) => {
+                  onSelectChange(sourceSelectedKeys, targetSelectedKeys);
+                  setDisabled(false);
+                }}
+                disabled={CheckReadOnly()}
+              >
+                {({ direction, onItemSelect, selectedKeys, filteredItems }) => {
+                  const data = direction === "left" ? permissionsAvailableFiltered : permissionsAddedFiltered;
+                  const checkedKeys = [...selectedKeys];
+                  return (
+                    <Tree
+                      virtual={false}
+                      checkable={!CheckReadOnly()}
+                      disabled={CheckReadOnly()}
+                      height={200}
+                      onCheck={(_, { node: { key, children, checked } }) => {
+                        if (children && children.length > 0 && checked) {
+                          onDeselectParent(key, children);
+                        } else if (children && children.length > 0) {
+                          onSelectParent(key, children);
+                        } else {
+                          onItemSelect(key.toString(), !checked);
+                        }
+                        setDisabled(false);
+                      }}
+                      onSelect={(_, { node: { key, checked, children } }) => {
+                        if (children && children.length > 0 && checked) {
+                          onDeselectParent(key, children);
+                        } else if (children && children.length > 0) {
+                          onSelectParent(key, children);
+                        } else {
+                          onItemSelect(key.toString(), !checked);
+                        }
+                        setDisabled(false);
+                      }}
+                      treeData={data}
+                      showIcon
+                      checkedKeys={checkedKeys}
+                    />
+                  );
+                }}
+              </Transfer>
+            </div>
           </div>
         </div>
       </div>

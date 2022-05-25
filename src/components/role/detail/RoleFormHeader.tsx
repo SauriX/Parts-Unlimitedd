@@ -20,8 +20,8 @@ const RoleFormHeader: FC<UserFormHeaderProps> = ({ handlePrint, handleDownload }
       title={<HeaderTitle title="Nuevo rol" image="role" />}
       className="header-container"
       extra={[
-        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        id ? <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} /> : "",
+        id ? <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} /> : null,
+        id ? <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} /> : null,
         <ImageButton
           key="back"
           title="Regresar"

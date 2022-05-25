@@ -16,6 +16,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import PasswordInput from "../../app/common/form/PasswordInput";
+import HeaderTitle from "../../app/common/header/HeaderTitle";
 type RoleTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
@@ -90,8 +91,28 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
     },
   ];
 
+  const RoleTablePrint = () => {
+    return (
+      <div ref={componentRef}>
+        <PageHeader
+          ghost={false}
+          title={<HeaderTitle title="Catálogo Roles" image="role" />}
+          className="header-container"
+        ></PageHeader>
+        <Divider className="header-divider" />
+        <Table<IRole>
+          size="small"
+          rowKey={(record) => record.id}
+          columns={columns.slice(0, 2)}
+          dataSource={[...roles]}
+          pagination={false}
+        />
+      </div>
+    );
+  };
+
   return (
-    <div ref={componentRef}>
+    <Fragment>
       <Table<IRole>
         loading={printing}
         size="small"
@@ -102,7 +123,8 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />
-    </div>
+      <div style={{ display: "none" }}>{<RoleTablePrint />}</div>
+    </Fragment>
   );
 };
 
