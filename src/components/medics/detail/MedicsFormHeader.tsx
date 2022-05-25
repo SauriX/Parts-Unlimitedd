@@ -32,9 +32,8 @@ const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({id, handlePrint }) => {
       title={<HeaderTitle title="Catálogo de Médicos" image="doctor" />}
       className="header-container"
       extra={[
-        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        id !== "0" ?
-        <ImageButton key="doc" title="Informe" image="doc" onClick={download}  />:'',
+        id? <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />:"",
+        id? <ImageButton key="doc" title="Informe" image="doc" onClick={download}  />:'',
         <ImageButton
           key="back"
           title="Regresar"
