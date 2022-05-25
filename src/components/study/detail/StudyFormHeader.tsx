@@ -21,7 +21,7 @@ const StudyFormHeader: FC<StudyFormHeaderProps> = ({ handlePrint,handleList }) =
         title={<HeaderTitle title="Catálogo Estudios" image="estudios" />}
         className="header-container"
         extra={[
-            <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+          id?<ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />:"",
             id?<ImageButton key="doc" title="Informe" image="doc" onClick={handleList }/>:"",
             <ImageButton
                 key="back"

@@ -204,7 +204,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
 
   ///Primera tabla Sucursal
   //console.log("Table");
-
+   
   const { width: windowWidth } = useWindowDimensions();
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",

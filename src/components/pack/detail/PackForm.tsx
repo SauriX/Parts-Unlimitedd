@@ -43,6 +43,9 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
   const [aeraSearch, setAreaSearch] = useState(areas);
   const [areaForm, setAreaForm] = useState<IOptions[]>([]);
   const [areaId, setAreaId] = useState<number>();
+  const [depId, setDepId] = useState<number>();
+  const [searchvalue, setSearchvalue] = useState<string>();
+  
   const [values, setValues] = useState<IPackForm>(new PackFormValues());
   let { id } = useParams<UrlParams>();
   const { width: windowWidth } = useWindowDimensions();
@@ -63,6 +66,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
     const areareader = async () => {
     await getareaOptions(0);
     setAreaSearch(areas);
+    setAreaForm(areas);
     }
       areareader();
   }, [ getareaOptions]);
@@ -104,6 +108,8 @@ useEffect(() => {
   };
   if (id) {
     readuser(Number(id));
+  }else{
+    form.setFieldsValue({idDepartamento:undefined,idArea:undefined});
   }
 }, [form, getById , id]);
   /* useEffect(() => {
@@ -239,9 +245,12 @@ useEffect(() => {
     }
     return 0;
   };
+  console.log(form.getFieldsValue(),"form");
   const siguienteUser = (index: number) => {
      const user = packs[index];
-
+     setAreaId(undefined);
+     setDepId(undefined);
+     setSearchvalue(undefined);
     navigate(
       `/${views.pack}/${user?.id}?mode=${searchParams.get("mode")}&search=${
         searchParams.get("search") ?? "all"
@@ -351,12 +360,14 @@ useEffect(() => {
                 options={departmentOptions}
                 readonly={CheckReadOnly()}
                 required
+
               />
                             <SelectInput
                 formProps={{ name: "idArea", label: "Área" }}
                 options={areaForm}
                 readonly={CheckReadOnly()}
                 required
+              
               />
               </Col>
               <Col md={12} sm={24} xs={12}>
@@ -394,11 +405,15 @@ useEffect(() => {
           Búsqueda por :   
           </Col>
           <Col md={9} sm={24} xs={12}>
-          <SelectInput 
-                formProps={{ name: "departamentoSearch", label: "Departamento" }}
+          <label htmlFor="">Departamentos: </label>
+          <Select
+                 style={{width:"350px"}}
                 options={departmentOptions}
-                readonly={CheckReadOnly()}
-                onChange={(value)=>{setAreaId(undefined); filterByDepartament(value)}}
+                disabled={CheckReadOnly()}
+                onChange={(value)=>{setAreaId(undefined); setDepId(value); filterByDepartament(value)}}
+                allowClear
+                 value={depId} 
+                 placeholder={"Departamentos"}
               />
 
               </Col> 
@@ -411,19 +426,23 @@ useEffect(() => {
                 disabled={CheckReadOnly()}
                 onChange={(value)=>{ setAreaId(value); filterByArea(value)}}
                 value={areaId}
+                allowClear
                 style={{width:"400px"}}
+                placeholder={"Área"}
               />
               </Col>
               <Col md={15} sm={24} xs={12}></Col>
               <Col md={9} sm={24} xs={12}>
               <label htmlFor="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
               <Search
-              style={{width:"400px"}}
+              style={{width:"400px",marginTop:"20px",marginBottom:"20px"}}
           key="search"
           placeholder="Buscar"
           onSearch={(value) => {
-           filterBySearch(value)
+           filterBySearch(value);
+           setSearchvalue(value);
           }}
+          value={searchvalue}
         />,</Col>
             <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
                 <Table<IPackEstudioList>

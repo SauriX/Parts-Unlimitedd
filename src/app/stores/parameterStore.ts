@@ -109,6 +109,7 @@ export default class ParameterStore {
 
       return true;
     } catch (error: any) {
+      console.log("error values ");
       alerts.warning(getErrors(error));
       return false;
     }
@@ -116,11 +117,17 @@ export default class ParameterStore {
   addvalues = async (values: ItipoValorForm[], parametroId = "") => {
     try {
       await Parameter.deletevalue(parametroId);
-      values.forEach(async (value) => {
-        await Parameter.addValue(value);
+      /*  values.forEach(async (value) => {
+         await Parameter.addValue(value);
+       }); */
+
+      var success = await Promise.all(values.map((value) => Parameter.addValue(value))).then(() => { return true }).catch(r => {
+        alerts.warning(getErrors(r));
+        return false;
       });
-      return true;
+      return success;
     } catch (error: any) {
+      console.log();
       alerts.warning(getErrors(error));
       return false;
     }
