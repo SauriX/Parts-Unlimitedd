@@ -81,11 +81,12 @@ const NumeroColumna: FC<Props> = ({ idTipeVAlue,parameter }) => {
         });
 
        var succes = await addvalues(val,id);
-       succes = await update(parameter);
+       if(succes){
+        succes = await update(parameter);
         if (succes) {
             navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
         }
-
+       }
     };
     return (
         <div >

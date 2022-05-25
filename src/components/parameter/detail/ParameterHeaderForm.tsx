@@ -20,7 +20,7 @@ const ParameterFormHeader: FC<ParameterFormHeaderProps> = ({ handlePrint,handleD
             title={<HeaderTitle title="Catálogo Parámetros" image="parameters" />}
             className="header-container"
             extra={[
-                <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+                id?<ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />:""  ,
                 id?<ImageButton key="doc" title="Informe" image="doc"  onClick={handleDownload}/>:"",
                 <ImageButton
                   key="back"
