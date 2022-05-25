@@ -46,11 +46,13 @@ export default class PriceListStore {
         var studies= roles.map((x) => {
             let data:IPriceListEstudioList = {
                 id: x.id,
+                estudioId: x.id,
                 clave: x.clave,
                 nombre: x.nombre,
                 area:x.area,
                 departamento:x.departamento,
                 activo: false,
+                precio:0,
             }
             return data;});
             this.studies=studies;

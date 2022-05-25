@@ -1,5 +1,5 @@
-import { Button, Divider, PageHeader, Spin, Table } from "antd";
-import React, { FC, Fragment, useEffect, useRef, useState } from "react";
+import { Button, Divider, PageHeader,  Table } from "antd";
+import React, { FC, Fragment, useEffect,  useState } from "react";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
@@ -10,37 +10,19 @@ import useWindowDimensions, { resizeWidth } from "../../app/util/window";
 import { EditOutlined } from "@ant-design/icons";
 import IconButton from "../../app/common/button/IconButton";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { IReagentList } from "../../app/models/reagent";
+import { ILoyaltyList } from "../../app/models/loyalty";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import { useReactToPrint } from "react-to-print";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
-import views from "../../app/util/view";
-import { IPromotionList } from "../../app/models/promotion";
-const promotions:IPromotionList[]=[
-    {
-        id:1,
-        nombre:"test",
-        clave:"test",
-        periodo:"test",
-        nombreListaPrecio:"test",
-        activo:true
-    },{
-        id:2,
-        nombre:"test1",
-        clave:"test1",
-        periodo:"test1",
-        nombreListaPrecio:"test1",
-        activo:true
-    }];
-type PromotionTableProps = {
+
+type LoyaltyTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
 
-const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => {
-  const { promotionStore } = useStore();
-   const {  getAll,promotionLists } = promotionStore; 
+const LoyaltyTable: FC<LoyaltyTableProps> = ({ componentRef, printing }) => {
+  const { loyaltyStore } = useStore();
+  const { loyaltys, getAll } = loyaltyStore;
 
   const [searchParams] = useSearchParams();
 
@@ -58,32 +40,32 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
   console.log("Table");
 
   useEffect(() => {
-    const readPromotions = async () => {
+    const readLoyalty = async () => {
       setLoading(true);
       await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
     };
+    readLoyalty();
+  }, [getAll, searchParams]);
 
-     if (promotionLists.length === 0) {
-       readPromotions()
-    } 
-     
-  }, [getAll]);
-
-  const columns: IColumns<IPromotionList> = [
+  const columns: IColumns<ILoyaltyList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: "8%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
-      render: (value, promotion) => (
+      render: (value, loyaltys) => (
         <Button
           type="link"
           onClick={() => {
-            navigate(`/${views.promo}/${promotion.id}?${searchParams}&mode=readonly`);
+            navigate(
+              `/loyalties/${loyaltys.id}?${searchParams}&mode=readonly&search=${
+                searchParams.get("search") ?? "all"
+              }`
+            );
           }}
         >
           {value}
@@ -91,31 +73,49 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
       ),
     },
     {
-      ...getDefaultColumnProps("nombre", "Nombre promocion", {
+      ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "12%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
     },
     {
-      ...getDefaultColumnProps("periodo", "Periodo", {
+      ...getDefaultColumnProps("cantidadDescuento", "Beneficio Aplicado", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "16%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    } /*
+    {
+      ...getDefaultColumnProps("clinica", "Clinica", {
+        searchState,
+        setSearchState,
+        width: "2%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },*/,
+    {
+      ...getDefaultColumnProps("fechaFinal", "Fecha de Vigencia", {
+        searchState,
+        setSearchState,
+        width: "8%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
     },
     {
-        ...getDefaultColumnProps("nombreListaPrecio", "Nombre Lista", {
-          searchState,
-          setSearchState,
-          width: "15%",
-          minWidth: 150,
-          windowSize: windowWidth,
-        }),
+      ...getDefaultColumnProps("tipoDescuento", "Promocion", {
+        searchState,
+        setSearchState,
+        width: "8%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
     },
     {
       key: "activo",
@@ -130,34 +130,36 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
       dataIndex: "id",
       title: "Editar",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: windowWidth < resizeWidth ? 100 : "6%",
       render: (value) => (
         <IconButton
-          title="Editar promoción"
+          title="Editar Lealtad"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/${views.promo}/${value}?${searchParams}&mode=edit`);
+            navigate(
+              `/loyalties/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`
+            );
           }}
         />
       ),
     },
   ];
 
-  const ReagentTablePrint = () => {
+  const LoyaltyTablePrint = () => {
     return (
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Promociones en listas de precios" image="promo" />}
+          title={<HeaderTitle title="Catálogo de Lealtades" image="contactos" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
-        <Table<IPromotionList>
-          size="small"
+        <Table<ILoyaltyList>
+          size="large"
           rowKey={(record) => record.id}
-          columns={columns.slice(0, 4)}
+          columns={columns.slice(0, 8)}
           pagination={false}
-          dataSource={[...promotions]}
+          dataSource={[...loyaltys]}
         />
       </div>
     );
@@ -165,19 +167,19 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
 
   return (
     <Fragment>
-      <Table<IPromotionList>
+      <Table<ILoyaltyList>
         loading={loading || printing}
         size="small"
         rowKey={(record) => record.id}
         columns={columns}
-        dataSource={[...promotionLists]}
+        dataSource={[...loyaltys]}
         pagination={defaultPaginationProperties}
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />
-      <div style={{ display: "none" }}>{<ReagentTablePrint />}</div>
+      <div style={{ display: "none" }}>{<LoyaltyTablePrint />}</div>
     </Fragment>
   );
 };
 
-export default observer(PromotionTable);
+export default observer(LoyaltyTable);

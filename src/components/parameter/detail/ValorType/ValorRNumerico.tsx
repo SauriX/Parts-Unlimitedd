@@ -85,12 +85,6 @@ const ValorRNumerico:FC<Props> = ({idTipeVAlue,parameter})=>{
                 onValuesChange={onValuesChange}
                 onFinish={onFinish}
                 scrollToFirstError
-                onFieldsChange={() => {
-                setDisabled(
-                        !formValue.isFieldsTouched() ||
-                        formValue.getFieldsError().filter(({ errors }) => errors.length).length > 0
-                    );
-                }}
             >
                 <Row>
                     <Col md={12} sm={24} xs={12} style={{marginTop:20 }}>

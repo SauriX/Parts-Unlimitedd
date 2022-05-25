@@ -19,6 +19,8 @@ const messages = {
   confirmations: {
     enableTitle: "¿Desea activar el registro?",
     enable: "El registro será activado",
+    visible: "Visible",
+    visibleweb: "Visible Web",
     disableTitle: "¿Desea desactivar el registro?",
     disable: "El registo podrá ser reactivado más tarde",
     deleteTitle: "¿Desea eliminar el registro?",

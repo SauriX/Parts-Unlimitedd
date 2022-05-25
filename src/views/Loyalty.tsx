@@ -4,12 +4,12 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
-import PromotionHeader from "../components/promotion/PromotionHeader";
-import PromotionTable from "../components/promotion/PromotionTable";
+import LoyaltyHeader from "../components/loyalty/LoyaltyHeader";
+import LoyaltyTable from "../components/loyalty/LoyaltyTable";
 
-const Promotion = () => {
-  const { promotionStore } = useStore();
-  const { scopes, access, clearScopes, exportList } =promotionStore ;
+const Loyalty = () => {
+  const { loyaltyStore } = useStore();
+  const { scopes, access, clearScopes, exportList } = loyaltyStore;
 
   const [searchParams] = useSearchParams();
 
@@ -39,24 +39,23 @@ const Promotion = () => {
     };
 
     checkAccess();
-  }, [ access ]);
-  console.log("el escope en principal");
-  console.log(scopes);
-/*   useEffect(() => {
+  }, [access]);
+
+  useEffect(() => {
     return () => {
       clearScopes();
     };
-  }, [ clearScopes ]); */
+  }, [clearScopes]);
 
-  //if (!scopes?.acceder) return null;
+  if (!scopes?.acceder) return null;
 
   return (
     <Fragment>
-      <PromotionHeader handlePrint={handlePrint} handleDownload={handleDownload} />
+      <LoyaltyHeader handlePrint={handlePrint} handleDownload={handleDownload} />
       <Divider className="header-divider" />
-      <PromotionTable componentRef={componentRef} printing={loading} />
+      <LoyaltyTable componentRef={componentRef} printing={loading} />
     </Fragment>
   );
 };
 
-export default observer(Promotion);
+export default observer(Loyalty);

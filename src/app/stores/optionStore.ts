@@ -22,7 +22,7 @@ export default class OptionStore {
       const departments = await Catalog.getActive<ICatalogNormalList>("department");
       this.departmentOptions = departments.map((x) => ({
         value: x.id,
-        label: x.clave,
+        label: x.clave, 
       }));
       return  departments.map((x) => ({
         value: x.id,
@@ -67,7 +67,7 @@ export default class OptionStore {
         ruta="area"
       }
       const area = await Catalog.getActive<ICatalogNormalList>(ruta);
-      console.log("el depa1");
+      console.log("el depaAreas");
       console.log(area);
        var areas= area.map((x) => ({
         value: x.id,
@@ -85,7 +85,7 @@ export default class OptionStore {
     console.log(id);
     try {
       const department = await Catalog.getActive<ICatalogNormalList>("format");
-      console.log("el depa1");
+      console.log("el depa optionStore");
       console.log(department);
       this.printFormat = department.map((x) => ({
         value: x.id,
@@ -291,6 +291,7 @@ export default class OptionStore {
   getPriceListOptions = async () => {
     try{
       const priceListOptions =await PriceList.getActive();
+      console.log(priceListOptions);
       this.priceListOptions= priceListOptions.map((x) => ({
         value: x.id,
         label: x.nombre,

@@ -41,6 +41,8 @@ import PriceList from "../../views/PriceList";
 import PriceListDetail from "../../components/priceList/detail/PriceListDetail";
 import Promotion from "../../views/Promotion";
 import PromotionDetail from "../../components/promotion/detail/PromotionDetail";
+import LoyaltyDetail from "../../components/loyalty/detail/LoyaltyDetail";
+import Loyalty from "../../views/Loyalty";
 
 function App() {
   const { profileStore } = useStore();
@@ -121,6 +123,9 @@ function App() {
           <Route path="promos" element={<Promotion/>} />
           <Route path="promos/new" element={<PromotionDetail/>} />
           <Route path="promos/:id" element={<PromotionDetail/>} />
+          <Route path="loyalties" element={<Loyalty />} />
+          <Route path="loyalties/:id" element={<LoyaltyDetail />} />
+          <Route path="loyalties/new" element={<LoyaltyDetail />} />
           <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
           <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
           <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />

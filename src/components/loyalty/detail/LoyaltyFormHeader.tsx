@@ -1,20 +1,24 @@
-import { Button, PageHeader, Input } from "antd";
+import { PageHeader, Input } from "antd";
 import React, { FC } from "react";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
-import { PlusOutlined } from "@ant-design/icons";
 import ImageButton from "../../../app/common/button/ImageButton";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 
 const { Search } = Input;
-type MedicsFormHeaderProps = {
-  handlePrint: () => void;
-  id : string;
-};
+// type LoyaltyFormHeaderProps = {
+//   handlePrint: () => void;
+//   id : string;
+// };
+type LoyaltyFormHeaderProps = {
+    id: string;
+    handlePrint: () => void;
+    handleDownload: () => Promise<void>;
+  };
 
-const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({id, handlePrint }) => {
-  const { medicsStore } = useStore();
-  const { exportForm } = medicsStore;
+const LoyaltyFormHeader: FC<LoyaltyFormHeaderProps> = ({id, handlePrint }) => {
+  const { loyaltyStore } = useStore();
+  const { exportForm } = loyaltyStore;
 
   const navigate = useNavigate();
 
@@ -29,23 +33,24 @@ const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({id, handlePrint }) => {
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Médicos" image="doctor" />}
+      title={<HeaderTitle title="Catálogo de Lealtades" image="contactos" />}
       className="header-container"
       extra={[
-        id? <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />:"",
-        id? <ImageButton key="doc" title="Informe" image="doc" onClick={download}  />:'',
+        id !== "0" ?
+        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />:'',
+        id !== "0" ?
+        <ImageButton key="doc" title="Informe" image="doc" onClick={download}  />:'',
         <ImageButton
           key="back"
           title="Regresar"
           image="back"
           onClick={() => {
-            navigate("/medics");
+            navigate("/loyalties");
           }}
         />,
         <Search
           key="search"
           placeholder="Buscar"
-          //defaultValue={searchParams.get("search") ?? ""}
           onSearch={(value) => {
             setSearchParams({ search: !value ? "all" : value });
           }}
@@ -56,4 +61,4 @@ const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({id, handlePrint }) => {
   );
 };
 
-export default MedicsFormHeader;
+export default LoyaltyFormHeader;

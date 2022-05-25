@@ -16,8 +16,8 @@ type PromotionHeaderProps = {
 };
 
 const PromotionHeader: FC<PromotionHeaderProps> = ({ handlePrint, handleDownload }) => {
-  const {  } = useStore();
-/*   const { scopes, getAll, exportList } = ; */
+  const { promotionStore } = useStore();
+   const { scopes, getAll, exportList } = promotionStore; 
 
   const navigate = useNavigate();
 
@@ -26,7 +26,7 @@ const PromotionHeader: FC<PromotionHeaderProps> = ({ handlePrint, handleDownload
   const search = async (search: string | undefined) => {
     search = search === "" ? undefined : search;
 
-    /* await getAll(search ?? "all"); */
+     await getAll(search ?? "all"); 
 
     if (search) {
       searchParams.set("search", search);
@@ -43,15 +43,15 @@ const PromotionHeader: FC<PromotionHeaderProps> = ({ handlePrint, handleDownload
       title={<HeaderTitle title="Catálogo de Promociones en listas de precios​" image="promo" />}
       className="header-container"
       extra={[
-        /* scopes?.imprimir && */ <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        /* scopes?.descargar &&  */<ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />,
+         scopes?.imprimir &&  <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+         scopes?.descargar &&  <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />,
         <Search
           key="search"
           placeholder="Buscar"
           defaultValue={searchParams.get("search") ?? ""}
           onSearch={search}
         />,
-      /*   scopes?.crear && */ (
+         scopes?.crear &&  (
           <Button
             key="new"
             type="primary"

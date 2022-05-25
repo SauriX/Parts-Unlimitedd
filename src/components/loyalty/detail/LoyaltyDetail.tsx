@@ -6,23 +6,23 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../../../app/stores/store";
 import { guidPattern } from "../../../app/util/utils";
-import PromotionForm from "./PromotionForm";
-import PromotionFormHeader from "./PromotionFormHeader";
+import LoyaltyForm from "./LoyaltyForm";
+import LoyaltyFormHeader from "./LoyaltyFormHeader";
 
 type UrlParams = {
   id: string;
 };
 
-const PromotionDetail = () => {
-  const { promotionStore } = useStore();
-  const { scopes, access, clearScopes, exportForm } = promotionStore; 
+const LoyaltyDetail = () => {
+  const { loyaltyStore } = useStore();
+  const { scopes, access, clearScopes, exportForm } = loyaltyStore;
 
   const navigate = useNavigate();
 
   const [printing, setPrinting] = useState(false);
 
   const { id } = useParams<UrlParams>();
-  const reagentId = id;//!id ? "" : !guidPattern.test(id) ? undefined : id;
+  const loyaltyId = !id ? "" : !guidPattern.test(id) ? undefined : id;
 
   const componentRef = useRef<any>();
 
@@ -42,47 +42,47 @@ const PromotionDetail = () => {
   });
 
   const handleDownload = async () => {
-    if (reagentId) {
+    if (loyaltyId) {
       setPrinting(true);
-      await exportForm(reagentId);
+      await exportForm(loyaltyId);
       setPrinting(false);
     }
   };
 
-/*   useEffect(() => {
+  useEffect(() => {
     const checkAccess = async () => {
       const permissions = await access();
 
-       if (id === undefined) {
-        console.log("undefined");
-        navigate("/notFound");
-      } else if (!permissions?.crear && id === "") {
-        navigate(`/forbidden`);
-      } else if (!permissions?.modificar && id!== "") {
-        navigate(`/forbidden`);
-      } 
+    //   if (loyaltyId === undefined) {
+    //     console.log("undefined");
+    //     navigate("/notFound");
+    //   } else if (!permissions?.crear && loyaltyId === "") {
+    //     navigate(`/forbidden`);
+    //   } else if (!permissions?.modificar && loyaltyId !== "") {
+    //     navigate(`/forbidden`);
+    //   }
     };
 
     checkAccess();
-  }, [ access , navigate, id]); */
+  }, [access, navigate, loyaltyId]);
 
-   useEffect(() => {
+  useEffect(() => {
     return () => {
       clearScopes();
     };
   }, [clearScopes]);
- 
-  //if (reagentId == null) return null;
 
-/*   if (!scopes?.acceder) return null; */
+  if (loyaltyId == null) return null;
+
+  if (!scopes?.acceder) return null;
 
   return (
     <Fragment>
-      <PromotionFormHeader id={reagentId!} handlePrint={handlePrint} handleDownload={handleDownload} />
+      <LoyaltyFormHeader id={loyaltyId} handlePrint={handlePrint} handleDownload={handleDownload} />
       <Divider className="header-divider" />
-      <PromotionForm id={reagentId!} componentRef={componentRef} printing={printing} />
+      <LoyaltyForm id={loyaltyId} componentRef={componentRef} printing={printing} />
     </Fragment>
   );
 };
 
-export default observer(PromotionDetail);
+export default observer(LoyaltyDetail);

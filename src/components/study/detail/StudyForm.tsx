@@ -537,7 +537,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                     }}
                                     style={{ width: 240, marginRight: 20,marginLeft: 10 }}
                                 />
-                                {!disabled||!load&& (
+                                {disabled||!load&& (
                                     <ImageButton
                                         key="agregar"
                                         title="Agregar lista de trabajo"
@@ -588,7 +588,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                     }}
                                     style={{ width: 240, marginRight: 20,marginLeft: 10 }}
                                 />
-                                {!disabled||!load&& (
+                                {disabled||!load&& (
                                     <ImageButton
                                         key="agregar"
                                         title="Agregar Parametro"
@@ -639,10 +639,10 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                     }}
                                     style={{ width: 240, marginRight: 20,marginLeft: 10 }}
                                 />
-                                {!disabled||!load&& (
+                                {disabled||!load&& (
                                     <ImageButton
                                         key="agregar"
-                                        title="Agregar Clinica"
+                                        title="Agregar Indicación"
                                         image="agregar-archivo"
                                         onClick={addIndication}
                                     />
@@ -662,7 +662,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                             <Col md={12} sm={24} style={{ textAlign: "left" }}>
                                 <ImageButton
                                     key="Eliminar"
-                                    title="Eliminar Indicacion"
+                                    title="Eliminar Indicación"
                                     image="Eliminar_Clinica"
                                     onClick={() => {
                                        deleteIndicacion(item.id);
@@ -690,7 +690,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                     }}
                                     style={{ width: 240, marginRight: 20,marginLeft: 10 }}
                                 />
-                                {!disabled||!load&& (
+                                {disabled||!load&& (
                                     <ImageButton
                                         key="agregar"
                                         title="Agregar Reactivo"
