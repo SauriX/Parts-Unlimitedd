@@ -42,6 +42,10 @@ const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto,disabled}) 
         }
     },[auto]);
 
+    useEffect(()=>{
+        setDisable(disabled);
+    },[disabled]);
+
     useEffect(() => {
         const readuser = async (idUser: string) => {
           let value = await getAllvalues(idUser,idTipeVAlue);
@@ -88,7 +92,7 @@ const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto,disabled}) 
                 valorFinalNumerico:x.valorFinalNumerico,
                 rangoEdadInicial:x.rangoEdadInicial,
                 rangoEdadFinal:x.rangoEdadFinal,
-                medidaTiempo:x.medidaTiempo,
+                medidaTiempoId:x.medidaTiempoId,
                 nombre:idTipeVAlue,
                 opcion:"",
                 descripcionTexto:"",
@@ -99,6 +103,7 @@ const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto,disabled}) 
             return data;
         });
 
+        
        var succes = await addvalues(val,id);
        if(succes){
         succes = await update(parameter);
@@ -130,18 +135,18 @@ const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto,disabled}) 
                                         name={[name, 'rangoEdadInicial']}
                                         rules={[{ required: true, message: 'Missing Hombre valor' }]}
                                     >
-                                        <Input type={"number"} min={0} disabled={disable} placeholder={"Rango Edad"} />
+                                        <Input type={"number"} min={0} max={120} disabled={disable} placeholder={"Rango Edad"} />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
                                         name={[name, 'rangoEdadFinal']}
                                         rules={[{ required: true, message: 'Missing Rango de edad' }]}
                                     >
-                                        <Input type={"number"} min={0} disabled={disable} placeholder="Rango Edad" />
+                                        <Input type={"number"} min={0} max={120} disabled={disable} placeholder="Rango Edad" />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
-                                        name={[name, 'medidaTiempo']}
+                                        name={[name, 'medidaTiempoId']}
                                         rules={[{ required: true, message: 'Missing Unidad de medida' }]}
                                     >
                                      <Select  defaultValue={0} disabled={disable}  options={[{label:"Unidad de tiempo",value:0},{label:"Días",value:1},{label:"Meses",value:2},{label:"Años",value:3}]}  />
@@ -151,14 +156,14 @@ const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto,disabled}) 
                                         name={[name, 'valorInicialNumerico']}
                                         rules={[{ required: true, message: 'valor inicial' }]}
                                     >
-                                        <Input type={"number"} min={0} disabled={disable} placeholder={"Valor inicial"} />
+                                        <Input type={"number"} min={0} max={120} disabled={disable} placeholder={"Valor inicial"} />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
                                         name={[name, 'valorFinalNumerico']}
                                         rules={[{ required: true, message: 'Missing Valor final' }]}
                                     >
-                                        <Input type={"number"} min={0} disabled={disable} placeholder="Valor final" />
+                                        <Input type={"number"} min={0} max={120} disabled={disable} placeholder="Valor final" />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>

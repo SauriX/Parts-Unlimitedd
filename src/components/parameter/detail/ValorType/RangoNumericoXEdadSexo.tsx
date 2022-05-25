@@ -8,7 +8,7 @@ type Props = {
 };
 const RangoNumericoXEdadSexo:FC<Props> = ({idTipeVAlue,parameter})=>{
     const [flag, setFlag] = useState<boolean>(false);
-    const [disabled, setDisabled] = useState(false);
+    const [disabled, setDisabled] = useState(true);
     const handle =(value:boolean)=>{
         setFlag(value);
     }
