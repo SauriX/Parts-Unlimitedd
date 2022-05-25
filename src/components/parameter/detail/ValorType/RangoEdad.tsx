@@ -30,6 +30,7 @@ const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto,disabled}) 
     const { parameterStore } = useStore();
     const { addvalues,getAllvalues,update  } = parameterStore;
     const [valuesValor, setValuesValor] = useState<ItipoValorForm[]>([]);
+
     useEffect(()=>{
         const update =()=>{
             formValue.submit()
@@ -40,6 +41,7 @@ const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto,disabled}) 
             }
         }
     },[auto]);
+
     useEffect(() => {
         const readuser = async (idUser: string) => {
           let value = await getAllvalues(idUser,idTipeVAlue);
@@ -74,6 +76,7 @@ const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto,disabled}) 
             sm: { span: 20, offset: 4 },
         },
     };
+
     let navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const onFinish = async (values: any) => {

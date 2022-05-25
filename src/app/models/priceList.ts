@@ -48,6 +48,9 @@ export interface ISucMedComList {
   area?:string;
   activo?: boolean;
   departamento?: string;
+  sucursal?:boolean,
+  medico?:boolean,
+  compañia?:boolean
 }
 
 
