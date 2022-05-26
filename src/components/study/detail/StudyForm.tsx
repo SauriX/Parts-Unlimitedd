@@ -493,6 +493,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                 min={1}
                                 max={9999999999999999}
                                 readonly={disabled}
+                                required
                             />
                         </Col>
                         <Col md={12} sm={24} xs={12}>
@@ -506,6 +507,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                 min={1}
                                 max={9999999999999999}
                                 readonly={disabled}
+                                required
                             />
                             <NumberInput
                                 formProps={{
