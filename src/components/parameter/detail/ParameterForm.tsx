@@ -171,7 +171,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     const Parameter = { ...values, ...newValues };
     console.log(Parameter);
     Parameter.tipoValor = Parameter.tipoValor.toString();
-    if(parameter.formula){
     let success = false;
     if (!Parameter.id) {
       console.log("create");
@@ -184,19 +183,18 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     if (success && flag == 0) {
       navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
     }
-  }
   };
   const onValuesChange = async (changeValues: any, values: any) => {
     const fields = Object.keys(changeValues)[0];
     if (fields === "tipoValor") {
       const value = changeValues[fields];
       values.tipoValor = value;
-      values.id=id;
+      values.id = id;
       setValueType(value);
-      
-        setValues(values);
-        console.log("values");
-        console.log(values);
+
+      setValues(values);
+      console.log("values");
+      console.log(values);
       setFlag(1);
     }
     if (fields === "departamentoId") {
@@ -254,274 +252,274 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
 
   return (
     <Spin spinning={loading || load}>
-      
       <Row style={{ marginBottom: 24 }}>
-          {id && (
-            <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
-              <Pagination
-                size="small"
-                total={parameters.length}
-                pageSize={1}
-                current={actualParameter()}
-                onChange={(value) => {
-                  siguienteParameter(value - 1);
-                }}
-              />
-            </Col>
-          )}
-          {!CheckReadOnly() && (
-            <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
-              <Button
-                onClick={() => {
-                  navigate(`/parameters`);
-                }}
-              >
-                Cancelar
-              </Button>
-              <Button
-                type="primary"
-                htmlType="submit"
-                onClick={() => {
-                  form.submit();
-                }}
-              >
-                Guardar
-              </Button>
-            </Col>
-          )}
-          {CheckReadOnly() && (
-            <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
-              <ImageButton
-                key="edit"
-                title="Editar"
-                image="editar"
-                onClick={() => {
-                  navigate(`/parameters/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`);
-                }}
-              />
-            </Col>
-          )}
-        </Row>
-        <div style={{ display: load ? "none" : "" }}>
+        {id && (
+          <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
+            <Pagination
+              size="small"
+              total={parameters.length}
+              pageSize={1}
+              current={actualParameter()}
+              onChange={(value) => {
+                siguienteParameter(value - 1);
+              }}
+            />
+          </Col>
+        )}
+        {!CheckReadOnly() && (
+          <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
+            <Button
+              onClick={() => {
+                navigate(`/parameters`);
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              onClick={() => {
+                form.submit();
+              }}
+            >
+              Guardar
+            </Button>
+          </Col>
+        )}
+        {CheckReadOnly() && (
+          <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
+            <ImageButton
+              key="edit"
+              title="Editar"
+              image="editar"
+              onClick={() => {
+                navigate(`/parameters/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`);
+              }}
+            />
+          </Col>
+        )}
+      </Row>
+      <div style={{ display: load ? "none" : "" }}>
         <div ref={componentRef}>
-        {load && (
+          {load && (
             <PageHeader
               ghost={false}
               title={<HeaderTitle title="Catálogo Parámetros" image="parameters" />}
               className="header-container"
             ></PageHeader>
           )}
-        <Form<IParameterForm>
-          {...formItemLayout}
-          form={form}
-          name="parameter"
-          onValuesChange={onValuesChange}
-          onFinish={onFinish}
-          scrollToFirstError
-          onFieldsChange={() => {
-            setDisabled(
-              !form.isFieldsTouched() ||
-                form.getFieldsError().filter(({ errors }) => errors.length).length > 0
-            );
-          }}
-        >
-          <Row>
-            <Col md={12} sm={24} xs={12}>
-              <TextInput
-                formProps={{
-                  name: "clave",
-                  label: "Clave",
-                }}
-                max={100}
-                required
-                readonly={CheckReadOnly()}
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <SelectInput
-                formProps={{ name: "departamentoId", label: "Departamento" }}
-                options={departmentOptions}
-                readonly={CheckReadOnly()}
-                required
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <TextInput
-                formProps={{
-                  name: "nombre",
-                  label: "Nombre",
-                }}
-                max={100}
-                required
-                readonly={CheckReadOnly()}
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <SelectInput
-                formProps={{ name: "areaId", label: "Área" }}
-                options={areas}
-                readonly={CheckReadOnly()}
-                required
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <TextInput
-                formProps={{
-                  name: "nombreCorto",
-                  label: "Nombre corto",
-                }}
-                max={100}
-                required
-                readonly={CheckReadOnly()}
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <SelectInput
-                formProps={{ name: "reactivoId", label: "Reactivo" }}
-                options={reagents}
-                readonly={CheckReadOnly()}
-                required
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <NumberInput
-              type="number"
-                formProps={{
-                  name: "unidades",
-                  label: "Unidades",
-                }}
-                max={100}
-                min={0}
-                required
-
-                readonly={CheckReadOnly()}
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <TextInput
-                formProps={{
-                  name: "unidadSi",
-                  label: "Unidad SI",
-                }}
-                max={100}
-                required
-                readonly={CheckReadOnly()}
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <SelectInput
-                formProps={{ name: "formatoImpresionId", label: "Formato de impresión" }}
-                options={printFormat}
-                readonly={CheckReadOnly()}
-                required
-              />
-            </Col>
-            {id && (
+          <Form<IParameterForm>
+            {...formItemLayout}
+            form={form}
+            name="parameter"
+            onValuesChange={onValuesChange}
+            onFinish={onFinish}
+            scrollToFirstError
+            onFieldsChange={() => {
+              setDisabled(
+                !form.isFieldsTouched() ||
+                  form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+              );
+            }}
+          >
+            <Row>
               <Col md={12} sm={24} xs={12}>
-                <SelectInput
-                  formProps={{ name: "tipoValor", label: "Tipo de valor" }}
-                  options={tipodeValorList}
-                  readonly={CheckReadOnly()}
-                  required
-                />
-
                 <TextInput
                   formProps={{
-                    name: "formula",
-                    label: "Fórmula",
+                    name: "clave",
+                    label: "Clave",
                   }}
                   max={100}
                   required
                   readonly={CheckReadOnly()}
-                  onClick={(e: any) => {
-                    const position = e.target.selectionStart ?? 0;
-                    setCursorPosition(position);
-                  }}
-                  onKeyUp={(e: any) => {
-                    const position = e.target.selectionStart ?? 0;
-                    setCursorPosition(position);
-                  }}
                 />
+              </Col>
+              <Col md={12} sm={24} xs={12}>
                 <SelectInput
-                  formProps={{ name: "funciones", label: "Funciones" }}
-                  options={functionOptions}
+                  formProps={{ name: "departamentoId", label: "Departamento" }}
+                  options={departmentOptions}
                   readonly={CheckReadOnly()}
+                  required
                 />
-                <SelectInput
-                  formProps={{ name: "parametros", label: "Parámetros" }}
-                  options={parameterOptions}
+              </Col>
+              <Col md={12} sm={24} xs={12}>
+                <TextInput
+                  formProps={{
+                    name: "nombre",
+                    label: "Nombre",
+                  }}
+                  max={100}
+                  required
                   readonly={CheckReadOnly()}
                 />
               </Col>
-            )}
-            <Col md={12} sm={24} xs={12}>
-              <TextInput
-                formProps={{
-                  name: "fcsi",
-                  label: "FCSI",
-                }}
-                max={100}
-                required
-                readonly={CheckReadOnly()}
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <TextInput
-                formProps={{
-                  name: "formato",
-                  label: "Formato",
-                }}
-                max={100}
-                required
-                readonly={CheckReadOnly()}
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <SwitchInput
-                name="activo"
-                label="Activo"
-                onChange={(value) => {
-                  if (value) {
-                    alerts.info(messages.confirmations.enable);
-                  } else {
-                    alerts.info(messages.confirmations.disable);
-                  }
-                }}
-                readonly={CheckReadOnly()}
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <NumberInput
+              <Col md={12} sm={24} xs={12}>
+                <SelectInput
+                  formProps={{ name: "areaId", label: "Área" }}
+                  options={areas}
+                  readonly={CheckReadOnly()}
+                  required
+                />
+              </Col>
+              <Col md={12} sm={24} xs={12}>
+                <TextInput
+                  formProps={{
+                    name: "nombreCorto",
+                    label: "Nombre corto",
+                  }}
+                  max={100}
+                  required
+                  readonly={CheckReadOnly()}
+                />
+              </Col>
+              <Col md={12} sm={24} xs={12}>
+                <SelectInput
+                  formProps={{ name: "reactivoId", label: "Reactivo" }}
+                  options={reagents}
+                  readonly={CheckReadOnly()}
+                  required
+                />
+              </Col>
+              <Col md={12} sm={24} xs={12}>
+                <NumberInput
+                  type="number"
+                  formProps={{
+                    name: "unidades",
+                    label: "Unidades",
+                  }}
+                  max={100}
+                  min={0}
+                  required
+                  readonly={CheckReadOnly()}
+                />
+              </Col>
+              <Col md={12} sm={24} xs={12}>
+                <TextInput
+                  formProps={{
+                    name: "unidadSi",
+                    label: "Unidad SI",
+                  }}
+                  max={100}
+                  required
+                  readonly={CheckReadOnly()}
+                />
+              </Col>
+              <Col md={12} sm={24} xs={12}>
+                <SelectInput
+                  formProps={{ name: "formatoImpresionId", label: "Formato de impresión" }}
+                  options={printFormat}
+                  readonly={CheckReadOnly()}
+                  required
+                />
+              </Col>
+              {id && (
+                <Col md={12} sm={24} xs={12}>
+                  <SelectInput
+                    formProps={{ name: "tipoValor", label: "Tipo de valor" }}
+                    options={tipodeValorList}
+                    readonly={CheckReadOnly()}
+                    required
+                  />
+
+                  <TextInput
+                    formProps={{
+                      name: "formula",
+                      label: "Fórmula",
+                    }}
+                    max={100}
+                    required
+                    readonly={CheckReadOnly()}
+                    onClick={(e: any) => {
+                      const position = e.target.selectionStart ?? 0;
+                      setCursorPosition(position);
+                    }}
+                    onKeyUp={(e: any) => {
+                      const position = e.target.selectionStart ?? 0;
+                      setCursorPosition(position);
+                    }}
+                  />
+                  <SelectInput
+                    formProps={{ name: "funciones", label: "Funciones" }}
+                    options={functionOptions}
+                    readonly={CheckReadOnly()}
+                  />
+                  <SelectInput
+                    formProps={{ name: "parametros", label: "Parámetros" }}
+                    options={parameterOptions}
+                    readonly={CheckReadOnly()}
+                  />
+                </Col>
+              )}
+              <Col md={12} sm={24} xs={12}>
+                <TextInput
+                  formProps={{
+                    name: "fcsi",
+                    label: "FCSI",
+                  }}
+                  max={100}
+                  required
+                  readonly={CheckReadOnly()}
+                />
+              </Col>
+              <Col md={12} sm={24} xs={12}>
+                <TextInput
+                  formProps={{
+                    name: "formato",
+                    label: "Formato",
+                  }}
+                  max={100}
+                  required
+                  readonly={CheckReadOnly()}
+                />
+              </Col>
+              <Col md={12} sm={24} xs={12}>
+                <SwitchInput
+                  name="activo"
+                  label="Activo"
+                  onChange={(value) => {
+                    if (value) {
+                      alerts.info(messages.confirmations.enable);
+                    } else {
+                      alerts.info(messages.confirmations.disable);
+                    }
+                  }}
+                  readonly={CheckReadOnly()}
+                />
+              </Col>
+              <Col md={12} sm={24} xs={12}>
+                <NumberInput
                   formProps={{
                     name: "valorInicial",
                     label: "Valor Inicial",
                   }}
                   min={1}
                   required
-                  readonly={CheckReadOnly()}    max ={99999999999999999999999}         />
+                  readonly={CheckReadOnly()}
+                  max={99999999999999999999999}
+                />
+              </Col>
+            </Row>
+          </Form>
+          <ValorType form={values} value={ValueType}></ValorType>
+          <Row>
+            <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
+              <PageHeader
+                ghost={false}
+                title={<HeaderTitle title="Estudios donde se encuentra el parámetro" />}
+                className="header-container"
+              ></PageHeader>
+              <Divider className="header-divider" />
+              <Table<IStudyList>
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columns.slice(0, 3)}
+                pagination={false}
+                dataSource={[...(values.estudios ?? [])]}
+                scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+              />
             </Col>
           </Row>
-        </Form>
-        <ValorType form={values} value={ValueType}></ValorType>
-        <Row>
-          <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
-            <PageHeader
-              ghost={false}
-              title={<HeaderTitle title="Estudios donde se encuentra el parámetro" />}
-              className="header-container"
-            ></PageHeader>
-            <Divider className="header-divider" />
-            <Table<IStudyList>
-              size="small"
-              rowKey={(record) => record.id}
-              columns={columns.slice(0, 3)}
-              pagination={false}
-              dataSource={[...(values.estudios ?? [])]}
-              scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-            />
-          </Col>
-        </Row>
-      </div>
+        </div>
       </div>
     </Spin>
   );
