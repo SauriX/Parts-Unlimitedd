@@ -60,7 +60,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     getPrintFormatsOptions,
     printFormat,
     getParameterOptions,
-    parameterOptions,
+    parameterOptions2,
   } = optionStore;
   const [form] = Form.useForm<IParameterForm>();
   const [flag, setFlag] = useState(0);
@@ -171,7 +171,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     const Parameter = { ...values, ...newValues };
     console.log(Parameter);
     Parameter.tipoValor = Parameter.tipoValor.toString();
-    if(parameter.formula){
     let success = false;
     if (!Parameter.id) {
       console.log("create");
@@ -184,7 +183,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     if (success && flag == 0) {
       navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
     }
-  }
   };
   const onValuesChange = async (changeValues: any, values: any) => {
     const fields = Object.keys(changeValues)[0];
@@ -449,7 +447,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                 />
                 <SelectInput
                   formProps={{ name: "parametros", label: "Parámetros" }}
-                  options={parameterOptions}
+                  options={parameterOptions2}
                   readonly={CheckReadOnly()}
                 />
               </Col>
