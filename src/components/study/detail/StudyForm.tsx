@@ -59,7 +59,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
     const [parameter, setParameter] = useState<{ clave: ""; id: string }>();
     const [indication, setIndication] = useState<{ clave: ""; id: number }>();
     const [Reagent, setReagent] = useState<{ clave: ""; id: string }>();
-    const [visible,setVisible] = useState<boolean>(true);
+    const [visible,setVisible] = useState<boolean>(false);
     let { id } = useParams<UrlParams>();
     const [disabled, setDisabled] = useState(()=>{
                 let result = false;

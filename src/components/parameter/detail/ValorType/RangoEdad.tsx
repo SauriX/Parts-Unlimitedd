@@ -12,6 +12,7 @@ import { IParameterForm, ItipoValorForm } from "../../../../app/models/parameter
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../../app/stores/store";
 import { values } from "mobx";
+import alerts from "../../../../app/util/alerts";
 type Props = {
     description: string;
     idTipeVAlue: string;
@@ -102,16 +103,40 @@ const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto,disabled}) 
             }
             return data;
         });
-
-        
-       var succes = await addvalues(val,id);
-       if(succes){
-        succes = await update(parameter);
-        if (succes) {
-            navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
+        var validatehombre =val.map( (x)=> { console.log(x,"x"); if(x.valorInicialNumerico! > x.valorFinalNumerico!){ console.log("if");return true;} return false;});
+        if(validatehombre.includes(true)){
+            alerts.warning(`En ${description} inicial no puede ser mayor al final`);
+            return
         }
-       }
+        var validatehombreIgual =val.map( (x)=> { console.log(x,"x"); if(x.valorInicialNumerico! === x.valorFinalNumerico!){ console.log("if");return true;} return false;});
+        if(validatehombreIgual.includes(true)){
+            alerts.warning(`En ${description} inicial no puede ser igual al final`);
+            return
+        }
+        if(parameter.formula!="" ){
+            var succes = await addvalues(val,id);
+            if(succes){
+             succes = await update(parameter);
+             if (succes) {
+                 navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
+             }
+            }
+        }else{
+            alerts.warning("Necesita ingresar una formula");
+        }
 
+
+    };
+    const onValuesChange = async (changeValues: any, values: any) => {
+        const fields = Object.keys(changeValues)[0];
+        if (fields === "rangoEdadInicial") {
+          const value = changeValues[fields];
+            console.log("on change");
+            if(value< formValue.getFieldValue("rangoEdadFinal")){
+                console.log("dentro del if");
+                alerts.warning("El rango final no puede ser meno al inicial");
+            }
+        }
     };
     return (
         <div >
@@ -123,7 +148,7 @@ const RangoEdad:FC<Props> = ({description,idTipeVAlue,parameter,auto,disabled}) 
                     Guardar
                 </Button>
             </Col>}
-            <Form<any[]> form={formValue} name="dynamic_form_nest_item" style={{ marginTop: 20 }} onFinish={onFinish} autoComplete="off">
+            <Form<any[]> form={formValue} name="dynamic_form_nest_item" style={{ marginTop: 20 }} onValuesChange={onValuesChange} onFinish={onFinish} autoComplete="off">
                 <Form.List  initialValue={lista}  name="value">
                     {(Fields, { add, remove }) => (
                         <>

@@ -7,6 +7,7 @@ import NumberInput from "../../../../app/common/form/NumberInput";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { IParameterForm, ItipoValorForm, tipoValorFormValues } from "../../../../app/models/parameter";
 import { useStore } from "../../../../app/stores/store";
+import alerts from "../../../../app/util/alerts";
 type Props = {
     idTipeVAlue: string;
     parameter:IParameterForm;
@@ -39,31 +40,37 @@ const ValorRNumerico:FC<Props> = ({idTipeVAlue,parameter})=>{
           readuser(id);
         }
     }, [formValue, getvalue, id]);
-    const onValuesChange = async (changeValues: any) => {
-        const fields = Object.keys(changeValues)[0]; 
-/*         if (fields === "tipoValor") {
-          const value = changeValues[fields];
-          setValueType(value);
-        }
-        if(fields==="departamento"){
-            const value = changeValues[fields];
-            await getareaOptions(value);
-        } */
-    }
+
 
     const onFinish = async (newValues: ItipoValorForm) => {
         console.log(newValues);
         const value = { ...valuesValor, ...newValues };
+         
+        if(value.valorInicial!<value.valorFinal! ){
+            alerts.warning("El valor inicial no puede ser mayor a final");
+            return
+        }
+        if(value.valorFinal=== value.valorInicial ){
+            alerts.warning("El valor inicial no puede ser igual a final");
+            return
+        }
         let success = false;
         if (!value.id) {
             value.nombre = idTipeVAlue;
             value.parametroId=id||"";
+            if(parameter.formula!="" ){
             success = await addValue(value);
             success = await update(parameter);
+        }else{
+            alerts.warning("Necesita ingresar una formula");
+        }
         } else {
-          success = await updatevalue(value);
-          success = await update(parameter);
-          
+            if(parameter.formula!="" ){
+                success = await updatevalue(value);
+                success = await update(parameter);
+            }else{
+                alerts.warning("Necesita ingresar una formula");
+            }
         }
         if (success) {
           navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
@@ -82,7 +89,6 @@ const ValorRNumerico:FC<Props> = ({idTipeVAlue,parameter})=>{
             <Form<ItipoValorForm>
                 form={formValue}
                 name="value"
-                onValuesChange={onValuesChange}
                 onFinish={onFinish}
                 scrollToFirstError
             >
