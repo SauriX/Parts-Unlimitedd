@@ -167,6 +167,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
         navigate(`/${views.study}/${estudio?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search") ?? "all"}`);
       } 
       const onFinish = async (newValues: IStudyForm) => {
+        setLoading(true);
         const User = { ...values, ...newValues };
         let success = false;
         if (!User.id) {
@@ -176,6 +177,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
         }
     
         if (success) {
+            setLoading(false);
           navigate(`/${views.study}?search=${searchParams.get("search") || "all"}`);
         }
       }; 
