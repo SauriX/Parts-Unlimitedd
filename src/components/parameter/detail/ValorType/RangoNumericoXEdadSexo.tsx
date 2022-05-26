@@ -8,14 +8,14 @@ type Props = {
 };
 const RangoNumericoXEdadSexo:FC<Props> = ({idTipeVAlue,parameter})=>{
     const [flag, setFlag] = useState<boolean>(false);
-    const [disabled, setDisabled] = useState(false);
+    const [disabled, setDisabled] = useState(true);
     const handle =(value:boolean)=>{
         setFlag(value);
     }
     return(
         <Fragment>
             <Col md={24} sm={24} xs={24} style={{ marginLeft: "50%" }}>
-                <Button onClick={() => { setDisabled(false) }} type="default">Modificar</Button>
+                <Button onClick={() => { setDisabled(false); console.log("editabe");  console.log(disabled);}} type="default">Modificar</Button>
                 <Button type="primary" htmlType="submit" onClick={() => { handle(true) }}>
                     Guardar
                 </Button>

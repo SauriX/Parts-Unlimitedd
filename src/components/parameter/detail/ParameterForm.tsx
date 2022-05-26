@@ -12,6 +12,7 @@ import {
   Divider,
   PageHeader,
   Table,
+  InputNumber,
 } from "antd";
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
@@ -170,6 +171,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     const Parameter = { ...values, ...newValues };
     console.log(Parameter);
     Parameter.tipoValor = Parameter.tipoValor.toString();
+    if(parameter.formula){
     let success = false;
     if (!Parameter.id) {
       console.log("create");
@@ -182,6 +184,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     if (success && flag == 0) {
       navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
     }
+  }
   };
   const onValuesChange = async (changeValues: any, values: any) => {
     const fields = Object.keys(changeValues)[0];
@@ -488,15 +491,14 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
               />
             </Col>
             <Col md={12} sm={24} xs={12}>
-              <TextAreaInput
-                formProps={{
-                  name: "valorInicial",
-                  label: "Valor Inicial",
-                }}
-                rows={4}
-                required
-                readonly={CheckReadOnly()}
-              />
+              <NumberInput
+                  formProps={{
+                    name: "valorInicial",
+                    label: "Valor Inicial",
+                  }}
+                  min={1}
+                  required
+                  readonly={CheckReadOnly()}    max ={99999999999999999999999}         />
             </Col>
           </Row>
         </Form>

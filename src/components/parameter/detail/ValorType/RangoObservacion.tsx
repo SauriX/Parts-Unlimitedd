@@ -13,6 +13,7 @@ import TextInput from "../../../../app/common/form/TextInput";
 import { IParameterForm, ItipoValorForm } from "../../../../app/models/parameter";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../../app/stores/store";
+import TextArea from "antd/lib/input/TextArea";
 type Props = {
     idTipeVAlue: string;
     parameter:IParameterForm;
@@ -109,7 +110,8 @@ const RangoObservacion : FC<Props> = ({ idTipeVAlue,parameter }) => {
                                         name={[name, 'descripcionTexto']}
                                         rules={[{ required: true, message: 'Missing valor' }]}
                                     >
-                                        <Input disabled={disabled} placeholder={"Observación"} />
+                                        <TextArea disabled={disabled} rows={5} autoSize placeholder={"Observación"} />
+                                       
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>

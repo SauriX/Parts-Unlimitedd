@@ -191,7 +191,7 @@ export default class OptionStore {
       console.log("parameters");
       console.log(parameter);
       this.parameterOptions = parameter.map((x) => ({
-        value: x.clave,
+        value: x.id,
         label: x.nombre,
       }));
     } catch (error) {
