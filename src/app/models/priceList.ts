@@ -22,6 +22,8 @@ export interface IPriceListForm {
     estudios: IPriceListEstudioList[];
     sucMedCom: ISucMedComList[];
     sucursales: ISucMedComList[];
+    compañia: ISucMedComList[];
+    medicos: ISucMedComList[];
   }
   export class PriceListFormValues implements IPriceListForm {
    
@@ -35,6 +37,8 @@ export interface IPriceListForm {
     estudios: IPriceListEstudioList[] = [];
     sucMedCom: ISucMedComList[] = [];
     sucursales: ISucMedComList[]=[];
+    compañia: ISucMedComList[]=[];
+    medicos: ISucMedComList[]=[];
     constructor(init?: IPriceListForm) {
       Object.assign(this, init);
     }

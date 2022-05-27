@@ -59,9 +59,19 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
   };
 
   useEffect(() => {
+    const studys = async () => {
+      let estudio = await getAllStudy();
+      setLista(estudio!);
+      setValues((prev) => ({ ...prev, estudio: estudio! }));
+    }
+    if(!id){
+      studys();
+    }
+    
+  }, [getAllStudy]);
+  useEffect(() => {
     getDepartmentOptions();
   }, [getDepartmentOptions]);
-
   useEffect(()=> {
     const areareader = async () => {
     await getareaOptions(0);
@@ -92,6 +102,7 @@ useEffect(() => {
      const all = await getAll("all");
     console.log(all);
     var studis =await getAllStudy();
+    console.log(studies,"estudios");
     var areaForm=await getareaOptions(values.idDepartamento);
       
     const user = await getById(idUser);
@@ -196,8 +207,10 @@ useEffect(() => {
     if(departament){
     var departamento=departmentOptions.filter(x=>x.value===departament)[0].label;
     var areaSearch=await getareaOptions(departament);
-    
-    var estudios = lista.filter(x=>x.departamento === departamento)
+    console.log(departamento,"departamento");
+    var estudios = lista.filter(x=>x.departamento === departamento);
+    console.log(lista,"lista");
+    console.log(estudios,"estudios filtro dep");
     setValues((prev) => ({ ...prev, estudio: estudios }));
     setAreaSearch(areaSearch!);}else{
       var estudios = lista.filter(x=>x.activo === true);
@@ -442,6 +455,10 @@ useEffect(() => {
            filterBySearch(value);
            setSearchvalue(value);
           }}
+          onChange={(value) => {
+            
+            setSearchvalue(value.target.value);
+           }}
           value={searchvalue}
         />,</Col>
             <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>

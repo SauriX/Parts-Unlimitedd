@@ -166,7 +166,7 @@ export default class PriceListStore {
     try {
       var compañias = await PriceList.getAllCompany();
       return compañias.map(x=>{
-        x.sucursal = true;
+        x.compañia = true;
         return x;
       });
     } catch (error: any) {

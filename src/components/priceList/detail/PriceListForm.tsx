@@ -86,7 +86,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const [areaForm, setAreaForm] = useState<IOptions[]>([]);
   const [areaId, setAreaId] = useState<number>();
   const navigate = useNavigate();
-
+  const [radioValue, setRadioValue] = useState<any>();
   const [searchParams, setSearchParams] = useSearchParams();
   const [lista, setLista] = useState(studies);
   const [listSMC, setListSCM] = useState(sucMedCom);
@@ -197,16 +197,29 @@ const PriceListForm: FC<PriceListFormProps> = ({
 
       const user = await getById(idUser);
       console.log("Lista de precio", user);
+      const branches = await getAllBranch();
+      const Companies = await getAllCompany();
+      const medics = await getAllMedics();
+
+
       form.setFieldsValue(user!);
       studis = studis?.map(x => {
         var activo = user?.estudios.find(y=> y.id === x.id) != null;
         return { ...x, activo };
       });
-
+      setListSucursal(branches);
+      setListCompañia(Companies);
+      setListMedicos(medics);
       setAreaForm(areaForm!);
       setValues(user!);
       setLista(studis!);
       setLoading(false);
+      
+      user?.sucursales.map(x => setSucursalesList(x.activo!,x,branches));
+      user?.compañia.map(x => setCompañiasList(x.activo!,x,Companies));
+      user?.medicos.map(x =>setMedicosList(x.activo!,x,medics));
+      setListSCM(listSucursal);
+      setRadioValue("branch");
       console.log(studis);
     };
     if (id) {
@@ -234,8 +247,27 @@ const PriceListForm: FC<PriceListFormProps> = ({
     navigate(`/${views.price}/${priceList.id}?${searchParams}`);
   };
 
-  const setSucursalesList = (sucursales:any) =>{
-
+  const setSucursalesList = (active: boolean, item: ISucMedComList,lists:ISucMedComList[]) =>{
+    console.log(lists,"Lista en metodo");
+    var index = lists.findIndex((x: ISucMedComList) => x.id === item.id);
+    var list = lists;
+    item.activo = active;
+    list[index] = item;
+    setListSucursal(list);
+  }
+  const setMedicosList = (active: boolean, item: ISucMedComList,lists:ISucMedComList[]) =>{
+    var index = lists.findIndex((x: ISucMedComList) => x.id === item.id);
+    var list = lists;
+    item.activo = active;
+    list[index] = item;
+    setListMedicos(list);
+  }
+  const setCompañiasList = (active: boolean, item: ISucMedComList,lists:ISucMedComList[]) =>{
+    var index = lists.findIndex((x: ISucMedComList) => x.id === item.id);
+    var list = lists;
+    item.activo = active;
+    list[index] = item;
+  setListCompañia(list);
   }
   ///Primera tabla Sucursal
   //console.log("Table");
@@ -340,15 +372,11 @@ const PriceListForm: FC<PriceListFormProps> = ({
     console.log("finish ");
     console.log(lista);
     console.log(priceList);
-    var listas:ISucMedComList[] = listSucursal;
-    listas =listas.concat(listCompañia);
-    listas =listas.concat(listMedicos);
-
-    values.sucMedCom=listas;
-    console.log(values);
-    
+    priceList.sucursales=listSucursal;
+    priceList.compañia=listCompañia;
+    priceList.medicos=listMedicos;
+    console.log(priceList);
     let success = false;
-
     if (!priceList.id) {
       success = await create(priceList);
     } else {
@@ -543,19 +571,23 @@ const PriceListForm: FC<PriceListFormProps> = ({
           </Form>
           <Row justify="center">
             <Radio.Group
+              value={radioValue}
               options={radioOptions}
               onChange={async (e) => {
                 if (e.target.value === "branch") {
                   
                   setSCMlist("sucursal");
+                  setRadioValue("branch");
                 }
                 if (e.target.value === "medic") {
 
                   setSCMlist("medicos");
+                  setRadioValue("medic");
                 }
                 if (e.target.value === "company") {
                   
                   setSCMlist("compañia");
+                  setRadioValue("company");
                 }
               }}
               optionType="button"
