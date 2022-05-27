@@ -7,7 +7,8 @@ type Props = {
   title: string;
   icon?: ReactNode;
   image?: "user" | "reagent" | "role"| "Indicaciones"| "doctor"|
-  "laboratorio"|"parameters"|"Company"|"contactos"|"maquilador"|"estudios"|"paquete"| "ListaPrecio"|"promo";
+  "laboratorio"|"parameters"|"Company"|"contactos"|"maquilador"|"estudios"|"paquete"| "ListaPrecio"|
+  "promo"|"Lealtad";
 };
 
 const HeaderTitle: FC<Props> = ({ title, icon, image }) => {

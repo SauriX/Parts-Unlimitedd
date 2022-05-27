@@ -1,4 +1,4 @@
-import { Button, Divider, PageHeader,  Table } from "antd";
+import { Button, Divider, PageHeader,Popover,  Table } from "antd";
 import React, { FC, Fragment, useEffect,  useState } from "react";
 import {
   defaultPaginationProperties,
@@ -14,6 +14,7 @@ import { ILoyaltyList } from "../../app/models/loyalty";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
+import DateRangeInput from "../../app/common/form/DateRangeInput";
 
 type LoyaltyTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -39,6 +40,14 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({ componentRef, printing }) => {
 
   console.log("Table");
 
+  const Reagendar = (
+    <div>
+      <DateRangeInput
+        formProps={{ label: "Descuento entre", name: "fecha" }}
+      />
+    </div>
+  );
+
   useEffect(() => {
     const readLoyalty = async () => {
       setLoading(true);
@@ -53,7 +62,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "8%",
+        width: "6%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -76,7 +85,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
-        width: "12%",
+        width: "15%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -85,25 +94,16 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("cantidadDescuento", "Beneficio Aplicado", {
         searchState,
         setSearchState,
-        width: "16%",
+        width: "9%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
-    } /*
+    } ,
     {
-      ...getDefaultColumnProps("clinica", "Clinica", {
+      ...getDefaultColumnProps("fecha", "Fecha de Vigencia", {
         searchState,
         setSearchState,
-        width: "2%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-    },*/,
-    {
-      ...getDefaultColumnProps("fechaFinal", "Fecha de Vigencia", {
-        searchState,
-        setSearchState,
-        width: "8%",
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -122,9 +122,22 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({ componentRef, printing }) => {
       dataIndex: "activo",
       title: "Activo",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: windowWidth < resizeWidth ? 100 : "6%",
       render: (value) => (value ? "Sí" : "No"),
     },
+    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Reagendar",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "6%",
+      render: (value) => (
+        <Popover content={Reagendar} title="Title">
+          <Button type="primary">Reagendar</Button>
+        </Popover>
+      ),
+    },
+    
     {
       key: "editar",
       dataIndex: "id",
@@ -150,7 +163,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({ componentRef, printing }) => {
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Lealtades" image="contactos" />}
+          title={<HeaderTitle title="Catálogo de Lealtades" image="Lealtad" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
