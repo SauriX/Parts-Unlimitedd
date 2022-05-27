@@ -43,6 +43,9 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
   const [aeraSearch, setAreaSearch] = useState(areas);
   const [areaForm, setAreaForm] = useState<IOptions[]>([]);
   const [areaId, setAreaId] = useState<number>();
+  const [depId, setDepId] = useState<number>();
+  const [searchvalue, setSearchvalue] = useState<string>();
+  
   const [values, setValues] = useState<IPackForm>(new PackFormValues());
   let { id } = useParams<UrlParams>();
   const { width: windowWidth } = useWindowDimensions();
@@ -56,13 +59,24 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
   };
 
   useEffect(() => {
+    const studys = async () => {
+      let estudio = await getAllStudy();
+      setLista(estudio!);
+      setValues((prev) => ({ ...prev, estudio: estudio! }));
+    }
+    if(!id){
+      studys();
+    }
+    
+  }, [getAllStudy]);
+  useEffect(() => {
     getDepartmentOptions();
   }, [getDepartmentOptions]);
-
   useEffect(()=> {
     const areareader = async () => {
     await getareaOptions(0);
     setAreaSearch(areas);
+    setAreaForm(areas);
     }
       areareader();
   }, [ getareaOptions]);
@@ -88,6 +102,7 @@ useEffect(() => {
      const all = await getAll("all");
     console.log(all);
     var studis =await getAllStudy();
+    console.log(studies,"estudios");
     var areaForm=await getareaOptions(values.idDepartamento);
       
     const user = await getById(idUser);
@@ -104,6 +119,8 @@ useEffect(() => {
   };
   if (id) {
     readuser(Number(id));
+  }else{
+    form.setFieldsValue({idDepartamento:undefined,idArea:undefined});
   }
 }, [form, getById , id]);
   /* useEffect(() => {
@@ -190,8 +207,10 @@ useEffect(() => {
     if(departament){
     var departamento=departmentOptions.filter(x=>x.value===departament)[0].label;
     var areaSearch=await getareaOptions(departament);
-    
-    var estudios = lista.filter(x=>x.departamento === departamento)
+    console.log(departamento,"departamento");
+    var estudios = lista.filter(x=>x.departamento === departamento);
+    console.log(lista,"lista");
+    console.log(estudios,"estudios filtro dep");
     setValues((prev) => ({ ...prev, estudio: estudios }));
     setAreaSearch(areaSearch!);}else{
       var estudios = lista.filter(x=>x.activo === true);
@@ -239,9 +258,12 @@ useEffect(() => {
     }
     return 0;
   };
+  console.log(form.getFieldsValue(),"form");
   const siguienteUser = (index: number) => {
      const user = packs[index];
-
+     setAreaId(undefined);
+     setDepId(undefined);
+     setSearchvalue(undefined);
     navigate(
       `/${views.pack}/${user?.id}?mode=${searchParams.get("mode")}&search=${
         searchParams.get("search") ?? "all"
@@ -351,12 +373,14 @@ useEffect(() => {
                 options={departmentOptions}
                 readonly={CheckReadOnly()}
                 required
+
               />
                             <SelectInput
                 formProps={{ name: "idArea", label: "Área" }}
                 options={areaForm}
                 readonly={CheckReadOnly()}
                 required
+              
               />
               </Col>
               <Col md={12} sm={24} xs={12}>
@@ -394,11 +418,15 @@ useEffect(() => {
           Búsqueda por :   
           </Col>
           <Col md={9} sm={24} xs={12}>
-          <SelectInput 
-                formProps={{ name: "departamentoSearch", label: "Departamento" }}
+          <label htmlFor="">Departamentos: </label>
+          <Select
+                 style={{width:"350px"}}
                 options={departmentOptions}
-                readonly={CheckReadOnly()}
-                onChange={(value)=>{setAreaId(undefined); filterByDepartament(value)}}
+                disabled={CheckReadOnly()}
+                onChange={(value)=>{setAreaId(undefined); setDepId(value); filterByDepartament(value)}}
+                allowClear
+                 value={depId} 
+                 placeholder={"Departamentos"}
               />
 
               </Col> 
@@ -411,19 +439,27 @@ useEffect(() => {
                 disabled={CheckReadOnly()}
                 onChange={(value)=>{ setAreaId(value); filterByArea(value)}}
                 value={areaId}
+                allowClear
                 style={{width:"400px"}}
+                placeholder={"Área"}
               />
               </Col>
               <Col md={15} sm={24} xs={12}></Col>
               <Col md={9} sm={24} xs={12}>
               <label htmlFor="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
               <Search
-              style={{width:"400px"}}
+              style={{width:"400px",marginTop:"20px",marginBottom:"20px"}}
           key="search"
           placeholder="Buscar"
           onSearch={(value) => {
-           filterBySearch(value)
+           filterBySearch(value);
+           setSearchvalue(value);
           }}
+          onChange={(value) => {
+            
+            setSearchvalue(value.target.value);
+           }}
+          value={searchvalue}
         />,</Col>
             <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
                 <Table<IPackEstudioList>

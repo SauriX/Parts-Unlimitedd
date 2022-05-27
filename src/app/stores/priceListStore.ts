@@ -138,8 +138,11 @@ export default class PriceListStore {
 
   getAllBranch = async () => {
     try {
-      //PriceList.getAllBranch();      
-      return await PriceList.getAllBranch();
+      var sucursales = await PriceList.getAllBranch();
+      return sucursales.map(x=>{
+        x.sucursal = true;
+        return x;
+      });
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return [];
@@ -148,8 +151,12 @@ export default class PriceListStore {
 
   getAllMedics = async () => {
     try {
-      //PriceList.getAllMedics();      
-      return await PriceList.getAllMedics();
+      
+      var medicos = await PriceList.getAllMedics();
+      return medicos.map(x=>{
+        x.medico = true;
+        return x;
+      });
     } catch (error) {
       alerts.warning(getErrors(error));
       return [];
@@ -157,8 +164,11 @@ export default class PriceListStore {
   };
   getAllCompany = async () => {
     try {
-      //PriceList.getAllCompany();
-      return await PriceList.getAllCompany();
+      var compañias = await PriceList.getAllCompany();
+      return compañias.map(x=>{
+        x.compañia = true;
+        return x;
+      });
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return [];

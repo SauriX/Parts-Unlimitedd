@@ -79,7 +79,8 @@ const { width: windowWidth } = useWindowDimensions();
         activo:x.activo,
         precio: x.precio! ,
         paquete:x.paquete,
-        selectedTags:x.selectedTags
+        selectedTags:x.selectedTags,
+        departamento:x.departamento
       }
     return data;
      });
@@ -105,6 +106,7 @@ const { width: windowWidth } = useWindowDimensions();
         precio: x.precio! ,
         paquete:x.paquete,
         selectedTags:x.selectedTags,
+        departamento:x.departamento
       }
     return data;
      });
@@ -140,7 +142,8 @@ const { width: windowWidth } = useWindowDimensions();
           activo:false,
           precio: x.precio! ,
           paquete:false,
-          selectedTags:[]
+          selectedTags:[],
+          departamento:x.departamento
         }
       return data;
        });
@@ -171,7 +174,7 @@ const { width: windowWidth } = useWindowDimensions();
           activo:x.activo,
           precio: x.precio! ,
           paquete:x.paquete,
-          selectedTags:x.selectedTags
+          selectedTags:x.selectedTags,departamento:x.departamento
         }
       return data;
        });
@@ -199,7 +202,8 @@ const { width: windowWidth } = useWindowDimensions();
         activo:x.activo,
         precio: x.precio! ,
         paquete:x.paquete,
-        selectedTags:x.selectedTags
+        selectedTags:x.selectedTags,
+        departamento:x.departamento
       }
     return data;
      });
@@ -229,7 +233,8 @@ console.log(tag,"el tag");
         activo:x.activo,
         precio: x.precio! ,
         paquete:x.paquete,
-        selectedTags:nextSelectedTags
+        selectedTags:nextSelectedTags,
+        departamento:x.departamento
       }
     return data;
      });
@@ -506,6 +511,9 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
     var areaSearch=await getareaOptions(departament);
 
     var estudio = estudios!.filter((x:IPromotionEstudioList) =>x.departamento === departamento) ;
+    console.log(estudios,"estudios");
+    console.log(departamento,"2depa");
+    console.log(estudio,"estudios");
     console.log(estudio);
     setValues((prev) => ({ ...prev, estudio: estudio })); 
     setAreaSearch(areaSearch!);}else{

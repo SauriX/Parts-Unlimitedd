@@ -59,6 +59,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
     const [parameter, setParameter] = useState<{ clave: ""; id: string }>();
     const [indication, setIndication] = useState<{ clave: ""; id: number }>();
     const [Reagent, setReagent] = useState<{ clave: ""; id: string }>();
+    const [visible,setVisible] = useState<boolean>(false);
     let { id } = useParams<UrlParams>();
     const [disabled, setDisabled] = useState(()=>{
                 let result = false;
@@ -67,6 +68,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
             result = true;
         }
         return result;
+        
     });
     useEffect(() => {
 
@@ -165,6 +167,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
         navigate(`/${views.study}/${estudio?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search") ?? "all"}`);
       } 
       const onFinish = async (newValues: IStudyForm) => {
+        setLoading(true);
         const User = { ...values, ...newValues };
         let success = false;
         if (!User.id) {
@@ -174,8 +177,10 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
         }
     
         if (success) {
+            
           navigate(`/${views.study}?search=${searchParams.get("search") || "all"}`);
         }
+        setLoading(false);
       }; 
     const onValuesChange = async (changeValues: any, values: any) => {
         const fields = Object.keys(changeValues)[0];
@@ -460,7 +465,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                             <SelectInput formProps={{ name: "metodo", label: "Método" }} options={MethodOptions} readonly={disabled} required />
                         </Col>
                         <Col md={9} sm={24} xs={8}>
-                            <SwitchInput name="visible" label="Visible"  readonly={disabled} />
+                            <SwitchInput name="visible" label="Visible" onChange={(values)=>{setVisible(values); console.log(values);}} readonly={disabled} />
                         </Col>
                         <Col md={3} sm={24} xs={4}>
                             <NumberInput
@@ -470,7 +475,8 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                 }}
                                 min={0}
                                 max={9999999999999999}
-                                readonly={disabled}
+                                readonly={!visible || disabled}
+                                
                             />
                         </Col>
                         <Col md={12} sm={24} xs={12}>
@@ -487,9 +493,10 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                     name: "cantidad",
                                     label: "Cantidad",
                                 }}
-                                min={0}
+                                min={1}
                                 max={9999999999999999}
                                 readonly={disabled}
+                                required
                             />
                         </Col>
                         <Col md={12} sm={24} xs={12}>
@@ -500,9 +507,10 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                     name: "tiemporespuesta",
                                     label: "Tiempo de respuesta",
                                 }}
-                                min={0}
+                                min={1}
                                 max={9999999999999999}
                                 readonly={disabled}
+                                required
                             />
                             <NumberInput
                                 formProps={{

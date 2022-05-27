@@ -12,6 +12,7 @@ import {
   Divider,
   PageHeader,
   Table,
+  InputNumber,
 } from "antd";
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
@@ -59,7 +60,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     getPrintFormatsOptions,
     printFormat,
     getParameterOptions,
-    parameterOptions,
+    parameterOptions2,
   } = optionStore;
   const [form] = Form.useForm<IParameterForm>();
   const [flag, setFlag] = useState(0);
@@ -446,7 +447,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                 />
                 <SelectInput
                   formProps={{ name: "parametros", label: "Parámetros" }}
-                  options={parameterOptions}
+                  options={parameterOptions2}
                   readonly={CheckReadOnly()}
                 />
               </Col>
@@ -488,15 +489,14 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
               />
             </Col>
             <Col md={12} sm={24} xs={12}>
-              <TextAreaInput
-                formProps={{
-                  name: "valorInicial",
-                  label: "Valor Inicial",
-                }}
-                rows={4}
-                required
-                readonly={CheckReadOnly()}
-              />
+              <NumberInput
+                  formProps={{
+                    name: "valorInicial",
+                    label: "Valor Inicial",
+                  }}
+                  min={1}
+                  required
+                  readonly={CheckReadOnly()}    max ={99999999999999999999999}         />
             </Col>
           </Row>
         </Form>

@@ -86,10 +86,13 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const [areaForm, setAreaForm] = useState<IOptions[]>([]);
   const [areaId, setAreaId] = useState<number>();
   const navigate = useNavigate();
-
+  const [radioValue, setRadioValue] = useState<any>();
   const [searchParams, setSearchParams] = useSearchParams();
   const [lista, setLista] = useState(studies);
   const [listSMC, setListSCM] = useState(sucMedCom);
+  const [listSucursal, setListSucursal] = useState<any>();
+  const [listMedicos, setListMedicos] = useState<any>();
+  const [listCompañia, setListCompañia] = useState<any>();
   const [form] = Form.useForm<IPriceListForm>();
 
   const [estudy, setEstudy] = useState<{ clave: ""; id: string; nombre: ""; precio:number; }>();
@@ -114,7 +117,35 @@ const PriceListForm: FC<PriceListFormProps> = ({
     areareader();
   }, [getareaOptions]);
 
+  useEffect(()=>{
+    const readtable = async () =>{
+      const branches = await getAllBranch();
+      const Companies = await getAllCompany();
+      const medics = await getAllMedics();
+      setListSucursal(branches);
+      setListCompañia(Companies);
+      setListMedicos(medics);
+    }
+    readtable();
+  },[getAllBranch,getAllCompany, getAllMedics]);
 
+  const setSCMlist=async (listatype:string)=>{
+      switch(listatype){
+        case "sucursal":
+          setListSCM(listSucursal);
+        break;
+        case "compañia":
+          setListSCM(listCompañia);
+        break;
+        case "medicos":
+          setListSCM(listMedicos);
+        break;
+
+      }
+      console.log(listMedicos);
+      console.log(listCompañia);
+      console.log(listSucursal);
+  }
   const setStudy = (active: boolean, item: IPriceListEstudioList) => {
     var index = lista.findIndex(x => x.id == item.id);
     var list = lista;
@@ -139,6 +170,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
     val[indexVal] = item;
     setValues((prev) => ({ ...prev, sucMedCom: val }));
     console.log("entra")
+
   };
 
   const setStudyPrice = (newprecio:number,item:IPriceListEstudioList) =>{
@@ -165,16 +197,29 @@ const PriceListForm: FC<PriceListFormProps> = ({
 
       const user = await getById(idUser);
       console.log("Lista de precio", user);
+      const branches = await getAllBranch();
+      const Companies = await getAllCompany();
+      const medics = await getAllMedics();
+
+
       form.setFieldsValue(user!);
       studis = studis?.map(x => {
         var activo = user?.estudios.find(y=> y.id === x.id) != null;
         return { ...x, activo };
       });
-
+      setListSucursal(branches);
+      setListCompañia(Companies);
+      setListMedicos(medics);
       setAreaForm(areaForm!);
       setValues(user!);
       setLista(studis!);
       setLoading(false);
+      
+      user?.sucursales.map(x => setSucursalesList(x.activo!,x,branches));
+      user?.compañia.map(x => setCompañiasList(x.activo!,x,Companies));
+      user?.medicos.map(x =>setMedicosList(x.activo!,x,medics));
+      setListSCM(listSucursal);
+      setRadioValue("branch");
       console.log(studis);
     };
     if (id) {
@@ -202,9 +247,31 @@ const PriceListForm: FC<PriceListFormProps> = ({
     navigate(`/${views.price}/${priceList.id}?${searchParams}`);
   };
 
+  const setSucursalesList = (active: boolean, item: ISucMedComList,lists:ISucMedComList[]) =>{
+    console.log(lists,"Lista en metodo");
+    var index = lists.findIndex((x: ISucMedComList) => x.id === item.id);
+    var list = lists;
+    item.activo = active;
+    list[index] = item;
+    setListSucursal(list);
+  }
+  const setMedicosList = (active: boolean, item: ISucMedComList,lists:ISucMedComList[]) =>{
+    var index = lists.findIndex((x: ISucMedComList) => x.id === item.id);
+    var list = lists;
+    item.activo = active;
+    list[index] = item;
+    setListMedicos(list);
+  }
+  const setCompañiasList = (active: boolean, item: ISucMedComList,lists:ISucMedComList[]) =>{
+    var index = lists.findIndex((x: ISucMedComList) => x.id === item.id);
+    var list = lists;
+    item.activo = active;
+    list[index] = item;
+  setListCompañia(list);
+  }
   ///Primera tabla Sucursal
   //console.log("Table");
-
+   
   const { width: windowWidth } = useWindowDimensions();
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
@@ -305,9 +372,11 @@ const PriceListForm: FC<PriceListFormProps> = ({
     console.log("finish ");
     console.log(lista);
     console.log(priceList);
-    
+    priceList.sucursales=listSucursal;
+    priceList.compañia=listCompañia;
+    priceList.medicos=listMedicos;
+    console.log(priceList);
     let success = false;
-
     if (!priceList.id) {
       success = await create(priceList);
     } else {
@@ -502,19 +571,23 @@ const PriceListForm: FC<PriceListFormProps> = ({
           </Form>
           <Row justify="center">
             <Radio.Group
+              value={radioValue}
               options={radioOptions}
               onChange={async (e) => {
                 if (e.target.value === "branch") {
-                  const branches = await getAllBranch();
-                  setListSCM(branches);
+                  
+                  setSCMlist("sucursal");
+                  setRadioValue("branch");
                 }
                 if (e.target.value === "medic") {
-                  const medics = await getAllMedics();
-                  setListSCM(medics);
+
+                  setSCMlist("medicos");
+                  setRadioValue("medic");
                 }
                 if (e.target.value === "company") {
-                  const Companies = await getAllCompany();
-                  setListSCM (Companies);
+                  
+                  setSCMlist("compañia");
+                  setRadioValue("company");
                 }
               }}
               optionType="button"

@@ -14,6 +14,7 @@ import { IParameterForm, ItipoValorForm } from "../../../../app/models/parameter
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../../app/stores/store";
 import TextArea from "antd/lib/input/TextArea";
+import alerts from "../../../../app/util/alerts";
 type Props = {
     idTipeVAlue: string;
     parameter:IParameterForm;
@@ -80,10 +81,17 @@ const OpcionMUltiple : FC<Props> = ({ idTipeVAlue,parameter }) => {
             return data;
         });
 
-       var succes = await addvalues(val,id);
-       succes = await update(parameter);
-        if (succes) {
-            navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
+
+        if(parameter.formula!="" ){
+            var succes = await addvalues(val,id);
+            if(succes){
+             succes = await update(parameter);
+             if (succes) {
+                 navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
+             }
+            }
+        }else{
+            alerts.warning("Necesita ingresar una formula");
         }
 
     };

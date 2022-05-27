@@ -12,6 +12,7 @@ import { max } from "moment";
 import { IParameterForm, ItipoValorForm, tipoValorFormValues } from "../../../../app/models/parameter";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../../app/stores/store";
+import alerts from "../../../../app/util/alerts";
 type Props = {
     idTipeVAlue: string;
     parameter:IParameterForm;
@@ -81,11 +82,39 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue,parameter }) => {
             return data;
         });
 
-       var succes = await addvalues(val,id);
-       succes = await update(parameter);
-        if (succes) {
-            navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
+        var validatehombre =val.map( (x)=> { console.log(x,"x"); if(x.hombreValorInicial! > x.hombreValorFinal!){ console.log("if");return true;} return false;});
+        if(validatehombre.includes(true)){
+            alerts.warning("El valor hombre inicial no puede ser mayor al final");
+            return
         }
+        var validatehombreIgual =val.map( (x)=> { console.log(x,"x"); if(x.hombreValorInicial! === x.hombreValorFinal!){ console.log("if");return true;} return false;});
+        if(validatehombreIgual.includes(true)){
+            alerts.warning("El valor hombre inicial no puede ser igual al final");
+            return
+        }
+        
+        var validatehombre =val.map( (x)=> { console.log(x,"x"); if(x.mujerValorInicial! > x.mujerValorFinal!){ console.log("if");return true;} return false;});
+        if(validatehombre.includes(true)){
+            alerts.warning("El valor mujer inicial no puede ser mayor al final");
+            return
+        }
+        var validatehombreIgual =val.map( (x)=> { console.log(x,"x"); if(x.mujerValorInicial! === x.mujerValorFinal!){ console.log("if");return true;} return false;});
+        if(validatehombreIgual.includes(true)){
+            alerts.warning("El valor mujer inicial no puede ser igual al final");
+            return
+        }
+        if(parameter.formula!="" ){
+            var succes = await addvalues(val,id);
+            if(succes){
+             succes = await update(parameter);
+             if (succes) {
+                 navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
+             }
+            }
+        }else{
+            alerts.warning("Necesita ingresar una formula");
+        }
+
 
     };
 
@@ -118,21 +147,21 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue,parameter }) => {
                                         name={[name, 'hombreValorFinal']}
                                         rules={[{ required: true, message: 'Missing Hombre valor' }]}
                                     >
-                                        <Input type={"number"} disabled={disabled} placeholder="Hombre valor" />
+                                        <Input type={"number"} min={0} disabled={disabled} placeholder="Hombre valor" />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
                                         name={[name, 'mujerValorInicial']}
                                         rules={[{ required: true, message: 'Mujer valor' }]}
                                     >
-                                        <Input type={"number"} disabled={disabled} placeholder={"Mujer valor"} />
+                                        <Input type={"number"} min={0} disabled={disabled} placeholder={"Mujer valor"} />
                                     </Form.Item>
                                     <Form.Item
                                         {...valuesValor}
                                         name={[name, 'mujerValorFinal']}
                                         rules={[{ required: true, message: 'Missing Mujer valor' }]}
                                     >
-                                        <Input type={"number"} disabled={disabled} placeholder="Mujer valor" />
+                                        <Input type={"number"} min={0} disabled={disabled} placeholder="Mujer valor" />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>

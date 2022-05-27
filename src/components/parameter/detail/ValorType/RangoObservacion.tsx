@@ -13,6 +13,8 @@ import TextInput from "../../../../app/common/form/TextInput";
 import { IParameterForm, ItipoValorForm } from "../../../../app/models/parameter";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../../app/stores/store";
+import TextArea from "antd/lib/input/TextArea";
+import alerts from "../../../../app/util/alerts";
 type Props = {
     idTipeVAlue: string;
     parameter:IParameterForm;
@@ -79,10 +81,17 @@ const RangoObservacion : FC<Props> = ({ idTipeVAlue,parameter }) => {
             return data;
         });
 
-       var succes = await addvalues(val,id);
-       succes = await update(parameter);
-        if (succes) {
-            navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
+
+        if(parameter.formula!="" ){
+            var succes = await addvalues(val,id);
+            if(succes){
+             succes = await update(parameter);
+             if (succes) {
+                 navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
+             }
+            }
+        }else{
+            alerts.warning("Necesita ingresar una formula");
         }
 
     };
@@ -107,7 +116,8 @@ const RangoObservacion : FC<Props> = ({ idTipeVAlue,parameter }) => {
                                         name={[name, 'descripcionTexto']}
                                         rules={[{ required: true, message: 'Missing valor' }]}
                                     >
-                                        <Input disabled={disabled} placeholder={"Observación"} />
+                                        <TextArea disabled={disabled} rows={5} autoSize placeholder={"Observación"} />
+                                       
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(name)} />
                                 </Space>

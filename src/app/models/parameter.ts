@@ -45,7 +45,7 @@ export interface ItipoValorForm {
   hombreValorFinal?: number;
   mujerValorInicial?: number;
   mujerValorFinal?: number;
-  medidaTiempo?: number;
+  medidaTiempoId?: number;
   opcion?: string | "";
   descripcionTexto?: string | "";
   descripcionParrafo?: string | "";
