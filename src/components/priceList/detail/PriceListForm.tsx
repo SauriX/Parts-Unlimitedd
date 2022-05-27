@@ -77,8 +77,10 @@ const PriceListForm: FC<PriceListFormProps> = ({
     getAllBranch,
     getAllMedics,
     getAllCompany,
+    getAllPack,
     studies,
     sucMedCom,
+    packs
   } = priceListStore;
   const { getDepartmentOptions, departmentOptions, getareaOptions, areas } =
     optionStore;
@@ -104,6 +106,12 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const [values, setValues] = useState<IPriceListForm>(
     new PriceListFormValues()
   );
+
+  useEffect(()=>{
+    const readtabla = async() =>{
+       //let estudios tabla
+    }
+  });
 
   useEffect(() => {
     getDepartmentOptions();
@@ -193,6 +201,8 @@ const PriceListForm: FC<PriceListFormProps> = ({
       const all = await getAll("all");
       console.log(all);
       var studis = await getAllStudy();
+      var pcks = await getAllPack();
+      var tabla = studis!.concat(pcks!);
       var areaForm = await getareaOptions(values.idDepartamento);
 
       const user = await getById(idUser);
@@ -207,14 +217,18 @@ const PriceListForm: FC<PriceListFormProps> = ({
         var activo = user?.estudios.find(y=> y.id === x.id) != null;
         return { ...x, activo };
       });
+      var listatabla = user?.estudios.concat(user?.paquete);
+      user!.table = listatabla?.filter(x=> x!=null);
+
+      console.log(user);
       setListSucursal(branches);
       setListCompañia(Companies);
       setListMedicos(medics);
       setAreaForm(areaForm!);
       setValues(user!);
-      setLista(studis!);
+      setLista(tabla);
       setLoading(false);
-      
+    
       user?.sucursales.map(x => setSucursalesList(x.activo!,x,branches));
       user?.compañia.map(x => setCompañiasList(x.activo!,x,Companies));
       user?.medicos.map(x =>setMedicosList(x.activo!,x,medics));
@@ -366,8 +380,10 @@ const PriceListForm: FC<PriceListFormProps> = ({
     setLoading(true);
 
     const priceList = { ...values, ...newValues };
+    console.log(lista);
     priceList.estudios=lista.filter(x=>x.activo==true);
-
+    priceList.paquete =[];
+    priceList.promocion=[];
     //priceList.estudios = lista;
     console.log("finish ");
     console.log(lista);
@@ -686,7 +702,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
                 rowKey={(record) => record.id}
                 columns={columnsEstudios.slice(0, 5)}
                 pagination={false}
-                dataSource={[...(values.estudios ?? [])]}
+                dataSource={[...(values.table ?? [])]}
                 scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
                 />
             </Col>

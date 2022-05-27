@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx";
+import Pack from "../api/pack";
 import PriceList from "../api/priceList";
 import Study from "../api/study";
 import { IPriceListEstudioList, IPriceListForm, IPriceListList, ISucMedComList } from "../models/priceList";
@@ -18,7 +19,7 @@ export default class PriceListStore {
   priceLists: IPriceListList[] = [];
   sucMedCom: ISucMedComList[] = [];
   studies:IPriceListEstudioList[]=[];
-
+  packs:IPriceListEstudioList[]=[];
   clearScopes = () => {
     this.scopes = undefined;
   };
@@ -56,6 +57,35 @@ export default class PriceListStore {
             }
             return data;});
             this.studies=studies;
+            return studies
+            console.log("estudios");
+            console.log(this.studies);
+      } catch (error: any) {
+        alerts.warning(getErrors(error));
+        this.studies = [];
+      }
+  };
+
+  getAllPack = async () =>{
+    try {
+        
+        const roles= await Pack.getAll("all");
+        console.log(roles);
+        console.log(roles);
+        var studies= roles.map((x) => {
+            let data:IPriceListEstudioList = {
+                id: x.id,
+                estudioId: x.id,
+                clave: x.clave,
+                nombre: x.nombre,
+                area:x.area,
+                departamento:x.departamento,
+                activo: false,
+                precio:0,
+                paqute:true
+            }
+            return data;});
+            this.packs=studies;
             return studies
             console.log("estudios");
             console.log(this.studies);
