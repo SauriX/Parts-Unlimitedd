@@ -66,7 +66,7 @@ export default class PackStore {
     try {
         
         const roles= await Study.getAll("all");
-        console.log(roles);
+        console.log(roles,"studies");
         console.log(roles);
         var studies= roles.map((x) => {
             let data:IPackEstudioList = {

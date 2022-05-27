@@ -46,7 +46,7 @@ const ValorRNumerico:FC<Props> = ({idTipeVAlue,parameter})=>{
         console.log(newValues);
         const value = { ...valuesValor, ...newValues };
          
-        if(value.valorInicial!<value.valorFinal! ){
+        if(value.valorInicial!>value.valorFinal! ){
             alerts.warning("El valor inicial no puede ser mayor a final");
             return
         }
@@ -58,14 +58,14 @@ const ValorRNumerico:FC<Props> = ({idTipeVAlue,parameter})=>{
         if (!value.id) {
             value.nombre = idTipeVAlue;
             value.parametroId=id||"";
-            if(parameter.formula!="" ){
+            if(parameter.formula.includes("")){
             success = await addValue(value);
             success = await update(parameter);
         }else{
             alerts.warning("Necesita ingresar una formula");
         }
         } else {
-            if(parameter.formula!="" ){
+            if(parameter.formula.includes("")){
                 success = await updatevalue(value);
                 success = await update(parameter);
             }else{

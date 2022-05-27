@@ -22,11 +22,11 @@ export default class OptionStore {
       const departments = await Catalog.getActive<ICatalogNormalList>("department");
       this.departmentOptions = departments.map((x) => ({
         value: x.id,
-        label: x.clave, 
+        label: x.nombre, 
       }));
       return  departments.map((x) => ({
         value: x.id,
-        label: x.clave,
+        label: x.nombre,
       }));
     } catch (error) {
       this.departmentOptions = [];
