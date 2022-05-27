@@ -184,7 +184,7 @@ export default class OptionStore {
   };
 
   parameterOptions: IOptions[] = [];
-
+  parameterOptions2: IOptions[] = [];
   getParameterOptions = async () => {
     try {
       const parameter = await Parameter.getAll("all");
@@ -194,8 +194,14 @@ export default class OptionStore {
         value: x.id,
         label: x.nombre,
       }));
+
+      this.parameterOptions2 = parameter.map((x) => ({
+        value: x.clave,
+        label: x.nombre,
+      }));
     } catch (error) {
       this.parameterOptions = [];
+      this.parameterOptions2 =[];
     }
   };
   MaquiladorOptions:IOptions[]=[];

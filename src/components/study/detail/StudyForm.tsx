@@ -177,9 +177,10 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
         }
     
         if (success) {
-            setLoading(false);
+            
           navigate(`/${views.study}?search=${searchParams.get("search") || "all"}`);
         }
+        setLoading(false);
       }; 
     const onValuesChange = async (changeValues: any, values: any) => {
         const fields = Object.keys(changeValues)[0];

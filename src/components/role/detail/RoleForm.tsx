@@ -169,6 +169,7 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load: printing }) => {
     User.permisos = permissions;
     if (!User.permisos || User.permisos.filter((x) => x.asignado).length === 0) {
       alerts.warning(messages.emptyPermissions);
+      setLoading(false);
       return;
     }
 
