@@ -4,12 +4,9 @@ import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import ImageButton from "../../../app/common/button/ImageButton";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
+import views from "../../../app/util/view";
 
 const { Search } = Input;
-// type LoyaltyFormHeaderProps = {
-//   handlePrint: () => void;
-//   id : string;
-// };
 type LoyaltyFormHeaderProps = {
     id: string;
     handlePrint: () => void;
@@ -33,19 +30,17 @@ const LoyaltyFormHeader: FC<LoyaltyFormHeaderProps> = ({id, handlePrint }) => {
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Lealtades" image="contactos" />}
+      title={<HeaderTitle title="Catálogo de Lealtades" image="Lealtad" />}
       className="header-container"
       extra={[
-        id !== "0" ?
-        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />:'',
-        id !== "0" ?
-        <ImageButton key="doc" title="Informe" image="doc" onClick={download}  />:'',
+        id? <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />:'',
+        id? <ImageButton key="doc" title="Informe" image="doc" onClick={download}  />:'',
         <ImageButton
           key="back"
           title="Regresar"
           image="back"
           onClick={() => {
-            navigate("/loyalties");
+            navigate(`/${views.loyalty}?${searchParams}`);
           }}
         />,
         <Search
