@@ -170,7 +170,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       let estudiosValidar :IPackEstudioList[] =[];
 
       estudiosPaquete?.forEach(x=>{
-        var estudy = lista.find(y=> y.id === x.id);
+        var estudy = lista.find(y=> y.id === x.id && y.paqute===false);
         console.log(estudy,"estudy");
       });
     }
