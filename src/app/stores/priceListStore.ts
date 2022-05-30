@@ -82,7 +82,9 @@ export default class PriceListStore {
                 departamento:x.departamento,
                 activo: false,
                 precio:0,
-                paqute:true
+                paqute:true,
+                pack:x.pack
+                
             }
             return data;});
             this.packs=studies;

@@ -9,6 +9,7 @@ export interface IPacketList {
     activo: boolean,
     area?:string,
     departamento?:string
+    pack?: IPackEstudioList[];
 }
 
 export interface IPackForm {
