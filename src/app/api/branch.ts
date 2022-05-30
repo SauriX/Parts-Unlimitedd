@@ -9,8 +9,8 @@ const Role = {
   create: (branch: IBranchForm): Promise<boolean> => requests.post("/Branch", branch),
   update: (branch: IBranchForm): Promise<boolean> => requests.put("/Branch", branch),
   exportList: (search: string): Promise<void> =>
-    requests.download(`Branch/export/list/${!search ? "all" : search}`), //, "Catálogo de Sucursales.xlsx"
-  exportForm: (id: string, clave?: string): Promise<void> => requests.download(`Branch/export/form/${id}`), //, `Catálogo de Sucursales (${clave}).xlsx`
+    requests.download(`Branch/export/list/${!search ? "all" : search}`),
+  exportForm: (id: string, clave?: string): Promise<void> => requests.download(`Branch/export/form/${id}`),
 };
 
 export default Role;

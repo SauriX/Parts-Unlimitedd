@@ -435,6 +435,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
                 const checkedKeys = [...selectedKeys];
                 return (
                   <Tree
+                    virtual={false}
                     checkable={!CheckReadOnly()}
                     disabled={CheckReadOnly()}
                     height={200}

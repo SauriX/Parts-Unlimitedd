@@ -23,11 +23,11 @@ const CatalogFormHeader: FC<CatalogFormHeaderProps> = ({ id, handlePrint }) => {
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Reactivos" image="reagent" />}
+      title={<HeaderTitle title="Catálogo General" image="catalog" />}
       className="header-container"
       extra={[
-        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        <ImageButton key="doc" title="Informe" image="doc" />,
+        !!id && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+        !!id && <ImageButton key="doc" title="Informe" image="doc" />,
         <ImageButton key="back" title="Regresar" image="back" onClick={getBack} />,
       ]}
     ></PageHeader>
