@@ -1,4 +1,15 @@
-import { Spin, Form, Row, Col, Pagination, Button, DatePicker, PageHeader, Divider } from "antd";
+import {
+  Spin,
+  Form,
+  Row,
+  Col,
+  Pagination,
+  Button,
+  DatePicker,
+  PageHeader,
+  Divider,
+  Radio,
+} from "antd";
 import React, { FC, useCallback, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
@@ -11,8 +22,10 @@ import NumberInput from "../../../app/common/form/NumberInput";
 import { observer } from "mobx-react-lite";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
-import { ILoyaltyForm, LoyaltyFormValues } from "../../../app/models/loyalty";
+import { ILoyaltyForm, ILoyaltyList, LoyaltyFormValues } from "../../../app/models/loyalty";
 import views from "../../../app/util/view";
+import moment from "moment";
+import DateRangeInput from "../../../app/common/form/DateRangeInput";
 // import { v4 as uuid } from "uuid";
 
 type LoyaltyFormProps = {
@@ -21,7 +34,7 @@ type LoyaltyFormProps = {
   printing: boolean;
 };
 const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
-  const { loyaltyStore} = useStore();
+  const { loyaltyStore } = useStore();
   const { getById, create, update, getAll, loyaltys } = loyaltyStore;
   const navigate = useNavigate();
   const { RangePicker } = DatePicker;
@@ -31,17 +44,26 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
   const [form] = Form.useForm<ILoyaltyForm>();
 
   const [loading, setLoading] = useState(false);
-  const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
+  const [readonly, setReadonly] = useState(
+    searchParams.get("mode") === "readonly"
+  );
   const [values, setValues] = useState<ILoyaltyForm>(new LoyaltyFormValues());
-
+  const radioOptions = [
+    { label: "Porcentaje", value: "Porcentaje" },
+    { label: "Puntos", value: "Puntos" },
+  ];
+  const [discunt, setDiscunt] = useState<string>();
 
   useEffect(() => {
     const readLoyalty = async (id: string) => {
       setLoading(true);
       const loyalty = await getById(id);
+      loyalty!.fecha = [moment(loyalty?.fechaInicial),moment(loyalty?.fechaFinal)]
       form.setFieldsValue(loyalty!);
       setValues(loyalty!);
       setLoading(false);
+      setDiscunt(loyalty?.tipoDescuento!);
+      
     };
 
     if (id) {
@@ -59,10 +81,14 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
     setLoading(true);
 
     const loyalty = { ...values, ...newValues };
+    loyalty.fechaInicial = newValues.fecha[0].toDate();
+    loyalty.fechaFinal = newValues.fecha[1].toDate();
+
 
     let success = false;
 
     if (!loyalty.id) {
+      loyalty.id = "00000000-0000-0000-0000-000000000000";
       success = await create(loyalty);
     } else {
       success = await update(loyalty);
@@ -125,7 +151,12 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
         )}
         {readonly && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
-            <ImageButton key="edit" title="Editar" image="editar" onClick={setEditMode} />
+            <ImageButton
+              key="edit"
+              title="Editar"
+              image="editar"
+              onClick={setEditMode}
+            />
           </Col>
         )}
       </Row>
@@ -135,7 +166,9 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo de Lealtades" image="contactos" />}
+              title={
+                <HeaderTitle title="Catálogo de Lealtades" image="Lealtad" />
+              }
               className="header-container"
             ></PageHeader>
           )}
@@ -159,9 +192,6 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
-              </Col>
-              <Col md={12} sm={24} xs={12}></Col>
-              <Col md={12} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "nombre",
@@ -171,34 +201,43 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
-              </Col>
-              <Col md={12} sm={24} xs={12}></Col>
-              <Col md={12} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "tipoDescuento",
-                    label: "Tipo de Descuento",
-                  }}
-                  max={100}
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}></Col>
-              <Col md={12} sm={24} xs={12}>
-                <TextInput
+                 <div style={{ marginLeft: "99px" , marginBottom: "20px" }}> 
+                  Tipo de descuento:
+                  <Radio.Group
+                    style={{ marginLeft: "10px" }}
+                    options={radioOptions}
+                    onChange={(e) => {
+                      setValues((prev) => ({
+                        ...prev,
+                        tipoDescuento: e.target.value,
+                      }));
+                      setDiscunt(e.target.value);
+                      console.log(values.cantidad);
+                    }}
+                    value={discunt}
+                  />
+                </div>
+                <NumberInput
                   formProps={{
                     name: "cantidadDescuento",
                     label: "Descuento/Cantidad",
                   }}
+                  min={1}
                   max={100}
                   readonly={readonly}
+                  required
                 />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                Descuento entre: 
-                <RangePicker onChange={(value) => console.log(value![0])} />
-              </Col>
-              <SwitchInput
+                <div style={{ marginBottom: "20px" }}>
+                  {/* Descuento entre : */}
+                  <DateRangeInput
+                    formProps={{ label: "Descuento entre", name: "fecha" }}
+                  />
+                  {/* <RangePicker
+                    style={{ marginLeft: "20px" }} //value={moment(item.fechaInicial)}
+                    onChange={(value) => console.log(value!)}
+                  /> */}
+                </div>
+                <SwitchInput
                   name="activo"
                   onChange={(value) => {
                     if (value) {
@@ -209,7 +248,9 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   label="Activo"
                   readonly={readonly}
+                  required
                 />
+              </Col>
             </Row>
           </Form>
         </div>

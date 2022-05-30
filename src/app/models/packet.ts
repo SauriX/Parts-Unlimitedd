@@ -7,6 +7,8 @@ export interface IPacketList {
     nombre: string,
     nombreLargo:string,
     activo: boolean,
+    area?:string,
+    departamento?:string
 }
 
 export interface IPackForm {
