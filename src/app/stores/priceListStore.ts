@@ -110,6 +110,7 @@ export default class PriceListStore {
   getById = async (id: string) => {
     try {
       const priceList = await PriceList.getById(id);
+      console.log("se obtuvo la lista de precios");
       return priceList;
     } catch (error: any) {
       if (error.status === responses.notFound) {
