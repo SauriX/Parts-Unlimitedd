@@ -12,6 +12,7 @@ import {
   Input,
   Checkbox,
   Select,
+  InputNumber,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
@@ -42,6 +43,7 @@ import NumberInput from "../../../app/common/form/NumberInput";
 import user from "../../../app/api/user";
 import { IOptions } from "../../../app/models/shared";
 import Study from "../../../views/Study";
+import { IPackEstudioList } from "../../../app/models/packet";
 const { Search } = Input;
 
 type PriceListFormProps = {
@@ -109,9 +111,16 @@ const PriceListForm: FC<PriceListFormProps> = ({
 
   useEffect(()=>{
     const readtabla = async() =>{
-       //let estudios tabla
+       let estudiostabla = await getAllStudy();
+       let paquetestabla = await getAllPack();
+       let tabla = estudiostabla!.concat(paquetestabla!);
+       console.log(tabla);
+       setValues((prev) => ({ ...prev, table: tabla }));
     }
-  });
+    if(!id){
+      readtabla();
+    }
+  },[getAllStudy,getAllPack]);
 
   useEffect(() => {
     getDepartmentOptions();
@@ -154,16 +163,57 @@ const PriceListForm: FC<PriceListFormProps> = ({
       console.log(listCompañia);
       console.log(listSucursal);
   }
-  const setStudy = (active: boolean, item: IPriceListEstudioList) => {
-    var index = lista.findIndex(x => x.id == item.id);
+  const setStudy = (active: boolean, item: IPriceListEstudioList,typePAck:boolean,first:boolean=false,values:IPriceListForm) => {
+    console.log(first,"bandera");
+     let estudiosSinPrecio:IPriceListEstudioList[] =[];
+    console.log(item,"item");
+    if(!first){
+      console.log("entro");
+      if(active){
+        if(typePAck){
+          let estudiosPaquete = item.pack;
+          let estudiosValidar :IPriceListEstudioList[] =[];
+    
+          estudiosPaquete?.forEach(x=>{
+            var estudy = lista.find(y=> y.id === x.id && !y.paqute);
+            estudiosValidar.push(estudy!);
+          });
+    
+          estudiosValidar?.forEach(x=>{ if(x.precio==0||x.activo==false){
+            estudiosSinPrecio.push(x);
+          }});
+          if(estudiosSinPrecio.length>0){
+            estudiosSinPrecio.forEach(X=>alerts.warning(`El estudio ${X.nombre} no tiene precio asignado`));
+    
+            return
+          }else{
+            var precio= 0;
+            for (let i = 0; i < estudiosValidar.length; i++) {
+              precio += estudiosValidar[i]!.precio!;
+            }
+            item.precio=precio;
+          }
+          
+        } 
+      }
+    }
+
+
+    var index = lista.findIndex(x => x.id == item.id  && x.paqute===typePAck);
     var list = lista;
     item.activo = active;
+    
+    console.log(item.precio,"precio");
     list[index] = item;
     setLista(list);
-    var indexVal= values.estudios.findIndex(x=>x.id===item.id);
-    var val =values.estudios;
-    val[indexVal]=item;
-    setValues((prev) => ({ ...prev, estudios: val }));
+    console.log(values,"values");
+    var indexVal= values.table!.findIndex(x=>x.id===item.id && x.paqute===typePAck);
+    var val =values.table;
+    
+    val![indexVal]=item;
+    console.log(val,"val");
+    setValues((prev) => ({ ...prev, table: val }));
+    console.log(values,"vaulues");
     console.log("entra el estudio seleccionado")
   };
 
@@ -181,23 +231,26 @@ const PriceListForm: FC<PriceListFormProps> = ({
 
   };
 
-  const setStudyPrice = (newprecio:number,item:IPriceListEstudioList) =>{
-    var index = lista.findIndex(x=>x.id==item.id);
+  const setStudyPrice = (newprecio:number,item:IPriceListEstudioList,typePAck:boolean) =>{
+    
+    var index = lista.findIndex(x=>x.id==item.id  && x.paqute===typePAck);
     var list = lista;
     item.precio = newprecio;
     list[index]=item;
-   // setLista(list); 
-    var indexVal= values.estudios.findIndex(x=>x.id==item.id);
-    var val =values.estudios;
+    var indexVal= values.table!.findIndex(x=>x.id==item.id  && x.paqute===typePAck);
+
+
+    var val =values.table!;
     val[indexVal]=item;
-    setValues((prev) => ({ ...prev, estudio: val })); 
+    setValues((prev) => ({ ...prev, table: val })); 
        
     }
 // red user 146
   useEffect(() => {
     const readuser = async (idUser: string) => {
       setLoading(true);
-      console.log("here getDepartament");
+      const user = await getById(idUser);
+      console.log(user,"here getDepartament");
       const all = await getAll("all");
       console.log(all);
       var studis = await getAllStudy();
@@ -205,36 +258,44 @@ const PriceListForm: FC<PriceListFormProps> = ({
       var tabla = studis!.concat(pcks!);
       var areaForm = await getareaOptions(values.idDepartamento);
 
-      const user = await getById(idUser);
+      
       console.log("Lista de precio", user);
       const branches = await getAllBranch();
       const Companies = await getAllCompany();
       const medics = await getAllMedics();
-
-
-      form.setFieldsValue(user!);
-      studis = studis?.map(x => {
-        var activo = user?.estudios.find(y=> y.id === x.id) != null;
-        return { ...x, activo };
-      });
+      if(user!.paquete){
+        user!.paquete = user!.paquete.map(x=>{x.paqute=true; return x;});
+      }
+      
       var listatabla = user?.estudios.concat(user?.paquete);
       user!.table = listatabla?.filter(x=> x!=null);
-
+      var studys =  user!.table!;
+      user!.table = tabla;
+      setValues(user!);
+      form.setFieldsValue(user!);
       console.log(user);
       setListSucursal(branches);
       setListCompañia(Companies);
       setListMedicos(medics);
       setAreaForm(areaForm!);
-      setValues(user!);
+      
       setLista(tabla);
-      setLoading(false);
-    
+     
+      console.log("seteado");
+      
+      console.log("inicia el foreach");
+      studys.forEach(x=>{setStudy(x.activo!,x,x.paqute!,true,user!); console.log("item");});
       user?.sucursales.map(x => setSucursalesList(x.activo!,x,branches));
       user?.compañia.map(x => setCompañiasList(x.activo!,x,Companies));
       user?.medicos.map(x =>setMedicosList(x.activo!,x,medics));
       setListSCM(listSucursal);
       setRadioValue("branch");
       console.log(studis);
+      console.log("values");
+      
+      setLoading(false);
+ 
+      
     };
     if (id) {
       readuser(String(id));
@@ -297,7 +358,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "10%",
         windowSize: windowWidth,
       }),
     },
@@ -305,7 +366,15 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "10%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("listaPrecio", "Lista de precio", {
+        searchState,
+        setSearchState,
+        width: "10%",
         windowSize: windowWidth,
       }),
     },
@@ -356,11 +425,11 @@ const PriceListForm: FC<PriceListFormProps> = ({
 
       console.log("Filtro")
       var estudios = lista.filter(x => x.departamento === departamento);
-      setValues((prev) => ({ ...prev, estudios: estudios }));
+      setValues((prev) => ({ ...prev, table: estudios }));
       setAreaSearch(areaSearch!);
     } else {
       estudios = lista.filter(x => x.activo === true);
-      setValues((prev) => ({ ...prev, estudios: estudios }));
+      setValues((prev) => ({ ...prev, table: estudios }));
     }
     // console.log("departament");
     // console.log(values);
@@ -368,12 +437,12 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const filterByArea = (area: number) => {
     var areaActive = areas.filter(x => x.value === area)[0].label;
     var estudios = lista.filter(x => x.area === areaActive);
-    setValues((prev) => ({ ...prev, estudios: estudios }));
+    setValues((prev) => ({ ...prev, table: estudios }));
   }
   const filterBySearch = (search: string) => {
     var estudios = lista.filter(
       (x) => x.clave.includes(search) || x.nombre.includes(search) );
-    setValues((prev) => ({ ...prev, estudios: estudios }));
+    setValues((prev) => ({ ...prev, table: estudios }));
   }
 
   const onFinish = async (newValues: IPriceListForm) => {
@@ -381,8 +450,6 @@ const PriceListForm: FC<PriceListFormProps> = ({
 
     const priceList = { ...values, ...newValues };
     console.log(lista);
-    priceList.estudios=lista.filter(x=>x.activo==true);
-    priceList.paquete =[];
     priceList.promocion=[];
     //priceList.estudios = lista;
     console.log("finish ");
@@ -391,7 +458,10 @@ const PriceListForm: FC<PriceListFormProps> = ({
     priceList.sucursales=listSucursal;
     priceList.compañia=listCompañia;
     priceList.medicos=listMedicos;
-    console.log(priceList);
+
+    priceList.estudios= priceList.table!.filter(x=> x.activo==true &&( x.paqute===false || !x.paqute));
+    priceList.paquete= priceList.table!.filter(x=> x.activo && x.paqute===true);
+    console.log(priceList,"LISTA");
     let success = false;
     if (!priceList.id) {
       success = await create(priceList);
@@ -434,11 +504,11 @@ const PriceListForm: FC<PriceListFormProps> = ({
         windowSize: windowWidth,
       }),
       render: (value,item) => (
-        <input type={"number"}  
+        <InputNumber type={"number"}  
         value={item.precio}  
-        onChange={(value)=>setStudyPrice(Number(value.target.value),item)}>
+        onChange={(value)=>setStudyPrice(Number(value),item,item.paqute!)}>
 
-        </input>
+        </InputNumber>
       ),
     },
     {
@@ -464,7 +534,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
             console.log(value1.target.checked); var active= false; 
             if(value1.target.checked){ 
               console.log("here check box estudio a listaPrice"); 
-              active= true;}setStudy(active,item)}}
+              active= true;}setStudy(active,item,item.paqute!,false,values!)}}
         />
       ),
     }
@@ -633,7 +703,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
               <Table<ISucMedComList>
                 size="large"
                 rowKey={(record) => record.id}
-                columns={columns.slice(0, 3)}
+                columns={columns.slice(0, 4)}
                 pagination={false}
                 dataSource={listSMC}
                 scroll={{
@@ -699,8 +769,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
             >
               <Table<IPriceListEstudioList>
                 size="large"
-                rowKey={(record) => record.id}
-                columns={columnsEstudios.slice(0, 5)}
+                columns={columnsEstudios.slice(0, 6)}
                 pagination={false}
                 dataSource={[...(values.table ?? [])]}
                 scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}

@@ -82,7 +82,9 @@ export default class PriceListStore {
                 departamento:x.departamento,
                 activo: false,
                 precio:0,
-                paqute:true
+                paqute:true,
+                pack:x.pack
+                
             }
             return data;});
             this.packs=studies;
@@ -108,6 +110,7 @@ export default class PriceListStore {
   getById = async (id: string) => {
     try {
       const priceList = await PriceList.getById(id);
+      console.log("se obtuvo la lista de precios");
       return priceList;
     } catch (error: any) {
       if (error.status === responses.notFound) {

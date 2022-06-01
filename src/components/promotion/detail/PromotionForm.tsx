@@ -147,7 +147,28 @@ const { width: windowWidth } = useWindowDimensions();
         }
       return data;
        });
+       let paquetes = priceList?.paquete.map(x=> {
+        let data:IPromotionEstudioList = {
+          id:x.id,
+          area:x.area,
+          clave:x.clave,
+          nombre:x.nombre,
+          descuentoPorcentaje:(values.tipoDescuento=="porcent"? values.cantidad:0),
+          descuentoCantidad:(values.tipoDescuento!="porcent"? values.cantidad:0),
+          precioFinal: 0,
+          lealtad:false,
+          fechaInicial: moment().toDate(),
+          fechaFinal:moment().toDate(),
+          activo:false,
+          precio: x.precio! ,
+          paquete:true,
+          selectedTags:[],
+          departamento:x.departamento
+        }
+      return data;
+       });
 
+       estudio= estudio?.concat(paquetes!);
        setEstudios(estudio!);
 
        setValues((prev) => ({ ...prev, estudio: estudio! }));
@@ -243,9 +264,9 @@ console.log(tag,"el tag");
      setValues((prev) => ({ ...prev, estudio: estudio! }));
     setSelectedTags( nextSelectedTags! );
   };
-  const setStudy = (active:boolean,item:IPromotionEstudioList) =>{
- 
-    var index = estudios.findIndex(x=>x.id==item.id);
+  const setStudy = (active:boolean,item:IPromotionEstudioList,type:boolean) =>{
+    console.log(item,"item");
+    var index = estudios.findIndex(x=>x.id==item.id&&x.paquete==type);
     var list = estudios;
     item.activo=active;
     list[index]=item;
@@ -473,7 +494,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
         <Checkbox
           name="activo"
           checked={item.activo}
-          onChange={(value)=>{ console.log(value.target.checked); var active= false; if(value.target.checked){ console.log("here"); active= true;}setStudy(active,item)}}
+          onChange={(value)=>{ console.log(value.target.checked); var active= false; if(value.target.checked){ console.log("here"); active= true;}setStudy(active,item,item.paquete)}}
         />
       ),
     },

@@ -1,3 +1,4 @@
+import { IPackEstudioList } from "./packet";
 import { IStudyForm, IStudyList } from "./study";
 
 export interface IPriceListList {
@@ -73,4 +74,5 @@ export interface IPriceListEstudioList {
   activo?: boolean;
   departamento?: string;
   paqute?:boolean;
+  pack?:IPackEstudioList[];
 }
