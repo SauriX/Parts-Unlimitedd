@@ -1,28 +1,55 @@
-import { Layout, Menu, Typography, Image, Avatar, Row, Col, Popover, Tooltip, Modal, Form } from "antd";
-import React, { useEffect } from "react";
-import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Layout, Menu, Typography, Image, Avatar, Row, Col, Popover, Form, Spin, Button } from "antd";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import IconSelector from "../common/icons/IconSelector";
 import { IMenu } from "../models/shared";
-import { UserOutlined, DownOutlined, LogoutOutlined } from "@ant-design/icons";
+import { UserOutlined, DownOutlined, LogoutOutlined, NotificationOutlined } from "@ant-design/icons";
 import DropdownOption from "../common/header/DropdownOption";
 import { useStore } from "../stores/store";
 import { observer } from "mobx-react-lite";
 import { IChangePasswordForm } from "../models/user";
 import { formItemLayout } from "../util/utils";
 import PasswordInput from "../common/form/PasswordInput";
+import HeaderTitle from "../common/header/HeaderTitle";
+import Notifications from "./Notifications";
 const { Header, Sider, Content } = Layout;
-const { SubMenu } = Menu;
 const { Text } = Typography;
 
-const LayoutComponent = () => {
-  const { profileStore, userStore } = useStore();
-  const { profile, menu, logout, setProfile, getProfile, getMenu } = profileStore;
-  const { changePassword } = userStore;
+interface IItem {
+  key: string;
+  label: ReactNode;
+  icon?: ReactNode;
+  children?: IItem[];
+}
 
-  let navigate = useNavigate();
+const LayoutComponent = () => {
+  const { profileStore, drawerStore, modalStore } = useStore();
+  const { openDrawer } = drawerStore;
+  const { openModal } = modalStore;
+  const { profile, menu, logout, getProfile, getMenu } = profileStore;
+
   const location = useLocation();
 
-  const [formPassword] = Form.useForm<IChangePasswordForm>();
+  const [menus, setMenus] = useState<IItem[]>([]);
+
+  const convertMenu = useCallback((menus: IMenu[]): IItem[] => {
+    return menus.map((x) => ({
+      key: x.id.toString() + "-" + x.ruta ?? x.descripcion,
+      label:
+        x.subMenus && x.subMenus.length > 0 ? (
+          x.descripcion
+        ) : (
+          <Link to={x.ruta ?? x.descripcion}>{x.descripcion}</Link>
+        ),
+      icon: <IconSelector name={x.icono} />,
+      children: !!x.subMenus && x.subMenus.length > 0 ? convertMenu(x.subMenus) : undefined,
+    }));
+  }, []);
+
+  useEffect(() => {
+    const items = convertMenu(menu);
+    setMenus(items);
+  }, [convertMenu, menu]);
 
   useEffect(() => {
     const readUsers = async () => {
@@ -32,19 +59,19 @@ const LayoutComponent = () => {
     readUsers();
   }, [getMenu, getProfile]);
 
-  const handleOk = () => {
-    formPassword.submit();
-  };
+  useEffect(() => {
+    if (profile && profile.requiereCambio) {
+      openModal({ title: "Configuración de contraseña", body: <SetPasswordComponent />, closable: false });
+    }
+  }, [openModal, profile]);
 
-  const onFinishPass = async (newValues: IChangePasswordForm) => {
-    let passForm = { ...newValues };
-    let success = false;
-    let checkPass = false;
-   let succeded= await changePassword(passForm);
-   if(succeded){
-    setProfile({ ...profile!, requiereCambio: false });
-   }
-    // console.log(success);
+  const openNotifications = () => {
+    openDrawer({
+      title: (
+        <HeaderTitle title="Notificaciones" icon={<NotificationOutlined className="header-title-icon" />} />
+      ),
+      body: <Notifications />,
+    });
   };
 
   return (
@@ -59,6 +86,7 @@ const LayoutComponent = () => {
           <Col span={12} className="header-data" style={{ textAlign: "right" }}>
             <Avatar icon={<UserOutlined />} />
             <Text>{profile?.nombre}</Text>
+            <NotificationOutlined className="trigger" onClick={openNotifications} />
             <Popover
               placement="topLeft"
               content={
@@ -77,89 +105,14 @@ const LayoutComponent = () => {
         <Sider width={250}>
           <Menu
             mode="inline"
+            className="layout-menu"
             selectedKeys={[location.pathname.substring(1)]}
             style={{ height: "100%", borderRight: 0 }}
-          >
-            {menu.map((menu) =>
-              menu.subMenus && menu.subMenus.length > 0 ? (
-                <SubMenu
-                  className="menu-item"
-                  key={menu.id}
-                  icon={<IconSelector name={menu.icono} />}
-                  title={menu.descripcion}
-                >
-                  {menu.subMenus.map((subMenu) => (
-                    <Menu.Item
-                      className="menu-item"
-                      key={subMenu.ruta ?? subMenu.descripcion}
-                      icon={<IconSelector name={subMenu.icono} />}
-                    >
-                      <Link to={subMenu.ruta ?? subMenu.descripcion}>{subMenu.descripcion}</Link>
-                    </Menu.Item>
-                  ))}
-                </SubMenu>
-              ) : (
-                <Menu.Item
-                  className="menu-item"
-                  key={menu.ruta ?? menu.descripcion}
-                  icon={<IconSelector name={menu.icono} />}
-                >
-                  <Link to={menu.ruta ?? menu.descripcion}>{menu.descripcion}</Link>
-                </Menu.Item>
-              )
-            )}
-          </Menu>
+            items={menus}
+          ></Menu>
         </Sider>
         <Layout id="content-layout">
-          <Content
-            className="site-layout-background"
-            style={{
-              padding: "12px 24px",
-              margin: 12,
-              height: "100%",
-              overflowY: "auto",
-            }}
-          >
-            <Modal
-              title="Ingreso de contraseña"
-              visible={profile && profile.requiereCambio}
-              onOk={handleOk}
-              closable={false}
-              cancelButtonProps={{ style: { display: "none" } }}
-            >
-              <Form<IChangePasswordForm>
-                {...formItemLayout}
-                form={formPassword}
-                name="changepassword"
-                onFinish={onFinishPass}
-                scrollToFirstError
-              >
-                <Row>
-                  <Col md={24} sm={24} xs={24}>
-                    <PasswordInput
-                      formProps={{
-                        name: "contraseña",
-                        label: "Nueva Contraseña",
-                      }}
-                      max={8}
-                      min={8}
-                      required
-                    />
-                  </Col>
-                  <Col md={24} sm={24} xs={24}>
-                    <PasswordInput
-                      formProps={{
-                        name: "confirmaContraseña",
-                        label: "Confirmar Contraseña",
-                      }}
-                      max={8}
-                      min={8}
-                      required
-                    />
-                  </Col>
-                </Row>
-              </Form>
-            </Modal>
+          <Content className="site-layout-background content">
             <Outlet />
           </Content>
         </Layout>
@@ -169,3 +122,67 @@ const LayoutComponent = () => {
 };
 
 export default observer(LayoutComponent);
+
+const SetPasswordComponent = observer(() => {
+  const { modalStore, profileStore, userStore } = useStore();
+  const { closeModal } = modalStore;
+  const { profile, setProfile } = profileStore;
+  const { changePassword } = userStore;
+
+  const [form] = Form.useForm<IChangePasswordForm>();
+
+  const [loading, setLoading] = useState(false);
+
+  const onFinish = async (newValues: IChangePasswordForm) => {
+    setLoading(true);
+    let passForm = { ...newValues };
+    let success = await changePassword(passForm);
+    setLoading(false);
+    if (success) {
+      setProfile({ ...profile!, requiereCambio: false });
+      closeModal();
+    }
+  };
+
+  return (
+    <Spin spinning={loading}>
+      <Form<IChangePasswordForm>
+        {...formItemLayout}
+        form={form}
+        name="changepassword"
+        onFinish={onFinish}
+        scrollToFirstError
+      >
+        <Row>
+          <Col md={24} sm={24} xs={24}>
+            <PasswordInput
+              formProps={{
+                name: "contraseña",
+                label: "Nueva Contraseña",
+              }}
+              max={8}
+              min={8}
+              required
+            />
+          </Col>
+          <Col md={24} sm={24} xs={24}>
+            <PasswordInput
+              formProps={{
+                name: "confirmaContraseña",
+                label: "Confirmar Contraseña",
+              }}
+              max={8}
+              min={8}
+              required
+            />
+          </Col>
+          <Col md={24} sm={24} xs={24} style={{ textAlign: "right" }}>
+            <Button type="primary" htmlType="submit">
+              Guardar
+            </Button>
+          </Col>
+        </Row>
+      </Form>
+    </Spin>
+  );
+});

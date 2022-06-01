@@ -28,7 +28,7 @@ import CompanyDetail from "../../components/company/detail/CompanyDetail";
 import Parameters from "../../views/Parameters";
 import ParameterDetail from "../../components/parameter/detail/ParameterDetail";
 import { useStore } from "../stores/store";
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { Spin } from "antd";
 import { observer } from "mobx-react-lite";
 import Maquilador from "../../views/Maquilador";
@@ -43,6 +43,9 @@ import Promotion from "../../views/Promotion";
 import PromotionDetail from "../../components/promotion/detail/PromotionDetail";
 import LoyaltyDetail from "../../components/loyalty/detail/LoyaltyDetail";
 import Loyalty from "../../views/Loyalty";
+import Center from "./Center";
+import ModalComponent from "../common/modal/ModalComponent";
+import DrawerComponent from "../common/drawer/DrawerComponent";
 
 function App() {
   const { profileStore } = useStore();
@@ -65,73 +68,69 @@ function App() {
 
   if (loading)
     return (
-      <div
-        style={{
-          height: "100%",
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+      <Center>
         <Spin size="large" spinning={loading} />
-      </div>
+      </Center>
     );
 
   return (
-    <Routes>
-      <Route path="login" element={<Login />} />
-      <Route element={<PrivateRoute />}>
-        <Route element={<LayoutComponent />}>
-          <Route path="" element={<Home />} />
-          <Route path="users" element={<User />} />
-          <Route path="users/:id" element={<UserDetail />} />
-          <Route path="new-user" element={<NewUser />} />
-          <Route path="roles" element={<Role />} />
-          <Route path="reagents" element={<Reagent />} />
-          <Route path="reagents/new" element={<ReagentDetail />} />
-          <Route path="reagents/:id" element={<ReagentDetail />} />
-          <Route path="catalogs" element={<Catalog />} />
-          <Route path="catalogs/:id" element={<CatalogDetail />} />
-          <Route path="medics" element={<Medics />} />
-          <Route path="medics/:id" element={<MedicsDetail />} />
-          <Route path="medics/new" element={<MedicsDetail />} />
-          <Route path="companies" element={<Company />} />
-          <Route path="companies/:id" element={<CompanyDetail />} />
-          <Route path="companies/new" element={<CompanyDetail />} />
-          <Route path="indications" element={<Indication />} />
-          <Route path="indications/:id" element={<IndicationDetail />} />
-          <Route path="roles/new-role" element={<NewRole />} />
-          <Route path="roles/:id" element={<RoleDetail />} />
-          <Route path="branches" element={<Branch />} />
-          <Route path="branches/new-sucursal" element={<BranchDetail />} />
-          <Route path="branches/:id" element={<BranchDetail />} />
-          <Route path="parameters" element={<Parameters />} />
-          <Route path="parameters/new-parameter" element={<ParameterDetail />} />
-          <Route path="parameters/:id" element={<ParameterDetail />} />
-          <Route path="maquila" element={<Maquilador />} />
-          <Route path="maquila/:id" element={<MaquiladorDetail />} />
-          <Route path="prices" element={<PriceList />} />
-          <Route path="prices/:id" element={<PriceListDetail />} />
-          <Route path="prices/new" element={<PriceListDetail />} />
-          <Route path="studies" element={<Study/>} />
-          <Route path="studies/new-study" element={<StudyDetail/>} />
-          <Route path="studies/:id" element={<StudyDetail/>} />
-          <Route path="packs" element={<Pack/>} />
-          <Route path="packs/new-pack" element={<PackDetail/>} />
-          <Route path="packs/:id" element={<PackDetail/>} />
-          <Route path="promos" element={<Promotion/>} />
-          <Route path="promos/new" element={<PromotionDetail/>} />
-          <Route path="promos/:id" element={<PromotionDetail/>} />
-          <Route path="loyalties" element={<Loyalty />} />
-          <Route path="loyalties/:id" element={<LoyaltyDetail />} />
-          <Route path="loyalties/new" element={<LoyaltyDetail />} />
-          <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
-          <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
-          <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />
+    <Fragment>
+      <ModalComponent />
+      <DrawerComponent />
+      <Routes>
+        <Route path="login" element={<Login />} />
+        <Route element={<PrivateRoute />}>
+          <Route element={<LayoutComponent />}>
+            <Route path="" element={<Home />} />
+            <Route path="users" element={<User />} />
+            <Route path="users/:id" element={<UserDetail />} />
+            <Route path="new-user" element={<NewUser />} />
+            <Route path="roles" element={<Role />} />
+            <Route path="reagents" element={<Reagent />} />
+            <Route path="reagents/new" element={<ReagentDetail />} />
+            <Route path="reagents/:id" element={<ReagentDetail />} />
+            <Route path="catalogs" element={<Catalog />} />
+            <Route path="catalogs/:id" element={<CatalogDetail />} />
+            <Route path="medics" element={<Medics />} />
+            <Route path="medics/:id" element={<MedicsDetail />} />
+            <Route path="medics/new" element={<MedicsDetail />} />
+            <Route path="companies" element={<Company />} />
+            <Route path="companies/:id" element={<CompanyDetail />} />
+            <Route path="companies/new" element={<CompanyDetail />} />
+            <Route path="indications" element={<Indication />} />
+            <Route path="indications/:id" element={<IndicationDetail />} />
+            <Route path="roles/new-role" element={<NewRole />} />
+            <Route path="roles/:id" element={<RoleDetail />} />
+            <Route path="branches" element={<Branch />} />
+            <Route path="branches/new-sucursal" element={<BranchDetail />} />
+            <Route path="branches/:id" element={<BranchDetail />} />
+            <Route path="parameters" element={<Parameters />} />
+            <Route path="parameters/new-parameter" element={<ParameterDetail />} />
+            <Route path="parameters/:id" element={<ParameterDetail />} />
+            <Route path="maquila" element={<Maquilador />} />
+            <Route path="maquila/:id" element={<MaquiladorDetail />} />
+            <Route path="prices" element={<PriceList />} />
+            <Route path="prices/:id" element={<PriceListDetail />} />
+            <Route path="prices/new" element={<PriceListDetail />} />
+            <Route path="studies" element={<Study />} />
+            <Route path="studies/new-study" element={<StudyDetail />} />
+            <Route path="studies/:id" element={<StudyDetail />} />
+            <Route path="packs" element={<Pack />} />
+            <Route path="packs/new-pack" element={<PackDetail />} />
+            <Route path="packs/:id" element={<PackDetail />} />
+            <Route path="promos" element={<Promotion />} />
+            <Route path="promos/new" element={<PromotionDetail />} />
+            <Route path="promos/:id" element={<PromotionDetail />} />
+            <Route path="loyalties" element={<Loyalty />} />
+            <Route path="loyalties/:id" element={<LoyaltyDetail />} />
+            <Route path="loyalties/new" element={<LoyaltyDetail />} />
+            <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
+            <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
+            <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />
+          </Route>
         </Route>
-      </Route>
-    </Routes>
+      </Routes>
+    </Fragment>
   );
 }
 

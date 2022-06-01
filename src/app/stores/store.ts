@@ -9,20 +9,24 @@ import CatalogStore from "./catalogStore";
 import OptionStore from "./optionStore";
 import RoleStore from "./roleStore";
 import LocationStore from "./locationStore";
-import BranchStore from "./brancStore"
+import BranchStore from "./brancStore";
 import CompanyStore from "./companyStore";
-import ParameterStore from "./parameterStore"
+import ParameterStore from "./parameterStore";
 import MaquiladorStore from "./maquiladorStore";
 import StudyStore from "./studyStore";
 import PriceListStore from "./priceListStore";
 import PackStore from "./packStore";
 import PromotionStore from "./promotionStore";
 import LoyaltyStore from "./loyaltyStore";
+import ModalStore from "./modalStore";
+import DrawerStore from "./drawerStore";
 configure({
   enforceActions: "never",
 });
 
 interface Store {
+  modalStore: ModalStore;
+  drawerStore: DrawerStore;
   profileStore: ProfileStore;
   optionStore: OptionStore;
   userStore: UserStore;
@@ -34,16 +38,18 @@ interface Store {
   roleStore: RoleStore;
   locationStore: LocationStore;
   branchStore: BranchStore;
-  parameterStore:ParameterStore; 
+  parameterStore: ParameterStore;
   maquiladorStore: MaquiladorStore;
-  studyStore:StudyStore;
-  priceListStore:PriceListStore;
-  packStore:PackStore;
-  promotionStore:PromotionStore;
-  loyaltyStore:LoyaltyStore;
+  studyStore: StudyStore;
+  priceListStore: PriceListStore;
+  packStore: PackStore;
+  promotionStore: PromotionStore;
+  loyaltyStore: LoyaltyStore;
 }
 
 export const store: Store = {
+  modalStore: new ModalStore(),
+  drawerStore: new DrawerStore(),
   profileStore: new ProfileStore(),
   optionStore: new OptionStore(),
   userStore: new UserStore(),
