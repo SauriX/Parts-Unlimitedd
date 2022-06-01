@@ -15,9 +15,10 @@ type CatalogHeaderProps = {
   catalog: IOptionsCatalog | undefined;
   setCatalog: React.Dispatch<React.SetStateAction<IOptionsCatalog | undefined>>;
   handlePrint: () => void;
+  handleDownload: () => Promise<void>;
 };
 
-const CatalogHeader: FC<CatalogHeaderProps> = ({ catalog, setCatalog, handlePrint }) => {
+const CatalogHeader: FC<CatalogHeaderProps> = ({ catalog, setCatalog, handlePrint, handleDownload }) => {
   const { catalogStore } = useStore();
   const { setCurrentCatalog, getAll } = catalogStore;
 
@@ -71,8 +72,8 @@ const CatalogHeader: FC<CatalogHeaderProps> = ({ catalog, setCatalog, handlePrin
       title={<HeaderTitle title="Catálogo General" image="catalog" />}
       className="header-container"
       extra={[
-        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        <ImageButton key="doc" title="Informe" image="doc" />,
+        catalog && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+        catalog && <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />,
         <Search
           key="search"
           placeholder="Buscar"

@@ -92,4 +92,24 @@ export default class CatalogStore {
       return false;
     }
   };
+
+  exportList = async (catalogName: string, search: string) => {
+    try {
+      await Catalog.exportList(catalogName, search);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  exportForm = async (catalogName: string, id: string) => {
+    try {
+      await Catalog.exportForm(catalogName, id);
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+    }
+  };
 }

@@ -14,6 +14,10 @@ const Catalog = {
     requests.post(`catalog/${catalogName}`, catalog),
   update: (catalogName: string, catalog: ICatalogForm): Promise<ICatalogList> =>
     requests.put(`catalog/${catalogName}`, catalog),
+  exportList: (catalogName: string, search: string): Promise<void> =>
+    requests.download(`catalog/${catalogName}/export/list/${!search ? "all" : search}`),
+  exportForm: (catalogName: string, id: string): Promise<void> =>
+    requests.download(`catalog/${catalogName}/export/form/${id}`),
 };
 
 export default Catalog;
