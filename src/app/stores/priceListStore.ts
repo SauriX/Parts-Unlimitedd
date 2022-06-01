@@ -58,8 +58,7 @@ export default class PriceListStore {
             return data;});
             this.studies=studies;
             return studies
-            console.log("estudios");
-            console.log(this.studies);
+            
       } catch (error: any) {
         alerts.warning(getErrors(error));
         this.studies = [];
@@ -89,8 +88,7 @@ export default class PriceListStore {
             return data;});
             this.packs=studies;
             return studies
-            console.log("estudios");
-            console.log(this.studies);
+
       } catch (error: any) {
         alerts.warning(getErrors(error));
         this.studies = [];
@@ -198,6 +196,7 @@ export default class PriceListStore {
   getAllCompany = async () => {
     try {
       var compañias = await PriceList.getAllCompany();
+      console.log(compañias,"getall, compañi");
       return compañias.map(x=>{
         x.compañia = true;
         return x;

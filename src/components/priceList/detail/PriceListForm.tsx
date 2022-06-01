@@ -39,11 +39,8 @@ import {
   ISearch,
 } from "../../../app/common/table/utils";
 import SelectInput from "../../../app/common/form/SelectInput";
-import NumberInput from "../../../app/common/form/NumberInput";
-import user from "../../../app/api/user";
-import { IOptions } from "../../../app/models/shared";
-import Study from "../../../views/Study";
-import { IPackEstudioList } from "../../../app/models/packet";
+
+
 const { Search } = Input;
 
 type PriceListFormProps = {
@@ -52,10 +49,6 @@ type PriceListFormProps = {
   printing: boolean;
 };
 
-const visibleOptions = [
-  { label: "Visible", value: "visible" },
-  { label: "VisibleWeb", value: "web" },
-];
 
 const radioOptions = [
   { label: "Sucursales", value: "branch" },
@@ -82,12 +75,10 @@ const PriceListForm: FC<PriceListFormProps> = ({
     getAllPack,
     studies,
     sucMedCom,
-    packs
   } = priceListStore;
   const { getDepartmentOptions, departmentOptions, getareaOptions, areas } =
     optionStore;
-  const [aeraSearch, setAreaSearch] = useState(areas);
-  const [areaForm, setAreaForm] = useState<IOptions[]>([]);
+
   const [areaId, setAreaId] = useState<number>();
   const navigate = useNavigate();
   const [radioValue, setRadioValue] = useState<any>();
@@ -98,9 +89,6 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const [listMedicos, setListMedicos] = useState<any>();
   const [listCompañia, setListCompañia] = useState<any>();
   const [form] = Form.useForm<IPriceListForm>();
-
-  const [estudy, setEstudy] = useState<{ clave: ""; id: string; nombre: ""; precio:number; }>();
-
   const [loading, setLoading] = useState(false);
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
@@ -120,7 +108,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
     if(!id){
       readtabla();
     }
-  },[getAllStudy,getAllPack]);
+  },[getAllStudy,getAllPack,id]);
 
   useEffect(() => {
     getDepartmentOptions();
@@ -129,7 +117,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
   useEffect(() => {
     const areareader = async () => {
       await getareaOptions(0);
-      setAreaSearch(areas);
+     
     };
     areareader();
   }, [getareaOptions]);
@@ -179,7 +167,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
             estudiosValidar.push(estudy!);
           });
     
-          estudiosValidar?.forEach(x=>{ if(x.precio==0||x.activo==false){
+          estudiosValidar?.forEach(x=>{ if(x.precio===0||x.activo===false){
             estudiosSinPrecio.push(x);
           }});
           if(estudiosSinPrecio.length>0){
@@ -199,7 +187,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
     }
 
 
-    var index = lista.findIndex(x => x.id == item.id  && x.paqute===typePAck);
+    var index = lista.findIndex(x => x.id === item.id  && x.paqute===typePAck);
     var list = lista;
     item.activo = active;
     
@@ -233,11 +221,11 @@ const PriceListForm: FC<PriceListFormProps> = ({
 
   const setStudyPrice = (newprecio:number,item:IPriceListEstudioList,typePAck:boolean) =>{
     
-    var index = lista.findIndex(x=>x.id==item.id  && x.paqute===typePAck);
+    var index = lista.findIndex(x=>x.id===item.id  && x.paqute===typePAck);
     var list = lista;
     item.precio = newprecio;
     list[index]=item;
-    var indexVal= values.table!.findIndex(x=>x.id==item.id  && x.paqute===typePAck);
+    var indexVal= values.table!.findIndex(x=>x.id===item.id  && x.paqute===typePAck);
 
 
     var val =values.table!;
@@ -256,7 +244,6 @@ const PriceListForm: FC<PriceListFormProps> = ({
       var studis = await getAllStudy();
       var pcks = await getAllPack();
       var tabla = studis!.concat(pcks!);
-      var areaForm = await getareaOptions(values.idDepartamento);
 
       
       console.log("Lista de precio", user);
@@ -271,13 +258,14 @@ const PriceListForm: FC<PriceListFormProps> = ({
       user!.table = listatabla?.filter(x=> x!=null);
       var studys =  user!.table!;
       user!.table = tabla;
+      user!.sucMedCom = user!.sucursales;
       setValues(user!);
       form.setFieldsValue(user!);
       console.log(user);
       setListSucursal(branches);
       setListCompañia(Companies);
       setListMedicos(medics);
-      setAreaForm(areaForm!);
+  
       
       setLista(tabla);
      
@@ -300,7 +288,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
     if (id) {
       readuser(String(id));
     }
-  }, [form, getById, id]);
+  }, [form, getById, id,getAll,getAllBranch,getAllCompany,getAllMedics,getAllPack,getAllStudy]);
 
   const goBack = () => {
     searchParams.delete("mode");
@@ -371,7 +359,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       }),
     },
     {
-      ...getDefaultColumnProps("listaPrecio", "Lista de precio", {
+      ...getDefaultColumnProps("listaPrecio", "Lista de precios", {
         searchState,
         setSearchState,
         width: "10%",
@@ -391,10 +379,11 @@ const PriceListForm: FC<PriceListFormProps> = ({
           name="activo"
           checked={item.activo}
           onChange={(value) => {
+            console.log(item,"here check sucmedcom");
             console.log(value.target.checked);
             var active = false;
             if (value.target.checked) {
-              console.log("here check sucmedcom");
+              
               active = true;
             }
             setSucMedCom(active, item);
@@ -410,8 +399,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
     if (field === "idDepartamento") {
       console.log("deparatemento on values change");
       const value = changedValues[field];
-      var areaForm = await getareaOptions(value);
-      setAreaForm(areaForm!);
+     
       form.setFieldsValue({ idArea: undefined });
     }
   };
@@ -421,12 +409,11 @@ const PriceListForm: FC<PriceListFormProps> = ({
       var departamento = departmentOptions.filter(
         x => x.value === departament
       )[0].label;
-      var areaSearch = await getareaOptions(departament);
-
+     
       console.log("Filtro")
       var estudios = lista.filter(x => x.departamento === departamento);
       setValues((prev) => ({ ...prev, table: estudios }));
-      setAreaSearch(areaSearch!);
+      
     } else {
       estudios = lista.filter(x => x.activo === true);
       setValues((prev) => ({ ...prev, table: estudios }));
@@ -452,14 +439,11 @@ const PriceListForm: FC<PriceListFormProps> = ({
     console.log(lista);
     priceList.promocion=[];
     //priceList.estudios = lista;
-    console.log("finish ");
-    console.log(lista);
-    console.log(priceList);
-    priceList.sucursales=listSucursal;
-    priceList.compañia=listCompañia;
-    priceList.medicos=listMedicos;
+    priceList.sucursales=listSucursal.filter((x:ISucMedComList)=>x.activo==true);
+    priceList.compañia=listCompañia.filter((x:ISucMedComList)=>x.activo==true);
+    priceList.medicos=listMedicos.filter((x:ISucMedComList)=>x.activo==true);
 
-    priceList.estudios= priceList.table!.filter(x=> x.activo==true &&( x.paqute===false || !x.paqute));
+    priceList.estudios= priceList.table!.filter(x=> x.activo===true &&( x.paqute===false || !x.paqute));
     priceList.paquete= priceList.table!.filter(x=> x.activo && x.paqute===true);
     console.log(priceList,"LISTA");
     let success = false;
@@ -529,12 +513,17 @@ const PriceListForm: FC<PriceListFormProps> = ({
         <Checkbox
           name="activo"
           checked={item.activo}
+          
           onChange={(value1)=>{ 
             console.log(item, "item")
             console.log(value1.target.checked); var active= false; 
             if(value1.target.checked){ 
               console.log("here check box estudio a listaPrice"); 
-              active= true;}setStudy(active,item,item.paqute!,false,values!)}}
+              active= true;}
+              
+              setStudy(active,item,item.paqute!,false,values!)}}
+
+        
         />
       ),
     }

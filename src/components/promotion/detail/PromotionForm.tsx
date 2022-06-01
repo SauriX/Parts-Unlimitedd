@@ -266,12 +266,13 @@ console.log(tag,"el tag");
   };
   const setStudy = (active:boolean,item:IPromotionEstudioList,type:boolean) =>{
     console.log(item,"item");
-    var index = estudios.findIndex(x=>x.id==item.id&&x.paquete==type);
+    var index = estudios.findIndex(x=>(x.id===item.id) && (x.paquete===type));
     var list = estudios;
     item.activo=active;
     list[index]=item;
    // setLista(list); 
-    var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+    var indexVal= values.estudio.findIndex(x=>(x.id===item.id) && (x.paquete===type));
+    console.log(indexVal,"index");
     var val =values.estudio;
     val[indexVal]=item;
     setValues((prev) => ({ ...prev, estudio: val })); 
@@ -315,31 +316,31 @@ const setStudyL = (active:boolean,item:IPromotionEstudioList) =>{
       setValues((prev) => ({ ...prev, estudio: val })); 
          
       };
-const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
+const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean) =>{
   
-      var index = estudios.findIndex(x=>x.id==item.id);
+      var index = estudios.findIndex(x=>x.id===item.id && x.paquete===type);
       var list = estudios;
       item.descuentoPorcentaje=decuento;
       item.descuentoCantidad=(item.precio*decuento/100);
       item.precioFinal = item.precio-item.descuentoCantidad;
       list[index]=item;
      // setLista(list); 
-      var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+      var indexVal= values.estudio.findIndex(x=>x.id==item.id && x.paquete===type);
       var val =values.estudio;
       val[indexVal]=item;
       setValues((prev) => ({ ...prev, estudio: val })); 
      
   };
 
-  const setStudydiscuntc = (decuento:number,item:IPromotionEstudioList) =>{
-    var index = estudios.findIndex(x=>x.id==item.id);
+  const setStudydiscuntc = (decuento:number,item:IPromotionEstudioList,type:boolean) =>{
+    var index = estudios.findIndex(x=>x.id===item.id&& x.paquete===type);
     var list = estudios;
     item.descuentoPorcentaje=(100*decuento/item.precio);
     item.descuentoCantidad=decuento;
     item.precioFinal= item.precio-decuento;
     list[index]=item;
    // setLista(list); 
-    var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+    var indexVal= values.estudio.findIndex(x=>x.id===item.id && x.paquete===type);
     var val =values.estudio;
     val[indexVal]=item;
     setValues((prev) => ({ ...prev, estudio: val })); 
@@ -420,7 +421,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
       align: "center",
       width:  100,
       render: (value,item) => (
-        <InputNumber type={"number"} min={0}  value={item.descuentoPorcentaje}  onChange={(value)=>setStudydiscunt(value,item)}></InputNumber>
+        <InputNumber type={"number"} min={0}  value={item.descuentoPorcentaje}  onChange={(value)=>setStudydiscunt(value,item,item.paquete!)}></InputNumber>
       ),
     },
     {
@@ -430,7 +431,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList) =>{
       align: "center",
       width:  100 ,
       render: (value,item) => (
-        <InputNumber type={"number"} min={0}  value={item.descuentoCantidad}  onChange={(value)=>setStudydiscuntc(value,item)}></InputNumber>
+        <InputNumber type={"number"} min={0}  value={item.descuentoCantidad}  onChange={(value)=>setStudydiscuntc(value,item,item.paquete!)}></InputNumber>
       ),
     },
     {

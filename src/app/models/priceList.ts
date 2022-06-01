@@ -1,5 +1,4 @@
 import { IPackEstudioList } from "./packet";
-import { IStudyForm, IStudyList } from "./study";
 
 export interface IPriceListList {
     id: number | string;
@@ -60,7 +59,8 @@ export interface ISucMedComList {
   departamento?: string;
   sucursal?:boolean,
   medico?:boolean,
-  compañia?:boolean
+  compañia?:boolean,
+  listaPrecio?:string,
 }
 
 
