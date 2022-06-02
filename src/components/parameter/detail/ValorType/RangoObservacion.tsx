@@ -83,7 +83,7 @@ const RangoObservacion : FC<Props> = ({ idTipeVAlue,parameter }) => {
 
 
         if(parameter.formula!="" ){
-            var succes = await addvalues(val,id);
+            var succes = await addvalues(val,id!);
             if(succes){
              succes = await update(parameter);
              if (succes) {

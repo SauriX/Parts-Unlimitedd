@@ -445,11 +445,11 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                   options={functionOptions}
                   readonly={CheckReadOnly()}
                 />
-                <SelectInput
+{/*                 <SelectInput
                   formProps={{ name: "parametros", label: "Parámetros" }}
                   options={parameterOptions2}
                   readonly={CheckReadOnly()}
-                />
+                /> */}
               </Col>
             )}
             <Col md={12} sm={24} xs={12}>
@@ -457,17 +457,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                 formProps={{
                   name: "fcsi",
                   label: "FCSI",
-                }}
-                max={100}
-                required
-                readonly={CheckReadOnly()}
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <TextInput
-                formProps={{
-                  name: "formato",
-                  label: "Formato",
                 }}
                 max={100}
                 required

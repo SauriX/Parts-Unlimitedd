@@ -104,7 +104,7 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue,parameter }) => {
             return
         }
         if(parameter.formula!="" ){
-            var succes = await addvalues(val,id);
+            var succes = await addvalues(val,id!);
             if(succes){
              succes = await update(parameter);
              if (succes) {

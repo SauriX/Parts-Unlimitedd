@@ -18,7 +18,6 @@ export interface IParameterForm {
   unidades: string;
   tipoValor: any;
   formula: string;
-  formato: string;
   valorInicial: string;
   departamentoId: number;
   areaId: number;
@@ -50,7 +49,10 @@ export interface ItipoValorForm {
   descripcionTexto?: string | "";
   descripcionParrafo?: string | "";
 }
-
+export interface Itipovalor{
+  values:ItipoValorForm[],
+  idParameter:String,
+}
 export class ParameterFormValues implements IParameterForm {
   id = "";
   clave = "";
@@ -59,7 +61,6 @@ export class ParameterFormValues implements IParameterForm {
   unidades = "";
   tipoValor = 0;
   formula = "";
-  formato = "";
   valorInicial = "";
   departamentoId = 0;
   areaId = 0;
