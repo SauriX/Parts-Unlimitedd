@@ -1,4 +1,4 @@
-import { IParameterForm, IParameterList, ItipoValorForm } from "../models/parameter";
+import { IParameterForm, IParameterList, Itipovalor, ItipoValorForm } from "../models/parameter";
 import requests from "./agent";
 
 const Parameter = {
@@ -10,9 +10,9 @@ const Parameter = {
   getValue: (id: string): Promise<ItipoValorForm> => requests.get(`parameter/value/${id}`),
   create: (parameter: IParameterForm): Promise<void> => requests.post("/parameter", parameter),
   addValue: (value: ItipoValorForm): Promise<void> => requests.post("/parameter/value", value),
+  addValues: (values: Itipovalor): Promise<void> => requests.post("/parameter/values",values),
   update: (parameter: IParameterForm): Promise<void> => requests.put("/parameter", parameter),
   updateValue: (value: ItipoValorForm) => requests.put("parameter/value", value),
-  deletevalue: (id: string): Promise<ItipoValorForm> => requests.delete(`parameter/${id}`),
   exportList: (search: string): Promise<void> =>
     requests.download(`parameter/export/list/${!search ? "all" : search}`),
   exportForm: (id: string): Promise<void> => requests.download(`parameter/export/form/${id}`),

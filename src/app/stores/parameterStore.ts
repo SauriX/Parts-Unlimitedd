@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import Parameter from "../api/parameter";
-import { IParameterForm, IParameterList, ItipoValorForm } from "../models/parameter";
+import { IParameterForm, IParameterList, Itipovalor, ItipoValorForm } from "../models/parameter";
 import alerts from "../util/alerts";
 import messages from "../util/messages";
 import responses from "../util/responses";
@@ -114,18 +114,15 @@ export default class ParameterStore {
       return false;
     }
   };
-  addvalues = async (values: ItipoValorForm[], parametroId = "") => {
+  addvalues = async (values: ItipoValorForm[], parametroId:string) => {
     try {
-      await Parameter.deletevalue(parametroId);
-      /*  values.forEach(async (value) => {
-         await Parameter.addValue(value);
-       }); */
-
-      var success = await Promise.all(values.map((value) => Parameter.addValue(value))).then(() => { return true }).catch(r => {
-        alerts.warning(getErrors(r));
-        return false;
-      });
-      return success;
+      var tipovalor:Itipovalor = {
+        values:values,
+        idParameter:parametroId
+      }
+      var success = await Parameter.addValues(tipovalor);
+      console.log(success,"succes");
+      return true;
     } catch (error: any) {
       console.log();
       alerts.warning(getErrors(error));
