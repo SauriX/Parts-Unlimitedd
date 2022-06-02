@@ -95,4 +95,14 @@ export default class LoyaltyStore {
       }
     }
   };
+  crearReagendado = async (loyaltys: ILoyaltyForm) => {
+    try {
+      await Loyalty.create(loyaltys);
+      alerts.success(messages.created);
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
 }

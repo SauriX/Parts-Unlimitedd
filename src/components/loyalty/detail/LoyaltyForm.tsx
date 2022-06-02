@@ -5,12 +5,14 @@ import {
   Col,
   Pagination,
   Button,
-  DatePicker,
   PageHeader,
   Divider,
   Radio,
+  Space,
+  InputNumber,
+  Typography,
 } from "antd";
-import React, { FC, useCallback, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
@@ -22,10 +24,11 @@ import NumberInput from "../../../app/common/form/NumberInput";
 import { observer } from "mobx-react-lite";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
-import { ILoyaltyForm, ILoyaltyList, LoyaltyFormValues } from "../../../app/models/loyalty";
+import { ILoyaltyForm,  LoyaltyFormValues } from "../../../app/models/loyalty";
 import views from "../../../app/util/view";
 import moment from "moment";
 import DateRangeInput from "../../../app/common/form/DateRangeInput";
+import SelectInput from "../../../app/common/form/SelectInput";
 // import { v4 as uuid } from "uuid";
 
 type LoyaltyFormProps = {
@@ -34,22 +37,26 @@ type LoyaltyFormProps = {
   printing: boolean;
 };
 const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
-  const { loyaltyStore } = useStore();
+  const { loyaltyStore, optionStore } = useStore();
   const { getById, create, update, getAll, loyaltys } = loyaltyStore;
+  const {priceListOptions1,getPriceListOptions1} = optionStore;
   const navigate = useNavigate();
-  const { RangePicker } = DatePicker;
+
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [form] = Form.useForm<ILoyaltyForm>();
+  const [form] = Form.useForm<ILoyaltyForm >();
+  const [formTP] = Form.useForm<{ tipoDescuento: string;  }>();
+  const nameValue = Form.useWatch('tipoDescuento', formTP);
 
-  const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [porcentaje, setporcentaje] = useState<number>();
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
   const [values, setValues] = useState<ILoyaltyForm>(new LoyaltyFormValues());
   const radioOptions = [
-    { label: "Porcentaje", value: "Porcentaje" },
+      { label: "Porcentaje", value: "Porcentaje" },
     { label: "Puntos", value: "Puntos" },
   ];
   const [discunt, setDiscunt] = useState<string>();
@@ -70,6 +77,13 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
       readLoyalty(id);
     }
   }, [form, getById, id]);
+
+  useEffect(()=>{
+    const readPriceList = async ()=>{
+      await getPriceListOptions1();
+    }
+    readPriceList();
+  },[getPriceListOptions1]);
 
   useEffect(() => {
     if (loyaltys.length === 0) {
@@ -94,7 +108,7 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
       success = await update(loyalty);
     }
 
-    setLoading(false);
+    setLoading(false); 
 
     if (success) {
       goBack();
@@ -201,6 +215,8 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
+                <Form form={formTP} layout="vertical" autoComplete="off">
+                   <Form.Item  name="tipoDescuento">
                  <div style={{ marginLeft: "99px" , marginBottom: "20px" }}> 
                   Tipo de descuento:
                   <Radio.Group
@@ -215,15 +231,21 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
                       console.log(values.cantidad);
                     }}
                     value={discunt}
-                  />
-                </div>
+                  /></div>
+                
+        </Form.Item>
+        </Form>
+                {/* <Typography>
+        <pre>Name Value: {nameValue}</pre>
+      </Typography> */}
                 <NumberInput
                   formProps={{
                     name: "cantidadDescuento",
                     label: "Descuento/Cantidad",
                   }}
-                  min={1}
-                  max={100}
+                  // nameValue ?  true : false;
+                  min={0}
+                  max={nameValue === "Porcentaje"? 100: undefined} 
                   readonly={readonly}
                   required
                 />
@@ -237,6 +259,8 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
                     onChange={(value) => console.log(value!)}
                   /> */}
                 </div>
+                </Col>
+                <Col md={12} sm={24} xs={12}>
                 <SwitchInput
                   name="activo"
                   onChange={(value) => {
@@ -249,6 +273,14 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
                   label="Activo"
                   readonly={readonly}
                   required
+                />
+                <SelectInput
+                  formProps={{
+                    name: "idListaPrecios",
+                    label: "Lista de precios",
+                  }}
+                  readonly={readonly}
+                  options={priceListOptions1}
                 />
               </Col>
             </Row>

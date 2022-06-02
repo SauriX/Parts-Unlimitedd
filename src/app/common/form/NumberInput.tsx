@@ -4,7 +4,7 @@ import React from "react";
 
 interface IProps {
   formProps: FormItemProps<any>;
-  max: number;
+  max?: number;
   min: number;
   required?: boolean;
   prefix?: React.ReactNode;
@@ -22,12 +22,14 @@ const NumberInput = ({
   readonly,
 }: IProps) => {
   let rules: Rule[] = [];
-
+if(max){
   rules.push({
     type: "number",
     max,
     message: `El máximo es de ${max}`,
   });
+}
+  
 
   rules.push({
     type: "number",

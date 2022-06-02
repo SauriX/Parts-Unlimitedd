@@ -11,6 +11,7 @@ const Loyaltys = {
   update: (loyaltys: ILoyaltyForm): Promise<void> => requests.put("loyalty", loyaltys),
   exportList: (search: string): Promise<void> => requests.download(`loyalty/export/list/${!search ? "all" : search}`), 
   exportForm: (id: string, clave: string): Promise<void> => requests.download(`loyalty/export/form/${id}`), //, `Catálogo de Medicos (${clave}).xlsx`
+  crearReagendado: (loyaltys: ILoyaltyForm): Promise<void> => requests.post("loyalty", loyaltys),
 };
 
 export default Loyaltys;

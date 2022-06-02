@@ -306,4 +306,18 @@ export default class OptionStore {
       this.priceListOptions=[]
     }
   };
+  priceListOptions1:IOptions[]=[];
+
+  getPriceListOptions1 = async () => {
+    try{
+      const priceListOptions1 =await PriceList.getActive();
+      console.log(priceListOptions1);
+      this.priceListOptions1= priceListOptions1.map((x) => ({
+        value: x.nombre,
+        label: x.nombre,
+      }));
+    }catch(error){
+      this.priceListOptions1=[]
+    }
+  };
 }
