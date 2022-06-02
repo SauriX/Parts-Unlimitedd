@@ -44,14 +44,6 @@ const MaquiladorFormHeader: FC<MaquiladorFormHeaderProps> = ({id, handlePrint })
             navigate("/maquila");
           }}
         />,
-        <Search
-          key="search"
-          placeholder="Buscar"
-          //defaultValue={searchParams.get("search") ?? ""}
-          onSearch={(value) => {
-            setSearchParams({ search: !value ? "all" : value });
-          }}
-        />,
         
       ]}
     ></PageHeader>

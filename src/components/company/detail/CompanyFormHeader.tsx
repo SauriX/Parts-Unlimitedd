@@ -44,14 +44,6 @@ const CompanyFormHeader: FC<CompanyFormHeaderProps> = ({id, handlePrint }) => {
             navigate("/companies");
           }}
         />,
-        <Search
-          key="search"
-          placeholder="Buscar"
-          //defaultValue={searchParams.get("search") ?? ""}
-          onSearch={(value) => {
-            setSearchParams({ search: !value ? "all" : value });
-          }}
-        />,
         
       ]}
     ></PageHeader>

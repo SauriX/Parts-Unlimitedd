@@ -43,13 +43,6 @@ const LoyaltyFormHeader: FC<LoyaltyFormHeaderProps> = ({id, handlePrint }) => {
             navigate(`/${views.loyalty}?${searchParams}`);
           }}
         />,
-        <Search
-          key="search"
-          placeholder="Buscar"
-          onSearch={(value) => {
-            setSearchParams({ search: !value ? "all" : value });
-          }}
-        />,
         
       ]}
     ></PageHeader>

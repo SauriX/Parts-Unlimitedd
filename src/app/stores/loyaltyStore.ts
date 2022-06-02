@@ -57,7 +57,9 @@ export default class LoyaltyStore {
   create = async (loyaltys: ILoyaltyForm) => {
     try {
       await Loyalty.create(loyaltys);
+      //const newLoyalty = await Loyalty.create(loyaltys);
       alerts.success(messages.created);
+      //this.loyaltys.push(newLoyalty);
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
