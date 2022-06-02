@@ -58,8 +58,7 @@ export default class PriceListStore {
             return data;});
             this.studies=studies;
             return studies
-            console.log("estudios");
-            console.log(this.studies);
+            
       } catch (error: any) {
         alerts.warning(getErrors(error));
         this.studies = [];
@@ -82,13 +81,14 @@ export default class PriceListStore {
                 departamento:x.departamento,
                 activo: false,
                 precio:0,
-                paqute:true
+                paqute:true,
+                pack:x.pack
+                
             }
             return data;});
             this.packs=studies;
             return studies
-            console.log("estudios");
-            console.log(this.studies);
+
       } catch (error: any) {
         alerts.warning(getErrors(error));
         this.studies = [];
@@ -108,6 +108,7 @@ export default class PriceListStore {
   getById = async (id: string) => {
     try {
       const priceList = await PriceList.getById(id);
+      console.log("se obtuvo la lista de precios");
       return priceList;
     } catch (error: any) {
       if (error.status === responses.notFound) {
@@ -195,6 +196,7 @@ export default class PriceListStore {
   getAllCompany = async () => {
     try {
       var compañias = await PriceList.getAllCompany();
+      console.log(compañias,"getall, compañi");
       return compañias.map(x=>{
         x.compañia = true;
         return x;

@@ -1,4 +1,5 @@
 import { Divider } from "antd";
+import { observer } from "mobx-react-lite";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
@@ -9,27 +10,33 @@ import CatalogTable from "../components/catalog/CatalogTable";
 
 const Catalog = () => {
   const { catalogStore } = useStore();
-  const { scopes, setCurrentCatalog, access, clearScopes } = catalogStore;
+  const { scopes, setCurrentCatalog, access, clearScopes, exportList } = catalogStore;
 
   const [searchParams] = useSearchParams();
 
-  const [printing, setPrinting] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [catalog, setCatalog] = useState<IOptionsCatalog>();
 
   const componentRef = useRef<any>();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     onBeforeGetContent: () => {
-      setPrinting(true);
+      setLoading(true);
     },
     onAfterPrint: () => {
-      setPrinting(false);
+      setLoading(false);
     },
   });
 
+  const handleDownload = async () => {
+    setLoading(true);
+    await exportList(searchParams.get("catalog") ?? "", searchParams.get("search") ?? "all");
+    setLoading(false);
+  };
+
   useEffect(() => {
     const checkAccess = async () => {
-      // await access();
+      await access();
     };
 
     checkAccess();
@@ -46,15 +53,20 @@ const Catalog = () => {
     };
   }, [clearScopes]);
 
-  // if (!scopes?.acceder) return null;
+  if (!scopes?.acceder) return null;
 
   return (
     <Fragment>
-      <CatalogHeader catalog={catalog} handlePrint={handlePrint} setCatalog={setCatalog} />
+      <CatalogHeader
+        catalog={catalog}
+        setCatalog={setCatalog}
+        handlePrint={handlePrint}
+        handleDownload={handleDownload}
+      />
       <Divider className="header-divider" />
-      <CatalogTable componentRef={componentRef} printing={printing} catalog={catalog} />
+      <CatalogTable componentRef={componentRef} printing={loading} catalog={catalog} />
     </Fragment>
   );
 };
 
-export default Catalog;
+export default observer(Catalog);

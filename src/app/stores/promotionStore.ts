@@ -55,7 +55,8 @@ export default class PromotionStore {
                 area:x.area,
                 departamento:x.departamento,
                 activo: false,
-                precio: 0
+                precio: 0,
+                paqute:false
             }
             return data;});
             this.studies=studies;

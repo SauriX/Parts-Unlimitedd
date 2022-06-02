@@ -14,10 +14,8 @@ const HeaderTitle: FC<Props> = ({ title, icon, image }) => {
     <Title level={4} className="header-title">
       {image ? (
         <Image src={`/${process.env.REACT_APP_NAME}/admin/assets/${image}.png`} preview={false} />
-      ) : (
-        icon
-      )}
-      {icon}
+      ) : null}
+      {icon ? icon : null}
       {title}
     </Title>
   );
