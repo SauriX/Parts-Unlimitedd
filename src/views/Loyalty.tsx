@@ -53,7 +53,7 @@ const Loyalty = () => {
     <Fragment>
       <LoyaltyHeader handlePrint={handlePrint} handleDownload={handleDownload} />
       <Divider className="header-divider" />
-      <LoyaltyTable componentRef={componentRef} printing={loading} />
+      <LoyaltyTable id = "" componentRef={componentRef} printing={loading} />
     </Fragment>
   );
 };

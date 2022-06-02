@@ -240,23 +240,15 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
           <Col md={id ? 12 : 24} sm={24} style={{ textAlign: "right" }}>
             <Button
               onClick={() => {
-                navigate("/medics");
-              }}
-            >
-              Cancelar
-            </Button>
+                navigate("/medics");}}
+            >Cancelar</Button>
             <Button
               type="primary"
               htmlType="submit"
               disabled={disabled}
               onClick={() => {
                 form.submit();
-                return;
-              }}
-            >
-              Guardar
-            </Button>
-          </Col>
+                return;}}>Guardar </Button></Col>
         )}
         {readonly && (
           <Col md={12} sm={24} style={{ textAlign: "right" }}>

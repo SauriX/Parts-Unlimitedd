@@ -1,198 +1,298 @@
-import { Button, Divider, PageHeader,Popover,  Table } from "antd";
-import React, { FC, Fragment, useEffect,  useState } from "react";
 import {
-  defaultPaginationProperties,
-  getDefaultColumnProps,
-  IColumns,
-  ISearch,
+    Button,
+    DatePicker,
+    Divider,
+    Form,
+    PageHeader,
+    Popover,
+    Table,
+} from "antd";
+import React, { FC, Fragment, useEffect, useState } from "react";
+import {
+    defaultPaginationProperties,
+    getDefaultColumnProps,
+    IColumns,
+    ISearch,
 } from "../../app/common/table/utils";
 import useWindowDimensions, { resizeWidth } from "../../app/util/window";
 import { EditOutlined } from "@ant-design/icons";
 import IconButton from "../../app/common/button/IconButton";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ILoyaltyList } from "../../app/models/loyalty";
+import {
+    ILoyaltyForm,
+    ILoyaltyList,
+    LoyaltyFormValues,
+} from "../../app/models/loyalty";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import DateRangeInput from "../../app/common/form/DateRangeInput";
+import TextInput from "../../app/common/form/TextInput";
+import moment from "moment";
 
 type LoyaltyTableProps = {
-  componentRef: React.MutableRefObject<any>;
-  printing: boolean;
+    id: string;
+    componentRef: React.MutableRefObject<any>;
+    printing: boolean;
 };
 
-const LoyaltyTable: FC<LoyaltyTableProps> = ({ componentRef, printing }) => {
-  const { loyaltyStore } = useStore();
-  const { loyaltys, getAll } = loyaltyStore;
+const LoyaltyTable: FC<LoyaltyTableProps> = ({
+    id,
+    componentRef,
+    printing,
+}) => {
+    const { loyaltyStore } = useStore();
+    const { loyaltys, getAll, create } = loyaltyStore;
+    const [values, setValues] = useState<ILoyaltyForm>(new LoyaltyFormValues());
 
-  const [searchParams] = useSearchParams();
+    const [searchParams] = useSearchParams();
 
-  let navigate = useNavigate();
+    let navigate = useNavigate();
 
-  const { width: windowWidth } = useWindowDimensions();
+    const { width: windowWidth } = useWindowDimensions();
 
-  const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [form] = Form.useForm<ILoyaltyForm>();
+    const [newDate, setNewDate] = useState("");
+    const [searchState, setSearchState] = useState<ISearch>({
+        searchedText: "",
+        searchedColumn: "",
+    });
 
-  const [searchState, setSearchState] = useState<ISearch>({
-    searchedText: "",
-    searchedColumn: "",
-  });
+    console.log("Table");
 
-  console.log("Table");
+    const Reagendar = (loy: ILoyaltyList) => (
+        <div>
+            <DatePicker.RangePicker
+                onChange={(e: any) => {
+                    if (e) {
 
-  const Reagendar = (
-    <div>
-      <DateRangeInput
-        formProps={{ label: "Descuento entre", name: "fecha" }}
-      />
-    </div>
-  );
+                        setNewDate(`${moment(e[0]).format("YYYY/MM/DD")} - ${moment(e[1]).format("YYYY/MM/DD")}`)
 
-  useEffect(() => {
-    const readLoyalty = async () => {
-      setLoading(true);
-      await getAll(searchParams.get("search") ?? "all");
-      setLoading(false);
-    };
-    readLoyalty();
-  }, [getAll, searchParams]);
+                        console.log(newDate, id)
 
-  const columns: IColumns<ILoyaltyList> = [
-    {
-      ...getDefaultColumnProps("clave", "Clave", {
-        searchState,
-        setSearchState,
-        width: "6%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-      render: (value, loyaltys) => (
-        <Button
-          type="link"
-          onClick={() => {
-            navigate(
-              `/loyalties/${loyaltys.id}?${searchParams}&mode=readonly&search=${
-                searchParams.get("search") ?? "all"
-              }`
-            );
-          }}
-        >
-          {value}
-        </Button>
-      ),
-    },
-    {
-      ...getDefaultColumnProps("nombre", "Nombre", {
-        searchState,
-        setSearchState,
-        width: "15%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-    },
-    {
-      ...getDefaultColumnProps("cantidadDescuento", "Beneficio Aplicado", {
-        searchState,
-        setSearchState,
-        width: "9%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-    } ,
-    {
-      ...getDefaultColumnProps("fecha", "Fecha de Vigencia", {
-        searchState,
-        setSearchState,
-        width: "10%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-    },
-    {
-      ...getDefaultColumnProps("tipoDescuento", "Promocion", {
-        searchState,
-        setSearchState,
-        width: "8%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-    },
-    {
-      key: "activo",
-      dataIndex: "activo",
-      title: "Activo",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "6%",
-      render: (value) => (value ? "Sí" : "No"),
-    },
-    {
-      key: "editar",
-      dataIndex: "id",
-      title: "Reagendar",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "6%",
-      render: (value) => (
-        <Popover content={Reagendar} title="Title">
-          <Button type="primary">Reagendar</Button>
-        </Popover>
-      ),
-    },
-    
-    {
-      key: "editar",
-      dataIndex: "id",
-      title: "Editar",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "6%",
-      render: (value) => (
-        <IconButton
-          title="Editar Lealtad"
-          icon={<EditOutlined />}
-          onClick={() => {
-            navigate(
-              `/loyalties/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`
-            );
-          }}
-        />
-      ),
-    },
-  ];
-
-  const LoyaltyTablePrint = () => {
-    return (
-      <div ref={componentRef}>
-        <PageHeader
-          ghost={false}
-          title={<HeaderTitle title="Catálogo de Lealtades" image="Lealtad" />}
-          className="header-container"
-        ></PageHeader>
-        <Divider className="header-divider" />
-        <Table<ILoyaltyList>
-          size="large"
-          rowKey={(record) => record.id}
-          columns={columns.slice(0, 8)}
-          pagination={false}
-          dataSource={[...loyaltys]}
-        />
-      </div>
+                    }
+                }}
+                format="DD/MM/YYYY"
+            />
+            <br />
+            <Button
+                type="primary"
+                htmlType="submit"
+                onClick={() => {
+                    const loyalty: ILoyaltyForm =
+                    {
+                        ...loy,
+                        cantidad: loy.cantidadDescuento,
+                        fechaInicial: new Date(moment(newDate.split(" - ")[0]).toISOString().split("T")[0]),
+                        fechaFinal: new Date(moment(newDate.split(" - ")[1]).toISOString().split("T")[0]),
+                        fecha: []
+                    };
+                    loyalty.id = "00000000-0000-0000-0000-000000000000";
+                    // loyalty.fechaInicial = Values.fecha[0].toDate();
+                    // loyalty.fechaFinal = Values.fecha[1].toDate();
+                    //let success = false;
+                    //loyalty.id = values.id;
+                    //loyalty.id = "00000000-0000-0000-0000-000000000000";
+                    //loyalty.cantidadDescuento = values.cantidadDescuento
+                    //loyalty.clave = values.clave;
+                    //loyalty.nombre = values.nombre;
+                    //console.log("Info de registro", loyalty.nombre, loyalty.clave, loyalty.cantidadDescuento);
+                    create(loyalty);
+                }}
+            >
+                Guardar
+            </Button>
+        </div>
     );
-  };
 
-  return (
-    <Fragment>
-      <Table<ILoyaltyList>
-        loading={loading || printing}
-        size="small"
-        rowKey={(record) => record.id}
-        columns={columns}
-        dataSource={[...loyaltys]}
-        pagination={defaultPaginationProperties}
-        sticky
-        scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-      />
-      <div style={{ display: "none" }}>{<LoyaltyTablePrint />}</div>
-    </Fragment>
-  );
+    useEffect(() => {
+        const readLoyalty = async () => {
+            setLoading(true);
+            await getAll(searchParams.get("search") ?? "all");
+            setLoading(false);
+        };
+        readLoyalty();
+    }, [getAll, searchParams]);
+
+    // const onFinish = async (newValues: ILoyaltyForm) => {
+    //   setLoading(true);
+
+    //   const loyalty = { ...values, ...newValues };
+    //   loyalty.fechaInicial = newValues.fecha[0].toDate();
+    //   loyalty.fechaFinal = newValues.fecha[1].toDate();
+
+    //   let success = false;
+
+    //   loyalty.id = "00000000-0000-0000-0000-000000000000";
+    //   success = await crearReagendado(loyalty);
+
+    //   setLoading(false);
+    // };
+
+    const LoyaltyTableForm = () => {
+        return (
+            <Form>
+                <TextInput
+                    formProps={{
+                        name: "id",
+                        label: "id",
+                    }}
+                    max={100}
+                    required
+                />
+
+                <DateRangeInput
+                    formProps={{ label: "Descuento entre", name: "fecha" }}
+                />
+            </Form>
+        );
+    };
+    const columns: IColumns<ILoyaltyList> = [
+        {
+            ...getDefaultColumnProps("clave", "Clave", {
+                searchState,
+                setSearchState,
+                width: "6%",
+                minWidth: 150,
+                windowSize: windowWidth,
+            }),
+            render: (value, loyaltys) => (
+                <Button
+                    type="link"
+                    onClick={() => {
+                        navigate(
+                            `/loyalties/${loyaltys.id}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"
+                            }`
+                        );
+                    }}
+                >
+                    {value}
+                </Button>
+            ),
+        },
+        {
+            ...getDefaultColumnProps("nombre", "Nombre", {
+                searchState,
+                setSearchState,
+                width: "15%",
+                minWidth: 150,
+                windowSize: windowWidth,
+            }),
+        },
+        {
+            ...getDefaultColumnProps("cantidadDescuento", "Beneficio Aplicado", {
+                searchState,
+                setSearchState,
+                width: "9%",
+                minWidth: 150,
+                windowSize: windowWidth,
+            }),
+        },
+        {
+            ...getDefaultColumnProps("fecha", "Fecha de Vigencia", {
+                searchState,
+                setSearchState,
+                width: "10%",
+                minWidth: 150,
+                windowSize: windowWidth,
+            }),
+        },
+        {
+            ...getDefaultColumnProps("tipoDescuento", "Promocion", {
+                searchState,
+                setSearchState,
+                width: "8%",
+                minWidth: 150,
+                windowSize: windowWidth,
+            }),
+        },
+        {
+            ...getDefaultColumnProps("idListaPrecios", "Lista de Precio", {
+                searchState,
+                setSearchState,
+                width: "8%",
+                minWidth: 150,
+                windowSize: windowWidth,
+            }),
+        },
+        {
+            key: "activo",
+            dataIndex: "activo",
+            title: "Activo",
+            align: "center",
+            width: windowWidth < resizeWidth ? 100 : "6%",
+            render: (value) => (value ? "Sí" : "No"),
+        },
+        {
+            key: "editar",
+            dataIndex: "id",
+            title: "Reagendar",
+            align: "center",
+            width: windowWidth < resizeWidth ? 100 : "6%",
+            render: (value, loyalty) => (
+                <Popover trigger="click" content={() => Reagendar(loyalty)} title="Reagendar">
+                    <Button type="primary">Reagendar</Button>
+                </Popover>
+            ),
+        },
+
+        {
+            key: "editar",
+            dataIndex: "id",
+            title: "Editar",
+            align: "center",
+            width: windowWidth < resizeWidth ? 100 : "6%",
+            render: (value) => (
+                <IconButton
+                    title="Editar Lealtad"
+                    icon={<EditOutlined />}
+                    onClick={() => {
+                        navigate(
+                            `/loyalties/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"
+                            }`
+                        );
+                    }}
+                />
+            ),
+        },
+    ];
+
+    const LoyaltyTablePrint = () => {
+        return (
+            <div ref={componentRef}>
+                <PageHeader
+                    ghost={false}
+                    title={<HeaderTitle title="Catálogo de Lealtades" image="Lealtad" />}
+                    className="header-container"
+                ></PageHeader>
+                <Divider className="header-divider" />
+                <Table<ILoyaltyList>
+                    size="large"
+                    rowKey={(record) => record.id}
+                    columns={columns.slice(0, 8)}
+                    pagination={false}
+                    dataSource={[...loyaltys]}
+                />
+            </div>
+        );
+    };
+
+    return (
+        <Fragment>
+            <Table<ILoyaltyList>
+                loading={loading || printing}
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columns}
+                dataSource={[...loyaltys]}
+                pagination={defaultPaginationProperties}
+                sticky
+                scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+            />
+            <div style={{ display: "none" }}>{<LoyaltyTablePrint />}</div>
+        </Fragment>
+    );
 };
 
 export default observer(LoyaltyTable);

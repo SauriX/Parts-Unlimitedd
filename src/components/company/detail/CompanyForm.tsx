@@ -324,8 +324,8 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
-        {!id  && (
-          <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
+        {!!id  && (
+          <Col md={12} sm={24} style={{ textAlign: "left" }}>
             <Pagination
               size="small"
               total={company.length}
@@ -338,11 +338,10 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
           </Col>
         )}
         {!readonly && (
-          <Col md={24} sm={24} style={id ? { textAlign: "right" } : { marginLeft: "80%" }}>
+          <Col md={id ? 12 : 24} sm={24} style={{ textAlign: "right" }}>
             <Button
               onClick={() => {
-                navigate("/companies");
-              }}
+                navigate("/companies");}}
             >
               {" "}
               Cancelar{" "}
