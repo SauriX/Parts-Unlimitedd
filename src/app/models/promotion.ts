@@ -17,7 +17,6 @@ export interface IPromotionEstudioList{
     area?:string,
     descuentoPorcentaje:number,
     descuentoCantidad:number,
-    lealtad:boolean,
     fechaInicial:Date,
     fechaFinal:Date,
     activo:boolean,
@@ -56,7 +55,6 @@ export interface IPromotionForm{
     tipoDescuento:string,
     cantidad:number,
     activo:boolean,
-    lealtad:boolean
     estudio: IPromotionEstudioList[],
     branchs: ISucMedComList[],
     dias:IDias[],

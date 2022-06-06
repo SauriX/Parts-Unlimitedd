@@ -190,6 +190,7 @@ export default class PromotionStore {
 
   update = async (priceList: IPromotionForm) => {
     try {
+      console.log("fallo");
       var estudios = priceList.estudio.map(x=>{
         x.selectedTags.map(t=>{
           if(t.id==1){
@@ -238,6 +239,7 @@ export default class PromotionStore {
       }
       return true;
     } catch (error: any) {
+      console.log("fallo",getErrors(error));
       alerts.warning(getErrors(error));
       return false;
     }

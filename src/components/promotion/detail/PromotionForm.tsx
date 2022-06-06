@@ -73,7 +73,6 @@ const { width: windowWidth } = useWindowDimensions();
         descuentoPorcentaje:x.descuentoPorcentaje,
         descuentoCantidad:x.descuentoPorcentaje,
         precioFinal: x.precioFinal,
-        lealtad:x.lealtad,
         fechaInicial: fecha.toDate(),
         fechaFinal: x.fechaFinal,
         activo:x.activo,
@@ -99,7 +98,6 @@ const { width: windowWidth } = useWindowDimensions();
         descuentoPorcentaje:x.descuentoPorcentaje,
         descuentoCantidad:x.descuentoPorcentaje,
         precioFinal: x.precioFinal,
-        lealtad:x.lealtad,
         fechaInicial: x.fechaInicial,
         fechaFinal: fecha.toDate(),
         activo:x.activo,
@@ -136,7 +134,6 @@ const { width: windowWidth } = useWindowDimensions();
           descuentoPorcentaje:(values.tipoDescuento=="porcent"? values.cantidad:0),
           descuentoCantidad:(values.tipoDescuento!="porcent"? values.cantidad:0),
           precioFinal: 0,
-          lealtad:false,
           fechaInicial: moment().toDate(),
           fechaFinal:moment().toDate(),
           activo:false,
@@ -156,7 +153,6 @@ const { width: windowWidth } = useWindowDimensions();
           descuentoPorcentaje:(values.tipoDescuento=="porcent"? values.cantidad:0),
           descuentoCantidad:(values.tipoDescuento!="porcent"? values.cantidad:0),
           precioFinal: 0,
-          lealtad:false,
           fechaInicial: moment().toDate(),
           fechaFinal:moment().toDate(),
           activo:false,
@@ -189,7 +185,6 @@ const { width: windowWidth } = useWindowDimensions();
           descuentoPorcentaje:(values.tipoDescuento==="porcent"? cantidad: ((cantidad*100)/x.precio)),
           descuentoCantidad:(values.tipoDescuento!=="porcent"? cantidad:((cantidad*x.precio)/100)),
           precioFinal:(values.tipoDescuento!=="porcent"? (x.precio-cantidad):x.precio-((cantidad*x.precio)/100)) ,
-          lealtad:x.lealtad,
           fechaInicial: moment().toDate(),
           fechaFinal:moment().toDate(),
           activo:x.activo,
@@ -217,7 +212,6 @@ const { width: windowWidth } = useWindowDimensions();
         descuentoPorcentaje:(typos=="porcent"? values.cantidad: ((values.cantidad*100)/x.precio)),
         descuentoCantidad:(typos!="porcent"? values.cantidad:((values.cantidad*x.precio)/100)),
         precioFinal:(typos!="porcent"? x.precio-values.cantidad:x.precio-((values.cantidad*x.precio)/100)) ,
-        lealtad:x.lealtad,
         fechaInicial: moment().toDate(),
         fechaFinal:moment().toDate(),
         activo:x.activo,
@@ -248,7 +242,6 @@ console.log(tag,"el tag");
         descuentoPorcentaje:x.descuentoPorcentaje,
         descuentoCantidad:x.descuentoCantidad,
         precioFinal:x.precioFinal ,
-        lealtad:x.lealtad,
         fechaInicial: x.fechaInicial,
         fechaFinal: x.fechaFinal,
         activo:x.activo,
@@ -279,38 +272,26 @@ console.log(tag,"el tag");
    
 };
 
-const setStudyL = (active:boolean,item:IPromotionEstudioList) =>{
-  var index = estudios.findIndex(x=>x.id==item.id);
-  var list = estudios;
-  item.lealtad=active;
-  list[index]=item;
- // setLista(list); 
-  var indexVal= values.estudio.findIndex(x=>x.id==item.id);
-  var val =values.estudio;
-  val[indexVal]=item;
-  setValues((prev) => ({ ...prev, estudio: val })); 
-     
-  };
-  const setStudyFi = (fechainical:moment.Moment,item:IPromotionEstudioList) =>{
+  const setStudyFi = (fechainical:moment.Moment,item:IPromotionEstudioList,type:boolean) =>{
     
-    var index = estudios.findIndex(x=>x.id==item.id);
+    var index = estudios.findIndex(x=>x.id==item.id && (x.paquete===type));
     var list = estudios;
     item.fechaInicial=fechainical.toDate();
     list[index]=item;
    // setLista(list); 
-    var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+    var indexVal= values.estudio.findIndex(x=>x.id==item.id && (x.paquete===type));
     var val =values.estudio;
     val[indexVal]=item;
     setValues((prev) => ({ ...prev, estudio: val })); 
        
     };
-    const setStudyFf = (fechafinal:moment.Moment,item:IPromotionEstudioList) =>{
-      var index = estudios.findIndex(x=>x.id==item.id);
+    const setStudyFf = (fechafinal:moment.Moment,item:IPromotionEstudioList,type:boolean) =>{
+      var index = estudios.findIndex(x=>x.id==item.id && (x.paquete===type));
       var list = estudios;
       item.fechaFinal=fechafinal.toDate();
       list[index]=item;
      // setLista(list); 
-      var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+      var indexVal= values.estudio.findIndex(x=>x.id==item.id && (x.paquete===type));
       var val =values.estudio;
       val[indexVal]=item;
       setValues((prev) => ({ ...prev, estudio: val })); 
@@ -346,24 +327,24 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     setValues((prev) => ({ ...prev, estudio: val })); 
        
     };
-    const setStudyPricefinal = (preciofinal:number,item:IPromotionEstudioList) =>{
-      var index = estudios.findIndex(x=>x.id==item.id);
+    const setStudyPricefinal = (preciofinal:number,item:IPromotionEstudioList,type:boolean) =>{
+      var index = estudios.findIndex(x=>x.id==item.id  && x.paquete===type);
       var list = estudios;
       item.descuentoCantidad=preciofinal-item.precio;
       item.descuentoPorcentaje=(100*item.descuentoCantidad/item.precio);
       item.precioFinal= preciofinal;
       list[index]=item;
      // setLista(list); 
-      var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+      var indexVal= values.estudio.findIndex(x=>x.id==item.id  && x.paquete===type);
       var val =values.estudio;
       val[indexVal]=item;
       setValues((prev) => ({ ...prev, estudio: val })); 
          
       };
 
-      const setStudyday= (item:IPromotionEstudioList,checked:boolean,tag:IDias) =>{
+      const setStudyday= (item:IPromotionEstudioList,checked:boolean,tag:IDias,type:boolean) =>{
         
-        var index = estudios.findIndex(x=>x.id==item.id);
+        var index = estudios.findIndex(x=>x.id==item.id && (x.paquete===type));
         var list = estudios;
 
         const nextSelectedTags = checked ? [...item.selectedTags!, tag] : item.selectedTags.filter(t => t.id !== tag.id);
@@ -371,7 +352,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
         item.selectedTags  = nextSelectedTags;
         list[index]=item;
        // setLista(list); 
-        var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+        var indexVal= values.estudio.findIndex(x=>x.id==item.id && (x.paquete===type));
         var val =values.estudio;
         val[indexVal]=item;
         setValues((prev) => ({ ...prev, estudio: val })); 
@@ -441,7 +422,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
       align: "center",
       width:  100 ,
       render: (value,item) => (
-        <InputNumber type={"number"} min={0} value={item.precioFinal}  onChange={(value)=>setStudyPricefinal(value,item)}></InputNumber>
+        <InputNumber type={"number"} min={0} value={item.precioFinal}  onChange={(value)=>setStudyPricefinal(value,item,item.paquete)}></InputNumber>
       ),
     },
     {
@@ -452,20 +433,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
           windowSize: windowWidth,
         }),
     },
-    {
-      key: "editarl",
-      dataIndex: "id",
-      title: "Lealtad",
-      align: "center",
-      width:  100 ,
-      render: (value,item) => (
-        <Checkbox
-          name="Lealtad"
-          checked={item.lealtad}
-          onChange={(value)=>{ console.log(value.target.checked); var active= false; if(value.target.checked){ console.log("here"); active= true;}setStudyL(active,item)}}
-        />
-      ),
-    },
+
     {
       key: "editarc",
       dataIndex: "id",
@@ -473,7 +441,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
       align: "center",
       width: 200,
       render: (value,item) => (
-        <DatePicker style={{marginLeft:"10px"}} value={moment(item.fechaInicial)} onChange={(value)=>{setStudyFi(value!,item)}} />
+        <DatePicker style={{marginLeft:"10px"}} value={moment(item.fechaInicial)} onChange={(value)=>{setStudyFi(value!,item,item.paquete)}} />
       ),
     },    {
       key: "editarc",
@@ -482,7 +450,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
       align: "center",
       width: 200,
       render: (value,item) => (
-        <DatePicker style={{marginLeft:"10px"}} value={moment(item.fechaFinal)} onChange={(value)=>{setStudyFf(value!,item)}} />
+        <DatePicker style={{marginLeft:"10px"}} value={moment(item.fechaFinal)} onChange={(value)=>{setStudyFf(value!,item,item.paquete)}} />
       ),
     },
     {
@@ -518,7 +486,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
                   <CheckableTag
                     key={tag.id}
                     checked={item.selectedTags.filter((x:IDias) =>x.id===tag.id).length>0}
-                    onChange={checked => setStudyday(item,checked,tag)}
+                    onChange={checked => setStudyday(item,checked,tag,item.paquete)}
                   >
                     {tag.dia}
                   </CheckableTag>
@@ -791,18 +759,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
                   ></NumberInput>
               </Col>
               <Col md={12} sm={24} xs={12}>
-              <SwitchInput
-                  name="lealtad"
-                  onChange={(value) => {
-                    if (value) {
-                      alerts.info("Se aplicará lealtad");
-                    } else {
-                      alerts.info("Ya no se aplicará lealtad");
-                    }
-                  }}
-                  label="Lealtad"
-                  readonly={readonly}
-                />
+
               </Col>
               <Col md={12} sm={24} xs={12}>
               <div style={{marginLeft:"98px",marginBottom:"20px"}}>
