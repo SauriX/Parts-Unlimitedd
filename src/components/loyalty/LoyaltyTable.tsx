@@ -6,6 +6,7 @@ import {
     PageHeader,
     Popover,
     Table,
+    Space,
 } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {
@@ -29,6 +30,7 @@ import HeaderTitle from "../../app/common/header/HeaderTitle";
 import DateRangeInput from "../../app/common/form/DateRangeInput";
 import TextInput from "../../app/common/form/TextInput";
 import moment from "moment";
+import views from "../../app/util/view";
 
 type LoyaltyTableProps = {
     id: string;
@@ -62,7 +64,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
     console.log("Table");
 
     const Reagendar = (loy: ILoyaltyList) => (
-        <div>
+        <Space direction="vertical">
             <DatePicker.RangePicker
                 onChange={(e: any) => {
                     if (e) {
@@ -71,14 +73,17 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
 
                         console.log(newDate, id)
 
+                    } else {
+                        setNewDate("");
                     }
                 }}
                 format="DD/MM/YYYY"
             />
-            <br />
+            
             <Button
                 type="primary"
                 htmlType="submit"
+                disabled={!!!newDate}
                 onClick={() => {
                     const loyalty: ILoyaltyForm =
                     {
@@ -89,21 +94,12 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
                         fecha: []
                     };
                     loyalty.id = "00000000-0000-0000-0000-000000000000";
-                    // loyalty.fechaInicial = Values.fecha[0].toDate();
-                    // loyalty.fechaFinal = Values.fecha[1].toDate();
-                    //let success = false;
-                    //loyalty.id = values.id;
-                    //loyalty.id = "00000000-0000-0000-0000-000000000000";
-                    //loyalty.cantidadDescuento = values.cantidadDescuento
-                    //loyalty.clave = values.clave;
-                    //loyalty.nombre = values.nombre;
-                    //console.log("Info de registro", loyalty.nombre, loyalty.clave, loyalty.cantidadDescuento);
                     create(loyalty);
                 }}
             >
                 Guardar
             </Button>
-        </div>
+        </Space>
     );
 
     useEffect(() => {
@@ -115,20 +111,10 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
         readLoyalty();
     }, [getAll, searchParams]);
 
-    // const onFinish = async (newValues: ILoyaltyForm) => {
-    //   setLoading(true);
+    useEffect(() => {
+        console.log(newDate);
+    }, [newDate]);
 
-    //   const loyalty = { ...values, ...newValues };
-    //   loyalty.fechaInicial = newValues.fecha[0].toDate();
-    //   loyalty.fechaFinal = newValues.fecha[1].toDate();
-
-    //   let success = false;
-
-    //   loyalty.id = "00000000-0000-0000-0000-000000000000";
-    //   success = await crearReagendado(loyalty);
-
-    //   setLoading(false);
-    // };
 
     const LoyaltyTableForm = () => {
         return (
@@ -144,6 +130,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
 
                 <DateRangeInput
                     formProps={{ label: "Descuento entre", name: "fecha" }}
+                    required
                 />
             </Form>
         );
@@ -270,7 +257,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
                 <Table<ILoyaltyList>
                     size="large"
                     rowKey={(record) => record.id}
-                    columns={columns.slice(0, 8)}
+                    columns={columns.slice(0, 7)}
                     pagination={false}
                     dataSource={[...loyaltys]}
                 />
