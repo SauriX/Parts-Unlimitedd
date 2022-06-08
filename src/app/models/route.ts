@@ -50,7 +50,7 @@ export interface IRouteEstudioList {
     area: string,
     departamento: string,
     activo: boolean,
-    selectedTags:IDias[],
+    //selectedTags:IDias[],
 }
 
 export class RouteFormValues implements IRouteForm {

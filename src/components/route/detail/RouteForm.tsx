@@ -193,7 +193,7 @@ useEffect(() => {
             area:x.area,
             clave:x.clave,
             nombre:x.nombre,
-            selectedTags:nextSelectedTags,
+            //selectedTags:nextSelectedTags,
             departamento:x.departamento,
             activo:x.activo,
           }
