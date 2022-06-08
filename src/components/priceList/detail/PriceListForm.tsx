@@ -83,7 +83,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const navigate = useNavigate();
   const [radioValue, setRadioValue] = useState<any>();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [lista, setLista] = useState(studies);
+  const [lista, setLista] = useState<IPriceListEstudioList[]>(studies);
   const [listSMC, setListSCM] = useState(sucMedCom);
   const [listSucursal, setListSucursal] = useState<any>();
   const [listMedicos, setListMedicos] = useState<any>();
@@ -222,7 +222,10 @@ const PriceListForm: FC<PriceListFormProps> = ({
   };
 
   const setStudyPrice = (newprecio:number,item:IPriceListEstudioList,typePAck:boolean) =>{
-    
+    if(newprecio<0){
+      alerts.warning("El Precio tiene que ser mayor a 0");
+      return;
+    }
     var index = lista.findIndex(x=>x.id===item.id  && x.paqute===typePAck);
     var list = lista;
     item.precio = newprecio;
@@ -264,13 +267,14 @@ const PriceListForm: FC<PriceListFormProps> = ({
       user!.sucMedCom = user!.sucursales;
       setValues(user!);
       form.setFieldsValue(user!);
+      setLista(user?.table!);
       console.log(user);
       setListSucursal(branches);
       setListCompañia(Companies);
       setListMedicos(medics);
   
+      console.log(tabla,"estudios y paquetesa");
       
-      setLista(tabla);
      
       console.log("seteado");
       
@@ -409,6 +413,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
   };
 
   const filterByDepartament = async (departament: number) => {
+    console.log(lista,"lalista");
     if (departament) {
       var departamento = departmentOptions.filter(
         x => x.value === departament
@@ -500,8 +505,8 @@ const PriceListForm: FC<PriceListFormProps> = ({
       render: (value,item) => (
         <InputNumber type={"number"}  
         value={item.precio}  
-        onChange={(value)=>setStudyPrice(Number(value),item,item.paqute!)}
-        min={0}
+        onChange={(value)=>setStudyPrice(value,item,item.paqute!)}
+        
         >
 
         </InputNumber>
@@ -728,6 +733,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
             <Col md={9} sm={24} xs={12}>
               <label htmlFor="">Área: </label> 
               <Select
+
                 //formProps={{ name: "area", label: "Área" }}
                 options={areas}
                 onChange={(value) => {
@@ -735,7 +741,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
                   filterByArea(value);
                 }}
                 value={areaId}
-                style={{ width: "400px" }}
+                style={{ width: "400px" ,marginLeft:"2px"}}
                 disabled={readonly}
               />
             </Col>
