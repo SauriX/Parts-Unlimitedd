@@ -11,6 +11,7 @@ import Indication from "../api/indication";
 import PriceList from "../api/priceList";
 import branch from "../api/branch";
 
+import Branch from "../api/branch";
 export default class OptionStore {
   constructor() {
     makeAutoObservable(this);
@@ -233,6 +234,7 @@ export default class OptionStore {
       this.MethodOptions = [];
     }
   };
+
   taponOption:IOptions[]=[];
   getTaponOption = async () =>{
     try {
@@ -337,4 +339,32 @@ export default class OptionStore {
     }
   };
   
+  BranchOptions:IOptions[]=[];
+  getBranchOptions=async()=>{
+    try{
+      const branch = Branch.getAll("");
+      this.BranchOptions= (await branch).map((x)=>({
+        value:x.idSucursal,
+        label:x.nombre
+      }));
+    }catch(error){
+      this.BranchOptions=[];
+    }
+  };
+
+  DeliveryOptions:IOptions[]=[];
+  getDeliveryOptions = async () => {
+    try {
+      const Delivery = await Catalog.getActive<ICatalogNormalList>(
+        "Delivery"
+      );
+      console.log(Delivery);
+      this.DeliveryOptions = Delivery.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.DeliveryOptions = [];
+    }
+  };
 }

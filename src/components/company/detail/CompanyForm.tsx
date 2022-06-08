@@ -516,6 +516,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                     label: "Código P: ",
                   }}
                   max={1000000}
+                  required
                   readonly={readonly}
                 />
 
@@ -534,6 +535,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                     label: "Municipio ",
                   }}
                   max={100}
+                  required
                   readonly={readonly}
                 />
                 <TextInput

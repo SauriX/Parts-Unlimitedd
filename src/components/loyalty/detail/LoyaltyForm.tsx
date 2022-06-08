@@ -50,7 +50,7 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
   const nameValue = Form.useWatch('tipoDescuento', formTP);
 
     const [loading, setLoading] = useState(false);
-    const [porcentaje, setporcentaje] = useState<number>();
+    // const [porcentaje, setporcentaje] = useState<number>();
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
@@ -229,9 +229,11 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
                       }));
                       setDiscunt(e.target.value);
                       console.log(values.cantidad);
+                      
                     }}
                     value={discunt}
-                  /></div>
+                  />
+                  </div>
                 
         </Form.Item>
         </Form>
@@ -253,6 +255,7 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
                   {/* Descuento entre : */}
                   <DateRangeInput
                     formProps={{ label: "Descuento entre", name: "fecha" }}
+                    readonly={readonly}
                   />
                   {/* <RangePicker
                     style={{ marginLeft: "20px" }} //value={moment(item.fechaInicial)}

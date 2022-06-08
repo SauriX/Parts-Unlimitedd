@@ -1,6 +1,3 @@
-import { IBranchInfo } from "../models/branch";
-import { ICompanyList } from "../models/company";
-import { IMedicsList } from "../models/medics";
 import { IPriceListForm, IPriceListList, ISucMedComList } from "../models/priceList";
 import { IScopes } from "../models/shared";
 import requests from "./agent";

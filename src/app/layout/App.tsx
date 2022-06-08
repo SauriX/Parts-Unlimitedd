@@ -4,7 +4,6 @@ import ReagentDetail from "../../components/reagent/detail/ReagentDetail";
 import MedicsDetail from "../../components/medics/detail/MedicsDetail";
 import IndicationDetail from "../../components/indication/detail/IndicationDetail";
 import UserDetail from "../../components/user/detail/UserDetail";
-import UserFormValues from "../../components/user/detail/UserForm";
 import NewUser from "../../components/user/detail/NewUser";
 import Home from "../../views/Home";
 import Reagent from "../../views/Reagent";
@@ -47,6 +46,8 @@ import Center from "./Center";
 import ModalComponent from "../common/modal/ModalComponent";
 import DrawerComponent from "../common/drawer/DrawerComponent";
 import Proceeding from "../../views/Proceeding";
+import Routee from "../../views/Route";
+import RouteDetail from "../../components/route/detail/RouteDetail";
 
 function App() {
   const { profileStore } = useStore();
@@ -128,6 +129,9 @@ function App() {
             <Route path="expedientes" element={<Proceeding />} />
             <Route path="expedientes/:id" element={< PromotionDetail/>} />
             <Route path="expedientes/new" element={<PromotionDetail />} /> 
+            <Route path="routes" element={<Routee/>} />
+            <Route path="routes/:id" element={<RouteDetail />} />
+            <Route path="routes/new" element={<RouteDetail />} />
             <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
             <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
             <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />

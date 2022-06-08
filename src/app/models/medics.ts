@@ -17,8 +17,8 @@ export interface IMedicsList {
   calle: string;
   coloniaId?: number;
   correo: string;
-  celular: number;
-  telefono: number;
+  celular?: string;
+  telefono?: string;
   activo: boolean;
   clinicas: IClinicList[];
 }
@@ -39,8 +39,8 @@ export interface IMedicsForm {
   calle: string;
   coloniaId?: number;
   correo?: string;
-  celular?: number;
-  telefono?: number | string;
+  celular?: string;
+  telefono?: string;
   activo: boolean;
   clinicas: IClinicList[];
 }
