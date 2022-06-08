@@ -88,6 +88,7 @@ export default class ParameterStore {
       alerts.success(messages.updated);
       return true;
     } catch (error: any) {
+ 
       alerts.warning(getErrors(error));
       return false;
     }
