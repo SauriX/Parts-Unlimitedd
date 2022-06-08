@@ -22,9 +22,9 @@ export interface IRouteForm {
     diasDeEntrega: number,
     horaDeEntregaEstimada: number,
     horaDeEntrega:	number,
-    horaDeRecoleccion:	number,
-    tiempoDeEntrega:	number,
-    formatoDeTiempoId:	number,
+    horaDeRecoleccion?:	number,
+    tiempoDeEntrega?:	number,
+    formatoDeTiempoId?:	number,
     estudioId:	string,
     fechaInicial?: Date,
     fechaFinal?: Date,
@@ -50,6 +50,7 @@ export interface IRouteEstudioList {
     area: string,
     departamento: string,
     activo: boolean,
+    selectedTags:IDias[],
 }
 
 export class RouteFormValues implements IRouteForm {
@@ -72,9 +73,9 @@ export class RouteFormValues implements IRouteForm {
     diasDeEntrega = 0;
     horaDeEntregaEstimada = 0;
     horaDeEntrega = 0;
-    horaDeRecoleccion = 0;
-    tiempoDeEntrega = 0;
-    formatoDeTiempoId = 0;
+    horaDeRecoleccion = undefined;
+    tiempoDeEntrega = undefined;
+    formatoDeTiempoId = undefined;
     estudioId = "";
     idResponsableEnvio = "";
     idResponsableRecepcion = "";

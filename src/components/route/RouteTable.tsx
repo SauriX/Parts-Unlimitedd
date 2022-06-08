@@ -92,7 +92,7 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-        ...getDefaultColumnProps("sucursalDestinoId", "Sucursal Destino", {
+        ...getDefaultColumnProps("sucursalDestinoId", "Destino", {
           searchState,
           setSearchState,
           width: "30%",
@@ -131,7 +131,7 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Rutas" image="routes" />}
+          title={<HeaderTitle title="Catálogo de Rutas" image="rutas" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />

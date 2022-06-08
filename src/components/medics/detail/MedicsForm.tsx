@@ -120,16 +120,16 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   const onFinish = async (newValues: IMedicsForm) => {
     const medics = { ...values, ...newValues };
 
-    medics.telefono = medics.telefono
-      ? parseInt(
-          medics.telefono.toString()?.replaceAll("_", "0")?.replaceAll("-", "")
-        )
-      : undefined;
-      medics.celular = medics.celular
-      ? parseInt(
-          medics.celular.toString()?.replaceAll("_", "0")?.replaceAll("-", "")
-        )
-      : undefined;   
+    // medics.telefono = medics.telefono
+    //   ? parseInt(
+    //       medics.telefono.toString()?.replaceAll("_", "0")?.replaceAll("-", "")
+    //     )
+    //   : undefined;
+    //   medics.celular = medics.celular
+    //   ? parseInt(
+    //       medics.celular.toString()?.replaceAll("_", "0")?.replaceAll("-", "")
+    //     )
+    //   : undefined;   
       
     let success = false;
 

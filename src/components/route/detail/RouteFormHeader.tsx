@@ -30,7 +30,7 @@ const RouteFormHeader: FC<RouteFormHeaderProps> = ({ id, handlePrint, handleDown
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Rutas" image="route" />}
+      title={<HeaderTitle title="Catálogo de Rutas" image="rutas" />}
       className="header-container"
       extra={[
         !!id && scopes?.imprimir && (

@@ -4,7 +4,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../app/common/button/ImageButton";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import { useStore } from "../../app/stores/store";
-import views from "../../app/util/view";
 import { PlusOutlined } from "@ant-design/icons";
 
 const { Search } = Input;
@@ -39,7 +38,7 @@ const RouteHeader: FC<RouteHeaderProps> = ({ handlePrint, handleDownload }) => {
     return (
         <PageHeader
             ghost={false}
-            title={<HeaderTitle title="Catálogo de Rutas" image="route" />}
+            title={<HeaderTitle title="Catálogo de Rutas" image="rutas" />}
             className="header-container"
             extra={[
                 scopes?.imprimir && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

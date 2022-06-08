@@ -1,4 +1,4 @@
-import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Select, Checkbox, Input, Table } from "antd";
+import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Select, Checkbox, Input, Table, TreeSelect } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
@@ -11,12 +11,16 @@ import views from "../../../app/util/view";
 import SwitchInput from "../../../app/common/form/SwitchInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
-import { IRouteEstudioList, IRouteForm, RouteFormValues } from "../../../app/models/route";
+import { IDias, IRouteEstudioList, IRouteForm, RouteFormValues } from "../../../app/models/route";
 import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import { IOptions } from "../../../app/models/shared";
 import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import NumberInput from "../../../app/common/form/NumberInput";
+import SelectInput from "../../../app/common/form/SelectInput";
+import MaskInput from "../../../app/common/form/MaskInput";
+import CheckableTag from "antd/lib/tag/CheckableTag";
+import Typography from "antd/lib/typography/Typography";
 
 const { Search } = Input;
 type RouteFormProps = {
@@ -33,24 +37,29 @@ const RouteForm: FC<RouteFormProps> = ({  componentRef, printing }) => {
   const { optionStore, routeStore } = useStore();
   const { routes, getById, getAll, create, update,getAllStudy, studies } = routeStore;
   const [lista, setLista] = useState(studies);
-  const { getDepartmentOptions, departmentOptions,getareaOptions,areas } = optionStore;
+  const { getDepartmentOptions, departmentOptions,getareaOptions,areas,
+    BranchOptions, getBranchOptions, DeliveryOptions, getDeliveryOptions, MaquiladorOptions, getMaquiladorOptions } = optionStore;
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-
   const [form] = Form.useForm<IRouteForm>();
   const [aeraSearch, setAreaSearch] = useState(areas);
   const [areaForm, setAreaForm] = useState<IOptions[]>([]);
   const [areaId, setAreaId] = useState<number>();
   const [depId, setDepId] = useState<number>();
   const [searchvalue, setSearchvalue] = useState<string>();
-
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [loading, setLoading] = useState(false);
   const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
   const [values, setValues] = useState<IRouteForm>(new RouteFormValues());
+  const [value, setValue] = useState<string>();
+  const [estudios,setEstudios] = useState<IRouteEstudioList[]>([]);
   let { id } = useParams<UrlParams>();
   const { width: windowWidth } = useWindowDimensions();
+  const [selectedTags, setSelectedTags] = useState<IDias[]>([]);
+  const tagsData:IDias[] = [{id:1,dia:'L'}, {id:2,dia:'M'}, {id:3,dia:'M'}, {id:4,dia:'J'},{id:5,dia:'V'},{id:6,dia:'S'},{id:7,dia:'D'}];
 
-  
+  const [formTP] = Form.useForm<{ tiempoDeEntrega: string;  }>();
+  const nameValue = Form.useWatch('tiempoDeEntrega', formTP);
   useEffect(() => {
     const studys = async () => {
       let estudio = await getAllStudy();
@@ -62,6 +71,8 @@ const RouteForm: FC<RouteFormProps> = ({  componentRef, printing }) => {
     }
     
   }, [getAllStudy]);
+
+
   useEffect(() => {
     getDepartmentOptions();
   }, [getDepartmentOptions]);
@@ -74,6 +85,17 @@ const RouteForm: FC<RouteFormProps> = ({  componentRef, printing }) => {
       areareader();
   }, [ getareaOptions]);
   
+  useEffect(() => {
+    getBranchOptions();
+    getDeliveryOptions();
+    getMaquiladorOptions();
+    
+  }, [
+    getBranchOptions,
+    getDeliveryOptions,
+    getMaquiladorOptions,
+  ]);
+
 useEffect(() => {
   console.log("use");
   const readuser = async (idUser: string) => {
@@ -102,7 +124,7 @@ useEffect(() => {
   }else{
     form.setFieldsValue({idDepartamento:undefined,idArea:undefined});
   }
-}, [form, getById , id]);
+}, [form, getById , id, getAll, getAllStudy, getareaOptions, studies  ]);
 
   
 
@@ -117,7 +139,7 @@ useEffect(() => {
 
     const route = { ...values, ...newValues };
 
-    route.estudio=lista.filter(x=>x.activo==true);
+    route.estudio=lista.filter(x=>x.activo===true);
 
     let success = false;
 
@@ -159,7 +181,47 @@ useEffect(() => {
     searchedText: "",
     searchedColumn: "",
   });
+
+  const handleChange=(tag:IDias, checked:Boolean)=>{
+
+    console.log(tag,"el tag");
+        const nextSelectedTags = checked ? [...selectedTags!, tag] : selectedTags.filter(t => t.id !== tag.id);
+        console.log('You are interested in: ', nextSelectedTags);
+        let estudio:IRouteEstudioList[] = estudios!.map(x=> {
+          let data:IRouteEstudioList = {
+            id:x.id,
+            area:x.area,
+            clave:x.clave,
+            nombre:x.nombre,
+            selectedTags:nextSelectedTags,
+            departamento:x.departamento,
+            activo:x.activo,
+          }
+        return data;
+         });
+    
+         setValues((prev) => ({ ...prev, estudio: estudio! }));
+        setSelectedTags( nextSelectedTags! );
+      };
   
+      const treeData = [
+        {
+          title: 'Sucursales',
+          value: 'sucursalDestinoId',
+          children: BranchOptions.map(x => ({ title: x.label, value: x.value }))
+        },
+        {
+          title: 'Maquiladores',
+          value: 'sucursalDestinoId',
+          children: MaquiladorOptions.map(x => ({ title: x.label, value: x.value }))
+        },
+      ];
+
+      const onChange = (newDestinoValue: string) => {
+        console.log(newDestinoValue);
+        setValue(newDestinoValue);
+      };
+
   const columnsEstudios: IColumns<IRouteEstudioList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
@@ -193,8 +255,8 @@ useEffect(() => {
         windowSize: windowWidth,
       }),
   },
-    {
-      key: "editar",
+    { 
+      key: "Añadir",
       dataIndex: "id",
       title: "Añadir",
       align: "center",
@@ -203,22 +265,30 @@ useEffect(() => {
         <Checkbox
           name="activo"
           checked={item.activo}
-          onChange={(value)=>{ console.log(value.target.checked); var active= false; if(value.target.checked){ console.log("here"); active= true;}setStudy(active,item)}}
+          onChange={(value)=>{ console.log(value.target.checked); 
+            var active= false; 
+            if(value.target.checked){ console.log("here");
+             active= true;}setStudy(active,item)}}
         />
       ),
     }
     ,
-    {
-      key: "selectAll",
-      dataIndex: "id",
-      title: "Seleccionar todos",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value,item) => (
-        "All Might"
-      ),
-    }
   ];
+  
+  const onSelectChange = (newSelectedRowKeys: React.Key[], ) => {
+    console.log('selectedRowKeys changed: ', selectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+   // setStudy()
+    
+  };
+  
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+    
+    
+  };
+  const hasSelected = selectedRowKeys.length > 0;
 
   const onValuesChange = async (changedValues: any) => {
     const field = Object.keys(changedValues)[0];
@@ -231,15 +301,34 @@ useEffect(() => {
       form.setFieldsValue({idArea:undefined});
 
     }
+
+    if (field === "formatoDeTiempoId") {
+      const value = changedValues[field];
+      let horas = value*24;
+      horas = Math.round(horas*100)/100;  
+      form.setFieldsValue({tiempoDeEntrega:horas});
+  }
+  if (field === "tiempoDeEntrega") {
+      const value = changedValues[field];
+      let dias = value/24;
+      if(dias <1){
+          dias =0;
+      }else{
+          dias = Math.round(dias*100)/100;  
+      }
+      
+      console.log(dias);
+      form.setFieldsValue({formatoDeTiempoId:dias});
+  }
   };
 
   const setStudy = (active:boolean,item:IRouteEstudioList) =>{
-    var index = lista.findIndex(x=>x.id==item.id);
+    var index = lista.findIndex(x=>x.id=item.id);
     var list = lista;
     item.activo=active;
     list[index]=item;
     setLista(list);
-    var indexVal= values.estudio.findIndex(x=>x.id==item.id);
+    var indexVal= values.estudio.findIndex(x=>x.id===item.id);
     var val =values.estudio;
     val[indexVal]=item;
     setValues((prev) => ({ ...prev, estudio: val }));
@@ -313,7 +402,7 @@ useEffect(() => {
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo de Rutas" image="route" />}
+              title={<HeaderTitle title="Catálogo de Rutas" image="rutas" />}
               className="header-container"
             ></PageHeader>
           )}
@@ -353,28 +442,37 @@ useEffect(() => {
               </Col>
               <Col md={12} sm={24} xs={12}></Col>
               <Col md={12} sm={24} xs={12}>
-                <TextInput
+                <SelectInput
                   formProps={{
                     name: "sucursalOrigenId",
-                    label: "Sucursal Origen",
+                    label: "Sucursal Origen ",
                   }}
-                  max={100}
-                  required
                   readonly={readonly}
+                  required
+                  options={BranchOptions}
                 />
-              </Col>
-              <Col md={12} sm={24} xs={12}></Col>
-              <Col md={12} sm={24} xs={12}>
-                <TextInput
+                <div style={{marginLeft:"170px",marginBottom:"20px"}}>
+                <span style={{ marginRight: 10 }}>Destino:</span>
+                <TreeSelect
+                  style={{ width: '80%' }}
+                  value={value}
+                  dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                  treeData={treeData}
+                  placeholder="Please select"
+                  treeDefaultExpandAll
+                  onChange={onChange}
+                  />
+              </div>
+                {/* <TreeSelect
                   formProps={{
                     name: "sucursalDestinoId",
-                    label: "Destino",
+                    label: "Destino ",
                   }}
-                  max={100}
-                  required
                   readonly={readonly}
-                />
-              </Col>
+                  required
+                  options={BranchOptions}
+                /> */}
+                </Col>
               <Col md={12} sm={24} xs={12}></Col>
               <Col md={12} sm={24} xs={12}>
               <TextAreaInput
@@ -386,9 +484,6 @@ useEffect(() => {
                   rows={5}
                   readonly={readonly}
                 />
-              </Col>
-              <Col md={12} sm={24} xs={12}></Col>
-              <Col md={12} sm={24} xs={12}>
                 <SwitchInput
                   name="activo"
                   onChange={(value) => {
@@ -404,24 +499,59 @@ useEffect(() => {
                 />
               </Col>
               <Col md={12} sm={24} xs={12}>
-              <TextInput
+              <SelectInput
                   formProps={{
                     name: "paqueteriaId",
-                    label: "Paqueteria",
+                    label: "Paqueteria ",
                   }}
-                  max={100}
                   readonly={readonly}
+                  required
+                  options={DeliveryOptions}
                 />
-                <TextInput
+                <div style={{marginLeft:"145px",marginBottom:"20px"}}>
+                <span style={{ marginRight: 10 }}>Aplicar dias:</span>
+                {tagsData.map(tag => (
+                  <CheckableTag
+                    key={tag.id}
+                    checked={selectedTags.filter(x=>x.id===tag.id).length>0}
+                    onChange={checked => handleChange(tag, checked) }
+                  >
+                    {tag.dia}
+                  </CheckableTag>
+                ))}
+              </div>
+                <NumberInput
                   formProps={{
                     name: "horaDeRecoleccion",
                     label: "Hora de Recoleccion",
                   }}
-                  max={100}
+                  min={7}
+                  max={23}
                   required
                   readonly={readonly}
                 />
-                <NumberInput
+                {/* <MaskInput
+                  formProps={{
+                    name: "horaDeRecoleccion",
+                    label: "Hora de Recoleccion",
+                  }}
+                  mask={[
+                    /[0-9]/,
+                    /[0-9]/,
+                    " : ",
+                    "0",
+                    "0 ",
+                  ]}
+                  validator={(_, value: any) => {
+                    if (!value || value.indexOf("_") === -1) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject("El campo debe contener 10 dígitos");
+                  }}
+                  readonly={readonly}
+                  required
+                  /> */}
+                    <NumberInput
                   formProps={{
                     name: "tiempoDeEntrega",
                     label: "Tiempo de Entrega",
@@ -430,8 +560,22 @@ useEffect(() => {
                   max={100}
                   required
                   readonly={readonly}
+                  
                 />
-              </Col>
+                  <TextInput
+                  formProps={{
+                    name: "formatoDeTiempoId",
+                    label: "Dias",
+                  }}
+                  max= {50}
+                  //nameValue > "24"? "Horas": "Dias"
+                  required
+                  readonly={readonly}
+                  
+                />
+                  </Col>
+                
+              
             </Row>
           </Form>
           <Divider orientation="center">Asignación de Estudios</Divider>
@@ -484,12 +628,17 @@ useEffect(() => {
           value={searchvalue}
         />,</Col>
             <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
+                <span style={{ marginLeft: 8 }}>
+                {hasSelected ? `${selectedRowKeys.length} estudios seleccionados  ` : ''}
+                </span>
                 <Table<IRouteEstudioList>
                 size="small"
                 rowKey={(record) => record.id}
                 columns={columnsEstudios.slice(0, 6)}
                 pagination={false}
                 dataSource={[...(values.estudio ?? [])]}
+                rowSelection={rowSelection} 
+               
                 // scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
                 scroll={{ y: 240 }}
                 />

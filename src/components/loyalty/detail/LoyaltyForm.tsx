@@ -50,7 +50,7 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
   const nameValue = Form.useWatch('tipoDescuento', formTP);
 
     const [loading, setLoading] = useState(false);
-    const [porcentaje, setporcentaje] = useState<number>();
+    // const [porcentaje, setporcentaje] = useState<number>();
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );

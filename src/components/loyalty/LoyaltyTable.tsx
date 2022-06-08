@@ -62,7 +62,9 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
     });
 
     console.log("Table");
-
+    function disabledDate(current: moment.Moment) {
+        return current.isBefore(moment(), "day");
+      }
     const Reagendar = (loy: ILoyaltyList) => (
         <Space direction="vertical">
             <DatePicker.RangePicker
@@ -78,6 +80,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
                     }
                 }}
                 format="DD/MM/YYYY"
+                disabledDate={disabledDate} 
             />
             
             <Button
@@ -186,7 +189,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
             }),
         },
         {
-            ...getDefaultColumnProps("tipoDescuento", "Promocion", {
+            ...getDefaultColumnProps("tipoDescuento", "Promoción", {
                 searchState,
                 setSearchState,
                 width: "8%",
