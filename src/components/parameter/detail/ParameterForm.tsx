@@ -61,6 +61,8 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     printFormat,
     getParameterOptions,
     parameterOptions2,
+    getUnitOptions,
+    UnitOptions
   } = optionStore;
   const [form] = Form.useForm<IParameterForm>();
   const [flag, setFlag] = useState(0);
@@ -111,6 +113,13 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     };
     readdepartments();
   }, [getDepartmentOptions]);
+
+  useEffect(() => {
+    const readdepartments = async () => {
+      await getUnitOptions();
+    };
+    readdepartments();
+  }, [getUnitOptions]);
   useEffect(() => {
     const readReagents = async () => {
       await getReagentOptions();
@@ -382,26 +391,24 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
               />
             </Col>
             <Col md={12} sm={24} xs={12}>
-              <NumberInput
-              type="number"
+              <SelectInput
                 formProps={{
                   name: "unidades",
                   label: "Unidades",
                 }}
-                max={100}
-                min={0}
+                options={UnitOptions}
                 required
 
                 readonly={CheckReadOnly()}
               />
             </Col>
             <Col md={12} sm={24} xs={12}>
-              <TextInput
+              <SelectInput
                 formProps={{
                   name: "unidadSi",
                   label: "Unidad SI",
                 }}
-                max={100}
+                options={UnitOptions}
                 required
                 readonly={CheckReadOnly()}
               />
