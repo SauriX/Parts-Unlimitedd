@@ -1,7 +1,7 @@
 import { IBranchForm, IBranchInfo } from "../models/branch";
 import requests from "./agent";
 
-const Role = {
+const branch = {
   access: (): Promise<void> => requests.get("/user/scopes"),
   getAll: (search: string): Promise<IBranchInfo[]> => requests.get(`Branch/all/${!search ? "all" : search}`),
   getById: (id: string): Promise<IBranchForm> => requests.get(`Branch/${id}`),
@@ -13,4 +13,4 @@ const Role = {
   exportForm: (id: string, clave?: string): Promise<void> => requests.download(`Branch/export/form/${id}`),
 };
 
-export default Role;
+export default branch;

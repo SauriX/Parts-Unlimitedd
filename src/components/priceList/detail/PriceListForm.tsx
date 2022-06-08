@@ -52,7 +52,7 @@ type PriceListFormProps = {
 
 const radioOptions = [
   { label: "Sucursales", value: "branch" },
-  { label: "Medicos", value: "medic" },
+  { label: "Médicos", value: "medic" },
   { label: "Compañias", value: "company" },
 ];
 
@@ -93,6 +93,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
+  const [aeraSearch, setAreaSearch] = useState(areas);
   const [values, setValues] = useState<IPriceListForm>(
     new PriceListFormValues()
   );
@@ -104,6 +105,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
        let tabla = estudiostabla!.concat(paquetestabla!);
        console.log(tabla);
        setValues((prev) => ({ ...prev, table: tabla }));
+       setLista(tabla);
     }
     if(!id){
       readtabla();
@@ -243,6 +245,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       console.log(all);
       var studis = await getAllStudy();
       var pcks = await getAllPack();
+      console.log(pcks,"paquetes");
       var tabla = studis!.concat(pcks!);
 
       
@@ -276,7 +279,8 @@ const PriceListForm: FC<PriceListFormProps> = ({
       user?.sucursales.map(x => setSucursalesList(x.activo!,x,branches));
       user?.compañia.map(x => setCompañiasList(x.activo!,x,Companies));
       user?.medicos.map(x =>setMedicosList(x.activo!,x,medics));
-      setListSCM(listSucursal);
+      console.log(user!.sucursales!.length<=0,"evaluacion");
+      setListSCM(user!.sucursales!.length<=0 ?  branches! : user!.sucursales);
       setRadioValue("branch");
       console.log(studis);
       console.log("values");
@@ -409,13 +413,19 @@ const PriceListForm: FC<PriceListFormProps> = ({
       var departamento = departmentOptions.filter(
         x => x.value === departament
       )[0].label;
-     
+      var areaSearch=await getareaOptions(departament);
+
       console.log("Filtro")
       var estudios = lista.filter(x => x.departamento === departamento);
+      console.log(lista,"lista");
+      console.log(estudios,"el estudio");
       setValues((prev) => ({ ...prev, table: estudios }));
-      
+      setAreaSearch(areaSearch!);
     } else {
       estudios = lista.filter(x => x.activo === true);
+      if(estudios.length<=0){
+        estudios=lista      
+      }
       setValues((prev) => ({ ...prev, table: estudios }));
     }
     // console.log("departament");
@@ -490,13 +500,15 @@ const PriceListForm: FC<PriceListFormProps> = ({
       render: (value,item) => (
         <InputNumber type={"number"}  
         value={item.precio}  
-        onChange={(value)=>setStudyPrice(Number(value),item,item.paqute!)}>
+        onChange={(value)=>setStudyPrice(Number(value),item,item.paqute!)}
+        min={0}
+        >
 
         </InputNumber>
       ),
     },
     {
-      ...getDefaultColumnProps("area", "Area", {
+      ...getDefaultColumnProps("area", "Área", {
         searchState,
         setSearchState,
         width: "30%",
@@ -683,26 +695,17 @@ const PriceListForm: FC<PriceListFormProps> = ({
               style={{ marginRight: 20, textAlign: "center" }}
             ></Col>
           </Row>
-          <Row>
-            <Col
-              md={24}
-              sm={12}
-              style={{ marginRight: 20, textAlign: "center" }}
-            >
               <Table<ISucMedComList>
                 size="large"
                 rowKey={(record) => record.id}
-                columns={columns.slice(0, 4)}
+                columns={printing?columns.slice(0, 4):columns}
                 pagination={false}
                 dataSource={listSMC}
                 scroll={{
                   x: windowWidth < resizeWidth ? "max-content" : "auto",
                 }}
               />
-              {/* <Divider className="header-divider"/>
-                <Divider className="header-divider"/> */}
-            </Col>
-          </Row>
+
 
           <Divider orientation="left">Estudios</Divider>
           <Row justify="center">
@@ -723,7 +726,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
             </Col>
             <Col md={2} sm={24} xs={12}></Col>
             <Col md={9} sm={24} xs={12}>
-              <label htmlFor="">Área: </label>
+              <label htmlFor="">Área: </label> 
               <Select
                 //formProps={{ name: "area", label: "Área" }}
                 options={areas}
@@ -750,21 +753,16 @@ const PriceListForm: FC<PriceListFormProps> = ({
               />
               ,
             </Col>
+          </Row>
 
-            <Col
-              md={24}
-              sm={12}
-              style={{ marginRight: 20, textAlign: "center" }}
-            >
               <Table<IPriceListEstudioList>
                 size="large"
-                columns={columnsEstudios.slice(0, 6)}
+                columns={printing?columnsEstudios.slice(0,4):columnsEstudios}
                 pagination={false}
                 dataSource={[...(values.table ?? [])]}
                 scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
                 />
-            </Col>
-          </Row>
+
         </div>
       </div>
     </Spin>

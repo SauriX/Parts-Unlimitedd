@@ -38,8 +38,8 @@ export class PackFormValues implements IPackForm{
     clave="";
     nombre="";
     nombreLargo="";
-    idArea=0;
-    idDepartamento=0;
+    idArea=1;
+    idDepartamento=1;
     activo=false;
     visible=false;
     estudio: IPackEstudioList[]=[]  ;

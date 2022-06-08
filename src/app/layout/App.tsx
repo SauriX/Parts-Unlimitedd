@@ -46,6 +46,7 @@ import Loyalty from "../../views/Loyalty";
 import Center from "./Center";
 import ModalComponent from "../common/modal/ModalComponent";
 import DrawerComponent from "../common/drawer/DrawerComponent";
+import Proceeding from "../../views/Proceeding";
 
 function App() {
   const { profileStore } = useStore();
@@ -123,7 +124,10 @@ function App() {
             <Route path="promos/:id" element={<PromotionDetail />} />
             <Route path="loyalties" element={<Loyalty />} />
             <Route path="loyalties/:id" element={<LoyaltyDetail />} />
-            <Route path="loyalties/new" element={<LoyaltyDetail />} />
+            <Route path="loyalties/new" element={<LoyaltyDetail />} /> 
+            <Route path="expedientes" element={<Proceeding />} />
+            <Route path="expedientes/:id" element={< PromotionDetail/>} />
+            <Route path="expedientes/new" element={<PromotionDetail />} /> 
             <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
             <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
             <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />
