@@ -104,8 +104,10 @@ useEffect(() => {
     var studis =await getAllStudy();
     console.log(studies,"estudios");
     var areaForm=await getareaOptions(values.idDepartamento);
-      
+
     const user = await getById(idUser);
+    user!.idDepartamento=1;
+    user!.idArea=1;
     form.setFieldsValue(user!);
     studis=studis?.map(x=>{
       var activo = user?.estudio.find(y=>y.id===x.id)!=null;
@@ -120,7 +122,7 @@ useEffect(() => {
   if (id) {
     readuser(Number(id));
   }else{
-    form.setFieldsValue({idDepartamento:undefined,idArea:undefined});
+    form.setFieldsValue({idDepartamento:1,idArea:1});
   }
 }, [form, getById , id]);
   /* useEffect(() => {
@@ -371,16 +373,18 @@ useEffect(() => {
                 <SelectInput
                 formProps={{ name: "idDepartamento", label: "Departamento" }}
                 options={departmentOptions}
-                readonly={CheckReadOnly()}
+                readonly={true}
                 required
-
+                defaultValue={1}
+                  value={1}
               />
                             <SelectInput
                 formProps={{ name: "idArea", label: "Área" }}
                 options={areaForm}
-                readonly={CheckReadOnly()}
+                readonly={true}
                 required
-              
+                defaultValue={1}
+                value={1}
               />
               </Col>
               <Col md={12} sm={24} xs={12}>

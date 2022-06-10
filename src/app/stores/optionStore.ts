@@ -9,6 +9,8 @@ import Maquilador from "../api/maquilador";
 import Tapon from "../api/tapon";
 import Indication from "../api/indication";
 import PriceList from "../api/priceList";
+import branch from "../api/branch";
+
 import Branch from "../api/branch";
 import Promotion from "../api/promotion";
 export default class OptionStore {
@@ -33,7 +35,23 @@ export default class OptionStore {
       this.departmentOptions = [];
     }
   };
+  UnitOptions: IOptions[] = [];
 
+  getUnitOptions = async () => {
+    try {
+      const departments = await Catalog.getActive<ICatalogNormalList>("units");
+      this.UnitOptions = departments.map((x) => ({
+        value: x.id,
+        label: x.nombre, 
+      }));
+      return  departments.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.UnitOptions = [];
+    }
+  };
   clinicOptions: IOptions[] = [];
 
   getClinicOptions = async () => {
@@ -335,6 +353,21 @@ export default class OptionStore {
     }
   };
 
+  sucursales:IOptions[]=[];
+
+  getSucursalesOptions = async () => {
+    try{
+      const priceListOptions1 =await branch.getAll("all");;
+      console.log(priceListOptions1);
+      this.sucursales= priceListOptions1.map((x) => ({
+        value: x.idSucursal,
+        label: x.nombre,
+      }));
+    }catch(error){
+      this.sucursales=[]
+    }
+  };
+  
   BranchOptions:IOptions[]=[];
   getBranchOptions=async()=>{
     try{

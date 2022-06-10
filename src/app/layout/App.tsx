@@ -45,6 +45,7 @@ import Loyalty from "../../views/Loyalty";
 import Center from "./Center";
 import ModalComponent from "../common/modal/ModalComponent";
 import DrawerComponent from "../common/drawer/DrawerComponent";
+import Proceeding from "../../views/Proceeding";
 import Routee from "../../views/Route";
 import RouteDetail from "../../components/route/detail/RouteDetail";
 
@@ -124,7 +125,10 @@ function App() {
             <Route path="promos/:id" element={<PromotionDetail />} />
             <Route path="loyalties" element={<Loyalty />} />
             <Route path="loyalties/:id" element={<LoyaltyDetail />} />
-            <Route path="loyalties/new" element={<LoyaltyDetail />} />
+            <Route path="loyalties/new" element={<LoyaltyDetail />} /> 
+            <Route path="expedientes" element={<Proceeding />} />
+            <Route path="expedientes/:id" element={< PromotionDetail/>} />
+            <Route path="expedientes/new" element={<PromotionDetail />} /> 
             <Route path="routes" element={<Routee/>} />
             <Route path="routes/:id" element={<RouteDetail />} />
             <Route path="routes/new" element={<RouteDetail />} />

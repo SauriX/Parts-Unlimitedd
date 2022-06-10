@@ -27,7 +27,7 @@ type UrlParams = {
 
 const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
   const { userStore, roleStore, optionStore } = useStore();
-  const { roleOptions, getRoleOptions } = optionStore;
+  const { roleOptions, getRoleOptions,getSucursalesOptions,sucursales } = optionStore;
   const { getPermissionById } = roleStore;
   const { getById, create, update, Clave, generatePass, changePassordF, getAll, users, getPermission } =
     userStore;
@@ -56,7 +56,9 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
   useEffect(() => {
     getRoleOptions();
   }, [getRoleOptions]);
-
+  useEffect(() => {
+    getSucursalesOptions();
+  }, [getSucursalesOptions]);
   useEffect(() => {
     setTargetKeys(values.permisos?.filter((x) => x.asignado).map((x) => x.id.toString()) ?? []);
   }, []);
@@ -347,7 +349,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
             <Col md={12} sm={24} xs={12}>
               <SelectInput
                 formProps={{ name: "sucursalId", label: "Sucursal" }}
-                options={[{ value: "0", label: "test" }]}
+                options={sucursales}
                 readonly={CheckReadOnly()}
                 required
               />

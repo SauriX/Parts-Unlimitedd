@@ -506,7 +506,8 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     console.log(estudio,"estudios");
     console.log(estudio);
     setValues((prev) => ({ ...prev, estudio: estudio })); 
-    setAreaSearch(areaSearch!);}else{
+    setAreaSearch(areaSearch!);
+  }else{
       var estudi = estudios!.filter(x=>x.activo === true);
       setValues((prev) => ({ ...prev, estudio: estudi })); 
      
