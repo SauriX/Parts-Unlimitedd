@@ -91,7 +91,7 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
       ),
     },
     {
-      ...getDefaultColumnProps("nombre", "Nombre promocion", {
+      ...getDefaultColumnProps("nombre", "Nombre promoción", {
         searchState,
         setSearchState,
         width: "20%",

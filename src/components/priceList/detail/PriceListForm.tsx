@@ -437,6 +437,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
     // console.log(values);
   }
   const filterByArea = (area: number) => {
+
     var areaActive = areas.filter(x => x.value === area)[0].label;
     var estudios = lista.filter(x => x.area === areaActive);
     setValues((prev) => ({ ...prev, table: estudios }));
@@ -740,6 +741,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
                   setAreaId(value);
                   filterByArea(value);
                 }}
+                allowClear
                 value={areaId}
                 style={{ width: "400px" ,marginLeft:"2px"}}
                 disabled={readonly}
