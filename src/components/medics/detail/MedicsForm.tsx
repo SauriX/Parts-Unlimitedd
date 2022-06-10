@@ -52,8 +52,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
 
   const clearLocation = useCallback(() => {
     form.setFieldsValue({
-      estado: undefined,
-      ciudad: undefined,
+      estadoId: undefined,
+      ciudadId: undefined,
       coloniaId: undefined,
     });
     setColonies([]);
@@ -64,8 +64,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
       const location = await getColoniesByZipCode(zipCode);
       if (location) {
         form.setFieldsValue({
-          estado: location.estado,
-          ciudad: location.ciudad,
+          estadoId: location.estado,
+          ciudadId: location.ciudad,
         });
         setColonies(
           location.colonias.map((x) => ({
@@ -375,7 +375,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
 
                 <TextInput
                   formProps={{
-                    name: "estado",
+                    name: "estadoId",
                     label: "Estado",
                   }}
                   max={100}
@@ -384,7 +384,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
 
                 <TextInput
                   formProps={{
-                    name: "ciudad",
+                    name: "ciudadId",
                     label: "Ciudad",
                   }}
                   max={100}

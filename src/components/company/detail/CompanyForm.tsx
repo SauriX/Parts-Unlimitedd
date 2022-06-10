@@ -49,6 +49,8 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     getcfdiOptions,
     paymentMethodOptions,
     getpaymentMethodOptions,
+    priceListOptions1,
+    getPriceListOptions1
   } = optionStore;
   const { getColoniesByZipCode } = locationStore;
 
@@ -127,14 +129,14 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     getbankOptions();
     getcfdiOptions();
     getpaymentMethodOptions();
-    // getpriceOptions();
+    getPriceListOptions1();
     getprovenanceOptions();
   }, [
     getpaymentOptions,
     getbankOptions,
     getcfdiOptions,
     getpaymentMethodOptions,
-    // getpriceOptions,
+    getPriceListOptions1,
     getprovenanceOptions,
   ]);
   console.log(values.contacts);
@@ -468,14 +470,14 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   required
                   options={provenanceOptions}
                 />
-                <NumberInput
+                <SelectInput
                   formProps={{
                     name: "listaPrecioId",
-                    label: "Lista de precio: ",
+                    label: "Lista de precio ",
                   }}
-                  max={100000}
-                  min={10}
                   readonly={readonly}
+                  required
+                  options={priceListOptions1}
                 />
                 <NumberInput
                   formProps={{
@@ -627,7 +629,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 name="contact"
                 onFinish={onFinishContact}
                 layout="vertical"
-                // initialValues={valuesContact}
+                //initialValues={valuesContact}
                 scrollToFirstError
                 onFieldsChange={() => {
                   setDisabled(

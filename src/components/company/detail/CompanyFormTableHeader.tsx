@@ -1,8 +1,7 @@
-import { Button, PageHeader, Input, Form, FormInstance } from "antd";
-import React, { FC, useState } from "react";
-import { PlusOutlined } from "@ant-design/icons";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { ContactFormValues, IContactForm } from "../../../app/models/contact";
+import { Button, PageHeader, Input,  FormInstance } from "antd";
+import React, { FC} from "react";
+import {  useSearchParams } from "react-router-dom";
+import { IContactForm } from "../../../app/models/contact";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 
 const { Search } = Input;
@@ -26,7 +25,7 @@ const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
 
   // const [disabled, setDisabled] = useState(true);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, ] = useSearchParams();
  
 
   console.log("Header");
@@ -41,7 +40,7 @@ const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
           style={{ marginRight: 20, textAlign: "left" }}
           key="search"
           placeholder="Buscar"
-          defaultValue={searchParams.get("search") ?? "all"}
+          // defaultValue={searchParams.get("search") ?? ""}
           onSearch={(value) => {
             setFilteredContacts(
               contacts.filter(
@@ -62,19 +61,8 @@ const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
             return;
           }}
         >
-          Agregar / Guardar
+          Agregar
         </Button>,
-        // <Button
-        //   key="new"
-        //   style={{ marginRight: 1, textAlign: "right" }}
-        //   type="primary"
-        //   onClick={() => {
-        //     navigate("");
-        //   }}
-        //   icon={<PlusOutlined />}
-        // >
-        //   Nuevo
-        // </Button>,
       ]}
     ></PageHeader>
   );
