@@ -11,6 +11,7 @@ const ModalComponent = () => {
 
   return (
     <Modal
+      key={"modal"}
       visible={visible}
       title={title}
       width={width}
