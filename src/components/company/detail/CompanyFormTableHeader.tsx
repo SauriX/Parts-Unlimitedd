@@ -1,5 +1,5 @@
 import { Button, PageHeader, Input,  FormInstance } from "antd";
-import React, { FC} from "react";
+import React, { FC, useState} from "react";
 import {  useSearchParams } from "react-router-dom";
 import { IContactForm } from "../../../app/models/contact";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
@@ -20,13 +20,9 @@ const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
   contacts,
   setFilteredContacts,
 }) => {
-  // const contactos = ;
-  // const navigate = useNavigate();
-
-  // const [disabled, setDisabled] = useState(true);
 
   const [searchParams, ] = useSearchParams();
- 
+
 
   console.log("Header");
 
@@ -58,7 +54,15 @@ const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
           // disabled={disabled}
           onClick={() => {
             formContact.submit();
-            return;
+          //   contacts.forEach(item => setContactos( {
+          //     id: item.id,
+          //     compañiaId: item.compañiaId,
+          //     nombre: item.nombre,
+          //     apellidos: item.apellidos,
+          //     telefono: item.telefono,
+          //     correo: item.correo,
+          //     activo: item.activo,
+          //   }) )
           }}
         >
           Agregar

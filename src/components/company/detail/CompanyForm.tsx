@@ -50,7 +50,9 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     paymentMethodOptions,
     getpaymentMethodOptions,
     priceListOptions1,
-    getPriceListOptions1
+    getPriceListOptions1,
+    PromotionOptions,
+    getPromotionOptions,
   } = optionStore;
   const { getColoniesByZipCode } = locationStore;
 
@@ -69,6 +71,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   // const [valuesContact, setValuesContact] = useState<IContactForm>(
   //   new ContactFormValues()
   // );
+
   const [contacts, setContacts] = useState<IContactForm[]>([]);
   const [filteredContacts, setFilteredContacts] = useState<IContactForm[]>([]);
   const [editContact, setEditContact] = useState<IContactForm>();
@@ -80,6 +83,12 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     });
     setColonies([]);
   }, [form]);
+
+  const setContactos = (item:IContactForm ) => {
+    var contacto = filteredContacts;
+    contacto.push(item);
+    setFilteredContacts(contacto);
+  };
 
   const getLocation = useCallback(
     async (zipCode: string) => {
@@ -131,6 +140,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     getpaymentMethodOptions();
     getPriceListOptions1();
     getprovenanceOptions();
+    getPromotionOptions();
   }, [
     getpaymentOptions,
     getbankOptions,
@@ -138,6 +148,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     getpaymentMethodOptions,
     getPriceListOptions1,
     getprovenanceOptions,
+    getPromotionOptions,
   ]);
   console.log(values.contacts);
 
@@ -156,11 +167,6 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
 
     let success = false;
 
-    // const contacts = [...company.contacts];
-    // contacts.forEach((v, i, a) => {
-    //   a[i].idContacto = typeof a[i].idContacto === "string" ? 0 : v.idContacto;
-    // });
-    // company.contacts = contacts;
 
     if (!company.id) {
       company.id= "00000000-0000-0000-0000-000000000000"
@@ -297,6 +303,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
             setEditContact(contact);
           }}
         />
+        
       ),
     },
   ];
@@ -318,6 +325,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
         setContacts(all);
       }
     }
+   
 
     formContact.resetFields();
     setEditContact(undefined);
@@ -479,7 +487,16 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   required
                   options={priceListOptions1}
                 />
-                <NumberInput
+                <SelectInput
+                  formProps={{
+                    name: "promocionesId",
+                    label: "Lista de promoción ",
+                  }}
+                  readonly={readonly}
+                  required
+                  options={ PromotionOptions }
+                  />
+                {/* <NumberInput
                   formProps={{
                     name: "promocionesId",
                     label: "Lista de promoción: ",
@@ -487,7 +504,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   max={100000}
                   min={10}
                   readonly={readonly}
-                />
+                /> */}
                 <SwitchInput
                   name="activo"
                   onChange={(value) => {

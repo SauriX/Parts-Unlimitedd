@@ -410,18 +410,18 @@ export default class OptionStore {
     }
   };
 
-  // PromotionOptions:IOptions[]=[];
+  PromotionOptions:IOptions[]=[];
 
-  // getPromotionOptions = async () => {
-  //   try{
-  //     const PromotionOptions =await Promotion.getActive();
-  //     console.log(PromotionOptions);
-  //     this.PromotionOptions= PromotionOptions.map((x) => ({
-  //       value: x.id,
-  //       label: x.nombre,
-  //     }));
-  //   }catch(error){
-  //     this.PromotionOptions=[]
-  //   }
-  // };
+  getPromotionOptions = async () => {
+    try{
+      const PromotionOptions =await Promotion.getActive();
+      console.log(PromotionOptions);
+      this.PromotionOptions= PromotionOptions.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
+    }catch(error){
+      this.PromotionOptions=[]
+    }
+  };
 }
