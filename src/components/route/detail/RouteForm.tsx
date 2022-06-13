@@ -1,9 +1,23 @@
-import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Select, Checkbox, Input, Table, TreeSelect } from "antd";
+import {
+  Spin,
+  Form,
+  Row,
+  Col,
+  Pagination,
+  Button,
+  PageHeader,
+  Divider,
+  Select,
+  Checkbox,
+  Input,
+  Table,
+  TreeSelect,
+} from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
 import { useStore } from "../../../app/stores/store";
-import {useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
@@ -11,8 +25,17 @@ import views from "../../../app/util/view";
 import SwitchInput from "../../../app/common/form/SwitchInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
-import { IDias, IRouteEstudioList, IRouteForm, RouteFormValues } from "../../../app/models/route";
-import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
+import {
+  IDias,
+  IRouteEstudioList,
+  IRouteForm,
+  RouteFormValues,
+} from "../../../app/models/route";
+import {
+  getDefaultColumnProps,
+  IColumns,
+  ISearch,
+} from "../../../app/common/table/utils";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import { IOptions } from "../../../app/models/shared";
 import TextAreaInput from "../../../app/common/form/TextAreaInput";
@@ -33,12 +56,23 @@ type UrlParams = {
   id: string;
 };
 
-const RouteForm: FC<RouteFormProps> = ({  componentRef, printing }) => {
+const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   const { optionStore, routeStore } = useStore();
-  const { routes, getById, getAll, create, update,getAllStudy, studies } = routeStore;
+  const { routes, getById, getAll, create, update, getAllStudy, studies } =
+    routeStore;
   const [lista, setLista] = useState(studies);
-  const { getDepartmentOptions, departmentOptions,getareaOptions,areas,
-    BranchOptions, getBranchOptions, DeliveryOptions, getDeliveryOptions, MaquiladorOptions, getMaquiladorOptions } = optionStore;
+  const {
+    getDepartmentOptions,
+    departmentOptions,
+    getareaOptions,
+    areas,
+    BranchStringOptions,
+    getBranchStringOptions,
+    DeliveryStringOptions,
+    getDeliveryStringOptions,
+    MaquiladorStringOptions,
+    getMaquiladorStringOptions,
+  } = optionStore;
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [form] = Form.useForm<IRouteForm>();
@@ -49,84 +83,97 @@ const RouteForm: FC<RouteFormProps> = ({  componentRef, printing }) => {
   const [searchvalue, setSearchvalue] = useState<string>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [loading, setLoading] = useState(false);
-  const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
+  const [readonly, setReadonly] = useState(
+    searchParams.get("mode") === "readonly"
+  );
   const [values, setValues] = useState<IRouteForm>(new RouteFormValues());
   const [value, setValue] = useState<string>();
-  const [estudios,setEstudios] = useState<IRouteEstudioList[]>([]);
+  const [estudios, setEstudios] = useState<IRouteEstudioList[]>([]);
   let { id } = useParams<UrlParams>();
   const { width: windowWidth } = useWindowDimensions();
   const [selectedTags, setSelectedTags] = useState<IDias[]>([]);
-  const tagsData:IDias[] = [{id:1,dia:'L'}, {id:2,dia:'M'}, {id:3,dia:'M'}, {id:4,dia:'J'},{id:5,dia:'V'},{id:6,dia:'S'},{id:7,dia:'D'}];
+  const tagsData: IDias[] = [
+    { id: 1, dia: "L" },
+    { id: 2, dia: "M" },
+    { id: 3, dia: "M" },
+    { id: 4, dia: "J" },
+    { id: 5, dia: "V" },
+    { id: 6, dia: "S" },
+    { id: 7, dia: "D" },
+  ];
 
-  const [formTP] = Form.useForm<{ tiempoDeEntrega: string;  }>();
-  const nameValue = Form.useWatch('tiempoDeEntrega', formTP);
+  const [formTP] = Form.useForm<{ tiempoDeEntrega: string }>();
+  const nameValue = Form.useWatch("tiempoDeEntrega", formTP);
   useEffect(() => {
     const studys = async () => {
       let estudio = await getAllStudy();
       setLista(estudio!);
       setValues((prev) => ({ ...prev, estudio: estudio! }));
-    }
-    if(!id){
+    };
+    if (!id) {
       studys();
     }
-    
   }, [getAllStudy]);
-
 
   useEffect(() => {
     getDepartmentOptions();
   }, [getDepartmentOptions]);
-  useEffect(()=> {
-    const areareader = async () => {
-    await getareaOptions(0);
-    setAreaSearch(areas);
-    setAreaForm(areas);
-    }
-      areareader();
-  }, [ getareaOptions]);
-  
   useEffect(() => {
-    getBranchOptions();
-    getDeliveryOptions();
-    getMaquiladorOptions();
-    
+    const areareader = async () => {
+      await getareaOptions(0);
+      setAreaSearch(areas);
+      setAreaForm(areas);
+    };
+    areareader();
+  }, [getareaOptions]);
+
+  useEffect(() => {
+    getBranchStringOptions();
+    getDeliveryStringOptions();
+    getMaquiladorStringOptions();
   }, [
-    getBranchOptions,
-    getDeliveryOptions,
-    getMaquiladorOptions,
+    getBranchStringOptions,
+    getDeliveryStringOptions,
+    getMaquiladorStringOptions,
   ]);
 
-useEffect(() => {
-  console.log("use");
-  const readuser = async (idUser: string) => {
-    setLoading(true);
-    console.log("here");
-     const all = await getAll("all");
-    console.log(all);
-    var studis =await getAllStudy();
-    console.log(studies,"estudios");
-    var areaForm=await getareaOptions(values.idDepartamento);
-      
-    const user = await getById(idUser);
-    form.setFieldsValue(user!);
-    studis=studis?.map(x=>{
-      var activo = user?.estudio.find(y=>y.id===x.id)!=null;
-      return ({...x,activo})
-    });
-    setAreaForm(areaForm!);
-    setValues(user!);
-    setLista(studis!);
-    setLoading(false);
-    console.log(studis);
-  };
-  if (id) {
-    readuser(String(id));
-  }else{
-    form.setFieldsValue({idDepartamento:undefined,idArea:undefined});
-  }
-}, [form, getById , id, getAll, getAllStudy, getareaOptions, studies  ]);
+  useEffect(() => {
+    console.log("use");
+    const readuser = async (idUser: string) => {
+      try {
+        setLoading(true);
+        console.log("here");
+        const all = await getAll("all");
+        console.log(all);
+        var studis = await getAllStudy();
+        console.log(studies, "estudios");
+        var areaForm = await getareaOptions(values.idDepartamento);
 
-  
+        const user = await getById(idUser);
+        form.setFieldsValue(user!);
+
+        studis = studis?.map((x) => {
+          var activo = user?.estudio.find((y) => y.id === x.id) != null;
+          return { ...x, activo };
+        });
+        setAreaForm(areaForm!);
+        setValues(user!);
+        setLista(studis!);
+        setLoading(false);
+        user!.sucursalDestinoId = value!;
+        setSelectedTags(user?.dias!);
+        console.log(studis);
+      } catch {
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (id) {
+      readuser(String(id));
+    } else {
+      form.setFieldsValue({ idDepartamento: undefined, idArea: undefined });
+    }
+  }, [form, getById, id]);
 
   useEffect(() => {
     if (routes.length === 0) {
@@ -139,11 +186,15 @@ useEffect(() => {
 
     const route = { ...values, ...newValues };
 
-    route.estudio=lista.filter(x=>x.activo===true);
+    route.estudio = lista.filter((x) => x.activo === true);
+    route.sucursalDestinoId = value!;
+    route.dias = selectedTags;
 
     let success = false;
 
     if (!route.id) {
+      // route.id = "00000000-0000-0000-0000-000000000000"
+      console.log(route.id, "Valor del id");
       success = await create(route);
     } else {
       success = await update(route);
@@ -176,51 +227,57 @@ useEffect(() => {
     navigate(`/${views.route}/${route.id}?${searchParams}`);
   };
 
-  
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
 
-  const handleChange=(tag:IDias, checked:Boolean)=>{
+  const handleChange = (tag: IDias, checked: Boolean) => {
+    console.log(tag, "el tag");
+    const nextSelectedTags = checked
+      ? [...selectedTags!, tag]
+      : selectedTags.filter((t) => t.id !== tag.id);
+    console.log("You are interested in: ", nextSelectedTags);
+    // let estudio:IRouteEstudioList[] = estudios!.map(x=> {
+    //   let data:IRouteEstudioList = {
+    //     id:x.id,
+    //     area:x.area,
+    //     clave:x.clave,
+    //     nombre:x.nombre,
+    //     //selectedTags:nextSelectedTags,
+    //     departamento:x.departamento,
+    //     activo:x.activo,
+    //   }
+    // return data;
+    //  });
 
-    console.log(tag,"el tag");
-        const nextSelectedTags = checked ? [...selectedTags!, tag] : selectedTags.filter(t => t.id !== tag.id);
-        console.log('You are interested in: ', nextSelectedTags);
-        let estudio:IRouteEstudioList[] = estudios!.map(x=> {
-          let data:IRouteEstudioList = {
-            id:x.id,
-            area:x.area,
-            clave:x.clave,
-            nombre:x.nombre,
-            //selectedTags:nextSelectedTags,
-            departamento:x.departamento,
-            activo:x.activo,
-          }
-        return data;
-         });
-    
-         setValues((prev) => ({ ...prev, estudio: estudio! }));
-        setSelectedTags( nextSelectedTags! );
-      };
-  
-      const treeData = [
-        {
-          title: 'Sucursales',
-          value: 'sucursalDestinoId',
-          children: BranchOptions.map(x => ({ title: x.label, value: x.value }))
-        },
-        {
-          title: 'Maquiladores',
-          value: 'sucursalDestinoId',
-          children: MaquiladorOptions.map(x => ({ title: x.label, value: x.value }))
-        },
-      ];
+    //  setValues((prev) => ({ ...prev, estudio: estudio! }));
+    setSelectedTags(nextSelectedTags!);
+  };
 
-      const onChange = (newDestinoValue: string) => {
-        console.log(newDestinoValue);
-        setValue(newDestinoValue);
-      };
+  const treeData = [
+    {
+      title: "Sucursales",
+      value: "sucursal",
+      children: BranchStringOptions.map((x) => ({
+        title: x.label,
+        value: x.value,
+      })),
+    },
+    {
+      title: "Maquiladores",
+      value: "Maquiladores",
+      children: MaquiladorStringOptions.map((x) => ({
+        title: x.label,
+        value: x.value,
+      })),
+    },
+  ];
+
+  const onChange = (newDestinoValue: string) => {
+    console.log("Aqui esta el destino", newDestinoValue);
+    setValue(newDestinoValue);
+  };
 
   const columnsEstudios: IColumns<IRouteEstudioList> = [
     {
@@ -240,12 +297,12 @@ useEffect(() => {
       }),
     },
     {
-        ...getDefaultColumnProps("area", "Área", {
-          searchState,
-          setSearchState,
-          width: "20%",
-          windowSize: windowWidth,
-        }),
+      ...getDefaultColumnProps("area", "Área", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        windowSize: windowWidth,
+      }),
     },
     {
       ...getDefaultColumnProps("departamento", "Departamento", {
@@ -254,40 +311,42 @@ useEffect(() => {
         width: "20%",
         windowSize: windowWidth,
       }),
-  },
-    { 
-      key: "Añadir",
-      dataIndex: "id",
-      title: "Añadir",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value,item) => (
-        <Checkbox
-          name="activo"
-          checked={item.activo}
-          onChange={(value)=>{ console.log(value.target.checked); 
-            var active= false; 
-            if(value.target.checked){ console.log("here");
-             active= true;}setStudy(active,item)}}
-        />
-      ),
-    }
-    ,
+    },
+    Table.SELECTION_COLUMN,
+    // {
+    //   key: "Añadir",
+    //   dataIndex: "id",
+    //   title: "Añadir",
+    //   align: "center",
+    //   width: windowWidth < resizeWidth ? 100 : "10%",
+    //   render: (value,item) => (
+    //     <Checkbox
+    //       name="activo"
+    //       checked={item.activo}
+    //       onChange={(value)=>{ console.log(value.target.checked);
+    //         var active= false;
+    //         if(value.target.checked){ console.log("here");
+    //          active= true;}setStudy(active,item)}}
+    //     />
+    //   ),
+    // }
+    // ,
   ];
-  
-  const onSelectChange = (newSelectedRowKeys: React.Key[], ) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
+
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    console.log("selectedRowKeys changed: ", selectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
-   // setStudy()
-    
+    // setStudy()
   };
-  
+
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
-    
-    
+    onSelect: (record: IRouteEstudioList, selected: boolean) => {
+      setStudy(selected, record);
+    },
   };
+
   const hasSelected = selectedRowKeys.length > 0;
 
   const onValuesChange = async (changedValues: any) => {
@@ -296,71 +355,74 @@ useEffect(() => {
     if (field === "idDepartamento") {
       console.log("deparatemento");
       const value = changedValues[field];
-      var areaForm=await getareaOptions(value);
+      var areaForm = await getareaOptions(value);
       setAreaForm(areaForm!);
-      form.setFieldsValue({idArea:undefined});
-
+      form.setFieldsValue({ idArea: undefined });
     }
 
     if (field === "formatoDeTiempoId") {
       const value = changedValues[field];
-      let horas = value*24;
-      horas = Math.round(horas*100)/100;  
-      form.setFieldsValue({tiempoDeEntrega:horas});
-  }
-  if (field === "tiempoDeEntrega") {
-      const value = changedValues[field];
-      let dias = value/24;
-      if(dias <1){
-          dias =0;
-      }else{
-          dias = Math.round(dias*100)/100;  
-      }
-      
-      console.log(dias);
-      form.setFieldsValue({formatoDeTiempoId:dias});
-  }
-  };
-
-  const setStudy = (active:boolean,item:IRouteEstudioList) =>{
-    var index = lista.findIndex(x=>x.id=item.id);
-    var list = lista;
-    item.activo=active;
-    list[index]=item;
-    setLista(list);
-    var indexVal= values.estudio.findIndex(x=>x.id===item.id);
-    var val =values.estudio;
-    val[indexVal]=item;
-    setValues((prev) => ({ ...prev, estudio: val }));
-   
-  };
-
-  const filterByDepartament = async (departament:number) => {
-    if(departament){
-    var departamento=departmentOptions.filter(x=>x.value===departament)[0].label;
-    var areaSearch=await getareaOptions(departament);
-    console.log(departamento,"departamento");
-    var estudios = lista.filter(x=>x.departamento === departamento);
-    console.log(lista,"lista");
-    console.log(estudios,"estudios filtro dep");
-    setValues((prev) => ({ ...prev, estudio: estudios }));
-    setAreaSearch(areaSearch!);}else{
-      var estudios = lista.filter(x=>x.activo === true);
-      setValues((prev) => ({ ...prev, estudio: estudios }));
-     
+      let horas = value * 24;
+      horas = Math.round(horas * 100) / 100;
+      form.setFieldsValue({ tiempoDeEntrega: horas });
     }
-    
-  }
+    if (field === "tiempoDeEntrega") {
+      const value = changedValues[field];
+      let dias = value / 24;
+      if (dias < 1) {
+        dias = 0;
+      } else {
+        dias = Math.round(dias * 100) / 100;
+      }
 
-  const filterByArea = (area:number) => {
-    var areaActive=areas.filter(x=>x.value===area)[0].label;
-    var estudios = lista.filter(x=>x.area === areaActive)
+      console.log(dias);
+      form.setFieldsValue({ formatoDeTiempoId: dias });
+    }
+    // if (field === "sucursalorigenId"){
+    // }
+  };
+
+  const setStudy = (active: boolean, item: IRouteEstudioList) => {
+    var index = lista.findIndex((x) => x.id === item.id);
+    var list = lista;
+    item.activo = active;
+    list[index] = item;
+    setLista(list);
+    var indexVal = values.estudio.findIndex((x) => x.id === item.id);
+    var val = values.estudio;
+    val[indexVal] = item;
+    setValues((prev) => ({ ...prev, estudio: val }));
+  };
+
+  const filterByDepartament = async (departament: number) => {
+    if (departament) {
+      var departamento = departmentOptions.filter(
+        (x) => x.value === departament
+      )[0].label;
+      var areaSearch = await getareaOptions(departament);
+      console.log(departamento, "departamento");
+      var estudios = lista.filter((x) => x.departamento === departamento);
+      console.log(lista, "lista");
+      console.log(estudios, "estudios filtro dep");
+      setValues((prev) => ({ ...prev, estudio: estudios }));
+      setAreaSearch(areaSearch!);
+    } else {
+      estudios = lista.filter((x) => x.activo === true);
+      setValues((prev) => ({ ...prev, estudio: estudios }));
+    }
+  };
+
+  const filterByArea = (area: number) => {
+    var areaActive = areas.filter((x) => x.value === area)[0].label;
+    var estudios = lista.filter((x) => x.area === areaActive);
     setValues((prev) => ({ ...prev, estudio: estudios }));
-  }
-  const filterBySearch = (search:string)=>{
-    var estudios = lista.filter(x=>x.clave.includes(search) || x.nombre.includes(search))
+  };
+  const filterBySearch = (search: string) => {
+    var estudios = lista.filter(
+      (x) => x.clave.includes(search) || x.nombre.includes(search)
+    );
     setValues((prev) => ({ ...prev, estudio: estudios }));
-  }
+  };
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
@@ -392,7 +454,12 @@ useEffect(() => {
         )}
         {readonly && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
-            <ImageButton key="edit" title="Editar" image="editar" onClick={setEditMode} />
+            <ImageButton
+              key="edit"
+              title="Editar"
+              image="editar"
+              onClick={setEditMode}
+            />
           </Col>
         )}
       </Row>
@@ -449,20 +516,20 @@ useEffect(() => {
                   }}
                   readonly={readonly}
                   required
-                  options={BranchOptions}
+                  options={BranchStringOptions}
                 />
-                <div style={{marginLeft:"170px",marginBottom:"20px"}}>
-                <span style={{ marginRight: 10 }}>Destino:</span>
-                <TreeSelect
-                  style={{ width: '80%' }}
-                  value={value}
-                  dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                  treeData={treeData}
-                  placeholder="Please select"
-                  treeDefaultExpandAll
-                  onChange={onChange}
+                <div style={{ marginLeft: "170px", marginBottom: "20px" }}>
+                  <span style={{ marginRight: 10 }}>Destino:</span>
+                  <TreeSelect
+                    style={{ width: "80%" }}
+                    value={value}
+                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                    treeData={treeData}
+                    placeholder="Please select"
+                    treeDefaultExpandAll
+                    onChange={onChange}
                   />
-              </div>
+                </div>
                 {/* <TreeSelect
                   formProps={{
                     name: "sucursalDestinoId",
@@ -472,10 +539,10 @@ useEffect(() => {
                   required
                   options={BranchOptions}
                 /> */}
-                </Col>
+              </Col>
               <Col md={12} sm={24} xs={12}></Col>
               <Col md={12} sm={24} xs={12}>
-              <TextAreaInput
+                <TextAreaInput
                   formProps={{
                     name: "comentarios",
                     label: "Comentarios",
@@ -499,27 +566,29 @@ useEffect(() => {
                 />
               </Col>
               <Col md={12} sm={24} xs={12}>
-              <SelectInput
+                <SelectInput
                   formProps={{
                     name: "paqueteriaId",
                     label: "Paqueteria ",
                   }}
                   readonly={readonly}
                   required
-                  options={DeliveryOptions}
+                  options={DeliveryStringOptions}
                 />
-                <div style={{marginLeft:"145px",marginBottom:"20px"}}>
-                <span style={{ marginRight: 10 }}>Aplicar dias:</span>
-                {tagsData.map(tag => (
-                  <CheckableTag
-                    key={tag.id}
-                    checked={selectedTags.filter(x=>x.id===tag.id).length>0}
-                    onChange={checked => handleChange(tag, checked) }
-                  >
-                    {tag.dia}
-                  </CheckableTag>
-                ))}
-              </div>
+                <div style={{ marginLeft: "145px", marginBottom: "20px" }}>
+                  <span style={{ marginRight: 10 }}>Aplicar dias:</span>
+                  {tagsData.map((tag) => (
+                    <CheckableTag
+                      key={tag.id}
+                      checked={
+                        selectedTags.filter((x) => x.id === tag.id).length > 0
+                      }
+                      onChange={(checked) => handleChange(tag, checked)}
+                    >
+                      {tag.dia}
+                    </CheckableTag>
+                  ))}
+                </div>
                 <NumberInput
                   formProps={{
                     name: "horaDeRecoleccion",
@@ -551,97 +620,110 @@ useEffect(() => {
                   readonly={readonly}
                   required
                   /> */}
-                    <NumberInput
+                <NumberInput
                   formProps={{
                     name: "tiempoDeEntrega",
                     label: "Tiempo de Entrega",
                   }}
                   min={0}
-                  max={100}
+                  max={9999999999999999}
                   required
                   readonly={readonly}
-                  
                 />
-                  <TextInput
+                <NumberInput
                   formProps={{
                     name: "formatoDeTiempoId",
                     label: "Dias",
                   }}
-                  max= {50}
-                  //nameValue > "24"? "Horas": "Dias"
-                  required
+                  min={0}
+                  max={9999999999999999}
                   readonly={readonly}
-                  
                 />
-                  </Col>
-                
-              
+              </Col>
             </Row>
           </Form>
           <Divider orientation="center">Asignación de Estudios</Divider>
           <Row>
-          <Col md={4} sm={24} xs={12}>
-          Búsqueda por :   
-          </Col>
-          <Col md={9} sm={24} xs={12}>
-          <label htmlFor="">Departamentos: </label>
-          <Select
-                 style={{width:"350px"}}
+            <Col md={4} sm={24} xs={12}>
+              Búsqueda por :
+            </Col>
+            <Col md={9} sm={24} xs={12}>
+              <label htmlFor="">Departamentos: </label>
+              <Select
+                style={{ width: "350px" }}
                 options={departmentOptions}
                 disabled={readonly}
-                onChange={(value)=>{setAreaId(undefined); setDepId(value); filterByDepartament(value)}}
+                onChange={(value) => {
+                  setAreaId(undefined);
+                  setDepId(value);
+                  filterByDepartament(value);
+                }}
                 allowClear
-                 value={depId} 
-                 placeholder={"Departamentos"}
+                value={depId}
+                placeholder={"Departamentos"}
               />
-
-              </Col> 
-              <Col md={2} sm={24} xs={12}></Col>
-              <Col md={9} sm={24} xs={12}>
-                <label htmlFor="">Área: </label>
-                <Select
+            </Col>
+            <Col md={2} sm={24} xs={12}></Col>
+            <Col md={9} sm={24} xs={12}>
+              <label htmlFor="">Área: </label>
+              <Select
                 /* formProps={{ name: "areaSearch", label: "Área" }} */
                 options={aeraSearch}
                 disabled={readonly}
-                onChange={(value)=>{ setAreaId(value); filterByArea(value)}}
+                onChange={(value) => {
+                  setAreaId(value);
+                  filterByArea(value);
+                }}
                 value={areaId}
                 allowClear
-                style={{width:"400px"}}
+                style={{ width: "400px" }}
                 placeholder={"Área"}
               />
-              </Col>
-              <Col md={15} sm={24} xs={12}></Col>
-              <Col md={9} sm={24} xs={12}>
-              <label htmlFor="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+            </Col>
+            <Col md={15} sm={24} xs={12}></Col>
+            <Col md={9} sm={24} xs={12}>
+              <label htmlFor="">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              </label>
               <Search
-              style={{width:"400px",marginTop:"20px",marginBottom:"20px"}}
-          key="search"
-          placeholder="Buscar"
-          onSearch={(value) => {
-           filterBySearch(value);
-           setSearchvalue(value);
-          }}
-          onChange={(value) => {
-            
-            setSearchvalue(value.target.value);
-           }}
-          value={searchvalue}
-        />,</Col>
-            <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
-                <span style={{ marginLeft: 8 }}>
-                {hasSelected ? `${selectedRowKeys.length} estudios seleccionados  ` : ''}
-                </span>
-                <Table<IRouteEstudioList>
+                style={{
+                  width: "400px",
+                  marginTop: "20px",
+                  marginBottom: "20px",
+                }}
+                key="search"
+                placeholder="Buscar"
+                onSearch={(value) => {
+                  filterBySearch(value);
+                  setSearchvalue(value);
+                }}
+                onChange={(value) => {
+                  setSearchvalue(value.target.value);
+                }}
+                value={searchvalue}
+              />
+              ,
+            </Col>
+            <Col
+              md={24}
+              sm={12}
+              style={{ marginRight: 20, textAlign: "center" }}
+            >
+              <span style={{ marginLeft: 8 }}>
+                {hasSelected
+                  ? `${selectedRowKeys.length} estudios seleccionados  `
+                  : ""}
+              </span>
+              <Table<IRouteEstudioList>
                 size="small"
                 rowKey={(record) => record.id}
                 columns={columnsEstudios.slice(0, 6)}
                 pagination={false}
                 dataSource={[...(values.estudio ?? [])]}
-                rowSelection={rowSelection} 
-               
+                rowSelection={rowSelection}
                 // scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
                 scroll={{ y: 240 }}
-                />
+              />
             </Col>
           </Row>
         </div>

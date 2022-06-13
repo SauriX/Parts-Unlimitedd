@@ -1,12 +1,13 @@
 const views = {
   reagent: "reagents",
   study: "studies",
-  pack:"packs",
+  pack: "packs",
   price: "prices",
-  promo:"promos",
+  promo: "promos",
   loyalty: "loyalties",
-  proceeding:"expedientes",
+  proceeding: "expedientes",
   route: "routes",
+  appointment: "appointments",
 };
 
 export default views;

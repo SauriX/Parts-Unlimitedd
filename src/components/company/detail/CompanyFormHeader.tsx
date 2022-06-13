@@ -33,9 +33,8 @@ const CompanyFormHeader: FC<CompanyFormHeaderProps> = ({id, handlePrint }) => {
       title={<HeaderTitle title="Catálogo de Compañias" image="Company" />}
       className="header-container"
       extra={[
-        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        !id  ?
-        <ImageButton key="doc" title="Informe" image="doc" onClick={download}  />:'',
+        id? <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />:'',
+        id? <ImageButton key="doc" title="Informe" image="doc" onClick={download}  />:'',
         <ImageButton
           key="back"
           title="Regresar"

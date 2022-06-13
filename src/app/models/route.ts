@@ -17,8 +17,8 @@ export interface IRouteForm {
     maquiladorId:	string,
     requierePaqueteria: boolean,
     seguimientoPaqueteria:	number,
-    paqueteriaId:	string,
-    comentarios:	string,
+    paqueteriaId: string,
+    comentarios: string,
     diasDeEntrega: number,
     horaDeEntregaEstimada: number,
     horaDeEntrega:	number,
@@ -75,7 +75,7 @@ export class RouteFormValues implements IRouteForm {
     horaDeEntrega = 0;
     horaDeRecoleccion = undefined;
     tiempoDeEntrega = undefined;
-    formatoDeTiempoId = undefined;
+    formatoDeTiempoId = 0;
     estudioId = "";
     idResponsableEnvio = "";
     idResponsableRecepcion = "";

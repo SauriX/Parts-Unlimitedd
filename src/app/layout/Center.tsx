@@ -1,6 +1,10 @@
 import React, { FC } from "react";
 
-const Center: FC = ({ children }) => {
+type Props = {
+  children: React.ReactNode;
+};
+
+const Center = ({ children }: Props) => {
   return (
     <div
       style={{

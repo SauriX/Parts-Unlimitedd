@@ -48,7 +48,8 @@ import DrawerComponent from "../common/drawer/DrawerComponent";
 import Proceeding from "../../views/Proceeding";
 import Routee from "../../views/Route";
 import RouteDetail from "../../components/route/detail/RouteDetail";
-import ProceedingDetail from "../../components/proceedings.tsx/details/ProceedingDetail";
+import views from "../util/view";
+import Appointment from "../../views/Appointment";
 
 function App() {
   const { profileStore } = useStore();
@@ -126,13 +127,14 @@ function App() {
             <Route path="promos/:id" element={<PromotionDetail />} />
             <Route path="loyalties" element={<Loyalty />} />
             <Route path="loyalties/:id" element={<LoyaltyDetail />} />
-            <Route path="loyalties/new" element={<LoyaltyDetail />} /> 
+            <Route path="loyalties/new" element={<LoyaltyDetail />} />
             <Route path="expedientes" element={<Proceeding />} />
-            <Route path="expedientes/:id" element={< ProceedingDetail/>} />
-            <Route path="expedientes/new" element={<ProceedingDetail />} /> 
-            <Route path="routes" element={<Routee/>} />
+            <Route path="expedientes/:id" element={<PromotionDetail />} />
+            <Route path="expedientes/new" element={<PromotionDetail />} />
+            <Route path="routes" element={<Routee />} />
             <Route path="routes/:id" element={<RouteDetail />} />
             <Route path="routes/new" element={<RouteDetail />} />
+            <Route path={views.appointment} element={<Appointment />} />
             <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
             <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
             <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />

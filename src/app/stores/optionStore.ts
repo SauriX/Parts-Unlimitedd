@@ -12,6 +12,7 @@ import PriceList from "../api/priceList";
 import branch from "../api/branch";
 
 import Branch from "../api/branch";
+import Promotion from "../api/promotion";
 export default class OptionStore {
   constructor() {
     makeAutoObservable(this);
@@ -234,6 +235,18 @@ export default class OptionStore {
       this.MaquiladorOptions=[];
     }
   };
+  MaquiladorStringOptions:IOptions[]=[];
+  getMaquiladorStringOptions=async()=>{
+    try{
+      const maquilador = Maquilador.getAll("");
+      this.MaquiladorStringOptions= (await maquilador).map((x)=>({
+        value:x.nombre,
+        label:x.nombre
+      }));
+    }catch(error){
+      this.MaquiladorStringOptions=[];
+    }
+  };
   MethodOptions: IOptions[] = [];
 
   getMethodOptions = async () => {
@@ -368,19 +381,47 @@ export default class OptionStore {
     }
   };
 
-  DeliveryOptions:IOptions[]=[];
-  getDeliveryOptions = async () => {
+  BranchStringOptions:IOptions[]=[];
+  getBranchStringOptions=async()=>{
+    try{
+      const branch = Branch.getAll("");
+      this.BranchStringOptions= (await branch).map((x)=>({
+        value:x.nombre,
+        label:x.nombre
+      }));
+    }catch(error){
+      this.BranchStringOptions=[];
+    }
+  };
+
+  DeliveryStringOptions:IOptions[]=[];
+  getDeliveryStringOptions = async () => {
     try {
       const Delivery = await Catalog.getActive<ICatalogNormalList>(
         "Delivery"
       );
       console.log(Delivery);
-      this.DeliveryOptions = Delivery.map((x) => ({
-        value: x.id,
+      this.DeliveryStringOptions = Delivery.map((x) => ({
+        value: x.nombre,
         label: x.nombre,
       }));
     } catch (error) {
-      this.DeliveryOptions = [];
+      this.DeliveryStringOptions = [];
     }
   };
+
+  // PromotionOptions:IOptions[]=[];
+
+  // getPromotionOptions = async () => {
+  //   try{
+  //     const PromotionOptions =await Promotion.getActive();
+  //     console.log(PromotionOptions);
+  //     this.PromotionOptions= PromotionOptions.map((x) => ({
+  //       value: x.id,
+  //       label: x.nombre,
+  //     }));
+  //   }catch(error){
+  //     this.PromotionOptions=[]
+  //   }
+  // };
 }

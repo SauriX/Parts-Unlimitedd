@@ -9,7 +9,7 @@ interface IProps {
   prefix?: React.ReactNode;
   placeholder?: string;
   readonly?: boolean;
-  mask: Mask | ((value: string) => Mask);
+  mask: (string | RegExp)[];
   validator?: (_: RuleObject, value: any) => Promise<any>;
 }
 
@@ -48,7 +48,7 @@ const MaskInput = ({
         placeholder={placeholder}
         mask={mask}
         disabled={readonly}
-        render={(ref, props) => (
+        render={(ref: any, props: any) => (
           <input
             // autoComplete={itemProps.name?.toString()}
             className="ant-input"

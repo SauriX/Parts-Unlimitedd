@@ -77,7 +77,7 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "20%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -86,7 +86,7 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
       ...getDefaultColumnProps("sucursalOrigenId", "Sucursal Origen", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "20%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -95,7 +95,7 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
         ...getDefaultColumnProps("sucursalDestinoId", "Destino", {
           searchState,
           setSearchState,
-          width: "30%",
+          width: "20%",
           minWidth: 150,
           windowSize: windowWidth,
         }),
@@ -119,7 +119,7 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
           title="Editar reactivo"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/${views.reagent}/${value}?${searchParams}&mode=edit`);
+            navigate(`/${views.route}/${value}?${searchParams}&mode=edit`);
           }}
         />
       ),
