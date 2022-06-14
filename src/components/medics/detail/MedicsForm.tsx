@@ -362,7 +362,27 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
               </Col>
 
               <Col md={12} sm={24}>
-                <NumberInput
+              <MaskInput
+                  formProps={{
+                    name: "codigoPostal",
+                    label: "Código P",
+                  }}
+                  mask={[
+                    /[0-9]/,
+                    /[0-9]/,
+                    /[0-9]/,
+                    /[0-9]/,
+                    /[0-9]/,
+                  ]}
+                  validator={(_, value: any) => {
+                    if (!value || value.indexOf("_") === -1) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject("El campo debe contener 5 dígitos");
+                  }}
+                  readonly={readonly}
+                />
+                {/* <NumberInput
                   formProps={{
                     name: "codigoPostal",
                     label: "Código P",
@@ -371,7 +391,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   min={11111}
                   required
                   readonly={readonly}
-                />
+                /> */}
 
                 <TextInput
                   formProps={{
