@@ -17,7 +17,7 @@ type AgendaProps<T extends IAgenda> = {
   calendarHeight?: number | string;
   defaultType?: "date" | "week";
   timeFormat?: "HH:mm" | "hh:mm a";
-  render: (record?: T) => React.ReactNode;
+  render: (event?: T) => React.ReactNode;
   renderDate?: (date: moment.Moment, column?: IAgendaColumn) => React.ReactNode;
   renderHeader?: (date: moment.Moment, column?: IAgendaColumn) => React.ReactNode;
   onTypeChange?: (type: "date" | "week") => void;
@@ -50,14 +50,12 @@ const Agenda = <T extends IAgenda>({
   const [selectedDates, setSelectedDates] = useState<moment.Moment[]>([moment()]);
 
   useEffect(() => {
-    debugger;
     const startDate = selectedDate.clone().startOf("week");
     const endDate = selectedDate.clone().endOf("week");
 
     const dates = getWeekDates(startDate, endDate, excludeDays ?? []);
-
+    console.log(dates);
     setSelectedDates(dates);
-    console.log(calendarType, excludeDays, selectedDate);
   }, [calendarType, excludeDays, selectedDate]);
 
   return (

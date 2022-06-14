@@ -62,8 +62,6 @@ type ExtraProps = {
   minWidth?: number | string;
 };
 
-console.log("Props");
-
 export const getDefaultColumnProps = (
   dataIndex: string,
   title: string,

@@ -82,13 +82,15 @@ export const getCellClassName = (
   date: moment.Moment,
   calendarType: "date" | "week",
   selectedDate: moment.Moment,
-  selectedDates: moment.Moment[]
+  selectedDates: moment.Moment[],
+  excludeDays: Days[]
 ) => {
   let className = "agenda-calendar-day";
 
   if (
     (calendarType === "date" && selectedDate.isSame(date, "day")) ||
-    (calendarType === "week" && date.isBetween(selectedDates[0], selectedDates[6], "day", "[]"))
+    (calendarType === "week" &&
+      date.isBetween(selectedDates[0], selectedDates[6 - excludeDays.length], "day", "[]"))
   ) {
     className += " selected-day";
   }

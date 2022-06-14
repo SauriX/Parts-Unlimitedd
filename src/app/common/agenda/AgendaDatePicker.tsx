@@ -124,10 +124,11 @@ const AgendaDatePicker = ({
         headerRender={headerRender}
         fullscreen={false}
         dateFullCellRender={(date) => {
-          const className = getCellClassName(date, calendarType, selectedDate, selectedDates);
+          const className = getCellClassName(date, calendarType, selectedDate, selectedDates, excludeDays);
           return <div className={className}>{date.format("D")}</div>;
         }}
         defaultValue={selectedDate}
+        value={selectedDate}
         disabledDate={disabledDate}
         onChange={(value) => {
           setSelectedDate(value!);

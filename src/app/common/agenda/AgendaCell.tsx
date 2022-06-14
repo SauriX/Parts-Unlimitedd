@@ -55,7 +55,7 @@ const AgendaCell = <T extends IAgenda>({
         }
       }}
       style={{
-        backgroundColor: hovered ? "lightblue" : "white",
+        backgroundColor: hovered ? "#f0f0f0" : "white",
         height: "100%",
       }}
     >

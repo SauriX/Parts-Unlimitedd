@@ -9,10 +9,6 @@ const DrawerComponent = () => {
 
   const { visible, title, body, width } = drawer;
 
-  useEffect(() => {
-    console.log(visible, title, body, width);
-  }, [body, title, visible, width]);
-
   return (
     <Drawer
       visible={visible}

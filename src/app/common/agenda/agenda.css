@@ -57,6 +57,7 @@
 
 .agenda-calendar-day:hover {
   background: #f0f0f0;
+  cursor: pointer;
 }
 
 .agenda-calendar-day.selected-day {
