@@ -16,6 +16,8 @@ import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
 import { IOptions } from "../../../app/models/shared";
+import DatosFiscalesForm from "./DatosFiscalesForm";
+import Concidencias from "./Concidencias";
 type ProceedingFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
@@ -46,7 +48,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
   };
   const onFinish = async (newValues: any) => {
     setLoading(true);
-
+    openModal({ title: "Se encuentran coincidencias con los siguientes expedientes", body:<Concidencias  printing={false}></Concidencias>, closable: true ,width:"55%"})
     //const reagent = { ...values, ...newValues }; 
     /*         console.log(reagent,"en el onfish")
             console.log(reagent); */
@@ -108,7 +110,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
             onValuesChange={onValuesChange}
           >
             <Row>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "nombre",
@@ -119,6 +121,8 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                   readonly={readonly}
                 />
               </Col>
+              <Col md={4} sm={24} xs={12}>
+              </Col>
               <Col md={12} sm={24} xs={12}>
                 <TextInput
                   formProps={{
@@ -126,11 +130,10 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                     label: "Exp",
                   }}
                   max={100}
-                  required
                   readonly={readonly}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "apellido",
@@ -141,7 +144,24 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                   readonly={readonly}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
+              <TextInput
+                  formProps={{
+                    name: "telefono",
+                    label: "Teléfono",
+                  }}
+                  max={100}
+                ></TextInput>
+              </Col>
+              <Col md={8} sm={24} xs={12}>
+                <TextInput
+                  formProps={{
+                    name: "correo",
+                    label: "E-Mail",
+                  }}
+                  required
+                  max={100}
+                ></TextInput>
               </Col>
               <Col md={6} sm={24} xs={12}>
                 <SelectInput
@@ -149,6 +169,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                     name: "sexo",
                     label: "Sexo",
                   }}
+                  required
                   options={[{ value: "M", label: "M" }, { value: "F", label: "F" }]}></SelectInput>
               </Col>
               <Col md={6} sm={24} xs={12}>
@@ -164,30 +185,23 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                   min={0}
                 ></NumberInput>
               </Col>
-              <Col md={6} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "telefono",
-                    label: "Teléfono",
-                  }}
-                  max={100}
-                ></TextInput>
-              </Col>
               <Col md={4} sm={24} xs={12}>
                 <TextInput
                   formProps={{
-                    name: "correo",
-                    label: "E-Mail",
+                    name: "celular",
+                    label: "Celular",
                   }}
                   max={100}
                 ></TextInput>
               </Col>
+
               <Col md={4} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "cp",
                     label: "CP",
                   }}
+                  required
                   max={100}
                 ></TextInput>
               </Col>
@@ -207,21 +221,14 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                   }}
                   options={[]}></SelectInput>
               </Col>
-              <Col md={4} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "celular",
-                    label: "Celular",
-                  }}
-                  max={100}
-                ></TextInput>
-              </Col>
+
               <Col md={6} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "calle",
                     label: "Calle y Número",
                   }}
+                  required
                   max={100}
                 ></TextInput>
               </Col>
@@ -231,11 +238,12 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                     name: "colonia",
                     label: "Colonia",
                   }}
+                  required
                   max={100}
                 ></TextInput>
               </Col>
               <Col md={24} style={{ textAlign: "center" }}>
-                <Button onClick={() => openModal({ title: "tets", body: <Test />, closable: true })} style={{ backgroundColor: "#6EAA46", color: "white", borderColor: "#6EAA46" }}>Datos Fiscales</Button>
+                <Button onClick={() => openModal({ title: "Seleccionar o Ingresar Datos Fiscales", body:<DatosFiscalesForm></DatosFiscalesForm>, closable: true ,width:"55%"})} style={{ backgroundColor: "#6EAA46", color: "white", borderColor: "#6EAA46" }}>Datos Fiscales</Button>
               </Col>
             </Row>
           </Form>
@@ -246,7 +254,4 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
   );
 }
 
-const Test = () => {
-  return <div>Prueba</div>
-}
 export default observer(ProceedingForm);

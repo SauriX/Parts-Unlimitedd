@@ -132,6 +132,11 @@ const PriceListForm: FC<PriceListFormProps> = ({
       setListSucursal(branches);
       setListCompañia(Companies);
       setListMedicos(medics);
+      if(!id){
+        setListSCM(branches);
+        setRadioValue("branch");
+      }
+
     }
     readtable();
   },[getAllBranch,getAllCompany, getAllMedics]);
@@ -427,7 +432,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       setValues((prev) => ({ ...prev, table: estudios }));
       setAreaSearch(areaSearch!);
     } else {
-      estudios = lista.filter(x => x.activo === true);
+      estudios = lista
       if(estudios.length<=0){
         estudios=lista      
       }

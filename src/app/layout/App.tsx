@@ -50,6 +50,7 @@ import Routee from "../../views/Route";
 import RouteDetail from "../../components/route/detail/RouteDetail";
 import views from "../util/view";
 import Appointment from "../../views/Appointment";
+import ProceedingDetail from "../../components/proceedings/details/ProceedingDetail";
 
 function App() {
   const { profileStore } = useStore();
@@ -129,8 +130,8 @@ function App() {
             <Route path="loyalties/:id" element={<LoyaltyDetail />} />
             <Route path="loyalties/new" element={<LoyaltyDetail />} />
             <Route path="expedientes" element={<Proceeding />} />
-            <Route path="expedientes/:id" element={<PromotionDetail />} />
-            <Route path="expedientes/new" element={<PromotionDetail />} />
+            <Route path="expedientes/:id" element={<ProceedingDetail />} />
+            <Route path="expedientes/new" element={<ProceedingDetail />} />
             <Route path="routes" element={<Routee />} />
             <Route path="routes/:id" element={<RouteDetail />} />
             <Route path="routes/new" element={<RouteDetail />} />

@@ -4,8 +4,8 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
-import ProceedingHeader from "../components/proceedings.tsx/ProceedingHeader";
-import ProceedingTable from "../components/proceedings.tsx/ProceedingTable";
+import ProceedingHeader from "../components/proceedings/ProceedingHeader";
+import ProceedingTable from "../components/proceedings/ProceedingTable";
 
 const Proceeding = () => {
   const {  } = useStore();
