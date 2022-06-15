@@ -1,6 +1,6 @@
-import { Button, PageHeader, Input,  FormInstance } from "antd";
-import React, { FC} from "react";
-import {  useSearchParams } from "react-router-dom";
+import { Button, PageHeader, Input, FormInstance } from "antd";
+import React, { FC, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { IContactForm } from "../../../app/models/contact";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 
@@ -20,15 +20,20 @@ const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
   contacts,
   setFilteredContacts,
 }) => {
-  // const contactos = ;
-  // const navigate = useNavigate();
-
-  // const [disabled, setDisabled] = useState(true);
-
-  const [searchParams, ] = useSearchParams();
- 
+  const [searchParams] = useSearchParams();
+  const [searchValue, setSearchValue] = useState<string>("");
 
   console.log("Header");
+
+  useEffect(() => {
+    setFilteredContacts(
+      contacts.filter(
+        (x) =>
+          x.nombre.toLowerCase().includes(searchValue.toLowerCase()) ||
+          x.telefono?.toString()?.includes(searchValue)
+      )
+    );
+  }, [contacts, searchValue, setFilteredContacts]);
 
   return (
     <PageHeader
@@ -41,14 +46,16 @@ const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
           key="search"
           placeholder="Buscar"
           // defaultValue={searchParams.get("search") ?? ""}
+          value={searchValue}
           onSearch={(value) => {
-            setFilteredContacts(
-              contacts.filter(
-                (x) =>
-                  x.nombre.toLowerCase().includes(value.toLowerCase()) ||
-                  x.telefono?.toString()?.includes(value)
-              )
-            );
+            setSearchValue(value);
+            // setFilteredContacts(
+            //   contacts.filter(
+            //     (x) =>
+            //       x.nombre.toLowerCase().includes(value.toLowerCase()) ||
+            //       x.telefono?.toString()?.includes(value)
+            //   )
+            // );
           }}
         />,
         <Button
@@ -58,7 +65,15 @@ const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
           // disabled={disabled}
           onClick={() => {
             formContact.submit();
-            return;
+            // contacts.forEach(item => setContactos( {
+            //   id: item.id,
+            //   compañiaId: item.compañiaId,
+            //   nombre: item.nombre,
+            //   apellidos: item.apellidos,
+            //   telefono: item.telefono,
+            //   correo: item.correo,
+            //   activo: item.activo,
+            // }) )
           }}
         >
           Agregar

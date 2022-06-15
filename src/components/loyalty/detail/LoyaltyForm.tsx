@@ -8,9 +8,6 @@ import {
   PageHeader,
   Divider,
   Radio,
-  Space,
-  InputNumber,
-  Typography,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
