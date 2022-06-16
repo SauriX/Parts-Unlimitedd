@@ -38,7 +38,7 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
     searchedColumn: "",
   });
 
-  console.log("Table");
+  //console.log("Table");
 
   useEffect(() => {
     const readRoutes = async () => {

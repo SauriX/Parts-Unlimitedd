@@ -1,7 +1,6 @@
 import { Divider } from "antd";
-import { resolve } from "path";
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams} from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import MaquiladorForm from "./MaquiladorForm";
 import MaquiladorFormHeader from "./MaquiladorFormHeader";
@@ -13,7 +12,7 @@ type UrlParams = {
 const MaquiladorDetail = () => {
   let navigate = useNavigate();
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  // const [searchParams, setSearchParams] = useSearchParams();
 
   const [printing, setPrinting] = useState(false);
 
@@ -37,7 +36,7 @@ const MaquiladorDetail = () => {
   const maquiladorId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
 
   useEffect(() => {
-    console.log(maquiladorId);
+    //console.log(maquiladorId);
     if (maquiladorId === undefined) {
       navigate("/notFound");
     }

@@ -1,8 +1,9 @@
 import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, SetStateAction, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
+import { ILoyaltyForm } from "../app/models/loyalty";
 import { useStore } from "../app/stores/store";
 import LoyaltyHeader from "../components/loyalty/LoyaltyHeader";
 import LoyaltyTable from "../components/loyalty/LoyaltyTable";
@@ -51,7 +52,10 @@ const Loyalty = () => {
 
   return (
     <Fragment>
-      <LoyaltyHeader handlePrint={handlePrint} handleDownload={handleDownload} />
+      <LoyaltyHeader handlePrint={handlePrint} handleDownload={handleDownload} 
+      // loyalty={[]} setFilteredContacts={function (value: SetStateAction<ILoyaltyForm[]>): void {
+      //   throw new Error("Function not implemented."); } } 
+      />
       <Divider className="header-divider" />
       <LoyaltyTable id = "" componentRef={componentRef} printing={loading} />
     </Fragment>

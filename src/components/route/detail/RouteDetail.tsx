@@ -53,7 +53,7 @@ const RouteDetail = () => {
       const permissions = await access();
 
       if (routeId === undefined) {
-        console.log("undefined");
+        //console.log("undefined");
         navigate("/notFound");
       } else if (!permissions?.crear && routeId === "") {
         navigate(`/forbidden`);

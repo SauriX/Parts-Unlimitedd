@@ -65,15 +65,6 @@ const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
           // disabled={disabled}
           onClick={() => {
             formContact.submit();
-            // contacts.forEach(item => setContactos( {
-            //   id: item.id,
-            //   compañiaId: item.compañiaId,
-            //   nombre: item.nombre,
-            //   apellidos: item.apellidos,
-            //   telefono: item.telefono,
-            //   correo: item.correo,
-            //   activo: item.activo,
-            // }) )
           }}
         >
           Agregar

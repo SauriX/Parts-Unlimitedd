@@ -11,20 +11,37 @@ const { Search } = Input;
 type LoyaltyHeaderProps = {
   handlePrint: () => void;
   handleDownload: () => Promise<void>;
+  // loyalty: ILoyaltyForm[];
+  // setFilteredContacts: React.Dispatch<React.SetStateAction<ILoyaltyForm[]>>;
+
 };
 
-const LoyaltyHeader: FC<LoyaltyHeaderProps> = ({ handlePrint, }) => {
+const LoyaltyHeader: FC<LoyaltyHeaderProps> = ({ handlePrint
+  // , loyalty,
+  // setFilteredContacts, 
+}) => {
   const navigate = useNavigate();
   const { loyaltyStore } = useStore();
   const { exportList } = loyaltyStore;
-
   const [searchParams, setSearchParams] = useSearchParams();
+  // const [searchValue, setSearchValue] = useState<string>("");
 
-  console.log("Header");
+  //console.log("Header");
 
   const download = () => {
     exportList(searchParams.get("search") ?? "all");
   };
+
+  // useEffect(() => {
+  //   setFilteredContacts(
+  //     loyalty.filter(
+  //       (x) =>
+  //         x.clave.toString()?.includes(searchValue.toLowerCase()) ||
+  //         x.nombre.toLowerCase().includes(searchValue.toLowerCase())
+          
+  //     )
+  //   );
+  // }, [loyalty, searchValue, setFilteredContacts]);
 
   return (
     <PageHeader
@@ -39,6 +56,7 @@ const LoyaltyHeader: FC<LoyaltyHeaderProps> = ({ handlePrint, }) => {
           placeholder="Buscar"
           onSearch={(value) => {
             setSearchParams({ search: !value ? "all" : value });
+             //setSearchValue(value);
           }}
         />,
         <Button

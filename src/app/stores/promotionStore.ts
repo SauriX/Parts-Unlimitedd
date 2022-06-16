@@ -45,8 +45,9 @@ export default class PromotionStore {
         
         const roles= await Study.getAll("all");
         console.log(roles);
+        const activos = roles.filter(x => x.activo);
         console.log(roles);
-        var studies= roles.map((x) => {
+        var studies= activos.map((x) => {
             let data:IPriceListEstudioList = {
                 id: x.id,
                 clave: x.clave,

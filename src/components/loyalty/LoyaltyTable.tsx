@@ -30,7 +30,6 @@ import HeaderTitle from "../../app/common/header/HeaderTitle";
 import DateRangeInput from "../../app/common/form/DateRangeInput";
 import TextInput from "../../app/common/form/TextInput";
 import moment from "moment";
-import views from "../../app/util/view";
 
 type LoyaltyTableProps = {
     id: string;
@@ -45,8 +44,6 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
 }) => {
     const { loyaltyStore } = useStore();
     const { loyaltys, getAll, create } = loyaltyStore;
-    const [values, setValues] = useState<ILoyaltyForm>(new LoyaltyFormValues());
-
     const [searchParams] = useSearchParams();
 
     let navigate = useNavigate();
@@ -61,7 +58,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
         searchedColumn: "",
     });
 
-    console.log("Table");
+    //console.log("Table");
     function disabledDate(current: moment.Moment) {
         return current.isBefore(moment(), "day");
       }
@@ -73,7 +70,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
 
                         setNewDate(`${moment(e[0]).format("YYYY/MM/DD")} - ${moment(e[1]).format("YYYY/MM/DD")}`)
 
-                        console.log(newDate, id)
+                        //console.log(newDate, id)
 
                     } else {
                         setNewDate("");
@@ -97,8 +94,10 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
                         fecha: []
                     };
                     loyalty.id = "00000000-0000-0000-0000-000000000000";
-                    create(loyalty);
+                    create(loyalty).then(x => { getAll("all")});
+                    
                 }}
+                
             >
                 Guardar
             </Button>
@@ -115,7 +114,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
     }, [getAll, searchParams]);
 
     useEffect(() => {
-        console.log(newDate);
+        //console.log(newDate);
     }, [newDate]);
 
 

@@ -92,16 +92,16 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   ]);
 
   useEffect(() => {
-    console.log("use");
+    //console.log("use");
     const readuser = async (idUser: string) => {
       try {
         setLoading(true);
-        console.log("here");
+        //console.log("here");
         const all = await getAll("all");
-        console.log(all);
+        //console.log(all);
         var studis = await getAllStudy();
-        console.log(studies, "estudios");
-        console.log("checks seleccionados" ,selectedRowKeys);
+        //console.log(studies, "estudios");
+        //console.log("checks seleccionados" ,selectedRowKeys);
         var areaForm = await getareaOptions(values.idDepartamento);
         const user = await getById(idUser);
         form.setFieldsValue(user!);
@@ -116,7 +116,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         setLoading(false);
         user!.sucursalDestinoId = value!;
         setSelectedTags(user?.dias!);
-        console.log(studis);
+        //console.log(studis);
       } catch {
       } finally {
         setLoading(false);
@@ -140,10 +140,10 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     const route = { ...values, ...newValues };
     route.estudio = lista.filter((x) => x.activo === true);
     route.dias = selectedTags;
-    console.log("checks seleccionados" ,selectedRowKeys);
+    //console.log("checks seleccionados" ,selectedRowKeys);
     let success = false;
     if (!route.id) {
-      console.log(route.id, "Valor del id");
+      //console.log(route.id, "Valor del id");
     
       success = await create(route);
     } else {
@@ -181,11 +181,11 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   });
 
   const handleChange = (tag: IDias, checked: Boolean) => {
-    console.log(tag, "el tag");
+    //console.log(tag, "el tag");
     const nextSelectedTags = checked
       ? [...selectedTags!, tag]
       : selectedTags.filter((t) => t.id !== tag.id);
-    console.log("You are interested in: ", nextSelectedTags);
+    //console.log("You are interested in: ", nextSelectedTags);
     setSelectedTags(nextSelectedTags!);
   };
 
@@ -207,7 +207,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   ];
 
   const onChange = (newDestinoValue: string) => {
-    console.log("Aqui esta el destino", newDestinoValue);
+    //console.log("Aqui esta el destino", newDestinoValue);
     setValue(newDestinoValue);
   };
 
@@ -248,8 +248,8 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   ];
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", selectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);console.log("checks seleccionados" ,selectedRowKeys);
+    //console.log("selectedRowKeys changed: ", selectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);//console.log("checks seleccionados" ,selectedRowKeys);
   };
 
   const rowSelection = {
@@ -260,12 +260,12 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     onSelect: (record: IRouteEstudioList, selected: boolean) => {
       
       setStudy(selected, record);
-      console.log("checks seleccionados" ,selectedRowKeys);
+      //console.log("checks seleccionados" ,selectedRowKeys);
     },
     onSelectAll: (selected: boolean, _: any, studies: IRouteEstudioList[]) => {
       for (const study of studies) {
         setStudy(selected, study);
-      }console.log("checks seleccionados" ,selectedRowKeys);
+      }//console.log("checks seleccionados" ,selectedRowKeys);
     },
   };
 
@@ -275,7 +275,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     const field = Object.keys(changedValues)[0];
 
     if (field === "idDepartamento") {
-      console.log("deparatemento");
+      //console.log("deparatemento");
       const value = changedValues[field];
       var areaForm = await getareaOptions(value);
       setAreaForm(areaForm!);
@@ -297,7 +297,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         dias = Math.round(dias * 100) / 100;
       }
 
-      console.log(dias);
+      //console.log(dias);
       form.setFieldsValue({ formatoDeTiempoId: dias });
     }
   };
@@ -320,10 +320,10 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         (x) => x.value === departament
       )[0].label;
       var areaSearch = await getareaOptions(departament);
-      console.log(departamento, "departamento");
+      //console.log(departamento, "departamento");
       var estudios = lista.filter((x) => x.departamento === departamento);
-      console.log(lista, "lista");
-      console.log(estudios, "estudios filtro dep");
+      //console.log(lista, "lista");
+      //console.log(estudios, "estudios filtro dep");
       setValues((prev) => ({ ...prev, estudio: estudios }));
       setAreaSearch(areaSearch!);
     } else {
@@ -540,7 +540,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                     name: "tiempoDeEntrega",
                     label: "Tiempo de Entrega",
                   }}
-                  min={0}
+                  min={1}
                   max={9999999999999999}
                   required
                   readonly={readonly}

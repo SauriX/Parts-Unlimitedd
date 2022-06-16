@@ -1,22 +1,18 @@
-import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Table, FormInstance } from "antd";
+import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Table } from "antd";
 import React, { FC, Fragment, useCallback, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
 import SelectInput from "../../../app/common/form/SelectInput";
 import { useStore } from "../../../app/stores/store";
-import { Search, useNavigate, useSearchParams } from "react-router-dom";
+import {useNavigate, useSearchParams } from "react-router-dom";
 import { ICompanyForm, CompanyFormValues } from "../../../app/models/company";
-import { IContactForm, ContactFormValues } from "../../../app/models/contact";
+import { IContactForm} from "../../../app/models/contact";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import NumberInput from "../../../app/common/form/NumberInput";
-import { IContactList } from "../../../app/models/contact";
 import { observer } from "mobx-react-lite";
-import { List, Typography } from "antd";
 import { IOptions } from "../../../app/models/shared";
-import Company from "../../../views/Company";
-import Item from "antd/lib/list/Item";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import MaskInput from "../../../app/common/form/MaskInput";
@@ -41,8 +37,6 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     getprovenanceOptions,
     paymentOptions,
     getpaymentOptions,
-    // priceOptions,
-    // getpriceOptions,
     bankOptions,
     getbankOptions,
     cfdiOptions,
@@ -68,9 +62,6 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   const [colonies, setColonies] = useState<IOptions[]>([]);
   const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
   const [values, setValues] = useState<ICompanyForm>(new CompanyFormValues());
-  // const [valuesContact, setValuesContact] = useState<IContactForm>(
-  //   new ContactFormValues()
-  // );
 
   const [contacts, setContacts] = useState<IContactForm[]>([]);
   const [filteredContacts, setFilteredContacts] = useState<IContactForm[]>([]);
@@ -195,6 +186,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   };
   console.log("Aqui esta el console");
   console.log(id);
+
   useEffect(() => {
     const newpass = async () => {
       let pass = await generatePass();
@@ -229,7 +221,6 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     navigate(`/companies/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`);
   };
 
-  //   const { Search } = Input;
 
   const [, setPrinting] = useState(false);
   const handleCompanyPrint = useReactToPrint({
@@ -376,8 +367,6 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
               key="edit"
               title="Editar"
               image="editar"
-              //onClick={() => {  setReadonly(false); }}
-              //onClick={() =>  { navigate(`/companies/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`) ; }}
               onClick={() => {
                 botonEdit();
               }}
@@ -496,15 +485,6 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   required
                   options={ PromotionOptions }
                   />
-                {/* <NumberInput
-                  formProps={{
-                    name: "promocionesId",
-                    label: "Lista de promoción: ",
-                  }}
-                  max={100000}
-                  min={10}
-                  readonly={readonly}
-                /> */}
                 <SwitchInput
                   name="activo"
                   onChange={(value) => {
