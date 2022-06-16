@@ -49,8 +49,8 @@ export interface IPromotionForm{
     id:number,
     clave:string,
     nombre:string,
-    fechaInicial?:Date
-    fechaFinal?:Date,
+    fechaInicial:Date
+    fechaFinal:Date,
     idListaPrecios:string,
     tipoDescuento:string,
     cantidad:number,
@@ -72,6 +72,8 @@ export class PromotionFormValues implements IPromotionForm{
     idListaPrecios= "";
     activo=false;
     lealtad=false;
+    fechaInicial= new Date(moment.now());
+    fechaFinal = new Date(moment.now());
     estudio: IPromotionEstudioList[] =[];
     branchs: ISucMedComList[]=[];
     dias: IDias[]=[];

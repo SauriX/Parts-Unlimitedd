@@ -406,7 +406,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                             />
                         </Col>
                         <Col md={12} sm={24} xs={12}>
-                            <SelectInput formProps={{ name: "departamento", label: "Departamento" }} options={departmentOptions} readonly={disabled} required />
+                            <SelectInput formProps={{ name: "departamento", label: "Departamento" }} options={departmentOptions.filter(x=>x.value!=1)} readonly={disabled} required />
                         </Col>
                         <Col md={12} sm={24} xs={12}>
                             <NumberInput
@@ -743,7 +743,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                             size="small"
                             columns={columns.slice(0, 3)}
                             pagination={false}
-                            dataSource={[...(values.paquetes ?? [])]}
+                            dataSource={[...(values.paquete ?? [])]}
                             scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
                         />
                     </Col>

@@ -862,6 +862,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
                 disabled={readonly}
                 onChange={(value)=>{ setAreaId(value); filterByArea(value)}}
                 value={areaId}
+                allowClear
                 style={{width:"400px"}}
               />
               </Col>

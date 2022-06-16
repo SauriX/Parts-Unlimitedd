@@ -50,7 +50,7 @@ const ProceedingHeader: FC<ProceedingProps> = ({ handlePrint, handleDownload }) 
             key="new"
             type="primary"
             onClick={() => {
-              navigate(`/${views.price}/new?${searchParams}&mode=edit`);
+              navigate(`/${views.proceeding}/new?${searchParams}&mode=edit`);
             }}
             icon={<PlusOutlined />}
           >

@@ -132,6 +132,11 @@ const PriceListForm: FC<PriceListFormProps> = ({
       setListSucursal(branches);
       setListCompañia(Companies);
       setListMedicos(medics);
+      if(!id){
+        setListSCM(branches);
+        setRadioValue("branch");
+      }
+
     }
     readtable();
   },[getAllBranch,getAllCompany, getAllMedics]);
@@ -427,7 +432,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       setValues((prev) => ({ ...prev, table: estudios }));
       setAreaSearch(areaSearch!);
     } else {
-      estudios = lista.filter(x => x.activo === true);
+      estudios = lista
       if(estudios.length<=0){
         estudios=lista      
       }
@@ -437,6 +442,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
     // console.log(values);
   }
   const filterByArea = (area: number) => {
+
     var areaActive = areas.filter(x => x.value === area)[0].label;
     var estudios = lista.filter(x => x.area === areaActive);
     setValues((prev) => ({ ...prev, table: estudios }));
@@ -740,6 +746,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
                   setAreaId(value);
                   filterByArea(value);
                 }}
+                allowClear
                 value={areaId}
                 style={{ width: "400px" ,marginLeft:"2px"}}
                 disabled={readonly}

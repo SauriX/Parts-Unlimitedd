@@ -44,7 +44,7 @@ export interface IStudyForm {
   parameters:IParameterList[],
   indicaciones:IIndicationList[],
   reactivos:IReagentList[],
-  paquetes:IPacketList[]
+  paquete:IPacketList[]
 }
 
 export class StudyFormValues implements IStudyForm {
@@ -71,7 +71,7 @@ export class StudyFormValues implements IStudyForm {
   parameters: IParameterList[]=[];
   indicaciones: IIndicationList[]=[];
   reactivos: IReagentList[]=[];
-  paquetes: IPacketList[]=[];
+  paquete: IPacketList[]=[];
   tapon= 0;
   cantidad= 0;
   constructor(init?: IStudyForm) {
