@@ -52,6 +52,7 @@ const { width: windowWidth } = useWindowDimensions();
   const [loading, setLoading] = useState(false);
   const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
   const [values, setValues] = useState<IPromotionForm>(new PromotionFormValues());
+  const [depId, setDepId] = useState<number>();
   
   const tagsData:IDias[] = [{id:1,dia:'L'}, {id:2,dia:'M'}, {id:3,dia:'M'}, {id:4,dia:'J'},{id:5,dia:'V'},{id:6,dia:'S'},{id:7,dia:'D'}];
   const radioOptions = [
@@ -514,10 +515,16 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     }
     
   };
-  const filterByArea = (area:number) => {
-    var areaActive=areas.filter(x=>x.value===area)[0].label;
-     var estudio = estudios.filter(x=>x.area === areaActive) 
-     setValues((prev) => ({ ...prev, estudio: estudio })); 
+  const filterByArea = (area?:number) => {
+    if (area) {
+      var areaActive = areas.filter((x) => x.value === area)[0].label;
+      var estudi = estudios.filter((x) => x.area === areaActive);
+      setValues((prev) => ({ ...prev, estudio: estudi }));
+    } else {
+      const dep = departmentOptions.find((x) => x.value === depId)?.label;
+      estudi = estudios.filter((x) => x.departamento === dep);
+      setValues((prev) => ({ ...prev, estudio: estudi }));
+    }
   };
   const filterBySearch = (search:string)=>{
      var estudio = estudios.filter(x=>x.clave.includes(search) || x.nombre.includes(search))
@@ -624,6 +631,8 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
 
   const setPage = (page: number) => {
     const reagent = promotionLists[page - 1];
+    setAreaId(undefined);
+     setDepId(undefined);
     navigate(`/${views.promo}/${reagent.id}?${searchParams}`);
   };
 
@@ -849,7 +858,8 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
                 formProps={{ name: "departamentoSearch", label: "Departamento" }}
                 options={departmentOptions}
                 readonly={readonly}
-                onChange={(value)=>{setAreaId(undefined); filterByDepartament(value)}}
+                value={depId} 
+                onChange={(value)=>{setAreaId(undefined); setDepId(value); filterByDepartament(value)}}
               />
 
               </Col> 
@@ -863,6 +873,10 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
                 onChange={(value)=>{ setAreaId(value); filterByArea(value)}}
                 value={areaId}
                 allowClear
+                onClear={() => {
+                  setAreaId(undefined);
+                  filterByArea();
+                }}
                 style={{width:"400px"}}
               />
               </Col>

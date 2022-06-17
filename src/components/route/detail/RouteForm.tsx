@@ -1,4 +1,17 @@
-import {  Spin,  Form,  Row,  Col,  Pagination,  Button,  PageHeader,  Divider,  Select,  Input,  Table,  TreeSelect,} from "antd";
+import {
+  Spin,
+  Form,
+  Row,
+  Col,
+  Pagination,
+  Button,
+  PageHeader,
+  Divider,
+  Select,
+  Input,
+  Table,
+  TreeSelect,
+} from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
@@ -11,8 +24,17 @@ import views from "../../../app/util/view";
 import SwitchInput from "../../../app/common/form/SwitchInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
-import {  IDias,  IRouteEstudioList,  IRouteForm,  RouteFormValues,} from "../../../app/models/route";
-import {  getDefaultColumnProps,  IColumns,  ISearch,} from "../../../app/common/table/utils";
+import {
+  IDias,
+  IRouteEstudioList,
+  IRouteForm,
+  RouteFormValues,
+} from "../../../app/models/route";
+import {
+  getDefaultColumnProps,
+  IColumns,
+  ISearch,
+} from "../../../app/common/table/utils";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import { IOptions } from "../../../app/models/shared";
 import TextAreaInput from "../../../app/common/form/TextAreaInput";
@@ -24,17 +46,30 @@ const { Search } = Input;
 type RouteFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
-  printing: boolean;  };
+  printing: boolean;
+};
 
 type UrlParams = {
-  id: string; };
+  id: string;
+};
 
 const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   const { optionStore, routeStore } = useStore();
-  const { routes, getById, getAll, create, update, getAllStudy, studies } = routeStore;
+  const { routes, getById, getAll, create, update, getAllStudy, studies } =
+    routeStore;
   const [lista, setLista] = useState(studies);
-  const {getDepartmentOptions, departmentOptions, getareaOptions,areas,BranchStringOptions, 
-    getBranchStringOptions, DeliveryStringOptions,getDeliveryStringOptions, MaquiladorStringOptions,getMaquiladorStringOptions,} = optionStore;
+  const {
+    getDepartmentOptions,
+    departmentOptions,
+    getareaOptions,
+    areas,
+    BranchStringOptions,
+    getBranchStringOptions,
+    DeliveryStringOptions,
+    getDeliveryStringOptions,
+    MaquiladorStringOptions,
+    getMaquiladorStringOptions,
+  } = optionStore;
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [form] = Form.useForm<IRouteForm>();
@@ -45,7 +80,9 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   const [searchvalue, setSearchvalue] = useState<string>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [loading, setLoading] = useState(false);
-  const [readonly, setReadonly] = useState( searchParams.get("mode") === "readonly");
+  const [readonly, setReadonly] = useState(
+    searchParams.get("mode") === "readonly"
+  );
   const [values, setValues] = useState<IRouteForm>(new RouteFormValues());
   const [value, setValue] = useState<string>();
   const [estudios, setEstudios] = useState<IRouteEstudioList[]>([]);
@@ -53,11 +90,17 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   const { width: windowWidth } = useWindowDimensions();
   const [selectedTags, setSelectedTags] = useState<IDias[]>([]);
   const tagsData: IDias[] = [
-    { id: 1, dia: "L" }, { id: 2, dia: "M" }, { id: 3, dia: "M" }, { id: 4, dia: "J" },
-    { id: 5, dia: "V" }, { id: 6, dia: "S" }, { id: 7, dia: "D" },  ];
+    { id: 1, dia: "L" },
+    { id: 2, dia: "M" },
+    { id: 3, dia: "M" },
+    { id: 4, dia: "J" },
+    { id: 5, dia: "V" },
+    { id: 6, dia: "S" },
+    { id: 7, dia: "D" },
+  ];
   const [formTP] = Form.useForm<{ tiempoDeEntrega: string }>();
   const nameValue = Form.useWatch("tiempoDeEntrega", formTP);
-  
+
   useEffect(() => {
     const studys = async () => {
       let estudio = await getAllStudy();
@@ -109,7 +152,9 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
           var activo = user?.estudio.find((y) => y.id === x.id) != null;
           return { ...x, activo };
         });
-        setSelectedRowKeys(studis?.filter((x) => x.activo )?.map((x) => x.id ) ?? []);//aqui
+        setSelectedRowKeys(
+          studis?.filter((x) => x.activo)?.map((x) => x.id) ?? []
+        ); //aqui
         setAreaForm(areaForm!);
         setValues(user!);
         setLista(studis!);
@@ -144,7 +189,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     let success = false;
     if (!route.id) {
       //console.log(route.id, "Valor del id");
-    
+
       success = await create(route);
     } else {
       success = await update(route);
@@ -195,14 +240,16 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
       value: "sucursal",
       children: BranchStringOptions.map((x) => ({
         title: x.label,
-        value: x.value,    })),
+        value: x.value,
+      })),
     },
     {
       title: "Maquiladores",
       value: "Maquiladores",
       children: MaquiladorStringOptions.map((x) => ({
         title: x.label,
-        value: x.value,   })),
+        value: x.value,
+      })),
     },
   ];
 
@@ -249,23 +296,22 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     //console.log("selectedRowKeys changed: ", selectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);//console.log("checks seleccionados" ,selectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys); //console.log("checks seleccionados" ,selectedRowKeys);
   };
 
   const rowSelection = {
     selectedRowKeys,
-    
+
     onChange: onSelectChange,
-    
+
     onSelect: (record: IRouteEstudioList, selected: boolean) => {
-      
       setStudy(selected, record);
       //console.log("checks seleccionados" ,selectedRowKeys);
     },
     onSelectAll: (selected: boolean, _: any, studies: IRouteEstudioList[]) => {
       for (const study of studies) {
         setStudy(selected, study);
-      }//console.log("checks seleccionados" ,selectedRowKeys);
+      } //console.log("checks seleccionados" ,selectedRowKeys);
     },
   };
 
@@ -327,16 +373,26 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
       setValues((prev) => ({ ...prev, estudio: estudios }));
       setAreaSearch(areaSearch!);
     } else {
-      estudios = lista.filter((x) => x.activo === true);
+      estudios = lista;
+      if (estudios.length <= 0) {
+        estudios = lista;
+      }
       setValues((prev) => ({ ...prev, estudio: estudios }));
     }
   };
 
-  const filterByArea = (area: number) => {
-    var areaActive = areas.filter((x) => x.value === area)[0].label;
-    var estudios = lista.filter((x) => x.area === areaActive);
-    setValues((prev) => ({ ...prev, estudio: estudios }));
+  const filterByArea = (area?: number) => {
+    if (area) {
+      var areaActive = areas.filter((x) => x.value === area)[0].label;
+      var estudios = lista.filter((x) => x.area === areaActive);
+      setValues((prev) => ({ ...prev, estudio: estudios }));
+    } else {
+      const dep = departmentOptions.find((x) => x.value === depId)?.label;
+      estudios = lista.filter((x) => x.departamento === dep);
+      setValues((prev) => ({ ...prev, estudio: estudios }));
+    }
   };
+
   const filterBySearch = (search: string) => {
     var estudios = lista.filter(
       (x) => x.clave.includes(search) || x.nombre.includes(search)
@@ -361,8 +417,15 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         {!readonly && (
           <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
             <Button onClick={goBack}>Cancelar</Button>
-            <Button type="primary"  htmlType="submit"  onClick={() => {  form.submit();
-              }}>Guardar</Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              onClick={() => {
+                form.submit();
+              }}
+            >
+              Guardar
+            </Button>
           </Col>
         )}
         {readonly && (
@@ -591,6 +654,10 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                 }}
                 value={areaId}
                 allowClear
+                onClear={() => {
+                  setAreaId(undefined);
+                  filterByArea();
+                }}
                 style={{ width: "400px" }}
                 placeholder={"Área"}
               />
