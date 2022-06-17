@@ -197,7 +197,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
             }),
         },
         {
-            ...getDefaultColumnProps("idListaPrecios", "Lista de Precio", {
+            ...getDefaultColumnProps("precioLista", "Lista de Precio", {
                 searchState,
                 setSearchState,
                 width: "8%",

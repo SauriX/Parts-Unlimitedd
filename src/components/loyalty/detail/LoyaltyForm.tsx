@@ -36,7 +36,7 @@ type LoyaltyFormProps = {
 const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
   const { loyaltyStore, optionStore } = useStore();
   const { getById, create, update, getAll, loyaltys } = loyaltyStore;
-  const {priceListOptions1,getPriceListOptions1} = optionStore;
+  const {priceListOptions,getPriceListOptions} = optionStore;
   const navigate = useNavigate();
 
 
@@ -77,10 +77,10 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
 
   useEffect(()=>{
     const readPriceList = async ()=>{
-      await getPriceListOptions1();
+      await getPriceListOptions();
     }
     readPriceList();
-  },[getPriceListOptions1]);
+  },[getPriceListOptions]);
 
   useEffect(() => {
     if (loyaltys.length === 0) {
@@ -276,11 +276,11 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
                 />
                 <SelectInput
                   formProps={{
-                    name: "idListaPrecios",
+                    name: "precioListaId",
                     label: "Lista de precios",
                   }}
                   readonly={readonly}
-                  options={priceListOptions1}
+                  options={priceListOptions}
                 />
               </Col>
             </Row>
