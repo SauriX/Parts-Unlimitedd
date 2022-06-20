@@ -1,9 +1,15 @@
-import { Layout, Menu, Typography, Image, Avatar, Row, Col, Popover, Form, Spin, Button, Modal } from "antd";
+import { Layout, Menu, Typography, Image, Avatar, Row, Col, Popover, Form, Spin, Button } from "antd";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import IconSelector from "../common/icons/IconSelector";
 import { IMenu } from "../models/shared";
-import { UserOutlined, DownOutlined, LogoutOutlined, NotificationOutlined } from "@ant-design/icons";
+import {
+  UserOutlined,
+  DownOutlined,
+  LogoutOutlined,
+  NotificationOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import DropdownOption from "../common/header/DropdownOption";
 import { useStore } from "../stores/store";
 import { observer } from "mobx-react-lite";
@@ -12,6 +18,7 @@ import { formItemLayout } from "../util/utils";
 import PasswordInput from "../common/form/PasswordInput";
 import HeaderTitle from "../common/header/HeaderTitle";
 import Notifications from "./Notifications";
+import Configuration from "../../components/configuration/Configuration";
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
 
@@ -26,25 +33,46 @@ const LayoutComponent = () => {
   const { profileStore, drawerStore, modalStore } = useStore();
   const { openDrawer } = drawerStore;
   const { openModal } = modalStore;
-  const { profile, menu, logout, getProfile, getMenu } = profileStore;
+  const { profile, menu, logoImg, logout, getProfile, getMenu } = profileStore;
 
   const location = useLocation();
 
   const [menus, setMenus] = useState<IItem[]>([]);
 
-  const convertMenu = useCallback((menus: IMenu[]): IItem[] => {
-    return menus.map((x) => ({
-      key: x.id.toString() + "-" + x.ruta ?? x.descripcion,
-      label:
-        x.subMenus && x.subMenus.length > 0 ? (
-          x.descripcion
-        ) : (
-          <Link to={x.ruta ?? x.descripcion}>{x.descripcion}</Link>
-        ),
-      icon: <IconSelector name={x.icono} />,
-      children: !!x.subMenus && x.subMenus.length > 0 ? convertMenu(x.subMenus) : undefined,
-    }));
-  }, []);
+  const convertMenu = useCallback(
+    (menus: IMenu[]): IItem[] => {
+      return menus.map((x) => ({
+        key: x.id.toString() + "-" + x.ruta ?? x.descripcion,
+        label:
+          x.subMenus && x.subMenus.length > 0 ? (
+            x.descripcion
+          ) : x.ruta === "configuration" ? (
+            <Link
+              to="#"
+              onClick={() =>
+                openDrawer({
+                  title: (
+                    <HeaderTitle
+                      title="Configuración de parámetros del sistema"
+                      icon={<SettingOutlined className="header-title-icon" />}
+                    />
+                  ),
+                  body: <Configuration />,
+                  width: 550,
+                })
+              }
+            >
+              {x.descripcion}
+            </Link>
+          ) : (
+            <Link to={x.ruta ?? x.descripcion}>{x.descripcion}</Link>
+          ),
+        icon: <IconSelector name={x.icono} />,
+        children: !!x.subMenus && x.subMenus.length > 0 ? convertMenu(x.subMenus) : undefined,
+      }));
+    },
+    [openDrawer]
+  );
 
   useEffect(() => {
     const items = convertMenu(menu);
@@ -80,7 +108,10 @@ const LayoutComponent = () => {
         <Row>
           <Col span={12}>
             <div className="header-logo-container">
-              <Image src={`/${process.env.REACT_APP_NAME}/admin/assets/logo.png`} preview={false} />
+              <Image
+                src={logoImg ?? `${process.env.REACT_APP_CATALOG_URL}/images/logo.png`}
+                preview={false}
+              />
             </div>
           </Col>
           <Col span={12} className="header-data" style={{ textAlign: "right" }}>

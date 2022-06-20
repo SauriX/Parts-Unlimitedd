@@ -52,15 +52,18 @@ import views from "../util/view";
 import Appointment from "../../views/Appointment";
 
 function App() {
-  const { profileStore } = useStore();
+  const { profileStore, configurationStore } = useStore();
   const { token, getProfile, getMenu } = profileStore;
+  const { getGeneral } = configurationStore;
 
   const [loading, setLoading] = useState(true);
 
   const loadUser = useCallback(async () => {
-    await Promise.all([getMenu(), getProfile()]);
+    await Promise.all([getMenu(), getProfile(), getGeneral()]).then((x) => {
+      document.title = x[2]?.nombreSistema ?? "";
+    });
     setLoading(false);
-  }, [getMenu, getProfile, setLoading]);
+  }, [getGeneral, getMenu, getProfile]);
 
   useEffect(() => {
     if (token) {

@@ -1,6 +1,4 @@
 import {
-  HomeOutlined,
-  SettingOutlined,
   UserOutlined,
   IdcardOutlined,
   SafetyOutlined,
@@ -17,6 +15,7 @@ import {
   TagsOutlined,
   CarOutlined,
   ToolOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 
 const IconSelector = ({ name }: { name: string }) => {
@@ -55,6 +54,8 @@ const IconSelector = ({ name }: { name: string }) => {
       return <CarOutlined />;
     case "maquila":
       return <ToolOutlined />;
+    case "configuration":
+      return <SettingOutlined />;
     default:
       return null;
   }

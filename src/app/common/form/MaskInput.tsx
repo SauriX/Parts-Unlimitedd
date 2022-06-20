@@ -10,6 +10,7 @@ interface IProps {
   placeholder?: string;
   readonly?: boolean;
   mask: (string | RegExp)[];
+  width?: string | number;
   validator?: (_: RuleObject, value: any) => Promise<any>;
 }
 
@@ -20,6 +21,7 @@ const MaskInput = ({
   placeholder,
   readonly,
   mask,
+  width,
   validator,
 }: IProps) => {
   let rules: any[] = [];
@@ -58,6 +60,7 @@ const MaskInput = ({
             autoComplete="off"
             // prefix={prefix}
             placeholder={placeholder ?? itemProps.label?.toString()}
+            style={{ width: width ?? "100%" }}
           />
         )}
       />

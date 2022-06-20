@@ -21,6 +21,8 @@ import LoyaltyStore from "./loyaltyStore";
 import ModalStore from "./modalStore";
 import DrawerStore from "./drawerStore";
 import RouteStore from "./routeStore";
+import ConfigurationStore from "./configurationStore";
+
 configure({
   enforceActions: "never",
 });
@@ -30,6 +32,7 @@ interface Store {
   drawerStore: DrawerStore;
   profileStore: ProfileStore;
   optionStore: OptionStore;
+  configurationStore: ConfigurationStore;
   userStore: UserStore;
   reagentStore: ReagentStore;
   medicsStore: MedicsStore;
@@ -54,6 +57,7 @@ export const store: Store = {
   drawerStore: new DrawerStore(),
   profileStore: new ProfileStore(),
   optionStore: new OptionStore(),
+  configurationStore: new ConfigurationStore(),
   userStore: new UserStore(),
   reagentStore: new ReagentStore(),
   medicsStore: new MedicsStore(),

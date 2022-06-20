@@ -12,7 +12,7 @@ import messages from "../app/util/messages";
 const Login = () => {
   const { userStore, profileStore } = useStore();
   const { changePassordF, changePassword } = userStore;
-  const { login } = profileStore;
+  const { logoImg, login } = profileStore;
 
   const location = useLocation();
 
@@ -57,11 +57,11 @@ const Login = () => {
         <div className={"trapecio-top"}></div>
         <div className={"trapecio-top"}></div>
       </div>
-      <div className={"contenedor"}>
+      <div className={"contenedor"} style={{ textAlign: "center" }}>
         <img
-          src={`/${process.env.REACT_APP_NAME}/admin/assets/logologin.png`}
+          src={logoImg ?? `${process.env.REACT_APP_CATALOG_URL}/images/logo.png`}
           alt="Logo"
-          style={{ width: 534 }}
+          style={{ height: 150 }}
         />
       </div>
       <div className={"contenedor"}>

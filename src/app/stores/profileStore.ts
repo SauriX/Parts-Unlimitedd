@@ -25,6 +25,7 @@ export default class ProfileStore {
   menu: IMenu[] = [];
   profile: IProfile | undefined;
   token?: string = window.localStorage.getItem(tokenName) ?? undefined;
+  logoImg?: string;
 
   get isLoggedIn() {
     return !!this.profile;
@@ -36,6 +37,10 @@ export default class ProfileStore {
 
   setProfile = (profile?: IProfile) => {
     this.profile = profile;
+  };
+
+  setLogoImg = (image: string) => {
+    this.logoImg = image;
   };
 
   getMenu = async () => {

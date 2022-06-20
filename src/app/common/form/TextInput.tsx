@@ -11,6 +11,7 @@ interface IProps {
   type?: RuleType;
   placeholder?: string;
   readonly?: boolean;
+  width?: string | number;
   onClick?: React.MouseEventHandler<HTMLInputElement> | undefined;
   onKeyUp?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
 }
@@ -23,6 +24,7 @@ const TextInput = ({
   type,
   placeholder,
   readonly,
+  width,
   onClick,
   onKeyUp,
 }: IProps) => {
@@ -70,6 +72,7 @@ const TextInput = ({
         placeholder={placeholder ?? itemProps.label?.toString()}
         onClick={onClick}
         onKeyUp={onKeyUp}
+        style={{ width: width ?? "100%" }}
       />
     </Form.Item>
   );
