@@ -28,6 +28,7 @@ import {
   IDias,
   IRouteEstudioList,
   IRouteForm,
+  IRouteList,
   RouteFormValues,
 } from "../../../app/models/route";
 import {
@@ -41,6 +42,9 @@ import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import NumberInput from "../../../app/common/form/NumberInput";
 import SelectInput from "../../../app/common/form/SelectInput";
 import CheckableTag from "antd/lib/tag/CheckableTag";
+import { title } from "process";
+import Route from "../../../app/api/route";
+import { nodeModuleNameResolver } from "typescript";
 
 const { Search } = Input;
 type RouteFormProps = {
@@ -63,12 +67,12 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     departmentOptions,
     getareaOptions,
     areas,
-    BranchStringOptions,
-    getBranchStringOptions,
-    DeliveryStringOptions,
-    getDeliveryStringOptions,
-    MaquiladorStringOptions,
-    getMaquiladorStringOptions,
+    BranchOptions,
+    getBranchOptions,
+    DeliveryOptions,
+    getDeliveryOptions,
+    MaquiladorOptions,
+    getMaquiladorOptions,
   } = optionStore;
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -125,15 +129,11 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   }, [getareaOptions]);
 
   useEffect(() => {
-    getBranchStringOptions();
-    getDeliveryStringOptions();
-    getMaquiladorStringOptions();
-  }, [
-    getBranchStringOptions,
-    getDeliveryStringOptions,
-    getMaquiladorStringOptions,
-  ]);
-
+    getBranchOptions();
+    getDeliveryOptions();
+    getMaquiladorOptions();
+  }, [getBranchOptions, getDeliveryOptions, getMaquiladorOptions]);
+  // const [discunt, setDiscunt] = useState<string|number>();
   useEffect(() => {
     //console.log("use");
     const readuser = async (idUser: string) => {
@@ -147,6 +147,9 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         //console.log("checks seleccionados" ,selectedRowKeys);
         var areaForm = await getareaOptions(values.idDepartamento);
         const user = await getById(idUser);
+        if (user?.sucursalDestinoId == null){
+          user!.sucursalDestinoId = user?.maquiladorId!.toString();
+        }
         form.setFieldsValue(user!);
         studis = studis?.map((x) => {
           var activo = user?.estudio.find((y) => y.id === x.id) != null;
@@ -159,9 +162,10 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         setValues(user!);
         setLista(studis!);
         setLoading(false);
-        user!.sucursalDestinoId = value!;
+       
+        
+        // user!.maquiladorId = value!;
         setSelectedTags(user?.dias!);
-        //console.log(studis);
       } catch {
       } finally {
         setLoading(false);
@@ -185,6 +189,16 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     const route = { ...values, ...newValues };
     route.estudio = lista.filter((x) => x.activo === true);
     route.dias = selectedTags;
+    const parent = treeData.find((x) =>
+    x.children.map((x) => x.value).includes(newValues.sucursalDestinoId!));
+    if (parent?.title === "Sucursales"){
+      route.maquiladorId = undefined;
+      console.log("Llega el valor a SucursalDestino?", route.sucursalDestinoId);
+    }else{
+      route.maquiladorId = newValues.sucursalDestinoId;
+      route.sucursalDestinoId= undefined;
+      console.log("Llega el valor a Maquilador?", route.maquiladorId);
+    } 
     //console.log("checks seleccionados" ,selectedRowKeys);
     let success = false;
     if (!route.id) {
@@ -197,6 +211,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     setLoading(false);
     if (success) {
       goBack();
+      getAll("all");
     }
   };
 
@@ -237,16 +252,16 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   const treeData = [
     {
       title: "Sucursales",
-      value: "sucursal",
-      children: BranchStringOptions.map((x) => ({
+      value: "sucursalDestinoId",
+      children: BranchOptions.map((x) => ({
         title: x.label,
         value: x.value,
       })),
     },
     {
       title: "Maquiladores",
-      value: "Maquiladores",
-      children: MaquiladorStringOptions.map((x) => ({
+      value: "maquiladorId",
+      children: MaquiladorOptions.map((x) => ({
         title: x.label,
         value: x.value,
       })),
@@ -492,7 +507,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                   }}
                   readonly={readonly}
                   required
-                  options={BranchStringOptions}
+                  options={BranchOptions}
                 />
                 {/* <div style={{ marginLeft: "170px", marginBottom: "20px" }}>
                   <span style={{ marginRight: 10 }}>Destino:</span> */}
@@ -504,19 +519,18 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                     treeData={treeData}
                     placeholder="Please select"
                     treeDefaultExpandAll
-                    // onChange={onChange}
+                    // defaultValue={}
+                    onSelect={(value: any, node: any) => {
+                      console.log(value);
+                      console.log(node);
+
+                      const parent = treeData.find((x) =>
+                        x.children.map((x) => x.value).includes(value)
+                      );
+                      console.log(parent);
+                    }}
                   />
                 </Form.Item>
-                {/* </div> */}
-                {/* <TreeSelect
-                  formProps={{
-                    name: "sucursalDestinoId",
-                    label: "Destino ",
-                  }}
-                  readonly={readonly}
-                  required
-                  options={BranchOptions}
-                /> */}
               </Col>
               <Col md={12} sm={24} xs={12}></Col>
               <Col md={12} sm={24} xs={12}>
@@ -551,7 +565,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                   }}
                   readonly={readonly}
                   required
-                  options={DeliveryStringOptions}
+                  options={DeliveryOptions}
                 />
                 <div style={{ marginLeft: "145px", marginBottom: "20px" }}>
                   <span style={{ marginRight: 10 }}>Aplicar días:</span>

@@ -43,8 +43,8 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     getcfdiOptions,
     paymentMethodOptions,
     getpaymentMethodOptions,
-    priceListOptions1,
-    getPriceListOptions1,
+    priceListOptions,
+    getPriceListOptions,
     PromotionOptions,
     getPromotionOptions,
   } = optionStore;
@@ -129,7 +129,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     getbankOptions();
     getcfdiOptions();
     getpaymentMethodOptions();
-    getPriceListOptions1();
+    getPriceListOptions();
     getprovenanceOptions();
     getPromotionOptions();
   }, [
@@ -137,7 +137,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     getbankOptions,
     getcfdiOptions,
     getpaymentMethodOptions,
-    getPriceListOptions1,
+    getPriceListOptions,
     getprovenanceOptions,
     getPromotionOptions,
   ]);
@@ -469,12 +469,12 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 />
                 <SelectInput
                   formProps={{
-                    name: "listaPrecioId",
+                    name: "precioListaId",
                     label: "Lista de precio ",
                   }}
                   readonly={readonly}
                   required
-                  options={priceListOptions1}
+                  options={priceListOptions}
                 />
                 <SelectInput
                   formProps={{
@@ -483,7 +483,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   readonly={readonly}
                   required
-                  options={ PromotionOptions }
+                  options={PromotionOptions}
                   />
                 <SwitchInput
                   name="activo"
