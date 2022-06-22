@@ -1,27 +1,29 @@
 import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
+import { resolve } from "path";
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../../../app/stores/store";
 import { guidPattern } from "../../../app/util/utils";
-import RouteForm from "./RouteForm";
-import RouteFormHeader from "./RouteFormHeader";
+import ProceedingForm from "./ProceedingForm";
+import ProceedingFormHeader from "./ProceedingFormHeader";
+
 
 type UrlParams = {
   id: string;
 };
 
-const RouteDetail = () => {
-  const { routeStore } = useStore();
-  const { scopes, access, clearScopes, exportForm } = routeStore;
+const ProceedingDetail = () => {
+  const {  } = useStore();
+/*   const { scopes, access, clearScopes, exportForm } = ; */ 
 
   const navigate = useNavigate();
 
   const [printing, setPrinting] = useState(false);
 
   const { id } = useParams<UrlParams>();
-  const routeId = !id ? "" : !guidPattern.test(id) ? undefined : id;
+  const reagentId = !id ? "" : !guidPattern.test(id) ? undefined : id;
 
   const componentRef = useRef<any>();
 
@@ -41,47 +43,47 @@ const RouteDetail = () => {
   });
 
   const handleDownload = async () => {
-    if (routeId) {
+    if (reagentId) {
       setPrinting(true);
-      await exportForm(routeId);
+     // await exportForm(reagentId);
       setPrinting(false);
     }
   };
 
-  useEffect(() => {
+/*   useEffect(() => {
     const checkAccess = async () => {
       const permissions = await access();
 
-      if (routeId === undefined) {
-        //console.log("undefined");
+       if (id === undefined) {
+        console.log("undefined");
         navigate("/notFound");
-      } else if (!permissions?.crear && routeId === "") {
+      } else if (!permissions?.crear && id === "") {
         navigate(`/forbidden`);
-      } else if (!permissions?.modificar && routeId !== "") {
+      } else if (!permissions?.modificar && id!== "") {
         navigate(`/forbidden`);
-      }
+      } 
     };
 
     checkAccess();
-  }, [access, navigate, routeId]);
+  }, [ access , navigate, id]); */
 
-  useEffect(() => {
+   useEffect(() => {
     return () => {
-      clearScopes();
+     // clearScopes();
     };
-  }, [clearScopes]);
+  }, [/* clearScopes */]);
+ 
+  //if (reagentId == null) return null;
 
-  if (routeId == null) return null;
-
-  if (!scopes?.acceder) return null;
+/*   if (!scopes?.acceder) return null; */
 
   return (
     <Fragment>
-      <RouteFormHeader id={routeId} handlePrint={handlePrint} handleDownload={handleDownload} />
+      <ProceedingFormHeader id={reagentId!} handlePrint={handlePrint} handleDownload={handleDownload} />
       <Divider className="header-divider" />
-      <RouteForm id={routeId} componentRef={componentRef} printing={printing} />
+      <ProceedingForm id={reagentId!} componentRef={componentRef} printing={printing} />
     </Fragment>
   );
 };
 
-export default observer(RouteDetail);
+export default observer(ProceedingDetail);

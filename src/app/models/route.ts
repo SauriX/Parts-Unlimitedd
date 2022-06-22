@@ -2,8 +2,8 @@ export interface IRouteList {
     id: string;
     clave: string;
     nombre: string;
-    sucursalOrigenId: string;
-    sucursalDestinoId: string;
+    sucursalOrigen: string;
+    sucursalDestino: string;
     activo: boolean;
 }
 
@@ -12,12 +12,11 @@ export interface IRouteForm {
     clave: string,
     nombre: string,
     sucursalOrigenId: string,
-    maquilador: boolean,
-    sucursalDestinoId:	string,
-    maquiladorId:	string,
+    sucursalDestinoId?:	string,
+    maquiladorId?:	string|number,
     requierePaqueteria: boolean,
     seguimientoPaqueteria:	number,
-    paqueteriaId: string,
+    paqueteriaId: number,
     comentarios: string,
     diasDeEntrega: number,
     horaDeEntregaEstimada: number,
@@ -63,12 +62,11 @@ export class RouteFormValues implements IRouteForm {
     cantidad = 0;
     activo = true;
     sucursalOrigenId = "";
-    maquilador = true;
-    sucursalDestinoId = "";
-    maquiladorId = "";
+    sucursalDestinoId = undefined;
+    maquiladorId = undefined;
     requierePaqueteria = false;
     seguimientoPaqueteria = 0;
-    paqueteriaId = "";
+    paqueteriaId = 0;
     comentarios = "";
     diasDeEntrega = 0;
     horaDeEntregaEstimada = 0;

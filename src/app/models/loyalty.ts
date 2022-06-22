@@ -5,7 +5,8 @@ export interface ILoyaltyList {
   clave: string;
   nombre: string;
   tipoDescuento: string;
-  idListaPrecios:string,
+  precioLista: string;
+  precioListaId:string,
   cantidadDescuento: number;
   fechaInicial: Date;
   fechaFinal: Date;
@@ -19,7 +20,7 @@ export interface ILoyaltyForm {
   tipoDescuento: string;
   cantidadDescuento: number;
   cantidad: number;
-  idListaPrecios:string,
+  precioListaId :string,
   fechaInicial?: Date;
   fechaFinal?: Date;
   activo: boolean;
@@ -29,7 +30,7 @@ export class LoyaltyFormValues implements ILoyaltyForm {
   id = "";
   clave = "";
   nombre = "";
-  idListaPrecios= "";
+  precioListaId = "";
   tipoDescuento = "";
   cantidadDescuento = 0;
   cantidad = 0;

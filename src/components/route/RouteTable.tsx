@@ -38,13 +38,15 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
     searchedColumn: "",
   });
 
-  console.log("Table");
+  //console.log("Table");
 
   useEffect(() => {
     const readRoutes = async () => {
       setLoading(true);
       await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
+      getAll("all");
+      // create(routes).then(x => { getAll("all")});
     };
 
     if (routes.length === 0) {
@@ -83,7 +85,7 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-      ...getDefaultColumnProps("sucursalOrigenId", "Sucursal Origen", {
+      ...getDefaultColumnProps("sucursalOrigen", "Sucursal Origen", {
         searchState,
         setSearchState,
         width: "20%",
@@ -92,7 +94,7 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-        ...getDefaultColumnProps("sucursalDestinoId", "Destino", {
+        ...getDefaultColumnProps("sucursalDestino", "Destino", {
           searchState,
           setSearchState,
           width: "20%",

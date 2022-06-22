@@ -1,4 +1,17 @@
-import {  Spin,  Form,  Row,  Col,  Pagination,  Button,  PageHeader,  Divider,  Select,  Input,  Table,  TreeSelect,} from "antd";
+import {
+  Spin,
+  Form,
+  Row,
+  Col,
+  Pagination,
+  Button,
+  PageHeader,
+  Divider,
+  Select,
+  Input,
+  Table,
+  TreeSelect,
+} from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
@@ -11,30 +24,56 @@ import views from "../../../app/util/view";
 import SwitchInput from "../../../app/common/form/SwitchInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
-import {  IDias,  IRouteEstudioList,  IRouteForm,  RouteFormValues,} from "../../../app/models/route";
-import {  getDefaultColumnProps,  IColumns,  ISearch,} from "../../../app/common/table/utils";
+import {
+  IDias,
+  IRouteEstudioList,
+  IRouteForm,
+  IRouteList,
+  RouteFormValues,
+} from "../../../app/models/route";
+import {
+  getDefaultColumnProps,
+  IColumns,
+  ISearch,
+} from "../../../app/common/table/utils";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import { IOptions } from "../../../app/models/shared";
 import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import NumberInput from "../../../app/common/form/NumberInput";
 import SelectInput from "../../../app/common/form/SelectInput";
 import CheckableTag from "antd/lib/tag/CheckableTag";
+import { title } from "process";
+import Route from "../../../app/api/route";
+import { nodeModuleNameResolver } from "typescript";
 
 const { Search } = Input;
 type RouteFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
-  printing: boolean;  };
+  printing: boolean;
+};
 
 type UrlParams = {
-  id: string; };
+  id: string;
+};
 
 const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   const { optionStore, routeStore } = useStore();
-  const { routes, getById, getAll, create, update, getAllStudy, studies } = routeStore;
+  const { routes, getById, getAll, create, update, getAllStudy, studies } =
+    routeStore;
   const [lista, setLista] = useState(studies);
-  const {getDepartmentOptions, departmentOptions, getareaOptions,areas,BranchStringOptions, 
-    getBranchStringOptions, DeliveryStringOptions,getDeliveryStringOptions, MaquiladorStringOptions,getMaquiladorStringOptions,} = optionStore;
+  const {
+    getDepartmentOptions,
+    departmentOptions,
+    getareaOptions,
+    areas,
+    BranchOptions,
+    getBranchOptions,
+    DeliveryOptions,
+    getDeliveryOptions,
+    MaquiladorOptions,
+    getMaquiladorOptions,
+  } = optionStore;
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [form] = Form.useForm<IRouteForm>();
@@ -45,7 +84,9 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   const [searchvalue, setSearchvalue] = useState<string>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [loading, setLoading] = useState(false);
-  const [readonly, setReadonly] = useState( searchParams.get("mode") === "readonly");
+  const [readonly, setReadonly] = useState(
+    searchParams.get("mode") === "readonly"
+  );
   const [values, setValues] = useState<IRouteForm>(new RouteFormValues());
   const [value, setValue] = useState<string>();
   const [estudios, setEstudios] = useState<IRouteEstudioList[]>([]);
@@ -53,11 +94,17 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   const { width: windowWidth } = useWindowDimensions();
   const [selectedTags, setSelectedTags] = useState<IDias[]>([]);
   const tagsData: IDias[] = [
-    { id: 1, dia: "L" }, { id: 2, dia: "M" }, { id: 3, dia: "M" }, { id: 4, dia: "J" },
-    { id: 5, dia: "V" }, { id: 6, dia: "S" }, { id: 7, dia: "D" },  ];
+    { id: 1, dia: "L" },
+    { id: 2, dia: "M" },
+    { id: 3, dia: "M" },
+    { id: 4, dia: "J" },
+    { id: 5, dia: "V" },
+    { id: 6, dia: "S" },
+    { id: 7, dia: "D" },
+  ];
   const [formTP] = Form.useForm<{ tiempoDeEntrega: string }>();
   const nameValue = Form.useWatch("tiempoDeEntrega", formTP);
-  
+
   useEffect(() => {
     const studys = async () => {
       let estudio = await getAllStudy();
@@ -82,41 +129,43 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   }, [getareaOptions]);
 
   useEffect(() => {
-    getBranchStringOptions();
-    getDeliveryStringOptions();
-    getMaquiladorStringOptions();
-  }, [
-    getBranchStringOptions,
-    getDeliveryStringOptions,
-    getMaquiladorStringOptions,
-  ]);
-
+    getBranchOptions();
+    getDeliveryOptions();
+    getMaquiladorOptions();
+  }, [getBranchOptions, getDeliveryOptions, getMaquiladorOptions]);
+  // const [discunt, setDiscunt] = useState<string|number>();
   useEffect(() => {
-    console.log("use");
+    //console.log("use");
     const readuser = async (idUser: string) => {
       try {
         setLoading(true);
-        console.log("here");
+        //console.log("here");
         const all = await getAll("all");
-        console.log(all);
+        //console.log(all);
         var studis = await getAllStudy();
-        console.log(studies, "estudios");
-        console.log("checks seleccionados" ,selectedRowKeys);
+        //console.log(studies, "estudios");
+        //console.log("checks seleccionados" ,selectedRowKeys);
         var areaForm = await getareaOptions(values.idDepartamento);
         const user = await getById(idUser);
+        if (user?.sucursalDestinoId == null){
+          user!.sucursalDestinoId = user?.maquiladorId!.toString();
+        }
         form.setFieldsValue(user!);
         studis = studis?.map((x) => {
           var activo = user?.estudio.find((y) => y.id === x.id) != null;
           return { ...x, activo };
         });
-        setSelectedRowKeys(studis?.filter((x) => x.activo )?.map((x) => x.id ) ?? []);//aqui
+        setSelectedRowKeys(
+          studis?.filter((x) => x.activo)?.map((x) => x.id) ?? []
+        ); //aqui
         setAreaForm(areaForm!);
         setValues(user!);
         setLista(studis!);
         setLoading(false);
-        user!.sucursalDestinoId = value!;
+       
+        
+        // user!.maquiladorId = value!;
         setSelectedTags(user?.dias!);
-        console.log(studis);
       } catch {
       } finally {
         setLoading(false);
@@ -140,11 +189,21 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     const route = { ...values, ...newValues };
     route.estudio = lista.filter((x) => x.activo === true);
     route.dias = selectedTags;
-    console.log("checks seleccionados" ,selectedRowKeys);
+    const parent = treeData.find((x) =>
+    x.children.map((x) => x.value).includes(newValues.sucursalDestinoId!));
+    if (parent?.title === "Sucursales"){
+      route.maquiladorId = undefined;
+      console.log("Llega el valor a SucursalDestino?", route.sucursalDestinoId);
+    }else{
+      route.maquiladorId = newValues.sucursalDestinoId;
+      route.sucursalDestinoId= undefined;
+      console.log("Llega el valor a Maquilador?", route.maquiladorId);
+    } 
+    //console.log("checks seleccionados" ,selectedRowKeys);
     let success = false;
     if (!route.id) {
-      console.log(route.id, "Valor del id");
-    
+      //console.log(route.id, "Valor del id");
+
       success = await create(route);
     } else {
       success = await update(route);
@@ -152,6 +211,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     setLoading(false);
     if (success) {
       goBack();
+      getAll("all");
     }
   };
 
@@ -181,33 +241,35 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   });
 
   const handleChange = (tag: IDias, checked: Boolean) => {
-    console.log(tag, "el tag");
+    //console.log(tag, "el tag");
     const nextSelectedTags = checked
       ? [...selectedTags!, tag]
       : selectedTags.filter((t) => t.id !== tag.id);
-    console.log("You are interested in: ", nextSelectedTags);
+    //console.log("You are interested in: ", nextSelectedTags);
     setSelectedTags(nextSelectedTags!);
   };
 
   const treeData = [
     {
       title: "Sucursales",
-      value: "sucursal",
-      children: BranchStringOptions.map((x) => ({
+      value: "sucursalDestinoId",
+      children: BranchOptions.map((x) => ({
         title: x.label,
-        value: x.value,    })),
+        value: x.value,
+      })),
     },
     {
       title: "Maquiladores",
-      value: "Maquiladores",
-      children: MaquiladorStringOptions.map((x) => ({
+      value: "maquiladorId",
+      children: MaquiladorOptions.map((x) => ({
         title: x.label,
-        value: x.value,   })),
+        value: x.value,
+      })),
     },
   ];
 
   const onChange = (newDestinoValue: string) => {
-    console.log("Aqui esta el destino", newDestinoValue);
+    //console.log("Aqui esta el destino", newDestinoValue);
     setValue(newDestinoValue);
   };
 
@@ -248,24 +310,23 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   ];
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", selectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);console.log("checks seleccionados" ,selectedRowKeys);
+    //console.log("selectedRowKeys changed: ", selectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys); //console.log("checks seleccionados" ,selectedRowKeys);
   };
 
   const rowSelection = {
     selectedRowKeys,
-    
+
     onChange: onSelectChange,
-    
+
     onSelect: (record: IRouteEstudioList, selected: boolean) => {
-      
       setStudy(selected, record);
-      console.log("checks seleccionados" ,selectedRowKeys);
+      //console.log("checks seleccionados" ,selectedRowKeys);
     },
     onSelectAll: (selected: boolean, _: any, studies: IRouteEstudioList[]) => {
       for (const study of studies) {
         setStudy(selected, study);
-      }console.log("checks seleccionados" ,selectedRowKeys);
+      } //console.log("checks seleccionados" ,selectedRowKeys);
     },
   };
 
@@ -275,7 +336,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     const field = Object.keys(changedValues)[0];
 
     if (field === "idDepartamento") {
-      console.log("deparatemento");
+      //console.log("deparatemento");
       const value = changedValues[field];
       var areaForm = await getareaOptions(value);
       setAreaForm(areaForm!);
@@ -297,7 +358,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         dias = Math.round(dias * 100) / 100;
       }
 
-      console.log(dias);
+      //console.log(dias);
       form.setFieldsValue({ formatoDeTiempoId: dias });
     }
   };
@@ -320,23 +381,33 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         (x) => x.value === departament
       )[0].label;
       var areaSearch = await getareaOptions(departament);
-      console.log(departamento, "departamento");
+      //console.log(departamento, "departamento");
       var estudios = lista.filter((x) => x.departamento === departamento);
-      console.log(lista, "lista");
-      console.log(estudios, "estudios filtro dep");
+      //console.log(lista, "lista");
+      //console.log(estudios, "estudios filtro dep");
       setValues((prev) => ({ ...prev, estudio: estudios }));
       setAreaSearch(areaSearch!);
     } else {
-      estudios = lista.filter((x) => x.activo === true);
+      estudios = lista;
+      if (estudios.length <= 0) {
+        estudios = lista;
+      }
       setValues((prev) => ({ ...prev, estudio: estudios }));
     }
   };
 
-  const filterByArea = (area: number) => {
-    var areaActive = areas.filter((x) => x.value === area)[0].label;
-    var estudios = lista.filter((x) => x.area === areaActive);
-    setValues((prev) => ({ ...prev, estudio: estudios }));
+  const filterByArea = (area?: number) => {
+    if (area) {
+      var areaActive = areas.filter((x) => x.value === area)[0].label;
+      var estudios = lista.filter((x) => x.area === areaActive);
+      setValues((prev) => ({ ...prev, estudio: estudios }));
+    } else {
+      const dep = departmentOptions.find((x) => x.value === depId)?.label;
+      estudios = lista.filter((x) => x.departamento === dep);
+      setValues((prev) => ({ ...prev, estudio: estudios }));
+    }
   };
+
   const filterBySearch = (search: string) => {
     var estudios = lista.filter(
       (x) => x.clave.includes(search) || x.nombre.includes(search)
@@ -361,8 +432,15 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         {!readonly && (
           <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
             <Button onClick={goBack}>Cancelar</Button>
-            <Button type="primary"  htmlType="submit"  onClick={() => {  form.submit();
-              }}>Guardar</Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              onClick={() => {
+                form.submit();
+              }}
+            >
+              Guardar
+            </Button>
           </Col>
         )}
         {readonly && (
@@ -429,7 +507,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                   }}
                   readonly={readonly}
                   required
-                  options={BranchStringOptions}
+                  options={BranchOptions}
                 />
                 {/* <div style={{ marginLeft: "170px", marginBottom: "20px" }}>
                   <span style={{ marginRight: 10 }}>Destino:</span> */}
@@ -441,19 +519,18 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                     treeData={treeData}
                     placeholder="Please select"
                     treeDefaultExpandAll
-                    // onChange={onChange}
+                    // defaultValue={}
+                    onSelect={(value: any, node: any) => {
+                      console.log(value);
+                      console.log(node);
+
+                      const parent = treeData.find((x) =>
+                        x.children.map((x) => x.value).includes(value)
+                      );
+                      console.log(parent);
+                    }}
                   />
                 </Form.Item>
-                {/* </div> */}
-                {/* <TreeSelect
-                  formProps={{
-                    name: "sucursalDestinoId",
-                    label: "Destino ",
-                  }}
-                  readonly={readonly}
-                  required
-                  options={BranchOptions}
-                /> */}
               </Col>
               <Col md={12} sm={24} xs={12}></Col>
               <Col md={12} sm={24} xs={12}>
@@ -488,7 +565,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                   }}
                   readonly={readonly}
                   required
-                  options={DeliveryStringOptions}
+                  options={DeliveryOptions}
                 />
                 <div style={{ marginLeft: "145px", marginBottom: "20px" }}>
                   <span style={{ marginRight: 10 }}>Aplicar días:</span>
@@ -540,7 +617,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                     name: "tiempoDeEntrega",
                     label: "Tiempo de Entrega",
                   }}
-                  min={0}
+                  min={1}
                   max={9999999999999999}
                   required
                   readonly={readonly}
@@ -591,6 +668,10 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                 }}
                 value={areaId}
                 allowClear
+                onClear={() => {
+                  setAreaId(undefined);
+                  filterByArea();
+                }}
                 style={{ width: "400px" }}
                 placeholder={"Área"}
               />

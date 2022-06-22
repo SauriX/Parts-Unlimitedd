@@ -1,12 +1,10 @@
-import { Button, PageHeader, Input } from "antd";
+import { PageHeader} from "antd";
 import React, { FC } from "react";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
-import { PlusOutlined } from "@ant-design/icons";
 import ImageButton from "../../../app/common/button/ImageButton";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 
-const { Search } = Input;
 type MedicsFormHeaderProps = {
   handlePrint: () => void;
   id : string;
@@ -22,9 +20,9 @@ const MedicsFormHeader: FC<MedicsFormHeaderProps> = ({id, handlePrint }) => {
     exportForm(id);
   };
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  //const [searchParams, setSearchParams] = useSearchParams();
 
-  console.log("Header");
+  //console.log("Header");
 
   return (
     <PageHeader

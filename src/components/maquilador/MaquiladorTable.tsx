@@ -1,5 +1,5 @@
-import { Button, Divider, PageHeader, Spin, Table, List, Typography, } from "antd";
-import React, { FC, Fragment, useEffect, useRef, useState, } from "react";
+import { Button, Divider, PageHeader, Table,} from "antd";
+import React, { FC, Fragment, useEffect, useState, } from "react";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
@@ -13,9 +13,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { IMaquiladorList } from "../../app/models/maquilador";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import { useReactToPrint } from "react-to-print";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
-import Search from "antd/es/transfer/search";
 
 type MaquiladorTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -40,7 +38,7 @@ const MaquiladorTable: FC<MaquiladorTableProps> = ({ componentRef, printing }) =
     searchedColumn: "",
   });
 
-  console.log("Table");
+  //console.log("Table");
 
   useEffect(() => {
     const readMaquilador = async () => {

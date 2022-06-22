@@ -5,8 +5,8 @@ export interface ICompanyList {
     clave: string;
     contrasena : string;
     nombreComercial: string;
-    procedenciaid : number;
-    listaPrecioId: number;
+    procedenciaId : number;
+    precioLista: string;
     activo: boolean;
   }
 
@@ -18,7 +18,7 @@ export interface ICompanyForm {
     nombreComercial: string;
     emailEmpresarial : string
     procedenciaId?: number;
-    listaPrecioId?: number;
+    precioListaId: string;
     promocionesId?: number;
     rfc: string;
     codigoPostal: string;
@@ -43,8 +43,8 @@ export interface ICompanyForm {
     nombreComercial= "";
     emailEmpresarial = "";
     procedenciaId= undefined;
-    listaPrecioId= undefined;
-    promocionesId= undefined;
+    precioListaId = "";
+    promocionesId = 0;
     rfc= "";
     codigoPostal= "";
     estado= "";

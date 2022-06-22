@@ -66,9 +66,10 @@ export default class PackStore {
     try {
         
         const roles= await Study.getAll("all");
+        const activos = roles.filter(x => x.activo);
         console.log(roles,"studies");
         console.log(roles);
-        var studies= roles.map((x) => {
+        var studies= activos.map((x) => {
             let data:IPackEstudioList = {
                 id: x.id,
                 clave: x.clave,

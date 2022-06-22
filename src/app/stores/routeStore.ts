@@ -76,8 +76,9 @@ export default class RouteStore {
             
             const roles= await Study.getAll("all");
             console.log(roles,"studies");
+            const activos = roles.filter(x => x.activo);
             console.log(roles);
-            var studies= roles.map((x) => {
+            var studies= activos.map((x) => {
                 let data:IRouteEstudioList = {
                     id: x.id,
                     clave: x.clave,
