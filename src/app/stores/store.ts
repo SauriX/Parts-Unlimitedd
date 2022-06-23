@@ -21,6 +21,7 @@ import LoyaltyStore from "./loyaltyStore";
 import ModalStore from "./modalStore";
 import DrawerStore from "./drawerStore";
 import RouteStore from "./routeStore";
+import ProcedingStore from "./procedingStore";
 configure({
   enforceActions: "never",
 });
@@ -47,6 +48,7 @@ interface Store {
   promotionStore: PromotionStore;
   loyaltyStore: LoyaltyStore;
   routeStore: RouteStore;
+  procedingStore: ProcedingStore;
 }
 
 export const store: Store = {
@@ -71,6 +73,7 @@ export const store: Store = {
   promotionStore: new PromotionStore(),
   loyaltyStore: new LoyaltyStore(),
   routeStore: new RouteStore(),
+  procedingStore: new ProcedingStore(),
 };
 
 export const StoreContext = createContext(store);

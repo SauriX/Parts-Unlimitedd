@@ -25,11 +25,12 @@ const { Search } = Input;
 type PackFormProps = {
   componentRef: React.MutableRefObject<any>;
   load: boolean;
+  msj:String;
 };
 type UrlParams = {
   id: string;
 };
-const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
+const PackForm: FC<PackFormProps> = ({ componentRef, load, msj}) => {
   const { optionStore,packStore } = useStore();
   const {getAll,getById,create,update,getAllStudy,packs,studies} = packStore;
   const [lista, setLista] = useState(studies);
@@ -39,7 +40,6 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load }) => {
   const [form] = Form.useForm<IPackForm>();
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
-
   const [aeraSearch, setAreaSearch] = useState(areas);
   const [areaForm, setAreaForm] = useState<IOptions[]>([]);
   const [areaId, setAreaId] = useState<number>();
@@ -273,7 +273,7 @@ useEffect(() => {
     ); 
   };
   return (
-    <Spin spinning={loading || load} tip={load ? "Imprimiendo" : ""}>
+    <Spin spinning={loading || load} tip={load ? msj : ""}>
       <Row style={{ marginBottom: 24 }}>
         {!!id && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
@@ -339,6 +339,7 @@ useEffect(() => {
             onFinish={onFinish}
             scrollToFirstError
             onValuesChange={onValuesChange}
+            style={{marginLeft:"10px"}}
           >
             <Row>
               <Col md={12} sm={24}>

@@ -234,23 +234,46 @@ console.log(tag,"el tag");
     const nextSelectedTags = checked ? [...selectedTags!, tag] : selectedTags.filter(t => t.id !== tag.id);
     console.log('You are interested in: ', nextSelectedTags);
     let estudio:IPromotionEstudioList[] = estudios!.map(x=> {
-      let data:IPromotionEstudioList = {
-        id:x.id,
-        area:x.area,
-        clave:x.clave,
-        nombre:x.nombre,
-        descuentoPorcentaje:x.descuentoPorcentaje,
-        descuentoCantidad:x.descuentoCantidad,
-        precioFinal:x.precioFinal ,
-        fechaInicial: x.fechaInicial,
-        fechaFinal: x.fechaFinal,
-        activo:x.activo,
-        precio: x.precio! ,
-        paquete:x.paquete,
-        selectedTags:nextSelectedTags,
-        departamento:x.departamento
+      if(x.selectedTags.length>0){
+        let nextSelectedTagsInStudy = checked ? [...x.selectedTags!, tag] : x.selectedTags.filter(t => t.id !== tag.id);
+        let data:IPromotionEstudioList = {
+          id:x.id,
+          area:x.area,
+          clave:x.clave,
+          nombre:x.nombre,
+          descuentoPorcentaje:x.descuentoPorcentaje,
+          descuentoCantidad:x.descuentoCantidad,
+          precioFinal:x.precioFinal ,
+          fechaInicial: x.fechaInicial,
+          fechaFinal: x.fechaFinal,
+          activo:x.activo,
+          precio: x.precio! ,
+          paquete:x.paquete,
+          selectedTags:nextSelectedTagsInStudy,
+          departamento:x.departamento
+        }
+        return data;
+      }else{
+        let data:IPromotionEstudioList = {
+          id:x.id,
+          area:x.area,
+          clave:x.clave,
+          nombre:x.nombre,
+          descuentoPorcentaje:x.descuentoPorcentaje,
+          descuentoCantidad:x.descuentoCantidad,
+          precioFinal:x.precioFinal ,
+          fechaInicial: x.fechaInicial,
+          fechaFinal: x.fechaFinal,
+          activo:x.activo,
+          precio: x.precio! ,
+          paquete:x.paquete,
+          selectedTags:nextSelectedTags,
+          departamento:x.departamento
+        }
+        return data;
       }
-    return data;
+
+      
      });
 
      setEstudios(estudio!);
@@ -549,6 +572,8 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     console.log(id);
     if (id) {
       readReagent(Number(id));
+    }else{
+      setDiscunt("porcent");
     }
   }, [form, getById, id]);
  
@@ -743,6 +768,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
                     editStudy(e.target.value);}
                     }}
                     value={discunt}
+                    
                   />
                 </div>
               </Col>

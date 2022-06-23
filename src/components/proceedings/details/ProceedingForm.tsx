@@ -18,6 +18,7 @@ import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/ta
 import { IOptions } from "../../../app/models/shared";
 import DatosFiscalesForm from "./DatosFiscalesForm";
 import Concidencias from "./Concidencias";
+import { IProceedingForm, ProceedingFormValues } from "../../../app/models/Proceeding";
 type ProceedingFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
@@ -25,40 +26,91 @@ type ProceedingFormProps = {
 };
 const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing }) => {
   const navigate = useNavigate();
-  const { modalStore } = useStore();
+  const { modalStore,procedingStore,locationStore } = useStore();
+  const { getById,update,create } = procedingStore;
   const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
   const [form] = Form.useForm();
-  const [values, setValues] = useState();
+  const [values, setValues] = useState<IProceedingForm>(new ProceedingFormValues());
+  const { getColoniesByZipCode } = locationStore;
   const { openModal } = modalStore;
+  const [colonies, setColonies] = useState<IOptions[]>([]);
   const goBack = () => {
     searchParams.delete("mode");
     setSearchParams(searchParams);
-    navigate(`/${views.promo}?${searchParams}`);
+    navigate(`/${views.proceeding}?${searchParams}`);
   };
-  const onValuesChange = async (changedValues: any) => {
-    const field = Object.keys(changedValues)[0];
 
-    if (field === "idListaPrecios") { }
+  const clearLocation = () => {
+    form.setFieldsValue({
+      estado: undefined,
+      ciudad: undefined,
+      colonia: undefined,
+    });
+    setColonies([]);
   };
+  useEffect(() => {
+    const readExpedinte = async (id:string) => {
+      setLoading(true);
+      var expediente = await getById(id);
+      form.setFieldsValue(expediente!);
+      setValues(expediente!);
+      setLoading(false);
+    };
+
+      if(id){
+        readExpedinte(id);
+      }
+        
+   
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id,getById]);
+
   const setEditMode = () => {
     navigate(`/${views.promo}/${id}?${searchParams}&mode=edit`);
     setReadonly(false);
   };
-  const onFinish = async (newValues: any) => {
+  const onValuesChange = async (changedValues: any) => {
+    const field = Object.keys(changedValues)[0];
+
+    if (field === "cp") {
+      const zipCode = changedValues[field] as string;
+
+      if (zipCode && zipCode.trim().length === 5) {
+        const location = await getColoniesByZipCode(zipCode);
+        if (location) {
+          form.setFieldsValue({
+            estado: location.estado,
+            ciudad: location.ciudad,
+          });
+          setColonies(
+            location.colonias.map((x) => ({
+              value: x.id,
+              label: x.nombre,
+            }))
+          );
+        } else {
+          clearLocation();
+        }
+      } else {
+        clearLocation();
+      }
+    }
+  };
+  const onFinish = async (newValues: IProceedingForm) => {
     setLoading(true);
-    openModal({ title: "Se encuentran coincidencias con los siguientes expedientes", body:<Concidencias  printing={false}></Concidencias>, closable: true ,width:"55%"})
-    //const reagent = { ...values, ...newValues }; 
-    /*         console.log(reagent,"en el onfish")
-            console.log(reagent); */
+    //openModal({ title: "Se encuentran coincidencias con los siguientes expedientes", body:<Concidencias  printing={false}></Concidencias>, closable: true ,width:"55%"})
+    const reagent = { ...values, ...newValues }; 
+             console.log(reagent,"en el onfish")
+            console.log(reagent);
     let success = false;
 
-    /*         if (!reagent.id) {
+             if (!reagent.id) {
               success = await create(reagent);
             } else {
               success = await update(reagent);
-            } */
+            } 
 
     setLoading(false);
 
@@ -95,12 +147,12 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo de Promociones en listas de precios" image="promo" />}
+              title={<HeaderTitle title="Expediente"  />}
               className="header-container"
             ></PageHeader>
           )}
           {printing && <Divider className="header-divider" />}
-          <Form<any>
+          <Form<IProceedingForm>
             {...formItemLayout}
             form={form}
             name="proceeding"
@@ -151,6 +203,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                     label: "Teléfono",
                   }}
                   max={100}
+                  readonly={readonly}
                 ></TextInput>
               </Col>
               <Col md={8} sm={24} xs={12}>
@@ -161,6 +214,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                   }}
                   required
                   max={100}
+                  readonly={readonly}
                 ></TextInput>
               </Col>
               <Col md={6} sm={24} xs={12}>
@@ -170,6 +224,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                     label: "Sexo",
                   }}
                   required
+                  readonly={readonly}
                   options={[{ value: "M", label: "M" }, { value: "F", label: "F" }]}></SelectInput>
               </Col>
               <Col md={6} sm={24} xs={12}>
@@ -183,6 +238,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                     label: "Edad",
                   }}
                   min={0}
+                  readonly={readonly}
                 ></NumberInput>
               </Col>
               <Col md={4} sm={24} xs={12}>
@@ -191,6 +247,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                     name: "celular",
                     label: "Celular",
                   }}
+                  readonly={readonly}
                   max={100}
                 ></TextInput>
               </Col>
@@ -201,25 +258,33 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                     name: "cp",
                     label: "CP",
                   }}
+                  readonly={readonly}
                   required
                   max={100}
                 ></TextInput>
               </Col>
               <Col md={4} sm={24} xs={12}>
-                <SelectInput
+              <TextInput
                   formProps={{
                     name: "estado",
                     label: "Estado",
                   }}
-                  options={[]}></SelectInput>
+                  max={100}
+                  required
+                  readonly={readonly}
+                />
               </Col>
               <Col md={4} sm={24} xs={12}>
-                <SelectInput
+              <TextInput 
                   formProps={{
                     name: "municipio",
                     label: "Municipio",
                   }}
-                  options={[]}></SelectInput>
+                  max={100}
+                  required
+                  readonly={readonly}
+                />
+
               </Col>
 
               <Col md={6} sm={24} xs={12}>
@@ -233,14 +298,15 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                 ></TextInput>
               </Col>
               <Col md={6} sm={24} xs={12}>
-                <TextInput
+              <SelectInput
                   formProps={{
                     name: "colonia",
                     label: "Colonia",
                   }}
                   required
-                  max={100}
-                ></TextInput>
+                  options={colonies}
+                  readonly={readonly}
+                />
               </Col>
               <Col md={24} style={{ textAlign: "center" }}>
                 <Button onClick={() => openModal({ title: "Seleccionar o Ingresar Datos Fiscales", body:<DatosFiscalesForm></DatosFiscalesForm>, closable: true ,width:"55%"})} style={{ backgroundColor: "#6EAA46", color: "white", borderColor: "#6EAA46" }}>Datos Fiscales</Button>

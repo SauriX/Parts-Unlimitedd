@@ -20,7 +20,7 @@ type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
-const expedientes:IProceedingList[] = [{
+/* const expedientes:IProceedingList[] = [{
     id:"1",
     expediente:"445666765",
     nomprePaciente:"Alfredo Gonzalez Juarez",
@@ -38,10 +38,10 @@ const expedientes:IProceedingList[] = [{
     fechaNacimiento: new Date("24/6/1999"),
     monederoElectronico: 120.00,
     telefono:"8167889100",
-}]
+}] */
 const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) => {
-  const { priceListStore } = useStore();
-  const { priceLists, getAll } = priceListStore;
+  const { procedingStore } = useStore();
+  const { expedientes, getAll,getnow } = procedingStore;
 
   const [searchParams] = useSearchParams();
 
@@ -61,11 +61,11 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
   useEffect(() => {
     const readPriceList = async () => {
       setLoading(true);
-      await getAll(searchParams.get("search") ?? "all");
+      await getnow();
       setLoading(false);
     };
 
-    if (priceLists.length === 0) {
+    if (expedientes.length === 0) {
         readPriceList();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -153,10 +153,10 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
       width: windowWidth < resizeWidth ? 100 : "20%",
       render: (value) => (
         <IconButton
-          title="Editar lista de precio"
+          title="Editar Expediente"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/${views.price}/${value}?${searchParams}&mode=edit`);
+            navigate(`/${views.proceeding}/${value}?${searchParams}&mode=edit`);
           }}
         />
       ),
@@ -168,17 +168,17 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Lista de Precios" image="ListaPrecio" />}
+          title={<HeaderTitle title="Catálogo de Lista de Expedientes"  />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
-{/*         <Table<IPriceListList>
+        <Table<IProceedingList>
           size="small"
           rowKey={(record) => record.id}
           columns={columns.slice(0, 3)}
           pagination={false}
-          dataSource={[...priceLists]}
-        /> */}
+          dataSource={[...expedientes]}
+        />
       </div>
     );
   };

@@ -27,7 +27,7 @@ const ProceedingFormHeader: FC<ProceedingProps> = ({ handlePrint, handleDownload
    const getBack = () => {
      searchParams.delete("mode");
      setSearchParams(searchParams);
-     navigate(`/${views.promo}?${searchParams}`);
+     navigate(`/${views.proceeding}?${searchParams}`);
    };
   /*  console.log(scopes); */
   return (
