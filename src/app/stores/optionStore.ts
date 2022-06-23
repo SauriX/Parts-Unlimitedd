@@ -235,18 +235,7 @@ export default class OptionStore {
       this.MaquiladorOptions=[];
     }
   };
-  MaquiladorStringOptions:IOptions[]=[];
-  getMaquiladorStringOptions=async()=>{
-    try{
-      const maquilador = Maquilador.getAll("");
-      this.MaquiladorStringOptions= (await maquilador).map((x)=>({
-        value:x.nombre,
-        label:x.nombre
-      }));
-    }catch(error){
-      this.MaquiladorStringOptions=[];
-    }
-  };
+ 
   MethodOptions: IOptions[] = [];
 
   getMethodOptions = async () => {
@@ -338,20 +327,6 @@ export default class OptionStore {
       this.priceListOptions=[]
     }
   };
-  priceListOptions1:IOptions[]=[];
-
-  getPriceListOptions1 = async () => {
-    try{
-      const priceListOptions1 =await PriceList.getActive();
-      console.log(priceListOptions1);
-      this.priceListOptions1= priceListOptions1.map((x) => ({
-        value: x.nombre,
-        label: x.nombre,
-      }));
-    }catch(error){
-      this.priceListOptions1=[]
-    }
-  };
 
   sucursales:IOptions[]=[];
 
@@ -381,32 +356,19 @@ export default class OptionStore {
     }
   };
 
-  BranchStringOptions:IOptions[]=[];
-  getBranchStringOptions=async()=>{
-    try{
-      const branch = Branch.getAll("");
-      this.BranchStringOptions= (await branch).map((x)=>({
-        value:x.nombre,
-        label:x.nombre
-      }));
-    }catch(error){
-      this.BranchStringOptions=[];
-    }
-  };
-
-  DeliveryStringOptions:IOptions[]=[];
-  getDeliveryStringOptions = async () => {
+  DeliveryOptions:IOptions[]=[];
+  getDeliveryOptions = async () => {
     try {
       const Delivery = await Catalog.getActive<ICatalogNormalList>(
         "Delivery"
       );
       console.log(Delivery);
-      this.DeliveryStringOptions = Delivery.map((x) => ({
-        value: x.nombre,
+      this.DeliveryOptions = Delivery.map((x) => ({
+        value: x.id,
         label: x.nombre,
       }));
     } catch (error) {
-      this.DeliveryStringOptions = [];
+      this.DeliveryOptions = [];
     }
   };
 

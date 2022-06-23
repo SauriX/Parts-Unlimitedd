@@ -19,7 +19,7 @@ const MedicsHeader: FC<MedicsHeaderProps> = ({ handlePrint, }) => {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  console.log("Header");
+  //console.log("Header");
 
   const download = () => {
     exportList(searchParams.get("search") ?? "all");

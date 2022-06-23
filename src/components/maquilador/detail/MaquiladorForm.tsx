@@ -9,15 +9,11 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { IMaquiladorForm, MaquiladorFormValues } from "../../../app/models/maquilador";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
-import NumberInput from "../../../app/common/form/NumberInput";
 import { observer } from "mobx-react-lite";
 import { IOptions } from "../../../app/models/shared";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
-import { RuleObject } from "antd/lib/form";
-import { RoleValues } from "../../../app/models/role";
 import MaskInput from "../../../app/common/form/MaskInput";
-import { Mask } from "react-text-mask";
 //import { v4 as uuid } from "uuid";
 
 type MaquiladorFormProps = {
@@ -26,7 +22,7 @@ type MaquiladorFormProps = {
   printing: boolean;
 };
 const MaquiladorForm: FC<MaquiladorFormProps> = ({ id, componentRef, printing }) => {
-  const { maquiladorStore, optionStore, locationStore } = useStore();
+  const { maquiladorStore, locationStore } = useStore();
   const { getById, create, update, getAll, maquilador } = maquiladorStore;
   const { getColoniesByZipCode } = locationStore;
 
@@ -83,7 +79,7 @@ const MaquiladorForm: FC<MaquiladorFormProps> = ({ id, componentRef, printing })
       }
 
       setLoading(false);
-      console.log(maquilador);
+      //console.log(maquilador);
     };
 
     if (id) {
@@ -136,7 +132,7 @@ const MaquiladorForm: FC<MaquiladorFormProps> = ({ id, componentRef, printing })
   };
 
   useEffect(() => {
-    console.log(values);
+    //console.log(values);
   }, [values]);
 
   const botonEdit = () => {

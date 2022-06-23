@@ -7,7 +7,7 @@ const Promotion = {
   getAll: (search: string): Promise<IPromotionList[]> =>
     requests.get(`promotion/all/${!search ? "all" : search}`),
   getById: (id: number): Promise<IPromotionForm> => requests.get(`promotion/${id}`),
-  getActive: <Type extends IPromotionList>(): Promise<Type[]> => requests.get(`price/active`),
+  getActive: (): Promise<IPromotionList[]> => requests.get(`promotion/active`),
   create: (promotion: IPromotionForm): Promise<IPromotionList> => requests.post("promotion", promotion),
   update: (promotion: IPromotionForm): Promise<IPromotionList> => requests.put("promotion", promotion),
   exportList: (search: string): Promise<void> =>

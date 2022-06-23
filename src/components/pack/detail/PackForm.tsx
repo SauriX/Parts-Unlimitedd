@@ -214,17 +214,24 @@ useEffect(() => {
     console.log(lista,"lista");
     console.log(estudios,"estudios filtro dep");
     setValues((prev) => ({ ...prev, estudio: estudios }));
-    setAreaSearch(areaSearch!);}else{
+    setAreaSearch(areaSearch!);
+  }else{
       var estudios = lista.filter(x=>x.activo === true);
       setValues((prev) => ({ ...prev, estudio: estudios }));
      
     }
     
   }
-  const filterByArea = (area:number) => {
-    var areaActive=areas.filter(x=>x.value===area)[0].label;
-    var estudios = lista.filter(x=>x.area === areaActive)
-    setValues((prev) => ({ ...prev, estudio: estudios }));
+  const filterByArea = (area?:number) => {
+    if (area) {
+      var areaActive = areas.filter((x) => x.value === area)[0].label;
+      var estudios = lista.filter((x) => x.area === areaActive);
+      setValues((prev) => ({ ...prev, estudio: estudios }));
+    } else {
+      const dep = departmentOptions.find((x) => x.value === depId)?.label;
+      estudios = lista.filter((x) => x.departamento === dep);
+      setValues((prev) => ({ ...prev, estudio: estudios }));
+    }
   }
   const filterBySearch = (search:string)=>{
     var estudios = lista.filter(x=>x.clave.includes(search) || x.nombre.includes(search))
@@ -445,6 +452,10 @@ useEffect(() => {
                 onChange={(value)=>{ setAreaId(value); filterByArea(value)}}
                 value={areaId}
                 allowClear
+                onClear={() => {
+                  setAreaId(undefined);
+                  filterByArea();
+                }}
                 style={{width:"400px"}}
                 placeholder={"Área"}
               />

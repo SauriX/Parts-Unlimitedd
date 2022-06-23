@@ -10,18 +10,12 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { IMedicsForm, MedicsFormValues } from "../../../app/models/medics";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
-import NumberInput from "../../../app/common/form/NumberInput";
 import { IClinicList } from "../../../app/models/clinic";
 import { observer } from "mobx-react-lite";
 import { List, Typography } from "antd";
 import { IOptions } from "../../../app/models/shared";
-import TextArea from "antd/lib/input/TextArea";
-import Medics from "../../../views/Medics";
-import { createSecureContext } from "tls";
-import Item from "antd/lib/list/Item";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
-import { claveValues } from "../../../app/models/user";
 import MaskInput from "../../../app/common/form/MaskInput";
 // import { v4 as uuid } from "uuid";
 
@@ -92,7 +86,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
       }
 
       setLoading(false);
-      console.log(medics);
+      //console.log(medics);
     };
 
     if (id) {
@@ -133,7 +127,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
       
     let success = false;
 
-   console.log(medics);
+   //console.log(medics);
 
 
     const clinics = [...medics.clinicas];
@@ -169,7 +163,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   };
 
   useEffect(() => {
-    console.log(values);
+    //console.log(values);
   }, [values]);
 
   const onValuesChange = async (changeValues: any, values: IMedicsForm) => {
@@ -382,17 +376,6 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   readonly={readonly}
                 />
-                {/* <NumberInput
-                  formProps={{
-                    name: "codigoPostal",
-                    label: "Código P",
-                  }}
-                  max={99999}
-                  min={11111}
-                  required
-                  readonly={readonly}
-                /> */}
-
                 <TextInput
                   formProps={{
                     name: "estadoId",

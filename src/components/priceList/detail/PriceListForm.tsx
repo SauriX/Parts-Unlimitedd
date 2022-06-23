@@ -90,6 +90,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const [listCompañia, setListCompañia] = useState<any>();
   const [form] = Form.useForm<IPriceListForm>();
   const [loading, setLoading] = useState(false);
+  const [depId, setDepId] = useState<number>();
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
@@ -327,6 +328,8 @@ const PriceListForm: FC<PriceListFormProps> = ({
 
   const setPage = (page: number) => {
     const priceList = priceLists[page - 1];
+    setAreaId(undefined);
+     setDepId(undefined);
     navigate(`/${views.price}/${priceList.id}?${searchParams}`);
   };
 
@@ -448,11 +451,16 @@ const PriceListForm: FC<PriceListFormProps> = ({
     // console.log("departament");
     // console.log(values);
   }
-  const filterByArea = (area: number) => {
-
-    var areaActive = areas.filter(x => x.value === area)[0].label;
-    var estudios = lista.filter(x => x.area === areaActive);
-    setValues((prev) => ({ ...prev, table: estudios }));
+  const filterByArea = (area?: number) => {
+    if (area) {
+      var areaActive = areas.filter((x) => x.value === area)[0].label;
+      var estudios = lista.filter((x) => x.area === areaActive);
+      setValues((prev) => ({ ...prev, table: estudios }));
+    } else {
+      const dep = departmentOptions.find((x) => x.value === depId)?.label;
+      estudios = lista.filter((x) => x.departamento === dep);
+      setValues((prev) => ({ ...prev, table: estudios }));
+    }
   }
   const filterBySearch = (search: string) => {
     var estudios = lista.filter(
@@ -736,10 +744,8 @@ const PriceListForm: FC<PriceListFormProps> = ({
                 options={departmentOptions}
                 readonly={readonly}
                 required
-                onChange={(value) => {
-                  setAreaId(undefined);
-                  filterByDepartament(value);
-                }}
+                value={depId} 
+                onChange={(value)=>{setAreaId(undefined); setDepId(value); filterByDepartament(value)}}
               />
             </Col>
             <Col md={2} sm={24} xs={12}></Col>
@@ -754,6 +760,10 @@ const PriceListForm: FC<PriceListFormProps> = ({
                   filterByArea(value);
                 }}
                 allowClear
+                onClear={() => {
+                  setAreaId(undefined);
+                  filterByArea();
+                }}
                 value={areaId}
                 style={{ width: "400px" ,marginLeft:"2px"}}
                 disabled={readonly}

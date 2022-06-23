@@ -103,7 +103,7 @@ type CompanyTableProps = {
         }),
       },
       {
-        ...getDefaultColumnProps("listaPrecioId", "Precio", {
+        ...getDefaultColumnProps("precioLista", "Precio", {
           searchState,
           setSearchState,
           width: "8%",
