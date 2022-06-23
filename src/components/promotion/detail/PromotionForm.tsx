@@ -571,6 +571,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     console.log("el id");
     console.log(id);
     if (id) {
+      console.log(id,"id");
       readReagent(Number(id));
     }else{
       setDiscunt("porcent");

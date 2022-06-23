@@ -15,8 +15,8 @@ type UrlParams = {
 };
 
 const ProceedingDetail = () => {
-  const {  } = useStore();
-/*   const { scopes, access, clearScopes, exportForm } = ; */ 
+  const { procedingStore  } = useStore();
+   const { /* scopes, access, clearScopes, */ exportForm } = procedingStore;  
 
   const navigate = useNavigate();
 
@@ -45,7 +45,7 @@ const ProceedingDetail = () => {
   const handleDownload = async () => {
     if (reagentId) {
       setPrinting(true);
-     // await exportForm(reagentId);
+      await exportForm(reagentId);
       setPrinting(false);
     }
   };

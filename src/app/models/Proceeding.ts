@@ -1,5 +1,6 @@
 import moment from "moment";
-export interface ISearch{
+import { ITaxForm } from "./taxdata";
+export interface ISearchMedical{
     expediente:string,
     telefono:string,
     fechaNacimiento:Date,
@@ -24,7 +25,7 @@ export interface IProceedingForm{
     apellido:string,
     expediente:string,
     sexo:string,
-    fechaNacimiento:Date,
+    fechaNacimiento?:Date,
     edad:number,
     edadCheck:boolean,
     telefono:string,
@@ -34,7 +35,23 @@ export interface IProceedingForm{
     municipio:string,
     celular:string,
     calle:string,
-    colonia?:number
+    colonia?:number,
+    colonian?:string,
+    taxData?:ITaxForm[],
+    sucursal?:string
+}
+
+export class SearchMedicalFormValues implements ISearchMedical{
+    expediente = "";
+    telefono = "";
+    fechaNacimiento = new Date(moment.now());
+    fechaAlta=new  Date(moment.now());
+    ciudad= "";
+    sucursal= "";
+
+    constructor(init?:ISearchMedical) {
+        Object.assign(this, init);
+    }
 }
 
 export class ProceedingFormValues implements IProceedingForm{
@@ -57,5 +74,5 @@ export class ProceedingFormValues implements IProceedingForm{
     colonia=undefined;
     constructor(init?:IProceedingForm) {
         Object.assign(this, init);
-      }
+    }
 }

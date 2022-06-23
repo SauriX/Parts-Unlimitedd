@@ -18,27 +18,10 @@ import { IProceedingList } from "../../../app/models/Proceeding";
 
 type ProceedingTableProps = {
   printing: boolean;
+  expedientes:IProceedingList[];
+  handle:React.Dispatch<React.SetStateAction<boolean>>;
 };
-const expedientes:IProceedingList[] = [{
-    id:"1",
-    expediente:"445666765",
-    nomprePaciente:"Alfredo Gonzalez Juarez",
-    genero:"M",
-    edad:23,
-    fechaNacimiento: new Date("24/6/1999"),
-    monederoElectronico: 54.50,
-    telefono:"8167889100",
-},{
-    id:"1",
-    expediente:"445666765",
-    nomprePaciente:"Luisa Jaramillo Perez",
-    genero:"F",
-    edad:23,
-    fechaNacimiento: new Date("24/6/1999"),
-    monederoElectronico: 120.00,
-    telefono:"8167889100",
-}]
-const Coincidencias: FC<ProceedingTableProps> = ({  printing }) => {
+const Coincidencias: FC<ProceedingTableProps> = ({  printing,expedientes,handle }) => {
   const { priceListStore } = useStore();
   const { priceLists, getAll } = priceListStore;
 
@@ -153,6 +136,11 @@ const Coincidencias: FC<ProceedingTableProps> = ({  printing }) => {
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />
       <div style={{ display: "none" }}>{<PriceListTablePrint />}</div>
+      <Row>
+        <Col md={24} style={{ textAlign: "center" }}>
+                <Button onClick={()=>{handle(true)}}>Continuar</Button>
+        </Col>
+      </Row>
     </Fragment>
   );
 };

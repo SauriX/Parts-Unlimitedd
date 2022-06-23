@@ -6,3 +6,9 @@ export interface ILocation {
     ciudad: string;
     colonias: ICatalog[];
   }
+
+  export interface ICity {
+    Id:number ;
+    EstadoId :number; 
+    ciudad:string ;
+  }

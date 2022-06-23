@@ -9,7 +9,7 @@ import ProceedingTable from "../components/proceedings/ProceedingTable";
 
 const Proceeding = () => {
   const { procedingStore } = useStore();
-   const { /* scopes, access, clearScopes, */ exportList } = procedingStore;
+   const { /* scopes, access, clearScopes, */ exportList,search } = procedingStore;
 
   const [searchParams] = useSearchParams();
 
@@ -29,7 +29,7 @@ const Proceeding = () => {
 
   const handleDownload = async () => {
     setLoading(true);
-    await exportList(searchParams.get("search") ?? "all");
+    await exportList(search);
     setLoading(false);
   };
 

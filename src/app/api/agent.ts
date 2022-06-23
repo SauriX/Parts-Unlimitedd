@@ -95,11 +95,11 @@ const requests = {
       })
       .then(responseBody),
   // download: (url: string, data?: Object | FormData) =>
-  download: (url: string) =>
+  download: (url: string, data?: Object | FormData) =>
     axios
       .post(
         url,
-        {},
+        data??{},
         {
           baseURL,
           responseType: "blob",
