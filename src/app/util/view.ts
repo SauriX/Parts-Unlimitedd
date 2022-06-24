@@ -8,6 +8,7 @@ const views = {
   proceeding: "expedientes",
   route: "routes",
   appointment: "appointments",
+  request: "requests",
 };
 
 export default views;
