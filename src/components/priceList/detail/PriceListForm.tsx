@@ -241,9 +241,16 @@ const PriceListForm: FC<PriceListFormProps> = ({
 
     var val =values.table!;
     val[indexVal]=item;
-    setValues((prev) => ({ ...prev, table: val })); 
-       
+    if(!typePAck){
+      var paquetes = values.table!.filter(x => x.paqute==true);
+      var paquetesestudy = paquetes.filter(x=> x.pack?.filter(x=>x.id==item.id).length!>0).filter(x=>x.activo);
+      if(paquetesestudy.length>0){
+        paquetesestudy.forEach(x=> setStudy(x.activo!,x,x.paqute!,false,values));
+      }
     }
+    setValues((prev) => ({ ...prev, table: val })); 
+    
+  }
 // red user 146
   useEffect(() => {
     const readuser = async (idUser: string) => {

@@ -18,30 +18,13 @@ import { IProceedingList } from "../../../app/models/Proceeding";
 
 type ProceedingTableProps = {
   printing: boolean;
+  expedientes:IProceedingList[];
+  handle:() => Promise<void>;
 };
-const expedientes:IProceedingList[] = [{
-    id:"1",
-    expediente:"445666765",
-    nomprePaciente:"Alfredo Gonzalez Juarez",
-    genero:"M",
-    edad:23,
-    fechaNacimiento: new Date("24/6/1999"),
-    monederoElectronico: 54.50,
-    telefono:"8167889100",
-},{
-    id:"1",
-    expediente:"445666765",
-    nomprePaciente:"Luisa Jaramillo Perez",
-    genero:"F",
-    edad:23,
-    fechaNacimiento: new Date("24/6/1999"),
-    monederoElectronico: 120.00,
-    telefono:"8167889100",
-}]
-const Coincidencias: FC<ProceedingTableProps> = ({  printing }) => {
-  const { priceListStore } = useStore();
+const Coincidencias: FC<ProceedingTableProps> = ({  printing,expedientes,handle }) => {
+  const { priceListStore,modalStore} = useStore();
   const { priceLists, getAll } = priceListStore;
-
+  const { closeModal } = modalStore;
   const [searchParams] = useSearchParams();
 
   let navigate = useNavigate();
@@ -153,6 +136,15 @@ const Coincidencias: FC<ProceedingTableProps> = ({  printing }) => {
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />
       <div style={{ display: "none" }}>{<PriceListTablePrint />}</div>
+      <Row>
+        
+        <Col md={24} style={{ textAlign: "center" }}>
+          <h1>¿Desea continuar con el alta?</h1>            
+        </Col>
+        <Col md={8} style={{ textAlign: "center"  }}></Col>
+        <Col md={4} style={{ textAlign: "center"  }}><Button style={{backgroundColor:"#002060",color:"white"}} onClick={()=>{handle()}}>Aceptar</Button></Col>
+        <Col md={4} style={{ textAlign: "center"  }}><Button style={{backgroundColor:"#9A0000",color:"white"}} onClick={()=>{closeModal()}}>Cancelar</Button></Col>
+      </Row>
     </Fragment>
   );
 };

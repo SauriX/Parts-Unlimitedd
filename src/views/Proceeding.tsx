@@ -8,8 +8,8 @@ import ProceedingHeader from "../components/proceedings/ProceedingHeader";
 import ProceedingTable from "../components/proceedings/ProceedingTable";
 
 const Proceeding = () => {
-  const {  } = useStore();
- /*  const { scopes, access, clearScopes, exportList } = ; */
+  const { procedingStore } = useStore();
+   const { /* scopes, access, clearScopes, */ exportList,search } = procedingStore;
 
   const [searchParams] = useSearchParams();
 
@@ -29,7 +29,7 @@ const Proceeding = () => {
 
   const handleDownload = async () => {
     setLoading(true);
-   // await exportList(searchParams.get("search") ?? "all");
+    await exportList(search);
     setLoading(false);
   };
 
