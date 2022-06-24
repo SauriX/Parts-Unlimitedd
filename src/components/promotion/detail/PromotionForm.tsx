@@ -582,6 +582,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
       readReagent(Number(id));
     }else{
       setDiscunt("porcent");
+      setValues((prev)=>({...prev,tipoDescuento:"porcent"}))
     }
   }, [form, getById, id]);
  

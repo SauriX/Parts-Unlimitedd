@@ -22,8 +22,8 @@ export default class LocationStore {
   getCity= async () => {
     try {
       const citys= await Location.getCities()
-      console.log(citys,"ciudades");
-      this.cityOptions=  citys.map((x)=>({
+      var ciudades = citys.filter(x=>x.id==1906||x.id==1909||x.id==932||x.id==1965||x.id==968||x.id==978);
+      this.cityOptions=  ciudades.map((x)=>({
         value:x.ciudad,
         label:x.ciudad
       }));

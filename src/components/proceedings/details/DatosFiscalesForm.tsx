@@ -24,6 +24,7 @@ import { IProceedingForm } from "../../../app/models/Proceeding";
 const DatosFiscalesForm = () => {
   const navigate = useNavigate();
   const { modalStore, procedingStore, locationStore } = useStore();
+  const {closeModal}=modalStore;
   const {setTax,tax}=procedingStore;
   const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -159,7 +160,7 @@ const DatosFiscalesForm = () => {
       <Row style={{ marginBottom: 14 }}>
 
         <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
-          <Button onClick={goBack}>Cancelar</Button>
+          <Button onClick={closeModal}>Cancelar</Button>
           <Button
             type="primary"
             htmlType="submit"
@@ -193,7 +194,7 @@ const DatosFiscalesForm = () => {
  
 
             />
-            <Col md={8} sm={24} xs={12}>
+            <Col md={5} sm={24} xs={12}>
               <TextInput
                 formProps={{
                   name: "rfc",
@@ -217,7 +218,7 @@ const DatosFiscalesForm = () => {
             </Col>
             <Col md={4} sm={24} xs={12}></Col>
 
-            <Col md={6} sm={24} xs={12}>
+            <Col md={4} sm={24} xs={12}>
               <TextInput
                 formProps={{
                   name: "cp",
@@ -233,11 +234,11 @@ const DatosFiscalesForm = () => {
                   label: "Estado",
                 }}
                 max={100}
-                required
+             
 
               />
             </Col>
-            <Col md={6} sm={24} xs={12}>
+            <Col md={8} sm={24} xs={12}>
               <TextInput
                 formProps={{
                   name: "municipio",
@@ -254,16 +255,16 @@ const DatosFiscalesForm = () => {
                   name: "correo",
                   label: "E-Mail",
                 }}
+                type="email"
                 max={100}
               ></TextInput>
             </Col>
-            <Col md={12} sm={24} xs={12}>
+            <Col md={11} sm={24} xs={12}>
               <TextInput
                 formProps={{
                   name: "calle",
                   label: "Calle y Número",
                 }}
-                required
                 max={100}
               ></TextInput>
             </Col>
@@ -273,7 +274,6 @@ const DatosFiscalesForm = () => {
                   name: "colonia",
                   label: "Colonia",
                 }}
-                required
                 options={colonies}
 
               />

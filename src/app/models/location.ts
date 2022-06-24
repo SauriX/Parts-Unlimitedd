@@ -8,7 +8,7 @@ export interface ILocation {
   }
 
   export interface ICity {
-    Id:number ;
+    id:number ;
     EstadoId :number; 
     ciudad:string ;
   }

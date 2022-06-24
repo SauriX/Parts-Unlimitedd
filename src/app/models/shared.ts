@@ -2,6 +2,8 @@ export interface IProfile {
   nombre: string;
   token?: string;
   requiereCambio: boolean;
+  sucursal:string;
+  admin:boolean; 
 }
 
 export interface IScopes {

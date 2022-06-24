@@ -144,7 +144,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
         }),
       },
       {
-        ...getDefaultColumnProps("monederoElectronico", "Monedero electronico", {
+        ...getDefaultColumnProps("monederoElectronico", "Monedero electrónico", {
           searchState,
           setSearchState,
           width: "10%",
@@ -191,7 +191,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
         <Table<IProceedingList>
           size="small"
           rowKey={(record) => record.id}
-          columns={columns.slice(0, 3)}
+          columns={columns.slice(0, 7)}
           pagination={false}
           dataSource={[...expedientes]}
         />
@@ -202,11 +202,11 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
   return (
     <Fragment>
         <Row>
-            <Col md={14} sm={12}>
+            <Col md={18} sm={12}>
                 <label htmlFor="">Expediente/Nombre/Codigo de barras/Huella digital: </label>
-                <Input value={search.expediente} onChange={(value)=>{setSearch({ ...search,expediente:value.target.value  })}} style={{width:"400px" , marginBottom:"30px"}} type={"text"} placeholder={""}></Input>
+                <Input value={search.expediente} onChange={(value)=>{setSearch({ ...search,expediente:value.target.value  })}} style={{width:"600px" , marginBottom:"30px"}} type={"text"} placeholder={""}></Input>
             </Col>
-            <Col md={10} sm={12}>
+            <Col md={6} sm={12}>
                 <Button type="primary" onClick={onfinish}>Buscar</Button>
             </Col>
             <Col xs={8} md={8} sm={12}>

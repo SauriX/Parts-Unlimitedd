@@ -18,6 +18,10 @@ export default class ProcedingStore {
   setTax=(value:ITaxForm[])=>{
       this.tax=value
   };
+
+  clearTax=()=>{
+    this.tax=[];
+  };
   setSearch= (value:ISearchMedical)=>{
       this.search=value;
   };

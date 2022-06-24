@@ -19,12 +19,12 @@ import { IProceedingList } from "../../../app/models/Proceeding";
 type ProceedingTableProps = {
   printing: boolean;
   expedientes:IProceedingList[];
-  handle:React.Dispatch<React.SetStateAction<boolean>>;
+  handle:() => Promise<void>;
 };
 const Coincidencias: FC<ProceedingTableProps> = ({  printing,expedientes,handle }) => {
-  const { priceListStore } = useStore();
+  const { priceListStore,modalStore} = useStore();
   const { priceLists, getAll } = priceListStore;
-
+  const { closeModal } = modalStore;
   const [searchParams] = useSearchParams();
 
   let navigate = useNavigate();
@@ -137,9 +137,13 @@ const Coincidencias: FC<ProceedingTableProps> = ({  printing,expedientes,handle 
       />
       <div style={{ display: "none" }}>{<PriceListTablePrint />}</div>
       <Row>
+        
         <Col md={24} style={{ textAlign: "center" }}>
-                <Button onClick={()=>{handle(true)}}>Continuar</Button>
+          <h1>¿Desea continuar con el alta?</h1>            
         </Col>
+        <Col md={8} style={{ textAlign: "center"  }}></Col>
+        <Col md={4} style={{ textAlign: "center"  }}><Button style={{backgroundColor:"#002060",color:"white"}} onClick={()=>{handle()}}>Aceptar</Button></Col>
+        <Col md={4} style={{ textAlign: "center"  }}><Button style={{backgroundColor:"#9A0000",color:"white"}} onClick={()=>{closeModal()}}>Cancelar</Button></Col>
       </Row>
     </Fragment>
   );
