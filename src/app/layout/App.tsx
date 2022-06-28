@@ -51,6 +51,7 @@ import RouteDetail from "../../components/route/detail/RouteDetail";
 import views from "../util/view";
 import Appointment from "../../views/Appointment";
 import ProceedingDetail from "../../components/proceedings/details/ProceedingDetail";
+import Report from "../../views/Report";
 
 function App() {
   const { profileStore } = useStore();
@@ -135,6 +136,7 @@ function App() {
             <Route path="routes" element={<Routee />} />
             <Route path="routes/:id" element={<RouteDetail />} />
             <Route path="routes/new" element={<RouteDetail />} />
+            <Route path="reports" element={<Report />} />
             <Route path={views.appointment} element={<Appointment />} />
             <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
             <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />

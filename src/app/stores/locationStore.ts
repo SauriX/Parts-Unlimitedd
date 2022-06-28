@@ -16,4 +16,13 @@ export default class LocationStore {
       alerts.warning(getErrors(error));
     }
   };
+
+  getCity = async () => {
+    try {
+      const ciudades = await Location.getCity();
+      return ciudades;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
 }
