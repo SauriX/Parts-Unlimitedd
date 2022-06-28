@@ -20,6 +20,11 @@ const UserDetail = () => {
     content: () => componentRef.current,
     onBeforeGetContent: () => {
       setLoading(true);
+      return new Promise((resolve: any) => {
+        setTimeout(() => {
+          resolve();
+        }, 200);
+      });
     },
     onAfterPrint: () => {
       setLoading(false);

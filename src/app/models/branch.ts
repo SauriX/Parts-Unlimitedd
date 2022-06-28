@@ -17,6 +17,7 @@ export interface IBranchForm {
   coloniaId?: number;
   codigoPostal: string;
   departamentos: IBranchDepartment[];
+  matriz?:boolean;
 }
 
 export interface IBranchInfo {

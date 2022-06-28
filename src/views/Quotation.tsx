@@ -5,6 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
 import QuotationHeader from "../components/quotation/QuotationHeader";
+import QuotationTable from "../components/quotation/QuotationTable";
 
 const Quotation= () => {
   const {  } = useStore();
@@ -52,7 +53,7 @@ const Quotation= () => {
     <Fragment>
       <QuotationHeader handlePrint={handlePrint} handleDownload={handleDownload} />
       <Divider className="header-divider" />
-      {/* <ReagentTable componentRef={componentRef} printing={loading} /> */}
+      <QuotationTable componentRef={componentRef} printing={loading} />
     </Fragment>
   );
 };

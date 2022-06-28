@@ -12,12 +12,16 @@ const NewUser = () => {
     content: () => componentRef.current,
     onBeforeGetContent: () => {
       setPrinting(true);
+      return new Promise((resolve: any) => {
+        setTimeout(() => {
+          resolve();
+        }, 200);
+      });
     },
     onAfterPrint: () => {
       setPrinting(false);
     },
   });
-
   return (
     <Fragment>
       <UserFormHeader handlePrint={handlePrint} handleDownload={()=>{}}/>

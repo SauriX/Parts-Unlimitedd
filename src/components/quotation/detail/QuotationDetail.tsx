@@ -6,6 +6,8 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../../../app/stores/store";
 import { guidPattern } from "../../../app/util/utils";
+import QuotationForm from "./QuotationForm";
+import QuotationHeaderForm from "./QuotationHeaderForm";
 
 type UrlParams = {
   id: string;
@@ -76,9 +78,9 @@ const QuotationDetail = () => {
 
   return (
     <Fragment>
-     {/*  <ReagentFormHeader id={reagentId} handlePrint={handlePrint} handleDownload={handleDownload} /> */}
+      <QuotationHeaderForm id={reagentId!} handlePrint={handlePrint} handleDownload={handleDownload} />
       <Divider className="header-divider" />
-      {/* <ReagentForm id={reagentId} componentRef={componentRef} printing={printing} /> */}
+      <QuotationForm id={reagentId!} componentRef={componentRef} printing={printing} />
     </Fragment>
   );
 };

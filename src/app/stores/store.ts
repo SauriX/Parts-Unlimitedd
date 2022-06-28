@@ -22,6 +22,7 @@ import ModalStore from "./modalStore";
 import DrawerStore from "./drawerStore";
 import RouteStore from "./routeStore";
 import ProcedingStore from "./procedingStore";
+import QuotationStore from "./quotationStore";
 configure({
   enforceActions: "never",
 });
@@ -49,6 +50,7 @@ interface Store {
   loyaltyStore: LoyaltyStore;
   routeStore: RouteStore;
   procedingStore: ProcedingStore;
+  quotationStore:QuotationStore
 }
 
 export const store: Store = {
@@ -74,6 +76,7 @@ export const store: Store = {
   loyaltyStore: new LoyaltyStore(),
   routeStore: new RouteStore(),
   procedingStore: new ProcedingStore(),
+  quotationStore: new QuotationStore(),
 };
 
 export const StoreContext = createContext(store);
