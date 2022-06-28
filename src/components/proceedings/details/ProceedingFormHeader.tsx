@@ -16,8 +16,8 @@ type ProceedingProps = {
 };
 
 const ProceedingFormHeader: FC<ProceedingProps> = ({ handlePrint, handleDownload,id }) => {
-    const {  } = useStore();
-    /* const { scopes } = ; */ 
+    const { procedingStore } = useStore();
+    const { clearTax } = procedingStore;  
    console.log("el id de la promo");
    console.log(id);
    let navigate = useNavigate();
@@ -27,7 +27,9 @@ const ProceedingFormHeader: FC<ProceedingProps> = ({ handlePrint, handleDownload
    const getBack = () => {
      searchParams.delete("mode");
      setSearchParams(searchParams);
-     navigate(`/${views.promo}?${searchParams}`);
+     clearTax();
+     navigate(`/${views.proceeding}?${searchParams}`);
+     
    };
   /*  console.log(scopes); */
   return (

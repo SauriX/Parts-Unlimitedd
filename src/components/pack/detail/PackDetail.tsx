@@ -14,6 +14,7 @@ type UrlParams = {
 
 const PackDetail = () => {
   const [loading, setLoading] = useState(false);
+  const [msj, setMsj] = useState<String>();
   const componentRef = useRef<any>();
   const { packStore } = useStore();
   const { getById,exportForm } = packStore;
@@ -24,6 +25,7 @@ const PackDetail = () => {
     content: () => componentRef.current,
     onBeforeGetContent: () => {
       setLoading(true);
+      setMsj("Imprimiendo");
       return new Promise((resolve: any) => {
         setTimeout(() => {
           resolve();
@@ -46,6 +48,7 @@ const PackDetail = () => {
     
     console.log("download");
     setLoading(true);
+    setMsj("Descargando");
     const succes = await exportForm(Number(id)!);
     
      if(succes){
@@ -56,7 +59,7 @@ const PackDetail = () => {
     <Fragment>
     <PackFormHeader  handlePrint={handlePrint} handleDownload={handleDownload}/>
       <Divider className="header-divider" />
-    <PackForm  componentRef={componentRef} load={loading} />
+    <PackForm  componentRef={componentRef} load={loading}  msj={msj!}/>
     </Fragment>
   );
 };

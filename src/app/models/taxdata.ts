@@ -14,6 +14,6 @@ export interface ITaxForm{
     municipio:string,
     correo:string,
     calle:string,
-    colonia:string
-
+    colonia?:number,
+    colonian?:string,
 }

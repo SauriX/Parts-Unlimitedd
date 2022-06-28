@@ -14,13 +14,14 @@ import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import views from "../../app/util/view";
-import { IProceedingList } from "../../app/models/Proceeding";
+import { IProceedingList, ISearchMedical, ProceedingFormValues, SearchMedicalFormValues } from "../../app/models/Proceeding";
+import moment from "moment";
 
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
-const expedientes:IProceedingList[] = [{
+/* const expedientes:IProceedingList[] = [{
     id:"1",
     expediente:"445666765",
     nomprePaciente:"Alfredo Gonzalez Juarez",
@@ -38,11 +39,12 @@ const expedientes:IProceedingList[] = [{
     fechaNacimiento: new Date("24/6/1999"),
     monederoElectronico: 120.00,
     telefono:"8167889100",
-}]
+}] */
 const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) => {
-  const { priceListStore } = useStore();
-  const { priceLists, getAll } = priceListStore;
-
+  const { procedingStore,optionStore,locationStore } = useStore();
+  const { expedientes, getAll,getnow,setSearch,search } = procedingStore;
+  const {BranchOptions,getBranchOptions}= optionStore;
+  const {getCity,cityOptions}=locationStore;
   const [searchParams] = useSearchParams();
 
   let navigate = useNavigate();
@@ -50,27 +52,41 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
   const { width: windowWidth } = useWindowDimensions();
 
   const [loading, setLoading] = useState(false);
-
+  //const [search,SetSearch] = useState<ISearchMedical>(new SearchMedicalFormValues())
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
 
   console.log("Table");
+  useEffect(()=>{
+    const readData = async(search:ISearchMedical)=>{
+      await getBranchOptions();
+    }
 
+    readData(search);
+  },[getBranchOptions]);
+  useEffect(()=>{
+    const readData = async()=>{
+      await getCity();
+    }
+    readData();
+  },[getCity])
   useEffect(() => {
     const readPriceList = async () => {
       setLoading(true);
-      await getAll(searchParams.get("search") ?? "all");
+      await getnow(search!);
       setLoading(false);
     };
 
-    if (priceLists.length === 0) {
+    if (expedientes.length === 0) {
         readPriceList();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+ const onfinish =async ()=>{
+  await getnow(search!);
+ }
   const columns: IColumns<IProceedingList> = [
     {
       ...getDefaultColumnProps("expediente", "Expediente", {
@@ -128,7 +144,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
         }),
       },
       {
-        ...getDefaultColumnProps("monederoElectronico", "Monedero electronico", {
+        ...getDefaultColumnProps("monederoElectronico", "Monedero electrónico", {
           searchState,
           setSearchState,
           width: "10%",
@@ -153,10 +169,10 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
       width: windowWidth < resizeWidth ? 100 : "20%",
       render: (value) => (
         <IconButton
-          title="Editar lista de precio"
+          title="Editar Expediente"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/${views.price}/${value}?${searchParams}&mode=edit`);
+            navigate(`/${views.proceeding}/${value}?${searchParams}&mode=edit`);
           }}
         />
       ),
@@ -168,17 +184,17 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Lista de Precios" image="ListaPrecio" />}
+          title={<HeaderTitle title="Catálogo de Lista de Expedientes"  />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
-{/*         <Table<IPriceListList>
+        <Table<IProceedingList>
           size="small"
           rowKey={(record) => record.id}
-          columns={columns.slice(0, 3)}
+          columns={columns.slice(0, 7)}
           pagination={false}
-          dataSource={[...priceLists]}
-        /> */}
+          dataSource={[...expedientes]}
+        />
       </div>
     );
   };
@@ -186,32 +202,32 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
   return (
     <Fragment>
         <Row>
-            <Col md={12} sm={12}>
+            <Col md={18} sm={12}>
                 <label htmlFor="">Expediente/Nombre/Codigo de barras/Huella digital: </label>
-                <Input style={{width:"300px" , marginBottom:"30px"}} type={"text"} placeholder={""}></Input>
+                <Input value={search.expediente} onChange={(value)=>{setSearch({ ...search,expediente:value.target.value  })}} style={{width:"600px" , marginBottom:"30px"}} type={"text"} placeholder={""}></Input>
             </Col>
-            <Col md={12} sm={12}>
-                <Button type="primary">Buscar</Button>
+            <Col md={6} sm={12}>
+                <Button type="primary" onClick={onfinish}>Buscar</Button>
             </Col>
             <Col xs={8} md={8} sm={12}>
-                <label>Telefono: </label>
-                <InputNumber   style={{width:"300px",marginBottom:"30px"}} placeholder={""}></InputNumber>
+                <label>Teléfono: </label>
+                <Input value={search.telefono} onChange={(value)=>{setSearch({ ...search,telefono:value.target.value  })}}  style={{width:"300px",marginBottom:"30px"}} placeholder={""}></Input>
             </Col>
             <Col xs={8} md={8} sm={12}>
                 <label>Fecha Nacimiento: </label>
-                <DatePicker style={{marginLeft:"10px",width:"200px"}} ></DatePicker>
+                <DatePicker  value={moment(search.fechaNacimiento)} onChange={(value)=>{setSearch({ ...search,fechaNacimiento:value?.toDate()!  })}} style={{marginLeft:"10px",width:"200px"}} ></DatePicker>
             </Col>
             <Col xs={8} md={8} sm={12}>
                 <label>Fecha Alta Exp.: </label>
-                <DatePicker style={{marginLeft:"10px",width:"200px"}} ></DatePicker>
+                <DatePicker value={moment(search.fechaAlta)}  onChange={(value)=>{setSearch({ ...search,fechaAlta:value?.toDate()!  })}} style={{marginLeft:"10px",width:"200px"}} ></DatePicker>
             </Col>
             <Col xs={8} md={8} sm={12}>
                 <label>Ciudad: </label>
-                <Select style={{marginLeft:"10px",width:"300px",marginBottom:"30px"}} ></Select>
+                <Select value={search.ciudad} options={cityOptions} onChange={(value)=>{setSearch({ ...search,ciudad:value  })}} style={{marginLeft:"10px",width:"300px",marginBottom:"30px"}} ></Select>
             </Col>
             <Col xs={8} md={8} sm={12}>
                 <label>Sucursal: </label>
-                <Select style={{marginLeft:"10px",width:"300px"}} ></Select>
+                <Select options={BranchOptions} onChange={(value)=>{setSearch({ ...search,sucursal:value  })}} style={{marginLeft:"10px",width:"300px"}} />
             </Col>
         </Row>
       <Table<IProceedingList>

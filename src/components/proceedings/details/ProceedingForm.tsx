@@ -18,6 +18,9 @@ import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/ta
 import { IOptions } from "../../../app/models/shared";
 import DatosFiscalesForm from "./DatosFiscalesForm";
 import Concidencias from "./Concidencias";
+import { IProceedingForm, ISearchMedical, ProceedingFormValues } from "../../../app/models/Proceeding";
+import moment from "moment";
+import { ITaxForm } from "../../../app/models/taxdata";
 type ProceedingFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
@@ -25,50 +28,184 @@ type ProceedingFormProps = {
 };
 const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing }) => {
   const navigate = useNavigate();
-  const { modalStore } = useStore();
+  const { modalStore, procedingStore, locationStore, optionStore,profileStore } = useStore();
+  const { getById, update, create, coincidencias, getnow, setTax, clearTax, expedientes, search, tax } = procedingStore;
+  const { profile } = profileStore;
+  const { BranchOptions, getBranchOptions } = optionStore;
   const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
-  const [form] = Form.useForm();
-  const [values, setValues] = useState();
-  const { openModal } = modalStore;
+  const [form] = Form.useForm<IProceedingForm>();
+  const [values, setValues] = useState<IProceedingForm>(new ProceedingFormValues());
+  const { getColoniesByZipCode } = locationStore;
+  const { openModal,closeModal } = modalStore;
+  const [colonies, setColonies] = useState<IOptions[]>([]);
+  const [date, setDate] = useState(moment(new Date(moment.now())));
+  const [continuar, SetContinuar] = useState<boolean>(true);
   const goBack = () => {
     searchParams.delete("mode");
     setSearchParams(searchParams);
-    navigate(`/${views.promo}?${searchParams}`);
+    navigate(`/${views.proceeding}?${searchParams}`);
+    clearTax();
+    closeModal();
   };
-  const onValuesChange = async (changedValues: any) => {
-    const field = Object.keys(changedValues)[0];
 
-    if (field === "idListaPrecios") { }
+  const clearLocation = () => {
+    form.setFieldsValue({
+      estado: undefined,
+      municipio: undefined,
+      colonia: undefined,
+    });
+    setColonies([]);
   };
+
+
+  useEffect(() => {
+    const readExpedinte = async (id: string) => {
+      setLoading(true);
+      var expediente = await getById(id);
+      console.log(expediente, "exp");
+      form.setFieldsValue(expediente!);
+      setTax(expediente?.taxData!);
+      setValues(expediente!);
+      setLoading(false);
+    };
+
+    if (id) {
+      readExpedinte(id);
+    }
+
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, getById]);
+  
+  useEffect(()=>{
+    if(!profile?.admin){
+      form.setFieldsValue({sucursal:profile?.sucursal});
+    }
+    
+  });
+
+  useEffect(() => {
+    const readData = async (search: ISearchMedical) => {
+      await getnow(search);
+    }
+
+    readData(search);
+  }, [search, getnow])
+  useEffect(() => {
+    const readData = async (search: ISearchMedical) => {
+      await getBranchOptions();
+    }
+
+    readData(search);
+  }, [getBranchOptions])
   const setEditMode = () => {
-    navigate(`/${views.promo}/${id}?${searchParams}&mode=edit`);
+    navigate(`/${views.proceeding}/${id}?${searchParams}&mode=edit`);
     setReadonly(false);
   };
-  const onFinish = async (newValues: any) => {
-    setLoading(true);
-    openModal({ title: "Se encuentran coincidencias con los siguientes expedientes", body:<Concidencias  printing={false}></Concidencias>, closable: true ,width:"55%"})
-    //const reagent = { ...values, ...newValues }; 
-    /*         console.log(reagent,"en el onfish")
-            console.log(reagent); */
-    let success = false;
+  const calcularEdad =(fecha:Date) =>{
+    var hoy = new Date();
+    var cumpleanos = fecha;
+    var edad = hoy.getFullYear() - cumpleanos.getFullYear();
+    var m = hoy.getMonth() - cumpleanos.getMonth();
 
-    /*         if (!reagent.id) {
-              success = await create(reagent);
-            } else {
-              success = await update(reagent);
-            } */
+    if (m < 0 || (m === 0 && hoy.getDate() < cumpleanos.getDate())) {
+        edad--;
+    }
+    form.setFieldsValue({edad:edad});
+    return edad;
+};
+  const onValuesChange = async (changedValues: any) => {
+    const field = Object.keys(changedValues)[0];
+    if(field=="edad"){
+      const edad = changedValues[field] as number;
+      var hoy = new Date();
+      var cumpleaños =  hoy.getFullYear()-edad;
+      hoy.setFullYear(cumpleaños);
+      setValues((prev) => ({ ...prev, fechaNacimiento: hoy }))
+    }
+    if (field === "cp") {
+      const zipCode = changedValues[field] as string;
 
-    setLoading(false);
-
-    if (success) {
-      goBack();
+      if (zipCode && zipCode.trim().length === 5) {
+        const location = await getColoniesByZipCode(zipCode);
+        if (location) {
+          form.setFieldsValue({
+            estado: location.estado,
+            municipio: location.ciudad,
+          });
+          setColonies(
+            location.colonias.map((x) => ({
+              value: x.id,
+              label: x.nombre,
+            }))
+          );
+        } else {
+          clearLocation();
+        }
+      } else {
+        clearLocation();
+      }
     }
   };
+  const setPage = (page: number) => {
+    const priceList = expedientes[page - 1];
+    navigate(`/${views.proceeding}/${priceList.id}?${searchParams}`);
+  };
+  const getPage = (id: string) => {
+    return expedientes.findIndex(x => x.id === id) + 1;
+  };
+  const continues = async (cont: boolean) => {
+    SetContinuar(cont);
+  }
+
+  const onFinish = async (newValues: IProceedingForm) => {
+    setLoading(true);
+    var coincidencia = await coincidencias(newValues);
+    openModal({ title: "Se encuentran coincidencias con los siguientes expedientes", body: <Concidencias handle={async()=>{
+      
+      const reagent = { ...values, ...newValues };
+      let success = false;
+      reagent.taxData = tax;
+      if (!reagent.id) {
+         success = await create(reagent);
+
+         
+      } else{
+        success = await update(reagent);
+      }
+      setLoading(false);
+      if (success) {
+
+        goBack();
+        
+      } 
+    }} expedientes={coincidencia} printing={false}></Concidencias>, closable: true, width: "55%" })
+        
+   
+
+
+  };
+
+  const handleChangeTax = (tax: ITaxForm[]) => {
+    setTax(tax);
+  }
+
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
+        {!!id && (
+          <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
+            <Pagination
+              size="small"
+              total={expedientes?.length ?? 0}
+              pageSize={1}
+              current={getPage(id)}
+              onChange={setPage}
+            />
+          </Col>
+        )}
         {!readonly && (
           <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
             <Button onClick={goBack}>Cancelar</Button>
@@ -95,12 +232,12 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo de Promociones en listas de precios" image="promo" />}
+              title={<HeaderTitle title="Expediente" />}
               className="header-container"
             ></PageHeader>
           )}
           {printing && <Divider className="header-divider" />}
-          <Form<any>
+          <Form<IProceedingForm>
             {...formItemLayout}
             form={form}
             name="proceeding"
@@ -110,88 +247,83 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
             onValuesChange={onValuesChange}
           >
             <Row>
-              <Col md={8} sm={24} xs={12}>
+              <Col md={9} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "nombre",
                     label: "Nombre(s)",
+                    style: { width: "500px" }
                   }}
                   max={100}
                   required
                   readonly={readonly}
                 />
               </Col>
-              <Col md={4} sm={24} xs={12}>
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "expediente",
-                    label: "Exp",
-                  }}
-                  max={100}
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={8} sm={24} xs={12}>
+              <Col md={9} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "apellido",
                     label: "Apellido (s)",
+                    style: { width: "500px" }
                   }}
                   max={100}
                   required
                   readonly={readonly}
                 />
               </Col>
+              <Col md={6} sm={24} xs={12}>
+
+              </Col>
+              <Col md={9} sm={24} xs={12}>
+
+              </Col>
+              <Col md={7} sm={24} xs={12}></Col>
+              <Col md={8} sm={24} xs={12}></Col>
+              <Col md={5} sm={24} xs={12}>
+                <SelectInput
+                  formProps={{
+                    name: "sexo",
+                    label: "Sexo",
+                    style: { width: "140px", marginLeft: "73px" }
+                  }}
+                  required
+                  readonly={readonly}
+                  options={[{ value: "M", label: "M" }, { value: "F", label: "F" }]}></SelectInput>
+              </Col>
               <Col md={8} sm={24} xs={12}>
-              <TextInput
+                <label htmlFor="">Fecha Nacimiento: </label>
+                <DatePicker value={moment(values.fechaNacimiento)} disabled={readonly} onChange={(value) => {   calcularEdad(value?.toDate()!);  setValues((prev) => ({ ...prev, fechaNacimiento: value?.toDate() })) }} style={{ marginLeft: "10px" }} />
+              </Col>
+              <Col md={5} sm={24} xs={12}>
+                <NumberInput
+                  formProps={{
+                    name: "edad",
+                    label: "Edad",
+                    style: { width: "140px" }
+                  }}
+                  min={0}
+                  readonly={readonly}
+                ></NumberInput>
+              </Col>
+              <Col md={5} sm={24} xs={12}>
+                <TextInput
                   formProps={{
                     name: "telefono",
                     label: "Teléfono",
                   }}
                   max={100}
+                  readonly={readonly}
                 ></TextInput>
               </Col>
-              <Col md={8} sm={24} xs={12}>
+              <Col md={7} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "correo",
                     label: "E-Mail",
                   }}
-                  required
+                  type="email"
                   max={100}
-                ></TextInput>
-              </Col>
-              <Col md={6} sm={24} xs={12}>
-                <SelectInput
-                  formProps={{
-                    name: "sexo",
-                    label: "Sexo",
-                  }}
-                  required
-                  options={[{ value: "M", label: "M" }, { value: "F", label: "F" }]}></SelectInput>
-              </Col>
-              <Col md={6} sm={24} xs={12}>
-                <label style={{ marginLeft: "30px" }} htmlFor="">Fecha Nacimiento: </label>
-                <DatePicker style={{ marginLeft: "10px" }} />
-              </Col>
-              <Col md={6} sm={24} xs={12}>
-                <NumberInput
-                  formProps={{
-                    name: "edad",
-                    label: "Edad",
-                  }}
-                  min={0}
-                ></NumberInput>
-              </Col>
-              <Col md={4} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "celular",
-                    label: "Celular",
-                  }}
-                  max={100}
+                  readonly={readonly}
                 ></TextInput>
               </Col>
 
@@ -200,54 +332,102 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                   formProps={{
                     name: "cp",
                     label: "CP",
+                    style: { width: "100px", marginLeft: "40px" }
                   }}
+                  readonly={readonly}
                   required
-                  max={100}
+                  max={5}
+
                 ></TextInput>
               </Col>
               <Col md={4} sm={24} xs={12}>
-                <SelectInput
+                <TextInput
                   formProps={{
                     name: "estado",
                     label: "Estado",
                   }}
-                  options={[]}></SelectInput>
+                  max={100}
+                  readonly={readonly}
+                />
               </Col>
-              <Col md={4} sm={24} xs={12}>
-                <SelectInput
+              <Col md={5} sm={24} xs={12}>
+                <TextInput
                   formProps={{
                     name: "municipio",
                     label: "Municipio",
                   }}
-                  options={[]}></SelectInput>
+                  max={100}
+                  required
+                  readonly={readonly}
+                />
+
+              </Col>
+              <Col md={4} sm={24} xs={12}>
+                <TextInput
+                  formProps={{
+                    name: "celular",
+                    label: "Celular",
+                  }}
+                  readonly={readonly}
+                  max={100}
+                ></TextInput>
               </Col>
 
+
+
+
+              <Col md={1} sm={24} xs={12}></Col>
               <Col md={6} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "calle",
                     label: "Calle y Número",
                   }}
-                  required
                   max={100}
+                  readonly={readonly}
                 ></TextInput>
               </Col>
-              <Col md={6} sm={24} xs={12}>
-                <TextInput
+
+              <Col md={5} sm={24} xs={12}>
+                <SelectInput
                   formProps={{
                     name: "colonia",
                     label: "Colonia",
                   }}
-                  required
-                  max={100}
-                ></TextInput>
+
+                  options={colonies}
+                  readonly={readonly}
+                />
               </Col>
+              <Col md={5} sm={24} xs={12}>
+              <TextInput
+                  formProps={{
+                    name: "expediente",
+                    label: "Exp",
+                    style: { width: "270px", marginLeft: "10px" }
+                  }}
+                  max={100}
+                  readonly={readonly}
+                />
+              </Col>
+
               <Col md={24} style={{ textAlign: "center" }}>
-                <Button onClick={() => openModal({ title: "Seleccionar o Ingresar Datos Fiscales", body:<DatosFiscalesForm></DatosFiscalesForm>, closable: true ,width:"55%"})} style={{ backgroundColor: "#6EAA46", color: "white", borderColor: "#6EAA46" }}>Datos Fiscales</Button>
+                <Button onClick={() => openModal({ title: "Seleccionar o Ingresar Datos Fiscales", body: <DatosFiscalesForm ></DatosFiscalesForm>, closable: true, width: "55%" })} style={{ backgroundColor: "#6EAA46", color: "white", borderColor: "#6EAA46" }}>Datos Fiscales</Button>
+              </Col>
+              <Col md={5} sm={24} xs={12}>
+                <SelectInput
+                  formProps={{
+                    name: "sucursal",
+                    label: "Sucursal",
+                  }}
+                  required
+                  options={BranchOptions}
+                  readonly={readonly && profile!.admin}
+                />
               </Col>
             </Row>
           </Form>
-          
+
         </div>
       </div>
     </Spin>
