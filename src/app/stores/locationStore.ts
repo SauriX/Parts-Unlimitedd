@@ -33,7 +33,7 @@ export default class LocationStore {
     }
   };
 
-  getCity = async () => {
+  getCity2 = async () => {
     try {
       const ciudades = await Location.getCity();
       return ciudades;
