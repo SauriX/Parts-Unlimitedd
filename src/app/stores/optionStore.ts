@@ -14,6 +14,7 @@ import Company from "../api/company";
 import Medics from "../api/medics";
 import Branch from "../api/branch";
 import Promotion from "../api/promotion";
+import Location from "../api/location";
 export default class OptionStore {
   constructor() {
     makeAutoObservable(this);
@@ -430,4 +431,17 @@ export default class OptionStore {
       this.BranchOptions=[];
     }
   };
+  CityOptions:IOptions[]=[];
+  getCityOptions=async()=>{
+    try{
+      const branch = Location.getCities();
+      this.CityOptions= (await branch).map((x)=>({
+        value:x.id,
+        label:x.ciudad
+      }));
+    }catch(error){
+      this.CityOptions=[];
+    }
+  };
+
 }

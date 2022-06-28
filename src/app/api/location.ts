@@ -8,8 +8,8 @@ const Location = {
     getCities: (): Promise<ICity[]> =>
     requests.get(`location/getcity`),
 
-    getCity: (): Promise<ILocation> =>
-    requests.get(`location/getCity/`),
+    // getCity: (): Promise<ILocation> =>
+    // requests.get(`location/getCity/`),
 };
 
 export default Location;
