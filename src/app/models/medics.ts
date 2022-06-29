@@ -53,8 +53,8 @@ export class MedicsFormValues implements IMedicsForm {
   especialidadId = undefined;
   observaciones = "";
   codigoPostal = undefined;
-  estadoId = "";
-  ciudadId = "";
+  estadoId? = "";
+  ciudadId? = "";
   numeroExterior = "";
   numeroInterior = "";
   calle = "";
