@@ -9,6 +9,7 @@ const views = {
   route: "routes",
   appointment: "appointments",
   quotatiion:"cotizacion",
+  report: "reportes"
 };
 
 export default views;

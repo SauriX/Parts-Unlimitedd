@@ -40,6 +40,10 @@ export interface IOptionsCatalog extends IOptions {
   type: "normal" | "description" | "dimension" | "area";
 }
 
+export interface IOptionsReport extends IOptions {
+  type: "expediente" | "prueba" ;
+}
+
 export type TreeData = {
   title: string;
   key: string;

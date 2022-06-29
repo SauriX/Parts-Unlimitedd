@@ -4,6 +4,7 @@ import requests from "./agent";
 
 const Company = {
   access: (): Promise<IScopes> => requests.get("scopes/company"),
+  getActive: (): Promise<ICompanyList[]> => requests.get(`company/active`),
   getAll: (search: string): Promise<ICompanyList[]> =>
     requests.get(`company/all/${!search ? "all" : search}`),
   getById: (id: string): Promise<ICompanyForm> => requests.get(`company/${id}`),

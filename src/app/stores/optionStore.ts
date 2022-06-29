@@ -10,7 +10,8 @@ import Tapon from "../api/tapon";
 import Indication from "../api/indication";
 import PriceList from "../api/priceList";
 import branch from "../api/branch";
-
+import Company from "../api/company";
+import Medics from "../api/medics";
 import Branch from "../api/branch";
 import Promotion from "../api/promotion";
 export default class OptionStore {
@@ -384,6 +385,49 @@ export default class OptionStore {
       }));
     }catch(error){
       this.PromotionOptions=[]
+    }
+  };
+
+  CompanyOptions:IOptions[]=[];
+
+  getCompanyOptions = async () => {
+    try{
+      const CompanyOptions =await Company.getAll("");
+      console.log(CompanyOptions);
+      this.CompanyOptions= CompanyOptions.map((x) => ({
+        value: x.id,
+        label: x.nombreComercial,
+      }));
+    }catch(error){
+      this.CompanyOptions=[]
+    }
+  };
+
+  MedicOptions:IOptions[]=[];
+
+  getMedicOptions = async () => {
+    try{
+      const MedicOptions =await Medics.getAll("");
+      console.log(MedicOptions);
+      this.MedicOptions= MedicOptions.map((x) => ({
+        value: x.idMedico,
+        label: x.nombre,
+      }));
+    }catch(error){
+      this.MedicOptions=[]
+    }
+  };
+
+  BranchCityOptions:IOptions[]=[];
+  getBranchCityOptions=async()=>{
+    try{
+      const branch = Branch.getBranchByCity();
+      this.BranchOptions= (await branch).map((x)=>({
+        value:x.idSucursal,
+        label:x.nombre
+      }));
+    }catch(error){
+      this.BranchOptions=[];
     }
   };
 }
