@@ -53,6 +53,7 @@ const CatalogDescriptionForm: FC<CatalogDescriptionFormProps> = ({
   }, [catalogName, form, getById, id]);
 
   const onFinish = async (newValues: ICatalogDescriptionForm) => {
+    setLoading(true);
     const catalog = { ...values, ...newValues };
 
     let success = false;
@@ -62,6 +63,7 @@ const CatalogDescriptionForm: FC<CatalogDescriptionFormProps> = ({
     } else {
       success = await update(catalogName, catalog);
     }
+    setLoading(false);
 
     if (success) {
       goBack();
@@ -79,7 +81,16 @@ const CatalogDescriptionForm: FC<CatalogDescriptionFormProps> = ({
       <Row style={{ marginBottom: 24 }}>
         <Col md={12} sm={24} style={{ textAlign: "left" }}>
           {id > 0 && (
-            <Pagination size="small" total={catalogs.length} pageSize={1} current={getIndex(id) + 1} />
+            <Pagination
+              size="small"
+              total={catalogs.length}
+              pageSize={1}
+              current={getIndex(id) + 1}
+              onChange={(page) => {
+                const catalog = catalogs[page - 1];
+                navigate(`/catalogs/${catalog.id}?${searchParams}`);
+              }}
+            />
           )}
         </Col>
         <Col md={12} sm={24} style={{ textAlign: "right" }}>

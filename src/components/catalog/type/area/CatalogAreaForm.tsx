@@ -54,6 +54,7 @@ const CatalogAreaForm: FC<CatalogAreaFormProps> = ({ id, componentRef, printing 
   }, [getDepartmentOptions]);
 
   const onFinish = async (newValues: ICatalogAreaForm) => {
+    setLoading(true);
     const catalog = { ...values, ...newValues };
 
     let success = false;
@@ -63,6 +64,7 @@ const CatalogAreaForm: FC<CatalogAreaFormProps> = ({ id, componentRef, printing 
     } else {
       success = await update(catalogName, catalog);
     }
+    setLoading(false);
 
     if (success) {
       goBack();
@@ -80,7 +82,16 @@ const CatalogAreaForm: FC<CatalogAreaFormProps> = ({ id, componentRef, printing 
       <Row style={{ marginBottom: 24 }}>
         <Col md={12} sm={24} style={{ textAlign: "left" }}>
           {id > 0 && (
-            <Pagination size="small" total={catalogs.length} pageSize={1} current={getIndex(id) + 1} />
+            <Pagination
+              size="small"
+              total={catalogs.length}
+              pageSize={1}
+              current={getIndex(id) + 1}
+              onChange={(page) => {
+                const catalog = catalogs[page - 1];
+                navigate(`/catalogs/${catalog.id}?${searchParams}`);
+              }}
+            />
           )}
         </Col>
         <Col md={12} sm={24} style={{ textAlign: "right" }}>

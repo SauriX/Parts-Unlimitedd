@@ -50,6 +50,7 @@ const CatalogDimensionForm: FC<CatalogDimensionFormProps> = ({ id, componentRef,
   }, [form, getById, id]);
 
   const onFinish = async (newValues: ICatalogDimensionForm) => {
+    setLoading(true);
     const catalog = { ...values, ...newValues };
 
     let success = false;
@@ -59,6 +60,7 @@ const CatalogDimensionForm: FC<CatalogDimensionFormProps> = ({ id, componentRef,
     } else {
       success = await update(catalogName, catalog);
     }
+    setLoading(false);
 
     if (success) {
       goBack();
@@ -76,7 +78,16 @@ const CatalogDimensionForm: FC<CatalogDimensionFormProps> = ({ id, componentRef,
       <Row style={{ marginBottom: 24 }}>
         <Col md={12} sm={24} style={{ textAlign: "left" }}>
           {id > 0 && (
-            <Pagination size="small" total={catalogs.length} pageSize={1} current={getIndex(id) + 1} />
+            <Pagination
+              size="small"
+              total={catalogs.length}
+              pageSize={1}
+              current={getIndex(id) + 1}
+              onChange={(page) => {
+                const catalog = catalogs[page - 1];
+                navigate(`/catalogs/${catalog.id}?${searchParams}`);
+              }}
+            />
           )}
         </Col>
         <Col md={12} sm={24} style={{ textAlign: "right" }}>
