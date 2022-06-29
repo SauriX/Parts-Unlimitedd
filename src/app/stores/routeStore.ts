@@ -47,30 +47,6 @@ export default class RouteStore {
         }
     };
 
-    // getAllStudy = async () =>{
-    //     try {
-            
-    //         const roles= await Study.getAll("all");
-    //         console.log(roles,"studies");
-    //         console.log(roles);
-    //         var studies= roles.map((x) => {
-    //             let data:IRouteEstudioList = {
-    //                 id: x.id,
-    //                 clave: x.clave,
-    //                 nombre: x.nombre,
-    //                 area:x.area,
-    //                 //selectedTags:x.,
-    //                 departamento:x.departamento,
-    //                 activo: false,
-    //             }
-    //             return data;});
-    //             this.studies=studies;
-    //             return studies
-    //       } catch (error: any) {
-    //         alerts.warning(getErrors(error));
-    //         this.routes = [];
-    //       }
-    //   };
       getAllStudy = async () =>{
         try {
             

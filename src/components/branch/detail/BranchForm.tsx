@@ -386,8 +386,7 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
                     label: "Clínicos",
                   }}
                   max={100}
-                  readonly={CheckReadOnly()}
-                  required
+                  readonly={true}
                 />
                 <TextInput
                   formProps={{
@@ -395,8 +394,8 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
                     label: "Presupuestos",
                   }}
                   max={100}
-                  readonly={CheckReadOnly()}
-                  required
+                  readonly={true}
+                  
                 />
                 <TextInput
                   formProps={{
@@ -404,8 +403,7 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
                     label: "Facturación",
                   }}
                   max={100}
-                  readonly={CheckReadOnly()}
-                  required
+                  readonly={true}
                 />
                 <SwitchInput
                   name="activo"
@@ -419,6 +417,18 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
                   label="Activo"
                   readonly={CheckReadOnly()}
                 />
+                <SwitchInput
+                name="matriz"
+                onChange={(value) => {
+/*                   if (value) {
+                    alerts.info(messages.confirmations.enable);
+                  } else {
+                    alerts.info(messages.confirmations.disable);
+                  } */
+                }}
+                label="Matriz"
+                readonly={CheckReadOnly()}
+              />
               </Col>
             </Row>
           </Form>

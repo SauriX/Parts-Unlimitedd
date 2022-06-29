@@ -94,4 +94,16 @@ export default class BranchStore {
       }
     }
   }; 
+
+  getBranchByCity = async () => {
+    try {
+      console.log();
+      const roles= await Branch.getBranchByCity();
+      console.log(roles);
+      this.sucursales = roles;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      this.sucursales = []; 
+    }
+  };
 }

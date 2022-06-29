@@ -52,6 +52,9 @@ import views from "../util/view";
 import Appointment from "../../views/Appointment";
 import ProceedingDetail from "../../components/proceedings/details/ProceedingDetail";
 import Request from "../../views/Request";
+import Quotation from "../../views/Quotation";
+import QuotationDetail from "../../components/quotation/detail/QuotationDetail";
+import Report from "../../views/Report";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -139,6 +142,10 @@ function App() {
             <Route path="routes" element={<Routee />} />
             <Route path="routes/:id" element={<RouteDetail />} />
             <Route path="routes/new" element={<RouteDetail />} />
+            <Route path="cotizacion" element={<Quotation />} />
+            <Route path="cotizacion/:id" element={<QuotationDetail />} />
+            <Route path="cotizacion/new" element={<QuotationDetail />} />
+            <Route path="reports" element={<Report />} />
             <Route path={views.appointment} element={<Appointment />} />
             <Route path={views.request} element={<Request />} />
             <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />

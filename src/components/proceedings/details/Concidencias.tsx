@@ -20,8 +20,9 @@ type ProceedingTableProps = {
   printing: boolean;
   expedientes:IProceedingList[];
   handle:() => Promise<void>;
+  handleclose:() => Promise<void>;
 };
-const Coincidencias: FC<ProceedingTableProps> = ({  printing,expedientes,handle }) => {
+const Coincidencias: FC<ProceedingTableProps> = ({  printing,expedientes,handle,handleclose }) => {
   const { priceListStore,modalStore} = useStore();
   const { priceLists, getAll } = priceListStore;
   const { closeModal } = modalStore;
@@ -143,7 +144,7 @@ const Coincidencias: FC<ProceedingTableProps> = ({  printing,expedientes,handle 
         </Col>
         <Col md={8} style={{ textAlign: "center"  }}></Col>
         <Col md={4} style={{ textAlign: "center"  }}><Button style={{backgroundColor:"#002060",color:"white"}} onClick={()=>{handle()}}>Aceptar</Button></Col>
-        <Col md={4} style={{ textAlign: "center"  }}><Button style={{backgroundColor:"#9A0000",color:"white"}} onClick={()=>{closeModal()}}>Cancelar</Button></Col>
+        <Col md={4} style={{ textAlign: "center"  }}><Button style={{backgroundColor:"#9A0000",color:"white"}} onClick={()=>{closeModal();handleclose()}}>Cancelar</Button></Col>
       </Row>
     </Fragment>
   );

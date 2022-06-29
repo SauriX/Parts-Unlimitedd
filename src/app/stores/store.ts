@@ -23,6 +23,8 @@ import DrawerStore from "./drawerStore";
 import RouteStore from "./routeStore";
 import ConfigurationStore from "./configurationStore";
 import ProcedingStore from "./procedingStore";
+import QuotationStore from "./quotationStore";
+import ReportStore from "./reportStore";
 
 configure({
   enforceActions: "never",
@@ -52,6 +54,8 @@ interface Store {
   loyaltyStore: LoyaltyStore;
   routeStore: RouteStore;
   procedingStore: ProcedingStore;
+  quotationStore:QuotationStore
+  reportStore: ReportStore;
 }
 
 export const store: Store = {
@@ -78,6 +82,8 @@ export const store: Store = {
   loyaltyStore: new LoyaltyStore(),
   routeStore: new RouteStore(),
   procedingStore: new ProcedingStore(),
+  quotationStore: new QuotationStore(),
+  reportStore: new ReportStore(),
 };
 
 export const StoreContext = createContext(store);

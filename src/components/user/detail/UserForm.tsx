@@ -1,4 +1,4 @@
-import { Spin, Form, Row, Col, Transfer, Tooltip, Tree, Tag, Pagination, Button } from "antd";
+import { Spin, Form, Row, Col, Transfer, Tooltip, Tree, Tag, Pagination, Button, PageHeader } from "antd";
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { IUserPermission, IUserForm, UserFormValues, IClave, claveValues } from "../../../app/models/user";
 import { formItemLayout } from "../../../app/util/utils";
@@ -17,6 +17,7 @@ import ImageButton from "../../../app/common/button/ImageButton";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import { observer } from "mobx-react-lite";
+import HeaderTitle from "../../../app/common/header/HeaderTitle";
 type UserFormProps = {
   componentRef: React.MutableRefObject<any>;
   load: boolean;
@@ -297,6 +298,14 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
             </Col>
           )}
         </Row>
+        <div style={{ display: load ? "" : "none", height: 300 }}></div>
+        <div style={{ display: load ? "none" : "" }}>
+        <div ref={componentRef}>
+        {load && (<PageHeader
+            ghost={false}
+            title={<HeaderTitle title="Catálogo usuarios" image="user" />}
+            className="header-container"
+        ></PageHeader>)}
         <Form<IUserForm>
           {...formItemLayout}
           form={form}
@@ -312,6 +321,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
             );
           }}
         >
+          
           <Row>
             <Col md={12} sm={24} xs={12}>
               <TextInput
@@ -470,6 +480,8 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
             </Transfer>
           </div>
         </div>
+      </div>
+      </div>
       </div>
     </Spin>
   );

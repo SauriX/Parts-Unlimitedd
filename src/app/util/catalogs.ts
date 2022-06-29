@@ -1,4 +1,4 @@
-import { IOptionsCatalog } from "../models/shared";
+import { IOptionsCatalog, IOptionsReport } from "../models/shared";
 
 export const catalogs: IOptionsCatalog[] = [
   { value: "area", label: "Área", type: "area" },
@@ -15,4 +15,9 @@ export const catalogs: IOptionsCatalog[] = [
   { value: "paymentMethod", label: "Métodos de pago", type: "normal" },
   { value: "sampleType", label: "Tipo de Muestra", type: "normal" },
   { value: "useOfCFDI", label: "Uso de CFDI", type: "description" },
+];
+
+export const reports: IOptionsReport[] = [
+  { value: "expediente", label: "Expediente", type: "expediente" },
+  { value: "prueba", label: "Prueba", type: "prueba" },
 ];

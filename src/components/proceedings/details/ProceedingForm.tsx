@@ -64,7 +64,18 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
     const readExpedinte = async (id: string) => {
       setLoading(true);
       var expediente = await getById(id);
-      console.log(expediente, "exp");
+      
+      const location = await getColoniesByZipCode(expediente?.cp!);
+      if (location) {
+        setColonies(
+          location.colonias.map((x) => ({
+            value: x.id,
+            label: x.nombre,
+          }))
+        );
+      } else {
+        clearLocation();
+      }
       form.setFieldsValue(expediente!);
       setTax(expediente?.taxData!);
       setValues(expediente!);
@@ -163,9 +174,28 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
   const onFinish = async (newValues: IProceedingForm) => {
     setLoading(true);
     var coincidencia = await coincidencias(newValues);
-    openModal({ title: "Se encuentran coincidencias con los siguientes expedientes", body: <Concidencias handle={async()=>{
+    const reagent = { ...values, ...newValues };
+    if(coincidencia.length>0 || !reagent.id! ){
+      openModal({ title: "Se encuentran coincidencias con los siguientes expedientes", body: <Concidencias handle={async()=>{
       
-      const reagent = { ...values, ...newValues };
+        let success = false;
+        reagent.taxData = tax;
+        if (!reagent.id) {
+           success = await create(reagent);
+  
+           
+        } else{
+          success = await update(reagent);
+        }
+        setLoading(false);
+        if (success) {
+  
+          goBack();
+          
+        } 
+      }} expedientes={coincidencia} handleclose={async ()=>{setLoading(false);}} printing={false}></Concidencias>, closable: true, width: "55%" })
+    }else{
+      
       let success = false;
       reagent.taxData = tax;
       if (!reagent.id) {
@@ -181,10 +211,9 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
         goBack();
         
       } 
-    }} expedientes={coincidencia} printing={false}></Concidencias>, closable: true, width: "55%" })
-        
-   
+    }
 
+        
 
   };
 

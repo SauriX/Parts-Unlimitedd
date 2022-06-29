@@ -4,6 +4,7 @@ import requests from "./agent";
 
 const Medics = {
   access: (): Promise<IScopes> => requests.get("scopes/medic"),
+  getActive: (): Promise<IMedicsList[]> => requests.get(`medic/active`),
   getAll: (search: string): Promise<IMedicsList[]> => requests.get(`medic/all/${!search ? "all" : search}`),
   getById: (id: string): Promise<IMedicsForm> => requests.get(`medic/${id}`),
   create: (medics: IMedicsForm): Promise<void> => requests.post("medic", medics),
