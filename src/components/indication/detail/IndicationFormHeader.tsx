@@ -32,7 +32,8 @@ const IndicationFormHeader: FC<IndicationFormHeaderProps> = ({ id, handlePrint, 
       title={<HeaderTitle title="Catálogo de Indicaciones" image="Indicaciones" />}
       className="header-container"
       extra={[
-        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+        id !=0 ?
+        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />:'',
         id !=0 ?
         <ImageButton key="doc" title="Informe" image="doc" onClick={download} />:'',
         <ImageButton

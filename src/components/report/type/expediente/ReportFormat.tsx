@@ -47,7 +47,10 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
   const ReportForm: FC<ReportFormProps> = ({ /*id*/ componentRef, printing, reportName}) => {
     const { reportStore, optionStore } = useStore();
     const {reports } = reportStore;
-    const {BranchOptions,getBranchOptions,BranchCityOptions, getBranchCityOptions,CompanyOptions,getCompanyOptions} = optionStore;
+    const {BranchOptions,getBranchOptions,
+      BranchCityOptions, getBranchCityOptions,
+      CompanyOptions,getCompanyOptions,
+      CityOptions, getCityOptions} = optionStore;
     const navigate = useNavigate();
   
   
@@ -66,10 +69,12 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
       getBranchOptions();
       getBranchCityOptions();
       getCompanyOptions();
+      getCityOptions();
     }, [
       getBranchOptions,
       getBranchCityOptions,
       getCompanyOptions,
+      getCityOptions,
     ]);
 
     const treeData = [
@@ -81,22 +86,22 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
           value: x.value,
         })),
       },
-      {
-        title: "Jalisco",
-        value: "maquiladorId",
-        children: CompanyOptions.map((x) => ({
-          title: x.label,
-          value: x.value,
-        })),
-      },
-      {
-        title: "Sinaloa",
-        value: "maquiladorId",
-        children: CompanyOptions.map((x) => ({
-          title: x.label,
-          value: x.value,
-        })),
-      },
+      // {
+      //   title: "Jalisco",
+      //   value: "maquiladorId",
+      //   children: CityOptions.map((x) => ({
+      //     title: x.label,
+      //     value: x.value,
+      //   })),
+      // },
+      // {
+      //   title: "Sinaloa",
+      //   value: "maquiladorId",
+      //   children: CompanyOptions.map((x) => ({
+      //     title: x.label,
+      //     value: x.value,
+      //   })),
+      // },
     ];
   
     const handleChange = (value: string) => {
@@ -174,7 +179,7 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
                       label: "Sucursal",
                     }}
                     readonly={readonly}
-                    options={BranchCityOptions}
+                    options={CityOptions}
                   />
                   </Col>
               </Row>

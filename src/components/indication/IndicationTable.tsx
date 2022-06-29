@@ -86,7 +86,7 @@ const IndicationTable: FC<IndicationsTableProps> = ({ componentRef, printing }) 
       }),
     },
     {
-      ...getDefaultColumnProps("descripcion", "Descripcion", {
+      ...getDefaultColumnProps("descripcion", "Descripción", {
         searchState,
         setSearchState,
         width: "20%",
