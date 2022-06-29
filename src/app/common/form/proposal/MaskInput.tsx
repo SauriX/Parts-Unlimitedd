@@ -1,42 +1,38 @@
-import { Form, FormItemProps, Input, Space, Tooltip } from "antd";
-import { Rule } from "antd/lib/form";
-import { RuleType } from "rc-field-form/lib/interface";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Form, FormItemProps, Space, Tooltip } from "antd";
+import { Rule, RuleObject } from "antd/lib/form";
+import React, { useEffect, useRef, useState } from "react";
+import MaskedInput, { Mask } from "react-text-mask";
 import { InfoCircleTwoTone } from "@ant-design/icons";
 import "./index.less";
 
 interface IProps {
   formProps: FormItemProps<any>;
-  max: number;
   required?: boolean;
   prefix?: React.ReactNode;
-  type?: RuleType;
   placeholder?: string;
   readonly?: boolean;
+  mask: (string | RegExp)[];
   width?: string | number;
   suffix?: React.ReactNode;
   style?: React.CSSProperties;
-  showLabel?: boolean;
+  isGroup?: boolean;
   errors?: any[];
-  onClick?: React.MouseEventHandler<HTMLInputElement> | undefined;
-  onKeyUp?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
+  validator?: (_: RuleObject, value: any) => Promise<any>;
 }
 
-const TextInput = ({
+const MaskInput = ({
   formProps: itemProps,
-  max,
   required,
   prefix,
-  type,
   placeholder,
   readonly,
+  mask,
   width,
   suffix,
   style,
-  showLabel: isGroup,
+  isGroup,
   errors,
-  onClick,
-  onKeyUp,
+  validator,
 }: IProps) => {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -58,18 +54,7 @@ const TextInput = ({
     };
   }, []);
 
-  let rules: Rule[] = [];
-
-  if (max) {
-    rules.push({
-      validator: (_, value: string) => {
-        if (!value || value.length <= max) {
-          return Promise.resolve();
-        }
-        return Promise.reject(`La longitud máxima es de ${max}`);
-      },
-    });
-  }
+  let rules: any[] = [];
 
   if (required) {
     rules.push({
@@ -79,10 +64,8 @@ const TextInput = ({
     });
   }
 
-  if (type) {
-    rules.push({
-      type: type,
-    });
+  if (validator) {
+    rules.push({ validator });
   }
 
   return (
@@ -96,19 +79,27 @@ const TextInput = ({
         help=""
         className="no-error-text"
       >
-        <Input
+        <MaskedInput
+          placeholder={placeholder}
+          mask={mask}
           disabled={readonly}
-          autoComplete="off"
-          prefix={prefix}
-          type={type ?? "text"}
-          placeholder={placeholder ?? itemProps.label?.toString()}
-          onClick={onClick}
-          onKeyUp={onKeyUp}
-          style={{
-            paddingRight: paddingRight,
-            width: width ?? "100%",
-            ...(style ?? {}),
-          }}
+          render={(ref: any, props: any) => (
+            <input
+              // autoComplete={itemProps.name?.toString()}
+              className="ant-input ant-input-sm"
+              ref={(input) => input && ref(input)}
+              {...props}
+              disabled={readonly}
+              autoComplete="off"
+              // prefix={prefix}
+              placeholder={placeholder ?? itemProps.label?.toString()}
+              style={{
+                paddingRight: paddingRight,
+                width: width ?? "100%",
+                ...(style ?? {}),
+              }}
+            />
+          )}
         />
       </Form.Item>
       {/* {(!!suffix || isGroup || !!errors) && ( */}
@@ -147,4 +138,4 @@ const TextInput = ({
   );
 };
 
-export default TextInput;
+export default MaskInput;

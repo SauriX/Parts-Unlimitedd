@@ -2,7 +2,7 @@ import { makeAutoObservable } from "mobx";
 import Catalog from "../api/catalog";
 import Role from "../api/role";
 import { ICatalogNormalList } from "../models/catalog";
-import { IOptions,  } from "../models/shared";
+import { IOptions } from "../models/shared";
 import Parameter from "../api/parameter";
 import Reagent from "../api/reagent";
 import Maquilador from "../api/maquilador";
@@ -13,6 +13,8 @@ import branch from "../api/branch";
 
 import Branch from "../api/branch";
 import Promotion from "../api/promotion";
+import Study from "../api/study";
+import Pack from "../api/pack";
 export default class OptionStore {
   constructor() {
     makeAutoObservable(this);
@@ -25,9 +27,9 @@ export default class OptionStore {
       const departments = await Catalog.getActive<ICatalogNormalList>("department");
       this.departmentOptions = departments.map((x) => ({
         value: x.id,
-        label: x.nombre, 
+        label: x.nombre,
       }));
-      return  departments.map((x) => ({
+      return departments.map((x) => ({
         value: x.id,
         label: x.nombre,
       }));
@@ -42,9 +44,9 @@ export default class OptionStore {
       const departments = await Catalog.getActive<ICatalogNormalList>("units");
       this.UnitOptions = departments.map((x) => ({
         value: x.id,
-        label: x.nombre, 
+        label: x.nombre,
       }));
-      return  departments.map((x) => ({
+      return departments.map((x) => ({
         value: x.id,
         label: x.nombre,
       }));
@@ -81,14 +83,14 @@ export default class OptionStore {
   getareaOptions = async (id?: number) => {
     console.log(id);
     try {
-      let ruta =`area/department/${id}`
-      if(id==0){
-        ruta="area"
+      let ruta = `area/department/${id}`;
+      if (id == 0) {
+        ruta = "area";
       }
       const area = await Catalog.getActive<ICatalogNormalList>(ruta);
       console.log("el depaAreas");
       console.log(area);
-       var areas= area.map((x) => ({
+      var areas = area.map((x) => ({
         value: x.id,
         label: x.nombre,
       }));
@@ -220,29 +222,27 @@ export default class OptionStore {
       }));
     } catch (error) {
       this.parameterOptions = [];
-      this.parameterOptions2 =[];
+      this.parameterOptions2 = [];
     }
   };
-  MaquiladorOptions:IOptions[]=[];
-  getMaquiladorOptions=async()=>{
-    try{
+  MaquiladorOptions: IOptions[] = [];
+  getMaquiladorOptions = async () => {
+    try {
       const maquilador = Maquilador.getAll("");
-      this.MaquiladorOptions= (await maquilador).map((x)=>({
-        value:x.id,
-        label:x.nombre
+      this.MaquiladorOptions = (await maquilador).map((x) => ({
+        value: x.id,
+        label: x.nombre,
       }));
-    }catch(error){
-      this.MaquiladorOptions=[];
+    } catch (error) {
+      this.MaquiladorOptions = [];
     }
   };
- 
+
   MethodOptions: IOptions[] = [];
 
   getMethodOptions = async () => {
     try {
-      const Method = await Catalog.getActive<ICatalogNormalList>(
-        "Method"
-      );
+      const Method = await Catalog.getActive<ICatalogNormalList>("Method");
       console.log(Method);
       this.MethodOptions = Method.map((x) => ({
         value: x.id,
@@ -253,8 +253,8 @@ export default class OptionStore {
     }
   };
 
-  taponOption:IOptions[]=[];
-  getTaponOption = async () =>{
+  taponOption: IOptions[] = [];
+  getTaponOption = async () => {
     try {
       const tapon = await Tapon.getAll();
       this.taponOption = tapon.map((x) => ({
@@ -265,8 +265,8 @@ export default class OptionStore {
       this.taponOption = [];
     }
   };
-  indicationOptions:IOptions[] = [];
-  getIndication = async () =>{
+  indicationOptions: IOptions[] = [];
+  getIndication = async () => {
     try {
       const indication = await Indication.getAll("");
       console.log(indication);
@@ -283,9 +283,7 @@ export default class OptionStore {
 
   getworkListOptions = async () => {
     try {
-      const workList = await Catalog.getActive<ICatalogNormalList>(
-        "workList"
-      );
+      const workList = await Catalog.getActive<ICatalogNormalList>("workList");
       console.log(workList);
       this.workListOptions = workList.map((x) => ({
         value: x.id,
@@ -300,9 +298,7 @@ export default class OptionStore {
 
   getsampleTypeOptions = async () => {
     try {
-      const sampleType = await Catalog.getActive<ICatalogNormalList>(
-        "sampleType"
-      );
+      const sampleType = await Catalog.getActive<ICatalogNormalList>("sampleType");
       console.log(sampleType);
       this.sampleTypeOptions = sampleType.map((x) => ({
         value: x.id,
@@ -313,55 +309,53 @@ export default class OptionStore {
     }
   };
 
-  priceListOptions:IOptions[]=[];
+  priceListOptions: IOptions[] = [];
 
   getPriceListOptions = async () => {
-    try{
-      const priceListOptions =await PriceList.getActive();
+    try {
+      const priceListOptions = await PriceList.getActive();
       console.log(priceListOptions);
-      this.priceListOptions= priceListOptions.map((x) => ({
+      this.priceListOptions = priceListOptions.map((x) => ({
         value: x.id,
         label: x.nombre,
       }));
-    }catch(error){
-      this.priceListOptions=[]
+    } catch (error) {
+      this.priceListOptions = [];
     }
   };
 
-  sucursales:IOptions[]=[];
+  sucursales: IOptions[] = [];
 
   getSucursalesOptions = async () => {
-    try{
-      const priceListOptions1 =await branch.getAll("all");;
+    try {
+      const priceListOptions1 = await branch.getAll("all");
       console.log(priceListOptions1);
-      this.sucursales= priceListOptions1.map((x) => ({
+      this.sucursales = priceListOptions1.map((x) => ({
         value: x.idSucursal,
         label: x.nombre,
       }));
-    }catch(error){
-      this.sucursales=[]
-    }
-  };
-  
-  BranchOptions:IOptions[]=[];
-  getBranchOptions=async()=>{
-    try{
-      const branch = Branch.getAll("");
-      this.BranchOptions= (await branch).map((x)=>({
-        value:x.idSucursal,
-        label:x.nombre
-      }));
-    }catch(error){
-      this.BranchOptions=[];
+    } catch (error) {
+      this.sucursales = [];
     }
   };
 
-  DeliveryOptions:IOptions[]=[];
+  BranchOptions: IOptions[] = [];
+  getBranchOptions = async () => {
+    try {
+      const branch = Branch.getAll("");
+      this.BranchOptions = (await branch).map((x) => ({
+        value: x.idSucursal,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.BranchOptions = [];
+    }
+  };
+
+  DeliveryOptions: IOptions[] = [];
   getDeliveryOptions = async () => {
     try {
-      const Delivery = await Catalog.getActive<ICatalogNormalList>(
-        "Delivery"
-      );
+      const Delivery = await Catalog.getActive<ICatalogNormalList>("Delivery");
       console.log(Delivery);
       this.DeliveryOptions = Delivery.map((x) => ({
         value: x.id,
@@ -372,18 +366,49 @@ export default class OptionStore {
     }
   };
 
-  PromotionOptions:IOptions[]=[];
+  promotionOptions: IOptions[] = [];
 
   getPromotionOptions = async () => {
-    try{
-      const PromotionOptions =await Promotion.getActive();
-      console.log(PromotionOptions);
-      this.PromotionOptions= PromotionOptions.map((x) => ({
+    try {
+      const promotionOptions = await Promotion.getActive();
+      this.promotionOptions = promotionOptions.map((x) => ({
         value: x.id,
         label: x.nombre,
       }));
-    }catch(error){
-      this.PromotionOptions=[]
+    } catch (error) {
+      this.promotionOptions = [];
+    }
+  };
+
+  studyOptions: IOptions[] = [];
+
+  getStudyOptions = async () => {
+    try {
+      const studyOptions = await Study.getActive();
+      this.studyOptions = studyOptions.map((x) => ({
+        key: "study-" + x.id,
+        value: "study-" + x.id,
+        label: x.clave + " - " + x.nombre,
+        group: "study",
+      }));
+    } catch (error) {
+      this.studyOptions = [];
+    }
+  };
+
+  packOptions: IOptions[] = [];
+
+  getPackOptions = async () => {
+    try {
+      const packOptions = await Pack.getActive();
+      this.packOptions = packOptions.map((x) => ({
+        key: "pack-" + x.id,
+        value: "pack-" + x.id,
+        label: x.clave + " - " + x.nombre,
+        group: "pack",
+      }));
+    } catch (error) {
+      this.packOptions = [];
     }
   };
 }

@@ -20,6 +20,13 @@ export const getErrors = (error: any) => {
   }
 };
 
+export const moneyFormatter = new Intl.NumberFormat("es-MX", {
+  style: "currency",
+  currency: "MXN",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
 export const dataURItoBlob = async (dataURI: string) => {
   const data = await fetch(dataURI);
   const blob = await data.blob();

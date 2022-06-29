@@ -1,9 +1,11 @@
+import React from "react";
+
 export interface IProfile {
   nombre: string;
   token?: string;
   requiereCambio: boolean;
-  sucursal:string;
-  admin:boolean; 
+  sucursal: string;
+  admin: boolean;
 }
 
 export interface IScopes {
@@ -32,8 +34,11 @@ export interface IMenu {
 }
 
 export interface IOptions {
-  label: string;
+  key?: string | number;
+  label: string | React.ReactNode;
   value: number | string;
+  group?: string | number;
+  options?: IOptions[];
 }
 
 export interface IOptionsCatalog extends IOptions {
@@ -54,4 +59,9 @@ export interface ISearchParams {
 export interface ICatalog {
   id: number;
   nombre: string;
+}
+
+export interface IFormError {
+  name: string;
+  errors: string[];
 }

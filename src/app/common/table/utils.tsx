@@ -55,9 +55,10 @@ const handleReset = (
 };
 
 type ExtraProps = {
-  searchState: ISearch;
-  setSearchState: React.Dispatch<React.SetStateAction<ISearch>>;
   width: number | string;
+  searchState?: ISearch;
+  setSearchState?: React.Dispatch<React.SetStateAction<ISearch>>;
+  searchable?: boolean;
   windowSize?: number;
   minWidth?: number | string;
 };
@@ -65,45 +66,48 @@ type ExtraProps = {
 export const getDefaultColumnProps = (
   dataIndex: string,
   title: string,
-  { searchState, setSearchState, width, minWidth, windowSize }: ExtraProps
+  { searchState, setSearchState, searchable = true, width, minWidth, windowSize }: ExtraProps
 ): ColumnType<any> => ({
   key: dataIndex,
   dataIndex,
   title,
-  filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: FilterDropdownProps) => {
-    return (
-      <div style={{ padding: 8 }}>
-        <Input
-          ref={(node) => {
-            searchInput = node;
-          }}
-          placeholder={`Buscar ${title}`}
-          value={selectedKeys[0]}
-          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex, setSearchState)}
-          style={{ marginBottom: 8, display: "block" }}
-        />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex, setSearchState)}
-            icon={<SearchOutlined />}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Buscar
-          </Button>
-          <Button
-            onClick={() => handleReset(clearFilters, setSearchState)}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Limpiar
-          </Button>
-        </Space>
-      </div>
-    );
-  },
+  filterDropdown:
+    !searchable || !!!searchState || !!!setSearchState
+      ? undefined
+      : ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: FilterDropdownProps) => {
+          return (
+            <div style={{ padding: 8 }}>
+              <Input
+                ref={(node) => {
+                  searchInput = node;
+                }}
+                placeholder={`Buscar ${title}`}
+                value={selectedKeys[0]}
+                onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex, setSearchState)}
+                style={{ marginBottom: 8, display: "block" }}
+              />
+              <Space>
+                <Button
+                  type="primary"
+                  onClick={() => handleSearch(selectedKeys, confirm, dataIndex, setSearchState)}
+                  icon={<SearchOutlined />}
+                  size="small"
+                  style={{ width: 90 }}
+                >
+                  Buscar
+                </Button>
+                <Button
+                  onClick={() => handleReset(clearFilters, setSearchState)}
+                  size="small"
+                  style={{ width: 90 }}
+                >
+                  Limpiar
+                </Button>
+              </Space>
+            </div>
+          );
+        },
   filterIcon: (filtered: boolean) => <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />,
   onFilter: (value: string | number | boolean, record: any) =>
     record[dataIndex]
@@ -115,7 +119,7 @@ export const getDefaultColumnProps = (
     }
   },
   render: (value) =>
-    searchState.searchedColumn === dataIndex ? (
+    searchState && searchState.searchedColumn === dataIndex ? (
       <Highlighter
         highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
         searchWords={[searchState.searchedText?.toString()]}

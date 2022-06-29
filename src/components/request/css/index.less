@@ -1,4 +1,11 @@
-.request-description {
+.ant-descriptions.request-description {
+  .ant-descriptions-row {
+    th,
+    td {
+      padding: 4px 8px;
+    }
+  }
+
   .ant-descriptions-row:nth-child(even) {
     th,
     td {
@@ -34,5 +41,22 @@
 .request-radio {
   .ant-radio-wrapper {
     margin-right: 0;
+  }
+}
+
+.badge-container {
+  width: 15px;
+  height: 15px;
+  margin: auto;
+  border-radius: 50%;
+}
+
+.request-indication-list {
+  .ant-comment-inner:first-child {
+    padding-top: 0;
+  }
+
+  .ant-comment-content-author span {
+    color: rgba(0, 0, 0, 0.75);
   }
 }

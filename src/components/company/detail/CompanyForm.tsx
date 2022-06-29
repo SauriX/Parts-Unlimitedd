@@ -45,7 +45,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     getpaymentMethodOptions,
     priceListOptions,
     getPriceListOptions,
-    PromotionOptions,
+    promotionOptions: PromotionOptions,
     getPromotionOptions,
   } = optionStore;
   const { getColoniesByZipCode } = locationStore;

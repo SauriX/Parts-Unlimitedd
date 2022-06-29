@@ -18,8 +18,8 @@ export default class PriceListStore {
   scopes?: IScopes;
   priceLists: IPriceListList[] = [];
   sucMedCom: ISucMedComList[] = [];
-  studies:IPriceListEstudioList[]=[];
-  packs:IPriceListEstudioList[]=[];
+  studies: IPriceListEstudioList[] = [];
+  packs: IPriceListEstudioList[] = [];
   clearScopes = () => {
     this.scopes = undefined;
   };
@@ -38,62 +38,59 @@ export default class PriceListStore {
       history.push("/forbidden");
     }
   };
-  getAllStudy = async () =>{
+  getAllStudy = async () => {
     try {
-        
-        const roles= await Study.getAll("all");
-        console.log(roles);
-        const activos = roles.filter(x => x.activo);
-        console.log(roles);
-        var studies= activos.map((x) => {
-            let data:IPriceListEstudioList = {
-                id: x.id,
-                estudioId: x.id,
-                clave: x.clave,
-                nombre: x.nombre,
-                area:x.area,
-                departamento:x.departamento,
-                activo: false,
-                precio:0,
-            }
-            return data;});
-            this.studies=studies;
-            return studies
-            
-      } catch (error: any) {
-        alerts.warning(getErrors(error));
-        this.studies = [];
-      }
+      const roles = await Study.getAll("all");
+      console.log(roles);
+      const activos = roles.filter((x) => x.activo);
+      console.log(roles);
+      var studies = activos.map((x) => {
+        let data: IPriceListEstudioList = {
+          id: x.id,
+          estudioId: x.id,
+          clave: x.clave,
+          nombre: x.nombre,
+          area: x.area,
+          departamento: x.departamento,
+          activo: false,
+          precio: 0,
+        };
+        return data;
+      });
+      this.studies = studies;
+      return studies;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      this.studies = [];
+    }
   };
 
-  getAllPack = async () =>{
+  getAllPack = async () => {
     try {
-        
-        const roles= await Pack.getAll("all");
-        console.log(roles);
-        console.log(roles);
-        var studies= roles.map((x) => {
-            let data:IPriceListEstudioList = {
-                id: x.id,
-                estudioId: x.id,
-                clave: x.clave,
-                nombre: x.nombre,
-                area:x.area,
-                departamento:x.departamento,
-                activo: false,
-                precio:0,
-                paqute:true,
-                pack:x.pack
-                
-            }
-            return data;});
-            this.packs=studies;
-            return studies
-
-      } catch (error: any) {
-        alerts.warning(getErrors(error));
-        this.studies = [];
-      }
+      const roles = await Pack.getAll("all");
+      console.log(roles);
+      console.log(roles);
+      var studies = roles.map((x) => {
+        let data: IPriceListEstudioList = {
+          id: x.id,
+          estudioId: x.id,
+          clave: x.clave,
+          nombre: x.nombre,
+          area: x.area,
+          departamento: x.departamento,
+          activo: false,
+          precio: 0,
+          paqute: true,
+          pack: x.pack,
+        };
+        return data;
+      });
+      this.packs = studies;
+      return studies;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      this.studies = [];
+    }
   };
 
   getAll = async (search: string) => {
@@ -117,6 +114,24 @@ export default class PriceListStore {
       } else {
         alerts.warning(getErrors(error));
       }
+    }
+  };
+
+  getPriceStudy = async (id: number) => {
+    try {
+      const price = await PriceList.getPriceStudy(id);
+      return price;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  getPricePack = async (id: number) => {
+    try {
+      const price = await PriceList.getPricePack(id);
+      return price;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
     }
   };
 
@@ -167,25 +182,23 @@ export default class PriceListStore {
     }
   };
 
-
   getAllBranch = async () => {
     try {
       var sucursales = await PriceList.getAllBranch();
-      return sucursales.map(x=>{
+      return sucursales.map((x) => {
         x.sucursal = true;
         return x;
       });
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return [];
-    }    
+    }
   };
 
   getAllMedics = async () => {
     try {
-      
       var medicos = await PriceList.getAllMedics();
-      return medicos.map(x=>{
+      return medicos.map((x) => {
         x.medico = true;
         return x;
       });
@@ -197,8 +210,8 @@ export default class PriceListStore {
   getAllCompany = async () => {
     try {
       var compañias = await PriceList.getAllCompany();
-      console.log(compañias,"getall, compañi");
-      return compañias.map(x=>{
+      console.log(compañias, "getall, compañi");
+      return compañias.map((x) => {
         x.compañia = true;
         return x;
       });

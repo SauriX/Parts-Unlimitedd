@@ -4,7 +4,12 @@ import messages from "../util/messages";
 import responses from "../util/responses";
 import { getErrors } from "../util/utils";
 import history from "../util/history";
-import { IProceedingForm, IProceedingList, ISearchMedical, SearchMedicalFormValues } from "../models/Proceeding";
+import {
+  IProceedingForm,
+  IProceedingList,
+  ISearchMedical,
+  SearchMedicalFormValues,
+} from "../models/Proceeding";
 import Proceding from "../api/proceding";
 import { ITaxForm } from "../models/taxdata";
 export default class ProcedingStore {
@@ -12,24 +17,24 @@ export default class ProcedingStore {
     makeAutoObservable(this);
   }
   expedientes: IProceedingList[] = [];
-  expediente?: IProceedingForm;
-  search: ISearchMedical=new SearchMedicalFormValues();
-  tax:ITaxForm[]=[];
-  setTax=(value:ITaxForm[])=>{
-      this.tax=value
+  // expediente?: IProceedingForm;
+  search: ISearchMedical = new SearchMedicalFormValues();
+  tax: ITaxForm[] = [];
+  setTax = (value: ITaxForm[]) => {
+    this.tax = value;
   };
 
-  clearTax=()=>{
-    this.tax=[];
+  clearTax = () => {
+    this.tax = [];
   };
-  setSearch= (value:ISearchMedical)=>{
-      this.search=value;
+  setSearch = (value: ISearchMedical) => {
+    this.search = value;
   };
   getAll = async (search: string = "all") => {
     try {
       console.log(search);
       const parameters = await Proceding.getAll(search);
-      this.expedientes= parameters;
+      this.expedientes = parameters;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       this.expedientes = [];
@@ -39,7 +44,7 @@ export default class ProcedingStore {
     try {
       console.log(search);
       const parameters = await Proceding.getNow(search);
-      this.expedientes= parameters;
+      this.expedientes = parameters;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       this.expedientes = [];
@@ -49,7 +54,7 @@ export default class ProcedingStore {
     try {
       const rol = await Proceding.getById(id);
       console.log(rol);
-      this.expediente = rol;
+      // this.expediente = rol; // Comentado porque no se usa
       return rol;
     } catch (error: any) {
       if (error.status === responses.notFound) {
@@ -65,7 +70,7 @@ export default class ProcedingStore {
     try {
       console.log(parameter);
       console.log("here");
-     var coincidencias= await Proceding.getcoincidencia(parameter);
+      var coincidencias = await Proceding.getcoincidencia(parameter);
       return coincidencias;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -92,7 +97,6 @@ export default class ProcedingStore {
       alerts.success(messages.updated);
       return true;
     } catch (error: any) {
- 
       alerts.warning(getErrors(error));
       return false;
     }

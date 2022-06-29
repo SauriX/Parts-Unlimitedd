@@ -1,42 +1,30 @@
-import { Form, FormItemProps, Input, Space, Tooltip } from "antd";
+import { DatePicker, Form, FormItemProps, Space, Tooltip } from "antd";
 import { Rule } from "antd/lib/form";
-import { RuleType } from "rc-field-form/lib/interface";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import moment from "moment";
+import React, { useEffect, useRef, useState } from "react";
 import { InfoCircleTwoTone } from "@ant-design/icons";
 import "./index.less";
 
 interface IProps {
   formProps: FormItemProps<any>;
-  max: number;
   required?: boolean;
-  prefix?: React.ReactNode;
-  type?: RuleType;
-  placeholder?: string;
   readonly?: boolean;
   width?: string | number;
   suffix?: React.ReactNode;
   style?: React.CSSProperties;
-  showLabel?: boolean;
+  isGroup?: boolean;
   errors?: any[];
-  onClick?: React.MouseEventHandler<HTMLInputElement> | undefined;
-  onKeyUp?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
 }
 
-const TextInput = ({
+const DateInput = ({
   formProps: itemProps,
-  max,
   required,
-  prefix,
-  type,
-  placeholder,
   readonly,
   width,
   suffix,
   style,
-  showLabel: isGroup,
+  isGroup,
   errors,
-  onClick,
-  onKeyUp,
 }: IProps) => {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -45,7 +33,8 @@ const TextInput = ({
   useEffect(() => {
     const observer = new ResizeObserver((entries) => {
       console.log(entries[0]);
-      setPaddingRight(entries[0].target.clientWidth);
+      const width = entries[0].target.clientWidth;
+      setPaddingRight(width === 0 ? 7 : width);
     });
 
     if (ref.current) {
@@ -60,29 +49,15 @@ const TextInput = ({
 
   let rules: Rule[] = [];
 
-  if (max) {
-    rules.push({
-      validator: (_, value: string) => {
-        if (!value || value.length <= max) {
-          return Promise.resolve();
-        }
-        return Promise.reject(`La longitud máxima es de ${max}`);
-      },
-    });
-  }
-
   if (required) {
     rules.push({
       required: true,
       message: "El campo es requerido",
-      whitespace: true,
     });
   }
 
-  if (type) {
-    rules.push({
-      type: type,
-    });
+  function disabledDate(current: moment.Moment) {
+    return current.isBefore(moment(), "day");
   }
 
   return (
@@ -96,14 +71,10 @@ const TextInput = ({
         help=""
         className="no-error-text"
       >
-        <Input
+        <DatePicker
+          disabledDate={disabledDate}
           disabled={readonly}
-          autoComplete="off"
-          prefix={prefix}
-          type={type ?? "text"}
-          placeholder={placeholder ?? itemProps.label?.toString()}
-          onClick={onClick}
-          onKeyUp={onKeyUp}
+          format="DD/MM/YYYY"
           style={{
             paddingRight: paddingRight,
             width: width ?? "100%",
@@ -147,4 +118,4 @@ const TextInput = ({
   );
 };
 
-export default TextInput;
+export default DateInput;

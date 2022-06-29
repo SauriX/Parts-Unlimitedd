@@ -97,18 +97,14 @@ const requests = {
   // download: (url: string, data?: Object | FormData) =>
   download: (url: string, data?: Object | FormData) =>
     axios
-      .post(
-        url,
-        data??{},
-        {
-          baseURL,
-          responseType: "blob",
-          headers:
-            {} instanceof FormData
-              ? { "Content-Type": "multipart/form-data" }
-              : { "Content-Type": "application/json" },
-        }
-      )
+      .post(url, data ?? {}, {
+        baseURL,
+        responseType: "blob",
+        headers:
+          {} instanceof FormData
+            ? { "Content-Type": "multipart/form-data" }
+            : { "Content-Type": "application/json" },
+      })
       .then((response) => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement("a");

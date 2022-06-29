@@ -1,3 +1,32 @@
+.ant-form-item-has-error :not(.ant-input-disabled):not(.ant-input-borderless).ant-input,
+.ant-input-status-error:not(.ant-input-disabled):not(.ant-input-borderless).ant-input:hover {
+  background: #fff;
+  border-color: #ff4d4f;
+}
+
+.custom-input {
+  .suffix-container {
+    position: absolute;
+    top: 0.1em;
+    right: 1px;
+    padding: 0 5px;
+    z-index: 2;
+    background-color: white;
+  }
+
+  .ant-space.ant-space-horizontal {
+    gap: 4px !important;
+  }
+}
+
+.ant-input-group .custom-input .suffix-container {
+  right: 5px;
+}
+
+.suffix-container.disabled {
+  background-color: #f5f5f5;
+}
+
 .ant-row.ant-form-item.no-error-text {
   margin: 0;
 
