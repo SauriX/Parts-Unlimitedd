@@ -8,20 +8,6 @@ type RequestIndicationProps = {
 };
 
 const RequestIndication: FC<RequestIndicationProps> = ({ data }) => {
-  // const data = [
-  //   {
-  //     id: 1,
-  //     clave: "234234",
-  //     clavePatologica: "Citología Hemática\nPresentarse en el laboratorio con ayuno de 5-10 horas",
-  //     dias: 2,
-  //   },
-  //   {
-  //     id: 2,
-  //     clave: "234234",
-  //     clavePatologica: "Citología Hemática\nPresentarse en el laboratorio con ayuno de 5-10 horas",
-  //     dias: 2,
-  //   },
-  // ];
   const [indications, setIndications] = useState<IIndicationList[]>([]);
 
   useEffect(() => {
