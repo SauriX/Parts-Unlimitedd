@@ -1,11 +1,11 @@
-import { IBranchForm, IBranchInfo } from "../models/branch";
+import { IBranchCity, IBranchForm, IBranchInfo } from "../models/branch";
 import requests from "./agent";
 
 const branch = {
   access: (): Promise<void> => requests.get("/user/scopes"),
   getAll: (search: string): Promise<IBranchInfo[]> => requests.get(`Branch/all/${!search ? "all" : search}`),
   getById: (id: string): Promise<IBranchForm> => requests.get(`Branch/${id}`),
-  getBranchByCity: (): Promise<IBranchInfo[]> => requests.get(`Branch/getSucursalByCity`),
+  getBranchByCity: (): Promise<IBranchCity[]> => requests.get(`Branch/getSucursalByCity`),
   //getPermission: (): Promise<IRolePermission[]> => requests.get(`Rol/permisos`), */
   create: (branch: IBranchForm): Promise<boolean> => requests.post("/Branch", branch),
   update: (branch: IBranchForm): Promise<boolean> => requests.put("/Branch", branch),

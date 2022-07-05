@@ -9,7 +9,7 @@ export interface IMedicsList {
   especialidad: string;
   especialidadId: number;
   observaciones: string;
-  codigoPostal?: number;
+  codigoPostal?: string;
   estadoId: string;
   ciudadId: string;
   numeroExterior: string;
@@ -31,7 +31,7 @@ export interface IMedicsForm {
   segundoApellido: string;
   especialidadId?: number;
   observaciones: string;
-  codigoPostal?: number;
+  codigoPostal?: string;
   estadoId?: string;
   ciudadId?: string;
   numeroExterior: string;

@@ -1,22 +1,40 @@
 import { observer } from "mobx-react-lite";
-import { FC, Fragment, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 import { useStore } from "../../../app/stores/store";
 import ReactECharts from 'echarts-for-react';
-import { Divider, PageHeader } from "antd";
+import { Divider, PageHeader, Row } from "antd";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
+import ComponentExpedientes from "./ComponentExpedientes";
 
 type CompGrahicProps = {
-    componentRef: React.MutableRefObject<any>;
-    printing: boolean;
+    // componentRef: React.MutableRefObject<any>;
+    // printing: boolean;
 };
-const CompGraphic: FC<CompGrahicProps> = ({componentRef, printing}) => {
-    // const { optionStore} = useStore();
-    // const {  } = optionStore;
-    // const [loading, setLoading] = useState(false);
-    
+const CompGraphic: FC<CompGrahicProps> = ({}) => {
+  const { reportStore } = useStore();
+  const { getBranchByCount } = reportStore;
+  const [loading, setLoading] = useState(false);
+  const {reports } = reportStore;
 
+  useEffect(() => {
+    const readReport = async () => {
+      setLoading(true);
+      await getBranchByCount();
+      setLoading(false);
+      getBranchByCount();
+    };
+
+    if (reports.length === 0) {
+      readReport();
+  }
+  }, []);
+  
     const options = {
-        grid: { top: 8, right: "16%", bottom: 24, left: 36 },
+        grid: {  left: '3%',
+        right: '4%',
+        bottom: '3%',
+        width: 'auto',
+        containLabel: true },
         xAxis: {
           type: 'category',
           data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -29,6 +47,7 @@ const CompGraphic: FC<CompGrahicProps> = ({componentRef, printing}) => {
           {
             data: [5, 10, 15, 20, 30, 40, 50],
             type: 'bar',
+            barWidth: '60%',
             smooth: true,
           },
         ],
@@ -39,34 +58,49 @@ const CompGraphic: FC<CompGrahicProps> = ({componentRef, printing}) => {
 
       const GraphicPrint = () => {
         return (
-            <div 
-            ref={componentRef}>
+            <div style={{ textAlign: "center" }} >
                 <PageHeader
                     ghost={false}
-                    title={<HeaderTitle title="Estadística de expedientes" image="Lealtad" />}
+                    title={<HeaderTitle title="Estadística de expedientes" image="Reportes" />}
                     className="header-container"
                 ></PageHeader>
                 <Divider className="header-divider" />
-                <div style={{ display: "none" }}>{<ReportGraphic />} </div>
+                <ComponentExpedientes></ComponentExpedientes>
+                <Divider className="header-divider" />
+                {/* <div style={{ display: "none" }}>{<ReportGraphic />} </div> */}
+                <ReactECharts option={options} />
             </div>
-            
         );
     };
     
-      const ReportGraphic = () => {
-        return (
-            <div 
-            ref={componentRef}>
-                <ReactECharts option={options} />;
-            </div>
+    //   const ReportGraphic = () => {
+    //     return (
+    //         <div >
+    //           <PageHeader
+    //                 ghost={false}
+    //                 title={<HeaderTitle title="Estadística de expedientes" image="Lealtad" />}
+    //                 className="header-container"
+    //             ></PageHeader>
+    //             <Divider className="header-divider" />
+    //             <div style={{ display: "none" }}>{<GraphicPrint />} </div>
+    //             <ReactECharts option={options} />
+    //         </div>
             
-        );
-    };
+    //     );
+    // };
     
       return (
         <Fragment>
-            <div style={{ display: "none" }}>{<ReportGraphic />} </div>
-            <div style={{ display: "none" }}>{<GraphicPrint />} </div>
+            <div style={{ textAlign: "center" }} >
+                <PageHeader
+                    ghost={false}
+                    title={<HeaderTitle title="Estadística de expedientes" image="Reportes" />}
+                    className="header-container"
+                ></PageHeader>
+                <Divider className="header-divider" />
+                {/* <div style={{ display: "none" }}>{<ReportGraphic />} </div> */}
+                <ReactECharts option={options} />
+            </div>
         </Fragment>
     );
 

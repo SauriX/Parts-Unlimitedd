@@ -110,7 +110,7 @@ const IndicationTable: FC<IndicationsTableProps> = ({ componentRef, printing }) 
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (
         <IconButton
-          title="Editar usuario"
+          title="Editar indicación"
           icon={<EditOutlined />}
           onClick={() => {
             navigate(
