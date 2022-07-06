@@ -6,7 +6,7 @@ export interface IMedicsList {
   nombre: string;
   primerApellido: string;
   segundoApellido: string;
-  nombreCompleto: string;
+  nombreCompleto?: string;
   especialidad: string;
   especialidadId: number;
   observaciones: string;
@@ -22,7 +22,6 @@ export interface IMedicsList {
   telefono?: string;
   activo: boolean;
   clinicas: IClinicList[];
-  nombreCompleto?:string
 }
 
 export interface IMedicsForm {
