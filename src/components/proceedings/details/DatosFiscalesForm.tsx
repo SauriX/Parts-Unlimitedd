@@ -1,43 +1,54 @@
-import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Radio, DatePicker, List, Typography, Select, Table, Checkbox, Input, Tag, InputNumber } from "antd";
-import React, { FC, useEffect, useState } from "react";
-import { formItemLayout } from "../../../app/util/utils";
-import TextInput from "../../../app/common/form/TextInput";
+import { Spin, Form, Row, Col, Button, Table, Input } from "antd";
+import { useEffect, useState } from "react";
+import TextInput from "../../../app/common/form/proposal/TextInput";
+import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import { useStore } from "../../../app/stores/store";
-import { IReagentForm, ReagentFormValues } from "../../../app/models/reagent";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import ImageButton from "../../../app/common/button/ImageButton";
-import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
-import views from "../../../app/util/view";
-import NumberInput from "../../../app/common/form/NumberInput";
-import SelectInput from "../../../app/common/form/SelectInput";
-import SwitchInput from "../../../app/common/form/SwitchInput";
-import alerts from "../../../app/util/alerts";
-import messages from "../../../app/util/messages";
 import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
-import { IOptions } from "../../../app/models/shared";
-import { ITaxForm, ITaxList } from "../../../app/models/taxdata";
-import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
+import { IFormError, IOptions } from "../../../app/models/shared";
+import { ITaxData } from "../../../app/models/taxdata";
 import IconButton from "../../../app/common/button/IconButton";
 import { EditOutlined } from "@ant-design/icons";
-import { IProceedingForm } from "../../../app/models/Proceeding";
-const DatosFiscalesForm = () => {
-  const navigate = useNavigate();
-  const { modalStore, procedingStore, locationStore } = useStore();
-  const {closeModal}=modalStore;
-  const {setTax,tax}=procedingStore;
-  const [loading, setLoading] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
-  const [form] = Form.useForm<ITaxForm>();
-  const [values, setValues] = useState();
-  const [colonies, setColonies] = useState<IOptions[]>([]);
+
+const formItemLayout = {
+  labelCol: { span: 8 },
+  wrapperCol: { span: 16 },
+};
+
+type DatosFiscalesFormProps = {
+  local?: boolean;
+  recordId?: string;
+};
+
+const DatosFiscalesForm = ({ local, recordId }: DatosFiscalesFormProps) => {
+  const { procedingStore, locationStore } = useStore();
+  const { setTax, tax, getTaxData, createTaxData, updateTaxData } = procedingStore;
   const { getColoniesByZipCode } = locationStore;
-  const goBack = () => {
-    searchParams.delete("mode");
-    setSearchParams(searchParams);
-    navigate(`/${views.promo}?${searchParams}`);
-  };
+
+  const [form] = Form.useForm<ITaxData>();
+
+  const [loading, setLoading] = useState(false);
+  const [localTaxData, setLocalTaxData] = useState<ITaxData[]>([]);
+  const [colonies, setColonies] = useState<IOptions[]>([]);
+  const [errors, setErrors] = useState<IFormError[]>([]);
+  const [searchState, setSearchState] = useState<ISearch>({
+    searchedText: "",
+    searchedColumn: "",
+  });
+
+  useEffect(() => {
+    const readTaxData = async () => {
+      setLoading(true);
+      const taxData = await getTaxData(recordId!);
+      setLocalTaxData(taxData);
+      setLoading(false);
+    };
+
+    if (local && recordId) {
+      readTaxData();
+    }
+  }, [getTaxData, local, recordId]);
+
   const clearLocation = () => {
     form.setFieldsValue({
       estado: undefined,
@@ -47,69 +58,78 @@ const DatosFiscalesForm = () => {
     setColonies([]);
   };
 
-   useEffect(() => {
-    console.log(tax, "taxlist");
-  }, [tax]); 
-  const setEditMode = () => {
-    /*         navigate(`/${views.price}/${id}?${searchParams}&mode=edit`);
-            setReadonly(false); */
+  const getColonies = async (zipCode: string) => {
+    if (zipCode && zipCode.trim().length === 5) {
+      const location = await getColoniesByZipCode(zipCode);
+      if (location) {
+        form.setFieldsValue({
+          estado: location.estado,
+          municipio: location.ciudad,
+        });
+        setColonies(
+          location.colonias.map((x) => ({
+            value: x.id,
+            label: x.nombre,
+          }))
+        );
+      } else {
+        clearLocation();
+      }
+    }
   };
+
   const onValuesChange = async (changedValues: any) => {
     const field = Object.keys(changedValues)[0];
 
     if (field === "cp") {
       const zipCode = changedValues[field] as string;
 
-      if (zipCode && zipCode.trim().length === 5) {
-        const location = await getColoniesByZipCode(zipCode);
-        if (location) {
-          form.setFieldsValue({
-            estado: location.estado,
-            municipio: location.ciudad,
-          });
-          setColonies(
-            location.colonias.map((x) => ({
-              value: x.id,
-              label: x.nombre,
-            }))
-          );
-        } else {
-          clearLocation();
-        }
-      } else {
-        clearLocation();
-      }
+      getColonies(zipCode);
     }
   };
-  const onFinish = async (newValues: ITaxForm) => {
-    console.log(newValues, "values");
-    setLoading(true);
-    console.log(newValues, "values");
-    var taxes: ITaxForm[] = tax == null ? [] : [...tax];
 
+  const onFinish = async (newValues: ITaxData) => {
+    setLoading(true);
+    setErrors([]);
+    var taxes: ITaxData[] = local ? [...localTaxData] : [...(tax ?? [])];
+
+    newValues.expedienteId = recordId;
     if (newValues.id) {
-      console.log("entro el if");
-      var existing = taxes.findIndex(x => x.id == newValues.id);
+      var existing = taxes.findIndex((x) => x.id === newValues.id);
       taxes[existing] = newValues;
     } else {
       taxes.push(newValues);
     }
-    setTax(taxes);
-    setLoading(false);
 
+    if (local) {
+      if (!newValues.id) {
+        const id = await createTaxData(newValues);
+        if (id) {
+          taxes[taxes.length - 1] = { ...taxes[taxes.length - 1], id };
+          setLocalTaxData(taxes);
+          form.resetFields();
+        }
+      } else {
+        const success = await updateTaxData(newValues);
+        if (success) {
+          setLocalTaxData(taxes);
+          form.resetFields();
+        }
+      }
+    } else {
+      setTax(taxes);
+      form.resetFields();
+    }
+
+    setLoading(false);
   };
-  const { width: windowWidth } = useWindowDimensions();
-  const [searchState, setSearchState] = useState<ISearch>({
-    searchedText: "",
-    searchedColumn: "",
-  });
-  const columnsEstudios: IColumns<ITaxForm> = [
+
+  const columnsEstudios: IColumns<ITaxData> = [
     {
       ...getDefaultColumnProps("rfc", "RFC", {
         searchState,
         setSearchState,
-        width: "10%",
-        windowSize: windowWidth,
+        width: "15%",
       }),
     },
     {
@@ -117,23 +137,20 @@ const DatosFiscalesForm = () => {
         searchState,
         setSearchState,
         width: "30%",
-        windowSize: windowWidth,
       }),
     },
     {
       ...getDefaultColumnProps("calle", "Dirección", {
         searchState,
         setSearchState,
-        width: "30%",
-        windowSize: windowWidth,
+        width: "25%",
       }),
     },
     {
       ...getDefaultColumnProps("correo", "Correo", {
         searchState,
         setSearchState,
-        width: "30%",
-        windowSize: windowWidth,
+        width: "20%",
       }),
     },
     {
@@ -141,156 +158,178 @@ const DatosFiscalesForm = () => {
       dataIndex: "id",
       title: "Editar",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "20%",
-      render: (value, item) => (
+      width: "10%",
+      render: (_, item) => (
         <IconButton
           title="Editar lista de precio"
           icon={<EditOutlined />}
           onClick={() => {
-            console.log(item, "el item");
+            getColonies(item.cp);
             form.setFieldsValue(item);
-            form.setFieldsValue({ id: item.id });
           }}
         />
       ),
     },
   ];
+
   return (
     <Spin spinning={loading}>
-      <Row style={{ marginBottom: 14 }}>
-
-        <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
-          <Button onClick={closeModal}>Cancelar</Button>
-          <Button
-            type="primary"
-            htmlType="submit"
-            onClick={() => {
-              form.submit();
+      <Row gutter={[0, 12]}>
+        <Col span={24}>
+          <Form<ITaxData>
+            {...formItemLayout}
+            form={form}
+            name="taxes"
+            onFinish={onFinish}
+            onFinishFailed={({ errorFields }) => {
+              const errors = errorFields.map((x) => ({ name: x.name[0].toString(), errors: x.errors }));
+              setErrors(errors);
             }}
+            scrollToFirstError
+            onValuesChange={onValuesChange}
+            size="small"
           >
-            Añadir
-          </Button>
+            <Row gutter={[0, 12]}>
+              <TextInput
+                formProps={{
+                  name: "id",
+                  style: { display: "none" },
+                }}
+              />
+              <Col md={6} xs={24}>
+                <TextInput
+                  formProps={{
+                    name: "rfc",
+                    label: "RFC",
+                    labelCol: { span: 8 },
+                    wrapperCol: { span: 16 },
+                  }}
+                  max={100}
+                  required
+                  errors={errors.find((x) => x.name === "rfc")?.errors}
+                />
+              </Col>
+              <Col md={18} xs={24}>
+                <TextInput
+                  formProps={{
+                    name: "razonSocial",
+                    label: "Razon Social",
+                    labelCol: { span: 6 },
+                    wrapperCol: { span: 18 },
+                  }}
+                  max={100}
+                  required
+                  errors={errors.find((x) => x.name === "razonSocial")?.errors}
+                />
+              </Col>
+              <Col md={16} xs={24}>
+                <Form.Item
+                  label="CP"
+                  labelCol={{ span: 3 }}
+                  wrapperCol={{ span: 21 }}
+                  help=""
+                  className="no-error-text"
+                >
+                  <Input.Group>
+                    <Row gutter={8}>
+                      <Col md={6} xs={24}>
+                        <TextInput
+                          formProps={{
+                            name: "cp",
+                            label: "CP",
+                            noStyle: true,
+                          }}
+                          max={500}
+                          showLabel
+                          errors={errors.find((x) => x.name === "cp")?.errors}
+                        />
+                      </Col>
+                      <Col md={9} xs={24}>
+                        <TextInput
+                          formProps={{
+                            name: "estado",
+                            label: "Estado",
+                            noStyle: true,
+                          }}
+                          max={500}
+                          showLabel
+                          readonly
+                        />
+                      </Col>
+                      <Col md={9} xs={24}>
+                        <TextInput
+                          formProps={{
+                            name: "municipio",
+                            label: "Municipio",
+                            noStyle: true,
+                          }}
+                          max={500}
+                          showLabel
+                          readonly
+                        />
+                      </Col>
+                    </Row>
+                  </Input.Group>
+                </Form.Item>
+              </Col>
+              <Col md={8} xs={24}>
+                <TextInput
+                  formProps={{
+                    name: "correo",
+                    label: "E-Mail",
+                    labelCol: { span: 6 },
+                    wrapperCol: { span: 18 },
+                  }}
+                  type="email"
+                  max={100}
+                  errors={errors.find((x) => x.name === "correo")?.errors}
+                />
+              </Col>
+              <Col md={8} xs={24}>
+                <SelectInput
+                  formProps={{
+                    name: "colonia",
+                    label: "Colonia",
+                    labelCol: { span: 6 },
+                    wrapperCol: { span: 18 },
+                  }}
+                  options={colonies}
+                />
+              </Col>
+              <Col md={12} xs={24}>
+                <TextInput
+                  formProps={{
+                    name: "calle",
+                    label: "Calle y Número",
+                    labelCol: { span: 9 },
+                    wrapperCol: { span: 15 },
+                  }}
+                  max={100}
+                  errors={errors.find((x) => x.name === "calle")?.errors}
+                />
+              </Col>
+              <Col md={4} xs={24} style={{ textAlign: "right" }}>
+                <Button type="primary" htmlType="submit">
+                  Añadir
+                </Button>
+              </Col>
+            </Row>
+          </Form>
         </Col>
-
+        <Col span={24}>
+          <Table<ITaxData>
+            size="small"
+            sticky
+            columns={columnsEstudios}
+            pagination={false}
+            rowKey={(item) => item.id}
+            dataSource={local ? localTaxData : [...(tax ?? [])]}
+            scroll={{ x: "auto", y: 300 }}
+          />
+        </Col>
       </Row>
-      <div /* ref={componentRef} */>
-        <Form<ITaxForm>
-          {...formItemLayout}
-          form={form}
-          name="priceList"
-          initialValues={values}
-          onFinish={onFinish}
-          scrollToFirstError
-          onValuesChange={onValuesChange}
-        >
-          <Row>
-            <TextInput
-              formProps={{
-                name: "id",
-                label: "ID",
-                style: { display: "none" }
-              }}
-              max={100}
- 
-
-            />
-            <Col md={5} sm={24} xs={12}>
-              <TextInput
-                formProps={{
-                  name: "rfc",
-                  label: "RFC",
-                }}
-                max={100}
-                required
-
-              />
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <TextInput
-                formProps={{
-                  name: "razonSocial",
-                  label: "Razon Social",
-                }}
-                max={100}
-                required
-
-              />
-            </Col>
-            <Col md={4} sm={24} xs={12}></Col>
-
-            <Col md={4} sm={24} xs={12}>
-              <TextInput
-                formProps={{
-                  name: "cp",
-                  label: "CP",
-                }}
-                max={100}
-              ></TextInput>
-            </Col>
-            <Col md={6} sm={24} xs={12}>
-              <TextInput
-                formProps={{
-                  name: "estado",
-                  label: "Estado",
-                }}
-                max={100}
-             
-
-              />
-            </Col>
-            <Col md={8} sm={24} xs={12}>
-              <TextInput
-                formProps={{
-                  name: "municipio",
-                  label: "Municipio",
-                }}
-                max={100}
-                required
-
-              />
-            </Col>
-            <Col md={6} sm={24} xs={12}>
-              <TextInput
-                formProps={{
-                  name: "correo",
-                  label: "E-Mail",
-                }}
-                type="email"
-                max={100}
-              ></TextInput>
-            </Col>
-            <Col md={11} sm={24} xs={12}>
-              <TextInput
-                formProps={{
-                  name: "calle",
-                  label: "Calle y Número",
-                }}
-                max={100}
-              ></TextInput>
-            </Col>
-            <Col md={12} sm={24} xs={12}>
-              <SelectInput
-                formProps={{
-                  name: "colonia",
-                  label: "Colonia",
-                }}
-                options={colonies}
-
-              />
-            </Col>
-          </Row>
-        </Form>
-        <Table<ITaxForm>
-          size="large"
-          columns={columnsEstudios}
-          pagination={false}
-          rowKey={(item) => item.id}
-          dataSource={[...(tax??[])]}
-          scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-        />
-      </div>
     </Spin>
   );
-}
+};
 
 export default observer(DatosFiscalesForm);

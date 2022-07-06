@@ -13,7 +13,7 @@ interface IProps {
   width?: string | number;
   suffix?: React.ReactNode;
   style?: React.CSSProperties;
-  isGroup?: boolean;
+  showLabel?: boolean;
   errors?: any[];
   onChange?: (value: any) => void;
 }
@@ -27,7 +27,7 @@ const SelectInput = ({
   width,
   suffix,
   style,
-  isGroup,
+  showLabel,
   errors,
   onChange,
 }: IProps) => {
@@ -64,11 +64,11 @@ const SelectInput = ({
       {/* {(!!suffix || isGroup || !!errors) && ( */}
       <div
         className={`suffix-container ${readonly ? "disabled" : ""}`}
-        style={{ display: !!suffix || isGroup || !!errors ? "" : "none" }}
+        style={{ display: !!suffix || showLabel || !!errors ? "" : "none" }}
       >
         <Space size="small">
           {suffix ? suffix : null}
-          {isGroup ? (
+          {showLabel ? (
             <Tooltip key="info" title={itemProps.label}>
               <InfoCircleTwoTone />
             </Tooltip>

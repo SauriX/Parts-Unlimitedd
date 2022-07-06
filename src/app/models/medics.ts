@@ -1,11 +1,12 @@
 import { IClinicList } from "./clinic";
 
 export interface IMedicsList {
-  idMedico:string;
+  idMedico: string;
   clave: string;
   nombre: string;
   primerApellido: string;
   segundoApellido: string;
+  nombreCompleto: string;
   especialidad: string;
   especialidadId: number;
   observaciones: string;
@@ -21,6 +22,7 @@ export interface IMedicsList {
   telefono?: string;
   activo: boolean;
   clinicas: IClinicList[];
+  nombreCompleto?:string
 }
 
 export interface IMedicsForm {

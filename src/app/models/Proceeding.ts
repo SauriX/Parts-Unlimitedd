@@ -1,5 +1,5 @@
 import moment from "moment";
-import { ITaxForm } from "./taxdata";
+import { ITaxData } from "./taxdata";
 export interface ISearchMedical {
   expediente: string;
   telefono: string;
@@ -37,7 +37,7 @@ export interface IProceedingForm {
   calle: string;
   colonia?: number | string;
   colonian?: string;
-  taxData?: ITaxForm[];
+  taxData?: ITaxData[];
   sucursal?: string;
 }
 

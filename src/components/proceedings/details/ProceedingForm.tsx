@@ -20,7 +20,7 @@ import DatosFiscalesForm from "./DatosFiscalesForm";
 import Concidencias from "./Concidencias";
 import { IProceedingForm, ISearchMedical, ProceedingFormValues } from "../../../app/models/Proceeding";
 import moment from "moment";
-import { ITaxForm } from "../../../app/models/taxdata";
+import { ITaxData } from "../../../app/models/taxdata";
 type ProceedingFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
@@ -217,7 +217,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
 
   };
 
-  const handleChangeTax = (tax: ITaxForm[]) => {
+  const handleChangeTax = (tax: ITaxData[]) => {
     setTax(tax);
   }
 

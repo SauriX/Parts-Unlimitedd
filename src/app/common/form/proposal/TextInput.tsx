@@ -7,7 +7,7 @@ import "./index.less";
 
 interface IProps {
   formProps: FormItemProps<any>;
-  max: number;
+  max?: number;
   required?: boolean;
   prefix?: React.ReactNode;
   type?: RuleType;
@@ -44,7 +44,6 @@ const TextInput = ({
 
   useEffect(() => {
     const observer = new ResizeObserver((entries) => {
-      console.log(entries[0]);
       setPaddingRight(entries[0].target.clientWidth);
     });
 

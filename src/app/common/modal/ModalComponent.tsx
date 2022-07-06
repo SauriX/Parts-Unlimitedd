@@ -20,6 +20,7 @@ const ModalComponent = () => {
       destroyOnClose={true}
       maskClosable={false}
       onCancel={closeModal}
+      style={{ top: 64 }}
     >
       {body}
     </Modal>

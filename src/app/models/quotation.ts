@@ -1,4 +1,7 @@
-import moment from "moment";
+import moment, { Moment } from "moment";
+import { IIndicationList } from "./indication";
+import { IParameterList } from "./parameter";
+import { IRequestPrice } from "./request";
 export interface ISearchQuotation{
     presupuesto:string,
     activo:boolean,
@@ -15,33 +18,95 @@ export interface IQuotationList{
     estudios:string,
     email:string,
     whatsapp:string,
-    fecha:string,
+    fecha:Date,
     expediente:string,
     activo:boolean,
 }
 
-/* export interface IProceedingForm{
+export interface IQuotationForm{
     id:string,
-    nombre:string,
-    apellido:string,
     expediente:string,
-    sexo:string,
-    fechaNacimiento?:Date,
+    nomprePaciente:string,
     edad:number,
-    edadCheck:boolean,
-    telefono:string,
-    correo:string,
-    cp:string,
-    estado:string,
-    municipio:string,
-    celular:string,
-    calle:string,
-    colonia?:number,
-    colonian?:string,
-    taxData?:ITaxForm[],
-    sucursal?:string
-} */
+    fechaNacimiento:moment.Moment,
+    genero:string,
+    generales?:IQuotationGeneralesForm,
+    expedienteid?:string
+    estudy?:IRequestPrice[]
+}
 
+export interface IQuotationGeneralesForm{
+    procedencia?:string,
+    compañia:string,
+    medico:string,
+    nomprePaciente:string,
+    observaciones:string,
+    tipoEnvio:string,
+    email:string,
+    whatssap:string,
+    activo:boolean,
+
+}
+
+export interface IQuotationEstudiosForm{
+    codigoEstudio:string,
+    nombreEstudio:string
+}
+
+export class QuotationEstudiosFormValues implements IQuotationEstudiosForm{
+    codigoEstudio = "";
+    nombreEstudio="";
+    constructor(init?:IQuotationEstudiosForm){
+        Object.assign(this,init);
+    }
+}
+export interface IQuotationPrice {
+    precioListaId: string;
+    type: "study" | "pack";
+    estudioId?: number;
+    paqueteId?: number;
+    clave: string;
+    nombre: string;
+    precio: number;
+    precioFinal: number;
+    descuento: boolean;
+    cargo: boolean;
+    copago: boolean;
+    parametros: IParameterList[];
+    indicaciones: IIndicationList[];
+}
+export interface IQuotationExpedienteSearch{
+    fechaInicial:moment.Moment,
+    fechaFinal:moment.Moment,
+    buscar:string,
+    email:string,
+    telefono:string
+}
+export class QuotationExpedienteSearchValues implements IQuotationExpedienteSearch{
+    fechaFinal=moment( moment.now());
+    fechaInicial=moment( moment.now());
+    buscar = "";
+    email = "";
+    telefono ="";
+    constructor(init?:IQuotationExpedienteSearch) {
+        Object.assign(this, init);
+    }
+}
+export class QuotationGeneralesFormValues implements IQuotationGeneralesForm{
+    procedencia=undefined;
+    compañia="";
+    medico="";
+    nomprePaciente="";
+    
+    observaciones="";
+    tipoEnvio="";
+    email="";
+    whatssap="";
+    activo=false;
+    constructor(init?:IQuotationGeneralesForm) {
+        Object.assign(this, init);
+    }
+}
 export class SearchQuotationValues implements ISearchQuotation{
     presupuesto = "";
     telefono = "";
@@ -55,25 +120,15 @@ export class SearchQuotationValues implements ISearchQuotation{
     }
 }
 
-/* export class ProceedingFormValues implements IProceedingForm{
+ export class QuotationFormValues implements IQuotationForm{
 
     id="";
-    nombre="";
-    apellido="";
     expediente="";
-    sexo="";
-    fechaNacimiento=new Date(moment.now());
+    nomprePaciente="";
+    genero="";
     edad=0;
-    edadCheck=false;
-    telefono="";
-    correo="";
-    cp="";
-    estado="";
-    municipio="";
-    celular="";
-    calle="";
-    colonia=undefined;
-    constructor(init?:IProceedingForm) {
+    fechaNacimiento= moment( moment.now());
+    constructor(init?:IQuotationForm) {
         Object.assign(this, init);
     }
-} */
+}

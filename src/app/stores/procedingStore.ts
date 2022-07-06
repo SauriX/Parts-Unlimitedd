@@ -11,25 +11,30 @@ import {
   SearchMedicalFormValues,
 } from "../models/Proceeding";
 import Proceding from "../api/proceding";
-import { ITaxForm } from "../models/taxdata";
+import { ITaxData } from "../models/taxdata";
+
 export default class ProcedingStore {
   constructor() {
     makeAutoObservable(this);
   }
+
   expedientes: IProceedingList[] = [];
   // expediente?: IProceedingForm;
   search: ISearchMedical = new SearchMedicalFormValues();
-  tax: ITaxForm[] = [];
-  setTax = (value: ITaxForm[]) => {
+  tax: ITaxData[] = [];
+
+  setTax = (value: ITaxData[]) => {
     this.tax = value;
   };
 
   clearTax = () => {
     this.tax = [];
   };
+
   setSearch = (value: ISearchMedical) => {
     this.search = value;
   };
+
   getAll = async (search: string = "all") => {
     try {
       console.log(search);
@@ -40,6 +45,7 @@ export default class ProcedingStore {
       this.expedientes = [];
     }
   };
+
   getnow = async (search: ISearchMedical) => {
     try {
       console.log(search);
@@ -50,6 +56,17 @@ export default class ProcedingStore {
       this.expedientes = [];
     }
   };
+
+  getTaxData = async (recordId: string) => {
+    try {
+      const taxData = await Proceding.getTaxData(recordId);
+      return taxData;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return [];
+    }
+  };
+
   getById = async (id: string) => {
     try {
       const rol = await Proceding.getById(id);
@@ -91,9 +108,30 @@ export default class ProcedingStore {
     }
   };
 
+  createTaxData = async (taxData: ITaxData) => {
+    try {
+      const id = await Proceding.createTaxData(taxData);
+      alerts.success(messages.created);
+      return id;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
   update = async (parameter: IProceedingForm) => {
     try {
       await Proceding.update(parameter);
+      alerts.success(messages.updated);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
+  updateTaxData = async (taxData: ITaxData) => {
+    try {
+      await Proceding.updateTaxData(taxData);
       alerts.success(messages.updated);
       return true;
     } catch (error: any) {
@@ -110,6 +148,7 @@ export default class ProcedingStore {
       alerts.warning(getErrors(error));
     }
   };
+
   exportForm = async (id: string) => {
     try {
       await Proceding.exportForm(id);
