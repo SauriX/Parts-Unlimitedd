@@ -101,7 +101,7 @@ export default class CatalogStore {
     }
   };
 
-  exportForm = async (catalogName: string, id: string) => {
+  exportForm = async (catalogName: string, id: number) => {
     try {
       await Catalog.exportForm(catalogName, id);
     } catch (error: any) {

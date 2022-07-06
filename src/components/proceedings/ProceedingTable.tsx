@@ -204,7 +204,12 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
         <Row>
             <Col md={18} sm={12}>
                 <label htmlFor="">Expediente/Nombre/Codigo de barras/Huella digital: </label>
-                <Input value={search.expediente} onChange={(value)=>{setSearch({ ...search,expediente:value.target.value  })}} style={{width:"600px" , marginBottom:"30px"}} type={"text"} placeholder={""}></Input>
+                <Input 
+                value={search.expediente} 
+                onChange={(value)=>{setSearch({ ...search,expediente:value.target.value  })}} 
+                style={{width:"600px" , marginBottom:"30px"}} 
+                type={"text"} 
+                placeholder={""}></Input>
             </Col>
             <Col md={6} sm={12}>
                 <Button type="primary" onClick={onfinish}>Buscar</Button>

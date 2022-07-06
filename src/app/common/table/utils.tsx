@@ -24,6 +24,7 @@ export interface ISearch {
 }
 
 interface IColumn<RecordType> extends ColumnType<RecordType> {
+  width: number | string;
   minWidth: number | string;
 }
 
@@ -131,5 +132,5 @@ export const getDefaultColumnProps = (
     ),
   sorter: (a: any, b: any) => (a[dataIndex] > b[dataIndex] && 1) || -1,
   showSorterTooltip: false,
-  width: !minWidth ? width : (windowSize ?? resizeWidth) < resizeWidth ? minWidth : width,
+  width: width, //!minWidth ? width : (windowSize ?? resizeWidth) < resizeWidth ? minWidth : width,
 });

@@ -3,6 +3,7 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { IOptionsCatalog } from "../../../app/models/shared";
+import { useStore } from "../../../app/stores/store";
 import { catalogs } from "../../../app/util/catalogs";
 import CatalogForm from "./CatalogForm";
 import CatalogFormHeader from "./CatalogFormHeader";
@@ -12,6 +13,9 @@ type UrlParams = {
 };
 
 const CatalogDetail = () => {
+  const { catalogStore } = useStore();
+  const { exportForm } = catalogStore;
+
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
@@ -38,21 +42,30 @@ const CatalogDetail = () => {
   });
 
   const { id } = useParams<UrlParams>();
-  const reagentId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
+  const catalogId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
+
+  const handleDownload = async () => {
+    const catalog = searchParams.get("catalog");
+    if (catalog && catalogId) {
+      setPrinting(true);
+      await exportForm(catalog, catalogId);
+      setPrinting(false);
+    }
+  };
 
   useEffect(() => {
-    if (reagentId === undefined || !catalog) {
+    if (catalogId === undefined || !catalog) {
       navigate("/notFound");
     }
-  }, [catalog, navigate, reagentId]);
+  }, [catalog, navigate, catalogId]);
 
-  if (reagentId === undefined || !catalog) return null;
+  if (catalogId === undefined || !catalog) return null;
 
   return (
     <Fragment>
-      <CatalogFormHeader id={reagentId} handlePrint={handlePrint} />
+      <CatalogFormHeader id={catalogId} handlePrint={handlePrint} handleDownload={handleDownload} />
       <Divider className="header-divider" />
-      <CatalogForm id={reagentId} catalog={catalog} componentRef={componentRef} printing={printing} />
+      <CatalogForm id={catalogId} catalog={catalog} componentRef={componentRef} printing={printing} />
     </Fragment>
   );
 };

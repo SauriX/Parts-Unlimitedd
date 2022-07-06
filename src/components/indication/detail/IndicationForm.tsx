@@ -135,7 +135,7 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing })
 
   const columns: IColumns<IStudyList> = [
     {
-      ...getDefaultColumnProps("id", "Id Estudio", {
+      ...getDefaultColumnProps("clave", "Clave Estudio", {
         searchState,
         setSearchState,
         width: "30%",

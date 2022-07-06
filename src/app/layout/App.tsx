@@ -136,7 +136,7 @@ function App() {
             <Route path="loyalties" element={<Loyalty />} />
             <Route path="loyalties/:id" element={<LoyaltyDetail />} />
             <Route path="loyalties/new" element={<LoyaltyDetail />} />
-            <Route path="expedientes" element={<Proceeding />} ></Route>
+            <Route path="expedientes" element={<Proceeding />}></Route>
             <Route path="expedientes/:id" element={<ProceedingDetail />} />
             <Route path="expedientes/new" element={<ProceedingDetail />} />
             <Route path="routes" element={<Routee />} />

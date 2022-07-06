@@ -7,9 +7,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 type CatalogFormHeaderProps = {
   id: number;
   handlePrint: () => void;
+  handleDownload: () => Promise<void>;
 };
 
-const CatalogFormHeader: FC<CatalogFormHeaderProps> = ({ id, handlePrint }) => {
+const CatalogFormHeader: FC<CatalogFormHeaderProps> = ({ id, handlePrint, handleDownload }) => {
   let navigate = useNavigate();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -27,7 +28,7 @@ const CatalogFormHeader: FC<CatalogFormHeaderProps> = ({ id, handlePrint }) => {
       className="header-container"
       extra={[
         !!id && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        !!id && <ImageButton key="doc" title="Informe" image="doc" />,
+        !!id && <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />,
         <ImageButton key="back" title="Regresar" image="back" onClick={getBack} />,
       ]}
     ></PageHeader>

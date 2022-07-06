@@ -47,6 +47,7 @@ const CatalogNormalForm: FC<CatalogNormalFormProps> = ({ id, catalogName, compon
   }, [catalogName, form, getById, id]);
 
   const onFinish = async (newValues: ICatalogNormalForm) => {
+    setLoading(true);
     const catalog = { ...values, ...newValues };
 
     let success = false;
@@ -56,6 +57,7 @@ const CatalogNormalForm: FC<CatalogNormalFormProps> = ({ id, catalogName, compon
     } else {
       success = await update(catalogName, catalog);
     }
+    setLoading(false);
 
     if (success) {
       goBack();

@@ -16,7 +16,7 @@ const Catalog = {
     requests.put(`catalog/${catalogName}`, catalog),
   exportList: (catalogName: string, search: string): Promise<void> =>
     requests.download(`catalog/${catalogName}/export/list/${!search ? "all" : search}`),
-  exportForm: (catalogName: string, id: string): Promise<void> =>
+  exportForm: (catalogName: string, id: number): Promise<void> =>
     requests.download(`catalog/${catalogName}/export/form/${id}`),
 };
 
