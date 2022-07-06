@@ -1,9 +1,10 @@
 import { makeAutoObservable } from "mobx";
 import Report from "../api/report";
-import { IReportList } from "../models/report";
+import { IReportForm, IReportList, ReportFormValues } from "../models/report";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
+import messages from "../util/messages";
 import responses from "../util/responses";
 import { getErrors } from "../util/utils";
 
@@ -11,7 +12,7 @@ export default class ReportStore {
     constructor() {
         makeAutoObservable(this);
     }
-
+    search: IReportForm = new ReportFormValues();
     scopes?: IScopes;
     reports: IReportList[] = [];
     currentReport: string | undefined;
@@ -38,13 +39,20 @@ export default class ReportStore {
     };
 
 
-    exportList = async (reportName: string, search: string) => {
-        try {
-            await Report.exportList(reportName, search);
-        } catch (error: any) {
-            alerts.warning(getErrors(error));
-        }
+    exportList = async (catalogName: string, search: string) => {
+      try {
+        await Report.exportList(catalogName, search);
+      } catch (error: any) {
+        alerts.warning(getErrors(error));
+      }
     };
+  //   exportGraphic = async (catalogName: string, search: string) => {
+  //   try {
+  //     await Report.exportGraphic(catalogName, search);
+  //   } catch (error: any) {
+  //     alerts.warning(getErrors(error));
+  //   }
+  // };
 
     getAll = async (reportName: string, search?: string) => {
         try {
@@ -55,6 +63,17 @@ export default class ReportStore {
           this.reports = [];
         }
       };
+
+      getBranchByCount = async () => {
+        try {
+          const reports = await Report.getBranchByCount();
+          this.reports = reports;
+      } catch (error: any) {
+          alerts.warning(getErrors(error));
+          this.reports = [];
+      }
+  };
+
     exportForm = async (id: string) => {
         try {
             await Report.exportForm(id);
@@ -65,5 +84,20 @@ export default class ReportStore {
                 alerts.warning(getErrors(error));
             }
         }
+    };
+
+    setSearch = (value: IReportForm) => {
+      this.search = value;
+    };
+
+    filtro = async (search: IReportForm) => {
+      try {
+        console.log(search);
+        const reports = await Report.filtro(search);
+        this.reports = reports;
+      } catch (error: any) {
+        alerts.warning(getErrors(error));
+        this.reports = [];
+      }
     };
 }

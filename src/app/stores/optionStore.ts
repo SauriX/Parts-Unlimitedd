@@ -456,18 +456,24 @@ export default class OptionStore {
     }
   };
 
-  BranchCityOptions: IOptions[] = [];
+  BranchCityOptions: any[] = [];
   getBranchCityOptions = async () => {
     try {
       const branch = Branch.getBranchByCity();
-      this.BranchOptions = (await branch).map((x) => ({
-        value: x.idSucursal,
-        label: x.nombre,
+
+      this.BranchCityOptions = (await branch).map((x) => ({
+        value: x.ciudad,
+        title: x.ciudad,
+        children: x.sucursales.map((y) => ({
+          value: y.idSucursal,
+          title: y.nombre,
+        })),
       }));
     } catch (error) {
-      this.BranchOptions = [];
+      this.BranchCityOptions = [];
     }
   };
+
   CityOptions: IOptions[] = [];
   getCityOptions = async () => {
     try {

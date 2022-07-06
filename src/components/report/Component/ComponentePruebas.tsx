@@ -82,7 +82,7 @@ const CompPrueba: FC<CompPruebaProps> = ({componentRef, printing }) => {
             ref={componentRef}>
                 <PageHeader
                     ghost={false}
-                    title={<HeaderTitle title="Estadística de expedientes" image="Lealtad" />}
+                    title={<HeaderTitle title="Estadística de expedientes" image="Reportes" />}
                     className="header-container"
                 ></PageHeader>
                 <Divider className="header-divider" />

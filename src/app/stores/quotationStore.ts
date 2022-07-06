@@ -1,5 +1,10 @@
 import { makeAutoObservable } from "mobx";
-import { ISearchQuotation, SearchQuotationValues } from "../models/quotation";
+import moment from "moment";
+import PriceList from "../api/priceList";
+import quotation from "../api/quotation";
+import Study from "../api/study";
+import { IProceedingList } from "../models/Proceeding";
+import { IQuotationExpedienteSearch, IQuotationForm, IQuotationList, ISearchQuotation, SearchQuotationValues } from "../models/quotation";
 
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -15,6 +20,8 @@ export default class QuotationStore {
 
   scopes?: IScopes;
   search: ISearchQuotation=new SearchQuotationValues();
+  quotatios: IQuotationList[] =[];
+  records: IProceedingList[]=[];
   setSearch= (value:ISearchQuotation)=>{
     this.search=value;
 };
@@ -37,19 +44,39 @@ export default class QuotationStore {
     }
   }; */
 
-  getAll = async (search: string) => {
+  getAll = async (search: ISearchQuotation) => {
     try {
-   /*    const reagents = await Reagent.getAll(search);
-      this.reagents = reagents; */
+       const reagents = await quotation.getNow(search);
+      this.quotatios = reagents; 
     } catch (error: any) {
       alerts.warning(getErrors(error));
-     /*  this.reagents = []; */
+       this.quotatios = []; 
     }
   };
+  getExpediente = async (search: IQuotationExpedienteSearch) => {
+    try {
+       const reagents = await quotation.getRecord(search);
+      this.records = reagents; 
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+       this.records = []; 
+    }
+  };
+  create = async (reagent: IQuotationForm) => {
+    try {
+      const newReagent = await quotation.create(reagent);
+      alerts.success(messages.created);
+      // this.reagents.push(newReagent);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  }; 
 
-  getById = async (id: string) => {
-/*     try {
-      const reagent = await Reagent.getById(id);
+  getParameter=async(id:number)=>{
+    try {
+      const reagent = await Study.getById(id);
       return reagent;
     } catch (error: any) {
       if (error.status === responses.notFound) {
@@ -57,35 +84,65 @@ export default class QuotationStore {
       } else {
         alerts.warning(getErrors(error));
       }
-    } */
+    } 
+  };
+  getById = async (id: string) => {
+    console.log("getbyid");
+     try {
+      const reagent = await quotation.getById(id);
+      reagent.fechaNacimiento = moment(reagent.fechaNacimiento);
+      reagent.estudy?.map(async (x)=>{ 
+        var parametros = await this.getParameter(x.estudioId!) ;
+        x.parametros= parametros!.parameters;
+        x.nombre= parametros!.nombre
+        x.indicaciones = parametros?.indicaciones!;
+      });
+      console.log(reagent,"cotizacion");
+      return reagent;
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+    } 
   };
 
-/*   create = async (reagent: IReagentForm) => {
-    try {
-      const newReagent = await Reagent.create(reagent);
-      alerts.success(messages.created);
-      this.reagents.push(newReagent);
-      return true;
-    } catch (error: any) {
-      alerts.warning(getErrors(error));
-      return false;
-    }
-  }; */
 
-/*   update = async (reagent: IReagentForm) => {
+
+  update = async (reagent: IQuotationForm) => {
     try {
-      const updatedReagent = await Reagent.update(reagent);
+      const updatedReagent = await quotation.update(reagent);
       alerts.success(messages.updated);
-      const id = this.reagents.findIndex((x) => x.id === reagent.id);
-      if (id !== -1) {
-        this.reagents[id] = updatedReagent;
-      }
+      
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
     }
-  }; */
+  };
+getstudy = async (id:number) =>{
+  try {
+  const updatedReagent = await PriceList.getPriceStudy(id);
+  console.log(updatedReagent,"hola");
+  return updatedReagent;
+} catch (error: any) {
+  alerts.warning(getErrors(error));
+  return false;
+}
+  
+}
+getPack = async (id:number) =>{
+  try {
+  const updatedReagent = await PriceList.getPricePack(id);
+  console.log(updatedReagent,"hola");
+  return updatedReagent;
+} catch (error: any) {
+  alerts.warning(getErrors(error));
+  return false;
+}
+  
+}
 /* 
   exportList = async (search: string) => {
     try {

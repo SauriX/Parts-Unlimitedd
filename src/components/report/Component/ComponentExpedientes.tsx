@@ -6,16 +6,13 @@ import { IColumns, ISearch, getDefaultColumnProps } from "../../../app/common/ta
 import { IReportList } from "../../../app/models/report";
 import { useStore } from "../../../app/stores/store";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
-import ReactECharts from 'echarts-for-react';
-import optionStore from "../../../app/stores/optionStore";
 
 type CompExpedienteProps = {
-    componentRef: React.MutableRefObject<any>;
-    printing: boolean;
 };
 
-const CompExpediente: FC<CompExpedienteProps> = ({componentRef, printing}) => {
+const CompExpediente: FC<CompExpedienteProps> = ({}) => {
     const { reportStore ,optionStore} = useStore();
+  const { getBranchByCount } = reportStore;
     const {
         DeliveryOptions,
         getDeliveryOptions,
@@ -31,33 +28,24 @@ const CompExpediente: FC<CompExpedienteProps> = ({componentRef, printing}) => {
     useEffect(() => {
         getDeliveryOptions();
       }, [getDeliveryOptions]);
-     //TABLAA
-    //  const options = {
-    //     grid: { top: 8, right: "16%", bottom: 24, left: 36 },
-    //     xAxis: {
-    //       type: 'category',
-    //       data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    //     },
-    //     yAxis: {
-    //       type: 'value',
-    //       alignWithLabel: true
-    //     },
-    //     series: [
-    //       {
-    //         data: [5, 10, 15, 20, 30, 40, 50],
-    //         type: 'bar',
-    //         smooth: true,
-    //       },
-    //     ],
-    //     tooltip: {
-    //       trigger: 'axis',
-    //     },
-    //   };
 
+      useEffect(() => {
+        const readReport = async () => {
+          setLoading(true);
+          await getBranchByCount();
+          setLoading(false);
+          getBranchByCount();
+        };
+    
+        if (reports.length === 0) {
+              readReport();
+          }
+      }, []);
+    
     
     const columns: IColumns<IReportList> = [
         {
-            ...getDefaultColumnProps("nombre", "Nombre", {
+            ...getDefaultColumnProps("clave", "Expediente", {
                 searchState,
                 setSearchState,
                 width: "15%",
@@ -66,7 +54,7 @@ const CompExpediente: FC<CompExpedienteProps> = ({componentRef, printing}) => {
             }),
         },
         {
-            ...getDefaultColumnProps("expediente", "Expediente", {
+            ...getDefaultColumnProps("nombre", "Nombre", {
                 searchState,
                 setSearchState,
                 width: "10%",
@@ -85,18 +73,21 @@ const CompExpediente: FC<CompExpedienteProps> = ({componentRef, printing}) => {
         },
         
     ];
+    const FuncionPrueba = () =>{
+        
+    }
     const ReportTablePrint = () => {
         return (
-            <div 
-            ref={componentRef}>
+            <div>
+            
                 <PageHeader
                     ghost={false}
-                    title={<HeaderTitle title="Estadística de expedientes" image="Lealtad" />}
+                    title={<HeaderTitle title="Estadística de expedientes" image="Reportes" />}
                     className="header-container"
                 ></PageHeader>
                 <Divider className="header-divider" />
                 <Table<IReportList>
-                    size="large"
+                    size="small"
                     rowKey={(record) => record.id}
                     columns={columns.slice(0, 3)}
                     pagination={false}
@@ -108,21 +99,12 @@ const CompExpediente: FC<CompExpedienteProps> = ({componentRef, printing}) => {
         );
     };
 
-    // const ReportGraphic = () => {
-    //     return (
-    //         <div 
-    //         ref={componentRef}>
-    //             <ReactECharts option={options} />;
-    //         </div>
-            
-    //     );
-    // };
 
     return (
         <Fragment>
             <Table<IReportList>
-                loading={loading || printing}
-                size="large"
+                loading={loading}
+                size="small"
                 rowKey={(record) => record.id}
                 columns={columns}
                 dataSource={[...reports]}

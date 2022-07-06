@@ -20,6 +20,10 @@ export interface IBranchForm {
   matriz?:boolean;
 }
 
+export interface IBranchCity{
+  sucursales: IBranchInfo[];
+  ciudad: string;
+}
 export interface IBranchInfo {
   idSucursal: string;
   clave: string;

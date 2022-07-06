@@ -3,35 +3,24 @@ import {
     Form,
     Row,
     Col,
-    Pagination,
     Button,
     PageHeader,
-    DatePicker,
     Divider,
-    Radio,
     TreeSelect,
     Select,
   } from "antd";
   import React, { FC, useEffect, useState } from "react";
   import { formItemLayout } from "../../../../app/util/utils";
-  import { PlusOutlined } from "@ant-design/icons";
-  import TextInput from "../../../../app/common/form/TextInput";
   import SwitchInput from "../../../../app/common/form/SwitchInput";
   import { useStore } from "../../../../app/stores/store";
   import { useNavigate, useSearchParams } from "react-router-dom";
-  import ImageButton from "../../../../app/common/button/ImageButton";
   import HeaderTitle from "../../../../app/common/header/HeaderTitle";
   import { observer } from "mobx-react-lite";
   import alerts from "../../../../app/util/alerts";
   import messages from "../../../../app/util/messages";
-  import moment from "moment";
   import DateRangeInput from "../../../../app/common/form/DateRangeInput";
   import SelectInput from "../../../../app/common/form/SelectInput";
 import { IReportForm, ReportFormValues } from "../../../../app/models/report";
-import * as echarts from 'echarts/core';
-import { TooltipComponent, GridComponent } from 'echarts/components';
-import { BarChart } from 'echarts/charts';
-import { CanvasRenderer } from 'echarts/renderers';
 import ComponentExpedientes from "../../Component/ComponentExpedientes";
 import ComponentGraphic from "../../Component/ComponentGraphic";
   // import { v4 as uuid } from "uuid";
@@ -46,11 +35,9 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
   };
   const ReportForm: FC<ReportFormProps> = ({ /*id*/ componentRef, printing, reportName}) => {
     const { reportStore, optionStore } = useStore();
-    const {reports } = reportStore;
-    const {BranchOptions,getBranchOptions,
-      BranchCityOptions, getBranchCityOptions,
-      CompanyOptions,getCompanyOptions,
-      CityOptions, getCityOptions} = optionStore;
+    const {reports, filtro, setSearch,search } = reportStore;
+    const {
+      BranchCityOptions, getBranchCityOptions} = optionStore;
     const navigate = useNavigate();
   
   
@@ -59,6 +46,10 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
     const [form] = Form.useForm<IReportForm >();
     const { Option, OptGroup } = Select;
     const [loading, setLoading] = useState(false);
+    const [Grafica, setGrafica] = useState<boolean>(false);
+    const [TablaExp, setTablaExp] = useState<boolean>(true);
+    const [Switch, setSwitch] = useState<boolean>(false) ;
+      
     const [readonly, setReadonly] = useState(
       searchParams.get("mode") === "readonly"
     );
@@ -66,48 +57,39 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
   
   
     useEffect(() => {
-      getBranchOptions();
       getBranchCityOptions();
-      getCompanyOptions();
-      getCityOptions();
     }, [
-      getBranchOptions,
       getBranchCityOptions,
-      getCompanyOptions,
-      getCityOptions,
+      // console.log(BranchCityOptions, "treeSelect"),
     ]);
-
-    const treeData = [
-      {
-        title: "Nuevo Léon",
-        value: "sucursalDestinoId",
-        children: BranchOptions.map((x ) => ({
-          title: x.label,
-          value: x.value,
-        })),
-      },
-      // {
-      //   title: "Jalisco",
-      //   value: "maquiladorId",
-      //   children: CityOptions.map((x) => ({
-      //     title: x.label,
-      //     value: x.value,
-      //   })),
-      // },
-      // {
-      //   title: "Sinaloa",
-      //   value: "maquiladorId",
-      //   children: CompanyOptions.map((x) => ({
-      //     title: x.label,
-      //     value: x.value,
-      //   })),
-      // },
-    ];
   
     const handleChange = (value: string) => {
       console.log(`selected ${value}`);
     };
 
+    const SwicthValidator= async ()=> {
+      if(Switch){
+        console.log("si entree")
+        setGrafica(true);
+        setTablaExp(false);
+      }else{
+        setTablaExp(true);
+        setGrafica(false);
+          }
+          await filtro(search!);
+      }
+      useEffect(() => {
+        const readReport = async () => {
+          setLoading(true);
+          await filtro(search!);
+          setLoading(false);
+        };
+    
+        if (reports.length === 0) {
+          readReport();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
     const onFinish = async (newValues: IReportForm) => {
       setLoading(true);
   
@@ -119,12 +101,12 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
       let success = false;
   
       setLoading(false); 
-  
+      // success = await filtro(report);
+
       if (success) {
         // goBack();
       }
     };
-  
  
     return (
       <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
@@ -141,37 +123,32 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
             >
               <Row>
               
-                  <Col md={8} sm={24} xs={12}> 
+                  <Col md={10} sm={24} xs={12}> 
                    <div style={{ marginBottom: "20px" }}>
                     <DateRangeInput
                       formProps={{ label: "Rango de fechas", name: "fecha" }}
                       readonly={readonly}
+                      
                     />
                   </div>
                   </Col>
-                  <Col md={8} sm={24} xs={12}> 
+                  <Col md={14} sm={24} xs={12}> 
                   <Form.Item name="ciudadId" label="Ciudad">
                   <TreeSelect
                     // style={{ width: "80%" }}
                     // value={value}
-                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                    treeData={treeData}
+                    dropdownStyle={{ maxHeight: 400, overflow: "left" }}
+                    treeData={BranchCityOptions}
                     placeholder="Please select"
                     treeDefaultExpandAll
-                    // defaultValue={}
-                    onSelect={(value: any, node: any) => {
-                      console.log(value);
-                      console.log(node);
-
-                      const parent = treeData.find((x) =>
-                        x.children.map((x) => x.value).includes(value)
-                      );
-                      console.log(parent);
-                    }}
+                    value={search.sucursalId} 
+                    onChange={(value)=>{
+                      setSearch({ ...search,sucursalId:value  })
+                    }} 
                   />
                 </Form.Item>
                   </Col>
-                  <Col md={8} sm={24} xs={12}>
+                  {/* <Col md={8} sm={24} xs={12}>
                     
                   <SelectInput
                     formProps={{
@@ -181,7 +158,7 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
                     readonly={readonly}
                     options={CityOptions}
                   />
-                  </Col>
+                  </Col> */}
               </Row>
               
               <Divider orientation="left"></Divider>
@@ -196,6 +173,7 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
                     } else {
                       alerts.info(messages.confirmations.nographic);
                     }
+                    setSwitch(value)
                   }}
                   label="Gráfica"
                   readonly={readonly}
@@ -206,13 +184,14 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
                 key="new"
                 type="primary"
                 onClick={() => {
-                  // navigate(`/${views.reagent}/new?${searchParams}&mode=edit`);
+                  SwicthValidator();
                   }}
                 >
                 Aceptar
                 </Button>
                 </Col>
                 
+                  <Col md={12} sm={24} xs={12}> </Col>
               </Row>
             </Form>
             
@@ -225,14 +204,16 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
               <PageHeader
                 ghost={false}
                 title={
-                  <HeaderTitle title="Expedientes" image="Lealtad" />
+                  <HeaderTitle title="Expedientes" image="Reportes" />
                 }
                 className="header-container"
               ></PageHeader>
             )}
-            {printing && <Divider className="header-divider" />}   
-            {/* <ComponentExpedientes componentRef={undefined} printing={false}></ComponentExpedientes>   
-            <ComponentGraphic componentRef={undefined} printing={false}></ComponentGraphic>   */}
+            {printing && <Divider className="header-divider" />} 
+            <Row justify="center">
+            {TablaExp && <ComponentExpedientes></ComponentExpedientes>}  
+            {Grafica && <ComponentGraphic></ComponentGraphic> }
+            </Row>
           </div>
         </div>
         </Row>
