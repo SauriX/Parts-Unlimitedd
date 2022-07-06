@@ -5,7 +5,7 @@ import React from "react";
 
 interface IProps {
   formProps: FormItemProps<any>;
-  max: number;
+  max?: number;
   required?: boolean;
   prefix?: React.ReactNode;
   type?: RuleType;

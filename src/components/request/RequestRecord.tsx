@@ -1,4 +1,4 @@
-import { Form, Row, Col, Input, Button, Spin } from "antd";
+import { Form, Row, Col, Input, Button, Spin, TreeSelect } from "antd";
 import DateInput from "../../app/common/form/proposal/DateInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
@@ -6,25 +6,37 @@ import { IProceedingForm } from "../../app/models/Proceeding";
 import { useStore } from "../../app/stores/store";
 import { useEffect, useState } from "react";
 import moment from "moment";
+import DatosFiscalesForm from "../proceedings/details/DatosFiscalesForm";
+import { observer } from "mobx-react-lite";
 
-const RequestRecord = () => {
-  const { procedingStore, locationStore } = useStore();
+type RequestRecordProps = {
+  recordId: string;
+};
+
+const formItemLayout = {
+  labelCol: { span: 8 },
+  wrapperCol: { span: 16 },
+};
+
+const RequestRecord = ({ recordId }: RequestRecordProps) => {
+  const { procedingStore, locationStore, modalStore, optionStore } = useStore();
   const { getById } = procedingStore;
   const { getColoniesByZipCode } = locationStore;
+  const { openModal } = modalStore;
+  const { BranchOptions, getBranchOptions } = optionStore;
 
   const [form] = Form.useForm<IProceedingForm>();
 
   const [loading, setLoading] = useState(false);
 
-  const formItemLayout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 },
-  };
+  useEffect(() => {
+    getBranchOptions();
+  }, [getBranchOptions]);
 
   useEffect(() => {
     const readRecord = async () => {
       setLoading(true);
-      const record = await getById("850DA518-FFBB-4E8E-85CD-08DA5567441E");
+      const record = await getById(recordId);
 
       if (record) {
         if (record.fechaNacimiento) {
@@ -43,7 +55,7 @@ const RequestRecord = () => {
     };
 
     readRecord();
-  }, [form, getById, getColoniesByZipCode]);
+  }, [form, getById, getColoniesByZipCode, recordId]);
 
   return (
     <Spin spinning={loading}>
@@ -261,15 +273,30 @@ const RequestRecord = () => {
               </Input.Group>
             </Form.Item>
           </Col>
-          <Col span={24} style={{ textAlign: "end" }}>
+          <Col span={16} style={{ textAlign: "end" }}>
             <Button
-              type="primary"
-              onClick={() => {
-                form.submit();
-              }}
+              onClick={() =>
+                openModal({
+                  title: "Seleccionar o Ingresar Datos Fiscales",
+                  body: <DatosFiscalesForm local recordId={recordId} />,
+                  width: 900,
+                })
+              }
+              style={{ backgroundColor: "#6EAA46", color: "white", borderColor: "#6EAA46" }}
             >
-              Submit
+              Datos Fiscales
             </Button>
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              formProps={{
+                name: "sucursalId",
+                label: "Sucursal",
+                labelCol: { span: 6 },
+                wrapperCol: { span: 18 },
+              }}
+              options={BranchOptions}
+            />
           </Col>
         </Row>
       </Form>
@@ -277,4 +304,4 @@ const RequestRecord = () => {
   );
 };
 
-export default RequestRecord;
+export default observer(RequestRecord);

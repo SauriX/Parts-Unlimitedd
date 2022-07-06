@@ -13,7 +13,11 @@ import RequestInvoice from "./RequestInvoice";
 
 const { TabPane } = Tabs;
 
-const RequestTab = () => {
+type RequestTabProps = {
+  recordId: string;
+};
+
+const RequestTab = ({ recordId }: RequestTabProps) => {
   const [data, setData] = useState<IRequestPrice[]>([]);
 
   const operations = (

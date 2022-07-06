@@ -17,6 +17,18 @@ import Promotion from "../api/promotion";
 import Study from "../api/study";
 import Pack from "../api/pack";
 import Location from "../api/location";
+
+export const originOptions = [
+  { label: "Compañía", value: 1 },
+  { label: "Particular", value: 2 },
+];
+
+export const urgencyOptions = [
+  { label: "Normal", value: 1 },
+  { label: "Urgencia", value: 2 },
+  { label: "Urgencia con cargo", value: 3 },
+];
+
 export default class OptionStore {
   constructor() {
     makeAutoObservable(this);
@@ -414,59 +426,58 @@ export default class OptionStore {
     }
   };
 
-  CompanyOptions:IOptions[]=[];
+  CompanyOptions: IOptions[] = [];
 
   getCompanyOptions = async () => {
-    try{
-      const CompanyOptions =await Company.getAll("");
+    try {
+      const CompanyOptions = await Company.getActive();
       console.log(CompanyOptions);
-      this.CompanyOptions= CompanyOptions.map((x) => ({
+      this.CompanyOptions = CompanyOptions.map((x) => ({
         value: x.id,
         label: x.nombreComercial,
       }));
-    }catch(error){
-      this.CompanyOptions=[]
+    } catch (error) {
+      this.CompanyOptions = [];
     }
   };
 
-  MedicOptions:IOptions[]=[];
+  MedicOptions: IOptions[] = [];
 
   getMedicOptions = async () => {
-    try{
-      const MedicOptions =await Medics.getAll("");
+    try {
+      const MedicOptions = await Medics.getActive();
       console.log(MedicOptions);
-      this.MedicOptions= MedicOptions.map((x) => ({
+      this.MedicOptions = MedicOptions.map((x) => ({
         value: x.idMedico,
+        label: x.nombreCompleto,
+      }));
+    } catch (error) {
+      this.MedicOptions = [];
+    }
+  };
+
+  BranchCityOptions: IOptions[] = [];
+  getBranchCityOptions = async () => {
+    try {
+      const branch = Branch.getBranchByCity();
+      this.BranchOptions = (await branch).map((x) => ({
+        value: x.idSucursal,
         label: x.nombre,
       }));
-    }catch(error){
-      this.MedicOptions=[]
+    } catch (error) {
+      this.BranchOptions = [];
     }
   };
-
-  BranchCityOptions:IOptions[]=[];
-  getBranchCityOptions=async()=>{
-    try{
-      const branch = Branch.getBranchByCity();
-      this.BranchOptions= (await branch).map((x)=>({
-        value:x.idSucursal,
-        label:x.nombre
-      }));
-    }catch(error){
-      this.BranchOptions=[];
-    }
-  };
-  CityOptions:IOptions[]=[];
-  getCityOptions=async()=>{
-    try{
+  CityOptions: IOptions[] = [];
+  getCityOptions = async () => {
+    try {
       const branch = Location.getCities();
-      this.CityOptions= (await branch).map((x)=>({
-        value:x.id,
-        label:x.ciudad
+      this.CityOptions = (await branch).map((x) => ({
+        value: x.id,
+        label: x.ciudad,
       }));
-    }catch(error){
-      this.CityOptions=[];
+    } catch (error) {
+      this.CityOptions = [];
     }
   };
-
 }

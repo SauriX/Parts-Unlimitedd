@@ -17,7 +17,7 @@ import messages from "../../../app/util/messages";
 import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
 import { IOptions } from "../../../app/models/shared";
 import moment from "moment";
-import { ITaxForm } from "../../../app/models/taxdata";
+import { ITaxData } from "../../../app/models/taxdata";
 type QuotationFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
