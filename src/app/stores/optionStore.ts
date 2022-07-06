@@ -434,10 +434,11 @@ export default class OptionStore {
   getMedicOptions = async () => {
     try{
       const MedicOptions =await Medics.getAll("");
+
       console.log(MedicOptions);
       this.MedicOptions= MedicOptions.map((x) => ({
         value: x.idMedico,
-        label: x.nombre,
+        label: x.nombreCompleto,
       }));
     }catch(error){
       this.MedicOptions=[]

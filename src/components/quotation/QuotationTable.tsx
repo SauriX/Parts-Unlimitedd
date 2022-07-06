@@ -30,7 +30,7 @@ const cotizaciones =[{
     estudios:"Rayos X,Electrocardiograma",
     email:"alfredo.gj@...",
     whatsapp:"8167889100 ",
-    fecha:new  Date(moment.now()).toDateString(),
+    fecha:new  Date(moment.now()),
     expediente:"12312",
     activo:true,
 },{
@@ -40,13 +40,13 @@ const cotizaciones =[{
     estudios:"Rayos X,Electrocardiograma",
     email:"alfredo.gj@...",
     whatsapp:"8167889100 ",
-    fecha:new  Date(moment.now()).toDateString(),
+    fecha:new  Date(moment.now()),
     expediente:"12312",
     activo:true,
 }];
 const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => {
   const { optionStore,locationStore,quotationStore } = useStore();
-  const {  setSearch,search } = quotationStore;
+  const {  setSearch,getAll,search,quotatios } = quotationStore;
   const {BranchOptions,getBranchOptions}= optionStore;
   const {getCity,cityOptions}=locationStore;
   const [searchParams] = useSearchParams();
@@ -64,11 +64,11 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
 
   console.log("Table");
   useEffect(()=>{
-     const readData = async(search:ISearchQuotation)=>{
+     const readData = async()=>{
       await getBranchOptions();
     }
 
-     readData(search);
+     readData();
   },[getBranchOptions]);
   useEffect(()=>{
     const readData = async()=>{
@@ -76,20 +76,25 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
     }
     readData();
   },[getCity])
+
   useEffect(() => {
-    const readPriceList = async () => {
+    console.log(quotatios,"hola");
+
+    const readPriceList = async (search:ISearchQuotation) => {
       setLoading(true);
-      /* await getnow(search!); */
+      console.log("getexpedientes");
+       await getAll(search!); 
       setLoading(false);
     };
-
-/*     if (expedientes.length === 0) {
-        readPriceList();
-    } */
+    
+     if (quotatios.length === 0) {
+        readPriceList(search);
+    } 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
  const onfinish =async ()=>{
-/*   await getnow(search!); */
+   await getAll(search!); 
  }
     const columns: IColumns<IQuotationList> = [
     {
@@ -186,7 +191,7 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
           title="Editar Expediente"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/${views.proceeding}/${cotizacion.id}?${searchParams}&mode=edit`);
+            navigate(`/${views.quotatiion}/${cotizacion.id}?${searchParams}&mode=edit`);
           }}
         />
       ),
@@ -207,7 +212,7 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
           rowKey={(record) => record.id}
           columns={columns.slice(0, 7)}
           pagination={false}
-          dataSource={[...cotizaciones]}
+          dataSource={quotatios}
         />
       </div>
     );
@@ -258,7 +263,7 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
           rowKey={(record) => record.id}
           columns={columns}
           pagination={false}
-          dataSource={[...cotizaciones]}
+          dataSource={quotatios}
         />
       <div style={{ display: "none" }}>{<QuotationTablePrint />}</div>
     </Fragment>

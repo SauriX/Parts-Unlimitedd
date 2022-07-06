@@ -22,9 +22,9 @@ export default class LocationStore {
   getCity= async () => {
     try {
       const citys= await Location.getCities()
-      var ciudades = citys.filter(x=>x.id==1906||x.id==1909||x.id==932||x.id==1965||x.id==968||x.id==978);
+      var ciudades = citys.filter(x=>x.ciudad == "Ciudad Obregón"||x.ciudad == "Navojoa"||x.ciudad == "Hermosillo"||x.ciudad == "Nogales"||x.ciudad == "Guaymas"||x.ciudad=="Monterrey"||x.ciudad=="San Pedro Garza García");
       this.cityOptions=  ciudades.map((x)=>({
-        value:x.ciudad,
+        value:x.ciudad, 
         label:x.ciudad
       }));
       console.log(this.cityOptions,"options");
