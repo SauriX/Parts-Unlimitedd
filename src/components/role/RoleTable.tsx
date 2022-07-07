@@ -114,7 +114,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
   return (
     <Fragment>
       <Table<IRole>
-        loading={printing}
+        loading={loading ||printing}
         size="small"
         rowKey={(record) => record.id}
         columns={columns}

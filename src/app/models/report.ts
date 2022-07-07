@@ -8,11 +8,12 @@ export interface IReportList {
   expediente: string;
   nombre: string;
   visitas: number;
+  fecha: Date;
   fechaInicial: Date;
   fechaFinal: Date;
   grafica: boolean;
 }
-export interface IReportTable{
+export interface IReportTable {
   id: string;
   nombre: string;
   clave: string;
@@ -20,13 +21,13 @@ export interface IReportTable{
   visitas: number;
 }
 export interface IReportForm {
-    id: string;
-    ciudadId?: string;
-    sucursalId?: string;
-    grafica?: boolean;
+  id: string;
+  ciudadId?: string;
+  sucursalId?: string;
+  grafica?: boolean;
   fechaInicial?: Date;
   fechaFinal?: Date;
-   fecha: moment.Moment[];
+  fecha: moment.Moment[];
 }
 export class ReportFormValues implements IReportForm {
   id = "";

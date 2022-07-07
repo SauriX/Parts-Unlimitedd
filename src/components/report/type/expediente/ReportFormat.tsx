@@ -23,6 +23,7 @@ import {
 import { IReportForm, ReportFormValues } from "../../../../app/models/report";
 import ComponentExpedientes from "../../Component/ComponentExpedientes";
 import ComponentGraphic from "../../Component/ComponentGraphic";
+import moment from "moment";
   // import { v4 as uuid } from "uuid";
   
   type ReportFormProps = {
@@ -42,7 +43,7 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
   
   
     const [searchParams, setSearchParams] = useSearchParams();
-  
+    const [sucursal, setSucursal] = useState<string>("");
     const [form] = Form.useForm<IReportForm >();
     const { Option, OptGroup } = Select;
     const [loading, setLoading] = useState(false);
@@ -68,6 +69,7 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
     };
 
     const SwicthValidator= async ()=> {
+      // search.sucursalId = sucursal;
       if(Switch){
         console.log("si entree")
         setGrafica(true);
@@ -76,38 +78,43 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
         setTablaExp(true);
         setGrafica(false);
           }
-          await filtro(search!);
+
+          form.submit();
       }
+      
       useEffect(() => {
         const readReport = async () => {
           setLoading(true);
-          await filtro(search!);
+          // const report = await filtro(search);
+          // await filtro(search!);
           setLoading(false);
         };
     
         if (reports.length === 0) {
           readReport();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, []);
+      }, [reports.length]);
     const onFinish = async (newValues: IReportForm) => {
       setLoading(true);
   
       const report = { ...values, ...newValues };
       report.fechaInicial = newValues.fecha[0].toDate();
       report.fechaFinal = newValues.fecha[1].toDate();
-  
-  
-      let success = false;
-  
-      setLoading(false); 
-      // success = await filtro(report);
+      report.fecha = [moment(report?.fechaInicial),moment(report?.fechaFinal)]
+      report.sucursalId = sucursal;
+      filtro(report!).then(x=> setLoading(false));
 
-      if (success) {
-        // goBack();
-      }
+      // let success = false;
+      // setLoading(false); 
+      // // await filtro(report);
+      
+      // if (success) {
+      //   // SwicthValidator();
+      // }
     };
- 
+    // function disabledDate(current: moment.Moment) {
+    //   return current.isBefore(moment(), "day");
+    // }
     return (
       <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
         <Row style={{ marginBottom: 24 }}>
@@ -128,12 +135,14 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
                     <DateRangeInput
                       formProps={{ label: "Rango de fechas", name: "fecha" }}
                       readonly={readonly}
+                      // disabledDate={disabledDate} 
                       
                     />
                   </div>
                   </Col>
                   <Col md={14} sm={24} xs={12}> 
-                  <Form.Item name="ciudadId" label="Ciudad">
+                  <Form.Item name="CiudadId" label="Ciudad">
+                  {/* <Form.Item name="sucursalId" label="Sucursal"> */}
                   <TreeSelect
                     // style={{ width: "80%" }}
                     // value={value}
@@ -143,7 +152,7 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
                     treeDefaultExpandAll
                     value={search.sucursalId} 
                     onChange={(value)=>{
-                      setSearch({ ...search,sucursalId:value  })
+                      setSucursal(value);
                     }} 
                   />
                 </Form.Item>
@@ -177,6 +186,7 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
                   }}
                   label="Gráfica"
                   readonly={readonly}
+                  
                 />
                 </Col>
                   <Col md={12} sm={24} xs={12}> 
@@ -204,15 +214,16 @@ import ComponentGraphic from "../../Component/ComponentGraphic";
               <PageHeader
                 ghost={false}
                 title={
-                  <HeaderTitle title="Expedientes" image="Reportes" />
+                  <HeaderTitle title="Estadística de Expedientes" image="Reportes" />
                 }
                 className="header-container"
               ></PageHeader>
+              
             )}
             {printing && <Divider className="header-divider" />} 
             <Row justify="center">
-            {TablaExp && <ComponentExpedientes></ComponentExpedientes>}  
-            {Grafica && <ComponentGraphic></ComponentGraphic> }
+            {TablaExp && <ComponentExpedientes printing={true}></ComponentExpedientes>}  
+            {Grafica && <ComponentGraphic printing={true}></ComponentGraphic> }
             </Row>
           </div>
         </div>

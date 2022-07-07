@@ -39,7 +39,7 @@ const RequestTab = ({ recordId }: RequestTabProps) => {
     } else if (tabName === "indications") {
       component = <RequestIndication data={data} />;
     } else if (tabName === "register") {
-      component = <RequestRegister />;
+      component = <RequestRegister recordId={recordId} />;
     } else if (tabName === "request") {
       component = <RequestRequest />;
     } else if (tabName === "print") {

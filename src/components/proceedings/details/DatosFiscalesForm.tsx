@@ -18,9 +18,10 @@ const formItemLayout = {
 type DatosFiscalesFormProps = {
   local?: boolean;
   recordId?: string;
+  onSelectRow?: (taxData: ITaxData) => void;
 };
 
-const DatosFiscalesForm = ({ local, recordId }: DatosFiscalesFormProps) => {
+const DatosFiscalesForm = ({ local, recordId, onSelectRow }: DatosFiscalesFormProps) => {
   const { procedingStore, locationStore } = useStore();
   const { setTax, tax, getTaxData, createTaxData, updateTaxData } = procedingStore;
   const { getColoniesByZipCode } = locationStore;
@@ -28,6 +29,7 @@ const DatosFiscalesForm = ({ local, recordId }: DatosFiscalesFormProps) => {
   const [form] = Form.useForm<ITaxData>();
 
   const [loading, setLoading] = useState(false);
+  const [selectedRow, setSelectedRow] = useState<string>();
   const [localTaxData, setLocalTaxData] = useState<ITaxData[]>([]);
   const [colonies, setColonies] = useState<IOptions[]>([]);
   const [errors, setErrors] = useState<IFormError[]>([]);
@@ -187,7 +189,6 @@ const DatosFiscalesForm = ({ local, recordId }: DatosFiscalesFormProps) => {
             }}
             scrollToFirstError
             onValuesChange={onValuesChange}
-            size="small"
           >
             <Row gutter={[0, 12]}>
               <TextInput
@@ -318,13 +319,24 @@ const DatosFiscalesForm = ({ local, recordId }: DatosFiscalesFormProps) => {
         </Col>
         <Col span={24}>
           <Table<ITaxData>
-            size="small"
+            tableLayout="auto"
             sticky
             columns={columnsEstudios}
             pagination={false}
             rowKey={(item) => item.id}
             dataSource={local ? localTaxData : [...(tax ?? [])]}
-            scroll={{ x: "auto", y: 300 }}
+            scroll={{ x: "max-content" }}
+            rowClassName={(taxData) => (taxData.id === selectedRow ? "custom-selected-row" : "")}
+            onRow={(taxData) => {
+              return {
+                onClick: () => {
+                  if (onSelectRow) {
+                    setSelectedRow(taxData.id);
+                    onSelectRow(taxData);
+                  }
+                },
+              };
+            }}
           />
         </Col>
       </Row>
