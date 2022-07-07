@@ -31,7 +31,8 @@ const DateRangeInput = ({ formProps: itemProps, required, readonly }: IProps) =>
       labelAlign={itemProps.labelAlign ?? "right"}
       rules={rules}
     >
-      <DatePicker.RangePicker disabledDate={disabledDate} 
+      <DatePicker.RangePicker 
+      // disabledDate={disabledDate} 
       disabled={readonly} format="DD/MM/YYYY" />
     </Form.Item>
   );

@@ -7,9 +7,9 @@ const Report = {
     getAll: (reportName: string, search?: string): Promise<IReportList[]> =>
     requests.get(`report/${reportName}/all/${!search ? "all" : search}`),
     getBranchByCount: (): Promise<IReportList[]> => requests.get(`request/getBranchByCount`),
-    access: (): Promise<IScopes> => requests.get("scopes/report"),
+    access: (): Promise<IScopes> => requests.get("scopes/request"),
     // filtro: (reportName: IReportForm): Promise<void> => requests.post("report", reportName),
-    filtro: (search:IReportForm): Promise<IReportList[]> => requests.post(`report/now`,search??{}),
+    filtro: (search:IReportForm): Promise<IReportList[]> => requests.post(`request/filter`,search??{}),
     // create: (reportName: string, report: IReportForm): Promise<IReportForm> => requests.post(`report/${reportName}`, report),
     exportList: (reportName: string, search: string): Promise<void> =>
     requests.download(`report/${reportName}/export/list/${!search ? "all" : search}`),

@@ -8,13 +8,16 @@ import { useStore } from "../../../app/stores/store";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 
 type CompExpedienteProps = {
+    // componentRef: React.MutableRefObject<any>;
+    printing: boolean;
 };
 
-const CompExpediente: FC<CompExpedienteProps> = ({}) => {
+const CompExpediente: FC<CompExpedienteProps> = ({
+    // componentRef,
+    printing,}) => {
     const { reportStore ,optionStore} = useStore();
   const { getBranchByCount } = reportStore;
     const {
-        DeliveryOptions,
         getDeliveryOptions,
       } = optionStore;
     const [loading, setLoading] = useState(false);
@@ -73,9 +76,55 @@ const CompExpediente: FC<CompExpedienteProps> = ({}) => {
         },
         
     ];
-    const FuncionPrueba = () =>{
+    // const FuncionPrueba = () =>{
         
-    }
+    // }
+    // const ReportTablePrint = () => {
+    //     return (
+    //         <div >
+    //             <PageHeader
+    //                 ghost={false}
+    //                 title={<HeaderTitle title="Estadística de expedientes" image="Reportes" />}
+    //                 className="header-container"
+    //             ></PageHeader>
+    //             <Divider className="header-divider" />
+    //             <Table<IReportList>
+    //                 size="small"
+    //                 rowKey={(record) => record.id}
+    //                 columns={columns.slice(0, 3)}
+    //                 pagination={false}
+    //                 dataSource={[...reports]}
+    //             />
+    //         </div>
+    //     );
+    // };
+
+
+    // return (
+    //     <Fragment>
+    //         <div style={{ textAlign: "right" }} >
+    //         <PageHeader
+    //                 ghost={false}
+    //                 title={<HeaderTitle title="Estadística de expedientes" image="Reportes" />}
+    //                 className="header-container"
+    //             ></PageHeader>
+    //             <Divider className="header-divider" />
+    //         <Table<IReportList>
+    //             loading={loading }
+    //             size="large"
+    //             rowKey={(record) => record.id}
+    //             columns={columns}
+    //             dataSource={[...reports]}
+    //             sticky
+    //             scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+    //         />
+    //         <div 
+    //         style={{ display: "none" }}
+    //         >{<ReportTablePrint />}</div>
+    //         </div>
+    //     </Fragment>
+    // );
+
     const ReportTablePrint = () => {
         return (
             <div>
@@ -102,20 +151,32 @@ const CompExpediente: FC<CompExpedienteProps> = ({}) => {
 
     return (
         <Fragment>
+            <div style={{ textAlign: "center", height: 100 }} >
+                <Divider className="header-divider" />
+                {printing && (
+            <PageHeader
+              ghost={false}
+              title={
+                <HeaderTitle title="Catálogo de Lealtades" image="Lealtad" />
+              }
+              className="header-container"
+            ></PageHeader>
+          )}
             <Table<IReportList>
                 loading={loading}
                 size="small"
                 rowKey={(record) => record.id}
-                columns={columns}
+                columns={columns.slice(0, 3)}
                 dataSource={[...reports]}
                 sticky
+                pagination={false}
                 // scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
             />
             <div style={{ display: "none" }}>{<ReportTablePrint />}</div>
             {/* <ReactECharts option={options} />; */}
+            </div>
         </Fragment>
     );
-
     
 }
 export default observer(CompExpediente);
