@@ -28,7 +28,7 @@ const root = createRoot(document.getElementById("root")!);
 
 root.render(
   <BrowserRouter basename={`${process.env.REACT_APP_NAME}/admin/`}>
-    <ConfigProvider locale={es_ES} renderEmpty={() => <Empty />}>
+    <ConfigProvider locale={es_ES} renderEmpty={() => <Empty />} componentSize="small">
       <StoreContext.Provider value={store}>
         <NavigateSetter />
         <App />

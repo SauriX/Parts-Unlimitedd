@@ -94,7 +94,6 @@ const requests = {
         baseURL,
       })
       .then(responseBody),
-  // download: (url: string, data?: Object | FormData) =>
   download: (url: string, data?: Object | FormData) =>
     axios
       .post(url, data ?? {}, {
@@ -122,6 +121,41 @@ const requests = {
         link.setAttribute("download", name);
         document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
+      }),
+  print: (url: string, data?: Object | FormData) =>
+    axios
+      .post(url, data ?? {}, {
+        baseURL,
+        responseType: "blob",
+        headers:
+          {} instanceof FormData
+            ? { "Content-Type": "multipart/form-data" }
+            : { "Content-Type": "application/json" },
+      })
+      .then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));
+
+        let iframe = document.querySelector("iframe.printframe") as HTMLIFrameElement;
+
+        if (!iframe) {
+          iframe = document.createElement("iframe");
+          iframe.classList.add("printframe");
+        }
+
+        iframe.style.display = "none";
+
+        document.body.appendChild(iframe);
+
+        iframe.onload = function () {
+          setTimeout(function () {
+            iframe.focus();
+            iframe.contentWindow?.print();
+            URL.revokeObjectURL(url);
+          }, 1);
+        };
+
+        iframe.src = url;
       }),
 };
 
