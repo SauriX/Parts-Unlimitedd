@@ -4,7 +4,8 @@ import PriceList from "../api/priceList";
 import quotation from "../api/quotation";
 import Study from "../api/study";
 import { IProceedingList } from "../models/Proceeding";
-import { IQuotationExpedienteSearch, IQuotationForm, IQuotationList, ISearchQuotation, SearchQuotationValues } from "../models/quotation";
+import { IQuotationExpedienteSearch, IQuotationForm, IQuotationList, ISearchQuotation, ISolicitud, SearchQuotationValues } from "../models/quotation";
+import { IRequestGeneral } from "../models/request";
 
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -29,8 +30,8 @@ export default class QuotationStore {
     this.scopes = undefined;
   };
 
-  clearReagents = () => {
-   
+  clearsearch = () => {
+    this.search =new SearchQuotationValues();
   };
 
 /*   access = async () => {
@@ -96,6 +97,7 @@ export default class QuotationStore {
         x.parametros= parametros!.parameters;
         x.nombre= parametros!.nombre
         x.indicaciones = parametros?.indicaciones!;
+        x.clave= parametros?.clave!;
       });
       console.log(reagent,"cotizacion");
       return reagent;
@@ -121,6 +123,17 @@ export default class QuotationStore {
       return false;
     }
   };
+  createsolictud = async (reagent: ISolicitud) => {
+    try {
+      const updatedReagent = await quotation.createSolicitud(reagent);
+      alerts.success(messages.updated);
+      
+      return updatedReagent;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
 getstudy = async (id:number) =>{
   try {
   const updatedReagent = await PriceList.getPriceStudy(id);
@@ -131,7 +144,7 @@ getstudy = async (id:number) =>{
   return false;
 }
   
-}
+};
 getPack = async (id:number) =>{
   try {
   const updatedReagent = await PriceList.getPricePack(id);
@@ -142,19 +155,19 @@ getPack = async (id:number) =>{
   return false;
 }
   
-}
-/* 
-  exportList = async (search: string) => {
+};
+ 
+  exportList = async (search: ISearchQuotation) => {
     try {
-      await Reagent.exportList(search);
+      await quotation.exportList(search);
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
-  }; */
+  }; 
 
-/*   exportForm = async (id: string) => {
+   exportForm = async (id: string) => {
     try {
-      await Reagent.exportForm(id);
+      await quotation.exportForm(id);
     } catch (error: any) {
       if (error.status === responses.notFound) {
         history.push("/notFound");
@@ -162,5 +175,5 @@ getPack = async (id:number) =>{
         alerts.warning(getErrors(error));
       }
     }
-  }; */
+  }; 
 }

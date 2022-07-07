@@ -1,7 +1,7 @@
 import moment, { Moment } from "moment";
 import { IIndicationList } from "./indication";
 import { IParameterList } from "./parameter";
-import { IRequestPrice } from "./request";
+import { IRequestGeneral, IRequestPrice } from "./request";
 export interface ISearchQuotation{
     presupuesto:string,
     activo:boolean,
@@ -33,8 +33,20 @@ export interface IQuotationForm{
     generales?:IQuotationGeneralesForm,
     expedienteid?:string
     estudy?:IRequestPrice[]
+    cargo?:number
+    typo?: number
+    sucursalId?:string
 }
-
+export interface ISolicitud {
+    Id :string;
+    ExpedienteId :string;
+    SucursalId :string;
+    Clave :string;
+    ClavePatologica :string;
+    UsuarioId :string;
+    General :IRequestGeneral;
+    Estudios :IRequestPrice[];
+}
 export interface IQuotationGeneralesForm{
     procedencia?:string,
     compañia:string,

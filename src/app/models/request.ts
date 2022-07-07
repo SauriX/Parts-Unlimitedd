@@ -3,8 +3,8 @@ import { IParameterList } from "./parameter";
 
 export interface IRequestGeneral {
   procedencia?: number;
-  compañiaId?: number;
-  medicoId?: number;
+  compañiaId?: string;
+  medicoId?: string;
   afiliacion: string;
   urgencia?: number;
   metodoEnvio?: string[];

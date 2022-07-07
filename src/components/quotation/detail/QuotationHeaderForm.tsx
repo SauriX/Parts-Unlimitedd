@@ -17,8 +17,8 @@ type QuotationHeaderFormProps = {
 };
 
 const QuotationHeaderForm: FC<QuotationHeaderFormProps> = ({ handlePrint, handleDownload,id }) => {
-/*   const {  } = useStore();
-  const { scopes, getAll, exportList } = ; */
+   const { quotationStore } = useStore();
+  const { /* scopes, */ getAll, exportList } = quotationStore; 
 
   const navigate = useNavigate();
 

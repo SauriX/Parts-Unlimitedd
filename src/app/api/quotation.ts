@@ -1,6 +1,7 @@
 import { IProceedingList } from "../models/Proceeding";
 import { IPromotionForm, IPromotionList } from "../models/promotion";
-import { IQuotationExpedienteSearch, IQuotationForm, IQuotationList, ISearchQuotation } from "../models/quotation";
+import { IQuotationExpedienteSearch, IQuotationForm, IQuotationList, ISearchQuotation, ISolicitud } from "../models/quotation";
+import { IRequestGeneral } from "../models/request";
 import { IScopes } from "../models/shared";
 import requests from "./agent";
 
@@ -10,12 +11,11 @@ const Quotation = {
   create: (promotion: IQuotationForm): Promise<boolean> => requests.post("/PriceQuote", promotion),
   getRecord: (search:IQuotationExpedienteSearch): Promise<IProceedingList[]> => requests.post(`PriceQuote/records`,search??{}),
   getById: (id: string): Promise<IQuotationForm> => requests.get(`PriceQuote/${id}`),
-  update: (promotion: IQuotationForm): Promise<IQuotationForm> => requests.put("PriceQuote", promotion),
-
-  getActive: (): Promise<IPromotionList[]> => requests.get(`promotion/active`),
-  exportList: (search: string): Promise<void> =>
-    requests.download(`promotion/export/list/${!search ? "all" : search}`),
-  exportForm: (id: string): Promise<void> => requests.download(`promotion/export/form/${id}`),
+  update: (promotion:IQuotationForm): Promise<string> => requests.put("PriceQuote", promotion),
+  createSolicitud: (promotion: ISolicitud ): Promise<string> => requests.post("/PriceQuote/solicitud", promotion),
+  exportList: (search: ISearchQuotation): Promise<void> =>
+  requests.download(`PriceQuote/export/list`, search),
+  exportForm: (id: string): Promise<void> => requests.download(`PriceQuote/export/form/${id}`),
 };
 
 export default Quotation;

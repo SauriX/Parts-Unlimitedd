@@ -141,7 +141,7 @@ const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>{
                         <SelectInput
                             formProps={{
                                 name: "medico",
-                                label: "Medico",
+                                label: "Médico",
                             }}
                             options={[...MedicOptions]}
                         ></SelectInput>
@@ -201,7 +201,7 @@ const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>{
                             /* form.submit(); */
                         }}
                         >
-                        Prueba Envió
+                        Prueba Envio
                     </Button>
                     </Col>
                     <Col span={9}></Col>
@@ -225,7 +225,7 @@ const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>{
                             /* form.submit(); */
                         }}
                         >
-                        Prueba Envió
+                        Prueba Envio
                     </Button>
                     </Col>
                     <Col span={9}></Col>

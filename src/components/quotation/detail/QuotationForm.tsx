@@ -9,9 +9,9 @@ import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
-import NumberInput from "../../../app/common/form/proposal/MaskInput";
+import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import DateInput from "../../../app/common/form/proposal/DateInput";
-import SelectInput from "../../../app/common/form/SelectInput";
+import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
@@ -23,12 +23,14 @@ import  GeneralesForm  from "./TapsComponents/Generales"
 import ExpedientesForm from "./TapsComponents/Estudios"
 import IndiciacionesForm from "./TapsComponents/Indicaciones"
 import BusquedaForm from "./TapsComponents/Busqueda"
-import { IQuotationForm, IQuotationGeneralesForm, IQuotationPrice, QuotationFormValues } from "../../../app/models/quotation";
+import { IQuotationForm, IQuotationGeneralesForm, IQuotationPrice, QuotationFormValues,ISolicitud } from "../../../app/models/quotation";
 import { IProceedingList } from "../../../app/models/Proceeding";
 import { IRequestPrice } from "../../../app/models/request";
 import { sum } from "lodash";
+import { IParameterList } from "../../../app/models/parameter";
+import { type } from "os";
 type QuotationFormProps = {
-  id: string;
+  id:  string;
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
@@ -36,7 +38,7 @@ type QuotationFormProps = {
 const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) => {
   const navigate = useNavigate();
   const { modalStore,  locationStore, optionStore,profileStore,quotationStore,priceListStore } = useStore();
-   const { getById, update,  create,  search,  } = quotationStore;
+   const { getById, update,  create,  search,createsolictud,getAll,quotatios  } = quotationStore;
  const [data, setData] = useState<IRequestPrice[]>([]);
   const { profile } = profileStore;
   const [loading, setLoading] = useState(false);
@@ -53,13 +55,16 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
   const[generales,setGenerales] = useState<IQuotationGeneralesForm>();
   const [generalesSumbit,setGeneralesSumbit] = useState(false);
   const [record,Setrecord]=useState<IProceedingList>();
-  const [total,SetTotal]=useState<number>();
+  const [total,SetTotal]=useState<number>(0);
+  const [totalFinal,SetTotalFinal]=useState<number>();
+  const [cargo,SetCargo]=useState<number>();
+  const [typo,SetTypo]=useState<number>(1);
   const { TabPane } = Tabs;
   const goBack = () => {
     
     searchParams.delete("mode");
     setSearchParams(searchParams);
-    navigate(`/${views.proceeding}?${searchParams}`);
+    navigate(`/${views.quotatiion}?${searchParams}`);
     closeModal();
   };
 
@@ -69,7 +74,15 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
     form.setFieldsValue(values!);
   },[values]);
 
-
+useEffect(()=>{
+  const read = async ()=>{
+    await getAll(search);
+  }
+  if(id){
+    read();
+  }
+  
+},[getAll]);
 
 /*   const clearLocation = () => {
     form.setFieldsValue({
@@ -81,6 +94,56 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
   }; */
 
 
+  const setTipo=(tipo:number,carg:number)=>{
+      SetTypo(tipo);
+      calculateTotalFinal(carg!,tipo);
+  }
+  const calculateTotalFinal = (carg:number,tipo:number)=>{
+    if(tipo==2){
+      var totalfinal= total!+carg!;
+      SetTotalFinal(totalfinal);
+    }
+    if(tipo==1){
+      var porcent = (total! * carg!)/100;
+      var totalfinal = total! + porcent;
+      SetTotalFinal(totalfinal);
+    }   
+    
+  }
+const convertSolicitud=()=>{
+    var request:ISolicitud = {
+      Id:values.id,
+      ExpedienteId :values.expedienteid!,
+      SucursalId :profile?.sucursal!,
+      Clave :values.nomprePaciente,
+      ClavePatologica :"",
+      UsuarioId :"00000000-0000-0000-0000-000000000000",
+      General :{
+        procedencia: 0,
+        compañiaId:  values.generales?.compañia!,
+        medicoId:  values.generales?.medico!,
+        afiliacion:  "",
+        urgencia:  0,
+        metodoEnvio: [],
+        envioCorreo:  values.generales?.email!,
+        envioWhatsapp:  values.generales?.whatssap!,
+        observaciones:  values.generales?.observaciones!,
+        
+      },
+      Estudios :values.estudy!,
+    }
+    var redirect = createsolictud(request);
+    navigate(`/${views.quotatiion}/${redirect}?${searchParams}`);
+}
+useEffect(()=>{
+  var suma = 0;
+  data.forEach ((x)=>{
+
+      suma += x.precioFinal;
+  });
+
+  SetTotal(suma);
+},[data]);
   useEffect(() => {
     const readExpedinte = async (id: string) => {
       setLoading(true);
@@ -99,6 +162,10 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
       setValues(expediente!);
       console.log(expediente?.estudy!,"estudys");
       setData(expediente?.estudy!);
+      SetCargo(expediente?.cargo!);
+      SetTypo(expediente?.typo!);
+
+      calculateTotalFinal(expediente?.cargo!,expediente?.typo!);
       setLoading(false);
     };
 
@@ -110,28 +177,16 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, getById]);
   
-/*   useEffect(()=>{
+/*    useEffect(()=>{
     if(!profile?.admin){
       form.setFieldsValue({sucursal:profile?.sucursal});
     }
     
-  });
- */
-/*   useEffect(() => {
-    const readData = async (search: ISearchMedical) => {
-      await getnow(search);
-    }
+  }); */
 
-    readData(search);
-  }, [search, getnow]) */
 
-/*   useEffect(() => {
-    const readData = async (search: ISearchMedical) => {
-      await getBranchOptions();
-    }
 
-    readData(search);
-  }, [getBranchOptions]) */
+
   const setEditMode = () => {
     navigate(`/${views.proceeding}/${id}?${searchParams}&mode=edit`);
     setReadonly(false);
@@ -152,14 +207,14 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
   const onValuesChange = async (changedValues: any) => {
     const field = Object.keys(changedValues)[0];
     if(field=="edad"){
-      const edad = changedValues[field] as number;
+      const edad = changedValues[field] 
       var hoy = new Date();
       var cumpleaños =  hoy.getFullYear()-edad;
       hoy.setFullYear(cumpleaños);
       /* setValues((prev) => ({ ...prev, fechaNacimiento: hoy })) */
     }
     if (field === "cp") {
-      const zipCode = changedValues[field] as string;
+      const zipCode = changedValues[field] 
 
       if (zipCode && zipCode.trim().length === 5) {
         const location = await getColoniesByZipCode(zipCode);
@@ -182,13 +237,25 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
       }
     }
   };
+  const parametrosDuplicados =(estudios:IRequestPrice[])=>{
+    let duplicados = [];
+    var temparray:IParameterList[]=[] ;
+    estudios.forEach(x=>x.parametros.forEach(x=> temparray.push(x)));  
+    temparray = temparray.sort();
+      for (let i = 0; i < temparray.length; i++) {
+        if (temparray[i + 1] === temparray[i]) {
+          duplicados.push(temparray[i]);
+        }
+      }
+
+      return duplicados;
+  } 
   const setPage = (page: number) => {
-/*     const priceList = expedientes[page - 1];
-    navigate(`/${views.proceeding}/${priceList.id}?${searchParams}`); */
+    const priceList = quotatios[page - 1];
+    navigate(`/${views.quotatiion}/${priceList.id}?${searchParams}`);
   };
   const getPage = (id: string) => {
-    /* return expedientes.findIndex(x => x.id === id) + 1; */
-    return 1;
+    return quotatios.findIndex(x => x.id === id) + 1;
   };
   const continues = async (cont: boolean) => {
     SetContinuar(cont);
@@ -198,13 +265,28 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
      setLoading(true);
       console.log(generales,"genreales");
     const reagent = { ...values, ...newValues };
-
+        if (data.length<=0){
+          alerts.warning(`La cotización debe tener un estudio o paquete`)
+          setLoading(false);
+          return
+        }
       
       let success = false;
       reagent.generales = generales;
       reagent.expediente = record?.expediente!;
       reagent.estudy= data;
+      reagent.typo= typo;
+      reagent.cargo = cargo;
+      reagent.sucursalId= profile?.sucursal;
       console.log(reagent,"reagent");
+
+      var duplicados = parametrosDuplicados(reagent.estudy);
+      if(duplicados.length>0){
+        duplicados.forEach(x=>alerts.warning(`El parametro ${x.nombre} sse Encuentra duplicado`));
+        setLoading(false);
+        return
+      }
+      
       if (!reagent.id) {
         console.log("succes");
          success = await create(reagent);      
@@ -226,7 +308,7 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
             <Pagination
               size="small"
-              total={10 ?? 0}
+              total={quotatios.length ?? 0}
               pageSize={1}
               current={getPage(id)}
               onChange={setPage}
@@ -259,7 +341,7 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Expediente" />}
+              title={<HeaderTitle title="Catálogo de Cotizaciones" />}
               className="header-container"
             ></PageHeader>
           )}
@@ -285,7 +367,9 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
                   formProps={{
                     name: "nomprePaciente",
                     label: "Nombre(s)",
+                    
                   }}
+                  width="small"
                   max={500}
                   showLabel
                   readonly={readonly}
@@ -298,41 +382,44 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
                     name: "expediente",
                     label: "Expediente",
                   }}
+                  width="small"
                   max={500}
                   showLabel
                   readonly={readonly}
                   errors={errors.find((x) => x.name === "expediente")?.errors}
                 />
-                <DateInput 
-                  formProps={{
-                      name: "fechaNacimiento",
-                      label: "Fecha de Nacimiento",
-                      
-                    }}
-                    errors={errors.find((x) => x.name === "fechaNacimiento")?.errors}
-                />
-                
               </Col>
               <Col md={12} sm={24} xs={12} >
               <NumberInput
                   formProps={{
                     name: "edad",
                     label: "Edad",
+                    style:{width:"130px", marginLeft:"170px"}
                   }}
-                  mask={[
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                  ]}
+                  width="small"
+                  min={0}
                   readonly={readonly}
                   errors={errors.find((x) => x.name === "edad")?.errors}
                 ></NumberInput>
               </Col>
+              <Col md={12} sm={24} xs={12}>
+              <DateInput 
+                  formProps={{
+                      name: "fechaNacimiento",
+                      label: "Fecha de Nacimiento",
+                      style:{width:"430px", marginLeft:"70px"}
+                    }}
+                    width="small"
+                    errors={errors.find((x) => x.name === "fechaNacimiento")?.errors}
+                />
+              </Col>
+
               <Col span={12}>
                         <SelectInput
                             formProps={{
                                 name: "genero",
-                                label: "Genero",
+                                label: "Género",
+                                style:{width:"165px", marginLeft:"159px"}
                             }}
                             options={[{ value: "M", label: "M" }, { value: "F", label: "F" }]}
                         ></SelectInput>
@@ -351,13 +438,14 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
                   <TabPane tab="Indiciaciones" key="3">
                     <IndiciacionesForm data={data} clave={""}></IndiciacionesForm>
                   </TabPane>
-                  <TabPane tab="Busqueda" key="4">
+                  <TabPane tab="Búsqueda" key="4">
                     <BusquedaForm handleCotizacion={setValues} handleIdExpediente={Setrecord} printing={loading}></BusquedaForm>
                   </TabPane>
               </Tabs>
             </Col>
             <Col  md={6} sm={24} xs={12}>
-              <br />
+            {id &&<Button style={{marginTop:"10px", marginLeft:"80px",backgroundColor:"#B4C7E7",color:"white"}} onClick={()=>{convertSolicitud()}}>Convertir a solicitud</Button>}
+            {!id &&<br />}
               <br />
                 <Descriptions
                   labelStyle={{ width: "60%", }}
@@ -366,26 +454,24 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
                   column={1}
                   size="small"
                 >
-                  <Descriptions.Item label="Cancelar">Modificar</Descriptions.Item>
+                  <Descriptions.Item label="">Costos</Descriptions.Item>
                   
 
-                <Descriptions.Item label="Total">{total}</Descriptions.Item>
+                <Descriptions.Item label="Total">$ {total}</Descriptions.Item>
                 <Descriptions.Item
                     label={
                       <div style={{ display: "flex", justifyContent: "space-between" }}>
                         <Text>Cargo</Text>
-                        <Radio.Group size="small" className="request-radio"
-                          
-                        >
-                          <Radio value={1}>%</Radio>
-                          <Radio value={2}>$</Radio>
-                        </Radio.Group>
+
+                          <Radio value={1} checked={typo==1} onChange={(value)=>{setTipo(value.target.value,cargo!)}}>%</Radio>
+                          <Radio value={2} checked={typo==2} onChange={(value)=>{setTipo(value.target.value,cargo!)}}>$</Radio>
+
                       </div>
                     }
                   >
-                    {}
+                    <InputNumber min={0} value={cargo} onChange={(value)=>{SetCargo(value); calculateTotalFinal(value,typo)}}></InputNumber>
                   </Descriptions.Item>
-                  <Descriptions.Item label="Total">$ 630.00</Descriptions.Item>
+                  <Descriptions.Item label="Total">$ {totalFinal}</Descriptions.Item>
               </Descriptions>
               <Button style={{marginTop:"10px", marginLeft:"100px",backgroundColor:"#B4C7E7",color:"white"}} onClick={()=>{}}>Imprimir</Button>
             </Col>

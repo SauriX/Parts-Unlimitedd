@@ -1,5 +1,5 @@
 import { isFocusable } from "@testing-library/user-event/dist/utils";
-import { Checkbox, Col, Row, Select, Table, Typography } from "antd";
+import { Button, Checkbox, Col, Row, Select, Table, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { FC, useEffect, useState } from "react";
 import {
@@ -20,7 +20,7 @@ type RequestStudyProps = {
   data: IRequestPrice[];
   total:number;
   setData: React.Dispatch<React.SetStateAction<IRequestPrice[]>>;
-  setTotal:React.Dispatch<React.SetStateAction<number | undefined>>;
+  setTotal:React.Dispatch<React.SetStateAction<number>>;
 };
 
 const RequestStudy: FC<RequestStudyProps> = ({ data, setData,setTotal,total }) => {
@@ -286,6 +286,9 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData,setTotal,total }) =
           sticky
           scroll={{ x: "auto" }}
         />
+      </Col>
+      <Col span={24}>
+        <Button style={{borderColor:"#87CEFA", marginTop:"40px", marginLeft:"400px" , width:"700px;"}} onClick={()=>{setData([])}}>Remover estudios</Button>
       </Col>
     </Row>
   );
