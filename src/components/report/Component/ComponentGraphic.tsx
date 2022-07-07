@@ -127,7 +127,7 @@ const CompGraphic: FC<CompGrahicProps> = ({printing}) => {
               <Divider className="header-divider" />
               {/* <div style={{ display: "none" }}>{<ReportGraphic />} </div> */}
               <ReactECharts option={options} />
-              {!printing && < ComponentExpedientes printing={false}></ComponentExpedientes>}
+              {/* {!printing && < ComponentExpedientes printing={false}></ComponentExpedientes>} */}
           </div>
       </Fragment>
   );

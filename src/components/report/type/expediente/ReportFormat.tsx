@@ -43,7 +43,7 @@ import moment from "moment";
   
   
     const [searchParams, setSearchParams] = useSearchParams();
-    const [ciudad, setCiudad] = useState<string>("");
+    const [sucursal, setSucursal] = useState<string>("");
     const [form] = Form.useForm<IReportForm >();
     const { Option, OptGroup } = Select;
     const [loading, setLoading] = useState(false);
@@ -69,7 +69,7 @@ import moment from "moment";
     };
 
     const SwicthValidator= async ()=> {
-      search.sucursalId = ciudad;
+      // search.sucursalId = sucursal;
       if(Switch){
         console.log("si entree")
         setGrafica(true);
@@ -78,38 +78,39 @@ import moment from "moment";
         setTablaExp(true);
         setGrafica(false);
           }
-          await filtro(search!);
+
+          form.submit();
       }
+      
       useEffect(() => {
         const readReport = async () => {
           setLoading(true);
           // const report = await filtro(search);
-
           // await filtro(search!);
           setLoading(false);
         };
     
-        // if (reports.length === 0) {
-        //   readReport();
-        // }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, []);
+        if (reports.length === 0) {
+          readReport();
+        }
+      }, [reports.length]);
     const onFinish = async (newValues: IReportForm) => {
       setLoading(true);
   
       const report = { ...values, ...newValues };
       report.fechaInicial = newValues.fecha[0].toDate();
       report.fechaFinal = newValues.fecha[1].toDate();
-      report!.fecha = [moment(report?.fechaInicial),moment(report?.fechaFinal)]
-  
-      let success = false;
-  
-      setLoading(false); 
-      // await filtro(report);
+      report.fecha = [moment(report?.fechaInicial),moment(report?.fechaFinal)]
+      report.sucursalId = sucursal;
+      filtro(report!).then(x=> setLoading(false));
 
-      if (success) {
-        // SwicthValidator();
-      }
+      // let success = false;
+      // setLoading(false); 
+      // // await filtro(report);
+      
+      // if (success) {
+      //   // SwicthValidator();
+      // }
     };
     // function disabledDate(current: moment.Moment) {
     //   return current.isBefore(moment(), "day");
@@ -151,9 +152,7 @@ import moment from "moment";
                     treeDefaultExpandAll
                     value={search.sucursalId} 
                     onChange={(value)=>{
-                      console.log(value, "Treselect debuger")
-                      setCiudad(value);
-                      // setSearch({ ...search,sucursalId:value})
+                      setSucursal(value);
                     }} 
                   />
                 </Form.Item>
@@ -187,6 +186,7 @@ import moment from "moment";
                   }}
                   label="Gráfica"
                   readonly={readonly}
+                  
                 />
                 </Col>
                   <Col md={12} sm={24} xs={12}> 
@@ -218,6 +218,7 @@ import moment from "moment";
                 }
                 className="header-container"
               ></PageHeader>
+              
             )}
             {printing && <Divider className="header-divider" />} 
             <Row justify="center">
