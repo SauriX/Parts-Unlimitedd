@@ -33,7 +33,8 @@ type RequestRegisterProps = {
 };
 
 const RequestRegister = ({ recordId }: RequestRegisterProps) => {
-  const { modalStore } = useStore();
+  const { requestStore, modalStore } = useStore();
+  const { printTicket } = requestStore;
   const { openModal } = modalStore;
 
   const [form] = Form.useForm<any>();
@@ -185,7 +186,7 @@ const RequestRegister = ({ recordId }: RequestRegisterProps) => {
             type="default"
             onClick={async () => {
               setLoading(true);
-              await Request.printTicket();
+              await printTicket();
               setLoading(false);
             }}
           >

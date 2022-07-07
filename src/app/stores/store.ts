@@ -25,6 +25,7 @@ import ConfigurationStore from "./configurationStore";
 import ProcedingStore from "./procedingStore";
 import QuotationStore from "./quotationStore";
 import ReportStore from "./reportStore";
+import RequestStore from "./requestStore";
 
 configure({
   enforceActions: "never",
@@ -54,8 +55,9 @@ interface Store {
   loyaltyStore: LoyaltyStore;
   routeStore: RouteStore;
   procedingStore: ProcedingStore;
-  quotationStore:QuotationStore
+  quotationStore: QuotationStore;
   reportStore: ReportStore;
+  requestStore: RequestStore;
 }
 
 export const store: Store = {
@@ -84,6 +86,7 @@ export const store: Store = {
   procedingStore: new ProcedingStore(),
   quotationStore: new QuotationStore(),
   reportStore: new ReportStore(),
+  requestStore: new RequestStore(),
 };
 
 export const StoreContext = createContext(store);
