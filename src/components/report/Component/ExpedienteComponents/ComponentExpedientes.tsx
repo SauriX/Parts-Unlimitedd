@@ -1,15 +1,15 @@
 import { Divider, PageHeader, Table } from "antd";
 import { observer } from "mobx-react-lite";
 import { FC, Fragment, useEffect, useState } from "react";
-import HeaderTitle from "../../../app/common/header/HeaderTitle";
+import HeaderTitle from "../../../../app/common/header/HeaderTitle";
 import {
   IColumns,
   ISearch,
   getDefaultColumnProps,
-} from "../../../app/common/table/utils";
-import { IReportList } from "../../../app/models/report";
-import { useStore } from "../../../app/stores/store";
-import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
+} from "../../../../app/common/table/utils";
+import { IReportList } from "../../../../app/models/report";
+import { useStore } from "../../../../app/stores/store";
+import useWindowDimensions, { resizeWidth } from "../../../../app/util/window";
 
 type CompExpedienteProps = {
   // componentRef: React.MutableRefObject<any>;
