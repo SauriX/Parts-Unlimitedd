@@ -8,8 +8,8 @@ import QuotationHeader from "../components/quotation/QuotationHeader";
 import QuotationTable from "../components/quotation/QuotationTable";
 
 const Quotation= () => {
-  const {  } = useStore();
-/*   const { scopes, access, clearScopes, exportList } = ; */
+  const { quotationStore } = useStore();
+  const { scopes, /* access, */ clearScopes, exportList,search } = quotationStore; 
 
   const [searchParams] = useSearchParams();
 
@@ -28,8 +28,8 @@ const Quotation= () => {
   });
 
   const handleDownload = async () => {
-/*     setLoading(true);
-    await exportList(searchParams.get("search") ?? "all"); */
+     setLoading(true);
+    await exportList(search); 
     setLoading(false);
   };
 

@@ -14,8 +14,8 @@ type UrlParams = {
 };
 
 const QuotationDetail = () => {
-  const {  } = useStore();
-/*   const { scopes, access, clearScopes, exportForm } = ; */
+  const { quotationStore } = useStore();
+  const { scopes, /* access, clearScopes, */  exportForm  } =quotationStore ;
 
   const navigate = useNavigate();
 
@@ -44,7 +44,7 @@ const QuotationDetail = () => {
   const handleDownload = async () => {
     if (reagentId) {
       setPrinting(true);
-      /* await exportForm(reagentId); */
+      await exportForm(reagentId);
       setPrinting(false);
     }
   };
