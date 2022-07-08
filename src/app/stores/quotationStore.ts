@@ -45,6 +45,7 @@ export default class QuotationStore {
     }
   }; */
 
+
   getAll = async (search: ISearchQuotation) => {
     try {
        const reagents = await quotation.getNow(search);
@@ -74,7 +75,13 @@ export default class QuotationStore {
       return false;
     }
   }; 
-
+  printTicket = async () => {
+    try {
+      await quotation.printTicket();
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
   getParameter=async(id:number)=>{
     try {
       const reagent = await Study.getById(id);

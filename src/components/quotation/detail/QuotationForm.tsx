@@ -38,7 +38,7 @@ type QuotationFormProps = {
 const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) => {
   const navigate = useNavigate();
   const { modalStore,  locationStore, optionStore,profileStore,quotationStore,priceListStore } = useStore();
-   const { getById, update,  create,  search,createsolictud,getAll,quotatios  } = quotationStore;
+   const { getById, update,  create,  search,createsolictud,getAll,quotatios,printTicket  } = quotationStore;
  const [data, setData] = useState<IRequestPrice[]>([]);
   const { profile } = profileStore;
   const [loading, setLoading] = useState(false);
@@ -473,7 +473,7 @@ useEffect(()=>{
                   </Descriptions.Item>
                   <Descriptions.Item label="Total">$ {totalFinal}</Descriptions.Item>
               </Descriptions>
-              <Button style={{marginTop:"10px", marginLeft:"100px",backgroundColor:"#B4C7E7",color:"white"}} onClick={()=>{}}>Imprimir</Button>
+              <Button style={{marginTop:"10px", marginLeft:"100px",backgroundColor:"#B4C7E7",color:"white"}} onClick={async ()=>{await printTicket()}}>Imprimir</Button>
             </Col>
           </Row>
 

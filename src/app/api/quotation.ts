@@ -16,6 +16,7 @@ const Quotation = {
   exportList: (search: ISearchQuotation): Promise<void> =>
   requests.download(`PriceQuote/export/list`, search),
   exportForm: (id: string): Promise<void> => requests.download(`PriceQuote/export/form/${id}`),
+  printTicket: (): Promise<void> => requests.print(`PriceQuote/ticket`),
 };
 
 export default Quotation;
