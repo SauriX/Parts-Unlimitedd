@@ -25,6 +25,7 @@ import ConfigurationStore from "./configurationStore";
 import ProcedingStore from "./procedingStore";
 import QuotationStore from "./quotationStore";
 import ReportStore from "./reportStore";
+import PatientStatisticStore from "./patientStatisticStore";
 import RequestStore from "./requestStore";
 
 configure({
@@ -57,6 +58,7 @@ interface Store {
   procedingStore: ProcedingStore;
   quotationStore: QuotationStore;
   reportStore: ReportStore;
+  patientStatisticStore: PatientStatisticStore;
   requestStore: RequestStore;
 }
 
@@ -86,6 +88,7 @@ export const store: Store = {
   procedingStore: new ProcedingStore(),
   quotationStore: new QuotationStore(),
   reportStore: new ReportStore(),
+  patientStatisticStore: new PatientStatisticStore(),
   requestStore: new RequestStore(),
 };
 
