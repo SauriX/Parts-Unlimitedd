@@ -12,16 +12,16 @@ type CompChartProps = {
 
 const CompChart: FC<CompChartProps> = ({ printing }) => {
   const { patientStatisticStore } = useStore();
-  const { getBranchByCount } = patientStatisticStore;
+  const { getByName } = patientStatisticStore;
   const [loading, setLoading] = useState(false);
   const { statsreport } = patientStatisticStore;
 
   useEffect(() => {
     const readStatsReport = async () => {
       setLoading(true);
-      await getBranchByCount();
+      await getByName();
       setLoading(false);
-      getBranchByCount();
+      getByName();
     };
     if (statsreport.length == 0) {
       readStatsReport();
@@ -36,9 +36,13 @@ const CompChart: FC<CompChartProps> = ({ printing }) => {
       width: "auto",
       containLabel: true,
     },
+    legend: {
+      data: ['Solicitudes', 'Total']
+    },
     xAxis: {
       type: "category",
-      data: statsreport.map((x) => x.solicitado),
+      data: statsreport.map((x) => x.nombrePaciente),
+      axisLabel: {interval: 0, rotate: 30},
     },
     yAxis: {
       type: "value",
@@ -46,9 +50,23 @@ const CompChart: FC<CompChartProps> = ({ printing }) => {
     },
     series: [
       {
-        data: statsreport.map((x) => x.monto),
+        name: 'Solicitudes',
+        data: statsreport.map((x) => x.solicitudes),
+        emphasis: {
+          focus: 'series'
+        },
+        label: {show: true},
         type: "bar",
-        barWidth: "60%",
+        smooth: true,
+      },
+      {
+        name: 'Total',
+        data: statsreport.map((x) => x.total),
+        emphasis: {
+          focus: 'series'
+        },
+        label: {show: true},
+        type: "bar",
         smooth: true,
       },
     ],
