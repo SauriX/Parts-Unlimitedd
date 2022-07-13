@@ -46,7 +46,7 @@ const PatientStatsForm: FC<StatsFormProps> = ({
   const [searchParams, setSearchParams] = useSearchParams();
   const [sucursal, setSucursal] = useState<string>("");
   const [form] = Form.useForm<IPatientStatisticForm>();
-  const {Option, OptGroup} = Select;
+  const { Option, OptGroup } = Select;
   const [loading, setLoading] = useState(false);
   const [Grafica, setGrafica] = useState<boolean>(false);
   const [TablaExp, setTablaExp] = useState<boolean>(true);
@@ -55,13 +55,13 @@ const PatientStatsForm: FC<StatsFormProps> = ({
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
-  const [values, setValues] = useState<IPatientStatisticForm>(new PatientStatisticFormValues());
+  const [values, setValues] = useState<IPatientStatisticForm>(
+    new PatientStatisticFormValues()
+  );
 
   useEffect(() => {
     getBranchCityOptions();
-  }, [
-    getBranchCityOptions,
-  ]);
+  }, [getBranchCityOptions]);
 
   const filterBtn = () => {
     form.submit();
@@ -69,19 +69,22 @@ const PatientStatsForm: FC<StatsFormProps> = ({
 
   useEffect(() => {
     const readStatsReport = async () => {
-        setLoading(true);
-        setLoading(false);
-    }
-    if(readStatsReport.length === 0){
-        readStatsReport();
+      setLoading(true);
+      setLoading(false);
+    };
+    if (readStatsReport.length === 0) {
+      readStatsReport();
     }
   }, [statsreport.length]);
   const onFinish = async (newValues: IPatientStatisticForm) => {
     setLoading(true);
-    const statsreport = {...values, ...newValues};
+    const statsreport = { ...values, ...newValues };
     statsreport.fechaInicial = newValues.fecha[0].toDate();
     statsreport.fechaFinal = newValues.fecha[1].toDate();
-    statsreport.fecha = [moment(statsreport?.fechaInicial), moment(statsreport?.fechaFinal)];
+    statsreport.fecha = [
+      moment(statsreport?.fechaInicial),
+      moment(statsreport?.fechaFinal),
+    ];
     statsreport.sucursalId = sucursal;
     filtro(statsreport!).then((x) => setLoading(false));
   };
@@ -154,11 +157,12 @@ const PatientStatsForm: FC<StatsFormProps> = ({
                 setSwitch(value);
               }}
               label="Gráfica"
+              labelAlign="left"
+              labelCol={{span: 4}}
               readonly={readonly}
             />
           </Col>
-          <Col md={12} sm={24} xs={12}>
-          </Col>
+          <Col md={12} sm={24} xs={12}></Col>
 
           <Col md={12} sm={24} xs={12}>
             {" "}
@@ -168,30 +172,30 @@ const PatientStatsForm: FC<StatsFormProps> = ({
 
       <Row>
         <Col md={24} sm={24} xs={24}>
-        <div style={{ display: printing ? "" : "none", height: 100 }}></div>
-        <div style={{ display: printing ? "none" : "" }}>
-          <div ref={componentRef}>
-            {printing && (
-              <PageHeader
-                ghost={false}
-                title={
-                  <HeaderTitle
-                    title="Estadística de Expedientes"
-                    image="Reportes"
-                  />
-                }
-                className="header-container"
-              ></PageHeader>
-            )}
-            {printing && <Divider className="header-divider" />}
-            <Row justify="center">
-              {TablaExp && (
-                <ComponentPatientStats printing={true}></ComponentPatientStats>
+          <div style={{ display: printing ? "" : "none", height: 100 }}></div>
+          <div style={{ display: printing ? "none" : "" }}>
+            <div ref={componentRef}>
+              {printing && (
+                <PageHeader
+                  ghost={false}
+                  title={
+                    <HeaderTitle
+                      title="Estadística de Pacientes"
+                      image="Reportes"
+                    />
+                  }
+                  className="header-container"
+                ></PageHeader>
               )}
-              {Grafica && <ComponentChart printing={true}></ComponentChart>}
-            </Row>
+              {printing && <Divider className="header-divider" />}
+            </div>
           </div>
-        </div>
+        </Col>
+        <Col span={24}>
+          {TablaExp && (
+            <ComponentPatientStats printing={true}></ComponentPatientStats>
+          )}
+          {Grafica && <ComponentChart printing={true}></ComponentChart>}
         </Col>
       </Row>
     </Spin>

@@ -12,16 +12,16 @@ type CompChartProps = {
 
 const CompChart: FC<CompChartProps> = ({ printing }) => {
   const { patientStatisticStore } = useStore();
-  const { getBranchByCount } = patientStatisticStore;
+  const { getByName } = patientStatisticStore;
   const [loading, setLoading] = useState(false);
   const { statsreport } = patientStatisticStore;
 
   useEffect(() => {
     const readStatsReport = async () => {
       setLoading(true);
-      await getBranchByCount();
+      await getByName();
       setLoading(false);
-      getBranchByCount();
+      getByName();
     };
     if (statsreport.length == 0) {
       readStatsReport();
@@ -38,7 +38,7 @@ const CompChart: FC<CompChartProps> = ({ printing }) => {
     },
     xAxis: {
       type: "category",
-      data: statsreport.map((x) => x.solicitado),
+      data: statsreport.map((x) => x.nombrePaciente),
     },
     yAxis: {
       type: "value",
@@ -46,7 +46,13 @@ const CompChart: FC<CompChartProps> = ({ printing }) => {
     },
     series: [
       {
-        data: statsreport.map((x) => x.monto),
+        data: statsreport.map((x) => x.solicitudes),
+        type: "bar",
+        barWidth: "60%",
+        smooth: true,
+      },
+      {
+        data: statsreport.map((x) => x.total),
         type: "bar",
         barWidth: "60%",
         smooth: true,

@@ -45,6 +45,15 @@ export default class PatientStaticStore {
         }
     };
 
+    printPdf = async () => {
+        try{
+            await PatientStatistic.printPdf();
+        } catch (error: any) {
+            alerts.warning(getErrors(error));
+            this.statsreport = []
+        }
+    }
+
     getAll = async (reportName: string, search?: string) => {
         try{
             const statsreport = await PatientStatistic.getAll(reportName, search);
@@ -55,9 +64,9 @@ export default class PatientStaticStore {
         }
     };
 
-    getBranchByCount = async () => {
+    getByName = async () => {
         try {
-            const statsreport = await PatientStatistic.getBranchByCount();
+            const statsreport = await PatientStatistic.getByName();
             this.statsreport = statsreport;
         } catch (error: any) {
             alerts.warning(getErrors(error));
