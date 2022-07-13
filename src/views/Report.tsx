@@ -10,7 +10,7 @@ import ReportDefault from "../components/report/ReportDefault";
 
 const Report = () => {
   const { reportStore } = useStore();
-  const { scopes, access, setCurrentReport,  clearScopes, exportList } = reportStore;
+  const { scopes, access, setCurrentReport,  clearScopes, exportList, printPdf } = reportStore;
 
   const [searchParams] = useSearchParams();
 
@@ -29,7 +29,8 @@ const Report = () => {
   });
   const handleDownload = async () => {
     setLoading(true);
-    await exportList(searchParams.get("report") ?? "", searchParams.get("search") ?? "all");
+    await printPdf();
+    // await printPdf(searchParams.get("report") ?? "", searchParams.get("search") ?? "all");
     setLoading(false);
   };
 

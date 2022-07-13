@@ -3,10 +3,10 @@ import moment from "moment";
 export interface IReportList {
   id: string;
   ciudadId: string;
-  clave: string;
+  expedienteNombre: string;
   sucursalId: string;
   expediente: string;
-  nombre: string;
+  pacienteNombre: string;
   visitas: number;
   fecha: Date;
   fechaInicial: Date;
@@ -15,8 +15,8 @@ export interface IReportList {
 }
 export interface IReportTable {
   id: string;
-  nombre: string;
-  clave: string;
+  expedienteNombre: string;
+  nombrePaciente: string;
   sucursalId?: string;
   visitas: number;
 }

@@ -10,6 +10,7 @@ const Report = {
     access: (): Promise<IScopes> => requests.get("scopes/request"),
     // filtro: (reportName: IReportForm): Promise<void> => requests.post("report", reportName),
     filtro: (search:IReportForm): Promise<IReportList[]> => requests.post(`request/filter`,search??{}),
+    printPdf: (): Promise<void> => requests.download(`request/download/pdf`),
     // create: (reportName: string, report: IReportForm): Promise<IReportForm> => requests.post(`report/${reportName}`, report),
     exportList: (reportName: string, search: string): Promise<void> =>
     requests.download(`report/${reportName}/export/list/${!search ? "all" : search}`),

@@ -50,7 +50,7 @@ const CompExpediente: FC<CompExpedienteProps> = ({
 
   const columns: IColumns<IReportList> = [
     {
-      ...getDefaultColumnProps("clave", "Expediente", {
+      ...getDefaultColumnProps("expedienteNombre", "Expediente", {
         searchState,
         setSearchState,
         width: "30%",
@@ -59,7 +59,7 @@ const CompExpediente: FC<CompExpedienteProps> = ({
       }),
     },
     {
-      ...getDefaultColumnProps("nombre", "Nombre", {
+      ...getDefaultColumnProps("pacienteNombre", "Nombre", {
         searchState,
         setSearchState,
         width: "40%",

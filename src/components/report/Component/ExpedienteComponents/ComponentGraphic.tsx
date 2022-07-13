@@ -38,7 +38,7 @@ const CompGraphic: FC<CompGrahicProps> = ({printing}) => {
         containLabel: true },
         xAxis: {
           type: 'category',
-          data: reports.map(x=>x.clave) ,
+          data: reports.map(x=>x.expedienteNombre) ,
         },
         yAxis: {
           type: 'value',

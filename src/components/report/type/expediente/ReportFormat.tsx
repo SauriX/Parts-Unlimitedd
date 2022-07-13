@@ -240,15 +240,16 @@ const ReportForm: FC<ReportFormProps> = ({
               ></PageHeader>
             )}
             {printing && <Divider className="header-divider" />}
-            <Row justify="center">
+            
+          </div>
+        </div>
+        </Col>
+        <Col span={24}>
               {TablaExp && (
                 <ComponentExpedientes printing={true}></ComponentExpedientes>
               )}
               {Grafica && <ComponentGraphic printing={true}></ComponentGraphic>}
-            </Row>
-          </div>
-        </div>
-        </Col>
+            </Col>
       </Row>
     </Spin>
   );
