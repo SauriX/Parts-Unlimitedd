@@ -99,7 +99,7 @@ const CompExpediente: FC<CompExpedienteProps> = ({
   // "text-align:center"
 
   return (
-      <div style={{ marginLeft: "99px" , marginBottom: "20px" }}>
+      <div style={{ marginBottom: "20px" }}>
         
         <Divider className="header-divider" />
 

@@ -249,7 +249,7 @@ const ReportForm: FC<ReportFormProps> = ({
                 <ComponentExpedientes printing={true}></ComponentExpedientes>
               )}
               {Grafica && <ComponentGraphic printing={true}></ComponentGraphic>}
-            </Col>
+        </Col>
       </Row>
     </Spin>
   );
