@@ -85,8 +85,6 @@ const CompGraphic: FC<CompGrahicProps> = ({printing}) => {
               ></PageHeader>
               <Divider className="header-divider" />
               <ReactECharts option={options} />
-              {/* <Divider className="header-divider" /> */}
-              {/* < ComponentExpedientes printing={false}></ComponentExpedientes>} */}
           </div>
       </Fragment>
   );
