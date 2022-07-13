@@ -241,14 +241,14 @@ const ReportForm: FC<ReportFormProps> = ({
             )}
             {printing && <Divider className="header-divider" />}
             
-          </div>
-        </div>
-        </Col>
         <Col span={24}>
               {TablaExp && (
                 <ComponentExpedientes printing={true}></ComponentExpedientes>
               )}
               {Grafica && <ComponentGraphic printing={true}></ComponentGraphic>}
+        </Col>
+          </div>
+        </div>
         </Col>
       </Row>
     </Spin>
