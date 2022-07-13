@@ -56,6 +56,7 @@ import Quotation from "../../views/Quotation";
 import QuotationDetail from "../../components/quotation/detail/QuotationDetail";
 import Report from "../../views/Report";
 import DatosFiscalesForm from "../../components/proceedings/details/DatosFiscalesForm";
+import ApointmentDetail from "../../components/appointment/detail/apointmentDetail";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -148,6 +149,8 @@ function App() {
             <Route path="cotizacion/new" element={<QuotationDetail />} />
             <Route path="reports" element={<Report />} />
             <Route path={views.appointment} element={<Appointment />} />
+            <Route path={`${views.appointment}/:id`} element={<ApointmentDetail />} />
+            <Route path={`${views.appointment}/new`} element={<ApointmentDetail />} />
             <Route path={`${views.request}/:recordId`} element={<Request />} />
             <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
             <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
