@@ -46,13 +46,15 @@ export default class ReportStore {
         alerts.warning(getErrors(error));
       }
     };
-  //   exportGraphic = async (catalogName: string, search: string) => {
-  //   try {
-  //     await Report.exportGraphic(catalogName, search);
-  //   } catch (error: any) {
-  //     alerts.warning(getErrors(error));
-  //   }
-  // };
+    printPdf    = async () => {
+      try {
+        await Report.printPdf();
+        // this.reports = reports;
+      } catch (error: any) {
+        alerts.warning(getErrors(error));
+        this.reports = [];
+      }
+    };
 
     getAll = async (reportName: string, search?: string) => {
         try {

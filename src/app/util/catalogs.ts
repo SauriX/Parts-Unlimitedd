@@ -19,5 +19,5 @@ export const catalogs: IOptionsCatalog[] = [
 
 export const reports: IOptionsReport[] = [
   { value: "expediente", label: "Expediente", type: "expediente" },
-  { value: "prueba", label: "Prueba", type: "prueba" },
+  { value: "estadistica", label: "Estadística Pacientes", type: "estadistica" },
 ];

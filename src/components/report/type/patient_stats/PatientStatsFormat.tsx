@@ -19,34 +19,33 @@ import { observer } from "mobx-react-lite";
 import alerts from "../../../../app/util/alerts";
 import messages from "../../../../app/util/messages";
 import DateRangeInput from "../../../../app/common/form/DateRangeInput";
-import SelectInput from "../../../../app/common/form/SelectInput";
-import { IReportForm, ReportFormValues } from "../../../../app/models/report";
-import ComponentGraphic from "../../Component/ExpedienteComponents/ComponentGraphic";
 import moment from "moment";
-import ComponentExpedientes from "../../Component/ExpedienteComponents/ComponentExpedientes";
-// import { v4 as uuid } from "uuid";
+import {
+  IPatientStatisticForm,
+  PatientStatisticFormValues,
+} from "../../../../app/models/patient_statistic";
+import ComponentChart from "../../Component/PatientStatsComponent/ComponentChart";
+import ComponentPatientStats from "../../Component/PatientStatsComponent/ComponentPatientStats";
 
-type ReportFormProps = {
-  // id: string;
+type StatsFormProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
-  // handlePrint: () => void;
-  // handleDownload: () => Promise<void>;
   reportName: string;
 };
-const ReportForm: FC<ReportFormProps> = ({
-  /*id*/ componentRef,
+
+const PatientStatsForm: FC<StatsFormProps> = ({
+  componentRef,
   printing,
   reportName,
 }) => {
-  const { reportStore, optionStore } = useStore();
-  const { reports, filtro, setSearch, search } = reportStore;
+  const { patientStatisticStore, optionStore } = useStore();
+  const { statsreport, filtro, setSearch, search } = patientStatisticStore;
   const { BranchCityOptions, getBranchCityOptions } = optionStore;
   const navigate = useNavigate();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [sucursal, setSucursal] = useState<string>("");
-  const [form] = Form.useForm<IReportForm>();
+  const [form] = Form.useForm<IPatientStatisticForm>();
   const { Option, OptGroup } = Select;
   const [loading, setLoading] = useState(false);
   const [Grafica, setGrafica] = useState<boolean>(false);
@@ -56,71 +55,44 @@ const ReportForm: FC<ReportFormProps> = ({
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
-  const [values, setValues] = useState<IReportForm>(new ReportFormValues());
+  const [values, setValues] = useState<IPatientStatisticForm>(
+    new PatientStatisticFormValues()
+  );
 
   useEffect(() => {
     getBranchCityOptions();
-  }, [
-    getBranchCityOptions,
-    // console.log(BranchCityOptions, "treeSelect"),
-  ]);
+  }, [getBranchCityOptions]);
 
-  const BtnFiltro = () => {
+  const filterBtn = () => {
     form.submit();
   };
 
-  // const SwicthValidator = async () => {
-  //   // search.sucursalId = sucursal;
-  //   if (Switch) {
-  //     console.log("si Grafica");
-  //     setGrafica(true);
-  //     setTablaExp(false);
-  //   } else {
-  //     console.log("si Tabla");
-  //     setTablaExp(true);
-  //     setGrafica(false);
-  //   }
-
-  //   // form.submit();
-  // };
-
   useEffect(() => {
-    const readReport = async () => {
+    const readStatsReport = async () => {
       setLoading(true);
-      // const report = await filtro(search);
-      // await filtro(search!);
       setLoading(false);
     };
-
-    if (reports.length === 0) {
-      readReport();
+    if (readStatsReport.length === 0) {
+      readStatsReport();
     }
-  }, [reports.length]);
-  const onFinish = async (newValues: IReportForm) => {
+  }, [statsreport.length]);
+  const onFinish = async (newValues: IPatientStatisticForm) => {
     setLoading(true);
-
-    const report = { ...values, ...newValues };
-    report.fechaInicial = newValues.fecha[0].toDate();
-    report.fechaFinal = newValues.fecha[1].toDate();
-    report.fecha = [moment(report?.fechaInicial), moment(report?.fechaFinal)];
-    report.sucursalId = sucursal;
-    filtro(report!).then((x) => setLoading(false));
-
-    // let success = false;
-    // setLoading(false);
-    // // await filtro(report);
-
-    // if (success) {
-    //   // SwicthValidator();
-    // }
+    const statsreport = { ...values, ...newValues };
+    statsreport.fechaInicial = newValues.fecha[0].toDate();
+    statsreport.fechaFinal = newValues.fecha[1].toDate();
+    statsreport.fecha = [
+      moment(statsreport?.fechaInicial),
+      moment(statsreport?.fechaFinal),
+    ];
+    statsreport.sucursalId = sucursal;
+    filtro(statsreport!).then((x) => setLoading(false));
   };
-  // function disabledDate(current: moment.Moment) {
-  //   return current.isBefore(moment(), "day");
-  // }
+
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}></Row>
-      <Form<IReportForm>
+      <Form<IPatientStatisticForm>
         {...formItemLayout}
         form={form}
         name="report"
@@ -134,16 +106,12 @@ const ReportForm: FC<ReportFormProps> = ({
               <DateRangeInput
                 formProps={{ label: "Rango de fechas", name: "fecha" }}
                 readonly={readonly}
-                // disabledDate={disabledDate}
               />
             </div>
           </Col>
           <Col md={10} sm={24} xs={12}>
             <Form.Item name="CiudadId" label="Ciudad">
-              {/* <Form.Item name="sucursalId" label="Sucursal"> */}
               <TreeSelect
-                // style={{ width: "80%" }}
-                // value={value}
                 dropdownStyle={{ maxHeight: 400, overflow: "left" }}
                 treeData={BranchCityOptions}
                 placeholder="Please select"
@@ -161,24 +129,13 @@ const ReportForm: FC<ReportFormProps> = ({
                 key="new"
                 type="primary"
                 onClick={() => {
-                  BtnFiltro();
+                  filterBtn();
                 }}
               >
                 Filtrar
               </Button>
             </div>
           </Col>
-          {/* <Col md={8} sm={24} xs={12}>
-                    
-                  <SelectInput
-                    formProps={{
-                      name: "sucursalId",
-                      label: "Sucursal",
-                    }}
-                    readonly={readonly}
-                    options={CityOptions}
-                  />
-                  </Col> */}
         </Row>
 
         <Divider orientation="left"></Divider>
@@ -198,23 +155,14 @@ const ReportForm: FC<ReportFormProps> = ({
                   setGrafica(false);
                 }
                 setSwitch(value);
-                // SwicthValidator();
               }}
               label="Gráfica"
+              labelAlign="left"
+              labelCol={{span: 4}}
               readonly={readonly}
             />
           </Col>
-          <Col md={12} sm={24} xs={12}>
-            {/* <Button
-              key="new"
-              type="primary"
-              onClick={() => {
-                SwicthValidator();
-              }}
-            >
-              Aceptar
-            </Button> */}
-          </Col>
+          <Col md={12} sm={24} xs={12}></Col>
 
           <Col md={12} sm={24} xs={12}>
             {" "}
@@ -224,35 +172,34 @@ const ReportForm: FC<ReportFormProps> = ({
 
       <Row>
         <Col md={24} sm={24} xs={24}>
-        <div style={{ display: printing ? "" : "none", height: 100 }}></div>
-        <div style={{ display: printing ? "none" : "" }}>
-          <div ref={componentRef}>
-            {printing && (
-              <PageHeader
-                ghost={false}
-                title={
-                  <HeaderTitle
-                    title="Estadística de Expedientes"
-                    image="Reportes"
-                  />
-                }
-                className="header-container"
-              ></PageHeader>
-            )}
-            {printing && <Divider className="header-divider" />}
-            
+          <div style={{ display: printing ? "" : "none", height: 100 }}></div>
+          <div style={{ display: printing ? "none" : "" }}>
+            <div ref={componentRef}>
+              {printing && (
+                <PageHeader
+                  ghost={false}
+                  title={
+                    <HeaderTitle
+                      title="Estadística de Pacientes"
+                      image="Reportes"
+                    />
+                  }
+                  className="header-container"
+                ></PageHeader>
+              )}
+              {printing && <Divider className="header-divider" />}
+            </div>
           </div>
-        </div>
         </Col>
         <Col span={24}>
-              {TablaExp && (
-                <ComponentExpedientes printing={true}></ComponentExpedientes>
-              )}
-              {Grafica && <ComponentGraphic printing={true}></ComponentGraphic>}
-            </Col>
+          {TablaExp && (
+            <ComponentPatientStats printing={true}></ComponentPatientStats>
+          )}
+          {Grafica && <ComponentChart printing={true}></ComponentChart>}
+        </Col>
       </Row>
     </Spin>
   );
 };
 
-export default observer(ReportForm);
+export default observer(PatientStatsForm);
