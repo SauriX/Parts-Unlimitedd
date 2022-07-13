@@ -52,7 +52,7 @@ const handleChange = async (value: string) => {
             title={<HeaderTitle title="Reportes" image="rutas" />}
             className="header-container"
             extra={[
-              report && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+              // report && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
               report && <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />,
                 <Select
                   key="reports"

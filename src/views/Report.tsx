@@ -1,6 +1,7 @@
 import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
 import React, { Fragment,  useEffect, useRef, useState } from "react";
+import PatientStaticStore from "../app/stores/patientStatisticStore";
 import { useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
@@ -9,8 +10,9 @@ import { IOptionsReport } from "../app/models/shared";
 import ReportDefault from "../components/report/ReportDefault";
 
 const Report = () => {
-  const { reportStore } = useStore();
+  const { reportStore, patientStatisticStore } = useStore();
   const { scopes, access, setCurrentReport,  clearScopes, exportList, printPdf } = reportStore;
+  const {printPdf: printPdfStats} = patientStatisticStore;
 
   const [searchParams] = useSearchParams();
 
@@ -29,7 +31,13 @@ const Report = () => {
   });
   const handleDownload = async () => {
     setLoading(true);
-    await printPdf();
+    const params = searchParams.get("reports");
+    if (params == "expediente"){
+      await printPdf();
+    }
+    if(params == "estadistica"){
+      await printPdfStats();
+    }
     // await printPdf(searchParams.get("report") ?? "", searchParams.get("search") ?? "all");
     setLoading(false);
   };

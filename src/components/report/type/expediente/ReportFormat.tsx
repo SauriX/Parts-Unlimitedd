@@ -224,31 +224,32 @@ const ReportForm: FC<ReportFormProps> = ({
 
       <Row>
         <Col md={24} sm={24} xs={24}>
-        <div style={{ display: printing ? "" : "none", height: 100 }}></div>
-        <div style={{ display: printing ? "none" : "" }}>
-          <div ref={componentRef}>
-            {printing && (
-              <PageHeader
-                ghost={false}
-                title={
-                  <HeaderTitle
-                    title="Estadística de Expedientes"
-                    image="Reportes"
-                  />
-                }
-                className="header-container"
-              ></PageHeader>
-            )}
-            {printing && <Divider className="header-divider" />}
-            
-          </div>
-        </div>
-        </Col>
-        <Col span={24}>
-              {TablaExp && (
-                <ComponentExpedientes printing={true}></ComponentExpedientes>
+          <div style={{ display: printing ? "" : "none", height: 100 }}></div>
+          <div style={{ display: printing ? "none" : "" }}>
+            <div ref={componentRef}>
+              {printing && (
+                <PageHeader
+                  ghost={false}
+                  title={
+                    <HeaderTitle
+                      title="Estadística de Expedientes"
+                      image="Reportes"
+                    />
+                  }
+                  className="header-container"
+                ></PageHeader>
               )}
-              {Grafica && <ComponentGraphic printing={true}></ComponentGraphic>}
+              {printing && <Divider className="header-divider" />}
+              <Col span={24}>
+                {TablaExp && (
+                  <ComponentExpedientes printing={true}></ComponentExpedientes>
+                )}
+                {Grafica && (
+                  <ComponentGraphic printing={true}></ComponentGraphic>
+                )}
+              </Col>
+            </div>
+          </div>
         </Col>
       </Row>
     </Spin>
