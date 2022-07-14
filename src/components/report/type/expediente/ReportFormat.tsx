@@ -146,7 +146,7 @@ const ReportForm: FC<ReportFormProps> = ({
                 // value={value}
                 dropdownStyle={{ maxHeight: 400, overflow: "left" }}
                 treeData={BranchCityOptions}
-                placeholder="Please select"
+                placeholder="Seleccionar"
                 treeDefaultExpandAll
                 value={search.sucursalId}
                 onChange={(value) => {
@@ -179,12 +179,7 @@ const ReportForm: FC<ReportFormProps> = ({
                     options={CityOptions}
                   />
                   </Col> */}
-        </Row>
-
-        <Divider orientation="left"></Divider>
-        <Divider orientation="left"></Divider>
-        <Row justify="center">
-          <Col md={12} sm={24} xs={12}>
+                  <Col md={10} sm={24} xs={12}>
             <SwitchInput
               name="Mostrar Gráfica"
               onChange={(value) => {
@@ -204,6 +199,12 @@ const ReportForm: FC<ReportFormProps> = ({
               readonly={readonly}
             />
           </Col>
+        </Row>
+
+        <Divider orientation="left"></Divider>
+        <Divider orientation="left"></Divider>
+        <Row justify="center">
+          
           <Col md={12} sm={24} xs={12}>
             {/* <Button
               key="new"
