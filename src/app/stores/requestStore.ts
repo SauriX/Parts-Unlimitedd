@@ -20,4 +20,13 @@ export default class RequestStore {
       alerts.warning(getErrors(error));
     }
   };
+
+  getOrderPdfUrl = async () => {
+    try {
+      const url = await Request.getOrderPdfUrl();
+      return url;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
 }
