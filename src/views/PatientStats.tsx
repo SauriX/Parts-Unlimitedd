@@ -1,6 +1,7 @@
 import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
-import React, { Fragment,  useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
+import PatientStatistic from "../app/api/patient_statistic";
 import { useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
@@ -8,14 +9,15 @@ import ReportHeader from "../components/report/ReportHeader";
 import { IOptionsReport } from "../app/models/shared";
 import ReportDefault from "../components/report/ReportDefault";
 
-const Report = () => {
-  const { reportStore } = useStore();
-  const { scopes, access, setCurrentReport,  clearScopes, exportList, printPdf } = reportStore;
+const PatientStats = () => {
+  const { patientStatisticStore } = useStore();
+  const { scopes, access, setCurrentReport, clearScopes, exportList, printPdf } =
+    patientStatisticStore;
 
   const [searchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);
-  const [report, setReport] = useState<IOptionsReport>();
+  const [statsreport, setStatsReport] = useState<IOptionsReport>();
   const componentRef = useRef<any>();
 
   const handlePrint = useReactToPrint({
@@ -27,24 +29,15 @@ const Report = () => {
       setLoading(false);
     },
   });
+
   const handleDownload = async () => {
     setLoading(true);
     await printPdf();
-    // await printPdf(searchParams.get("report") ?? "", searchParams.get("search") ?? "all");
     setLoading(false);
   };
 
-  // useEffect(() => {
-  //   const checkAccess = async () => {
-  //     await access();
-  //   };
-
-  //   checkAccess();
-  // }, [access]);
-
   useEffect(() => {
     setCurrentReport(searchParams.get("report") ?? undefined);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -53,20 +46,22 @@ const Report = () => {
     };
   }, [clearScopes]);
 
-  // if (!scopes?.acceder) return null;
-
   return (
     <Fragment>
-    <ReportHeader 
-        report={report}
-        setReport={setReport}
+      <ReportHeader
+        report={statsreport}
+        setReport={setStatsReport}
         handlePrint={handlePrint}
         handleDownload={handleDownload}
       />
-    <Divider className="header-divider" />
-    <ReportDefault  componentRef={componentRef} printing={loading} report={report} />
-  </Fragment>
+      <Divider className="header-divider" />
+      <ReportDefault
+        componentRef={componentRef}
+        printing={loading}
+        report={statsreport}
+      />
+    </Fragment>
   );
 };
 
-export default observer(Report);
+export default observer(PatientStats);

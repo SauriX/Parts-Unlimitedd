@@ -1,15 +1,15 @@
 import { Divider, PageHeader, Table } from "antd";
 import { observer } from "mobx-react-lite";
 import { FC, Fragment, useEffect, useState } from "react";
-import HeaderTitle from "../../../app/common/header/HeaderTitle";
+import HeaderTitle from "../../../../app/common/header/HeaderTitle";
 import {
   IColumns,
   ISearch,
   getDefaultColumnProps,
-} from "../../../app/common/table/utils";
-import { IReportList } from "../../../app/models/report";
-import { useStore } from "../../../app/stores/store";
-import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
+} from "../../../../app/common/table/utils";
+import { IReportList } from "../../../../app/models/report";
+import { useStore } from "../../../../app/stores/store";
+import useWindowDimensions, { resizeWidth } from "../../../../app/util/window";
 
 type CompExpedienteProps = {
   // componentRef: React.MutableRefObject<any>;
@@ -50,7 +50,7 @@ const CompExpediente: FC<CompExpedienteProps> = ({
 
   const columns: IColumns<IReportList> = [
     {
-      ...getDefaultColumnProps("clave", "Expediente", {
+      ...getDefaultColumnProps("expedienteNombre", "Expediente", {
         searchState,
         setSearchState,
         width: "30%",
@@ -59,7 +59,7 @@ const CompExpediente: FC<CompExpedienteProps> = ({
       }),
     },
     {
-      ...getDefaultColumnProps("nombre", "Nombre", {
+      ...getDefaultColumnProps("pacienteNombre", "Nombre", {
         searchState,
         setSearchState,
         width: "40%",
@@ -99,7 +99,7 @@ const CompExpediente: FC<CompExpedienteProps> = ({
   // "text-align:center"
 
   return (
-      <div style={{ marginLeft: "99px" , marginBottom: "20px" }}>
+      <div style={{ marginBottom: "20px" }}>
         
         <Divider className="header-divider" />
 

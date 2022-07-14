@@ -28,7 +28,7 @@ const messages = {
     passwordTitle: "¿Desea enviar el correo para cambio de contraseña?",
     password: "Se enviará el correo de configuración",
     graphic: "Mostrar Gráfica",
-    nographic: "No se mostrara la gráfica",
+    nographic: "No se mostrará la gráfica",
   },
 };
 

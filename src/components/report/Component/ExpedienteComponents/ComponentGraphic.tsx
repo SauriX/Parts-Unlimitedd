@@ -1,9 +1,9 @@
 import { observer } from "mobx-react-lite";
 import { FC, Fragment, useEffect, useState } from "react";
-import { useStore } from "../../../app/stores/store";
+import { useStore } from "../../../../app/stores/store";
 import ReactECharts from 'echarts-for-react';
 import { Divider, PageHeader, Row } from "antd";
-import HeaderTitle from "../../../app/common/header/HeaderTitle";
+import HeaderTitle from "../../../../app/common/header/HeaderTitle";
 import ComponentExpedientes from "./ComponentExpedientes";
 
 type CompGrahicProps = {
@@ -38,7 +38,7 @@ const CompGraphic: FC<CompGrahicProps> = ({printing}) => {
         containLabel: true },
         xAxis: {
           type: 'category',
-          data: reports.map(x=>x.clave) ,
+          data: reports.map(x=>x.expedienteNombre) ,
         },
         yAxis: {
           type: 'value',
@@ -57,47 +57,6 @@ const CompGraphic: FC<CompGrahicProps> = ({printing}) => {
         },
       };
 
-    //   const GraphicPrint = () => {
-    //     return (
-    //         <div style={{ textAlign: "center" }} >
-    //             <PageHeader
-    //                 ghost={false}
-    //                 title={<HeaderTitle title="Estadística de expedientes" image="Reportes" />}
-    //                 className="header-container"
-    //             ></PageHeader>
-    //             {/* <Divider className="header-divider" />
-    //             <ComponentExpedientes printing={false}></ComponentExpedientes> */}
-    //             <Divider className="header-divider" />
-    //             <ReactECharts option={options} />
-    //         </div>
-    //     );
-    // };
-    
-    
-    //   return (
-    //     <Fragment>
-    //         <div style={{ textAlign: "center" }} >
-    //             <PageHeader
-    //                 ghost={false}
-    //                 title={<HeaderTitle title="Estadística de expedientes" image="Reportes" />}
-    //                 className="header-container"
-    //             ></PageHeader>
-    //             <Divider className="header-divider" />
-    //             <div style={{ display: "none" }}>{<GraphicPrint />} </div>
-    //             <ReactECharts 
-    //             option={options} 
-    //             // notMerge={true}
-    //             // lazyUpdate={true}
-    //             // theme={"theme_name"}
-    //             // onChartReady={this.onChartReadyCallback}
-    //             // onEvents={EventsDict}
-    //             // opts={}
-    //               />
-    //         </div>
-    //     </Fragment>
-    // );
-
-    
     const GraphicPrint = () => {
       return (
           <div style={{ textAlign: "center" }} >
@@ -118,16 +77,14 @@ const CompGraphic: FC<CompGrahicProps> = ({printing}) => {
   
     return (
       <Fragment>
-          <div style={{ textAlign: "center" }} >
+          <div style={{marginBottom: "20px" }}>
               <PageHeader
                   ghost={false}
                   title={<HeaderTitle title="Estadística de expedientes" image="Reportes" />}
                   className="header-container"
               ></PageHeader>
               <Divider className="header-divider" />
-              {/* <div style={{ display: "none" }}>{<ReportGraphic />} </div> */}
               <ReactECharts option={options} />
-              {/* {!printing && < ComponentExpedientes printing={false}></ComponentExpedientes>} */}
           </div>
       </Fragment>
   );
