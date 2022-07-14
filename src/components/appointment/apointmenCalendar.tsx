@@ -11,6 +11,7 @@ import { Days, IAgenda, IAgendaColumn } from "../../app/common/agenda/utils";
 import { v4 as uuid } from "uuid";
 import views from "../../app/util/view";
 import { useNavigate } from "react-router-dom";
+import DateRangeInput from "../../app/common/form/DateRangeInput";
 const { Search } = Input;
 const { TabPane } = Tabs;
 const { Link, Text } = Typography;
@@ -50,18 +51,24 @@ const AppointmentCalendar = () => {
     <>
         <div>
             <Row>
-            <Col md={13} sm={12}>
+            <Col md={10} sm={12}>
                 <label htmlFor="">Nombre/Clave: </label>
-                <Input   style={{width:"500px" , marginBottom:"30px"}} type={"text"} placeholder={""}></Input>
+                <Input   style={{width:"350px" , marginBottom:"30px"}} type={"text"} placeholder={""}></Input>
                 <Button type="primary" style={{marginLeft:"10px"}} onClick={()=>{}}>Buscar</Button>
             </Col>
-            <Col md={6} sm={12}>
-            <label htmlFor="">Tipo de cita: </label>
-                <Select style={{width:"200px" , marginBottom:"30px"}} onChange={(value)=>{seTipo(value)}} options={[{label:"Laboratorio",value:"laboratorio"},{label:"Domicilio",value:"domicilio"}]}></Select>
-            </Col>
             <Col md={5} sm={12}>
+            <label htmlFor="">Tipo de cita: </label>
+                <Select value={tipo} style={{width:"150px" , marginBottom:"30px"}} onChange={(value)=>{seTipo(value)}} options={[{label:"Laboratorio",value:"laboratorio"},{label:"Domicilio",value:"domicilio"}]}></Select>
+            </Col>
+            <Col md={7} sm={12}>
+            <DateRangeInput
+                    formProps={{ label: "Fechas", name: "fecha" }}
+                    
+              /></Col>
+            <Col md={2} sm={12}>
             <Button type="primary" style={{marginLeft:"10px"}} onClick={()=>{navigate(`/${views.appointment}/new?type=${tipo}&mode=edit`);}}>Generar</Button>
             </Col>
+
             </Row>
         </div>
       <Tabs tabPosition="left">
@@ -71,9 +78,10 @@ const AppointmentCalendar = () => {
         <TabPane key="2" tab={<TabInfo title="Agendadas" icon={<CalendarOutlined />} />}>
           <DemoTable />
         </TabPane>
+        {tipo==="laboratorio"&&
         <TabPane key="3" tab={<TabInfo title="Listas para scan" icon={<CalendarOutlined />} />}>
           <DemoTable />
-        </TabPane>
+        </TabPane>}
         <TabPane key="4" tab={<TabInfo title="Canceladas" icon={<CloseCircleOutlined />} />}>
           <DemoTable />
         </TabPane>

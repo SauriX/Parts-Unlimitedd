@@ -102,6 +102,14 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData,setTotal,total }) =
       render: (value) => <Checkbox />,
     },
     {
+      key: "cargo",
+      dataIndex: "Cargo",
+      title: "D",
+      align: "center",
+      width: "5%",
+      render: (value) => <Checkbox />,
+    },
+    {
       ...getDefaultColumnProps("dias", "Días", {
         searchable: false,
         width: "10%",
@@ -251,7 +259,7 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData,setTotal,total }) =
           mode="multiple"
           placeholder="Buscar Estudios"
           optionFilterProp="children"
-          style={{ width: "100%" }}
+          style={{ width: "65%" }}
           onChange={(_, option) => {
             addStudy((option as IOptions[])[0]);
           }}

@@ -26,6 +26,7 @@ import IconButton from "../../../../app/common/button/IconButton";
 import useWindowDimensions, { resizeWidth } from "../../../../app/util/window";
 import { EditOutlined } from "@ant-design/icons";
 import DateInput from "../../../../app/common/form/proposal/DateInput";
+import DateRangeInput from "../../../../app/common/form/DateRangeInput";
 type GeneralesFormProps = {
     printing: boolean;
     handleIdExpediente: React.Dispatch<React.SetStateAction<IProceedingList | undefined>>;
@@ -80,7 +81,7 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
           ...getDefaultColumnProps("expediente", "Expediente", {
             searchState,
             setSearchState,
-            width: "20%",
+            width: "10%",
             minWidth: 150,
             windowSize: windowWidth,
           }),
@@ -197,7 +198,7 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
                 onValuesChange={onValuesChange} 
             >
                 <Row>
-                <Col span={12}>
+                <Col span={10}>
                         <TextInput
                             formProps={{
                             name: "buscar",
@@ -219,37 +220,26 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
                         Buscar
                     </Button>
                     </Col>
-                    <Col span={4}></Col>
-                    <Col sm={10}>
-                    <DateInput 
-                      formProps={{
-                        name: "fechaNacimiento",
-                        label: "Fecha Incial",
-                        
+                    <Col span={9}></Col>
+                    <Col sm={9}>
+                    <DateRangeInput
+                    formProps={{ label: "Fechas", name: "fecha" ,
+                      style:{marginTop:"10px",width:"400px"}
                       }}
-                     />
+                      />
                     </Col>
-                    <Col sm={10}>
-                    <DateInput 
-                      formProps={{
-                        name: "fechaNacimiento",
-                        label: "Fecha FInal",
-                        
-                      }}/>
-                    </Col>
-                    <Col sm={2}></Col>
-                    <Col sm={11}>
+                    <Col sm={7}>
                     <TextInput
                             formProps={{
                             name: "email",
                             label: "Email",
                             style:{marginTop:"10px"}
                             }}
-                            max={100}
+                            max={300}
                             //errors={errors.find((x) => x.name === "exp")?.errors}
                         />
                     </Col>
-                    <Col sm={11}>
+                    <Col sm={7}>
                     <TextInput
                             formProps={{
                             name: "telefono",

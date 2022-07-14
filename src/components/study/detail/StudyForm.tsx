@@ -719,14 +719,14 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                 {item.clave}
                             </Col>
                             <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                                <ImageButton
+                               {  !loading&&<ImageButton
                                     key="Eliminar"
                                     title="Eliminar Reactivo"
                                     image="Eliminar_Clinica"
                                     onClick={() => {
                                         deleteReagent(item.id);
                                     }}
-                                />
+                                />}
                             </Col>
                         </List.Item>
                     )}

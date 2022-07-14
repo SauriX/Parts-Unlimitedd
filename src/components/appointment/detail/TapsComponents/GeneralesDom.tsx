@@ -128,23 +128,23 @@ const GeneralesDomForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>
                     </Col>  
                     <Col sm={12}></Col>
                     <Col span={12}>
-                    <SelectInput
+                    <TextInput
                             formProps={{
                                 name: "compañia",
                                 label: "Dirección",
                             }}
-                            options={[...CompanyOptions]}
-                    ></SelectInput>
+                          required  
+                    ></TextInput>
                     </Col>
                     <Col sm={12}></Col>
                     <Col span={12}>
-                    <SelectInput
+                    <TextInput
                             formProps={{
                                 name: "compañia",
                                 label: "Celular",
                             }}
-                            options={[...CompanyOptions]}
-                    ></SelectInput>
+                            
+                    ></TextInput>
                     </Col>
                     <Col sm={12}></Col>
                     <Col sm={12}></Col>

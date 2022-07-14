@@ -1,5 +1,5 @@
 import { Button, PageHeader, Input } from "antd";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -23,7 +23,7 @@ const ApointmentHeaderForm: FC<apointmentHeaderFormProps> = ({ handlePrint, hand
   const navigate = useNavigate();
 
   const [searchParams, setSearchParams] = useSearchParams();
-
+  const [tipo,setTipo]=useState(searchParams.get("type"));
   const search = async (search: string | undefined) => {
     search = search === "" ? undefined : search;
 
@@ -46,7 +46,7 @@ const ApointmentHeaderForm: FC<apointmentHeaderFormProps> = ({ handlePrint, hand
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Cita Laboratorio" image="" />}
+      title={<HeaderTitle title={`Cita ${tipo!="laboratorio"?"Domicilio":"Laboratorio"}`} image="" />}
       className="header-container"
       extra={[
         id &&/* scopes?.imprimir && */  <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
