@@ -8,6 +8,7 @@ import HeaderTitle from "../../app/common/header/HeaderTitle";
 import { IOptionsReport } from "../../app/models/shared";
 import { useStore } from "../../app/stores/store";
 import { reports } from "../../app/util/catalogs";
+import "./css/index.css"
 
 type ReportHeaderProps = {
     handlePrint: () => void;

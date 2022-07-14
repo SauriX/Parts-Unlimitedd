@@ -1,4 +1,4 @@
-import { Divider, PageHeader, Statistic, Table } from "antd";
+import { Divider, PageHeader, Statistic, Table, Tag } from "antd";
 import { observer } from "mobx-react-lite";
 import { FC, useEffect, useState } from "react";
 import HeaderTitle from "../../../../app/common/header/HeaderTitle";
@@ -111,6 +111,7 @@ const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
         pagination={false}
         dataSource={[...statsreport]}
         scroll={{ y: 200 }}
+        rowClassName={(item) => item.nombrePaciente === "Total"? "Resumen Total": ""}
         // summary={pageData => {
         //   let totalBorrow = 10;
         //   let totalRepayment = 5;
@@ -129,6 +130,9 @@ const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
         //   );
         // }}
       />
+      <div style={{textAlign: 'right'}}>
+        <Tag color="lime"> {statsreport.length - 1} Registros</Tag>
+      </div>
     </div>
   );
 };
