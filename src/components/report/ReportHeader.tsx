@@ -8,6 +8,7 @@ import HeaderTitle from "../../app/common/header/HeaderTitle";
 import { IOptionsReport } from "../../app/models/shared";
 import { useStore } from "../../app/stores/store";
 import { reports } from "../../app/util/catalogs";
+import "./css/index.css"
 
 type ReportHeaderProps = {
     handlePrint: () => void;
@@ -52,7 +53,7 @@ const handleChange = async (value: string) => {
             title={<HeaderTitle title="Reportes" image="rutas" />}
             className="header-container"
             extra={[
-              report && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
+              // report && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
               report && <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />,
                 <Select
                   key="reports"

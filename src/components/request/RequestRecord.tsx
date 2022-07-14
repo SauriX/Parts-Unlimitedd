@@ -11,6 +11,8 @@ import { observer } from "mobx-react-lite";
 
 type RequestRecordProps = {
   recordId: string;
+  branchId: string;
+  setBranchId: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
 const formItemLayout = {
@@ -18,7 +20,7 @@ const formItemLayout = {
   wrapperCol: { span: 16 },
 };
 
-const RequestRecord = ({ recordId }: RequestRecordProps) => {
+const RequestRecord = ({ recordId, branchId, setBranchId }: RequestRecordProps) => {
   const { procedingStore, locationStore, modalStore, optionStore } = useStore();
   const { getById } = procedingStore;
   const { getColoniesByZipCode } = locationStore;
@@ -27,11 +29,17 @@ const RequestRecord = ({ recordId }: RequestRecordProps) => {
 
   const [form] = Form.useForm<IProceedingForm>();
 
+  const branch = Form.useWatch("sucursal", form);
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getBranchOptions();
   }, [getBranchOptions]);
+
+  useEffect(() => {
+    setBranchId(branch);
+  }, [branch, setBranchId]);
 
   useEffect(() => {
     const readRecord = async () => {
@@ -59,7 +67,12 @@ const RequestRecord = ({ recordId }: RequestRecordProps) => {
 
   return (
     <Spin spinning={loading}>
-      <Form<IProceedingForm> {...formItemLayout} form={form} size="small">
+      <Form<IProceedingForm>
+        {...formItemLayout}
+        initialValues={{ sucursal: branchId }}
+        form={form}
+        size="small"
+      >
         <Row gutter={[0, 12]}>
           <Col span={12}>
             <Form.Item
@@ -290,7 +303,7 @@ const RequestRecord = ({ recordId }: RequestRecordProps) => {
           <Col span={8}>
             <SelectInput
               formProps={{
-                name: "sucursalId",
+                name: "sucursal",
                 label: "Sucursal",
                 labelCol: { span: 6 },
                 wrapperCol: { span: 18 },

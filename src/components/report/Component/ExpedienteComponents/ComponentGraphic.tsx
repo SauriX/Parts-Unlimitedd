@@ -77,7 +77,7 @@ const CompGraphic: FC<CompGrahicProps> = ({printing}) => {
   
     return (
       <Fragment>
-          <div style={{ marginLeft: "99px" , marginBottom: "20px" }}>
+          <div style={{marginBottom: "20px" }}>
               <PageHeader
                   ghost={false}
                   title={<HeaderTitle title="Estadística de expedientes" image="Reportes" />}
@@ -85,8 +85,6 @@ const CompGraphic: FC<CompGrahicProps> = ({printing}) => {
               ></PageHeader>
               <Divider className="header-divider" />
               <ReactECharts option={options} />
-              {/* <Divider className="header-divider" /> */}
-              {/* < ComponentExpedientes printing={false}></ComponentExpedientes>} */}
           </div>
       </Fragment>
   );

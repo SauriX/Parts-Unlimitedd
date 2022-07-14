@@ -100,21 +100,19 @@ const PatientStatsForm: FC<StatsFormProps> = ({
         onFinish={onFinish}
         scrollToFirstError
       >
-        <Row>
-          <Col md={10} sm={24} xs={12}>
-            <div style={{ marginBottom: "20px" }}>
+        <Row justify="space-between" gutter={8}>
+          <Col flex={0}>
               <DateRangeInput
                 formProps={{ label: "Rango de fechas", name: "fecha" }}
                 readonly={readonly}
               />
-            </div>
           </Col>
-          <Col md={10} sm={24} xs={12}>
+          <Col flex={1}>
             <Form.Item name="CiudadId" label="Ciudad">
               <TreeSelect
-                dropdownStyle={{ maxHeight: 400, overflow: "left" }}
+                dropdownStyle={{ maxHeight: 400 }}
                 treeData={BranchCityOptions}
-                placeholder="Please select"
+                placeholder="Seleccione una opción"
                 treeDefaultExpandAll
                 value={search.sucursalId}
                 onChange={(value) => {
@@ -123,8 +121,7 @@ const PatientStatsForm: FC<StatsFormProps> = ({
               />
             </Form.Item>
           </Col>
-          <Col md={4} sm={24} xs={12}>
-            <div style={{ marginLeft: "99px", marginBottom: "20px" }}>
+          <Col flex={2.5}>
               <Button
                 key="new"
                 type="primary"
@@ -134,14 +131,8 @@ const PatientStatsForm: FC<StatsFormProps> = ({
               >
                 Filtrar
               </Button>
-            </div>
           </Col>
-        </Row>
-
-        <Divider orientation="left"></Divider>
-        <Divider orientation="left"></Divider>
-        <Row justify="center">
-          <Col md={12} sm={24} xs={12}>
+          <Col flex={2}>
             <SwitchInput
               name="Mostrar Gráfica"
               onChange={(value) => {
@@ -157,17 +148,11 @@ const PatientStatsForm: FC<StatsFormProps> = ({
                 setSwitch(value);
               }}
               label="Gráfica"
-              labelAlign="left"
-              labelCol={{span: 4}}
               readonly={readonly}
             />
           </Col>
-          <Col md={12} sm={24} xs={12}></Col>
-
-          <Col md={12} sm={24} xs={12}>
-            {" "}
-          </Col>
         </Row>
+        <Divider orientation="left"></Divider>
       </Form>
 
       <Row>
@@ -188,15 +173,16 @@ const PatientStatsForm: FC<StatsFormProps> = ({
                 ></PageHeader>
               )}
               {printing && <Divider className="header-divider" />}
-            </div>
-          </div>
-        </Col>
-        <Col span={24}>
+              <Col span={24}>
           {TablaExp && (
             <ComponentPatientStats printing={true}></ComponentPatientStats>
           )}
           {Grafica && <ComponentChart printing={true}></ComponentChart>}
         </Col>
+            </div>
+          </div>
+        </Col>
+        
       </Row>
     </Spin>
   );

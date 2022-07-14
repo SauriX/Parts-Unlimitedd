@@ -1,4 +1,4 @@
-import { Divider, PageHeader, Table, Typography } from "antd";
+import { Divider, PageHeader, Statistic, Table, Tag } from "antd";
 import { observer } from "mobx-react-lite";
 import { FC, useEffect, useState } from "react";
 import HeaderTitle from "../../../../app/common/header/HeaderTitle";
@@ -11,15 +11,13 @@ import { IPatientStatisticList } from "../../../../app/models/patient_statistic"
 import { useStore } from "../../../../app/stores/store";
 import useWindowDimensions from "../../../../app/util/window";
 
-const { Text } = Typography;
-
 type CompPatientStatsProps = {
   printing: boolean;
 };
 
 const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
   const { patientStatisticStore, optionStore } = useStore();
-  const { getByName: getBranchByCount } = patientStatisticStore;
+  const { getByName } = patientStatisticStore;
   const { getDeliveryOptions } = optionStore;
   const [loading, setLoading] = useState(false);
   const { width: windowWidth } = useWindowDimensions();
@@ -36,9 +34,9 @@ const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
   useEffect(() => {
     const readStatsReport = async () => {
       setLoading(true);
-      await getBranchByCount();
+      await getByName();
       setLoading(false);
-      getBranchByCount();
+      getByName();
     };
     if (statsreport.length == 0) {
       readStatsReport();
@@ -50,7 +48,7 @@ const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
       ...getDefaultColumnProps("nombrePaciente", "Nombre del Paciente", {
         searchState,
         setSearchState,
-        width: '50%',
+        width: '45%',
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -59,19 +57,23 @@ const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
       ...getDefaultColumnProps("solicitudes", "Solicitudes", {
         searchState,
         setSearchState,
-        width: '20%',
+        width: '30%',
         minWidth: 150,
         windowSize: windowWidth,
       }),
     },
     {
-      ...getDefaultColumnProps("total", "Total Sol.", {
+      ...getDefaultColumnProps("total", "Total Solicitudes", {
         searchState,
         setSearchState,
         width: '30%',
         minWidth: 150,
         windowSize: windowWidth,
       }),
+      render: (value) => ((value).toLocaleString('es-MX', {
+        style: 'currency',
+        currency: 'MXN',
+      })),
     },
   ];
 
@@ -84,7 +86,7 @@ const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
       ></PageHeader>
       <Divider className="header-divider" />
       <Table<IPatientStatisticList>
-        size="large"
+        size="small"
         rowKey={(record) => record.id}
         columns={columns.slice(0, 3)}
         pagination={false}
@@ -98,17 +100,18 @@ const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
     <div style={{ marginBottom: "20px" }}>
       <PageHeader
         ghost={false}
-        title={<HeaderTitle title="Estadística de Pacientes" />}
+        title={<HeaderTitle title="Estadística de Pacientes" image="Reportes"/>}
         className="header-container"
       ></PageHeader>
       <Divider className="header-divider" />
       <Table<IPatientStatisticList>
         loading={loading}
-        size="large"
         rowKey={(record) => record.id}
         columns={columns.slice(0, 3)}
         pagination={false}
         dataSource={[...statsreport]}
+        scroll={{ y: 200 }}
+        rowClassName={(item) => item.nombrePaciente === "Total"? "Resumen Total": ""}
         // summary={pageData => {
         //   let totalBorrow = 10;
         //   let totalRepayment = 5;
@@ -127,6 +130,9 @@ const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
         //   );
         // }}
       />
+      <div style={{textAlign: 'right'}}>
+        <Tag color="lime"> {statsreport.length - 1} Registros</Tag>
+      </div>
     </div>
   );
 };
