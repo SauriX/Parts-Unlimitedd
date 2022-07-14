@@ -157,6 +157,21 @@ const requests = {
 
         iframe.src = url;
       }),
+  getFileUrl: (url: string, contentType: string, data?: Object | FormData) =>
+    axios
+      .post(url, data ?? {}, {
+        baseURL,
+        responseType: "blob",
+        headers:
+          {} instanceof FormData
+            ? { "Content-Type": "multipart/form-data" }
+            : { "Content-Type": "application/json" },
+      })
+      .then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data], { type: contentType }));
+
+        return url;
+      }),
 };
 
 export default requests;
