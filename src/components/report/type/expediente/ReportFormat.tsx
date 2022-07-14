@@ -128,25 +128,19 @@ const ReportForm: FC<ReportFormProps> = ({
         onFinish={onFinish}
         scrollToFirstError
       >
-        <Row>
-          <Col md={10} sm={24} xs={12}>
-            <div style={{ marginBottom: "20px" }}>
+        <Row justify="space-between" gutter={8}>
+          <Col flex={0}>
               <DateRangeInput
                 formProps={{ label: "Rango de fechas", name: "fecha" }}
                 readonly={readonly}
-                // disabledDate={disabledDate}
               />
-            </div>
           </Col>
-          <Col md={10} sm={24} xs={12}>
+          <Col flex={1}>
             <Form.Item name="CiudadId" label="Ciudad">
-              {/* <Form.Item name="sucursalId" label="Sucursal"> */}
               <TreeSelect
-                // style={{ width: "80%" }}
-                // value={value}
-                dropdownStyle={{ maxHeight: 400, overflow: "left" }}
+                dropdownStyle={{ maxHeight: 400 }}
                 treeData={BranchCityOptions}
-                placeholder="Seleccionar"
+                placeholder="Seleccione una opción"
                 treeDefaultExpandAll
                 value={search.sucursalId}
                 onChange={(value) => {
@@ -155,8 +149,7 @@ const ReportForm: FC<ReportFormProps> = ({
               />
             </Form.Item>
           </Col>
-          <Col md={4} sm={24} xs={12}>
-            <div style={{ marginLeft: "99px", marginBottom: "20px" }}>
+          <Col flex={2.5}>
               <Button
                 key="new"
                 type="primary"
@@ -166,20 +159,8 @@ const ReportForm: FC<ReportFormProps> = ({
               >
                 Filtrar
               </Button>
-            </div>
           </Col>
-          {/* <Col md={8} sm={24} xs={12}>
-                    
-                  <SelectInput
-                    formProps={{
-                      name: "sucursalId",
-                      label: "Sucursal",
-                    }}
-                    readonly={readonly}
-                    options={CityOptions}
-                  />
-                  </Col> */}
-                  <Col md={10} sm={24} xs={12}>
+          <Col flex={2}>
             <SwitchInput
               name="Mostrar Gráfica"
               onChange={(value) => {
@@ -193,34 +174,13 @@ const ReportForm: FC<ReportFormProps> = ({
                   setGrafica(false);
                 }
                 setSwitch(value);
-                // SwicthValidator();
               }}
               label="Gráfica"
               readonly={readonly}
             />
           </Col>
         </Row>
-
         <Divider orientation="left"></Divider>
-        <Divider orientation="left"></Divider>
-        <Row justify="center">
-          
-          <Col md={12} sm={24} xs={12}>
-            {/* <Button
-              key="new"
-              type="primary"
-              onClick={() => {
-                SwicthValidator();
-              }}
-            >
-              Aceptar
-            </Button> */}
-          </Col>
-
-          <Col md={12} sm={24} xs={12}>
-            {" "}
-          </Col>
-        </Row>
       </Form>
 
       <Row>

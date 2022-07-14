@@ -100,7 +100,7 @@ const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
     <div style={{ marginBottom: "20px" }}>
       <PageHeader
         ghost={false}
-        title={<HeaderTitle title="Estadística de Pacientes" />}
+        title={<HeaderTitle title="Estadística de Pacientes" image="Reportes"/>}
         className="header-container"
       ></PageHeader>
       <Divider className="header-divider" />
@@ -110,7 +110,7 @@ const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
         columns={columns.slice(0, 3)}
         pagination={false}
         dataSource={[...statsreport]}
-        scroll={{ y: 300 }}
+        scroll={{ y: 200 }}
         // summary={pageData => {
         //   let totalBorrow = 10;
         //   let totalRepayment = 5;
