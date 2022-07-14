@@ -100,12 +100,16 @@ const CompExpediente: FC<CompExpedienteProps> = ({
 
   return (
       <div style={{ marginBottom: "20px" }}>
-        
+        <PageHeader
+        ghost={false}
+        title={ <HeaderTitle title="Estadística de expedientes" image="Reportes" /> }
+        className="header-container"
+      ></PageHeader>
         <Divider className="header-divider" />
 
         <Table<IReportList>
           loading={loading}
-          size="large"
+          size="small"
           rowKey={(record) => record.id}
           columns={columns.slice(0, 3)}
           pagination={false}

@@ -146,7 +146,7 @@ const ReportForm: FC<ReportFormProps> = ({
                 // value={value}
                 dropdownStyle={{ maxHeight: 400, overflow: "left" }}
                 treeData={BranchCityOptions}
-                placeholder="Please select"
+                placeholder="Seleccionar"
                 treeDefaultExpandAll
                 value={search.sucursalId}
                 onChange={(value) => {
@@ -179,12 +179,7 @@ const ReportForm: FC<ReportFormProps> = ({
                     options={CityOptions}
                   />
                   </Col> */}
-        </Row>
-
-        <Divider orientation="left"></Divider>
-        <Divider orientation="left"></Divider>
-        <Row justify="center">
-          <Col md={12} sm={24} xs={12}>
+                  <Col md={10} sm={24} xs={12}>
             <SwitchInput
               name="Mostrar Gráfica"
               onChange={(value) => {
@@ -204,6 +199,12 @@ const ReportForm: FC<ReportFormProps> = ({
               readonly={readonly}
             />
           </Col>
+        </Row>
+
+        <Divider orientation="left"></Divider>
+        <Divider orientation="left"></Divider>
+        <Row justify="center">
+          
           <Col md={12} sm={24} xs={12}>
             {/* <Button
               key="new"
@@ -224,32 +225,31 @@ const ReportForm: FC<ReportFormProps> = ({
 
       <Row>
         <Col md={24} sm={24} xs={24}>
-          <div style={{ display: printing ? "" : "none", height: 100 }}></div>
-          <div style={{ display: printing ? "none" : "" }}>
-            <div ref={componentRef}>
-              {printing && (
-                <PageHeader
-                  ghost={false}
-                  title={
-                    <HeaderTitle
-                      title="Estadística de Expedientes"
-                      image="Reportes"
-                    />
-                  }
-                  className="header-container"
-                ></PageHeader>
+        <div style={{ display: printing ? "" : "none", height: 100 }}></div>
+        <div style={{ display: printing ? "none" : "" }}>
+          <div ref={componentRef}>
+            {printing && (
+              <PageHeader
+                ghost={false}
+                title={
+                  <HeaderTitle
+                    title="Estadística de Expedientes"
+                    image="Reportes"
+                  />
+                }
+                className="header-container"
+              ></PageHeader>
+            )}
+            {printing && <Divider className="header-divider" />}
+            
+        <Col span={24}>
+              {TablaExp && (
+                <ComponentExpedientes printing={true}></ComponentExpedientes>
               )}
-              {printing && <Divider className="header-divider" />}
-              <Col span={24}>
-                {TablaExp && (
-                  <ComponentExpedientes printing={true}></ComponentExpedientes>
-                )}
-                {Grafica && (
-                  <ComponentGraphic printing={true}></ComponentGraphic>
-                )}
-              </Col>
-            </div>
+              {Grafica && <ComponentGraphic printing={true}></ComponentGraphic>}
+        </Col>
           </div>
+        </div>
         </Col>
       </Row>
     </Spin>

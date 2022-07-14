@@ -173,15 +173,16 @@ const PatientStatsForm: FC<StatsFormProps> = ({
                 ></PageHeader>
               )}
               {printing && <Divider className="header-divider" />}
-            </div>
-          </div>
-        </Col>
-        <Col span={24}>
+              <Col span={24}>
           {TablaExp && (
             <ComponentPatientStats printing={true}></ComponentPatientStats>
           )}
           {Grafica && <ComponentChart printing={true}></ComponentChart>}
         </Col>
+            </div>
+          </div>
+        </Col>
+        
       </Row>
     </Spin>
   );

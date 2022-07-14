@@ -1,4 +1,5 @@
 import { Form, Row, Col, Checkbox, Input, Button } from "antd";
+import { FormInstance } from "antd/es/form/Form";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
@@ -23,11 +24,14 @@ const sendOptions = [
   { label: "Ambos", value: "ambos" },
 ];
 
-const RequestGeneral = () => {
+type RequestGeneralProps = {
+  form: FormInstance<IRequestGeneral>;
+  onSubmit: (general: IRequestGeneral) => void;
+};
+
+const RequestGeneral = ({ form, onSubmit }: RequestGeneralProps) => {
   const { optionStore } = useStore();
   const { CompanyOptions, MedicOptions, getCompanyOptions, getMedicOptions } = optionStore;
-
-  const [form] = Form.useForm<IRequestGeneral>();
 
   const origin = Form.useWatch("procedencia", form);
   const sendings = Form.useWatch("metodoEnvio", form);
@@ -75,7 +79,7 @@ const RequestGeneral = () => {
       {...formItemLayout}
       form={form}
       onFinish={(values) => {
-        console.log(values);
+        onSubmit(values);
       }}
       onFinishFailed={({ errorFields }) => {
         const errors = errorFields.map((x) => ({ name: x.name[0].toString(), errors: x.errors }));
