@@ -234,7 +234,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
   });
   const columns: IColumns<IStudyList> = [
     {
-      ...getDefaultColumnProps("id", "Id Estudio", {
+      ...getDefaultColumnProps("id", "Clave Estudio", {
         searchState,
         setSearchState,
         width: "30%",

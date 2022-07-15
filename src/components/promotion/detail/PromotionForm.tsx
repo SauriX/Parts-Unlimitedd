@@ -843,7 +843,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
                 }}
                 style={{ width: 240, marginRight: 20, marginLeft: 10 }}
               />
-              {!readonly && (
+              {!readonly || !printing&& (
                 <ImageButton
                   key="agregar"
                   title="Agregar "
