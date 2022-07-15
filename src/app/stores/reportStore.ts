@@ -9,97 +9,102 @@ import responses from "../util/responses";
 import { getErrors } from "../util/utils";
 
 export default class ReportStore {
-    constructor() {
-        makeAutoObservable(this);
-    }
-    search: IReportForm = new ReportFormValues();
-    scopes?: IScopes;
-    reports: IReportList[] = [];
-    currentReport: string | undefined;
-    clearScopes = () => {
-        this.scopes = undefined;
-    };
-    setCurrentReport = (report?: string) => {
-        this.currentReport = report;
-      };
-
-    clearReport = () => {
-        this.reports = [];
-    };
-
-    access = async () => {
-        try {
-            const scopes = await Report.access();
-            this.scopes = scopes;
-            return scopes;
-        } catch (error: any) {
-            alerts.warning(getErrors(error));
-            history.push("/forbidden");
-        }
-    };
-
-
-    exportList = async (catalogName: string, search: string) => {
-      try {
-        await Report.exportList(catalogName, search);
-      } catch (error: any) {
-        alerts.warning(getErrors(error));
-      }
-    };
-    printPdf    = async () => {
-      try {
-        await Report.printPdf();
-        // this.reports = reports;
-      } catch (error: any) {
-        alerts.warning(getErrors(error));
-        this.reports = [];
-      }
-    };
-
-    getAll = async (reportName: string, search?: string) => {
-        try {
-          const reports = await Report.getAll(reportName, search);
-          this.reports = reports;
-        } catch (error: any) {
-          alerts.warning(getErrors(error));
-          this.reports = [];
-        }
-      };
-
-      getBranchByCount = async () => {
-        try {
-          const reports = await Report.getBranchByCount();
-          this.reports = reports;
-      } catch (error: any) {
-          alerts.warning(getErrors(error));
-          this.reports = [];
-      }
+  constructor() {
+    makeAutoObservable(this);
+  }
+  search: IReportForm = new ReportFormValues();
+  scopes?: IScopes;
+  reports: IReportList[] = [];
+  currentReport: string | undefined;
+  filtroPDF?: IReportForm = new ReportFormValues();
+  clearScopes = () => {
+    this.scopes = undefined;
+  };
+  setCurrentReport = (report?: string) => {
+    this.currentReport = report;
   };
 
-    exportForm = async (id: string) => {
-        try {
-            await Report.exportForm(id);
-        } catch (error: any) {
-            if (error.status === responses.notFound) {
-                history.push("/notFound");
-            } else {
-                alerts.warning(getErrors(error));
-            }
-        }
-    };
+  clearReport = () => {
+    this.reports = [];
+  };
 
-    setSearch = (value: IReportForm) => {
-      this.search = value;
-    };
+  SetFilter = (search: IReportForm) => {
+    this.filtroPDF = search;
+  };
 
-    filtro = async (search: IReportForm) => {
-      try {
-        console.log(search);
-        const reports = await Report.filtro(search);
-        this.reports = reports;
-      } catch (error: any) {
+  access = async () => {
+    try {
+      const scopes = await Report.access();
+      this.scopes = scopes;
+      return scopes;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      history.push("/forbidden");
+    }
+  };
+
+  exportList = async (catalogName: string, search: string) => {
+    try {
+      await Report.exportList(catalogName, search);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  printPdf = async (search?: IReportForm) => {
+    try {
+      await Report.printPdf(search);
+      // this.reports = reports;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      this.reports = [];
+    }
+  };
+
+  getAll = async (reportName: string, search?: string) => {
+    try {
+      const reports = await Report.getAll(reportName, search);
+      this.reports = reports;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      this.reports = [];
+    }
+  };
+
+  getBranchByCount = async () => {
+    try {
+      const reports = await Report.getBranchByCount();
+      this.reports = reports;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      this.reports = [];
+    }
+  };
+
+  exportForm = async (id: string) => {
+    try {
+      await Report.exportForm(id);
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
         alerts.warning(getErrors(error));
-        this.reports = [];
       }
-    };
+    }
+  };
+
+  setSearch = (value: IReportForm) => {
+    this.search = value;
+  };
+
+  filtro = async (search: IReportForm) => {
+    try {
+      console.log(search);
+      const reports = await Report.filtro(search);
+      this.reports = reports;
+      this.SetFilter(search);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      this.reports = [];
+    }
+  };
 }

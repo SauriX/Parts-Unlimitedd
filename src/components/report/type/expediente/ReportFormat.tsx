@@ -24,6 +24,7 @@ import { IReportForm, ReportFormValues } from "../../../../app/models/report";
 import ComponentGraphic from "../../Component/ExpedienteComponents/ComponentGraphic";
 import moment from "moment";
 import ComponentExpedientes from "../../Component/ExpedienteComponents/ComponentExpedientes";
+import { map, zip } from "lodash";
 // import { v4 as uuid } from "uuid";
 
 type ReportFormProps = {
@@ -104,8 +105,11 @@ const ReportForm: FC<ReportFormProps> = ({
     report.fechaFinal = newValues.fecha[1].toDate();
     report.fecha = [moment(report?.fechaInicial), moment(report?.fechaFinal)];
     report.sucursalId = sucursal;
+    const sucursalName = BranchCityOptions.flatMap(x => x.children).find(x => x.value === report.sucursalId)?.title;
+    console.log("Sucursal nombre", sucursalName);
+    report.sucursal = sucursalName;
     filtro(report!).then((x) => setLoading(false));
-
+  
     // let success = false;
     // setLoading(false);
     // // await filtro(report);

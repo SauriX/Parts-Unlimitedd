@@ -8,11 +8,12 @@ import { useStore } from "../app/stores/store";
 import ReportHeader from "../components/report/ReportHeader";
 import { IOptionsReport } from "../app/models/shared";
 import ReportDefault from "../components/report/ReportDefault";
+import { IReportForm } from "../app/models/report";
 
 const Report = () => {
   const { reportStore, patientStatisticStore } = useStore();
-  const { scopes, access, setCurrentReport,  clearScopes, exportList, printPdf } = reportStore;
-  const {printPdf: printPdfStats} = patientStatisticStore;
+  const { scopes, access, setCurrentReport,  clearScopes, exportList, printPdf, filtroPDF } = reportStore;
+  const {printPdf: printPdfStats, pdfFilter} = patientStatisticStore;
 
   const [searchParams] = useSearchParams();
 
@@ -32,11 +33,11 @@ const Report = () => {
   const handleDownload = async () => {
     setLoading(true);
     const params = searchParams.get("reports");
-    if (params == "expediente"){
-      await printPdf();
+    if (params === "expediente"){
+      await printPdf(filtroPDF);
     }
     if(params == "estadistica"){
-      await printPdfStats();
+      await printPdfStats(pdfFilter);
     }
     // await printPdf(searchParams.get("report") ?? "", searchParams.get("search") ?? "all");
     setLoading(false);

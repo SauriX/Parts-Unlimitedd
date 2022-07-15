@@ -85,7 +85,9 @@ const PatientStatsForm: FC<StatsFormProps> = ({
       moment(statsreport?.fechaInicial),
       moment(statsreport?.fechaFinal),
     ];
-    statsreport.sucursalId = sucursal;
+    const sucursalName = BranchCityOptions.flatMap(x => x.children).find(x => x.value === statsreport.sucursalId)?.title;
+    console.log("Sucursal nombre", sucursalName);
+    statsreport.sucursal = sucursalName;
     filtro(statsreport!).then((x) => setLoading(false));
   };
 

@@ -1,4 +1,4 @@
-import { Divider, PageHeader, Table } from "antd";
+import { Divider, PageHeader, Table, Tag } from "antd";
 import { observer } from "mobx-react-lite";
 import { FC, Fragment, useEffect, useState } from "react";
 import HeaderTitle from "../../../../app/common/header/HeaderTitle";
@@ -93,6 +93,7 @@ const CompExpediente: FC<CompExpedienteProps> = ({
           pagination={false}
           dataSource={[...reports]}
       />
+      
       {/* <ReactECharts option={options} />; */}
     </div>
   );
@@ -114,8 +115,13 @@ const CompExpediente: FC<CompExpedienteProps> = ({
           columns={columns.slice(0, 3)}
           pagination={false}
           dataSource={[...reports]}
-          
+          scroll={{ y: 200 }}
+          rowClassName={(item) => item.expedienteNombre === "Total"? "Resumen Total": ""}
           />
+          <div  style={{ textAlign: "right" }}>
+         
+      <Tag color="lime"> {reports.length} Registros</Tag>
+          </div>
         </div>
   );
 };

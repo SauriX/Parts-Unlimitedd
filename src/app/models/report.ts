@@ -27,6 +27,7 @@ export interface IReportForm {
   grafica?: boolean;
   fechaInicial?: Date;
   fechaFinal?: Date;
+  sucursal: string;
   fecha: moment.Moment[];
 }
 export class ReportFormValues implements IReportForm {
@@ -34,6 +35,7 @@ export class ReportFormValues implements IReportForm {
   ciudadId = "";
   sucursalId = "";
   grafica = false;
+  sucursal = "";
   fecha = [moment(Date.now()), moment(Date.now()).add("day", 1)];
 
   constructor(init?: IReportForm) {

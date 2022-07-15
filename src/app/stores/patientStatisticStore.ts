@@ -15,6 +15,7 @@ export default class PatientStaticStore {
     scopes?: IScopes;
     statsreport: IPatientStatisticList[] = [];
     currentReport: string | undefined;
+    pdfFilter?: IPatientStatisticForm = new PatientStatisticFormValues();
     clearScopes = () => {
         this.scopes = undefined;
     };
@@ -24,6 +25,10 @@ export default class PatientStaticStore {
 
     clearReport = () => {
         this.statsreport = [];
+    };
+
+    setFilter = (search: IPatientStatisticForm) => {
+        this.pdfFilter = search;
     };
 
     access = async () => {
@@ -45,9 +50,9 @@ export default class PatientStaticStore {
         }
     };
 
-    printPdf = async () => {
+    printPdf = async (search?: IPatientStatisticForm) => {
         try{
-            await PatientStatistic.printPdf();
+            await PatientStatistic.printPdf(search);
         } catch (error: any) {
             alerts.warning(getErrors(error));
             this.statsreport = []
@@ -95,6 +100,7 @@ export default class PatientStaticStore {
             console.log(search);
             const statsreport = await PatientStatistic.filtro(search);
             this.statsreport = statsreport;
+            this.setFilter(search);
         } catch (error: any) {
             alerts.warning(getErrors(error));
             this.statsreport = [];
