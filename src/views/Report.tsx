@@ -13,7 +13,7 @@ import { IReportForm } from "../app/models/report";
 const Report = () => {
   const { reportStore, patientStatisticStore } = useStore();
   const { scopes, access, setCurrentReport,  clearScopes, exportList, printPdf, filtroPDF } = reportStore;
-  const {printPdf: printPdfStats} = patientStatisticStore;
+  const {printPdf: printPdfStats, pdfFilter} = patientStatisticStore;
 
   const [searchParams] = useSearchParams();
 
@@ -37,7 +37,7 @@ const Report = () => {
       await printPdf(filtroPDF);
     }
     if(params == "estadistica"){
-      await printPdfStats();
+      await printPdfStats(pdfFilter);
     }
     // await printPdf(searchParams.get("report") ?? "", searchParams.get("search") ?? "all");
     setLoading(false);
