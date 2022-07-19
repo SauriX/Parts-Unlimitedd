@@ -27,6 +27,7 @@ import QuotationStore from "./quotationStore";
 import ReportStore from "./reportStore";
 import PatientStatisticStore from "./patientStatisticStore";
 import RequestStore from "./requestStore";
+import MedicalStatsStore from "./medicalStatsStore";
 
 configure({
   enforceActions: "never",
@@ -59,6 +60,7 @@ interface Store {
   quotationStore: QuotationStore;
   reportStore: ReportStore;
   patientStatisticStore: PatientStatisticStore;
+  medicalStatsStore: MedicalStatsStore;
   requestStore: RequestStore;
 }
 
@@ -89,6 +91,7 @@ export const store: Store = {
   quotationStore: new QuotationStore(),
   reportStore: new ReportStore(),
   patientStatisticStore: new PatientStatisticStore(),
+  medicalStatsStore: new MedicalStatsStore(),
   requestStore: new RequestStore(),
 };
 

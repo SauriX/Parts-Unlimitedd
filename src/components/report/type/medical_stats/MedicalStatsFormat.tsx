@@ -21,11 +21,11 @@ import messages from "../../../../app/util/messages";
 import DateRangeInput from "../../../../app/common/form/DateRangeInput";
 import moment from "moment";
 import {
-  IPatientStatisticForm,
-  PatientStatisticFormValues,
-} from "../../../../app/models/patient_statistic";
-import ComponentChart from "../../Component/PatientStatsComponent/ComponentChart";
-import ComponentPatientStats from "../../Component/PatientStatsComponent/ComponentPatientStats";
+  IMedicalStatsForm,
+  MedicalStatsFormValues,
+} from "../../../../app/models/medical_stats";
+import ComponentChart from "../../Component/MedicalStatsComponent/ComponentChart";
+import ComponentMedicalStats from "../../Component/MedicalStatsComponent/ComponentMedicalStats";
 
 type StatsFormProps = {
   componentRef: React.MutableRefObject<any>;
@@ -33,19 +33,25 @@ type StatsFormProps = {
   reportName: string;
 };
 
-const PatientStatsForm: FC<StatsFormProps> = ({
+const MedicalStatsFormat: FC<StatsFormProps> = ({
   componentRef,
   printing,
   reportName,
 }) => {
-  const { patientStatisticStore, optionStore } = useStore();
-  const { statsreport, filtro, setSearch, search } = patientStatisticStore;
-  const { BranchCityOptions, getBranchCityOptions } = optionStore;
+  const { medicalStatsStore, optionStore } = useStore();
+  const { statsreport, filtro, setSearch, search } = medicalStatsStore;
+  const {
+    BranchCityOptions,
+    getBranchCityOptions,
+    MedicOptions,
+    getMedicOptions,
+  } = optionStore;
   const navigate = useNavigate();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [sucursal, setSucursal] = useState<string>("");
-  const [form] = Form.useForm<IPatientStatisticForm>();
+  const [medic, setMedic] = useState<string>("");
+  const [form] = Form.useForm<IMedicalStatsForm>();
   const { Option, OptGroup } = Select;
   const [loading, setLoading] = useState(false);
   const [Grafica, setGrafica] = useState<boolean>(false);
@@ -55,13 +61,17 @@ const PatientStatsForm: FC<StatsFormProps> = ({
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
-  const [values, setValues] = useState<IPatientStatisticForm>(
-    new PatientStatisticFormValues()
+  const [values, setValues] = useState<IMedicalStatsForm>(
+    new MedicalStatsFormValues()
   );
 
   useEffect(() => {
     getBranchCityOptions();
   }, [getBranchCityOptions]);
+
+  useEffect(() => {
+    getMedicOptions();
+  }, [getMedicOptions]);
 
   const filterBtn = () => {
     form.submit();
@@ -76,7 +86,8 @@ const PatientStatsForm: FC<StatsFormProps> = ({
       readStatsReport();
     }
   }, [statsreport.length]);
-  const onFinish = async (newValues: IPatientStatisticForm) => {
+  
+  const onFinish = async (newValues: IMedicalStatsForm) => {
     setLoading(true);
     const statsreport = { ...values, ...newValues };
     statsreport.fechaInicial = newValues.fecha[0].toDate();
@@ -85,16 +96,24 @@ const PatientStatsForm: FC<StatsFormProps> = ({
       moment(statsreport?.fechaInicial),
       moment(statsreport?.fechaFinal),
     ];
-    const sucursalName = BranchCityOptions.flatMap(x => x.children).find(x => x.value === statsreport.sucursalId)?.title;
-    console.log("Sucursal nombre", sucursalName);
+    const sucursalName = BranchCityOptions.flatMap((x) => x.children).filter(
+      (x) => statsreport.sucursalId?.includes(x.value)
+    )?.map(x => x.title).join(", ");
     statsreport.sucursal = sucursalName;
+    if (statsreport.medicoId) {
+      const medicName = MedicOptions.find(
+        (x) => x.value === statsreport.medicoId
+      );
+      statsreport.nombreMedico = medicName!.label!.toString();
+    }
     filtro(statsreport!).then((x) => setLoading(false));
+    console.log(newValues);
   };
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}></Row>
-      <Form<IPatientStatisticForm>
+      <Form<IMedicalStatsForm>
         {...formItemLayout}
         form={form}
         name="report"
@@ -103,38 +122,39 @@ const PatientStatsForm: FC<StatsFormProps> = ({
         scrollToFirstError
       >
         <Row justify="space-between" gutter={8}>
-          <Col span={8}>
-              <DateRangeInput
-                formProps={{ label: "Rango de fechas", name: "fecha" }}
-                readonly={readonly}
-              />
+          <Col flex={0}>
+            <DateRangeInput
+              formProps={{ label: "Rango de fechas", name: "fecha" }}
+              readonly={readonly}
+            />
           </Col>
-          <Col span={8}>
-            <Form.Item name="CiudadId" label="Ciudad">
+          <Col flex={1}>
+            <Form.Item name="sucursalId" label="Ciudad">
               <TreeSelect
                 dropdownStyle={{ maxHeight: 400 }}
                 treeData={BranchCityOptions}
+                multiple
                 placeholder="Seleccione una opción"
                 treeDefaultExpandAll
-                value={search.sucursalId}
-                onChange={(value) => {
-                  setSucursal(value);
-                }}
+                // value={search.sucursalId}
+                // onChange={(value) => {
+                //   setSucursal(value);
+                // }}
               />
             </Form.Item>
           </Col>
-          <Col span={4}>
-              <Button
-                key="new"
-                type="primary"
-                onClick={() => {
-                  filterBtn();
-                }}
-              >
-                Filtrar
-              </Button>
+          <Col flex={2.5}>
+            <Button
+              key="new"
+              type="primary"
+              onClick={() => {
+                filterBtn();
+              }}
+            >
+              Filtrar
+            </Button>
           </Col>
-          <Col span={4}>
+          <Col flex={2}>
             <SwitchInput
               name="Mostrar Gráfica"
               onChange={(value) => {
@@ -154,6 +174,22 @@ const PatientStatsForm: FC<StatsFormProps> = ({
             />
           </Col>
         </Row>
+        <Row justify="start" gutter={8}>
+          <Col flex={0.5}>
+            <Form.Item name="MedicoId" label="Médico">
+              <TreeSelect
+                dropdownStyle={{ maxHeight: 400 }}
+                treeData={MedicOptions}
+                placeholder="Seleccione una opción"
+                treeDefaultExpandAll
+                value={search.medicoId}
+                onChange={(value) => {
+                  setMedic(value);
+                }}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
         <Divider orientation="left"></Divider>
       </Form>
 
@@ -167,7 +203,7 @@ const PatientStatsForm: FC<StatsFormProps> = ({
                   ghost={false}
                   title={
                     <HeaderTitle
-                      title="Estadística de Pacientes"
+                      title="Solicitudes por Médico Condensado"
                       image="Reportes"
                     />
                   }
@@ -176,18 +212,19 @@ const PatientStatsForm: FC<StatsFormProps> = ({
               )}
               {printing && <Divider className="header-divider" />}
               <Col span={24}>
-          {TablaExp && (
-            <ComponentPatientStats printing={true}></ComponentPatientStats>
-          )}
-          {Grafica && <ComponentChart printing={true}></ComponentChart>}
-        </Col>
+                {TablaExp && (
+                  <ComponentMedicalStats
+                    printing={true}
+                  ></ComponentMedicalStats>
+                )}
+                {Grafica && <ComponentChart printing={true}></ComponentChart>}
+              </Col>
             </div>
           </div>
         </Col>
-        
       </Row>
     </Spin>
   );
 };
 
-export default observer(PatientStatsForm);
+export default observer(MedicalStatsFormat);

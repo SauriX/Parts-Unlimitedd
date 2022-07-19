@@ -7,17 +7,17 @@ import {
   ISearch,
   getDefaultColumnProps,
 } from "../../../../app/common/table/utils";
-import { IPatientStatisticList } from "../../../../app/models/patient_statistic";
+import { IMedicalStatsList } from "../../../../app/models/medical_stats";
 import { useStore } from "../../../../app/stores/store";
 import useWindowDimensions from "../../../../app/util/window";
 
-type CompPatientStatsProps = {
+type CompMedicalStatsProps = {
   printing: boolean;
 };
 
-const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
-  const { patientStatisticStore, optionStore } = useStore();
-  const { getByName } = patientStatisticStore;
+const CompMedicalStats: FC<CompMedicalStatsProps> = () => {
+  const { medicalStatsStore, optionStore } = useStore();
+  const { getByDoctor } = medicalStatsStore;
   const { getDeliveryOptions } = optionStore;
   const [loading, setLoading] = useState(false);
   const { width: windowWidth } = useWindowDimensions();
@@ -26,7 +26,7 @@ const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
     searchedColumn: "",
   });
 
-  const { statsreport } = patientStatisticStore;
+  const { statsreport } = medicalStatsStore;
   useEffect(() => {
     getDeliveryOptions();
   }, [getDeliveryOptions]);
@@ -34,46 +34,65 @@ const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
   useEffect(() => {
     const readStatsReport = async () => {
       setLoading(true);
-      await getByName();
+      await getByDoctor();
       setLoading(false);
-      getByName();
+      getByDoctor();
     };
     if (statsreport.length == 0) {
       readStatsReport();
     }
   }, []);
 
-  const columns: IColumns<IPatientStatisticList> = [
+  const columns: IColumns<IMedicalStatsList> = [
     {
-      ...getDefaultColumnProps("nombrePaciente", "Nombre del Paciente", {
+      ...getDefaultColumnProps("claveMedico", "Clave", {
         searchState,
         setSearchState,
-        width: '45%',
+        width: "20%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
     },
+    {
+        ...getDefaultColumnProps("nombreMedico", "Nombre del Médico", {
+          searchState,
+          setSearchState,
+          width: "35%",
+          minWidth: 150,
+          windowSize: windowWidth,
+        }),
+      },
+      {
+        ...getDefaultColumnProps("total", "Importe", {
+          searchState,
+          setSearchState,
+          width: "20%",
+          minWidth: 150,
+          windowSize: windowWidth,
+        }),
+        render: (value) =>
+          value.toLocaleString("es-MX", {
+            style: "currency",
+            currency: "MXN",
+          }),
+      },
     {
       ...getDefaultColumnProps("solicitudes", "Solicitudes", {
         searchState,
         setSearchState,
-        width: '30%',
+        width: "20%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
     },
     {
-      ...getDefaultColumnProps("total", "Total Solicitudes", {
+      ...getDefaultColumnProps("pacientes", "No. Pacientes", {
         searchState,
         setSearchState,
-        width: '30%',
+        width: "20%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
-      render: (value) => ((value).toLocaleString('es-MX', {
-        style: 'currency',
-        currency: 'MXN',
-      })),
     },
   ];
 
@@ -81,24 +100,28 @@ const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
     <div style={{ marginBottom: "20px" }}>
       <PageHeader
         ghost={false}
-        title={<HeaderTitle title="Estadística de Pacientes" image="Reportes"/>}
+        title={
+          <HeaderTitle title="Solicitudes por Médico Condensado" image="Reportes" />
+        }
         className="header-container"
       ></PageHeader>
       <Divider className="header-divider" />
-      <Table<IPatientStatisticList>
+      <Table<IMedicalStatsList>
         loading={loading}
         rowKey={(record) => record.id}
-        columns={columns.slice(0, 3)}
+        columns={columns.slice(0, 5)}
         pagination={false}
         dataSource={[...statsreport]}
         scroll={{ y: 200 }}
-        rowClassName={(item) => item.nombrePaciente === "Total"? "Resumen Total": ""}
+        rowClassName={(item) =>
+          item.claveMedico === "Total" ? "Resumen Total" : ""
+        }
       />
-      <div style={{textAlign: 'right'}}>
+      <div style={{ textAlign: "right" }}>
         <Tag color="lime"> {statsreport.length - 1} Registros</Tag>
       </div>
     </div>
   );
 };
 
-export default observer(CompPatientStats);
+export default observer(CompMedicalStats);

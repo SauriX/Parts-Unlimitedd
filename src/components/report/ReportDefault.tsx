@@ -3,6 +3,7 @@ import { IOptionsReport } from "../../app/models/shared";
 import { observer } from "mobx-react-lite";
 import ReportFormat from "./type/expediente/ReportFormat";
 import PatientStatsForm from "./type/patient_stats/PatientStatsFormat";
+import MedicalStatsFormat from "./type/medical_stats/MedicalStatsFormat";
 
 type ReportDefaultProps = {
   componentRef: React.MutableRefObject<any>;
@@ -10,7 +11,11 @@ type ReportDefaultProps = {
   report: IOptionsReport | undefined;
 };
 
-const ReportDefault: FC<ReportDefaultProps> = ({ componentRef, printing, report }) => {
+const ReportDefault: FC<ReportDefaultProps> = ({
+  componentRef,
+  printing,
+  report,
+}) => {
   return !report ? null : report.type === "expediente" ? (
     <ReportFormat
       componentRef={componentRef}
@@ -23,14 +28,12 @@ const ReportDefault: FC<ReportDefaultProps> = ({ componentRef, printing, report 
       printing={printing}
       reportName={report.value.toString()}
     />
-  // ) : report.type === "Estadistica" ? (
-  //   <PruebaFormat
-  //     componentRef={componentRef}
-  //     printing={printing}
-  //     reportName={report.value.toString()}
-  //   />
-//   ) : report.type === "dimension" ? (
-//     <CatalogDimensionTable componentRef={componentRef} printing={printing} />
+  ) : report.type === "medicos" ? (
+    <MedicalStatsFormat
+      componentRef={componentRef}
+      printing={printing}
+      reportName={report.value.toString()}
+    />
   ) : null;
 };
 
