@@ -566,14 +566,14 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                 {item.nombre}
                             </Col>
                             <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                                <ImageButton
+{   disabled&&!load&&                             <ImageButton
                                     key="Eliminar"
                                     title="Eliminar lista de trabajo"
                                     image="Eliminar_Clinica"
                                     onClick={() => {
                                         deleteWorkList(item.id);
                                     }}
-                                />
+                                />}
                             </Col>
                         </List.Item>
                     )}
@@ -617,14 +617,14 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                 {item.clave}
                             </Col>
                             <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                                <ImageButton
+{    disabled&&!load&&                            <ImageButton
                                     key="Eliminar"
                                     title="Eliminar Parametro"
                                     image="Eliminar_Clinica"
                                     onClick={() => {
                                         deleteParameter(item.id);
                                     }}
-                                />
+                                />}
                             </Col>
                         </List.Item>
                     )}
@@ -647,14 +647,14 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                     }}
                                     style={{ width: 240, marginRight: 20,marginLeft: 10 }}
                                 />
-                                {disabled||!load&& (
+                                {disabled&&!load&& 
                                     <ImageButton
                                         key="agregar"
                                         title="Agregar Indicación"
                                         image="agregar-archivo"
                                         onClick={addIndication}
                                     />
-                                )}
+                                }
                             </Col>
                         </div>
                     }
@@ -668,14 +668,14 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                 {item.nombre}
                             </Col>
                             <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                                <ImageButton
+                            {!disabled && !load&&<ImageButton
                                     key="Eliminar"
                                     title="Eliminar Indicación"
                                     image="Eliminar_Clinica"
                                     onClick={() => {
                                        deleteIndicacion(item.id);
                                     }}
-                                />
+                                />}
                             </Col>
                         </List.Item>
                     )}
@@ -719,7 +719,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                 {item.clave}
                             </Col>
                             <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                               {  !loading&&<ImageButton
+                               {  !disabled && !load&&<ImageButton
                                     key="Eliminar"
                                     title="Eliminar Reactivo"
                                     image="Eliminar_Clinica"

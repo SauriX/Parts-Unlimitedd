@@ -843,7 +843,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
                 }}
                 style={{ width: 240, marginRight: 20, marginLeft: 10 }}
               />
-              {!readonly || !printing&& (
+              {!readonly && !printing&& (
                 <ImageButton
                   key="agregar"
                   title="Agregar "
@@ -864,14 +864,14 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
               {item.nombre}
             </Col>
             <Col md={12} sm={24} style={{ textAlign: "left" }}>
-              <ImageButton
+      {!readonly && !printing&&        <ImageButton
                 key="Eliminar"
                 title="Eliminar"
                 image="Eliminar_Clinica"
                 onClick={() => {
                   deleteClinic(item.id);
                 }}
-              />
+              />}
             </Col>
           </List.Item>
         )}
