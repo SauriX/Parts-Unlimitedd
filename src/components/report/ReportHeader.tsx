@@ -50,7 +50,7 @@ const handleChange = async (value: string) => {
     return (
         <PageHeader
             ghost={false}
-            title={<HeaderTitle title="Reportes" image="rutas" />}
+            title={<HeaderTitle title="Reportes" image="grafico" />}
             className="header-container"
             extra={[
               // report && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

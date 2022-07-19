@@ -122,13 +122,13 @@ const MedicalStatsFormat: FC<StatsFormProps> = ({
         scrollToFirstError
       >
         <Row justify="space-between" gutter={8}>
-          <Col flex={0}>
+          <Col md={8} sm={12} xs={24}>
             <DateRangeInput
               formProps={{ label: "Rango de fechas", name: "fecha" }}
               readonly={readonly}
             />
           </Col>
-          <Col flex={1}>
+          <Col md={8} sm={12} xs={24}>
             <Form.Item name="sucursalId" label="Ciudad">
               <TreeSelect
                 dropdownStyle={{ maxHeight: 400 }}
@@ -143,7 +143,7 @@ const MedicalStatsFormat: FC<StatsFormProps> = ({
               />
             </Form.Item>
           </Col>
-          <Col flex={2.5}>
+          <Col md={2} sm={12} xs={24}>
             <Button
               key="new"
               type="primary"
@@ -154,7 +154,7 @@ const MedicalStatsFormat: FC<StatsFormProps> = ({
               Filtrar
             </Button>
           </Col>
-          <Col flex={2}>
+          <Col md={4} sm={12} xs={24}>
             <SwitchInput
               name="Mostrar Gráfica"
               onChange={(value) => {
@@ -173,19 +173,17 @@ const MedicalStatsFormat: FC<StatsFormProps> = ({
               readonly={readonly}
             />
           </Col>
-        </Row>
-        <Row justify="start" gutter={8}>
-          <Col flex={0.5}>
+          <Col md={8} sm={12} xs={24}>
             <Form.Item name="MedicoId" label="Médico">
               <TreeSelect
                 dropdownStyle={{ maxHeight: 400 }}
                 treeData={MedicOptions}
                 placeholder="Seleccione una opción"
                 treeDefaultExpandAll
-                value={search.medicoId}
-                onChange={(value) => {
-                  setMedic(value);
-                }}
+                // value={search.medicoId}
+                // onChange={(value) => {
+                //   setMedic(value);
+                // }}
               />
             </Form.Item>
           </Col>
@@ -204,7 +202,7 @@ const MedicalStatsFormat: FC<StatsFormProps> = ({
                   title={
                     <HeaderTitle
                       title="Solicitudes por Médico Condensado"
-                      image="Reportes"
+                      image="doctor"
                     />
                   }
                   className="header-container"

@@ -91,7 +91,7 @@ const CompChart: FC<CompChartProps> = () => {
         <PageHeader
           ghost={false}
           title={
-            <HeaderTitle title="Solicitudes por Médico Condensado" image="Reportes" />
+            <HeaderTitle title="Solicitudes por Médico Condensado" image="doctor" />
           }
           className="header-container"
         ></PageHeader>

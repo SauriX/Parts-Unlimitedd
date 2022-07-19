@@ -133,13 +133,13 @@ const ReportForm: FC<ReportFormProps> = ({
         scrollToFirstError
       >
         <Row justify="space-between" gutter={8}>
-          <Col flex={0}>
+          <Col md={8} sm={12} xs={24}>
               <DateRangeInput
                 formProps={{ label: "Rango de fechas", name: "fecha" }}
                 readonly={readonly}
               />
           </Col>
-          <Col flex={1}>
+          <Col md={8} sm={12} xs={24}>
             <Form.Item name="CiudadId" label="Ciudad">
               <TreeSelect
                 dropdownStyle={{ maxHeight: 400 }}
@@ -153,7 +153,7 @@ const ReportForm: FC<ReportFormProps> = ({
               />
             </Form.Item>
           </Col>
-          <Col flex={2.5}>
+          <Col md={2} sm={12} xs={24}>
               <Button
                 key="new"
                 type="primary"
@@ -164,7 +164,7 @@ const ReportForm: FC<ReportFormProps> = ({
                 Filtrar
               </Button>
           </Col>
-          <Col flex={2}>
+          <Col md={4} sm={12} xs={24}>
             <SwitchInput
               name="Mostrar Gráfica"
               onChange={(value) => {
