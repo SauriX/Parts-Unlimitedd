@@ -6,7 +6,7 @@ const MedicalStats = {
   getAll: (reportName: string, search?: string): Promise<IMedicalStatsList[]> =>
     requests.get(`report/${reportName}/all${!search ? "all" : search}`),
   getByDoctor: (): Promise<IMedicalStatsList[]> =>
-    requests.get(`report/medicos/getByDoctor`),
+    requests.get(`report/medicos/getAll`),
   access: (): Promise<IScopes> => requests.get("scopes/medicalstats"),
   filtro: (search: IMedicalStatsForm): Promise<IMedicalStatsList[]> =>
     requests.post(`report/medicos/filter`, search ?? {}),

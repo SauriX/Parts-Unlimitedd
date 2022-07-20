@@ -5,7 +5,7 @@ import requests from "./agent";
 const PatientStatistic = { 
     getAll: (reportName: string, search?: string): Promise<IPatientStatisticList[]> => 
     requests.get(`report/${reportName}/all${!search ? "all" : search}`),
-    getByName: (): Promise<IPatientStatisticList[]> => requests.get(`report/estadistica/getByName`),
+    getByName: (): Promise<IPatientStatisticList[]> => requests.get(`report/estadistica/getAll`),
     access: (): Promise<IScopes> => requests.get("scopes/patientstats"),
     filtro: (search:IPatientStatisticForm): Promise<IPatientStatisticList[]> => requests.post(`report/estadistica/filter`, search??{}),
     printPdf: (search?:IPatientStatisticForm): Promise<void> => requests.download(`report/estadistica/download/pdf`, search??{}),

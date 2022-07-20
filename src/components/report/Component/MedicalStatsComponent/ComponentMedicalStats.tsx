@@ -9,6 +9,7 @@ import {
 } from "../../../../app/common/table/utils";
 import { IMedicalStatsList } from "../../../../app/models/medical_stats";
 import { useStore } from "../../../../app/stores/store";
+import { moneyFormatter } from "../../../../app/util/utils";
 import useWindowDimensions from "../../../../app/util/window";
 
 type CompMedicalStatsProps = {
@@ -71,10 +72,12 @@ const CompMedicalStats: FC<CompMedicalStatsProps> = () => {
           windowSize: windowWidth,
         }),
         render: (value) =>
-          value.toLocaleString("es-MX", {
-            style: "currency",
-            currency: "MXN",
-          }),
+          moneyFormatter.format(value)
+        // render: (_value, record) =>
+        //     <ul>
+        //       <li>{record.pacientes}</li>
+        //       <li>{record.total}</li>
+        //     </ul>
       },
     {
       ...getDefaultColumnProps("solicitudes", "Solicitudes", {
@@ -95,6 +98,11 @@ const CompMedicalStats: FC<CompMedicalStatsProps> = () => {
       }),
     },
   ];
+
+  let lenReport = statsreport.length - 1;
+  if(lenReport < 0){
+    lenReport = 0;
+  }
 
   return (
     <div style={{ marginBottom: "20px" }}>
@@ -118,7 +126,7 @@ const CompMedicalStats: FC<CompMedicalStatsProps> = () => {
         }
       />
       <div style={{ textAlign: "right" }}>
-        <Tag color="lime"> {statsreport.length - 1} Registros</Tag>
+        <Tag color="lime"> {lenReport} Registros</Tag>
       </div>
     </div>
   );

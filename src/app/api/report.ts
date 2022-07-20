@@ -6,7 +6,7 @@ import requests from "./agent";
 const Report = {
     getAll: (reportName: string, search?: string): Promise<IReportList[]> =>
     requests.get(`report/${reportName}/all/${!search ? "all" : search}`),
-    getBranchByCount: (): Promise<IReportList[]> => requests.get(`report/expediente/getBranchByCount`),
+    getBranchByCount: (): Promise<IReportList[]> => requests.get(`report/expediente/getAll`),
     access: (): Promise<IScopes> => requests.get("scopes/request"),
     // filtro: (reportName: IReportForm): Promise<void> => requests.post("report", reportName),
     filtro: (search:IReportForm): Promise<IReportList[]> => requests.post(`report/expediente/filter`,search??{}),

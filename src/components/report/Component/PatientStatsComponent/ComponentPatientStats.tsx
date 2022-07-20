@@ -77,6 +77,11 @@ const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
     },
   ];
 
+  let lenReport = statsreport.length - 1;
+  if(lenReport < 0){
+    lenReport = 0;
+  }
+
   return (
     <div style={{ marginBottom: "20px" }}>
       <PageHeader
@@ -95,7 +100,7 @@ const CompPatientStats: FC<CompPatientStatsProps> = ({printing,}) => {
         rowClassName={(item) => item.nombrePaciente === "Total"? "Resumen Total": ""}
       />
       <div style={{textAlign: 'right'}}>
-        <Tag color="lime"> {statsreport.length - 1} Registros</Tag>
+        <Tag color="lime"> {lenReport} Registros</Tag>
       </div>
     </div>
   );
