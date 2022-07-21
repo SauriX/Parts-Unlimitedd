@@ -10,6 +10,7 @@ import {
   NotificationOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
+import { v4 as uuid } from "uuid";
 import DropdownOption from "../common/header/DropdownOption";
 import { useStore } from "../stores/store";
 import { observer } from "mobx-react-lite";
@@ -42,7 +43,7 @@ const LayoutComponent = () => {
   const convertMenu = useCallback(
     (menus: IMenu[]): IItem[] => {
       return menus.map((x) => ({
-        key: x.id.toString() + "-" + x.ruta ?? x.descripcion,
+        key: uuid(),
         label:
           x.subMenus && x.subMenus.length > 0 ? (
             x.descripcion

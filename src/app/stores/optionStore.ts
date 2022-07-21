@@ -426,51 +426,51 @@ export default class OptionStore {
     }
   };
 
-  CompanyOptions: IOptions[] = [];
+  companyOptions: IOptions[] = [];
 
   getCompanyOptions = async () => {
     try {
       const CompanyOptions = await Company.getActive();
       console.log(CompanyOptions);
-      this.CompanyOptions = CompanyOptions.map((x) => ({
+      this.companyOptions = CompanyOptions.map((x) => ({
         value: x.id,
         label: x.nombreComercial,
       }));
     } catch (error) {
-      this.CompanyOptions = [];
+      this.companyOptions = [];
     }
   };
 
-  MedicOptions: IOptions[] = [];
+  medicOptions: IOptions[] = [];
 
   getMedicOptions = async () => {
     try {
       const MedicOptions = await Medics.getActive();
       console.log(MedicOptions);
-      this.MedicOptions = MedicOptions.map((x) => ({
+      this.medicOptions = MedicOptions.map((x) => ({
         value: x.idMedico,
         label: x.nombreCompleto,
       }));
     } catch (error) {
-      this.MedicOptions = [];
+      this.medicOptions = [];
     }
   };
 
-  BranchCityOptions: any[] = [];
+  branchCityOptions: IOptions[] = [];
   getBranchCityOptions = async () => {
     try {
       const branch = Branch.getBranchByCity();
-
-      this.BranchCityOptions = (await branch).map((x) => ({
+      this.branchCityOptions = (await branch).map((x) => ({
         value: x.ciudad,
-        title: x.ciudad,
-        children: x.sucursales.map((y) => ({
+        label: x.ciudad,
+        disabled: true,
+        options: x.sucursales.map((y) => ({
           value: y.idSucursal,
-          title: y.nombre,
+          label: y.nombre,
         })),
       }));
     } catch (error) {
-      this.BranchCityOptions = [];
+      this.branchCityOptions = [];
     }
   };
 

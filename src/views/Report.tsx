@@ -1,47 +1,25 @@
 import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
-import React, { Fragment,  useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
+import ReportBody from "../components/report/ReportBody";
 import ReportHeader from "../components/report/ReportHeader";
-import { IOptionsReport } from "../app/models/shared";
-import ReportDefault from "../components/report/ReportDefault";
 
 const Report = () => {
-  const { reportStore, patientStatisticStore, medicalStatsStore } = useStore();
-  const { scopes, access, setCurrentReport,  clearScopes, exportList, printPdf, filtroPDF } = reportStore;
-  const {printPdf: printPdfStats, pdfFilter} = patientStatisticStore;
-  const {printPdf: printPdfMedical, medicalPdfFilter} = medicalStatsStore;
+  const { reportStore } = useStore();
+  const { scopes, filter, printPdf, setCurrentReport, clearScopes, access } = reportStore;
 
   const [searchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);
-  const [report, setReport] = useState<IOptionsReport>();
-  const componentRef = useRef<any>();
 
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-    onBeforeGetContent: () => {
-      setLoading(true);
-    },
-    onAfterPrint: () => {
-      setLoading(false);
-    },
-  });
   const handleDownload = async () => {
     setLoading(true);
-    const params = searchParams.get("reports");
-    if (params === "expediente"){
-      await printPdf(filtroPDF);
+    const report = searchParams.get("report");
+    if (report) {
+      await printPdf(report, filter);
     }
-    if(params == "estadistica"){
-      await printPdfStats(pdfFilter);
-    }
-    if(params == "medicos"){
-      await printPdfMedical(medicalPdfFilter);
-    }
-    // await printPdf(searchParams.get("report") ?? "", searchParams.get("search") ?? "all");
     setLoading(false);
   };
 
@@ -68,15 +46,10 @@ const Report = () => {
 
   return (
     <Fragment>
-    <ReportHeader 
-        report={report}
-        setReport={setReport}
-        handlePrint={handlePrint}
-        handleDownload={handleDownload}
-      />
-    <Divider className="header-divider" />
-    <ReportDefault  componentRef={componentRef} printing={loading} report={report} />
-  </Fragment>
+      <ReportHeader handleDownload={handleDownload} />
+      <Divider className="header-divider" />
+      <ReportBody printing={loading} />
+    </Fragment>
   );
 };
 

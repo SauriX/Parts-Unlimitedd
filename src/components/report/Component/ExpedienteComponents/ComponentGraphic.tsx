@@ -1,94 +1,92 @@
 import { observer } from "mobx-react-lite";
 import { FC, Fragment, useEffect, useState } from "react";
 import { useStore } from "../../../../app/stores/store";
-import ReactECharts from 'echarts-for-react';
+import ReactECharts from "echarts-for-react";
 import { Divider, PageHeader, Row } from "antd";
 import HeaderTitle from "../../../../app/common/header/HeaderTitle";
 import ComponentExpedientes from "./ComponentExpedientes";
 
 type CompGrahicProps = {
-    // componentRef: React.MutableRefObject<any>;
-    printing: boolean;
+  // componentRef: React.MutableRefObject<any>;
+  printing: boolean;
 };
-const CompGraphic: FC<CompGrahicProps> = ({printing}) => {
-  const { reportStore } = useStore();
-  const { getBranchByCount } = reportStore;
-  const [loading, setLoading] = useState(false);
-  const {reports } = reportStore;
-  // const Expedientes [] = getBranchByCount();
+const CompGraphic: FC<CompGrahicProps> = ({ printing }) => {
+  return <div></div>;
+  // const { reportStore } = useStore();
+  // const { getBranchByCount } = reportStore;
+  // const [loading, setLoading] = useState(false);
+  // const {reports } = reportStore;
+  // // const Expedientes [] = getBranchByCount();
 
-  useEffect(() => {
-    const readReport = async () => {
-      setLoading(true);
-      await getBranchByCount();
-      setLoading(false);
-      getBranchByCount();
-    };
+  // useEffect(() => {
+  //   const readReport = async () => {
+  //     setLoading(true);
+  //     await getBranchByCount();
+  //     setLoading(false);
+  //     getBranchByCount();
+  //   };
 
-    if (reports.length === 0) {
-      readReport();
-  }
-  }, []);
-  
-    const options = {
-        grid: {  left: '3%',
-        right: '4%',
-        bottom: '3%',
-        width: 'auto',
-        containLabel: true },
-        xAxis: {
-          type: 'category',
-          data: reports.map(x=>x.expedienteNombre) ,
-        },
-        yAxis: {
-          type: 'value',
-          alignWithLabel: false
-        },
-        series: [
-          {
-            data: reports.map(x=>x.visitas) ,
-            type: 'bar',
-            barWidth: '60%',
-            smooth: true,
-          },
-        ],
-        tooltip: {
-          trigger: 'axis',
-        },
-      };
+  //   if (reports.length === 0) {
+  //     readReport();
+  // }
+  // }, []);
 
-    const GraphicPrint = () => {
-      return (
-          <div style={{ textAlign: "center" }} >
-              <PageHeader
-                  ghost={false}
-                  title={<HeaderTitle title="Estadística de expedientes" image="Reportes" />}
-                  className="header-container"
-              ></PageHeader>
-              <Divider className="header-divider" />
-              {printing && < ComponentExpedientes printing={false}></ComponentExpedientes>}
-              <Divider className="header-divider" />
-              {/* <div style={{ display: "none" }}>{<ReportGraphic />} </div> */}
-              <ReactECharts option={options} />
-          </div>
-      );
-  };
+  //   const options = {
+  //       grid: {  left: '3%',
+  //       right: '4%',
+  //       bottom: '3%',
+  //       width: 'auto',
+  //       containLabel: true },
+  //       xAxis: {
+  //         type: 'category',
+  //         data: reports.map(x=>x.expedienteNombre) ,
+  //       },
+  //       yAxis: {
+  //         type: 'value',
+  //         alignWithLabel: false
+  //       },
+  //       series: [
+  //         {
+  //           data: reports.map(x=>x.visitas) ,
+  //           type: 'bar',
+  //           barWidth: '60%',
+  //           smooth: true,
+  //         },
+  //       ],
+  //       tooltip: {
+  //         trigger: 'axis',
+  //       },
+  //     };
 
-  
-    return (
-      <Fragment>
-          <div style={{marginBottom: "20px" }}>
-              <PageHeader
-                  ghost={false}
-                  title={<HeaderTitle title="Estadística de expedientes" image="Reportes" />}
-                  className="header-container"
-              ></PageHeader>
-              <Divider className="header-divider" />
-              <ReactECharts option={options} />
-          </div>
-      </Fragment>
-  );
+  //   const GraphicPrint = () => {
+  //     return (
+  //         <div style={{ textAlign: "center" }} >
+  //             <PageHeader
+  //                 ghost={false}
+  //                 title={<HeaderTitle title="Estadística de expedientes" image="Reportes" />}
+  //                 className="header-container"
+  //             ></PageHeader>
+  //             <Divider className="header-divider" />
+  //             {printing && < ComponentExpedientes printing={false}></ComponentExpedientes>}
+  //             <Divider className="header-divider" />
+  //             {/* <div style={{ display: "none" }}>{<ReportGraphic />} </div> */}
+  //             <ReactECharts option={options} />
+  //         </div>
+  //     );
+  // };
 
-    
-}
+  //   return (
+  //     <Fragment>
+  //         <div style={{marginBottom: "20px" }}>
+  //             <PageHeader
+  //                 ghost={false}
+  //                 title={<HeaderTitle title="Estadística de expedientes" image="Reportes" />}
+  //                 className="header-container"
+  //             ></PageHeader>
+  //             <Divider className="header-divider" />
+  //             <ReactECharts option={options} />
+  //         </div>
+  //     </Fragment>
+  // );
+};
 export default observer(CompGraphic);

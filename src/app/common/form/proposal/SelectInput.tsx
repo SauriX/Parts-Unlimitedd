@@ -11,6 +11,7 @@ interface IProps {
   options: IOptions[];
   readonly?: boolean;
   width?: string | number;
+  multiple?: boolean;
   suffix?: React.ReactNode;
   style?: React.CSSProperties;
   showLabel?: boolean;
@@ -25,6 +26,7 @@ const SelectInput = ({
   options,
   readonly,
   width,
+  multiple,
   suffix,
   style,
   showLabel,
@@ -50,6 +52,7 @@ const SelectInput = ({
       >
         <Select
           showSearch
+          mode={!multiple ? undefined : "multiple"}
           placeholder={placeholder ?? itemProps.label?.toString()}
           optionFilterProp="children"
           onChange={onChange}
