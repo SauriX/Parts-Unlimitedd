@@ -15,7 +15,7 @@ type ReportHeaderProps = {
 
 const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
   const { reportStore } = useStore();
-  const { currentReport, setCurrentReport } = reportStore;
+  const { currentReport, filter, setCurrentReport, getByFilter } = reportStore;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -24,6 +24,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
       const value = (options as IOptionsReport).value!.toString();
       setCurrentReport(value);
       searchParams.set("report", value);
+      await getByFilter(value, filter);
     } else {
       setCurrentReport(undefined);
       searchParams.delete("report");

@@ -7,10 +7,12 @@ export interface IReportData {
   paciente: string;
   medico: string;
   claveMedico: string;
-  noSolicitudes: string;
+  noSolicitudes: number;
   fecha: Date;
-  total: string;
-  noPacientes: string;
+  total: number;
+  noPacientes: number;
+  celular: string;
+  correo: string;
 }
 
 export interface IReportFilter {

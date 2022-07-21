@@ -14,32 +14,7 @@ export default class ReportStore {
   scopes?: IScopes;
   currentReport?: string;
   filter: IReportFilter = new ReportFilterValues();
-  reportData: IReportData[] = [
-    {
-      id: "3568",
-      expediente: "358",
-      sucursal: "Salinas",
-      paciente: "Mauricio Pola",
-      medico: "Esteban Lopez",
-      claveMedico: "345",
-      noSolicitudes: "2",
-      fecha: new Date(),
-      total: "765",
-      noPacientes: "2",
-    },
-    {
-      id: "435345345",
-      expediente: "32423",
-      sucursal: "Juarez",
-      paciente: "Carlos Reyes",
-      medico: "Luis Gonzales",
-      claveMedico: "2326",
-      noSolicitudes: "5",
-      fecha: new Date(),
-      total: "4634",
-      noPacientes: "456",
-    },
-  ];
+  reportData: IReportData[] = [];
 
   clearScopes = () => {
     this.scopes = undefined;
