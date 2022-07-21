@@ -8,21 +8,21 @@ const getRequestByRecordColumns = (
 ) => {
   const columns: IColumns<IReportData> = [
     {
-      ...getDefaultColumnProps("expedienteNombre", "Expediente", {
+      ...getDefaultColumnProps("expediente", "Expediente", {
         searchState,
         setSearchState,
         width: "30%",
       }),
     },
     {
-      ...getDefaultColumnProps("pacienteNombre", "Nombre", {
+      ...getDefaultColumnProps("paciente", "Nombre", {
         searchState,
         setSearchState,
         width: "40%",
       }),
     },
     {
-      ...getDefaultColumnProps("visitas", "Visitas", {
+      ...getDefaultColumnProps("noSolicitudes", "Visitas", {
         searchState,
         setSearchState,
         width: "30%",

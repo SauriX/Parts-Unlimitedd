@@ -8,14 +8,14 @@ const getPatientStatsColumns = (
 ) => {
   const columns: IColumns<IReportData> = [
     {
-      ...getDefaultColumnProps("nombrePaciente", "Nombre del Paciente", {
+      ...getDefaultColumnProps("paciente", "Nombre del Paciente", {
         searchState,
         setSearchState,
         width: "45%",
       }),
     },
     {
-      ...getDefaultColumnProps("solicitudes", "Solicitudes", {
+      ...getDefaultColumnProps("noSolicitudes", "Solicitudes", {
         searchState,
         setSearchState,
         width: "30%",

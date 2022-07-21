@@ -1,42 +1,63 @@
-import { Form, FormItemProps, Select, Space, Tooltip } from "antd";
+import { DatePicker, Form, FormItemProps, Space, Tooltip } from "antd";
 import { Rule } from "antd/lib/form";
+import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
-import { IOptions } from "../../../models/shared";
 import { InfoCircleTwoTone } from "@ant-design/icons";
+import "./index.less";
 
 interface IProps {
   formProps: FormItemProps<any>;
   required?: boolean;
-  placeholder?: string;
-  options: IOptions[];
   readonly?: boolean;
   width?: string | number;
-  multiple?: boolean;
   suffix?: React.ReactNode;
   style?: React.CSSProperties;
-  showLabel?: boolean;
+  isGroup?: boolean;
   errors?: any[];
-  onChange?: (value: any) => void;
 }
 
-const SelectInput = ({
+const DateRangeInput = ({
   formProps: itemProps,
   required,
-  placeholder,
-  options,
   readonly,
   width,
-  multiple,
   suffix,
   style,
-  showLabel,
+  isGroup,
   errors,
-  onChange,
 }: IProps) => {
+  let ref = useRef<HTMLDivElement>(null);
+
+  const [paddingRight, setPaddingRight] = useState(7);
+
+  useEffect(() => {
+    const observer = new ResizeObserver((entries) => {
+      console.log(entries[0]);
+      const width = entries[0].target.clientWidth;
+      setPaddingRight(width === 0 ? 7 : width);
+    });
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    const _ref = ref.current;
+
+    return () => {
+      if (_ref) observer.unobserve(_ref);
+    };
+  }, []);
+
   let rules: Rule[] = [];
 
   if (required) {
-    rules.push({ required: true, message: "El campo es requerido" });
+    rules.push({
+      required: true,
+      message: "El campo es requerido",
+    });
+  }
+
+  function disabledDate(current: moment.Moment) {
+    return current.isBefore(moment(), "day");
   }
 
   return (
@@ -50,29 +71,26 @@ const SelectInput = ({
         help=""
         className="no-error-text"
       >
-        <Select
-          showSearch
-          mode={!multiple ? undefined : "multiple"}
-          placeholder={placeholder ?? itemProps.label?.toString()}
-          optionFilterProp="children"
-          onChange={onChange}
-          filterOption={(input: any, option: any) =>
-            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }
-          allowClear
-          options={options}
+        <DatePicker.RangePicker
+          disabledDate={disabledDate}
           disabled={readonly}
-          maxTagCount={"responsive"}
-        ></Select>
+          format="DD/MM/YYYY"
+          style={{
+            paddingRight: paddingRight,
+            width: width ?? "100%",
+            ...(style ?? {}),
+          }}
+        />
       </Form.Item>
       {/* {(!!suffix || isGroup || !!errors) && ( */}
       <div
         className={`suffix-container ${readonly ? "disabled" : ""}`}
-        style={{ display: !!suffix || showLabel || !!errors ? "" : "none" }}
+        style={{ display: !!suffix || isGroup || !!errors ? "" : "none" }}
+        ref={ref}
       >
         <Space size="small">
           {suffix ? suffix : null}
-          {showLabel ? (
+          {isGroup ? (
             <Tooltip key="info" title={itemProps.label}>
               <InfoCircleTwoTone />
             </Tooltip>
@@ -100,4 +118,4 @@ const SelectInput = ({
   );
 };
 
-export default SelectInput;
+export default DateRangeInput;

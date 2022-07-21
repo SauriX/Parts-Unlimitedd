@@ -1,7 +1,6 @@
-import { PageHeader, Table, Tag } from "antd";
+import { Table, Tag } from "antd";
 import { observer } from "mobx-react-lite";
-import React, { Fragment } from "react";
-import HeaderTitle from "../../app/common/header/HeaderTitle";
+import { Fragment } from "react";
 import { IColumns } from "../../app/common/table/utils";
 import { IReportData } from "../../app/models/report";
 
@@ -25,7 +24,7 @@ const ReportTable = ({ loading, data, columns, hasFooterRow }: ReportTableProps)
         scroll={{ y: 200 }}
         rowClassName={(item) => (item.expediente === "Total" ? "Resumen Total" : "")}
       />
-      <div style={{ textAlign: "right" }}>
+      <div style={{ textAlign: "right", marginTop: 15 }}>
         <Tag color="lime">{!hasFooterRow ? data.length : Math.max(data.length - 1, 0)} Registros</Tag>
       </div>
     </Fragment>

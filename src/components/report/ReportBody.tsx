@@ -8,7 +8,6 @@ import { getColumns, getInputs, getTitleAndImage } from "./utils";
 import { IReportData } from "../../app/models/report";
 import { IColumns, ISearch } from "../../app/common/table/utils";
 import ReportTable from "./ReportTable";
-import ReportChart from "./ReportChart";
 import ReportChartSelector from "./ReportChartSelector";
 
 type ReportDefaultProps = {
@@ -54,7 +53,7 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
   if (!currentReport || !title || !image) return null;
 
   return (
-    <Row>
+    <Row gutter={[12, 12]}>
       <Col span={24}>
         <ReportFilter input={inputs} setShowChart={setShowChart} />
       </Col>

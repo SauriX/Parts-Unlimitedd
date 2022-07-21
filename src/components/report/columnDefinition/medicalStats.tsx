@@ -16,7 +16,7 @@ const getMedicalStatsColumns = (
       }),
     },
     {
-      ...getDefaultColumnProps("nombreMedico", "Nombre del Médico", {
+      ...getDefaultColumnProps("medico", "Nombre del Médico", {
         searchState,
         setSearchState,
         width: "35%",
@@ -36,14 +36,14 @@ const getMedicalStatsColumns = (
       //     </ul>
     },
     {
-      ...getDefaultColumnProps("solicitudes", "Solicitudes", {
+      ...getDefaultColumnProps("noSolicitudes", "Solicitudes", {
         searchState,
         setSearchState,
         width: "20%",
       }),
     },
     {
-      ...getDefaultColumnProps("pacientes", "No. Pacientes", {
+      ...getDefaultColumnProps("noPacientes", "No. Pacientes", {
         searchState,
         setSearchState,
         width: "20%",

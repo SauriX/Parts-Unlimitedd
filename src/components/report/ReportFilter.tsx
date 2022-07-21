@@ -1,9 +1,9 @@
 import { Form, Row, Col, Button, Spin } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import DateRangeInput from "../../app/common/form/DateRangeInput";
+import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
-import SwitchInput from "../../app/common/form/SwitchInput";
+import SwitchInput from "../../app/common/form/proposal/SwitchInput";
 import { IReportFilter } from "../../app/models/report";
 import { IOptions } from "../../app/models/shared";
 import { useStore } from "../../app/stores/store";
@@ -70,55 +70,59 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
         initialValues={filter}
         onFinish={onFinish}
       >
-        <Row justify="space-between" gutter={8}>
-          {input.includes("fecha") && (
-            <Col md={8} sm={12} xs={24}>
-              <DateRangeInput formProps={{ label: "Fecha", name: "fecha" }} />
-            </Col>
-          )}
-          {input.includes("sucursal") && (
-            <Col md={8} sm={12} xs={24}>
-              <SelectInput
-                formProps={{ name: "sucursalId", label: "Sucursales" }}
-                multiple
-                options={branchCityOptions}
-              />
-            </Col>
-          )}
-          {input.includes("medico") && (
-            <Col md={8} sm={12} xs={24}>
-              <SelectInput
-                formProps={{ name: "medicoId", label: "Médico" }}
-                multiple
-                options={medicOptions}
-              />
-            </Col>
-          )}
-          {input.includes("compañia") && (
-            <Col md={8} sm={12} xs={24}>
-              <SelectInput
-                formProps={{ name: "compañiaId", label: "Compañia" }}
-                multiple
-                options={companyOptions}
-              />
-            </Col>
-          )}
-          {input.includes("metodoEnvio") && (
-            <Col md={8} sm={12} xs={24}>
-              <SelectInput
-                formProps={{ name: "metodoEnvio", label: "Método envio" }}
-                multiple
-                options={sendMethodOptions}
-              />
-            </Col>
-          )}
-          <Col md={2} sm={12} xs={24}>
+        <Row>
+          <Col span={22}>
+            <Row justify="space-between" gutter={[12, 12]}>
+              {input.includes("fecha") && (
+                <Col span={8}>
+                  <DateRangeInput formProps={{ label: "Fecha", name: "fecha" }} />
+                </Col>
+              )}
+              {input.includes("sucursal") && (
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{ name: "sucursalId", label: "Sucursales" }}
+                    multiple
+                    options={branchCityOptions}
+                  />
+                </Col>
+              )}
+              {input.includes("medico") && (
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{ name: "medicoId", label: "Médico" }}
+                    multiple
+                    options={medicOptions}
+                  />
+                </Col>
+              )}
+              {input.includes("compañia") && (
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{ name: "compañiaId", label: "Compañia" }}
+                    multiple
+                    options={companyOptions}
+                  />
+                </Col>
+              )}
+              {input.includes("metodoEnvio") && (
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{ name: "metodoEnvio", label: "Método envio" }}
+                    multiple
+                    options={sendMethodOptions}
+                  />
+                </Col>
+              )}
+              <Col span={8}>
+                <SwitchInput name="grafica" label="Gráfica" />
+              </Col>
+            </Row>
+          </Col>
+          <Col span={2} style={{ textAlign: "right" }}>
             <Button key="new" type="primary" htmlType="submit">
               Filtrar
             </Button>
-          </Col>
-          <Col md={4} sm={12} xs={24}>
-            <SwitchInput name="grafica" label="Mostrar Gráfica" />
           </Col>
         </Row>
       </Form>

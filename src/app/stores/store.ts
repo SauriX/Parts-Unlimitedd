@@ -25,9 +25,7 @@ import ConfigurationStore from "./configurationStore";
 import ProcedingStore from "./procedingStore";
 import QuotationStore from "./quotationStore";
 import ReportStore from "./reportStore";
-import PatientStatisticStore from "./patientStatisticStore";
 import RequestStore from "./requestStore";
-import MedicalStatsStore from "./medicalStatsStore";
 import { IReportData } from "../models/report";
 
 configure({
@@ -59,9 +57,6 @@ interface Store {
   routeStore: RouteStore;
   procedingStore: ProcedingStore;
   quotationStore: QuotationStore;
-  // reportStore: ReportStore;
-  // patientStatisticStore: PatientStatisticStore;
-  // medicalStatsStore: MedicalStatsStore;
   reportStore: ReportStore;
   requestStore: RequestStore;
 }
@@ -92,8 +87,6 @@ export const store: Store = {
   procedingStore: new ProcedingStore(),
   quotationStore: new QuotationStore(),
   reportStore: new ReportStore(),
-  // patientStatisticStore: new PatientStatisticStore(),
-  // medicalStatsStore: new MedicalStatsStore(),
   requestStore: new RequestStore(),
 };
 
