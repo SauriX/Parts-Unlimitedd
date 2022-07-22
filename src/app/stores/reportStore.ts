@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import Report from "../api/report";
-import { IReportFilter, IReportData, ReportFilterValues } from "../models/report";
+import { IReportFilter, IReportData, IReportContactData, ReportFilterValues } from "../models/report";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
@@ -15,6 +15,7 @@ export default class ReportStore {
   currentReport?: string;
   filter: IReportFilter = new ReportFilterValues();
   reportData: IReportData[] = [];
+  contactData: IReportContactData[] = []
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -43,6 +44,16 @@ export default class ReportStore {
     try {
       const data = await Report.getByFilter(report, filter);
       this.reportData = data;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      this.reportData = [];
+    }
+  };
+
+  getByChart = async (report: string, filter: IReportFilter) => {
+    try {
+      const data = await Report.getByChart(report, filter);
+      this.contactData = data;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       this.reportData = [];

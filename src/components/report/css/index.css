@@ -3,3 +3,9 @@ tr.Resumen.Total td.ant-table-cell-row-hover {
   background-color: #c7c7c7;
   font-weight: 400;
 }
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}

@@ -8,11 +8,21 @@ export interface IReportData {
   medico: string;
   claveMedico: string;
   noSolicitudes: number;
+  estatus: string;
   fecha: Date;
   total: number;
   noPacientes: number;
   celular: string;
   correo: string;
+}
+
+export interface IReportContactData {
+  id: string;
+  fecha: string;
+  cantidadTelefono: number;
+  cantidadCorreo: number;
+  solicitudes: number;
+  total: number;
 }
 
 export interface IReportFilter {

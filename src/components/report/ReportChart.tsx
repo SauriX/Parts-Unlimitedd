@@ -1,24 +1,34 @@
 import { observer } from "mobx-react-lite";
-import { Fragment } from "react";
 import ReactECharts from "echarts-for-react";
-import { Divider, PageHeader } from "antd";
-import { toJS } from "mobx";
 
 type ReportChartProps<T> = {
   data: T[];
   serieX: keyof T;
   series: { title: string; dataIndex: keyof T }[];
+  axisLabel?: { interval: number; rotate: number };
 };
 
-const ReportChart = <T extends unknown>({ data, serieX, series }: ReportChartProps<T>) => {
+const ReportChart = <T extends unknown>({
+  data,
+  serieX,
+  series,
+  axisLabel,
+}: ReportChartProps<T>) => {
   const options = {
-    grid: { left: "3%", right: "4%", bottom: "3%", width: "auto", containLabel: true },
+    grid: {
+      left: "3%",
+      right: "4%",
+      bottom: "3%",
+      width: "auto",
+      containLabel: true,
+    },
     legend: {
       data: series.map((x) => x.title),
     },
     xAxis: {
       type: "category",
       data: data.map((x) => (x as any)[serieX]),
+      axisLabel: axisLabel,
     },
     yAxis: {
       type: "value",
@@ -39,6 +49,6 @@ const ReportChart = <T extends unknown>({ data, serieX, series }: ReportChartPro
     },
   };
 
-  return <ReactECharts option={options} notMerge />;
+  return <ReactECharts style={{height: 500}} option={options} notMerge />;
 };
 export default observer(ReportChart);

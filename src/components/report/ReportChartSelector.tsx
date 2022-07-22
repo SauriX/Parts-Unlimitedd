@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { IReportData } from "../../app/models/report";
+import { IReportContactData, IReportData } from "../../app/models/report";
 import ReportChart from "./ReportChart";
 
 type ReportChartSelectorProps = {
@@ -14,6 +14,7 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
         data={data as IReportData[]}
         serieX={"expediente"}
         series={[{ title: "Solicitudes", dataIndex: "noSolicitudes" }]}
+        axisLabel={{interval: 0, rotate: 0}}
       />
     );
   } else if (report === "estadistica") {
@@ -25,18 +26,34 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
           { title: "Solicitudes", dataIndex: "noSolicitudes" },
           { title: "Total", dataIndex: "total" },
         ]}
+        axisLabel={{interval: 0, rotate: 30}}
       />
     );
   } else if (report === "medicos") {
     return (
       <ReportChart<IReportData>
         data={data as IReportData[]}
-        serieX={"medico"}
+        serieX={"claveMedico"}
         series={[
           { title: "Total", dataIndex: "total" },
           { title: "Solicitudes", dataIndex: "noSolicitudes" },
           { title: "Pacientes", dataIndex: "noPacientes" },
         ]}
+        axisLabel={{interval: 0, rotate: 0}}
+      />
+    );
+  } else if (report === "contacto") {
+    return (
+      <ReportChart<IReportContactData>
+        data={data as IReportContactData[]}
+        serieX={"fecha"}
+        series={[
+          { title: "Solicitudes", dataIndex: "solicitudes" },
+          { title: "WhatsApp", dataIndex: "cantidadTelefono" },
+          { title: "Correo", dataIndex: "cantidadCorreo" },
+          { title: "Total Medio de Contacto", dataIndex: "total" },
+        ]}
+        axisLabel={{interval: 0, rotate: 0}}
       />
     );
   }

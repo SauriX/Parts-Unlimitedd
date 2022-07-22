@@ -21,8 +21,8 @@ const ReportTable = ({ loading, data, columns, hasFooterRow }: ReportTableProps)
         columns={columns}
         pagination={false}
         dataSource={[...data]}
-        scroll={{ y: 200 }}
-        rowClassName={(item) => (item.expediente === "Total" ? "Resumen Total" : "")}
+        scroll={{ y: 400 }}
+        rowClassName={(item) => (item.claveMedico == "Total" || item.paciente === "Total" ? "Resumen Total" : "")}
       />
       <div style={{ textAlign: "right", marginTop: 15 }}>
         <Tag color="lime">{!hasFooterRow ? data.length : Math.max(data.length - 1, 0)} Registros</Tag>

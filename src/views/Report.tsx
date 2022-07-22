@@ -23,13 +23,13 @@ const Report = () => {
     setLoading(false);
   };
 
-  // useEffect(() => {
-  //   const checkAccess = async () => {
-  //     await access();
-  //   };
+  useEffect(() => {
+    const checkAccess = async () => {
+      await access();
+    };
 
-  //   checkAccess();
-  // }, [access]);
+    checkAccess();
+  }, [access]);
 
   useEffect(() => {
     setCurrentReport(searchParams.get("report") ?? undefined);
@@ -42,7 +42,7 @@ const Report = () => {
     };
   }, [clearScopes]);
 
-  // if (!scopes?.acceder) return null;
+  if (!scopes?.acceder) return null;
 
   return (
     <Fragment>

@@ -21,13 +21,13 @@ const sendMethodOptions: IOptions[] = [
   },
   {
     value: 2,
-    label: "Teléfono",
+    label: "WhatsApp",
   },
 ];
 
 const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
   const { reportStore, optionStore } = useStore();
-  const { currentReport, filter, setFilter, getByFilter } = reportStore;
+  const { currentReport, filter, setFilter, getByFilter, getByChart } = reportStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -57,6 +57,9 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
     if (currentReport) {
       await getByFilter(currentReport, filter);
       setFilter(filter);
+      if(currentReport === "contacto"){
+        await getByChart(currentReport, filter);
+      }
     }
     setLoading(false);
   };
@@ -108,7 +111,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
               {input.includes("metodoEnvio") && (
                 <Col span={8}>
                   <SelectInput
-                    formProps={{ name: "metodoEnvio", label: "Método envio" }}
+                    formProps={{ name: "metodoEnvio", label: "Medio de envío" }}
                     multiple
                     options={sendMethodOptions}
                   />

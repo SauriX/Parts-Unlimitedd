@@ -15,7 +15,7 @@ type ReportHeaderProps = {
 
 const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
   const { reportStore } = useStore();
-  const { currentReport, filter, setCurrentReport, getByFilter } = reportStore;
+  const { currentReport, filter, setCurrentReport, getByFilter, getByChart } = reportStore;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -25,6 +25,9 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
       setCurrentReport(value);
       searchParams.set("report", value);
       await getByFilter(value, filter);
+      if(value === "contacto"){
+        await getByChart(value, filter);
+      }
     } else {
       setCurrentReport(undefined);
       searchParams.delete("report");

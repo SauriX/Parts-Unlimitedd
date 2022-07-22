@@ -72,7 +72,7 @@ const DateRangeInput = ({
         className="no-error-text"
       >
         <DatePicker.RangePicker
-          disabledDate={disabledDate}
+          // disabledDate={disabledDate}
           disabled={readonly}
           format="DD/MM/YYYY"
           style={{
