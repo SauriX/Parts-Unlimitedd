@@ -30,6 +30,13 @@ const getContactStatsColumns = (
       }),
     },
     {
+      ...getDefaultColumnProps("clave", "Solicitud No.", {
+        searchState,
+        setSearchState,
+        width: "25%",
+      }),
+    },
+    {
       ...getDefaultColumnProps("estatus", "Estatus", {
         searchState,
         setSearchState,

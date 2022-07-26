@@ -21,12 +21,14 @@ export const getInputs = (
   return filters;
 };
 
-export const getTitleAndImage = (reportName: string): { title: string; image: string } => {
+export const getReportConfig = (reportName: string): { title: string; image: string, hasFooterRow: boolean } => {
   let title = "";
   let image = "Reportes";
+  let hasFooterRow = true;
 
   if (reportName === "expediente") {
     title = "Estadística de expedientes";
+    hasFooterRow = false;
   } else if (reportName === "estadistica") {
     title = "Estadística de Pacientes";
   } else if (reportName === "medicos") {
@@ -35,9 +37,10 @@ export const getTitleAndImage = (reportName: string): { title: string; image: st
   } else if (reportName === "contacto") {
     title = "Solicitudes por contacto";
     image = "comunicar";
+    hasFooterRow = false;
   }
 
-  return { title, image };
+  return { title, image, hasFooterRow };
 };
 
 export const getColumns = (

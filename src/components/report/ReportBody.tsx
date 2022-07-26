@@ -4,7 +4,7 @@ import { useStore } from "../../app/stores/store";
 import ReportFilter from "./ReportFilter";
 import { Col, PageHeader, Row, Spin } from "antd";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
-import { getColumns, getInputs, getTitleAndImage } from "./utils";
+import { getColumns, getInputs, getReportConfig } from "./utils";
 import { IReportData } from "../../app/models/report";
 import { IColumns, ISearch } from "../../app/common/table/utils";
 import ReportTable from "./ReportTable";
@@ -25,6 +25,7 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
   >([]);
   const [title, setTitle] = useState<string>();
   const [image, setImage] = useState<string>();
+  const [hasFooterRow, setHasFooterRow] = useState<boolean>();
   const [columns, setColumns] = useState<IColumns<IReportData>>([]);
   const [showChar, setShowChart] = useState(false);
 
@@ -36,13 +37,15 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
   useEffect(() => {
     if (currentReport) {
       setInputs(getInputs(currentReport));
-      const data = getTitleAndImage(currentReport);
+      const data = getReportConfig(currentReport);
       setTitle(data.title);
       setImage(data.image);
+      setHasFooterRow(data.hasFooterRow);
     } else {
       setInputs([]);
       setTitle("");
       setImage("");
+      setHasFooterRow(false);
     }
   }, [currentReport]);
 
@@ -65,7 +68,7 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
   if (!currentReport || !title || !image) return null;
 
   return (
-    <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
+    <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
       <Row gutter={[12, 12]}>
         <Col span={24}>
           <ReportFilter input={inputs} setShowChart={setShowChart} />
@@ -79,7 +82,7 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
         </Col>
         <Col span={24}>
           {!showChar ? (
-            <ReportTable columns={columns} data={reportData} loading={false} />
+            <ReportTable columns={columns} data={reportData} loading={false} hasFooterRow={hasFooterRow} />
           ) : (
             <ReportChartSelector report={currentReport} data={dataChart} />
           )}

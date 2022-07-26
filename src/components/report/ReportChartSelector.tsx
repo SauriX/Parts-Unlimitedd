@@ -24,7 +24,7 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
         serieX={"paciente"}
         series={[
           { title: "Solicitudes", dataIndex: "noSolicitudes" },
-          { title: "Total", dataIndex: "total" },
+          { title: "Total de Solicitudes", dataIndex: "total" },
         ]}
         axisLabel={{interval: 0, rotate: 30}}
       />

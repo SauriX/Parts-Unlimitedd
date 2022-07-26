@@ -6,6 +6,7 @@ export interface IReportData {
   sucursal: string;
   paciente: string;
   medico: string;
+  clave: string;
   claveMedico: string;
   noSolicitudes: number;
   estatus: string;
