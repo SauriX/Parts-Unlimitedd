@@ -30,7 +30,7 @@ import AppointmentStore from "./appointmentStore";
 import { IReportData } from "../models/report";
 
 configure({
-  enforceActions: "never",
+  enforceActions: "never", 
 });
 
 interface Store {
