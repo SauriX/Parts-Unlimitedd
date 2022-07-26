@@ -10,7 +10,7 @@ import alerts from "../../app/util/alerts";
 import { Days, IAgenda, IAgendaColumn } from "../../app/common/agenda/utils";
 import { v4 as uuid } from "uuid";
 import views from "../../app/util/view";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import DateRangeInput from "../../app/common/form/DateRangeInput";
 
 import { useStore } from "../../app/stores/store";
@@ -54,6 +54,7 @@ type ProceedingTableProps = {
 const AppointmentCalendar:FC<ProceedingTableProps> = ({componentRef}) => {
   const { RangePicker } = DatePicker;
   const [events, setEvents] = useState<IEvent[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [tipo, seTipo] = useState("laboratorio");
    const [generadas,Setgeneradas]= useState<IAppointmentList[]>();
    const [agedadas,SetAgendadas]= useState<IAppointmentList[]>();
@@ -174,7 +175,7 @@ const AppointmentCalendar:FC<ProceedingTableProps> = ({componentRef}) => {
               </Col>
             <Col md={5} sm={12}>
             <label htmlFor="">Tipo de cita: </label>
-                <Select value={tipo} style={{width:"150px" , marginBottom:"30px",marginTop:"5px"}} onChange={(value)=>{seTipo(value); setSearch({ ...search,tipo:tipo })}} options={[{label:"Laboratorio",value:"laboratorio"},{label:"Domicilio",value:"domicilio"}]}></Select>
+                <Select value={tipo} style={{width:"150px" , marginBottom:"30px",marginTop:"5px"}} onChange={(value)=>{seTipo(value); setSearch({ ...search,tipo:tipo });searchParams.delete("type"); searchParams.append("type",value);setSearchParams(searchParams);navigate(`/${views.appointment}?${searchParams}`);}} options={[{label:"Laboratorio",value:"laboratorio"},{label:"Domicilio",value:"domicilio"}]}></Select>
             </Col>
 
             <Col md={2} sm={12}>
@@ -201,8 +202,9 @@ const AppointmentCalendar:FC<ProceedingTableProps> = ({componentRef}) => {
           <DemoTable status={5} citas={canceladas!} tipo={tipo} SetCita={SetCita}/>
         </TabPane>
       </Tabs>
-      <label htmlFor="">Equipo: </label>
-      <Select  style={{width:"100px"}} options={[  {
+      {tipo=="laboratorio"&&  <label htmlFor="">Equipo: </label>}
+      {tipo=="domicilio"&&  <label htmlFor="">Recolector: </label>}
+     {tipo=="laboratorio"&& <Select  style={{width:"100px"}} options={[  {
     value: 1,
     label: "Equipo 1",
   },
@@ -213,7 +215,19 @@ const AppointmentCalendar:FC<ProceedingTableProps> = ({componentRef}) => {
   {
     value: 3,
     label: "Equipo 3",
-  },]}></Select>
+  },]}></Select>}
+       {tipo=="domicilio"&& <Select  style={{width:"100px"}} options={[  {
+    value: 1,
+    label: "Usuario 1",
+  },
+  {
+    value: 2,
+    label: "Usurio 2",
+  },
+  {
+    value: 3,
+    label: "Usuario 3",
+  },]}></Select>}
       <Divider className="header-divider" />
       <Agenda<IEvent>
         startTime={moment("08:00", "HH:mm")}

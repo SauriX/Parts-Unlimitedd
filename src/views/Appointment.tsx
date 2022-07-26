@@ -1,5 +1,5 @@
 import { Divider, Table, Tabs, Tooltip, Typography } from "antd";
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { PlusCircleOutlined, CalendarOutlined, CloseCircleOutlined, EditOutlined } from "@ant-design/icons";
 import Agenda from "../app/common/agenda/Agenda";
 import moment from "moment";
@@ -22,7 +22,7 @@ const Appointment = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { appointmentStore } = useStore();
   const {   access,   exportForm,sucursal,search,exportList  } =appointmentStore ; 
-
+const [tipo,SetTipo]=useState(searchParams.get("type"));
   const componentRef = useRef<any>();
 const handleDownload = async () => {
   
@@ -33,6 +33,8 @@ const handleDownload = async () => {
     setPrinting(false);
   } 
 };
+useEffect(()=>{SetTipo(searchParams.get("type")); console.log("entro")},[searchParams.get("type")]);
+
 const handlePrint = useReactToPrint({
   content: () => componentRef.current,
   onBeforeGetContent: () => {
@@ -44,7 +46,7 @@ const handlePrint = useReactToPrint({
 });
   return(
     <Fragment>
-      <ApointmenHeader handlePrint={handlePrint} handleList={handleDownload}></ApointmenHeader>
+      <ApointmenHeader handlePrint={handlePrint} handleList={handleDownload} tipo={tipo!}></ApointmenHeader>
       <Divider className="header-divider" />
       <AppointmentCalendar componentRef={componentRef} printing={printing}></AppointmentCalendar>
     </Fragment>

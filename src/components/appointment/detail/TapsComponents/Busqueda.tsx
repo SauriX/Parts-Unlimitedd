@@ -209,7 +209,7 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
                     <Col sm={9}>
                     <DateRangeInput
                     formProps={{ label: "Fechas", name: "fecha" ,
-                      style:{marginTop:"10px",width:"400px"}
+                      style:{marginTop:"10px",width:"350px"}
                       }}
                       />
                     </Col>

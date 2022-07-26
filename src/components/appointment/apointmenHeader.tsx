@@ -5,18 +5,20 @@ import { UserOutlined, PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../app/common/button/ImageButton";
 import { useStore } from "../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
 const { Search } = Input;
 type UserHeaderProps = {
   handlePrint: () => void;
   handleList: () => void;
+  tipo:string
 };
-const  ApointmenHeader: FC<UserHeaderProps> = ({ handlePrint, handleList }) => {
+const  ApointmenHeader: FC<UserHeaderProps> = ({ handlePrint, handleList,tipo }) => {
   let navigate = useNavigate();
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Cita Imagenologia" image="citas" />}
+      title={tipo=="laboratorio"&&<HeaderTitle title={`Cita laboratorio`} image="citas" />||<HeaderTitle title={`Cita domicilio`} image="domicilio"  />}
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
@@ -26,4 +28,4 @@ const  ApointmenHeader: FC<UserHeaderProps> = ({ handlePrint, handleList }) => {
   );
 };
 
-export default ApointmenHeader;
+export default observer(ApointmenHeader);

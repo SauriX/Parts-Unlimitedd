@@ -444,7 +444,7 @@ useEffect(()=>{
             </Row>
           </Form>
           <Row>
-            <Col  md={18} sm={24} xs={12}>
+            <Col  md={17} sm={24} xs={12}>
               <Tabs defaultActiveKey="1" >
                   <TabPane tab="Generales" key="1">
                     {type=="laboratorio"&&<GeneralesForm data={generales} generales={setGenerales} handle={generalesSumbit} printing={loading}></GeneralesForm>}
@@ -461,12 +461,12 @@ useEffect(()=>{
                   </TabPane>
               </Tabs>
             </Col>
-            <Col  md={6} sm={24} xs={12}>
+            <Col  md={5} sm={24} xs={12} style={{marginLeft:"10px"}}>
             {id &&<Button style={{marginTop:"10px", marginLeft:"80px",backgroundColor:"#B4C7E7",color:"white"}} onClick={()=>{/* convertSolicitud() */}}>Convertir a solicitud</Button>}
             {!id &&<br />}
               <br />
                 <Descriptions
-                  labelStyle={{ width: "60%", }}
+                  labelStyle={{ width: "50%",marginLeft:"20px" }}
                   className="request-description"
                   bordered
                   column={1}
