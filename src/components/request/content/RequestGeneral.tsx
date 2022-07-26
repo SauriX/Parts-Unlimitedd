@@ -31,7 +31,7 @@ type RequestGeneralProps = {
 
 const RequestGeneral = ({ form, onSubmit }: RequestGeneralProps) => {
   const { optionStore } = useStore();
-  const { CompanyOptions, MedicOptions, getCompanyOptions, getMedicOptions } = optionStore;
+  const { companyOptions: CompanyOptions, medicOptions: MedicOptions, getCompanyOptions, getMedicOptions } = optionStore;
 
   const origin = Form.useWatch("procedencia", form);
   const sendings = Form.useWatch("metodoEnvio", form);

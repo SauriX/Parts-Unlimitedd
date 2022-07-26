@@ -38,15 +38,24 @@ export interface IOptions {
   label: string | React.ReactNode;
   value: number | string;
   group?: string | number;
+  disabled?: boolean;
   options?: IOptions[];
 }
+
+// export interface ITreeOptions {
+//   key?: string | number;
+//   title: string | React.ReactNode;
+//   value: number | string;
+//   group?: string | number;
+//   options?: IOptions[];
+// }
 
 export interface IOptionsCatalog extends IOptions {
   type: "normal" | "description" | "dimension" | "area";
 }
 
 export interface IOptionsReport extends IOptions {
-  type: "expediente" | "estadistica" ;
+  type: "expediente" | "estadistica" | "medicos" | "contacto";
 }
 
 export type TreeData = {

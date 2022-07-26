@@ -32,7 +32,7 @@ type GeneralesFormProps = {
 
 const GeneralesDomForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>{
     const {optionStore}=useStore();
-    const { getMedicOptions,getCompanyOptions,MedicOptions,CompanyOptions } = optionStore;
+    const { getMedicOptions,getCompanyOptions,medicOptions: MedicOptions,companyOptions: CompanyOptions } = optionStore;
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm<IAppointmentGeneralesForm>();
     const [values, setValues] = useState<IAppointmentGeneralesForm>(new AppointmentGeneralesFormValues());

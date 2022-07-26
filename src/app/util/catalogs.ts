@@ -20,4 +20,6 @@ export const catalogs: IOptionsCatalog[] = [
 export const reports: IOptionsReport[] = [
   { value: "expediente", label: "Expediente", type: "expediente" },
   { value: "estadistica", label: "Estadística Pacientes", type: "estadistica" },
+  { value: "medicos", label: "Sol. Médico Condensado", type: "medicos" },
+  { value: "contacto", label: "Sol. Contacto", type: "contacto" },
 ];

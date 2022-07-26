@@ -25,9 +25,9 @@ import ConfigurationStore from "./configurationStore";
 import ProcedingStore from "./procedingStore";
 import QuotationStore from "./quotationStore";
 import ReportStore from "./reportStore";
-import PatientStatisticStore from "./patientStatisticStore";
 import RequestStore from "./requestStore";
 import AppointmentStore from "./appointmentStore";
+import { IReportData } from "../models/report";
 
 configure({
   enforceActions: "never",
@@ -59,7 +59,6 @@ interface Store {
   procedingStore: ProcedingStore;
   quotationStore: QuotationStore;
   reportStore: ReportStore;
-  patientStatisticStore: PatientStatisticStore;
   requestStore: RequestStore;
   appointmentStore:AppointmentStore
 }
@@ -90,7 +89,6 @@ export const store: Store = {
   procedingStore: new ProcedingStore(),
   quotationStore: new QuotationStore(),
   reportStore: new ReportStore(),
-  patientStatisticStore: new PatientStatisticStore(),
   requestStore: new RequestStore(),
   appointmentStore: new AppointmentStore()
 };

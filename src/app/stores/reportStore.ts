@@ -1,35 +1,32 @@
 import { makeAutoObservable } from "mobx";
 import Report from "../api/report";
-import { IReportForm, IReportList, ReportFormValues } from "../models/report";
+import { IReportFilter, IReportData, IReportContactData, ReportFilterValues } from "../models/report";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
-import messages from "../util/messages";
-import responses from "../util/responses";
 import { getErrors } from "../util/utils";
 
 export default class ReportStore {
   constructor() {
     makeAutoObservable(this);
   }
-  search: IReportForm = new ReportFormValues();
+
   scopes?: IScopes;
-  reports: IReportList[] = [];
-  currentReport: string | undefined;
-  filtroPDF?: IReportForm = new ReportFormValues();
+  currentReport?: string;
+  filter: IReportFilter = new ReportFilterValues();
+  reportData: IReportData[] = [];
+  contactData: IReportContactData[] = []
+
   clearScopes = () => {
     this.scopes = undefined;
   };
-  setCurrentReport = (report?: string) => {
-    this.currentReport = report;
+
+  setCurrentReport = (name?: string) => {
+    this.currentReport = name;
   };
 
-  clearReport = () => {
-    this.reports = [];
-  };
-
-  SetFilter = (search: IReportForm) => {
-    this.filtroPDF = search;
+  setFilter = (filter: IReportFilter) => {
+    this.filter = filter;
   };
 
   access = async () => {
@@ -43,68 +40,31 @@ export default class ReportStore {
     }
   };
 
-  exportList = async (catalogName: string, search: string) => {
+  getByFilter = async (report: string, filter: IReportFilter) => {
     try {
-      await Report.exportList(catalogName, search);
+      const data = await Report.getByFilter(report, filter);
+      this.reportData = data;
     } catch (error: any) {
       alerts.warning(getErrors(error));
-    }
-  };
-  printPdf = async (search?: IReportForm) => {
-    try {
-      await Report.printPdf(search);
-      // this.reports = reports;
-    } catch (error: any) {
-      alerts.warning(getErrors(error));
-      this.reports = [];
+      this.reportData = [];
     }
   };
 
-  getAll = async (reportName: string, search?: string) => {
+  getByChart = async (report: string, filter: IReportFilter) => {
     try {
-      const reports = await Report.getAll(reportName, search);
-      this.reports = reports;
+      const data = await Report.getByChart(report, filter);
+      this.contactData = data;
     } catch (error: any) {
       alerts.warning(getErrors(error));
-      this.reports = [];
+      this.reportData = [];
     }
   };
 
-  getBranchByCount = async () => {
+  printPdf = async (report: string, filter: IReportFilter) => {
     try {
-      const reports = await Report.getBranchByCount();
-      this.reports = reports;
+      await Report.printPdf(report, filter);
     } catch (error: any) {
       alerts.warning(getErrors(error));
-      this.reports = [];
-    }
-  };
-
-  exportForm = async (id: string) => {
-    try {
-      await Report.exportForm(id);
-    } catch (error: any) {
-      if (error.status === responses.notFound) {
-        history.push("/notFound");
-      } else {
-        alerts.warning(getErrors(error));
-      }
-    }
-  };
-
-  setSearch = (value: IReportForm) => {
-    this.search = value;
-  };
-
-  filtro = async (search: IReportForm) => {
-    try {
-      console.log(search);
-      const reports = await Report.filtro(search);
-      this.reports = reports;
-      this.SetFilter(search);
-    } catch (error: any) {
-      alerts.warning(getErrors(error));
-      this.reports = [];
     }
   };
 }

@@ -1,55 +1,35 @@
 import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
-import React, { Fragment,  useEffect, useRef, useState } from "react";
-import PatientStaticStore from "../app/stores/patientStatisticStore";
+import { Fragment, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
+import ReportBody from "../components/report/ReportBody";
 import ReportHeader from "../components/report/ReportHeader";
-import { IOptionsReport } from "../app/models/shared";
-import ReportDefault from "../components/report/ReportDefault";
-import { IReportForm } from "../app/models/report";
 
 const Report = () => {
-  const { reportStore, patientStatisticStore } = useStore();
-  const { scopes, access, setCurrentReport,  clearScopes, exportList, printPdf, filtroPDF } = reportStore;
-  const {printPdf: printPdfStats, pdfFilter} = patientStatisticStore;
+  const { reportStore } = useStore();
+  const { scopes, filter, printPdf, setCurrentReport, clearScopes, access } = reportStore;
 
   const [searchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);
-  const [report, setReport] = useState<IOptionsReport>();
-  const componentRef = useRef<any>();
 
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-    onBeforeGetContent: () => {
-      setLoading(true);
-    },
-    onAfterPrint: () => {
-      setLoading(false);
-    },
-  });
   const handleDownload = async () => {
     setLoading(true);
-    const params = searchParams.get("reports");
-    if (params === "expediente"){
-      await printPdf(filtroPDF);
+    const report = searchParams.get("report");
+    if (report) {
+      await printPdf(report, filter);
     }
-    if(params == "estadistica"){
-      await printPdfStats(pdfFilter);
-    }
-    // await printPdf(searchParams.get("report") ?? "", searchParams.get("search") ?? "all");
     setLoading(false);
   };
 
-  // useEffect(() => {
-  //   const checkAccess = async () => {
-  //     await access();
-  //   };
+  useEffect(() => {
+    const checkAccess = async () => {
+      await access();
+    };
 
-  //   checkAccess();
-  // }, [access]);
+    checkAccess();
+  }, [access]);
 
   useEffect(() => {
     setCurrentReport(searchParams.get("report") ?? undefined);
@@ -62,19 +42,14 @@ const Report = () => {
     };
   }, [clearScopes]);
 
-  // if (!scopes?.acceder) return null;
+  if (!scopes?.acceder) return null;
 
   return (
     <Fragment>
-    <ReportHeader 
-        report={report}
-        setReport={setReport}
-        handlePrint={handlePrint}
-        handleDownload={handleDownload}
-      />
-    <Divider className="header-divider" />
-    <ReportDefault  componentRef={componentRef} printing={loading} report={report} />
-  </Fragment>
+      <ReportHeader handleDownload={handleDownload} />
+      <Divider className="header-divider" />
+      <ReportBody printing={loading} />
+    </Fragment>
   );
 };
 

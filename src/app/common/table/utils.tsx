@@ -64,13 +64,13 @@ type ExtraProps = {
   minWidth?: number | string;
 };
 
-export const getDefaultColumnProps = (
-  dataIndex: string,
+export const getDefaultColumnProps = <T extends unknown>(
+  dataIndex: keyof T,
   title: string,
   { searchState, setSearchState, searchable = true, width, minWidth, windowSize }: ExtraProps
 ): ColumnType<any> => ({
-  key: dataIndex,
-  dataIndex,
+  key: dataIndex.toString(),
+  dataIndex: dataIndex.toString(),
   title,
   filterDropdown:
     !searchable || !!!searchState || !!!setSearchState

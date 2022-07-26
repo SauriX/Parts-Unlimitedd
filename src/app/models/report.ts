@@ -1,44 +1,49 @@
 import moment from "moment";
 
-export interface IReportList {
+export interface IReportData {
   id: string;
-  ciudadId: string;
-  expedienteNombre: string;
-  sucursalId: string;
   expediente: string;
-  pacienteNombre: string;
-  visitas: number;
+  sucursal: string;
+  paciente: string;
+  medico: string;
+  clave: string;
+  claveMedico: string;
+  noSolicitudes: number;
+  estatus: string;
   fecha: Date;
-  fechaInicial: Date;
-  fechaFinal: Date;
+  total: number;
+  noPacientes: number;
+  celular: string;
+  correo: string;
+}
+
+export interface IReportContactData {
+  id: string;
+  fecha: string;
+  cantidadTelefono: number;
+  cantidadCorreo: number;
+  solicitudes: number;
+  total: number;
+}
+
+export interface IReportFilter {
+  sucursalId: string[];
+  medicoId: string[];
+  compañiaId: string[];
+  metodoEnvio: number[];
+  fecha: moment.Moment[];
   grafica: boolean;
 }
-export interface IReportTable {
-  id: string;
-  expedienteNombre: string;
-  nombrePaciente: string;
-  sucursalId?: string;
-  visitas: number;
-}
-export interface IReportForm {
-  id: string;
-  ciudadId?: string;
-  sucursalId?: string;
-  grafica?: boolean;
-  fechaInicial?: Date;
-  fechaFinal?: Date;
-  sucursal: string;
-  fecha: moment.Moment[];
-}
-export class ReportFormValues implements IReportForm {
-  id = "";
-  ciudadId = "";
-  sucursalId = "";
-  grafica = false;
-  sucursal = "";
-  fecha = [moment(Date.now()), moment(Date.now()).add("day", 1)];
 
-  constructor(init?: IReportForm) {
+export class ReportFilterValues implements IReportFilter {
+  sucursalId = [];
+  medicoId = [];
+  compañiaId = [];
+  metodoEnvio = [];
+  fecha = [moment(Date.now()), moment(Date.now()).add(1, "day")];
+  grafica = false;
+
+  constructor(init?: IReportFilter) {
     Object.assign(this, init);
   }
 }
