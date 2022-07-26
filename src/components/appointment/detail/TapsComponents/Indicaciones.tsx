@@ -19,12 +19,13 @@ import { IOptions } from "../../../../app/models/shared";
 import moment from "moment";
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import TextArea from "antd/lib/input/TextArea";
-import { IQuotationEstudiosForm, IQuotationPrice, QuotationEstudiosFormValues } from "../../../../app/models/quotation";
+
 import { moneyFormatter } from "../../../../app/util/utils";
 import { IIndicationList } from "../../../../app/models/indication";
+import { IAppointmentPrice } from "../../../../app/models/appointmen";
 type IndiciacionesFormProps = {
     clave: any;
-    data: IQuotationPrice[];
+    data: IAppointmentPrice[];
   };
 const IndiciacionesForm:FC<IndiciacionesFormProps> = ({data})=>{
     const [indications, setIndications] = useState<IIndicationList[]>([]);

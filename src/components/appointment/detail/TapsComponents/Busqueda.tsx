@@ -4,7 +4,7 @@ import { formItemLayout } from "../../../../app/util/utils";
 import TextInput from "../../../../app/common/form/proposal/TextInput";
 import { useStore } from "../../../../app/stores/store";
 import { IReagentForm, ReagentFormValues } from "../../../../app/models/reagent";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
@@ -19,7 +19,6 @@ import { IOptions } from "../../../../app/models/shared";
 import moment from "moment";
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import TextArea from "antd/lib/input/TextArea";
-import { IQuotationEstudiosForm, IQuotationExpedienteSearch, IQuotationForm, IQuotationPrice, QuotationEstudiosFormValues, QuotationExpedienteSearchValues } from "../../../../app/models/quotation";
 import { moneyFormatter } from "../../../../app/util/utils";
 import { IProceedingList } from "../../../../app/models/Proceeding";
 import IconButton from "../../../../app/common/button/IconButton";
@@ -27,39 +26,41 @@ import useWindowDimensions, { resizeWidth } from "../../../../app/util/window";
 import { EditOutlined } from "@ant-design/icons";
 import DateInput from "../../../../app/common/form/proposal/DateInput";
 import DateRangeInput from "../../../../app/common/form/DateRangeInput";
+import { AppointmentExpedienteSearchValues, IAppointmentExpedienteSearch, IAppointmentForm } from "../../../../app/models/appointmen";
 type GeneralesFormProps = {
     printing: boolean;
     handleIdExpediente: React.Dispatch<React.SetStateAction<IProceedingList | undefined>>;
-    handleCotizacion: React.Dispatch<React.SetStateAction<IQuotationForm>>;
+    handleCotizacion: React.Dispatch<React.SetStateAction<IAppointmentForm>>;
   };
 
 const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handleCotizacion})=>{
-    const{ quotationStore }=useStore();
-    const { getExpediente,records}=quotationStore;
+     const{ quotationStore }=useStore();
+    const { getExpediente,records}=quotationStore; 
     const [loading, setLoading] = useState(false);
-    const [form] = Form.useForm<IQuotationExpedienteSearch>();
-    const [values, setValues] = useState<IQuotationExpedienteSearch>(new QuotationExpedienteSearchValues());
+    const [form] = Form.useForm<IAppointmentExpedienteSearch>();
+    const [values, setValues] = useState<IAppointmentExpedienteSearch>(new AppointmentExpedienteSearchValues());
+    let navigate = useNavigate();
     const [searchState, setSearchState] = useState<ISearch>({
         searchedText: "",
         searchedColumn: "",
       });
-      useEffect(()=>{
+       useEffect(()=>{
         const readexp=async ()=>{
           await getExpediente(values);
         }
         readexp();
-      },[getExpediente]);
+      },[getExpediente]); 
   const { width: windowWidth } = useWindowDimensions();
 
-    const onFinish = async (newValues: IQuotationExpedienteSearch) => {
+    const onFinish = async (newValues: IAppointmentExpedienteSearch) => {
              setLoading(true);
         
             const reagent = { ...values, ...newValues };
-              await getExpediente(reagent);
+             // await getExpediente(reagent);
               setLoading(false);
 
     };
-    const onValuesChange = async (changedValues: IQuotationExpedienteSearch) => {
+    const onValuesChange = async (changedValues: IAppointmentExpedienteSearch) => {
         const field = Object.keys(changedValues)[0];
         if(field=="edad"){
          /*  const edad = changedValues[field] as number; */
@@ -81,9 +82,7 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
           ...getDefaultColumnProps("expediente", "Expediente", {
             searchState,
             setSearchState,
-            width: "10%",
-            minWidth: 150,
-            windowSize: windowWidth,
+            width: 100,
           }),
           render: (value, expediente) => (
             <Button
@@ -103,60 +102,54 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
             >
               {value}
             </Button>
+            
           ),
+          fixed:"left"
         },
         {
           ...getDefaultColumnProps("nomprePaciente", "Nombre del paciente", {
             searchState,
             setSearchState,
-            width: "20%",
-            minWidth: 150,
-            windowSize: windowWidth,
+            width: 200,
+   
           }),
         },
         {
             ...getDefaultColumnProps("genero", "Genero", {
               searchState,
               setSearchState,
-              width: "5%",
-              minWidth: 150,
-              windowSize: windowWidth,
+              width: 100,
+          
             }),
           },
           {
             ...getDefaultColumnProps("edad", "Edad", {
               searchState,
               setSearchState,
-              width: "10%",
-              minWidth: 150,
-              windowSize: windowWidth,
+              width: 100,
+             
             }),
           },
           {
             ...getDefaultColumnProps("fechaNacimiento", "Fecha de nacimiento", {
               searchState,
               setSearchState,
-              width: "20%",
-              minWidth: 150,
-              windowSize: windowWidth,
+              width: 200,
             }),
           },
           {
             ...getDefaultColumnProps("monederoElectronico", "Monedero electrónico", {
               searchState,
               setSearchState,
-              width: "10%",
-              minWidth: 150,
-              windowSize: windowWidth,
+              width: 100,
             }),
           },
           {
             ...getDefaultColumnProps("telefono", "Teléfono", {
               searchState,
               setSearchState,
-              width: "10%",
-              minWidth: 150,
-              windowSize: windowWidth,
+              width: 100,
+            
             }),
           },
         {
@@ -164,31 +157,23 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
           dataIndex: "id",
           title: "Editar",
           align: "center",
-          width: windowWidth < resizeWidth ? 100 : "20%",
+          width:  100 ,
           render: (value,expediente) => (
             <IconButton
               title="Editar Expediente"
               icon={<EditOutlined />}
               onClick={() => {
-                handleIdExpediente(expediente);
-                console.log("here");
-                console.log(expediente);
-                handleCotizacion((prev) => ({ ...prev,expedienteid:expediente.id,
-                  expediente:expediente.expediente,
-                  nomprePaciente:expediente.nomprePaciente,
-                  edad:expediente.edad,
-                  fechaNacimiento:moment(expediente.fechaNacimiento.getFullYear(), 'YYYY-MM-DD'),
-                  genero:expediente.genero,
-                }))
+                navigate(`/${views.proceeding}/${value}?&mode=edit`);
               }}
             />
           ),
+          fixed:"right"
         },
       ];
       
     return(
         <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
-            <Form<IQuotationExpedienteSearch>
+            <Form<IAppointmentExpedienteSearch>
                 {...formItemLayout}
                 form={form} 
                 name="generales"
@@ -260,7 +245,7 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
                 dataSource={records}
                 pagination={defaultPaginationProperties}
                 sticky
-                scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+                scroll={{ x: "max-content" }}
             />
         </Spin>
     )

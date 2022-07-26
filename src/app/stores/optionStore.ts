@@ -409,7 +409,22 @@ export default class OptionStore {
       this.studyOptions = [];
     }
   };
+  studyOptionscita: IOptions[] = [];
 
+  getStudyOptionscita = async (area:string) => {
+    try {
+      const studyOptions = await Study.getActive();
+      var studyOptionsf = studyOptions.filter(x=>x.area==area);
+      this.studyOptions = studyOptionsf.map((x) => ({
+        key: "study-" + x.id,
+        value: "study-" + x.id,
+        label: x.clave + " - " + x.nombre,
+        group: "study",
+      }));
+    } catch (error) {
+      this.studyOptions = [];
+    }
+  };
   packOptions: IOptions[] = [];
 
   getPackOptions = async () => {
@@ -425,7 +440,22 @@ export default class OptionStore {
       this.packOptions = [];
     }
   };
+  packOptionscita: IOptions[] = [];
 
+  getPackOptionscita = async (area:string) => {
+    try {
+      const packOptions = await Pack.getActive();
+      var packOptionsf = packOptions.filter(x=>x.area==area);
+      this.packOptions = packOptionsf.map((x) => ({
+        key: "pack-" + x.id,
+        value: "pack-" + x.id,
+        label: x.clave + " - " + x.nombre,
+        group: "pack",
+      }));
+    } catch (error) {
+      this.packOptions = [];
+    }
+  };
   CompanyOptions: IOptions[] = [];
 
   getCompanyOptions = async () => {

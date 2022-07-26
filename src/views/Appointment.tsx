@@ -13,20 +13,25 @@ import AppointmentCalendar from "../components/appointment/apointmenCalendar";
 import ApointmenHeader from "../components/appointment/apointmenHeader";
 import { useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
+import { useStore } from "../app/stores/store";
 
 
 const Appointment = () => {
   const [printing, setPrinting] = useState(false);
   const [accessing, setAccessing] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
+  const { appointmentStore } = useStore();
+  const {   access,   exportForm,sucursal,search,exportList  } =appointmentStore ; 
+
   const componentRef = useRef<any>();
 const handleDownload = async () => {
   
   setPrinting(true);
-/*   var succes= await exportList(searchParams.get("search") ?? "all");
+
+   var succes= await exportList(search);
   if(succes){
     setPrinting(false);
-  } */
+  } 
 };
 const handlePrint = useReactToPrint({
   content: () => componentRef.current,
@@ -41,7 +46,7 @@ const handlePrint = useReactToPrint({
     <Fragment>
       <ApointmenHeader handlePrint={handlePrint} handleList={handleDownload}></ApointmenHeader>
       <Divider className="header-divider" />
-      <AppointmentCalendar></AppointmentCalendar>
+      <AppointmentCalendar componentRef={componentRef} printing={printing}></AppointmentCalendar>
     </Fragment>
   );
 }

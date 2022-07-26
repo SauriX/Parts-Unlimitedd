@@ -4,6 +4,7 @@ import { resolve } from "path";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
+import { IExportForm } from "../../../app/models/appointmen";
 import { useStore } from "../../../app/stores/store";
 import { guidPattern } from "../../../app/util/utils";
 import ApointmentForm from "./apointmentForm";
@@ -14,9 +15,9 @@ type UrlParams = {
 };
 
 const ApointmentDetail = () => {
-/*   const { apointmentStore } = useStore();
-  const { scopes, /* access, clearScopes,  exportForm  } =apointmentStore ; */
-
+   const { appointmentStore } = useStore();
+  const {   access,   exportForm,sucursal  } =appointmentStore ; 
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const [printing, setPrinting] = useState(false);
@@ -42,9 +43,14 @@ const ApointmentDetail = () => {
   });
 
   const handleDownload = async () => {
+
     if (reagentId) {
+      var data:IExportForm={
+        id:reagentId,
+        tipo:searchParams.get("type")!
+      }
       setPrinting(true);
-      /* await exportForm(reagentId); */
+       await exportForm(data); 
       setPrinting(false);
     }
   };

@@ -16,7 +16,7 @@ const  ApointmenHeader: FC<UserHeaderProps> = ({ handlePrint, handleList }) => {
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Cita Laboratorio" image="" />}
+      title={<HeaderTitle title="Cita Imagenologia" image="citas" />}
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

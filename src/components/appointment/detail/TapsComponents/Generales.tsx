@@ -1,4 +1,4 @@
-import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Radio, DatePicker, List, Typography, Select, Table, Checkbox, Input, Tag, InputNumber, Tabs, Descriptions } from "antd";
+import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Radio, DatePicker, List, Typography, Select, Table, Checkbox, Input, Tag, InputNumber, Tabs, Descriptions,Image } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../../app/util/utils";
 import TextInput from "../../../../app/common/form/proposal/TextInput";
@@ -18,14 +18,15 @@ import { getDefaultColumnProps, IColumns, ISearch } from "../../../../app/common
 import { IFormError, IOptions } from "../../../../app/models/shared";
 import moment from "moment";
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
-import { IQuotationGeneralesForm, QuotationGeneralesFormValues } from "../../../../app/models/quotation";
+
 import TextArea from "antd/lib/input/TextArea";
 import TextAreaInput from "../../../../app/common/form/proposal/TextAreaInput";
+import { AppointmentGeneralesFormValues, IAppointmentGeneralesForm } from "../../../../app/models/appointmen";
 type GeneralesFormProps = {
     printing: boolean;
-    generales: React.Dispatch<React.SetStateAction<IQuotationGeneralesForm | undefined>>;
+    generales: React.Dispatch<React.SetStateAction<IAppointmentGeneralesForm | undefined>>;
     handle: boolean,
-    data: IQuotationGeneralesForm | undefined
+    data: IAppointmentGeneralesForm | undefined
   };
 
 
@@ -33,8 +34,8 @@ const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>{
     const {optionStore}=useStore();
     const { getMedicOptions,getCompanyOptions,MedicOptions,CompanyOptions } = optionStore;
     const [loading, setLoading] = useState(false);
-    const [form] = Form.useForm<IQuotationGeneralesForm>();
-    const [values, setValues] = useState<IQuotationGeneralesForm>(new QuotationGeneralesFormValues());
+    const [form] = Form.useForm<IAppointmentGeneralesForm>();
+    const [values, setValues] = useState<IAppointmentGeneralesForm>(new AppointmentGeneralesFormValues());
     const [errors, setErrors] = useState<IFormError[]>([]);
     const [type,SetType]=useState("");
     useEffect(()=>{
@@ -56,7 +57,7 @@ const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>{
     useEffect(()=>{
         form.submit();
     },[generales])
-    const onFinish = async (newValues: IQuotationGeneralesForm) => {
+    const onFinish = async (newValues: IAppointmentGeneralesForm) => {
         const reagent = { ...values, ...newValues };
         console.log("onfinish");
         console.log(reagent);
@@ -82,7 +83,7 @@ const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>{
         
     };
     
-    const onValuesChange = async (changedValues: IQuotationGeneralesForm) => {
+    const onValuesChange = async (changedValues: IAppointmentGeneralesForm) => {
         const field = Object.keys(changedValues)[0];
         form.submit();
         if(field=="edad"){
@@ -102,7 +103,7 @@ const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>{
     };
     return(
         <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
-            <Form<IQuotationGeneralesForm>
+            <Form<IAppointmentGeneralesForm>
                 {...formItemLayout}
                 form={form} 
                 name="generales"
@@ -121,7 +122,9 @@ const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>{
                             formProps={{
                                 name: "procedencia",
                                 label: "Procedencia",
+                                
                             }}
+                            onChange={(value)=>{ setValues({ ...values,procedencia:value })}}
                             errors={errors.find((x) => x.name === "nombre")?.errors}
                             options={[{value:"compañia",label:"Compañia"},{value:"particular",label:"Particular"}]}
                         ></SelectInput>
@@ -134,6 +137,7 @@ const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>{
                                 label: "Compañia",
                             }}
                             options={[...CompanyOptions]}
+                            readonly={values.procedencia=="particular"}
                     ></SelectInput>
                     </Col>
                     <Col sm={12}></Col>
@@ -164,9 +168,9 @@ const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>{
                     </Col>
                     <Col sm={12}>
                         <label style={{marginLeft:"100px",marginTop:"20px"}} htmlFor="">Enviar por: </label>
-                        <Checkbox checked={type=="Email"||type=="Ambos"} onChange={(values)=>{values.target.checked?SetType("Email"):SetType("")}} style={{marginLeft:"10px",marginTop:"20px"}}>Email</Checkbox>
-                        <Checkbox checked={type=="Whatsapp" ||  type=="Ambos"} onChange={(values)=>{values.target.checked?SetType("Whatsapp"):SetType("")}} style={{marginLeft:"10px",marginTop:"20px"}}>Whatsapp</Checkbox>
-                        <Checkbox checked={type=="Ambos"} onChange={(values)=>{values.target.checked?SetType("Ambos"):SetType("")}} style={{marginLeft:"10px",marginTop:"20px"}}>Ambos</Checkbox>
+                        <Checkbox checked={type=="Email"||type=="Ambos"} onChange={(values)=>{values.target.checked?SetType("Email"):SetType("")}} style={{marginLeft:"5px",marginTop:"20px"}}>Email</Checkbox>   <Image width={15} src={`/${process.env.REACT_APP_NAME}/admin/assets/correo.png`} preview={false}/>
+                        <Checkbox checked={type=="Whatsapp" ||  type=="Ambos"} onChange={(values)=>{values.target.checked?SetType("Whatsapp"):SetType("")}} style={{marginLeft:"5px",marginTop:"20px"}}>Whatsapp</Checkbox><Image width={15} src={`/${process.env.REACT_APP_NAME}/admin/assets/whats.png`} preview={false}/>
+                        <Checkbox checked={type=="Ambos"} onChange={(values)=>{values.target.checked?SetType("Ambos"):SetType("")}} style={{marginLeft:"10px",marginTop:"20px"}}>Ambos</Checkbox><Image width={20} src={`/${process.env.REACT_APP_NAME}/admin/assets/all.png`} preview={false}/>
                     </Col>
                     <Col sm={12}>
                     <SwitchInput style={{marginLeft:"100px",marginTop:"10px"}}

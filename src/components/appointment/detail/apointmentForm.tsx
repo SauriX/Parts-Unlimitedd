@@ -29,6 +29,7 @@ import { IRequestPrice } from "../../../app/models/request";
 import { sum } from "lodash";
 import { IParameterList } from "../../../app/models/parameter";
 import { type } from "os";
+import { AppointmentFormValues, generalDomicilio, IAppointmentForm, IAppointmentGeneralesForm } from "../../../app/models/appointmen";
 type apointmentFormProps = {
   id:  string;
   componentRef: React.MutableRefObject<any>;
@@ -37,29 +38,32 @@ type apointmentFormProps = {
 
 const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing }) => {
   const navigate = useNavigate();
-  const { modalStore,  locationStore, optionStore,profileStore,priceListStore } = useStore();
-/*    const { getById, update,  create,  search,createsolictud,getAll,quotatios,printTicket  } = ; */
+  const { modalStore,  locationStore, optionStore,profileStore,priceListStore,appointmentStore } = useStore();
+  const { getAllDom,getAllLab,getByIdDom,getByIdLab,createDom,createLab,updateDom,updateLab,search,sucursales }=appointmentStore;
  const [data, setData] = useState<IRequestPrice[]>([]);
   const { profile } = profileStore;
   const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
   const [type, setType] = useState(searchParams.get("type"));
-  const [form] = Form.useForm<any>();
-  const [values, setValues] = useState<any>();
+  const [form] = Form.useForm<IAppointmentForm>();
+  const [values, setValues] = useState<AppointmentFormValues>(new AppointmentFormValues());
   const { getColoniesByZipCode } = locationStore;
   const { openModal,closeModal } = modalStore;
   const [colonies, setColonies] = useState<IOptions[]>([]);
   const [date, setDate] = useState(moment(new Date(moment.now())));
   const [continuar, SetContinuar] = useState<boolean>(true);
   const [errors, setErrors] = useState<IFormError[]>([]);
-  const[generales,setGenerales] = useState<any>();
+  const[generales,setGenerales] = useState<IAppointmentGeneralesForm>();
+  const[generalesDom,setGeneralesDom] = useState<generalDomicilio>();
   const [generalesSumbit,setGeneralesSumbit] = useState(false);
   const [record,Setrecord]=useState<IProceedingList>();
   const [total,SetTotal]=useState<number>(0);
   const [totalFinal,SetTotalFinal]=useState<number>();
   const [cargo,SetCargo]=useState<number>();
+  const [descuento,SetDescuento]=useState<number>();
   const [typo,SetTypo]=useState<number>(1);
+  const [typoD,SetTypoD]=useState<number>(1);
   const { TabPane } = Tabs;
   const goBack = () => {
     
@@ -75,15 +79,20 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
     form.setFieldsValue(values!);
   },[values]);
 
-/* useEffect(()=>{
+ useEffect(()=>{
   const read = async ()=>{
-    await getAll(search);
+    if(type=="laboratorio"){
+      await getAllLab(search);
+    }else{
+      await getAllDom(search);
+    }
+    
   }
   if(id){
     read();
   }
   
-},[getAll]); */
+},[getAllDom,getAllLab]); 
 
 /*   const clearLocation = () => {
     form.setFieldsValue({
@@ -99,6 +108,10 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
       SetTypo(tipo);
       calculateTotalFinal(carg!,tipo);
   }
+  const setTipoD=(tipo:number,carg:number)=>{
+    SetTypoD(tipo);
+    calculateTotalFinalD(carg!,tipo);
+}
   const calculateTotalFinal = (carg:number,tipo:number)=>{
     if(tipo==2){
       var totalfinal= total!+carg!;
@@ -107,6 +120,18 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
     if(tipo==1){
       var porcent = (total! * carg!)/100;
       var totalfinal = total! + porcent;
+      SetTotalFinal(totalfinal);
+    }   
+    
+  }
+  const calculateTotalFinalD = (carg:number,tipo:number)=>{
+    if(tipo==2){
+      var totalfinal= total!-carg!;
+      SetTotalFinal(totalfinal);
+    }
+    if(tipo==1){
+      var porcent = (total! * carg!)/100;
+      var totalfinal = total! - porcent;
       SetTotalFinal(totalfinal);
     }   
     
@@ -146,10 +171,13 @@ useEffect(()=>{
   SetTotal(suma);
 },[data]);
 
-/*   useEffect(() => {
+   useEffect(() => {
     const readExpedinte = async (id: string) => {
       setLoading(true);
-      var  expediente = await getById(id);
+      if(type=="laboratorio"){
+      var  expediente = await getByIdLab(id);}else{
+        var  expediente = await getByIdDom(id)
+      }
 
       var suma = 0;
       expediente!.estudy!.forEach ((x)=>{
@@ -159,7 +187,9 @@ useEffect(()=>{
 
       SetTotal(suma);
       setGenerales(expediente?.generales);
+      setGeneralesDom(expediente?.generalesDom);
       console.log(expediente,"expediente");
+      expediente!.fechaNacimiento= moment(expediente?.fechaNacimiento);
       form.setFieldsValue(expediente!);
       setValues(expediente!);
       console.log(expediente?.estudy!,"estudys");
@@ -177,7 +207,7 @@ useEffect(()=>{
 
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, getById]); */
+  }, [id, getByIdLab,getByIdDom]); 
   
 /*    useEffect(()=>{
     if(!profile?.admin){
@@ -206,7 +236,7 @@ useEffect(()=>{
     form.setFieldsValue({edad:edad});
     return edad;
 }; */
-  const onValuesChange = async (changedValues: any) => {
+  const onValuesChange = async (changedValues: IAppointmentForm) => {
     const field = Object.keys(changedValues)[0];
     if(field=="edad"){
       const edad = changedValues[field] 
@@ -215,29 +245,7 @@ useEffect(()=>{
       hoy.setFullYear(cumpleaños);
       /* setValues((prev) => ({ ...prev, fechaNacimiento: hoy })) */
     }
-    if (field === "cp") {
-      const zipCode = changedValues[field] 
 
-      if (zipCode && zipCode.trim().length === 5) {
-        const location = await getColoniesByZipCode(zipCode);
-        if (location) {
- /*          form.setFieldsValue({
-            estado: location.estado,
-            municipio: location.ciudad,
-          }); */
-          setColonies(
-            location.colonias.map((x) => ({
-              value: x.id,
-              label: x.nombre,
-            }))
-          );
-        } else {
-          /* clearLocation(); */
-        }
-      } else {
-        /* clearLocation(); */
-      }
-    }
   };
   const parametrosDuplicados =(estudios:IRequestPrice[])=>{
     let duplicados = [];
@@ -253,17 +261,17 @@ useEffect(()=>{
       return duplicados;
   } 
   const setPage = (page: number) => {
-    //const priceList = quotatios[page - 1];
-   // navigate(`/${views.quotatiion}/${priceList.id}?${searchParams}`);
+    const priceList = sucursales[page - 1];
+    navigate(`/${views.appointment}/${priceList.id}?${searchParams}`);
   };
   const getPage = (id: string) => {
-    return 1;//quotatios.findIndex(x => x.id === id) + 1;
+    return sucursales.findIndex(x => x.id === id) + 1;
   };
   const continues = async (cont: boolean) => {
     SetContinuar(cont);
   }
 
-  const onFinish = async (newValues: any) => {
+  const onFinish = async (newValues: IAppointmentForm) => {
      setLoading(true);
       console.log(generales,"genreales");
     const reagent = { ...values, ...newValues };
@@ -274,7 +282,8 @@ useEffect(()=>{
         }
       
       let success = false;
-      reagent.generales = generales;
+      reagent!.generales! = generales!;
+      reagent!.generalesDom = generalesDom!
       reagent.expediente = record?.expediente!;
       reagent.estudy= data;
       reagent.typo= typo;
@@ -288,12 +297,18 @@ useEffect(()=>{
         setLoading(false);
         return
       }
-      
+      if(cargo==0){
+        alerts.warning(`Se debe aplicar un cargo`);
+        setLoading(false);
+        return
+      }
       if (!reagent.id) {
         console.log("succes");
-        // success = await create(reagent);      
+        if(type=="laboratorio"){success = await createLab(reagent);}else{success = await createDom(reagent);}
+               
       } else{
-         //success = await update(reagent); 
+        if(type=="laboratorio"){success = await updateLab(reagent);}else{success = await updateDom(reagent);}
+               
       }
       setLoading(false);
       if (success) {
@@ -310,7 +325,7 @@ useEffect(()=>{
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
             <Pagination
               size="small"
-              total={/* quotatios.length ?? */ 0}
+              total={ sucursales.length ??  0}
               pageSize={1}
               current={getPage(id)}
               onChange={setPage}
@@ -348,7 +363,7 @@ useEffect(()=>{
             ></PageHeader>
           )}
           {printing && <Divider className="header-divider" />}
-          <Form<any>
+          <Form<IAppointmentForm>
             {...formItemLayout}
              form={form} 
             name="apointment"
@@ -472,20 +487,20 @@ useEffect(()=>{
                       </div>
                     }
                   >
-                    <InputNumber min={0} value={cargo} onChange={(value)=>{SetCargo(value); calculateTotalFinal(value,typo)}}></InputNumber>
+                    <InputNumber min={0} value={cargo} required onChange={(value)=>{SetCargo(value); calculateTotalFinal(value,typo)}}></InputNumber>
                   </Descriptions.Item>
                   <Descriptions.Item
                     label={ 
                       <div style={{ display: "flex", justifyContent: "space-between" }}>
                         <Text>Descuento</Text>
 
-                          <Radio value={1} checked={typo==1} onChange={(value)=>{setTipo(value.target.value,cargo!)}}>%</Radio>
-                          <Radio value={2} checked={typo==2} onChange={(value)=>{setTipo(value.target.value,cargo!)}}>$</Radio>
+                          <Radio value={1} checked={typoD==1} onChange={(value)=>{setTipoD(value.target.value,descuento!)}}>%</Radio>
+                          <Radio value={2} checked={typoD==2} onChange={(value)=>{setTipoD(value.target.value,descuento!)}}>$</Radio>
 
                       </div>
                     }
                   >
-                    <InputNumber min={0} value={cargo} onChange={(value)=>{SetCargo(value); calculateTotalFinal(value,typo)}}></InputNumber>
+                    <InputNumber min={0} value={descuento} onChange={(value)=>{SetDescuento(value); calculateTotalFinalD(value,typo)}}></InputNumber>
                   </Descriptions.Item>
                   <Descriptions.Item label="Total">$ {totalFinal}</Descriptions.Item>
               </Descriptions>

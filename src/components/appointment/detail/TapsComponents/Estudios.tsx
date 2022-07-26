@@ -2,6 +2,7 @@ import { isFocusable } from "@testing-library/user-event/dist/utils";
 import { Button, Checkbox, Col, Row, Select, Table, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { FC, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
@@ -26,8 +27,8 @@ type RequestStudyProps = {
 const RequestStudy: FC<RequestStudyProps> = ({ data, setData,setTotal,total }) => {
   const { priceListStore, optionStore } = useStore();
   const { getPriceStudy, getPricePack } = priceListStore;
-  const { studyOptions, packOptions, getStudyOptions, getPackOptions } = optionStore;
-
+  const { studyOptionscita, packOptionscita, getStudyOptionscita, getPackOptionscita,studyOptions,packOptions,getStudyOptions,getPackOptions } = optionStore;
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedRows, setSelectedRows] = useState<IRequestPrice[]>([]);
 
   const [options, setOptions] = useState<IOptions[]>([]);
@@ -37,26 +38,50 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData,setTotal,total }) =
   });
 
   useEffect(() => {
-    getStudyOptions();
-    getPackOptions();
-  }, [getPackOptions, getStudyOptions]);
+    if(searchParams.get("type")=="laboratorio"){
+      getStudyOptionscita("Imagenologia");
+      getPackOptionscita("Imagenologia");
+    }else{
+      getStudyOptions();
+      getPackOptions();
+    }
+
+  }, [getPackOptionscita, getStudyOptionscita,getPackOptions, getStudyOptions]);
 
   useEffect(() => {
-    const options: IOptions[] = [
-      {
-        value: "study",
-        label: "Estudios",
-        options: studyOptions,
-      },
-      {
-        value: "pack",
-        label: "Paquetes",
-        options: packOptions,
-      },
-    ];
+    if(searchParams.get("type")=="laboratorio"){
+      const options: IOptions[] = [
+        {
+          value: "study",
+          label: "Estudios",
+          options: studyOptionscita,
+        },
+        {
+          value: "pack",
+          label: "Paquetes",
+          options: packOptionscita,
+        },
+      ];
+      setOptions(options);
+    }else{
+      const options: IOptions[] = [
+        {
+          value: "study",
+          label: "Estudios",
+          options: studyOptions,
+        },
+        {
+          value: "pack",
+          label: "Paquetes",
+          options: packOptions,
+        },
+      ];
+      setOptions(options);
+    }
 
-    setOptions(options);
-  }, [packOptions, studyOptions]);
+
+    
+  }, [packOptionscita, studyOptionscita]);
 
   const columns: IColumns<IRequestPrice> = [
     {

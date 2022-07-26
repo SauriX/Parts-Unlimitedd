@@ -46,7 +46,7 @@ const ApointmentHeaderForm: FC<apointmentHeaderFormProps> = ({ handlePrint, hand
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title={`Cita ${tipo!="laboratorio"?"Domicilio":"Laboratorio"}`} image="" />}
+      title={<HeaderTitle title={`Cita Imagenologia ${tipo!="laboratorio"?"Domicilio":"Laboratorio"}`} image="citas" />}
       className="header-container"
       extra={[
         id &&/* scopes?.imprimir && */  <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
