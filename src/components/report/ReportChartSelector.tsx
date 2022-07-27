@@ -1,5 +1,9 @@
 import { observer } from "mobx-react-lite";
-import { IReportContactData, IReportData } from "../../app/models/report";
+import {
+  IReportContactData,
+  IReportData,
+  IReportStudyData,
+} from "../../app/models/report";
 import ReportChart from "./ReportChart";
 
 type ReportChartSelectorProps = {
@@ -14,7 +18,7 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
         data={data as IReportData[]}
         serieX={"expediente"}
         series={[{ title: "Solicitudes", dataIndex: "noSolicitudes" }]}
-        axisLabel={{interval: 0, rotate: 0}}
+        axisLabel={{ interval: 0, rotate: 0 }}
       />
     );
   } else if (report === "estadistica") {
@@ -26,7 +30,7 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
           { title: "Solicitudes", dataIndex: "noSolicitudes" },
           { title: "Total de Solicitudes", dataIndex: "total" },
         ]}
-        axisLabel={{interval: 0, rotate: 30}}
+        axisLabel={{ interval: 0, rotate: 30 }}
       />
     );
   } else if (report === "medicos") {
@@ -39,7 +43,7 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
           { title: "Solicitudes", dataIndex: "noSolicitudes" },
           { title: "Pacientes", dataIndex: "noPacientes" },
         ]}
-        axisLabel={{interval: 0, rotate: 0}}
+        axisLabel={{ interval: 0, rotate: 0 }}
       />
     );
   } else if (report === "contacto") {
@@ -53,7 +57,16 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
           { title: "Correo", dataIndex: "cantidadCorreo" },
           { title: "Total Medio de Contacto", dataIndex: "total" },
         ]}
-        axisLabel={{interval: 0, rotate: 0}}
+        axisLabel={{ interval: 0, rotate: 0 }}
+      />
+    );
+  } else if (report === "estudios") {
+    return (
+      <ReportChart<IReportStudyData>
+        data={data as IReportStudyData[]}
+        serieX={"estatus"}
+        series={[{ title: "", dataIndex: "cantidad" }]}
+        axisLabel={{ interval: 0, rotate: 0 }}
       />
     );
   }

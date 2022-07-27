@@ -6,15 +6,28 @@ export interface IReportData {
   sucursal: string;
   paciente: string;
   medico: string;
-  clave: string;
+  solicitud: string;
+  estudio: IStudiesData[];
+  edad: number;
+  sexo: string;
   claveMedico: string;
   noSolicitudes: number;
   estatus: string;
   fecha: Date;
+  fechaEntrega: Date;
   total: number;
   noPacientes: number;
   celular: string;
   correo: string;
+  parcialidad: boolean;
+}
+
+export interface IStudiesData {
+  id: string;
+  clave: string;
+  estudio: string;
+  estatus: string;
+  precio: number;
 }
 
 export interface IReportContactData {
@@ -24,6 +37,13 @@ export interface IReportContactData {
   cantidadCorreo: number;
   solicitudes: number;
   total: number;
+}
+
+export interface IReportStudyData {
+  id: string;
+  estatus: string;
+  cantidad: number;
+  color: string;
 }
 
 export interface IReportFilter {

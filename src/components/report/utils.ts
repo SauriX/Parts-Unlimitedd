@@ -1,27 +1,39 @@
 import { IColumns, ISearch } from "../../app/common/table/utils";
 import { IReportData } from "../../app/models/report";
+import getStudyStatsColumns, { expandableStudyConfig } from "./columnDefinition/studyStats";
 import getContactStatsColumns from "./columnDefinition/contactStats";
 import getMedicalStatsColumns from "./columnDefinition/medicalStats";
 import getPatientStatsColumns from "./columnDefinition/patientStats";
 import getRequestByRecordColumns from "./columnDefinition/requestByRecord";
+import { ExpandableConfig } from "antd/lib/table/interface";
 
 export const getInputs = (
   reportName: string
 ): ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia")[] => {
-  const filters: ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia")[] = ["fecha", "sucursal"];
+  const filters: (
+    | "sucursal"
+    | "fecha"
+    | "medico"
+    | "metodoEnvio"
+    | "compañia"
+  )[] = ["fecha", "sucursal"];
 
   if (reportName === "medicos") {
     filters.push("medico");
-  }
-  else if (reportName === "contacto") {
+  } else if (reportName === "contacto") {
     filters.push("medico");
     filters.push("metodoEnvio");
+  } else if (reportName === "estudios") {
+    filters.push("medico");
+    filters.push("compañia");
   }
 
   return filters;
 };
 
-export const getReportConfig = (reportName: string): { title: string; image: string, hasFooterRow: boolean } => {
+export const getReportConfig = (
+  reportName: string
+): { title: string; image: string; hasFooterRow: boolean } => {
   let title = "";
   let image = "Reportes";
   let hasFooterRow = true;
@@ -36,7 +48,11 @@ export const getReportConfig = (reportName: string): { title: string; image: str
     image = "doctor";
   } else if (reportName === "contacto") {
     title = "Solicitudes por contacto";
-    image = "comunicar";
+    image = "contactoos";
+    hasFooterRow = false;
+  } else if (reportName === "estudios") {
+    title = "Relación Estudios por Paciente";
+    image = "estudios-paciente";
     hasFooterRow = false;
   }
 
@@ -54,10 +70,21 @@ export const getColumns = (
     return getPatientStatsColumns(searchState, setSearchState);
   } else if (reportName === "medicos") {
     return getMedicalStatsColumns(searchState, setSearchState);
-  }
-  else if (reportName === "contacto") {
+  } else if (reportName === "contacto") {
     return getContactStatsColumns(searchState, setSearchState);
+  } else if (reportName === "estudios") {
+    return getStudyStatsColumns(searchState, setSearchState);
   }
 
   return [];
+};
+
+export const getExpandableConfig = (
+  reportName: string
+): ExpandableConfig<IReportData> | undefined => {
+  if (reportName == "estudios") {
+    return expandableStudyConfig;
+  }
+
+  return undefined;
 };

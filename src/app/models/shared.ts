@@ -55,7 +55,7 @@ export interface IOptionsCatalog extends IOptions {
 }
 
 export interface IOptionsReport extends IOptions {
-  type: "expediente" | "estadistica" | "medicos" | "contacto";
+  type: "expediente" | "estadistica" | "medicos" | "contacto" | "estudios";
 }
 
 export type TreeData = {

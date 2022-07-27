@@ -1,4 +1,5 @@
 import { Form, Row, Col, Button, Spin } from "antd";
+import { graphic } from "echarts";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
@@ -27,7 +28,8 @@ const sendMethodOptions: IOptions[] = [
 
 const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
   const { reportStore, optionStore } = useStore();
-  const { currentReport, filter, setFilter, getByFilter, getByChart } = reportStore;
+  const { currentReport, filter, setFilter, getByFilter, getByChart } =
+    reportStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -50,6 +52,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
 
   useEffect(() => {
     setShowChart(chartValue);
+    setFilter({ ...filter, grafica: chartValue });
   }, [chartValue, setShowChart]);
 
   const onFinish = async (filter: IReportFilter) => {
@@ -57,7 +60,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
     if (currentReport) {
       await getByFilter(currentReport, filter);
       setFilter(filter);
-      if(currentReport === "contacto"){
+      if (currentReport === "contacto" || currentReport == "estudios") {
         await getByChart(currentReport, filter);
       }
     }
@@ -78,7 +81,9 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
             <Row justify="space-between" gutter={[12, 12]}>
               {input.includes("fecha") && (
                 <Col span={8}>
-                  <DateRangeInput formProps={{ label: "Fecha", name: "fecha" }} />
+                  <DateRangeInput
+                    formProps={{ label: "Fecha", name: "fecha" }}
+                  />
                 </Col>
               )}
               {input.includes("sucursal") && (
@@ -102,7 +107,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
               {input.includes("compañia") && (
                 <Col span={8}>
                   <SelectInput
-                    formProps={{ name: "compañiaId", label: "Compañia" }}
+                    formProps={{ name: "compañiaId", label: "Compañía" }}
                     multiple
                     options={companyOptions}
                   />
