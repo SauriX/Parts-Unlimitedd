@@ -175,7 +175,7 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
         {
       key: "activo",
       dataIndex: "activo",
-      title: "Áctivo",
+      title: "Activo",
       align: "center",
       width: 100,
       render: (value) => (value ? "Sí" : "No"),

@@ -192,7 +192,7 @@ useEffect(()=>{
     setReadonly(false);
   };
   const { Text } = Typography;
-/*   const calcularEdad =(fecha:Date) =>{
+   const calcularEdad =(fecha:Date) =>{
     var hoy = new Date();
     var cumpleanos = fecha;
     var edad = hoy.getFullYear() - cumpleanos.getFullYear();
@@ -203,7 +203,7 @@ useEffect(()=>{
     }
     form.setFieldsValue({edad:edad});
     return edad;
-}; */
+};
   const onValuesChange = async (changedValues: any) => {
     const field = Object.keys(changedValues)[0];
     if(field=="edad"){
@@ -211,7 +211,11 @@ useEffect(()=>{
       var hoy = new Date();
       var cumpleaños =  hoy.getFullYear()-edad;
       hoy.setFullYear(cumpleaños);
-      /* setValues((prev) => ({ ...prev, fechaNacimiento: hoy })) */
+       setValues((prev) => ({ ...prev, fechaNacimiento: moment(hoy),edad:edad })) 
+    }
+    if(field=="fechaNacimiento"){
+      const edad = changedValues[field] 
+      calcularEdad(edad);
     }
     if (field === "cp") {
       const zipCode = changedValues[field] 
@@ -407,8 +411,10 @@ useEffect(()=>{
                   formProps={{
                       name: "fechaNacimiento",
                       label: "Fecha de Nacimiento",
-                      style:{width:"430px", marginLeft:"70px"}
+                      style:{width:"430px", marginLeft:"70px"},
+                      
                     }}
+                    
                     width="small"
                     errors={errors.find((x) => x.name === "fechaNacimiento")?.errors}
                 />
@@ -435,7 +441,7 @@ useEffect(()=>{
                   <TabPane tab="Estudios" key="2">
                     <ExpedientesForm setTotal={SetTotal} total={total!}  data={data} setData={setData} ></ExpedientesForm>
                   </TabPane>
-                  <TabPane tab="Indiciaciones" key="3">
+                  <TabPane tab="Indicaciones" key="3">
                     <IndiciacionesForm data={data} clave={""}></IndiciacionesForm>
                   </TabPane>
                   <TabPane tab="Búsqueda" key="4">
