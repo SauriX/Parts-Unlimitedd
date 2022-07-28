@@ -6,16 +6,18 @@ import getMedicalStatsColumns from "./columnDefinition/medicalStats";
 import getPatientStatsColumns from "./columnDefinition/patientStats";
 import getRequestByRecordColumns from "./columnDefinition/requestByRecord";
 import { ExpandableConfig } from "antd/lib/table/interface";
+import getUrgentStatsColumns from "./columnDefinition/urgentStats";
 
 export const getInputs = (
   reportName: string
-): ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia")[] => {
+): ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia" | "urgencia")[] => {
   const filters: (
     | "sucursal"
     | "fecha"
     | "medico"
     | "metodoEnvio"
     | "compañia"
+    | "urgencia"
   )[] = ["fecha", "sucursal"];
 
   if (reportName === "medicos") {
@@ -26,7 +28,10 @@ export const getInputs = (
   } else if (reportName === "estudios") {
     filters.push("medico");
     filters.push("compañia");
-  }
+  } else if (reportName === "urgentes") {
+    filters.push("medico");
+    filters.push("urgencia");
+  } 
 
   return filters;
 };
@@ -54,6 +59,10 @@ export const getReportConfig = (
     title = "Relación Estudios por Paciente";
     image = "estudios-paciente";
     hasFooterRow = false;
+  } else if (reportName === "urgentes") {
+    title = "Relación Estudios por Paciente Urgente";
+    image = "alerta";
+    hasFooterRow = false;
   }
 
   return { title, image, hasFooterRow };
@@ -74,6 +83,8 @@ export const getColumns = (
     return getContactStatsColumns(searchState, setSearchState);
   } else if (reportName === "estudios") {
     return getStudyStatsColumns(searchState, setSearchState);
+  }else if (reportName === "urgentes") {
+    return getUrgentStatsColumns(searchState, setSearchState);
   }
 
   return [];
@@ -82,7 +93,7 @@ export const getColumns = (
 export const getExpandableConfig = (
   reportName: string
 ): ExpandableConfig<IReportData> | undefined => {
-  if (reportName == "estudios") {
+  if (reportName == "estudios" || reportName == "urgentes") {
     return expandableStudyConfig;
   }
 

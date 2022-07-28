@@ -25,7 +25,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
       setCurrentReport(value);
       searchParams.set("report", value);
       await getByFilter(value, filter);
-      if(value === "contacto" || value == "estudios"){
+      if(value === "contacto" || value == "estudios" || value == "urgentes"){
         await getByChart(value, filter);
       }
     } else {

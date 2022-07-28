@@ -17,12 +17,12 @@ type ReportDefaultProps = {
 
 const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
   const { reportStore } = useStore();
-  const { reportData, contactData, chartData, currentReport } = reportStore;
+  const { reportData, chartData, currentReport } = reportStore;
   const [loading, setLoading] = useState(false);
   const [dataChart, setDataChart] = useState<any[]>([]);
 
   const [inputs, setInputs] = useState<
-    ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia")[]
+    ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia" | "urgencia")[]
   >([]);
   const [title, setTitle] = useState<string>();
   const [image, setImage] = useState<string>();
@@ -43,6 +43,7 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
       setTitle(data.title);
       setImage(data.image);
       setHasFooterRow(data.hasFooterRow);
+      console.log(getInputs(currentReport))
     } else {
       setInputs([]);
       setTitle("");
@@ -63,7 +64,7 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
   }, [currentReport, searchState]);
 
   useEffect(() => {
-    if (currentReport == "contacto" || currentReport == "estudios") {
+    if (currentReport == "contacto" || currentReport == "estudios" || currentReport == "urgentes") {
       setDataChart(chartData);
     } else {
       setDataChart(reportData);

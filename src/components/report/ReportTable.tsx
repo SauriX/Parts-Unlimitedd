@@ -27,7 +27,6 @@ const ReportTable = ({ loading, data, columns, hasFooterRow, expandable }: Repor
         scroll={{ y: 500 }}
         rowClassName={(item) => (item.claveMedico == "Total" || item.paciente === "Total" ? "Resumen Total" : "")}
         expandable={expandable}
-        // expandable={{expandedRowRender: item => <p style={{ margin: 0 }}>{item.estudio}</p>}}
       />
       <div style={{ textAlign: "right", marginTop: 10 }}>
         <Tag color="lime">{!hasFooterRow ? data.length : Math.max(data.length - 1, 0)} Registros</Tag>

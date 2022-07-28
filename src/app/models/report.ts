@@ -20,6 +20,7 @@ export interface IReportData {
   celular: string;
   correo: string;
   parcialidad: boolean;
+  urgencia: number;
 }
 
 export interface IStudiesData {
@@ -51,6 +52,7 @@ export interface IReportFilter {
   medicoId: string[];
   compañiaId: string[];
   metodoEnvio: number[];
+  urgencia: number[];
   fecha: moment.Moment[];
   grafica: boolean;
 }
@@ -60,6 +62,7 @@ export class ReportFilterValues implements IReportFilter {
   medicoId = [];
   compañiaId = [];
   metodoEnvio = [];
+  urgencia = [];
   fecha = [moment(Date.now()), moment(Date.now()).add(1, "day")];
   grafica = false;
 

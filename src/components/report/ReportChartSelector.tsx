@@ -60,7 +60,7 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
         axisLabel={{ interval: 0, rotate: 0 }}
       />
     );
-  } else if (report === "estudios") {
+  } else if (report === "estudios" || report === "urgentes") {
     return (
       <ReportChart<IReportStudyData>
         data={data as IReportStudyData[]}

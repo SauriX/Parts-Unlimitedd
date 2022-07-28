@@ -1,5 +1,4 @@
 import { Form, Row, Col, Button, Spin } from "antd";
-import { graphic } from "echarts";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
@@ -11,7 +10,7 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 
 type ReportFilterProps = {
-  input: ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia")[];
+  input: ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia" | "urgencia")[];
   setShowChart: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -23,6 +22,17 @@ const sendMethodOptions: IOptions[] = [
   {
     value: 2,
     label: "WhatsApp",
+  },
+];
+
+const urgentOptions: IOptions[] = [
+  {
+    value: 1,
+    label: "Urgencia",
+  },
+  {
+    value: 2,
+    label: "Urgencia con cargo",
   },
 ];
 
@@ -60,9 +70,10 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
     if (currentReport) {
       await getByFilter(currentReport, filter);
       setFilter(filter);
-      if (currentReport === "contacto" || currentReport == "estudios") {
+      if (currentReport === "contacto" || currentReport == "estudios" || currentReport == "urgentes") {
         await getByChart(currentReport, filter);
       }
+      console.log(filter)
     }
     setLoading(false);
   };
@@ -119,6 +130,15 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
                     formProps={{ name: "metodoEnvio", label: "Medio de envío" }}
                     multiple
                     options={sendMethodOptions}
+                  />
+                </Col>
+              )}
+              {input.includes("urgencia") && (
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{ name: "urgencia", label: "Tipo de Urgencia" }}
+                    multiple
+                    options={urgentOptions}
                   />
                 </Col>
               )}
