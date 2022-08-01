@@ -53,16 +53,12 @@ const getStudyStatsColumns = (
     },
     {
       ...getDefaultColumnProps("fecha", "Fecha de Solicitud", {
-        searchState,
-        setSearchState,
         width: "20%",
       }),
       render: (value) => new Date(value).toLocaleDateString("en-GB"),
     },
     {
       ...getDefaultColumnProps("parcialidad", "Parcialidad", {
-        searchState,
-        setSearchState,
         width: "20%",
       }),
       render: (value) => (value == true ? "Si" : "No"),

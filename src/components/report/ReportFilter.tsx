@@ -10,7 +10,7 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 
 type ReportFilterProps = {
-  input: ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia" | "urgencia")[];
+  input: ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia" | "urgencia" | "tipoCompañia")[];
   setShowChart: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -33,6 +33,17 @@ const urgentOptions: IOptions[] = [
   {
     value: 2,
     label: "Urgencia con cargo",
+  },
+];
+
+const typeCompanyOptions: IOptions[] = [
+  {
+    value: 1,
+    label: "Convenio",
+  },
+  {
+    value: 2,
+    label: "Todas",
   },
 ];
 
@@ -70,7 +81,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
     if (currentReport) {
       await getByFilter(currentReport, filter);
       setFilter(filter);
-      if (currentReport === "contacto" || currentReport == "estudios" || currentReport == "urgentes") {
+      if (currentReport === "contacto" || currentReport == "estudios" || currentReport == "urgentes" || currentReport == "empresa") {
         await getByChart(currentReport, filter);
       }
       console.log(filter)
@@ -139,6 +150,15 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
                     formProps={{ name: "urgencia", label: "Tipo de Urgencia" }}
                     multiple
                     options={urgentOptions}
+                  />
+                </Col>
+              )}
+              {input.includes("tipoCompañia") && (
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{ name: "tipoCompañia", label: "Convenio" }}
+                    multiple
+                    options={typeCompanyOptions}
                   />
                 </Col>
               )}

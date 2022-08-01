@@ -22,11 +22,12 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
   const [dataChart, setDataChart] = useState<any[]>([]);
 
   const [inputs, setInputs] = useState<
-    ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia" | "urgencia")[]
+    ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia" | "urgencia" | "tipoCompañia")[]
   >([]);
   const [title, setTitle] = useState<string>();
   const [image, setImage] = useState<string>();
   const [expandable, setExpandable] = useState<ExpandableConfig<IReportData>>();
+  const [summary, setSummary] = useState<boolean>();
   const [hasFooterRow, setHasFooterRow] = useState<boolean>();
   const [columns, setColumns] = useState<IColumns<IReportData>>([]);
   const [showChar, setShowChart] = useState(false);
@@ -43,12 +44,14 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
       setTitle(data.title);
       setImage(data.image);
       setHasFooterRow(data.hasFooterRow);
+      setSummary(data.summary);
       console.log(getInputs(currentReport))
     } else {
       setInputs([]);
       setTitle("");
       setImage("");
       setHasFooterRow(false);
+      setSummary(false);
     }
   }, [currentReport]);
 
@@ -56,7 +59,6 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
     if (currentReport) {
       setColumns(getColumns(currentReport, searchState, setSearchState));
       setExpandable(getExpandableConfig(currentReport));
-      console.log(getExpandableConfig(currentReport));
     } else {
       setColumns([]);
       setExpandable(undefined);
@@ -64,7 +66,7 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
   }, [currentReport, searchState]);
 
   useEffect(() => {
-    if (currentReport == "contacto" || currentReport == "estudios" || currentReport == "urgentes") {
+    if (currentReport == "contacto" || currentReport == "estudios" || currentReport == "urgentes" || currentReport == "empresa") {
       setDataChart(chartData);
     } else {
       setDataChart(reportData);
@@ -88,7 +90,7 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
         </Col>
         <Col span={24}>
           {!showChar ? (
-            <ReportTable columns={columns} data={reportData} loading={false} hasFooterRow={hasFooterRow} expandable={expandable} />
+            <ReportTable columns={columns} data={reportData} loading={false} hasFooterRow={hasFooterRow} expandable={expandable} summary={summary} />
           ) : (
             <ReportChartSelector report={currentReport} data={dataChart} />
           )}

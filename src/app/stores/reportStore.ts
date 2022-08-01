@@ -16,6 +16,7 @@ export default class ReportStore {
   filter: IReportFilter = new ReportFilterValues();
   reportData: IReportData[] = [];
   chartData: any[] = [];
+  tableData: any[] = [];
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -54,6 +55,16 @@ export default class ReportStore {
     try {
       const data = await Report.getByChart<T>(report, filter);
       this.chartData = data;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      this.reportData = [];
+    }
+  };
+
+  getByTable = async <T extends unknown>(report: string, filter: IReportFilter) => {
+    try {
+      const data = await Report.getByTable<T>(report, filter);
+      this.tableData = data;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       this.reportData = [];
