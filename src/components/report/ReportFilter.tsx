@@ -105,6 +105,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
                 <Col span={8}>
                   <DateRangeInput
                     formProps={{ label: "Fecha", name: "fecha" }}
+                    required={true}
                   />
                 </Col>
               )}

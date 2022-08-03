@@ -49,7 +49,6 @@ const getUrgentStatsColumns = (
         setSearchState,
         width: "20%",
       }),
-      render: (value) => new Date(value).toLocaleDateString("en-GB"),
     },
     {
       ...getDefaultColumnProps("urgencia", "Urgencia", {

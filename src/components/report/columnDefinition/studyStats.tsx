@@ -2,6 +2,7 @@ import { IColumns, ISearch } from "../../../app/common/table/utils";
 import { IReportData } from "../../../app/models/report";
 import { getDefaultColumnProps } from "../../../app/common/table/utils";
 import { Card, Descriptions, List } from "antd";
+import moment from "moment";
 
 const getStudyStatsColumns = (
   searchState: ISearch,
@@ -49,13 +50,11 @@ const getStudyStatsColumns = (
         setSearchState,
         width: "20%",
       }),
-      render: (value) => new Date(value).toLocaleDateString("en-GB"),
     },
     {
       ...getDefaultColumnProps("fecha", "Fecha de Solicitud", {
         width: "20%",
       }),
-      render: (value) => new Date(value).toLocaleDateString("en-GB"),
     },
     {
       ...getDefaultColumnProps("parcialidad", "Parcialidad", {

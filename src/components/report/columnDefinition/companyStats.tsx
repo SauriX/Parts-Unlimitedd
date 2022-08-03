@@ -6,6 +6,16 @@ import { moneyFormatter } from "../../../app/util/utils";
 import React from "react";
 const { Text } = Typography;
 
+type companySummary = {
+  totalEstudios: number;
+  totalDescuentos: number;
+  total: number;
+  IVA: number;
+  subtotal: number;
+  auxTotalDescuentosPorcentual: number;
+  totalDescuentosPorcentual: number;
+}
+
 const getCompanyStatsColumns = (
   searchState: ISearch,
   setSearchState: React.Dispatch<React.SetStateAction<ISearch>>
@@ -92,35 +102,5 @@ export const expandableCompanyConfig = {
   ),
   rowExpandable: () => true,
 };
-
-// export const companyInvoice = (item: IReportData[]) => {
-//   let totalEstudio = 0;
-//   let totalDescuentos = 0;
-//   item.forEach((x) => {
-//     (totalEstudio += x.precioEstudios), (totalDescuentos += x.descuento);
-//   });
-
-//   return (
-//     <React.Fragment>
-//       <Table.Summary.Row>
-//         <Table.Summary.Cell index={0}>Total</Table.Summary.Cell>
-//         <Table.Summary.Cell index={1} colSpan={6}>
-//           <Text type="danger">{totalEstudio}</Text>
-//         </Table.Summary.Cell>
-//         <Table.Summary.Cell index={2}>
-//           <Text>{totalDescuentos}</Text>
-//         </Table.Summary.Cell>
-//       </Table.Summary.Row>
-//       <Table.Summary.Row>
-//         <Table.Summary.Cell index={0} colSpan={2}>
-//           Balance
-//         </Table.Summary.Cell>
-//         <Table.Summary.Cell index={1} colSpan={5}>
-//           <Text type="danger">{totalEstudio - totalDescuentos}</Text>
-//         </Table.Summary.Cell>
-//       </Table.Summary.Row>
-//     </React.Fragment>
-//   );
-// };
 
 export default getCompanyStatsColumns;
