@@ -2,7 +2,7 @@ import moment, { Moment } from "moment";
 import { IIndicationList } from "./indication";
 import { IParameterList } from "./parameter";
 
-import { IRequestGeneral, IRequestPrice } from "./request";
+import { IRequestGeneral, IRequestStudy } from "./request";
 
 export interface generalDomicilio{
     recoleccion?:string,
@@ -48,7 +48,7 @@ export interface IAppointmentForm{
     genero:string,
     generales?:IAppointmentGeneralesForm,
     expedienteid?:string
-    estudy?:IRequestPrice[]
+    estudy?:IRequestStudy[]
     cargo?:number
     typo?: number
     sucursalId?:string
@@ -65,7 +65,7 @@ export interface ISolicitud {
     ClavePatologica :string;
     UsuarioId :string;
     General :IRequestGeneral;
-    Estudios :IRequestPrice[];
+    Estudios :IRequestStudy[];
 }
 export interface IAppointmentGeneralesForm{
     procedencia?:string,

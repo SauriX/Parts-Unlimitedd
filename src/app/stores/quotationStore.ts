@@ -3,8 +3,16 @@ import moment from "moment";
 import PriceList from "../api/priceList";
 import quotation from "../api/quotation";
 import Study from "../api/study";
+import { IPriceListInfoFilter } from "../models/priceList";
 import { IProceedingList } from "../models/Proceeding";
-import { IQuotationExpedienteSearch, IQuotationForm, IQuotationList, ISearchQuotation, ISolicitud, SearchQuotationValues } from "../models/quotation";
+import {
+  IQuotationExpedienteSearch,
+  IQuotationForm,
+  IQuotationList,
+  ISearchQuotation,
+  ISolicitud,
+  SearchQuotationValues,
+} from "../models/quotation";
 import { IRequestGeneral } from "../models/request";
 
 import { IScopes } from "../models/shared";
@@ -20,21 +28,21 @@ export default class QuotationStore {
   }
 
   scopes?: IScopes;
-  search: ISearchQuotation=new SearchQuotationValues();
-  quotatios: IQuotationList[] =[];
-  records: IProceedingList[]=[];
-  setSearch= (value:ISearchQuotation)=>{
-    this.search=value;
-};
+  search: ISearchQuotation = new SearchQuotationValues();
+  quotatios: IQuotationList[] = [];
+  records: IProceedingList[] = [];
+  setSearch = (value: ISearchQuotation) => {
+    this.search = value;
+  };
   clearScopes = () => {
     this.scopes = undefined;
   };
 
   clearsearch = () => {
-    this.search =new SearchQuotationValues();
+    this.search = new SearchQuotationValues();
   };
 
-/*   access = async () => {
+  /*   access = async () => {
     try {
      // const scopes = await Reagent.access();
       this.scopes = scopes;
@@ -45,23 +53,22 @@ export default class QuotationStore {
     }
   }; */
 
-
   getAll = async (search: ISearchQuotation) => {
     try {
-       const reagents = await quotation.getNow(search);
-      this.quotatios = reagents; 
+      const reagents = await quotation.getNow(search);
+      this.quotatios = reagents;
     } catch (error: any) {
       alerts.warning(getErrors(error));
-       this.quotatios = []; 
+      this.quotatios = [];
     }
   };
   getExpediente = async (search: IQuotationExpedienteSearch) => {
     try {
-       const reagents = await quotation.getRecord(search);
-      this.records = reagents; 
+      const reagents = await quotation.getRecord(search);
+      this.records = reagents;
     } catch (error: any) {
       alerts.warning(getErrors(error));
-       this.records = []; 
+      this.records = [];
     }
   };
   create = async (reagent: IQuotationForm) => {
@@ -74,7 +81,7 @@ export default class QuotationStore {
       alerts.warning(getErrors(error));
       return false;
     }
-  }; 
+  };
   printTicket = async () => {
     try {
       await quotation.printTicket();
@@ -82,7 +89,7 @@ export default class QuotationStore {
       alerts.warning(getErrors(error));
     }
   };
-  getParameter=async(id:number)=>{
+  getParameter = async (id: number) => {
     try {
       const reagent = await Study.getById(id);
       return reagent;
@@ -92,21 +99,21 @@ export default class QuotationStore {
       } else {
         alerts.warning(getErrors(error));
       }
-    } 
+    }
   };
   getById = async (id: string) => {
     console.log("getbyid");
-     try {
+    try {
       const reagent = await quotation.getById(id);
       reagent.fechaNacimiento = moment(reagent.fechaNacimiento);
-      reagent.estudy?.map(async (x)=>{ 
-        var parametros = await this.getParameter(x.estudioId!) ;
-        x.parametros= parametros!.parameters;
-        x.nombre= parametros!.nombre
+      reagent.estudy?.map(async (x) => {
+        var parametros = await this.getParameter(x.estudioId!);
+        x.parametros = parametros!.parameters;
+        x.nombre = parametros!.nombre;
         x.indicaciones = parametros?.indicaciones!;
-        x.clave= parametros?.clave!;
+        x.clave = parametros?.clave!;
       });
-      console.log(reagent,"cotizacion");
+      console.log(reagent, "cotizacion");
       return reagent;
     } catch (error: any) {
       if (error.status === responses.notFound) {
@@ -114,16 +121,14 @@ export default class QuotationStore {
       } else {
         alerts.warning(getErrors(error));
       }
-    } 
+    }
   };
-
-
 
   update = async (reagent: IQuotationForm) => {
     try {
       const updatedReagent = await quotation.update(reagent);
       alerts.success(messages.updated);
-      
+
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -134,45 +139,43 @@ export default class QuotationStore {
     try {
       const updatedReagent = await quotation.createSolicitud(reagent);
       alerts.success(messages.updated);
-      
+
       return updatedReagent;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
     }
   };
-getstudy = async (id:number) =>{
-  try {
-  const updatedReagent = await PriceList.getPriceStudy(id);
-  console.log(updatedReagent,"hola");
-  return updatedReagent;
-} catch (error: any) {
-  alerts.warning(getErrors(error));
-  return false;
-}
-  
-};
-getPack = async (id:number) =>{
-  try {
-  const updatedReagent = await PriceList.getPricePack(id);
-  console.log(updatedReagent,"hola");
-  return updatedReagent;
-} catch (error: any) {
-  alerts.warning(getErrors(error));
-  return false;
-}
-  
-};
- 
+  getstudy = async (id: number) => {
+    try {
+      const updatedReagent = await PriceList.getPriceStudy();
+      console.log(updatedReagent, "hola");
+      return updatedReagent;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+  getPack = async (id: number) => {
+    try {
+      const updatedReagent = await PriceList.getPricePack();
+      console.log(updatedReagent, "hola");
+      return updatedReagent;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
   exportList = async (search: ISearchQuotation) => {
     try {
       await quotation.exportList(search);
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
-  }; 
+  };
 
-   exportForm = async (id: string) => {
+  exportForm = async (id: string) => {
     try {
       await quotation.exportForm(id);
     } catch (error: any) {
@@ -182,5 +185,5 @@ getPack = async (id:number) =>{
         alerts.warning(getErrors(error));
       }
     }
-  }; 
+  };
 }

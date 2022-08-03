@@ -2,10 +2,11 @@ import { Form, Row, Col, Checkbox, Input, Button } from "antd";
 import { FormInstance } from "antd/es/form/Form";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
+import { createSemanticDiagnosticsBuilderProgram } from "typescript";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
-import { IRequestGeneral, IRequestPrice } from "../../../app/models/request";
+import { IRequestGeneral, IRequestStudy } from "../../../app/models/request";
 import { IFormError } from "../../../app/models/shared";
 import { originOptions, urgencyOptions } from "../../../app/stores/optionStore";
 import { useStore } from "../../../app/stores/store";
@@ -25,24 +26,38 @@ const sendOptions = [
 ];
 
 type RequestGeneralProps = {
+  branchId: string | undefined;
   form: FormInstance<IRequestGeneral>;
   onSubmit: (general: IRequestGeneral) => void;
 };
 
-const RequestGeneral = ({ form, onSubmit }: RequestGeneralProps) => {
-  const { optionStore } = useStore();
-  const { companyOptions: CompanyOptions, medicOptions: MedicOptions, getCompanyOptions, getMedicOptions } = optionStore;
+const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
+  const { optionStore, requestStore } = useStore();
+  const {
+    companyOptions: CompanyOptions,
+    medicOptions: MedicOptions,
+    getCompanyOptions,
+    getMedicOptions,
+  } = optionStore;
+  const { request, setStudyFilter, getGeneral } = requestStore;
 
   const origin = Form.useWatch("procedencia", form);
   const sendings = Form.useWatch("metodoEnvio", form);
+  const doctorId = Form.useWatch("medicoId", form);
+  const companyId = Form.useWatch("compañiaId", form);
 
   const [errors, setErrors] = useState<IFormError[]>([]);
   const [previousSendings, setPreviousSendings] = useState<string[]>([]);
+  const [requestGeneral, setRequestGeneral] = useState<IRequestGeneral>();
 
   useEffect(() => {
     getCompanyOptions();
     getMedicOptions();
   }, [getCompanyOptions, getMedicOptions]);
+
+  useEffect(() => {
+    setStudyFilter(branchId, doctorId, companyId);
+  }, [branchId, companyId, doctorId, setStudyFilter]);
 
   useEffect(() => {
     if (origin === particular) {
@@ -51,6 +66,21 @@ const RequestGeneral = ({ form, onSubmit }: RequestGeneralProps) => {
       });
     }
   }, [form, origin]);
+
+  useEffect(() => {
+    const getRequestGeneral = async () => {
+      const requestGeneral = await getGeneral(request!.expedienteId, request!.solicitudId!);
+      if (requestGeneral) {
+        setRequestGeneral(requestGeneral);
+        form.setFieldsValue(requestGeneral);
+      }
+    };
+
+    if (request && request.solicitudId && request.expedienteId) {
+      getRequestGeneral();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [request]);
 
   const onValuesChange = (changedValues: any) => {
     const path = Object.keys(changedValues)[0];
@@ -61,6 +91,7 @@ const RequestGeneral = ({ form, onSubmit }: RequestGeneralProps) => {
 
       if (previousSendings.includes("ambos") && !sendings.includes("ambos")) {
         metodoEnvio = [];
+        form.setFieldsValue({ correo: undefined, whatsapp: undefined });
       } else if (!previousSendings.includes("ambos") && sendings.includes("ambos")) {
         metodoEnvio = ["correo", "whatsapp", "ambos"];
       } else if (sendings.length === 2 && !sendings.includes("ambos")) {
@@ -69,18 +100,29 @@ const RequestGeneral = ({ form, onSubmit }: RequestGeneralProps) => {
         metodoEnvio = sendings.filter((x) => x !== "ambos");
       }
 
+      if (!sendings.includes("correo")) {
+        form.setFieldsValue({ correo: undefined });
+      }
+      if (!sendings.includes("whatsapp")) {
+        form.setFieldsValue({ whatsapp: undefined });
+      }
+
       form.setFieldsValue({ metodoEnvio });
       setPreviousSendings(metodoEnvio);
     }
+  };
+
+  const onFinish = (values: IRequestGeneral) => {
+    const request = { ...requestGeneral, ...values };
+
+    onSubmit(request);
   };
 
   return (
     <Form<IRequestGeneral>
       {...formItemLayout}
       form={form}
-      onFinish={(values) => {
-        onSubmit(values);
-      }}
+      onFinish={onFinish}
       onFinishFailed={({ errorFields }) => {
         const errors = errorFields.map((x) => ({ name: x.name[0].toString(), errors: x.errors }));
         setErrors(errors);
@@ -166,6 +208,7 @@ const RequestGeneral = ({ form, onSubmit }: RequestGeneralProps) => {
                 max={100}
                 type="email"
                 readonly={!sendings?.includes("correo")}
+                required={sendings?.includes("correo")}
                 errors={errors.find((x) => x.name === "correo")?.errors}
               />
               <Button type="primary" disabled={!sendings?.includes("correo")}>
@@ -193,6 +236,7 @@ const RequestGeneral = ({ form, onSubmit }: RequestGeneralProps) => {
                 width="50%"
                 max={100}
                 readonly={!sendings?.includes("whatsapp")}
+                required={sendings?.includes("whatsapp")}
                 errors={errors.find((x) => x.name === "whatsapp")?.errors}
               />
               <Button type="primary" disabled={!sendings?.includes("whatsapp")}>

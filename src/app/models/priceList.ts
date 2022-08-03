@@ -76,21 +76,43 @@ export interface IPriceListEstudioList {
   pack?: IPackEstudioList[];
 }
 
+export interface IPriceListInfoFilter {
+  estudioId?: number;
+  paqueteId?: number;
+  sucursalId?: string;
+  medicoId?: string;
+  compañiaId?: string;
+}
+
 export interface IPriceListInfoStudy {
-  precioListaId: string;
+  listaPrecioId: string;
+  listaPrecio: string;
+  promocionId?: number;
+  promocion?: string;
   estudioId: number;
   clave: string;
   nombre: string;
-  precioListaPrecio: number;
+  dias: number;
+  horas: number;
+  precio: number;
+  descuento: number;
+  precioFinal: number;
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
 }
 
 export interface IPriceListInfoPack {
-  precioListaId: string;
+  listaPrecioId: string;
+  listaPrecio: string;
+  promocionId?: number;
+  promocion?: string;
   paqueteId: number;
   clave: string;
   nombre: string;
-  precioListaPrecio: number;
+  dias: number;
+  horas: number;
+  precio: number;
+  descuento: number;
+  precioFinal: number;
   estudios: IPriceListInfoStudy[];
 }

@@ -1,5 +1,6 @@
 import {
   IPriceListForm,
+  IPriceListInfoFilter,
   IPriceListInfoPack,
   IPriceListInfoStudy,
   IPriceListList,
@@ -19,8 +20,10 @@ const PriceList = {
 
   getActive: <Type extends IPriceListList>(): Promise<Type[]> => requests.get(`price/active`),
   getById: (id: string): Promise<IPriceListForm> => requests.get(`price/${id}`),
-  getPriceStudy: (id: number): Promise<IPriceListInfoStudy> => requests.get(`price/info/study/${id}`),
-  getPricePack: (id: number): Promise<IPriceListInfoPack> => requests.get(`price/info/pack/${id}`),
+  getPriceStudy: (filter?: IPriceListInfoFilter): Promise<IPriceListInfoStudy> =>
+    requests.post(`price/info/study`, filter ?? {}),
+  getPricePack: (filter?: IPriceListInfoFilter): Promise<IPriceListInfoPack> =>
+    requests.post(`price/info/pack`, filter ?? {}),
   create: (priceList: IPriceListForm): Promise<IPriceListList> => requests.post("price", priceList),
   update: (priceList: IPriceListForm): Promise<IPriceListList> => requests.put("price", priceList),
   exportList: (search: string): Promise<void> =>

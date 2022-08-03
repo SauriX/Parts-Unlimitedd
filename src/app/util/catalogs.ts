@@ -23,3 +23,19 @@ export const reports: IOptionsReport[] = [
   { value: "medicos", label: "Sol. Médico Condensado", type: "medicos" },
   { value: "contacto", label: "Sol. Contacto", type: "contacto" },
 ];
+
+export const status = {
+  requests: {
+    pendiente: 1,
+    tomaDeMuestra: 2,
+    solicitado: 3,
+    capturado: 4,
+    validado: 5,
+    liberado: 6,
+    enviado: 7,
+    enRuta: 8,
+    cancelado: 9,
+    entregado: 10,
+    urgente: 11,
+  },
+};

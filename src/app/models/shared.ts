@@ -19,6 +19,14 @@ export interface IScopes {
   enviarWapp: boolean;
 }
 
+export interface INotification {
+  para: string;
+  asunto: string;
+  mensaje: string;
+  params: string | object;
+  esAlerta: boolean;
+}
+
 export interface ILogin {
   usuario: string;
   contraseña: string;

@@ -152,6 +152,7 @@ function App() {
             <Route path={`${views.appointment}/:id`} element={<ApointmentDetail />} />
             <Route path={`${views.appointment}/new`} element={<ApointmentDetail />} />
             <Route path={`${views.request}/:recordId`} element={<Request />} />
+            <Route path={`${views.request}/:recordId/:requestId`} element={<Request />} />
             <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
             <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
             <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />
