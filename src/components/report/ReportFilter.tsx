@@ -10,7 +10,7 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 
 type ReportFilterProps = {
-  input: ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia")[];
+  input: ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia" | "urgencia" | "tipoCompañia")[];
   setShowChart: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -25,9 +25,32 @@ const sendMethodOptions: IOptions[] = [
   },
 ];
 
+const urgentOptions: IOptions[] = [
+  {
+    value: 1,
+    label: "Urgencia",
+  },
+  {
+    value: 2,
+    label: "Urgencia con cargo",
+  },
+];
+
+const typeCompanyOptions: IOptions[] = [
+  {
+    value: 1,
+    label: "Convenio",
+  },
+  {
+    value: 2,
+    label: "Todas",
+  },
+];
+
 const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
   const { reportStore, optionStore } = useStore();
-  const { currentReport, filter, setFilter, getByFilter, getByChart } = reportStore;
+  const { currentReport, filter, setFilter, getByFilter, getByChart } =
+    reportStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -50,6 +73,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
 
   useEffect(() => {
     setShowChart(chartValue);
+    setFilter({ ...filter, grafica: chartValue });
   }, [chartValue, setShowChart]);
 
   const onFinish = async (filter: IReportFilter) => {
@@ -57,9 +81,10 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
     if (currentReport) {
       await getByFilter(currentReport, filter);
       setFilter(filter);
-      if(currentReport === "contacto"){
+      if (currentReport === "contacto" || currentReport == "estudios" || currentReport == "urgentes" || currentReport == "empresa") {
         await getByChart(currentReport, filter);
       }
+      console.log(filter)
     }
     setLoading(false);
   };
@@ -78,7 +103,10 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
             <Row justify="space-between" gutter={[12, 12]}>
               {input.includes("fecha") && (
                 <Col span={8}>
-                  <DateRangeInput formProps={{ label: "Fecha", name: "fecha" }} />
+                  <DateRangeInput
+                    formProps={{ label: "Fecha", name: "fecha" }}
+                    required={true}
+                  />
                 </Col>
               )}
               {input.includes("sucursal") && (
@@ -102,7 +130,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
               {input.includes("compañia") && (
                 <Col span={8}>
                   <SelectInput
-                    formProps={{ name: "compañiaId", label: "Compañia" }}
+                    formProps={{ name: "compañiaId", label: "Compañía" }}
                     multiple
                     options={companyOptions}
                   />
@@ -114,6 +142,24 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
                     formProps={{ name: "metodoEnvio", label: "Medio de envío" }}
                     multiple
                     options={sendMethodOptions}
+                  />
+                </Col>
+              )}
+              {input.includes("urgencia") && (
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{ name: "urgencia", label: "Tipo de Urgencia" }}
+                    multiple
+                    options={urgentOptions}
+                  />
+                </Col>
+              )}
+              {input.includes("tipoCompañia") && (
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{ name: "tipoCompañia", label: "Convenio" }}
+                    multiple
+                    options={typeCompanyOptions}
                   />
                 </Col>
               )}

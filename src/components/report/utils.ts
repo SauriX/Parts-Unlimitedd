@@ -1,30 +1,64 @@
 import { IColumns, ISearch } from "../../app/common/table/utils";
 import { IReportData } from "../../app/models/report";
+import getStudyStatsColumns, {
+  expandableStudyConfig,
+} from "./columnDefinition/studyStats";
 import getContactStatsColumns from "./columnDefinition/contactStats";
 import getMedicalStatsColumns from "./columnDefinition/medicalStats";
 import getPatientStatsColumns from "./columnDefinition/patientStats";
 import getRequestByRecordColumns from "./columnDefinition/requestByRecord";
+import { ExpandableConfig } from "antd/lib/table/interface";
+import getUrgentStatsColumns from "./columnDefinition/urgentStats";
+import getCompanyStatsColumns, { expandableCompanyConfig } from "./columnDefinition/companyStats";
 
 export const getInputs = (
   reportName: string
-): ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia")[] => {
-  const filters: ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia")[] = ["fecha", "sucursal"];
+): (
+  | "sucursal"
+  | "fecha"
+  | "medico"
+  | "metodoEnvio"
+  | "compañia"
+  | "urgencia"
+  | "tipoCompañia"
+)[] => {
+  const filters: (
+    | "sucursal"
+    | "fecha"
+    | "medico"
+    | "metodoEnvio"
+    | "compañia"
+    | "urgencia"
+    | "tipoCompañia"
+  )[] = ["fecha", "sucursal"];
 
   if (reportName === "medicos") {
     filters.push("medico");
-  }
-  else if (reportName === "contacto") {
+  } else if (reportName === "contacto") {
     filters.push("medico");
     filters.push("metodoEnvio");
+  } else if (reportName === "estudios") {
+    filters.push("medico");
+    filters.push("compañia");
+  } else if (reportName === "urgentes") {
+    filters.push("medico");
+    filters.push("urgencia");
+  } else if (reportName === "empresa") {
+    filters.push("medico");
+    filters.push("tipoCompañia");
+    filters.push("compañia");
   }
 
   return filters;
 };
 
-export const getReportConfig = (reportName: string): { title: string; image: string, hasFooterRow: boolean } => {
+export const getReportConfig = (
+  reportName: string
+): { title: string; image: string; hasFooterRow: boolean, summary: boolean } => {
   let title = "";
   let image = "Reportes";
   let hasFooterRow = true;
+  let summary = false;
 
   if (reportName === "expediente") {
     title = "Estadística de expedientes";
@@ -36,11 +70,24 @@ export const getReportConfig = (reportName: string): { title: string; image: str
     image = "doctor";
   } else if (reportName === "contacto") {
     title = "Solicitudes por contacto";
-    image = "comunicar";
+    image = "contactoos";
     hasFooterRow = false;
+  } else if (reportName === "estudios") {
+    title = "Relación Estudios por Paciente";
+    image = "estudios-paciente";
+    hasFooterRow = false;
+  } else if (reportName === "urgentes") {
+    title = "Relación Estudios por Paciente Urgente";
+    image = "alerta";
+    hasFooterRow = false;
+  } else if (reportName === "empresa") {
+    title = "Solicitudes por compañía";
+    image = "empresa";
+    hasFooterRow = false;
+    summary = true;
   }
 
-  return { title, image, hasFooterRow };
+  return { title, image, hasFooterRow, summary };
 };
 
 export const getColumns = (
@@ -54,10 +101,27 @@ export const getColumns = (
     return getPatientStatsColumns(searchState, setSearchState);
   } else if (reportName === "medicos") {
     return getMedicalStatsColumns(searchState, setSearchState);
-  }
-  else if (reportName === "contacto") {
+  } else if (reportName === "contacto") {
     return getContactStatsColumns(searchState, setSearchState);
+  } else if (reportName === "estudios") {
+    return getStudyStatsColumns(searchState, setSearchState);
+  } else if (reportName === "urgentes") {
+    return getUrgentStatsColumns(searchState, setSearchState);
+  } else if (reportName === "empresa") {
+    return getCompanyStatsColumns(searchState, setSearchState);
   }
 
   return [];
+};
+
+export const getExpandableConfig = (
+  reportName: string
+): ExpandableConfig<IReportData> | undefined => {
+  if (reportName == "estudios" || reportName == "urgentes") {
+    return expandableStudyConfig;
+  } else if (reportName == "empresa") {
+    return expandableCompanyConfig;
+  }
+
+  return undefined;
 };

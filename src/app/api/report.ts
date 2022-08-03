@@ -8,11 +8,16 @@ const Report = {
     report: string,
     filter: IReportFilter
   ): Promise<IReportData[]> => requests.post(`report/${report}/filter`, filter),
-  getByChart: (
+  getByChart: <T extends unknown>(
     report: string,
     filter: IReportFilter
-  ): Promise<IReportContactData[]> =>
+  ): Promise<T[]> =>
     requests.post(`report/${report}/chart/filter`, filter),
+    getByTable: <T extends unknown>(
+      report: string,
+      filter: IReportFilter
+    ): Promise<T[]> =>
+      requests.post(`report/${report}/table/filter`, filter),
   printPdf: (report: string, filter: IReportFilter): Promise<void> =>
     requests.download(`report/${report}/download/pdf`, filter),
 };

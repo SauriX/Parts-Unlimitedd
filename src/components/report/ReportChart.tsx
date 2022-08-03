@@ -3,7 +3,7 @@ import ReactECharts from "echarts-for-react";
 
 type ReportChartProps<T> = {
   data: T[];
-  serieX: keyof T;
+  serieX?: keyof T;
   series: { title: string; dataIndex: keyof T }[];
   axisLabel?: { interval: number; rotate: number };
 };
@@ -36,7 +36,19 @@ const ReportChart = <T extends unknown>({
     },
     series: series.map((x) => ({
       name: x.title,
-      data: data.map((d) => (d as any)[x.dataIndex]),
+      data: data.map((d) => {
+        let obj: any = { value: (d as any)[x.dataIndex] };
+        const color = (d as any)["color"];
+        if (color) {
+          obj = {
+            ...obj,
+            itemStyle: {
+              color: color,
+            },
+          };
+        }
+        return obj
+      }),
       emphasis: {
         focus: "series",
       },
@@ -49,6 +61,6 @@ const ReportChart = <T extends unknown>({
     },
   };
 
-  return <ReactECharts style={{height: 500}} option={options} notMerge />;
+  return <ReactECharts style={{ height: 500 }} option={options} notMerge />;
 };
 export default observer(ReportChart);
