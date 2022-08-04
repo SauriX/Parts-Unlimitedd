@@ -81,7 +81,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
     if (currentReport) {
       await getByFilter(currentReport, filter);
       setFilter(filter);
-      if (currentReport === "contacto" || currentReport == "estudios" || currentReport == "urgentes" || currentReport == "empresa") {
+      if (currentReport === "contacto" || currentReport == "estudios" || currentReport == "urgentes" || currentReport == "empresa" || currentReport == "canceladas") {
         await getByChart(currentReport, filter);
       }
       console.log(filter)

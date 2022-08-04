@@ -66,7 +66,7 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
   }, [currentReport, searchState]);
 
   useEffect(() => {
-    if (currentReport == "contacto" || currentReport == "estudios" || currentReport == "urgentes" || currentReport == "empresa") {
+    if (currentReport == "contacto" || currentReport == "estudios" || currentReport == "urgentes" || currentReport == "empresa" || currentReport == "canceladas") {
       setDataChart(chartData);
     } else {
       setDataChart(reportData);

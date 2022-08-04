@@ -4,6 +4,7 @@ import { Fragment, useEffect } from "react";
 import { IColumns } from "../../app/common/table/utils";
 import { IReportData } from "../../app/models/report";
 import { ExpandableConfig } from "antd/lib/table/interface";
+import { useParams } from "react-router-dom";
 const { Text } = Typography;
 
 type ReportTableProps = {
@@ -31,6 +32,7 @@ const ReportTable = ({
   expandable,
   summary,
 }: ReportTableProps) => {
+  const {report} = useParams()
   totalDescuentos = 0;
   totalEstudios = 0;
   {
@@ -79,7 +81,7 @@ const ReportTable = ({
             <Descriptions.Item label="Estudios" style={{ maxWidth: 30 }}>
               ${totalEstudios == 0 ? 0 : totalEstudios}
             </Descriptions.Item>
-            <Descriptions.Item label="Desc. %" style={{ maxWidth: 30 }}>
+            <Descriptions.Item label={report == "cargo" ? "Cargo %" : "Desc. %"} style={{ maxWidth: 30 }}>
               {isNaN(totalDescuentosPorcentual) ? 0 : totalDescuentosPorcentual}%
             </Descriptions.Item>
             <Descriptions.Item label="Desc." style={{ maxWidth: 30 }}>

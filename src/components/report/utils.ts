@@ -9,7 +9,8 @@ import getPatientStatsColumns from "./columnDefinition/patientStats";
 import getRequestByRecordColumns from "./columnDefinition/requestByRecord";
 import { ExpandableConfig } from "antd/lib/table/interface";
 import getUrgentStatsColumns from "./columnDefinition/urgentStats";
-import getCompanyStatsColumns, { expandableCompanyConfig } from "./columnDefinition/companyStats";
+import getCompanyStatsColumns, { expandablePriceConfig } from "./columnDefinition/companyStats";
+import getCanceledRequestColumns from "./columnDefinition/canceledRequest";
 
 export const getInputs = (
   reportName: string
@@ -37,7 +38,7 @@ export const getInputs = (
   } else if (reportName === "contacto") {
     filters.push("medico");
     filters.push("metodoEnvio");
-  } else if (reportName === "estudios") {
+  } else if (reportName === "estudios" || reportName == "canceladas") {
     filters.push("medico");
     filters.push("compañia");
   } else if (reportName === "urgentes") {
@@ -85,6 +86,11 @@ export const getReportConfig = (
     image = "empresa";
     hasFooterRow = false;
     summary = true;
+  } else if (reportName === "canceladas") {
+    title = "Solicitudes Canceladas";
+    image = "cancelar";
+    hasFooterRow = false;
+    summary = true;
   }
 
   return { title, image, hasFooterRow, summary };
@@ -109,6 +115,8 @@ export const getColumns = (
     return getUrgentStatsColumns(searchState, setSearchState);
   } else if (reportName === "empresa") {
     return getCompanyStatsColumns(searchState, setSearchState);
+  } else if (reportName === "canceladas") {
+    return getCanceledRequestColumns(searchState, setSearchState);
   }
 
   return [];
@@ -119,8 +127,8 @@ export const getExpandableConfig = (
 ): ExpandableConfig<IReportData> | undefined => {
   if (reportName == "estudios" || reportName == "urgentes") {
     return expandableStudyConfig;
-  } else if (reportName == "empresa") {
-    return expandableCompanyConfig;
+  } else if (reportName == "empresa" || reportName == "canceladas") {
+    return expandablePriceConfig;
   }
 
   return undefined;
