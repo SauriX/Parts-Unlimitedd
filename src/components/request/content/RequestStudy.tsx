@@ -8,7 +8,7 @@ import {
   IColumns,
   ISearch,
 } from "../../../app/common/table/utils";
-import { IRequestPrice } from "../../../app/models/request";
+import { IRequestPack, IRequestStudy } from "../../../app/models/request";
 import { IOptions } from "../../../app/models/shared";
 import { useStore } from "../../../app/stores/store";
 import alerts from "../../../app/util/alerts";
@@ -16,15 +16,11 @@ import { moneyFormatter } from "../../../app/util/utils";
 
 const { Link } = Typography;
 
-type RequestStudyProps = {
-  data: IRequestPrice[];
-  setData: React.Dispatch<React.SetStateAction<IRequestPrice[]>>;
-};
-
-const RequestStudy: FC<RequestStudyProps> = ({ data, setData }) => {
-  const { priceListStore, optionStore } = useStore();
-  const { getPriceStudy, getPricePack } = priceListStore;
+const RequestStudy = () => {
+  const { requestStore, priceListStore, optionStore } = useStore();
   const { studyOptions, packOptions, getStudyOptions, getPackOptions } = optionStore;
+  const { isStudy, studies, packs, studyFilter, calculateTotals, setStudy, setPack, getPriceStudy, getPricePack } =
+    requestStore;
 
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
@@ -56,7 +52,7 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData }) => {
     setOptions(options);
   }, [packOptions, studyOptions]);
 
-  const columns: IColumns<IRequestPrice> = [
+  const columns: IColumns<IRequestStudy | IRequestPack> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
@@ -72,7 +68,14 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData }) => {
         width: "30%",
       }),
       render: (value, item) => {
-        return `${value} (${item.parametros.map((x) => x.clave).join(", ")})`;
+        if (isStudy(item)) {
+          return `${value} (${item.parametros.map((x) => x.clave).join(", ")})`;
+        } else {
+          return `${value} (${item.estudios
+            .flatMap((x) => x.parametros)
+            .map((x) => x.clave)
+            .join(", ")})`;
+        }
       },
     },
     {
@@ -92,20 +95,61 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData }) => {
       render: (value) => moneyFormatter.format(value),
     },
     {
-      key: "descuento",
-      dataIndex: "descuento",
+      key: "aplicaDescuento",
+      dataIndex: "aplicaDescuento",
       title: "D",
       align: "center",
       width: "5%",
-      render: (value) => <Checkbox />,
+      render: (value, item) => (
+        <Checkbox
+          checked={value}
+          onChange={(e) => {
+            if (isStudy(item)) {
+              setStudy({ ...item, aplicaDescuento: e.target.checked });
+            } else {
+              setPack({ ...item, aplicaDescuento: e.target.checked });
+            }
+          }}
+        />
+      ),
     },
     {
-      key: "cargo",
-      dataIndex: "Cargo",
+      key: "aplicaCargo",
+      dataIndex: "aplicaCargo",
       title: "C",
       align: "center",
       width: "5%",
-      render: (value) => <Checkbox />,
+      render: (value, item) => (
+        <Checkbox
+          checked={value}
+          onChange={(e) => {
+            if (isStudy(item)) {
+              setStudy({ ...item, aplicaCargo: e.target.checked });
+            } else {
+              setPack({ ...item, aplicaCargo: e.target.checked });
+            }
+          }}
+        />
+      ),
+    },
+    {
+      key: "aplicaCopago",
+      dataIndex: "aplicaCopago",
+      title: "CP",
+      align: "center",
+      width: "5%",
+      render: (value, item) => (
+        <Checkbox
+          checked={value}
+          onChange={(e) => {
+            if (isStudy(item)) {
+              setStudy({ ...item, aplicaCopago: e.target.checked });
+            } else {
+              setPack({ ...item, aplicaCopago: e.target.checked });
+            }
+          }}
+        />
+      ),
     },
     {
       ...getDefaultColumnProps("dias", "Días", {
@@ -136,114 +180,41 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData }) => {
     const value = parseInt(option.value.toString().split("-")[1]);
 
     if (isNaN(value)) return;
+    let ok = false;
 
     if (option.group === "study") {
-      const study = await getPriceStudy(value);
-      if (study == null) {
-        return;
-      }
-      setData((prev) => [
-        ...prev,
-        {
-          precioListaId: study.precioListaId,
-          estudioId: study.estudioId,
-          clave: study.clave,
-          nombre: study.nombre,
-          precio: study.precioListaPrecio,
-          descuento: false,
-          cargo: false,
-          copago: false,
-          precioFinal: study.precioListaPrecio,
-          type: "study",
-          parametros: study.parametros.map((x) => ({
-            id: x.id,
-            clave: x.clave,
-            nombre: x.nombre,
-            nombreCorto: x.nombreCorto,
-            area: x.area,
-            departamento: x.departamento,
-            activo: x.activo,
-          })),
-          indicaciones: study.indicaciones.map((x) => ({
-            id: x.id,
-            clave: x.clave,
-            nombre: x.nombre,
-            descripcion: x.descripcion,
-            activo: x.activo,
-            estudios: [],
-          })),
-        },
-      ]);
-      console.log(study);
+      ok = await getPriceStudy(value, studyFilter);
     }
 
     if (option.group === "pack") {
-      const pack = await getPricePack(value);
-      if (pack == null) {
-        return;
-      }
-      setData((prev) => [
-        ...prev,
-        {
-          precioListaId: pack.precioListaId,
-          estudioId: pack.paqueteId,
-          clave: pack.clave,
-          nombre: pack.nombre,
-          precio: pack.precioListaPrecio,
-          descuento: false,
-          cargo: false,
-          copago: false,
-          precioFinal: pack.precioListaPrecio,
-          type: "pack",
-          parametros: pack.estudios
-            .flatMap((x) => x.parametros)
-            .map((x) => ({
-              id: x.id,
-              clave: x.clave,
-              nombre: x.nombre,
-              nombreCorto: x.nombreCorto,
-              area: x.area,
-              departamento: x.departamento,
-              activo: x.activo,
-            })),
-          indicaciones: pack.estudios
-            .flatMap((x) => x.indicaciones)
-            .map((x) => ({
-              id: x.id,
-              clave: x.clave,
-              nombre: x.nombre,
-              descripcion: x.descripcion,
-              activo: x.activo,
-              estudios: [],
-            })),
-        },
-      ]);
-      console.log(pack);
+      ok = await getPricePack(value, studyFilter);
     }
 
-    setOptions((prev) => {
-      let studies = [...prev.find((x) => x.value === "study")!.options!];
-      let packs = [...prev.find((x) => x.value === "pack")!.options!];
+    if (ok) {
+      setOptions((prev) => {
+        let studies = [...prev.find((x) => x.value === "study")!.options!];
+        let packs = [...prev.find((x) => x.value === "pack")!.options!];
 
-      if (option.group === "study") {
-        studies = studies.filter((x) => x.value !== option.value);
-      } else if (option.group === "pack") {
-        packs = packs.filter((x) => x.value !== option.value);
-      }
+        if (option.group === "study") {
+          studies = studies.filter((x) => x.value !== option.value);
+        } else if (option.group === "pack") {
+          packs = packs.filter((x) => x.value !== option.value);
+        }
 
-      return [
-        {
-          value: "study",
-          label: "Estudios",
-          options: studies,
-        },
-        {
-          value: "pack",
-          label: "Paquetes",
-          options: packs,
-        },
-      ];
-    });
+        return [
+          {
+            value: "study",
+            label: "Estudios",
+            options: studies,
+          },
+          {
+            value: "pack",
+            label: "Paquetes",
+            options: packs,
+          },
+        ];
+      });
+    }
   };
 
   return (
@@ -264,27 +235,13 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData }) => {
           }
           options={options}
         />
-        {/* <DebounceSelect
-          fetchOptions={fetch}
-          style={{ width: "100%" }}
-          mode="multiple"
-          value={[]}
-          placeholder="Buscar Estudios"
-          onChange={(newValue) => {
-            // setValue(newValue as UserValue[]);
-          }}
-          maxTagCount={0}
-          maxTagPlaceholder={null}
-          tagRender={() => <div>Hola</div>}
-          // style={{ width: '100%' }}
-        /> */}
       </Col>
       <Col span={24}>
-        <Table<IRequestPrice>
+        <Table<IRequestStudy | IRequestPack>
           size="small"
-          rowKey={(record) => record.type + "-" + (record.estudioId ?? record.paqueteId)}
+          rowKey={(record) => record.type + "-" + record.clave}
           columns={columns}
-          dataSource={[...data]}
+          dataSource={[...studies, ...packs]}
           pagination={false}
           rowSelection={{}}
           sticky

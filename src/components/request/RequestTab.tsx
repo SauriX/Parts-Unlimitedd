@@ -1,7 +1,7 @@
 import { Button, Col, Form, Row, Space, Tabs } from "antd";
-import { useState } from "react";
-import { IRequestGeneral, IRequestPrice } from "../../app/models/request";
-import alerts from "../../app/util/alerts";
+import { useEffect, useState } from "react";
+import { IRequestGeneral, IRequestStudyUpdate } from "../../app/models/request";
+import { useStore } from "../../app/stores/store";
 import RequestGeneral from "./content/RequestGeneral";
 import RequestImage from "./content/RequestImage";
 import RequestIndication from "./content/RequestIndication";
@@ -11,6 +11,7 @@ import RequestRequest from "./content/RequestRequest";
 import RequestSampler from "./content/RequestSampler";
 import RequestStudy from "./content/RequestStudy";
 import RequestInvoice from "./RequestInvoice";
+import { onSubmitGeneral, submitGeneral } from "./utils";
 
 const { TabPane } = Tabs;
 
@@ -19,29 +20,41 @@ type RequestTabProps = {
   branchId: string | undefined;
 };
 
+type keys = "general" | "studies" | "indications" | "register" | "request" | "print" | "sampler" | "images";
+
 const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
-  const [data, setData] = useState<IRequestPrice[]>([]);
+  const { requestStore } = useStore();
+  const { request, studyUpdate, getStudies, updateGeneral, updateStudies } = requestStore;
 
   const [formGeneral] = Form.useForm<IRequestGeneral>();
 
-  const onSubmitGeneral = (general: IRequestGeneral) => {
-    console.log(general);
+  const [currentKey, setCurrentKey] = useState<keys>("general");
+
+  const onChangeTab = async (key: string) => {
+    const ok = await submit();
+
+    if (ok) {
+      setCurrentKey(key as keys);
+    }
   };
 
   const submit = async () => {
-    try {
-      await formGeneral.validateFields();
-      if (data.length === 0) {
-        throw Error("Se debe agregar al menos un estudio");
-      }
-      formGeneral.submit();
-    } catch (error: any) {
-      if (error && error.hasOwnProperty("errorFields")) {
-        alerts.warning("Por favor complete correctamente la información de la pestaña 'Generales'");
-      }
-      alerts.warning(error.message);
+    let ok = true;
+
+    if (currentKey === "general") {
+      ok = await submitGeneral(formGeneral);
+    } else if (currentKey === "studies") {
+      ok = await updateStudies(studyUpdate);
     }
+
+    return ok;
   };
+
+  useEffect(() => {
+    if (request) {
+      getStudies(request.expedienteId, request.solicitudId!);
+    }
+  }, [getStudies, request]);
 
   const operations = (
     <Space>
@@ -55,12 +68,22 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   );
 
   const tabRender = (tabName: string) => {
-    let component = <RequestGeneral form={formGeneral} onSubmit={onSubmitGeneral} />;
+    let component = (
+      <RequestGeneral
+        branchId={branchId}
+        form={formGeneral}
+        onSubmit={(request) => {
+          onSubmitGeneral(request, updateGeneral).then((ok) => {
+            if (!ok) setCurrentKey("general");
+          });
+        }}
+      />
+    );
 
     if (tabName === "studies") {
-      component = <RequestStudy data={data} setData={setData} />;
+      component = <RequestStudy />;
     } else if (tabName === "indications") {
-      component = <RequestIndication data={data} />;
+      component = <RequestIndication />;
     } else if (tabName === "register") {
       component = <RequestRegister recordId={recordId} />;
     } else if (tabName === "request") {
@@ -88,7 +111,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   }
 
   return (
-    <Tabs defaultActiveKey="1" tabBarExtraContent={operations}>
+    <Tabs activeKey={currentKey} tabBarExtraContent={operations} onChange={onChangeTab}>
       <TabPane tab="Generales" key="general">
         {tabRender("general")}
       </TabPane>

@@ -28,9 +28,10 @@ import ReportStore from "./reportStore";
 import RequestStore from "./requestStore";
 import AppointmentStore from "./appointmentStore";
 import { IReportData } from "../models/report";
+import NotificationStore from "./notificationStore";
 
 configure({
-  enforceActions: "never", 
+  enforceActions: "never",
 });
 
 interface Store {
@@ -60,7 +61,8 @@ interface Store {
   quotationStore: QuotationStore;
   reportStore: ReportStore;
   requestStore: RequestStore;
-  appointmentStore:AppointmentStore
+  appointmentStore: AppointmentStore;
+  notificationStore: NotificationStore;
 }
 
 export const store: Store = {
@@ -90,7 +92,8 @@ export const store: Store = {
   quotationStore: new QuotationStore(),
   reportStore: new ReportStore(),
   requestStore: new RequestStore(),
-  appointmentStore: new AppointmentStore()
+  appointmentStore: new AppointmentStore(),
+  notificationStore: new NotificationStore(),
 };
 
 export const StoreContext = createContext(store);

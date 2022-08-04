@@ -2,7 +2,13 @@ import { makeAutoObservable } from "mobx";
 import Pack from "../api/pack";
 import PriceList from "../api/priceList";
 import Study from "../api/study";
-import { IPriceListEstudioList, IPriceListForm, IPriceListList, ISucMedComList } from "../models/priceList";
+import {
+  IPriceListEstudioList,
+  IPriceListForm,
+  IPriceListInfoFilter,
+  IPriceListList,
+  ISucMedComList,
+} from "../models/priceList";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
@@ -117,18 +123,18 @@ export default class PriceListStore {
     }
   };
 
-  getPriceStudy = async (id: number) => {
+  getPriceStudy = async (filter?: IPriceListInfoFilter) => {
     try {
-      const price = await PriceList.getPriceStudy(id);
+      const price = await PriceList.getPriceStudy(filter);
       return price;
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
   };
 
-  getPricePack = async (id: number) => {
+  getPricePack = async (filter?: IPriceListInfoFilter) => {
     try {
-      const price = await PriceList.getPricePack(id);
+      const price = await PriceList.getPricePack(filter);
       return price;
     } catch (error: any) {
       alerts.warning(getErrors(error));

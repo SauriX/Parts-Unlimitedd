@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^6.4.3",
+    "@microsoft/signalr": "^6.0.7",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
@@ -26,8 +27,10 @@
     "moment": "^2.29.1",
     "rc-resize-observer": "^1.2.0",
     "react": "^18.1.0",
+    "react-beforeunload": "^2.5.3",
     "react-dom": "^18.1.0",
     "react-highlight-words": "^0.17.0",
+    "react-router": "^6.3.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "react-text-mask": "^5.4.3",
@@ -61,6 +64,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-beforeunload": "^2.1.1",
     "@types/react-window": "^1.8.5"
   },
   "optionalDependencies": {

@@ -3,18 +3,20 @@ import { useStore } from "../../../../app/stores/store";
 
 const RequestPrintOrder = () => {
   const { requestStore } = useStore();
-  const { getOrderPdfUrl } = requestStore;
+  const { request, getOrderPdfUrl } = requestStore;
 
   const [orderUrl, setOrderUrl] = useState<string>();
 
   useEffect(() => {
     const getUrl = async () => {
-      const url = await getOrderPdfUrl();
-      setOrderUrl(url);
+      if (request) {
+        const url = await getOrderPdfUrl(request.expedienteId, request.solicitudId!);
+        setOrderUrl(url);
+      }
     };
 
     getUrl();
-  }, [getOrderPdfUrl]);
+  }, [getOrderPdfUrl, request]);
 
   return (
     <div>

@@ -31,10 +31,11 @@ interface IItem {
 }
 
 const LayoutComponent = () => {
-  const { profileStore, drawerStore, modalStore } = useStore();
+  const { profileStore, drawerStore, modalStore, notificationStore } = useStore();
   const { openDrawer } = drawerStore;
   const { openModal } = modalStore;
-  const { profile, menu, logoImg, logout, getProfile, getMenu } = profileStore;
+  const { createHubConnection } = notificationStore;
+  const { profile, menu, logoImg, isLoggedIn, logout, getProfile, getMenu } = profileStore;
 
   const location = useLocation();
 
@@ -93,6 +94,13 @@ const LayoutComponent = () => {
       openModal({ title: "Configuración de contraseña", body: <SetPasswordComponent />, closable: false });
     }
   }, [openModal, profile]);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      createHubConnection();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const openNotifications = () => {
     openDrawer({

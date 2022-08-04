@@ -7,7 +7,7 @@ import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
-import { IRequestPrice } from "../../../app/models/request";
+import { IRequestStudy } from "../../../app/models/request";
 import { IFormError } from "../../../app/models/shared";
 import { useStore } from "../../../app/stores/store";
 import { moneyFormatter } from "../../../app/util/utils";
@@ -46,7 +46,7 @@ const RequestRegister = ({ recordId }: RequestRegisterProps) => {
     searchedColumn: "",
   });
 
-  const columns: IColumns<IRequestPrice> = [
+  const columns: IColumns<IRequestStudy> = [
     {
       ...getDefaultColumnProps("id", "#", {
         searchState,
@@ -186,7 +186,7 @@ const RequestRegister = ({ recordId }: RequestRegisterProps) => {
             type="default"
             onClick={async () => {
               setLoading(true);
-              await printTicket();
+              await printTicket("", "");
               setLoading(false);
             }}
           >

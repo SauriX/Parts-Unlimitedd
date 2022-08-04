@@ -1,7 +1,7 @@
 import { Button, Col, Row, Spin, Table } from "antd";
 import { useState } from "react";
 import { IColumns, getDefaultColumnProps } from "../../../../app/common/table/utils";
-import { IRequestPrice } from "../../../../app/models/request";
+import { IRequestStudy } from "../../../../app/models/request";
 import { useStore } from "../../../../app/stores/store";
 
 const data = [
@@ -31,7 +31,7 @@ const RequestPrintTag = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  const columns: IColumns<IRequestPrice> = [
+  const columns: IColumns<IRequestStudy> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchable: false,
@@ -75,7 +75,7 @@ const RequestPrintTag = () => {
             type="default"
             onClick={async () => {
               setLoading(true);
-              await printTicket();
+              await printTicket("", "");
               setLoading(false);
             }}
           >
