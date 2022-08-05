@@ -29,6 +29,11 @@ export interface IReportData {
   subtotal: number;
   iva: number;
   totalEstudios: number;
+  cargo: number;
+  cargoPorcentual: number;
+  subtotalCargo: number;
+  ivaCargo: number;
+  totalCargo: number;
 }
 
 export interface IStudiesData {
@@ -61,7 +66,7 @@ export interface IReportCompanyData {
   noSolicitudes: number;
 }
 
-export interface IReportCanceledData {
+export interface IReportRequestData {
   id: string;
   sucursal: string;
   cantidad: number;

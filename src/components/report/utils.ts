@@ -9,8 +9,12 @@ import getPatientStatsColumns from "./columnDefinition/patientStats";
 import getRequestByRecordColumns from "./columnDefinition/requestByRecord";
 import { ExpandableConfig } from "antd/lib/table/interface";
 import getUrgentStatsColumns from "./columnDefinition/urgentStats";
-import getCompanyStatsColumns, { expandablePriceConfig } from "./columnDefinition/companyStats";
+import getCompanyStatsColumns, {
+  expandablePriceConfig,
+} from "./columnDefinition/companyStats";
 import getCanceledRequestColumns from "./columnDefinition/canceledRequest";
+import getDescountRequestColumns from "./columnDefinition/descountRequest";
+import getChargeRequestColumns from "./columnDefinition/chargeRequest";
 
 export const getInputs = (
   reportName: string
@@ -38,7 +42,12 @@ export const getInputs = (
   } else if (reportName === "contacto") {
     filters.push("medico");
     filters.push("metodoEnvio");
-  } else if (reportName === "estudios" || reportName == "canceladas") {
+  } else if (
+    reportName === "estudios" ||
+    reportName == "canceladas" ||
+    reportName === "descuento" ||
+    reportName === "cargo"
+  ) {
     filters.push("medico");
     filters.push("compañia");
   } else if (reportName === "urgentes") {
@@ -55,7 +64,12 @@ export const getInputs = (
 
 export const getReportConfig = (
   reportName: string
-): { title: string; image: string; hasFooterRow: boolean, summary: boolean } => {
+): {
+  title: string;
+  image: string;
+  hasFooterRow: boolean;
+  summary: boolean;
+} => {
   let title = "";
   let image = "Reportes";
   let hasFooterRow = true;
@@ -91,6 +105,16 @@ export const getReportConfig = (
     image = "cancelar";
     hasFooterRow = false;
     summary = true;
+  } else if (reportName === "descuento") {
+    title = "Solicitudes con Descuento";
+    image = "descuento";
+    hasFooterRow = false;
+    summary = true;
+  } else if (reportName === "cargo") {
+    title = "Solicitudes con Cargo";
+    image = "cargo";
+    hasFooterRow = false;
+    summary = true;
   }
 
   return { title, image, hasFooterRow, summary };
@@ -117,6 +141,10 @@ export const getColumns = (
     return getCompanyStatsColumns(searchState, setSearchState);
   } else if (reportName === "canceladas") {
     return getCanceledRequestColumns(searchState, setSearchState);
+  } else if (reportName === "descuento") {
+    return getDescountRequestColumns(searchState, setSearchState);
+  } else if (reportName === "cargo") {
+    return getChargeRequestColumns(searchState, setSearchState);
   }
 
   return [];
@@ -127,7 +155,7 @@ export const getExpandableConfig = (
 ): ExpandableConfig<IReportData> | undefined => {
   if (reportName == "estudios" || reportName == "urgentes") {
     return expandableStudyConfig;
-  } else if (reportName == "empresa" || reportName == "canceladas") {
+  } else if (reportName == "empresa" || reportName == "canceladas" || reportName == "descuento" || reportName == "cargo") {
     return expandablePriceConfig;
   }
 

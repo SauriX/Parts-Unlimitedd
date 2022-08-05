@@ -15,17 +15,30 @@ type ReportHeaderProps = {
 
 const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
   const { reportStore } = useStore();
-  const { currentReport, filter, setCurrentReport, getByFilter, getByChart } = reportStore;
+  const { currentReport, filter, setCurrentReport, getByFilter, getByChart } =
+    reportStore;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const handleChange = async (_: string, options: IOptionsReport | IOptionsReport[]) => {
+  const handleChange = async (
+    _: string,
+    options: IOptionsReport | IOptionsReport[]
+  ) => {
     if (options) {
       const value = (options as IOptionsReport).value!.toString();
       setCurrentReport(value);
       searchParams.set("report", value);
       await getByFilter(value, filter);
-      if(value === "contacto" || value == "estudios" || value == "urgentes" || value == "empresa" || currentReport == "canceladas"){
+      console.log(options)
+      if (
+        value === "contacto" ||
+        value == "estudios" ||
+        value == "urgentes" ||
+        value == "empresa" ||
+        currentReport == "canceladas" ||
+        currentReport == "descuento" ||
+        currentReport == "cargo"
+      ) {
         await getByChart(value, filter);
       }
     } else {
@@ -42,7 +55,14 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
       title={<HeaderTitle title="Reportes" image="grafico" />}
       className="header-container"
       extra={[
-        currentReport && <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />,
+        currentReport && (
+          <ImageButton
+            key="doc"
+            title="Informe"
+            image="doc"
+            onClick={handleDownload}
+          />
+        ),
         <Select
           key="reports"
           showSearch

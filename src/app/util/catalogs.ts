@@ -26,6 +26,8 @@ export const reports: IOptionsReport[] = [
   { value: "urgentes", label: "Rel. Estudios Urgentes", type: "urgentes" },
   { value: "empresa", label: "Sol. Compañía", type: "empresa" },
   { value: "canceladas", label: "Sol. Canceladas", type: "canceladas" },
+  { value: "descuento", label: "Sol. Descuento", type: "descuento" },
+  { value: "cargo", label: "Sol. Cargo", type: "cargo" },
 ];
 
 export const status = {

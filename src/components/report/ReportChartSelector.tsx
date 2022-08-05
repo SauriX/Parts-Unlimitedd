@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import {
-  IReportCanceledData,
+  IReportRequestData,
   IReportCompanyData,
   IReportContactData,
   IReportData,
@@ -82,10 +82,10 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
         axisLabel={{ interval: 0, rotate: 0 }}
       />
     );
-  } else if (report === "canceladas") {
+  } else if (report === "canceladas" || report === "descuento" || report === "cargo") {
     return (
-      <ReportChart<IReportCanceledData>
-        data={data as IReportCanceledData[]}
+      <ReportChart<IReportRequestData>
+        data={data as IReportRequestData[]}
         serieX={"sucursal"}
         series={[
           { title: "Solicitudes por Sucursal", dataIndex: "cantidad" },
