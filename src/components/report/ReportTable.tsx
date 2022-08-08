@@ -1,9 +1,10 @@
 import { Descriptions, Table, Tag, Typography } from "antd";
 import { observer } from "mobx-react-lite";
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { IColumns } from "../../app/common/table/utils";
 import { IReportData } from "../../app/models/report";
 import { ExpandableConfig } from "antd/lib/table/interface";
+import { useParams, useSearchParams } from "react-router-dom";
 const { Text } = Typography;
 
 type ReportTableProps = {
@@ -14,6 +15,10 @@ type ReportTableProps = {
   expandable?: ExpandableConfig<IReportData> | undefined;
   summary?: boolean;
 };
+
+type ReportName = {
+  report: string;
+}
 
 let totalEstudios = 0;
 let totalDescuentos = 0;
@@ -31,17 +36,25 @@ const ReportTable = ({
   expandable,
   summary,
 }: ReportTableProps) => {
+  const [report, setReport] = useState<string>()
+  const [params] = useSearchParams()
+
+  useEffect(() => {
+    setReport(params.get("report") ?? undefined)
+  }, [params.get("report")])
+
+  console.log(report)
   totalDescuentos = 0;
   totalEstudios = 0;
   {
     data.forEach((x) => {
       totalEstudios += x.precioEstudios;
-      totalDescuentos += x.descuento;
+      report == "cargo" ? totalDescuentos += x.cargo : totalDescuentos += x.descuento
     });
   }
   auxTotalDescuentosPorcentual = (totalDescuentos / totalEstudios) * 100;
   totalDescuentosPorcentual = Math.round(auxTotalDescuentosPorcentual * 100) / 100
-  total = totalEstudios - totalDescuentos;
+  report == "cargo" ? total = totalEstudios + totalDescuentos : total = totalEstudios - totalDescuentos
   IVA = total * 0.16;
   subtotal = total - IVA;
   return (
@@ -79,10 +92,10 @@ const ReportTable = ({
             <Descriptions.Item label="Estudios" style={{ maxWidth: 30 }}>
               ${totalEstudios == 0 ? 0 : totalEstudios}
             </Descriptions.Item>
-            <Descriptions.Item label="Desc. %" style={{ maxWidth: 30 }}>
+            <Descriptions.Item label={report == "cargo" ? "Cargo %" : "Desc. %"} style={{ maxWidth: 30 }}>
               {isNaN(totalDescuentosPorcentual) ? 0 : totalDescuentosPorcentual}%
             </Descriptions.Item>
-            <Descriptions.Item label="Desc." style={{ maxWidth: 30 }}>
+            <Descriptions.Item label={report == "cargo" ? "Cargo" : "Desc."} style={{ maxWidth: 30 }}>
               ${totalDescuentos}
             </Descriptions.Item>
             <Descriptions.Item label="Subtotal" style={{ maxWidth: 30 }}>

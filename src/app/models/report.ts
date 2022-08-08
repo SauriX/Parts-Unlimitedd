@@ -26,7 +26,14 @@ export interface IReportData {
   precioEstudios: number;
   descuento: number;
   descuentoPorcentual: number;
+  subtotal: number;
+  iva: number;
   totalEstudios: number;
+  cargo: number;
+  cargoPorcentual: number;
+  subtotalCargo: number;
+  ivaCargo: number;
+  totalCargo: number;
 }
 
 export interface IStudiesData {
@@ -38,7 +45,11 @@ export interface IStudiesData {
   precioFinal: number;
   total: number;
 }
-
+export interface IReportRequestData {
+  id: string;
+  sucursal: string;
+  cantidad: number;
+}
 export interface IReportContactData {
   id: string;
   fecha: string;

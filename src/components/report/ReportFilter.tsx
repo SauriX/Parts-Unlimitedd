@@ -18,7 +18,6 @@ type ReportFilterProps = {
     | "compañia"
     | "urgencia"
     | "tipoCompañia"
-    | "medico-desglosado"
   )[];
   setShowChart: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -95,6 +94,9 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
         currentReport == "estudios" ||
         currentReport == "urgentes" ||
         currentReport == "empresa" ||
+        currentReport == "canceladas" ||
+        currentReport == "descuento" ||
+        currentReport == "cargo" ||
         currentReport === "medicos-desglosado"
       ) {
         await getByChart(currentReport, filter);

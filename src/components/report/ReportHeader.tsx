@@ -35,7 +35,10 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
         value == "estudios" ||
         value == "urgentes" ||
         value == "empresa" ||
-        value === "medicos-desglosado"
+        value === "medicos-desglosado" ||
+        value == "canceladas" ||
+        value == "descuento" ||
+        value == "cargo"
       ) {
         await getByChart(value, filter);
       }

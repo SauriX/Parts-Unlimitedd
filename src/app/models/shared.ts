@@ -71,7 +71,10 @@ export interface IOptionsReport extends IOptions {
     | "estudios"
     | "urgentes"
     | "empresa"
-    | "medicos-desglosado";
+    | "medicos-desglosado"
+    | "canceladas"
+    | "descuento"
+    | "cargo";
 }
 
 export type TreeData = {
