@@ -57,6 +57,7 @@ import QuotationDetail from "../../components/quotation/detail/QuotationDetail";
 import Report from "../../views/Report";
 import DatosFiscalesForm from "../../components/proceedings/details/DatosFiscalesForm";
 import ApointmentDetail from "../../components/appointment/detail/apointmentDetail";
+import Sampling from "../../views/Sampling";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -147,6 +148,9 @@ function App() {
             <Route path="cotizacion" element={<Quotation />} />
             <Route path="cotizacion/:id" element={<QuotationDetail />} />
             <Route path="cotizacion/new" element={<QuotationDetail />} />
+            <Route path="samplings" element={<Sampling />} />
+            <Route path="samplings/:id" element={<Sampling />} />
+            <Route path="samplings/new" element={<Sampling />} />
             <Route path="reports" element={<Report />} />
             <Route path={views.appointment} element={<Appointment />} />
             <Route path={`${views.appointment}/:id`} element={<ApointmentDetail />} />

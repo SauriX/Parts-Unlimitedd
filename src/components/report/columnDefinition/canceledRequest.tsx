@@ -81,7 +81,9 @@ export const expandablePriceConfig = {
       {item.estudio.map((x) => {
         return (
           <>
+            {x.id}
             <Descriptions
+              key={x.id}
               size="small"
               bordered
               labelStyle={{ fontWeight: "bold" }}

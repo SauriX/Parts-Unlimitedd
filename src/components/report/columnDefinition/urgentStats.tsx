@@ -71,6 +71,7 @@ export const expandableStudyConfig = {
         return (
           <>
             <Descriptions
+              key={x.id}
               size="small"
               bordered
               labelStyle={{ fontWeight: "bold" }}

@@ -192,7 +192,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
     setLoading(true);
     var coincidencia = await coincidencias(newValues);
     const reagent = { ...values, ...newValues };
-    if (coincidencia.length > 0 || !reagent.id!) {
+    if (coincidencia.length > 0 && !reagent.id!) {
       openModal({
         title: "Se encuentran coincidencias con los siguientes expedientes",
         body: (
@@ -331,7 +331,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                   formProps={{
                     name: "sexo",
                     label: "Sexo",
-                    style: { width: "140px", marginLeft: "73px" },
+                    style: { width: "140px", marginLeft:  printing ? "":"73px" },
                   }}
                   required
                   readonly={readonly}
@@ -426,7 +426,8 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                     label: "Celular",
                   }}
                   readonly={readonly}
-                  max={100}
+                  max={10}
+                  
                 ></TextInput>
               </Col>
 

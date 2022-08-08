@@ -11,6 +11,7 @@ const views = {
   request: "requests",
   quotatiion: "cotizacion",
   report: "reportes",
+  sampling:"samplings"
 };
 
 export default views;

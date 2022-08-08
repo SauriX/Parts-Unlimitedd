@@ -81,6 +81,7 @@ export const expandablePriceConfig = {
         return (
           <>
             <Descriptions
+              key={x.id}
               size="small"
               bordered
               labelStyle={{ fontWeight: "bold" }}
