@@ -10,7 +10,15 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 
 type ReportFilterProps = {
-  input: ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia" | "urgencia" | "tipoCompañia")[];
+  input: (
+    | "sucursal"
+    | "fecha"
+    | "medico"
+    | "metodoEnvio"
+    | "compañia"
+    | "urgencia"
+    | "tipoCompañia"
+  )[];
   setShowChart: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -81,10 +89,18 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
     if (currentReport) {
       await getByFilter(currentReport, filter);
       setFilter(filter);
-      if (currentReport === "contacto" || currentReport == "estudios" || currentReport == "urgentes" || currentReport == "empresa") {
+      if (
+        currentReport === "contacto" ||
+        currentReport == "estudios" ||
+        currentReport == "urgentes" ||
+        currentReport == "empresa" ||
+        currentReport == "canceladas" ||
+        currentReport == "descuento" ||
+        currentReport == "cargo"
+      ) {
         await getByChart(currentReport, filter);
       }
-      console.log(filter)
+      console.log(filter);
     }
     setLoading(false);
   };
