@@ -23,6 +23,7 @@ export default class ReportStore {
   };
 
   setCurrentReport = (name?: string) => {
+    console.log(name,"report name");
     this.currentReport = name;
   };
 

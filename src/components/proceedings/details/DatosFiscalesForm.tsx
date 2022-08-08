@@ -94,12 +94,14 @@ const DatosFiscalesForm = ({ local, recordId, onSelectRow }: DatosFiscalesFormPr
     setLoading(true);
     setErrors([]);
     var taxes: ITaxData[] = local ? [...localTaxData] : [...(tax ?? [])];
-
+      
     newValues.expedienteId = recordId;
     if (newValues.id) {
       var existing = taxes.findIndex((x) => x.id === newValues.id);
       taxes[existing] = newValues;
     } else {
+      
+      newValues.id=`tempId${taxes.length}`;
       taxes.push(newValues);
     }
 

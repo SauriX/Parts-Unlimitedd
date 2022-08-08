@@ -72,7 +72,7 @@ const DateInput = ({
         className="no-error-text"
       >
         <DatePicker
-          disabledDate={disabledDate}
+          //disabledDate={disabledDate}
           disabled={readonly}
           format="DD/MM/YYYY"
           style={{

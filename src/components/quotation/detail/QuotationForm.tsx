@@ -534,6 +534,7 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
                 >
                   <InputNumber
                     min={0}
+                    max={typo==1?100:total}
                     value={cargo}
                     onChange={(value) => {
                       SetCargo(value);
