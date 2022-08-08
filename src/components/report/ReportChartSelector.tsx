@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
 import {
+  IMedicalBreakdownData,
   IReportCompanyData,
   IReportContactData,
   IReportData,
@@ -75,7 +76,18 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
       <ReportChart<IReportCompanyData>
         data={data as IReportCompanyData[]}
         serieX={"compañia"}
-        series={[{ title: "Solicitudes por Compañía", dataIndex: "noSolicitudes" }]}
+        series={[
+          { title: "Solicitudes por Compañía", dataIndex: "noSolicitudes" },
+        ]}
+        axisLabel={{ interval: 0, rotate: 0 }}
+      />
+    );
+  } else if (report === "medicos-desglosado") {
+    return (
+      <ReportChart<IMedicalBreakdownData>
+        data={data as IMedicalBreakdownData[]}
+        serieX={"claveMedico"}
+        series={[{ title: "Solicitudes", dataIndex: "noSolicitudes" }]}
         axisLabel={{ interval: 0, rotate: 0 }}
       />
     );

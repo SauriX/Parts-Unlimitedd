@@ -1,39 +1,26 @@
 import { IColumns, ISearch } from "../../../app/common/table/utils";
 import { IReportData } from "../../../app/models/report";
 import { getDefaultColumnProps } from "../../../app/common/table/utils";
+import { moneyFormatter } from "../../../app/util/utils";
 import { Descriptions } from "antd";
 
-const getUrgentStatsColumns = (
+const getMedicalBreakdownStatsColumns = (
   searchState: ISearch,
   setSearchState: React.Dispatch<React.SetStateAction<ISearch>>
 ) => {
   const columns: IColumns<IReportData> = [
     {
-      ...getDefaultColumnProps("solicitud", "Clave", {
+      ...getDefaultColumnProps("solicitud", "Solicitud", {
         searchState,
         setSearchState,
         width: "20%",
       }),
     },
     {
-      ...getDefaultColumnProps("paciente", "Nombre del Paciente", {
+      ...getDefaultColumnProps("claveMedico", "Clave", {
         searchState,
         setSearchState,
-        width: "35%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("edad", "Edad", {
-        searchState,
-        setSearchState,
-        width: "15%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("sexo", "Sexo", {
-        searchState,
-        setSearchState,
-        width: "15%",
+        width: "20%",
       }),
     },
     {
@@ -44,26 +31,31 @@ const getUrgentStatsColumns = (
       }),
     },
     {
-      ...getDefaultColumnProps("fechaEntrega", "Fecha de Entrega", {
+      ...getDefaultColumnProps("empresa", "Compañia", {
         searchState,
         setSearchState,
         width: "20%",
       }),
     },
     {
-      ...getDefaultColumnProps("urgencia", "Urgencia", {
+      ...getDefaultColumnProps("paciente", "Nombre del Paciente", {
         searchState,
         setSearchState,
         width: "20%",
       }),
-      render: (value) => (value == 2 ? "Urgencia" : "Urgencia por cargo"),
     },
+    // {
+    //   ...getDefaultColumnProps("noPacientes", "No. Pacientes", {
+    //     searchState,
+    //     setSearchState,
+    //     width: "20%",
+    //   }),
+    // },
   ];
 
   return columns;
 };
-
-export const expandableStudyConfig = {
+export const expandableMedicalBreakdownConfig = {
   expandedRowRender: (item: IReportData) => (
     <div>
       <h4>Estudios</h4>
@@ -71,20 +63,36 @@ export const expandableStudyConfig = {
         return (
           <>
             <Descriptions
+              key={x.id}
               size="small"
               bordered
               labelStyle={{ fontWeight: "bold" }}
               contentStyle={{ background: "#fff" }}
               style={{ marginBottom: 5 }}
             >
+              {/* <Descriptions.Item label="Orden" style={{ maxWidth: 30 }}>
+                {x.clave}
+              </Descriptions.Item> */}
               <Descriptions.Item label="Clave" style={{ maxWidth: 30 }}>
                 {x.clave}
               </Descriptions.Item>
-              <Descriptions.Item label="Estudio" style={{ maxWidth: 30 }}>
+              <Descriptions.Item
+                label="Nombre del estudio"
+                style={{ maxWidth: 30 }}
+              >
                 {x.estudio}
               </Descriptions.Item>
-              <Descriptions.Item label="Estatus" style={{ maxWidth: 30 }}>
+              {/* <Descriptions.Item label="Compañia" style={{ maxWidth: 30 }}>
                 {x.estatus}
+              </Descriptions.Item> */}
+              <Descriptions.Item label="Precio" style={{ maxWidth: 30 }}>
+                {x.precio}
+              </Descriptions.Item>
+              <Descriptions.Item label="Precio Final" style={{ maxWidth: 30 }}>
+                {x.precioFinal}
+              </Descriptions.Item>
+              <Descriptions.Item label="Total" style={{ maxWidth: 30 }}>
+                {x.total}
               </Descriptions.Item>
             </Descriptions>
           </>
@@ -95,4 +103,4 @@ export const expandableStudyConfig = {
   rowExpandable: () => true,
 };
 
-export default getUrgentStatsColumns;
+export default getMedicalBreakdownStatsColumns;

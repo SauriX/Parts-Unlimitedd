@@ -4,7 +4,12 @@ import { useStore } from "../../app/stores/store";
 import ReportFilter from "./ReportFilter";
 import { Col, PageHeader, Row, Spin } from "antd";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
-import { getColumns, getExpandableConfig, getInputs, getReportConfig } from "./utils";
+import {
+  getColumns,
+  getExpandableConfig,
+  getInputs,
+  getReportConfig,
+} from "./utils";
 import { IReportData } from "../../app/models/report";
 import { IColumns, ISearch } from "../../app/common/table/utils";
 import ReportTable from "./ReportTable";
@@ -22,7 +27,15 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
   const [dataChart, setDataChart] = useState<any[]>([]);
 
   const [inputs, setInputs] = useState<
-    ("sucursal" | "fecha" | "medico" | "metodoEnvio" | "compañia" | "urgencia" | "tipoCompañia")[]
+    (
+      | "sucursal"
+      | "fecha"
+      | "medico"
+      | "metodoEnvio"
+      | "compañia"
+      | "urgencia"
+      | "tipoCompañia"
+    )[]
   >([]);
   const [title, setTitle] = useState<string>();
   const [image, setImage] = useState<string>();
@@ -45,7 +58,7 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
       setImage(data.image);
       setHasFooterRow(data.hasFooterRow);
       setSummary(data.summary);
-      console.log(getInputs(currentReport))
+      console.log(getInputs(currentReport));
     } else {
       setInputs([]);
       setTitle("");
@@ -66,9 +79,16 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
   }, [currentReport, searchState]);
 
   useEffect(() => {
-    if (currentReport == "contacto" || currentReport == "estudios" || currentReport == "urgentes" || currentReport == "empresa") {
+    if (
+      currentReport == "contacto" ||
+      currentReport == "estudios" ||
+      currentReport == "urgentes" ||
+      currentReport == "empresa" ||
+      currentReport == "medicos-desglosado"
+    ) {
       setDataChart(chartData);
     } else {
+      console.log("reporte data");
       setDataChart(reportData);
     }
   }, [currentReport, chartData, reportData]);
@@ -90,7 +110,14 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
         </Col>
         <Col span={24}>
           {!showChar ? (
-            <ReportTable columns={columns} data={reportData} loading={false} hasFooterRow={hasFooterRow} expandable={expandable} summary={summary} />
+            <ReportTable
+              columns={columns}
+              data={reportData}
+              loading={false}
+              hasFooterRow={hasFooterRow}
+              expandable={expandable}
+              summary={summary}
+            />
           ) : (
             <ReportChartSelector report={currentReport} data={dataChart} />
           )}

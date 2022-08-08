@@ -27,7 +27,6 @@ export interface IReportData {
   descuento: number;
   descuentoPorcentual: number;
   totalEstudios: number;
-  totals: ICompanyInvoice[];
 }
 
 export interface IStudiesData {
@@ -36,6 +35,8 @@ export interface IStudiesData {
   estudio: string;
   estatus: string;
   precio: number;
+  precioFinal: number;
+  total: number;
 }
 
 export interface IReportContactData {
@@ -60,13 +61,10 @@ export interface IReportCompanyData {
   noSolicitudes: number;
 }
 
-export interface ICompanyInvoice {
-  sumaEstudios: number;
-  sumaDescuentos: number;
-  sumaDescuentosPorcentual: number;
-  subtotal: number;
-  iva: number;
-  total: number;
+export interface IMedicalBreakdownData {
+  id: string;
+  claveMedico: string;
+  noSolicitudes: number;
 }
 
 export interface IReportFilter {

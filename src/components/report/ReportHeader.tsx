@@ -8,6 +8,7 @@ import { IOptionsReport } from "../../app/models/shared";
 import { useStore } from "../../app/stores/store";
 import { reports } from "../../app/util/catalogs";
 import "./css/index.css";
+import { reportType } from "./utils";
 
 type ReportHeaderProps = {
   handleDownload: () => Promise<void>;
@@ -15,17 +16,27 @@ type ReportHeaderProps = {
 
 const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
   const { reportStore } = useStore();
-  const { currentReport, filter, setCurrentReport, getByFilter, getByChart } = reportStore;
+  const { currentReport, filter, setCurrentReport, getByFilter, getByChart } =
+    reportStore;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const handleChange = async (_: string, options: IOptionsReport | IOptionsReport[]) => {
+  const handleChange = async (
+    _: string,
+    options: IOptionsReport | IOptionsReport[]
+  ) => {
     if (options) {
-      const value = (options as IOptionsReport).value!.toString();
+      const value = (options as IOptionsReport).value!.toString() as reportType;
       setCurrentReport(value);
-      searchParams.set("report", value);
-      await getByFilter(value, filter);
-      if(value === "contacto" || value == "estudios" || value == "urgentes" || value == "empresa"){
+      searchParams.set("report", value!);
+      await getByFilter(value!, filter);
+      if (
+        value === "contacto" ||
+        value == "estudios" ||
+        value == "urgentes" ||
+        value == "empresa" ||
+        value === "medicos-desglosado"
+      ) {
         await getByChart(value, filter);
       }
     } else {
@@ -42,7 +53,14 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
       title={<HeaderTitle title="Reportes" image="grafico" />}
       className="header-container"
       extra={[
-        currentReport && <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />,
+        currentReport && (
+          <ImageButton
+            key="doc"
+            title="Informe"
+            image="doc"
+            onClick={handleDownload}
+          />
+        ),
         <Select
           key="reports"
           showSearch
