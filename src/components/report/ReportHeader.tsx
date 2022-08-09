@@ -8,6 +8,7 @@ import { IOptionsReport } from "../../app/models/shared";
 import { useStore } from "../../app/stores/store";
 import { reports } from "../../app/util/catalogs";
 import "./css/index.css";
+import { reportType } from "./utils";
 
 type ReportHeaderProps = {
   handleDownload: () => Promise<void>;
@@ -25,19 +26,19 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
     options: IOptionsReport | IOptionsReport[]
   ) => {
     if (options) {
-      const value = (options as IOptionsReport).value!.toString();
+      const value = (options as IOptionsReport).value!.toString() as reportType;
       setCurrentReport(value);
-      searchParams.set("report", value);
-      await getByFilter(value, filter);
-      console.log(options)
+      searchParams.set("report", value!);
+      await getByFilter(value!, filter);
       if (
         value === "contacto" ||
         value == "estudios" ||
         value == "urgentes" ||
         value == "empresa" ||
-        currentReport == "canceladas" ||
-        currentReport == "descuento" ||
-        currentReport == "cargo"
+        value === "medicos-desglosado" ||
+        value == "canceladas" ||
+        value == "descuento" ||
+        value == "cargo"
       ) {
         await getByChart(value, filter);
       }

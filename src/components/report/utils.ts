@@ -5,6 +5,9 @@ import getStudyStatsColumns, {
 } from "./columnDefinition/studyStats";
 import getContactStatsColumns from "./columnDefinition/contactStats";
 import getMedicalStatsColumns from "./columnDefinition/medicalStats";
+import getMedicalBreakdownStatsColumns, {
+  expandableMedicalBreakdownConfig,
+} from "./columnDefinition/medicalBreakdownStats";
 import getPatientStatsColumns from "./columnDefinition/patientStats";
 import getRequestByRecordColumns from "./columnDefinition/requestByRecord";
 import { ExpandableConfig } from "antd/lib/table/interface";
@@ -16,8 +19,22 @@ import getCanceledRequestColumns from "./columnDefinition/canceledRequest";
 import getDescountRequestColumns from "./columnDefinition/descountRequest";
 import getChargeRequestColumns from "./columnDefinition/chargeRequest";
 
+export type reportType =
+  | "medicos"
+  | "medicos-desglosado"
+  | "contacto"
+  | "estudios"
+  | "urgentes"
+  | "empresa"
+  | "estadistica"
+  | "expediente"
+  | "canceladas"
+  | "descuento"
+  | "cargo"
+  | undefined;
+
 export const getInputs = (
-  reportName: string
+  reportName: reportType
 ): (
   | "sucursal"
   | "fecha"
@@ -37,7 +54,7 @@ export const getInputs = (
     | "tipoCompañia"
   )[] = ["fecha", "sucursal"];
 
-  if (reportName === "medicos") {
+  if (reportName === "medicos" || reportName === "medicos-desglosado") {
     filters.push("medico");
   } else if (reportName === "contacto") {
     filters.push("medico");
@@ -63,7 +80,7 @@ export const getInputs = (
 };
 
 export const getReportConfig = (
-  reportName: string
+  reportName: reportType
 ): {
   title: string;
   image: string;
@@ -98,6 +115,11 @@ export const getReportConfig = (
   } else if (reportName === "empresa") {
     title = "Solicitudes por compañía";
     image = "empresa";
+    hasFooterRow = false;
+    summary = true;
+  } else if (reportName === "medicos-desglosado") {
+    title = "Solicitudes por médico desglosado";
+    image = "doctor";
     hasFooterRow = false;
     summary = true;
   } else if (reportName === "canceladas") {
@@ -139,6 +161,8 @@ export const getColumns = (
     return getUrgentStatsColumns(searchState, setSearchState);
   } else if (reportName === "empresa") {
     return getCompanyStatsColumns(searchState, setSearchState);
+  } else if (reportName === "medicos-desglosado") {
+    return getMedicalBreakdownStatsColumns(searchState, setSearchState);
   } else if (reportName === "canceladas") {
     return getCanceledRequestColumns(searchState, setSearchState);
   } else if (reportName === "descuento") {
@@ -151,12 +175,19 @@ export const getColumns = (
 };
 
 export const getExpandableConfig = (
-  reportName: string
+  reportName: reportType
 ): ExpandableConfig<IReportData> | undefined => {
-  if (reportName == "estudios" || reportName == "urgentes") {
+  if (reportName === "estudios" || reportName === "urgentes") {
     return expandableStudyConfig;
-  } else if (reportName == "empresa" || reportName == "canceladas" || reportName == "descuento" || reportName == "cargo") {
+  } else if (
+    reportName == "empresa" ||
+    reportName == "canceladas" ||
+    reportName == "descuento" ||
+    reportName == "cargo"
+  ) {
     return expandablePriceConfig;
+  } else if (reportName === "medicos-desglosado") {
+    return expandableMedicalBreakdownConfig;
   }
 
   return undefined;

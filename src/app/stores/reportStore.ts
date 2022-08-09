@@ -1,10 +1,15 @@
 import { makeAutoObservable } from "mobx";
 import Report from "../api/report";
-import { IReportFilter, IReportData, ReportFilterValues } from "../models/report";
+import {
+  IReportFilter,
+  IReportData,
+  ReportFilterValues,
+} from "../models/report";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import { getErrors } from "../util/utils";
+import { reportType } from "../../components/report/utils";
 
 export default class ReportStore {
   constructor() {
@@ -12,7 +17,7 @@ export default class ReportStore {
   }
 
   scopes?: IScopes;
-  currentReport?: string;
+  currentReport?: reportType;
   filter: IReportFilter = new ReportFilterValues();
   reportData: IReportData[] = [];
   chartData: any[] = [];
@@ -22,8 +27,7 @@ export default class ReportStore {
     this.scopes = undefined;
   };
 
-  setCurrentReport = (name?: string) => {
-    console.log(name,"report name");
+  setCurrentReport = (name?: reportType) => {
     this.currentReport = name;
   };
 
@@ -45,6 +49,7 @@ export default class ReportStore {
   getByFilter = async (report: string, filter: IReportFilter) => {
     try {
       const data = await Report.getByFilter(report, filter);
+      console.log("data inicial filter", data);
       this.reportData = data;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -52,7 +57,10 @@ export default class ReportStore {
     }
   };
 
-  getByChart = async <T extends unknown>(report: string, filter: IReportFilter) => {
+  getByChart = async <T extends unknown>(
+    report: string,
+    filter: IReportFilter
+  ) => {
     try {
       const data = await Report.getByChart<T>(report, filter);
       this.chartData = data;
@@ -62,7 +70,10 @@ export default class ReportStore {
     }
   };
 
-  getByTable = async <T extends unknown>(report: string, filter: IReportFilter) => {
+  getByTable = async <T extends unknown>(
+    report: string,
+    filter: IReportFilter
+  ) => {
     try {
       const data = await Report.getByTable<T>(report, filter);
       this.tableData = data;

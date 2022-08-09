@@ -42,8 +42,14 @@ export interface IStudiesData {
   estudio: string;
   estatus: string;
   precio: number;
+  precioFinal: number;
+  total: number;
 }
-
+export interface IReportRequestData {
+  id: string;
+  sucursal: string;
+  cantidad: number;
+}
 export interface IReportContactData {
   id: string;
   fecha: string;
@@ -66,10 +72,10 @@ export interface IReportCompanyData {
   noSolicitudes: number;
 }
 
-export interface IReportRequestData {
+export interface IMedicalBreakdownData {
   id: string;
-  sucursal: string;
-  cantidad: number;
+  claveMedico: string;
+  noSolicitudes: number;
 }
 
 export interface IReportFilter {
