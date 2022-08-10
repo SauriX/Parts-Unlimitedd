@@ -73,6 +73,9 @@ export interface IPriceListEstudioList {
   activo?: boolean;
   departamento?: string;
   paqute?: boolean;
+  descuento?:number;
+  descuenNum?:number;
+  precioFinal?:number;
   pack?: IPackEstudioList[];
 }
 

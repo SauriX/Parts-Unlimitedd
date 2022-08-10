@@ -5,10 +5,12 @@ import { useSearchParams } from "react-router-dom";
 import { useStore } from "../app/stores/store";
 import ReportBody from "../components/report/ReportBody";
 import ReportHeader from "../components/report/ReportHeader";
+import { reportType } from "../components/report/utils";
 
 const Report = () => {
   const { reportStore } = useStore();
-  const { scopes, filter, printPdf, setCurrentReport, clearScopes, access } = reportStore;
+  const { scopes, filter, printPdf, setCurrentReport, clearScopes, access } =
+    reportStore;
 
   const [searchParams] = useSearchParams();
 
@@ -32,7 +34,7 @@ const Report = () => {
   }, [access]);
 
   useEffect(() => {
-    setCurrentReport(searchParams.get("report") ?? undefined);
+    setCurrentReport((searchParams.get("report") as reportType) ?? undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

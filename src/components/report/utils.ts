@@ -5,14 +5,36 @@ import getStudyStatsColumns, {
 } from "./columnDefinition/studyStats";
 import getContactStatsColumns from "./columnDefinition/contactStats";
 import getMedicalStatsColumns from "./columnDefinition/medicalStats";
+import getMedicalBreakdownStatsColumns, {
+  expandableMedicalBreakdownConfig,
+} from "./columnDefinition/medicalBreakdownStats";
 import getPatientStatsColumns from "./columnDefinition/patientStats";
 import getRequestByRecordColumns from "./columnDefinition/requestByRecord";
 import { ExpandableConfig } from "antd/lib/table/interface";
 import getUrgentStatsColumns from "./columnDefinition/urgentStats";
-import getCompanyStatsColumns, { expandableCompanyConfig } from "./columnDefinition/companyStats";
+import getCompanyStatsColumns, {
+  expandablePriceConfig,
+} from "./columnDefinition/companyStats";
+import getCanceledRequestColumns from "./columnDefinition/canceledRequest";
+import getDescountRequestColumns from "./columnDefinition/descountRequest";
+import getChargeRequestColumns from "./columnDefinition/chargeRequest";
+
+export type reportType =
+  | "medicos"
+  | "medicos-desglosado"
+  | "contacto"
+  | "estudios"
+  | "urgentes"
+  | "empresa"
+  | "estadistica"
+  | "expediente"
+  | "canceladas"
+  | "descuento"
+  | "cargo"
+  | undefined;
 
 export const getInputs = (
-  reportName: string
+  reportName: reportType
 ): (
   | "sucursal"
   | "fecha"
@@ -32,12 +54,17 @@ export const getInputs = (
     | "tipoCompañia"
   )[] = ["fecha", "sucursal"];
 
-  if (reportName === "medicos") {
+  if (reportName === "medicos" || reportName === "medicos-desglosado") {
     filters.push("medico");
   } else if (reportName === "contacto") {
     filters.push("medico");
     filters.push("metodoEnvio");
-  } else if (reportName === "estudios") {
+  } else if (
+    reportName === "estudios" ||
+    reportName == "canceladas" ||
+    reportName === "descuento" ||
+    reportName === "cargo"
+  ) {
     filters.push("medico");
     filters.push("compañia");
   } else if (reportName === "urgentes") {
@@ -53,8 +80,13 @@ export const getInputs = (
 };
 
 export const getReportConfig = (
-  reportName: string
-): { title: string; image: string; hasFooterRow: boolean, summary: boolean } => {
+  reportName: reportType
+): {
+  title: string;
+  image: string;
+  hasFooterRow: boolean;
+  summary: boolean;
+} => {
   let title = "";
   let image = "Reportes";
   let hasFooterRow = true;
@@ -85,6 +117,26 @@ export const getReportConfig = (
     image = "empresa";
     hasFooterRow = false;
     summary = true;
+  } else if (reportName === "medicos-desglosado") {
+    title = "Solicitudes por médico desglosado";
+    image = "doctor";
+    hasFooterRow = false;
+    summary = true;
+  } else if (reportName === "canceladas") {
+    title = "Solicitudes Canceladas";
+    image = "cancelar";
+    hasFooterRow = false;
+    summary = true;
+  } else if (reportName === "descuento") {
+    title = "Solicitudes con Descuento";
+    image = "descuento";
+    hasFooterRow = false;
+    summary = true;
+  } else if (reportName === "cargo") {
+    title = "Solicitudes con Cargo";
+    image = "cargo";
+    hasFooterRow = false;
+    summary = true;
   }
 
   return { title, image, hasFooterRow, summary };
@@ -109,18 +161,33 @@ export const getColumns = (
     return getUrgentStatsColumns(searchState, setSearchState);
   } else if (reportName === "empresa") {
     return getCompanyStatsColumns(searchState, setSearchState);
+  } else if (reportName === "medicos-desglosado") {
+    return getMedicalBreakdownStatsColumns(searchState, setSearchState);
+  } else if (reportName === "canceladas") {
+    return getCanceledRequestColumns(searchState, setSearchState);
+  } else if (reportName === "descuento") {
+    return getDescountRequestColumns(searchState, setSearchState);
+  } else if (reportName === "cargo") {
+    return getChargeRequestColumns(searchState, setSearchState);
   }
 
   return [];
 };
 
 export const getExpandableConfig = (
-  reportName: string
+  reportName: reportType
 ): ExpandableConfig<IReportData> | undefined => {
-  if (reportName == "estudios" || reportName == "urgentes") {
+  if (reportName === "estudios" || reportName === "urgentes") {
     return expandableStudyConfig;
-  } else if (reportName == "empresa") {
-    return expandableCompanyConfig;
+  } else if (
+    reportName == "empresa" ||
+    reportName == "canceladas" ||
+    reportName == "descuento" ||
+    reportName == "cargo"
+  ) {
+    return expandablePriceConfig;
+  } else if (reportName === "medicos-desglosado") {
+    return expandableMedicalBreakdownConfig;
   }
 
   return undefined;

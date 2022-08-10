@@ -238,7 +238,7 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
             </Col>
             <Col xs={8} md={8} sm={12}>
                 <label>Teléfono: </label>
-                <Input value={search.telefono} onChange={(value)=>{setSearch({ ...search,telefono:value.target.value  })}}  style={{width:"300px",marginBottom:"30px"}} placeholder={""}></Input>
+                <Input max={10} min={10} value={search.telefono} onChange={(value)=>{setSearch({ ...search,telefono:value.target.value  })}}  style={{width:"300px",marginBottom:"30px"}} placeholder={""}></Input>
             </Col>
             <Col xs={8} md={8} sm={12}>
                 <label>Fecha </label>
@@ -246,7 +246,7 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
             </Col>
             <Col xs={8} md={8} sm={12}>
                 <label>Email: </label>
-                <Input value={search.email} onChange={(value)=>{setSearch({ ...search,email:value.target.value  })}} type={"email"}  style={{width:"300px",marginBottom:"30px"}}></Input>
+                <Input  value={search.email} onChange={(value)=>{setSearch({ ...search,email:value.target.value  })}} type={"email"}  style={{width:"300px",marginBottom:"30px"}}></Input>
             </Col>
             <Col xs={8} md={8} sm={12}>
                 <label>Ciudad: </label>

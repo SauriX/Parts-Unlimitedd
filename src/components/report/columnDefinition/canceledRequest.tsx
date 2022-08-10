@@ -6,7 +6,7 @@ import { moneyFormatter } from "../../../app/util/utils";
 import React from "react";
 const { Text } = Typography;
 
-const getCompanyStatsColumns = (
+const getCanceledRequestColumns = (
   searchState: ISearch,
   setSearchState: React.Dispatch<React.SetStateAction<ISearch>>
 ) => {
@@ -33,7 +33,14 @@ const getCompanyStatsColumns = (
       }),
     },
     {
-      ...getDefaultColumnProps("precioEstudios", "Estudios", {
+      ...getDefaultColumnProps("empresa", "Compañía", {
+        searchState,
+        setSearchState,
+        width: "35%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("subtotal", "Subtotal", {
         width: "20%",
       }),
       render: (value) => moneyFormatter.format(value),
@@ -46,6 +53,12 @@ const getCompanyStatsColumns = (
     },
     {
       ...getDefaultColumnProps("descuento", "Desc.", {
+        width: "20%",
+      }),
+      render: (value) => moneyFormatter.format(value),
+    },
+    {
+      ...getDefaultColumnProps("iva", "IVA", {
         width: "20%",
       }),
       render: (value) => moneyFormatter.format(value),
@@ -68,6 +81,7 @@ export const expandablePriceConfig = {
       {item.estudio.map((x) => {
         return (
           <>
+            {x.id}
             <Descriptions
               key={x.id}
               size="small"
@@ -94,4 +108,4 @@ export const expandablePriceConfig = {
   rowExpandable: () => true,
 };
 
-export default getCompanyStatsColumns;
+export default getCanceledRequestColumns;

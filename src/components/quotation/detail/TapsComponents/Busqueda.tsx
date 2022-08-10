@@ -80,9 +80,8 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
           ...getDefaultColumnProps("expediente", "Expediente", {
             searchState,
             setSearchState,
-            width: "20%",
-            minWidth: 150,
-            windowSize: windowWidth,
+            width: 100,
+
           }),
           render: (value, expediente) => (
             <Button
@@ -103,59 +102,55 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
               {value}
             </Button>
           ),
+          fixed:"left"
         },
         {
           ...getDefaultColumnProps("nomprePaciente", "Nombre del paciente", {
             searchState,
             setSearchState,
-            width: "20%",
-            minWidth: 150,
-            windowSize: windowWidth,
+            width: 200,
+
           }),
+          
         },
         {
             ...getDefaultColumnProps("genero", "Genero", {
               searchState,
               setSearchState,
-              width: "5%",
-              minWidth: 150,
-              windowSize: windowWidth,
+              width: 100,
+
             }),
           },
           {
             ...getDefaultColumnProps("edad", "Edad", {
               searchState,
               setSearchState,
-              width: "10%",
-              minWidth: 150,
-              windowSize: windowWidth,
+              width: 100,
+
             }),
           },
           {
             ...getDefaultColumnProps("fechaNacimiento", "Fecha de nacimiento", {
               searchState,
               setSearchState,
-              width: "20%",
-              minWidth: 150,
-              windowSize: windowWidth,
+              width: 200,
+
             }),
           },
           {
             ...getDefaultColumnProps("monederoElectronico", "Monedero electrónico", {
               searchState,
               setSearchState,
-              width: "10%",
-              minWidth: 150,
-              windowSize: windowWidth,
+              width: 200,
+
             }),
           },
           {
             ...getDefaultColumnProps("telefono", "Teléfono", {
               searchState,
               setSearchState,
-              width: "10%",
-              minWidth: 150,
-              windowSize: windowWidth,
+              width: 100,
+
             }),
           },
         {
@@ -163,7 +158,7 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
           dataIndex: "id",
           title: "Editar",
           align: "center",
-          width: windowWidth < resizeWidth ? 100 : "20%",
+          width:  100 ,
           render: (value,expediente) => (
             <IconButton
               title="Editar Expediente"
@@ -182,6 +177,7 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
               }}
             />
           ),
+          fixed:"right"
         },
       ];
       
@@ -224,8 +220,8 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
                     <DateInput 
                       formProps={{
                         name: "fechaNacimiento",
-                        label: "Fecha Incial",
-                        
+                        label: "Fecha incial",
+                        style:{marginTop:"10px"}
                       }}
                      />
                     </Col>
@@ -233,8 +229,8 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
                     <DateInput 
                       formProps={{
                         name: "fechaNacimiento",
-                        label: "Fecha FInal",
-                        
+                        label: "Fecha final",
+                        style:{marginTop:"10px"}
                       }}/>
                     </Col>
                     <Col sm={2}></Col>
@@ -243,7 +239,7 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
                             formProps={{
                             name: "email",
                             label: "Email",
-                            style:{marginTop:"10px"}
+                            style:{marginTop:"10px",marginBottom:"10px;"}
                             }}
                             max={100}
                             //errors={errors.find((x) => x.name === "exp")?.errors}
@@ -252,9 +248,9 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
                     <Col sm={11}>
                     <TextInput
                             formProps={{
-                            name: "telefono",
-                            label: "Telefono",
-                            style:{marginTop:"10px"}
+                            name: "telfono",
+                            label: "Teléfono",
+                            style:{marginTop:"10px",marginBottom:"10px;"}
                             }}
                             max={100}
                             //errors={errors.find((x) => x.name === "exp")?.errors}
@@ -270,7 +266,7 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
                 dataSource={records}
                 pagination={defaultPaginationProperties}
                 sticky
-                scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+                scroll={{ x: "max-content" }}
             />
         </Spin>
     )

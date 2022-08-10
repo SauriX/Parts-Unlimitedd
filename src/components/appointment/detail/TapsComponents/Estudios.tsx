@@ -47,16 +47,20 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
   });
 
   useEffect(() => {
-    if (searchParams.get("type") == "laboratorio") {
-      getStudyOptionscita("Imagenologia");
-      getPackOptionscita("Imagenologia");
-    } else {
-      getStudyOptions();
-      getPackOptions();
+    const getdata = async ()=>{
+      if (searchParams.get("type") == "laboratorio") {
+        await getStudyOptionscita("Imagenologia");
+        await getPackOptionscita("Imagenologia");
+      } else {
+        await getStudyOptions();
+        await getPackOptions();
+      }
     }
+    getdata();
   }, [getPackOptionscita, getStudyOptionscita, getPackOptions, getStudyOptions]);
 
   useEffect(() => {
+
     if (searchParams.get("type") == "laboratorio") {
       const options: IOptions[] = [
         {
@@ -78,7 +82,7 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
           label: "Estudios",
           options: studyOptions,
         },
-        {
+        { 
           value: "pack",
           label: "Paquetes",
           options: packOptions,
@@ -86,6 +90,7 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
       ];
       setOptions(options);
     }
+    
   }, [packOptionscita, studyOptionscita]);
 
   const columns: IColumns<IRequestStudy> = [

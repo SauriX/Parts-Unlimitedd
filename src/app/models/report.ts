@@ -26,8 +26,14 @@ export interface IReportData {
   precioEstudios: number;
   descuento: number;
   descuentoPorcentual: number;
+  subtotal: number;
+  iva: number;
   totalEstudios: number;
-  totals: ICompanyInvoice[];
+  cargo: number;
+  cargoPorcentual: number;
+  subtotalCargo: number;
+  ivaCargo: number;
+  totalCargo: number;
 }
 
 export interface IStudiesData {
@@ -36,8 +42,14 @@ export interface IStudiesData {
   estudio: string;
   estatus: string;
   precio: number;
+  precioFinal: number;
+  total: number;
 }
-
+export interface IReportRequestData {
+  id: string;
+  sucursal: string;
+  cantidad: number;
+}
 export interface IReportContactData {
   id: string;
   fecha: string;
@@ -60,13 +72,10 @@ export interface IReportCompanyData {
   noSolicitudes: number;
 }
 
-export interface ICompanyInvoice {
-  sumaEstudios: number;
-  sumaDescuentos: number;
-  sumaDescuentosPorcentual: number;
-  subtotal: number;
-  iva: number;
-  total: number;
+export interface IMedicalBreakdownData {
+  id: string;
+  claveMedico: string;
+  noSolicitudes: number;
 }
 
 export interface IReportFilter {

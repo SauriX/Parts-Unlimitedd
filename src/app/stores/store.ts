@@ -29,6 +29,7 @@ import RequestStore from "./requestStore";
 import AppointmentStore from "./appointmentStore";
 import { IReportData } from "../models/report";
 import NotificationStore from "./notificationStore";
+import SamplingStore from "./samplingStore";
 
 configure({
   enforceActions: "never",
@@ -63,6 +64,7 @@ interface Store {
   requestStore: RequestStore;
   appointmentStore: AppointmentStore;
   notificationStore: NotificationStore;
+  samplig:SamplingStore;
 }
 
 export const store: Store = {
@@ -94,6 +96,7 @@ export const store: Store = {
   requestStore: new RequestStore(),
   appointmentStore: new AppointmentStore(),
   notificationStore: new NotificationStore(),
+  samplig: new SamplingStore(),
 };
 
 export const StoreContext = createContext(store);

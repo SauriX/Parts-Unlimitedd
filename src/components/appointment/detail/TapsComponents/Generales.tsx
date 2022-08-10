@@ -117,7 +117,7 @@ const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>{
                   }}
             >
                 <Row gutter={[0, 12]}>
-                    <Col sm={12}> 
+                    <Col   sm={12}> 
                         <SelectInput
                             formProps={{
                                 name: "procedencia",

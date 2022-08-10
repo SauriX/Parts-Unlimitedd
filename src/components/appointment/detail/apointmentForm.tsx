@@ -271,6 +271,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
       hoy.setFullYear(cumpleaños);
       /* setValues((prev) => ({ ...prev, fechaNacimiento: hoy })) */
     }
+    
   };
   const parametrosDuplicados = (estudios: IRequestStudy[]) => {
     let duplicados = [];

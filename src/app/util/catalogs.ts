@@ -21,10 +21,18 @@ export const reports: IOptionsReport[] = [
   { value: "expediente", label: "Expediente", type: "expediente" },
   { value: "estadistica", label: "Estadística Pacientes", type: "estadistica" },
   { value: "medicos", label: "Sol. Médico Condensado", type: "medicos" },
+  {
+    value: "medicos-desglosado",
+    label: "Sol. Medicos Desglosado",
+    type: "medicos-desglosado",
+  },
   { value: "contacto", label: "Sol. Contacto", type: "contacto" },
   { value: "estudios", label: "Rel. Estudios por Paciente", type: "estudios" },
   { value: "urgentes", label: "Rel. Estudios Urgentes", type: "urgentes" },
   { value: "empresa", label: "Sol. Compañía", type: "empresa" },
+  { value: "canceladas", label: "Sol. Canceladas", type: "canceladas" },
+  { value: "descuento", label: "Sol. Descuento", type: "descuento" },
+  { value: "cargo", label: "Sol. Cargo", type: "cargo" },
 ];
 
 export const status = {

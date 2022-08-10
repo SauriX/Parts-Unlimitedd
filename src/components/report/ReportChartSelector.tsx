@@ -1,5 +1,7 @@
 import { observer } from "mobx-react-lite";
 import {
+  IReportRequestData,
+  IMedicalBreakdownData,
   IReportCompanyData,
   IReportContactData,
   IReportData,
@@ -18,7 +20,9 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
       <ReportChart<IReportData>
         data={data as IReportData[]}
         serieX={"expediente"}
-        series={[{ title: "Solicitudes", dataIndex: "noSolicitudes" }]}
+        series={[
+          { title: "Cantidad de Solicitudes", dataIndex: "noSolicitudes" },
+        ]}
         axisLabel={{ interval: 0, rotate: 0 }}
       />
     );
@@ -28,7 +32,7 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
         data={data as IReportData[]}
         serieX={"paciente"}
         series={[
-          { title: "Solicitudes", dataIndex: "noSolicitudes" },
+          { title: "Cantidad de Solicitudes", dataIndex: "noSolicitudes" },
           { title: "Total de Solicitudes", dataIndex: "total" },
         ]}
         axisLabel={{ interval: 0, rotate: 30 }}
@@ -40,9 +44,9 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
         data={data as IReportData[]}
         serieX={"claveMedico"}
         series={[
-          { title: "Total", dataIndex: "total" },
-          { title: "Solicitudes", dataIndex: "noSolicitudes" },
-          { title: "Pacientes", dataIndex: "noPacientes" },
+          { title: "Total en pesos mexicanos", dataIndex: "total" },
+          { title: "Cantidad de Solicitudes", dataIndex: "noSolicitudes" },
+          { title: "Cantidad de Pacientes", dataIndex: "noPacientes" },
         ]}
         axisLabel={{ interval: 0, rotate: 0 }}
       />
@@ -53,10 +57,10 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
         data={data as IReportContactData[]}
         serieX={"fecha"}
         series={[
-          { title: "Solicitudes", dataIndex: "solicitudes" },
-          { title: "WhatsApp", dataIndex: "cantidadTelefono" },
-          { title: "Correo", dataIndex: "cantidadCorreo" },
-          { title: "Total Medio de Contacto", dataIndex: "total" },
+          { title: "Cantidad de Solicitudes", dataIndex: "solicitudes" },
+          { title: "Cantidad de WhatsApp", dataIndex: "cantidadTelefono" },
+          { title: "Cantidad de Correo", dataIndex: "cantidadCorreo" },
+          { title: "Total Medios de Contacto", dataIndex: "total" },
         ]}
         axisLabel={{ interval: 0, rotate: 0 }}
       />
@@ -75,7 +79,31 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
       <ReportChart<IReportCompanyData>
         data={data as IReportCompanyData[]}
         serieX={"compañia"}
-        series={[{ title: "Solicitudes por Compañía", dataIndex: "noSolicitudes" }]}
+        series={[
+          { title: "Solicitudes por Compañía", dataIndex: "noSolicitudes" },
+        ]}
+        axisLabel={{ interval: 0, rotate: 0 }}
+      />
+    );
+  } else if (
+    report === "canceladas" ||
+    report === "descuento" ||
+    report === "cargo"
+  ) {
+    return (
+      <ReportChart<IReportRequestData>
+        data={data as IReportRequestData[]}
+        serieX={"sucursal"}
+        series={[{ title: "Solicitudes por Sucursal", dataIndex: "cantidad" }]}
+        axisLabel={{ interval: 0, rotate: 0 }}
+      />
+    );
+  } else if (report === "medicos-desglosado") {
+    return (
+      <ReportChart<IMedicalBreakdownData>
+        data={data as IMedicalBreakdownData[]}
+        serieX={"claveMedico"}
+        series={[{ title: "Solicitudes", dataIndex: "noSolicitudes" }]}
         axisLabel={{ interval: 0, rotate: 0 }}
       />
     );

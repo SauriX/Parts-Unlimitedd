@@ -296,6 +296,8 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
           style={{ borderColor: "#87CEFA", marginTop: "40px", marginLeft: "400px", width: "700px;" }}
           onClick={() => {
             setData([]);
+            getStudyOptions();
+            getPackOptions();
           }}
         >
           Remover estudios
