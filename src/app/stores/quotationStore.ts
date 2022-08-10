@@ -139,7 +139,7 @@ export default class QuotationStore {
     try {
       const updatedReagent = await quotation.createSolicitud(reagent);
       alerts.success(messages.updated);
-
+        
       return updatedReagent;
     } catch (error: any) {
       alerts.warning(getErrors(error));

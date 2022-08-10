@@ -167,11 +167,13 @@ const PriceListForm: FC<PriceListFormProps> = ({
       console.log("entro");
       if(active){
         if(typePAck){
+          console.log("paquete");
           let estudiosPaquete = item.pack;
           let estudiosValidar :IPriceListEstudioList[] =[];
-    
+          console.log(estudiosPaquete);
           estudiosPaquete?.forEach(x=>{
-            var estudy = lista.find(y=> y.id === x.id && !y.paqute);
+            var estudy = values.table!.find(y=> y.id === x.id && !y.paqute);
+            console.log(estudy);
             estudiosValidar.push(estudy!);
           });
     
@@ -566,7 +568,149 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ),
     }
   ];
+  const setStudydiscuntc = (decuento:number,item:IPriceListEstudioList,type:boolean) =>{
+    var index = values.table!.findIndex(x=>x.id===item.id&& x.paqute===type);
+    var list = values.table!;
+    item.descuento=(100*decuento/item.precio!);
+    item.descuenNum=decuento;
+    item.precioFinal= item.precio!-decuento;
+    list[index]=item;
+   // setLista(list); 
+    var indexVal= values.table!.findIndex(x=>x.id===item.id && x.paqute===type);
+    var val =values.table!;
+    val[indexVal]=item;
+    setValues((prev) => ({ ...prev, table: val })); 
+       
+    };
 
+    const setStudydiscunt = (decuento:number,item:IPriceListEstudioList,type:boolean) =>{
+  
+      var index = values.table!.findIndex(x=>x.id===item.id && x.paqute===type);
+      var list = values.table!;
+      item.descuento=decuento;
+      item.descuenNum=(item.precio!*decuento/100);
+      item.precioFinal = item.precio!-item.descuenNum;
+      list[index]=item;
+     // setLista(list); 
+      var indexVal= values.table!.findIndex(x=>x.id==item.id && x.paqute===type);
+      var val =values.table!;
+      val[indexVal]=item;
+      setValues((prev) => ({ ...prev, estudio: val })); 
+     
+  };
+
+  const setStudyPricefinal = (preciofinal:number,item:IPriceListEstudioList,type:boolean) =>{
+    var index = values.table!.findIndex(x=>x.id==item.id  && x.paqute===type);
+    var list =values.table!;
+    item.descuento=(100*preciofinal/item.precio!);
+    var decuento = (100*preciofinal/item.precio!);
+    item.descuenNum=(item.precio!*decuento/100);
+    item.precioFinal= preciofinal;
+    list[index]=item;
+   // setLista(list); 
+    var indexVal= values.table!.findIndex(x=>x.id==item.id  && x.paqute===type);
+    var val =values.table!;
+    val[indexVal]=item;
+    setValues((prev) => ({ ...prev, estudio: val })); 
+       
+    };
+  //tabla paquietes
+  const columnsEstudiosP: IColumns<IPriceListEstudioList> = [
+    {
+      ...getDefaultColumnProps("clave", "Clave", {
+        searchState,
+        setSearchState,
+        width: "10%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("nombre", "Nombre", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },    {
+      key: "editarp",
+      dataIndex: "id",
+      title: "Desc %",
+      align: "center",
+      width:  100,
+      render: (value,item) => (
+        <InputNumber type={"number"} readOnly={item.precio==0} min={0}  value={item.descuento}   onChange={(value)=>setStudydiscunt(value,item,item.paqute!)} ></InputNumber>
+      ),
+    },
+    {
+      key: "editarc",
+      dataIndex: "id",
+      title: "Desc cantidad",
+      align: "center",
+      width:  100 ,
+      render: (value,item) => (
+        <InputNumber type={"number"} min={0} readOnly={item.precio==0} value={item.descuenNum}   onChange={(value)=>setStudydiscuntc(value,item,item.paqute!)} ></InputNumber>
+      ),
+    },
+    {
+      key: "editarc",
+      dataIndex: "id",
+      title: "Precio final",
+      align: "center",
+      width:  100 ,
+      render: (value,item) => (
+        <InputNumber type={"number"} min={0} readOnly={item.precio==0} value={item.precioFinal}   onChange={(value)=>setStudyPricefinal(value,item,item.paqute!)} ></InputNumber>
+      ),
+    },
+    {
+      ...getDefaultColumnProps("precio", "Precio", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+      render: (value,item) => (
+        <InputNumber type={"number"}  
+        value={item.precio}  
+        onChange={(value)=>setStudyPrice(value,item,item.paqute!)}
+        readOnly={true}
+        >
+
+        </InputNumber>
+      ),
+    },
+    {
+      ...getDefaultColumnProps("area", "Área", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Añadir",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value,item) => (
+        <Checkbox
+          name="activo"
+          checked={item.activo}
+          
+          onChange={(value1)=>{ 
+            console.log(item, "item")
+            console.log(value1.target.checked); var active= false; 
+            if(value1.target.checked){ 
+              console.log("here check box estudio a listaPrice"); 
+              active= true;}
+              
+              setStudy(active,item,item.paqute!,false,values!)}}
+
+        
+        />
+      ),
+    }
+  ];
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
@@ -789,10 +933,16 @@ const PriceListForm: FC<PriceListFormProps> = ({
                 size="large"
                 columns={printing?columnsEstudios.slice(0,4):columnsEstudios}
                 pagination={false}
-                dataSource={[...(values.table ?? [])]}
+                dataSource={[...(values.table?.filter(x=>!x.paqute) ?? [])]}
                 scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-                />
-
+              />
+              <Table<IPriceListEstudioList>
+                size="large"
+                columns={printing?columnsEstudiosP.slice(0,4):columnsEstudiosP}
+                pagination={false}
+                dataSource={[...(values.table?.filter(x=>x.paqute) ?? [])]}
+                scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+              />
         </div>
       </div>
     </Spin>
