@@ -125,6 +125,7 @@ export default class PromotionStore {
   getPriceById = async (id: string) => {
     try {
       const priceList = await PriceList.getById(id);
+      console.log(priceList,"pricelist");
       return priceList;
     } catch (error: any) {
       if (error.status === responses.notFound) {

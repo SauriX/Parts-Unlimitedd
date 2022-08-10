@@ -157,11 +157,12 @@ const { width: windowWidth } = useWindowDimensions();
           fechaInicial: moment().toDate(),
           fechaFinal:moment().toDate(),
           activo:false,
-          precio: x.precio! ,
+          precio: x.precioFinal!  ,
           paquete:true,
           selectedTags:[],
           departamento:x.departamento
         }
+        console.log(x);
       return data;
        });
 

@@ -82,7 +82,7 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
           label: "Estudios",
           options: studyOptions,
         },
-        {
+        { 
           value: "pack",
           label: "Paquetes",
           options: packOptions,
