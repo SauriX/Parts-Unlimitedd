@@ -11,8 +11,34 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   sucursalId: string;
   clave?: string;
   clavePatologica?: string;
+  parcialidad: boolean;
   registro?: string;
   esNuevo: boolean;
+}
+
+export interface IRequestFilter {}
+
+export interface IRequestInfo extends IRequestBase {
+  clave: string;
+  clavePatologica: string;
+  afiliacion: string;
+  paciente: string;
+  compañia: string;
+  procedencia: string;
+  factura: string;
+  importe: number;
+  descuento: number;
+  total: number;
+  saldo: number;
+  estudios: IRequestStudyInfo[];
+}
+
+export interface IRequestStudyInfo {
+  clave: string;
+  nombre: string;
+  estatusId: number;
+  estatus: string;
+  color: string;
 }
 
 export interface IRequestGeneral extends IRequestBase {
@@ -45,13 +71,13 @@ export interface IRequestSend extends IRequestBase {
 export interface IRequestStudyUpdate extends IRequestBase {
   estudios: IRequestStudy[];
   paquetes?: IRequestPack[];
-  totales?: IRequestTotal;
+  total?: IRequestTotal;
 }
 
 export class RequestStudyUpdate implements IRequestStudyUpdate {
   estudios: IRequestStudy[] = [];
   paquetes: IRequestPack[] = [];
-  totales: IRequestTotal = new RequestTotal();
+  total: IRequestTotal = new RequestTotal();
   solicitudId: string = "";
   expedienteId: string = "";
 
@@ -65,6 +91,8 @@ export interface IRequestStudy {
   estudioId: number;
   clave: string;
   nombre: string;
+  taponId: number;
+  taponColor: string;
   paqueteId?: number;
   paquete?: string;
   listaPrecioId: string;
@@ -75,11 +103,15 @@ export interface IRequestStudy {
   aplicaDescuento: boolean;
   aplicaCargo: boolean;
   aplicaCopago: boolean;
+  departamentoId: number;
+  areaId: number;
   dias: number;
   horas: number;
   precio: number;
   descuento: number;
+  descuentoPorcentaje: number;
   precioFinal: number;
+  nuevo: boolean;
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
 }
@@ -96,11 +128,15 @@ export interface IRequestPack {
   aplicaDescuento: boolean;
   aplicaCargo: boolean;
   aplicaCopago: boolean;
+  departamentoId: number;
+  areaId: number;
   dias: number;
   horas: number;
   precio: number;
   descuento: number;
+  descuentoPorcentaje: number;
   precioFinal: number;
+  nuevo: boolean;
   estudios: IRequestStudy[];
 }
 

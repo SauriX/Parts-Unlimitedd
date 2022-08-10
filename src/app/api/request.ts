@@ -1,14 +1,16 @@
 import {
   IRequest,
+  IRequestFilter,
   IRequestGeneral,
+  IRequestInfo,
   IRequestPartiality,
-  IRequestStudy,
   IRequestStudyUpdate,
   IRequestTotal,
 } from "../models/request";
 import requests from "./agent";
 
 const Request = {
+  getRequests: (filter: IRequestFilter): Promise<IRequestInfo[]> => requests.post("request/filter", filter),
   getById: (recordId: string, requestId: string): Promise<IRequest> =>
     requests.get(`request/${recordId}/${requestId}`),
   getGeneral: (recordId: string, requestId: string): Promise<IRequestGeneral> =>
