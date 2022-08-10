@@ -144,7 +144,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         //console.log("checks seleccionados" ,selectedRowKeys);
         var areaForm = await getareaOptions(values.idDepartamento);
         const user = await getById(idUser);
-        if (user?.sucursalDestinoId == null){
+        if (user?.sucursalDestinoId == null) {
           user!.sucursalDestinoId = user?.maquiladorId!.toString();
         }
         form.setFieldsValue(user!);
@@ -159,8 +159,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         setValues(user!);
         setLista(studis!);
         setLoading(false);
-       
-        
+
         // user!.maquiladorId = value!;
         setSelectedTags(user?.dias!);
       } catch {
@@ -187,15 +186,16 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     route.estudio = lista.filter((x) => x.activo === true);
     route.dias = selectedTags;
     const parent = treeData.find((x) =>
-    x.children.map((x) => x.value).includes(newValues.sucursalDestinoId!));
-    if (parent?.title === "Sucursales"){
+      x.children.map((x) => x.value).includes(newValues.sucursalDestinoId!)
+    );
+    if (parent?.title === "Sucursales") {
       route.maquiladorId = undefined;
       console.log("Llega el valor a SucursalDestino?", route.sucursalDestinoId);
-    }else{
+    } else {
       route.maquiladorId = newValues.sucursalDestinoId;
-      route.sucursalDestinoId= undefined;
+      route.sucursalDestinoId = undefined;
       console.log("Llega el valor a Maquilador?", route.maquiladorId);
-    } 
+    }
     //console.log("checks seleccionados" ,selectedRowKeys);
     let success = false;
     if (!route.id) {
@@ -451,7 +451,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
           </Col>
         )}
       </Row>
-      <div style={{ display: printing ? "" : "none", height: 300 }}></div>
+      <div style={{ display: printing ? "" : "none" }}></div>
       <div style={{ display: printing ? "none" : "" }}>
         <div ref={componentRef}>
           {printing && (
@@ -483,7 +483,17 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                   readonly={readonly}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}></Col>
+              <Col md={12} sm={24} xs={12}>
+                <SelectInput
+                  formProps={{
+                    name: "paqueteriaId",
+                    label: "Paquetería ",
+                  }}
+                  readonly={readonly}
+                  required
+                  options={DeliveryOptions}
+                />
+              </Col>
               <Col md={12} sm={24} xs={12}>
                 <TextInput
                   formProps={{
@@ -495,7 +505,22 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                   readonly={readonly}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}></Col>
+              <Col md={12} sm={24} xs={12}>
+                <div style={{ marginLeft: "145px", marginBottom: "20px" }}>
+                  <span style={{ marginRight: 10 }}>Aplicar días:</span>
+                  {tagsData.map((tag) => (
+                    <CheckableTag
+                      key={tag.id}
+                      checked={
+                        selectedTags.filter((x) => x.id === tag.id).length > 0
+                      }
+                      onChange={(checked) => handleChange(tag, checked)}
+                    >
+                      {tag.dia}
+                    </CheckableTag>
+                  ))}
+                </div>
+              </Col>
               <Col md={12} sm={24} xs={12}>
                 <SelectInput
                   formProps={{
@@ -508,6 +533,20 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                 />
                 {/* <div style={{ marginLeft: "170px", marginBottom: "20px" }}>
                   <span style={{ marginRight: 10 }}>Destino:</span> */}
+              </Col>
+              <Col md={12} sm={24} xs={12}>
+                <NumberInput
+                  formProps={{
+                    name: "horaDeRecoleccion",
+                    label: "Hora de Recolección",
+                  }}
+                  min={7}
+                  max={23}
+                  required
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={12} sm={24} xs={12}>
                 <Form.Item name="sucursalDestinoId" label="Destino">
                   <TreeSelect
                     // style={{ width: "80%" }}
@@ -529,7 +568,18 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                   />
                 </Form.Item>
               </Col>
-              <Col md={12} sm={24} xs={12}></Col>
+              <Col md={12} sm={24} xs={12}>
+                <NumberInput
+                  formProps={{
+                    name: "tiempoDeEntrega",
+                    label: "Tiempo de Entrega",
+                  }}
+                  min={1}
+                  max={9999999999999999}
+                  required
+                  readonly={readonly}
+                />
+              </Col>
               <Col md={12} sm={24} xs={12}>
                 <TextAreaInput
                   formProps={{
@@ -554,173 +604,75 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                   readonly={readonly}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
-                <SelectInput
-                  formProps={{
-                    name: "paqueteriaId",
-                    label: "Paquetería ",
-                  }}
-                  readonly={readonly}
-                  required
-                  options={DeliveryOptions}
-                />
-                <div style={{ marginLeft: "145px", marginBottom: "20px" }}>
-                  <span style={{ marginRight: 10 }}>Aplicar días:</span>
-                  {tagsData.map((tag) => (
-                    <CheckableTag
-                      key={tag.id}
-                      checked={
-                        selectedTags.filter((x) => x.id === tag.id).length > 0
-                      }
-                      onChange={(checked) => handleChange(tag, checked)}
-                    >
-                      {tag.dia}
-                    </CheckableTag>
-                  ))}
-                </div>
-                <NumberInput
-                  formProps={{
-                    name: "horaDeRecoleccion",
-                    label: "Hora de Recolección",
-                  }}
-                  min={7}
-                  max={23}
-                  required
-                  readonly={readonly}
-                />
-                {/* <MaskInput
-                  formProps={{
-                    name: "horaDeRecoleccion",
-                    label: "Hora de Recoleccion",
-                  }}
-                  mask={[
-                    /[0-9]/,
-                    /[0-9]/,
-                    " : ",
-                    "0",
-                    "0 ",
-                  ]}
-                  validator={(_, value: any) => {
-                    if (!value || value.indexOf("_") === -1) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject("El campo debe contener 10 dígitos");
-                  }}
-                  readonly={readonly}
-                  required
-                  /> */}
-                <NumberInput
-                  formProps={{
-                    name: "tiempoDeEntrega",
-                    label: "Tiempo de Entrega",
-                  }}
-                  min={1}
-                  max={9999999999999999}
-                  required
-                  readonly={readonly}
-                />
-                <NumberInput
-                  formProps={{
-                    name: "formatoDeTiempoId",
-                    label: "Días",
-                  }}
-                  min={0}
-                  max={9999999999999999}
-                  readonly={readonly}
-                />
-              </Col>
             </Row>
           </Form>
-          <Divider orientation="left">Asignación de Estudios</Divider>
-          <Row>
-            <Col md={4} sm={24} xs={12}>
-              Búsqueda por :
-            </Col>
-            <Col md={9} sm={24} xs={12}>
-              <label htmlFor="">Departamentos: </label>
-              <Select
-                style={{ width: "350px" }}
-                options={departmentOptions}
-                disabled={readonly}
-                onChange={(value) => {
-                  setAreaId(undefined);
-                  setDepId(value);
-                  filterByDepartament(value);
-                }}
-                allowClear
-                value={depId}
-                placeholder={"Departamentos"}
-              />
-            </Col>
-            <Col md={2} sm={24} xs={12}></Col>
-            <Col md={9} sm={24} xs={12}>
-              <label htmlFor="">Área: </label>
-              <Select
-                /* formProps={{ name: "areaSearch", label: "Área" }} */
-                options={aeraSearch}
-                disabled={readonly}
-                onChange={(value) => {
-                  setAreaId(value);
-                  filterByArea(value);
-                }}
-                value={areaId}
-                allowClear
-                onClear={() => {
-                  setAreaId(undefined);
-                  filterByArea();
-                }}
-                style={{ width: "400px" }}
-                placeholder={"Área"}
-              />
-            </Col>
-            <Col md={15} sm={24} xs={12}></Col>
-            <Col md={9} sm={24} xs={12}>
-              <label htmlFor="">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              </label>
-              <Search
-                style={{
-                  width: "400px",
-                  marginTop: "20px",
-                  marginBottom: "20px",
-                }}
-                key="search"
-                placeholder="Buscar"
-                onSearch={(value) => {
-                  filterBySearch(value);
-                  setSearchvalue(value);
-                }}
-                onChange={(value) => {
-                  setSearchvalue(value.target.value);
-                }}
-                value={searchvalue}
-              />
-              ,
-            </Col>
-            <Col
-              md={24}
-              sm={12}
-              style={{ marginRight: 20, textAlign: "center" }}
-            >
-              {/* <span style={{ marginLeft: 8 }}>
-                {hasSelected
-                  ? `${selectedRowKeys.length} estudios seleccionados  `
-                  : ""}
-              </span> */}
-              <Table<IRouteEstudioList>
-                size="small"
-                rowKey={(record) => record.id}
-                columns={columnsEstudios.slice(0, 6)}
-                pagination={false}
-                dataSource={[...(values.estudio ?? [])]}
-                rowSelection={rowSelection}
-                // scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-                scroll={{ y: 240 }}
-              />
-            </Col>
-          </Row>
         </div>
       </div>
+      <Divider orientation="left">Asignación de Estudios</Divider>
+      <Row>
+        <Col md={4} sm={24} xs={12}>
+          <h3>Búsqueda por</h3>
+        </Col>
+      </Row>
+
+      <Row justify="space-between" gutter={[8, 12]} align="middle">
+        <Col md={8} sm={24} xs={12}>
+          <SelectInput
+            formProps={{
+              name: "departamento",
+              label: "Departamentos",
+            }}
+            options={departmentOptions}
+            onChange={(value) => {
+              setAreaId(undefined);
+              setDepId(value);
+              filterByDepartament(value);
+            }}
+            value={depId}
+            placeholder={"Departamentos"}
+          />
+        </Col>
+        <Col md={8} sm={24} xs={12}>
+          <SelectInput
+            formProps={{ name: "areaSearch", label: "Área" }}
+            options={aeraSearch}
+            onChange={(value) => {
+              setAreaId(value);
+              filterByArea(value);
+            }}
+            value={areaId}
+            placeholder={"Área"}
+          />
+        </Col>
+        <Col md={6} sm={24} xs={12}>
+          <Form.Item name="search" label="" labelAlign="right">
+            <Search
+              key="search"
+              placeholder="Buscar"
+              onSearch={(value) => {
+                filterBySearch(value);
+                setSearchvalue(value);
+              }}
+              onChange={(value) => {
+                setSearchvalue(value.target.value);
+              }}
+              value={searchvalue}
+            />
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row>
+        <Table<IRouteEstudioList>
+          size="small"
+          rowKey={(record) => record.id}
+          columns={columnsEstudios.slice(0, 6)}
+          pagination={false}
+          dataSource={[...(values.estudio ?? [])]}
+          rowSelection={rowSelection}
+          // scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+          scroll={{ y: 240 }}
+        />
+      </Row>
     </Spin>
   );
 };

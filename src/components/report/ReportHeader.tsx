@@ -16,8 +16,14 @@ type ReportHeaderProps = {
 
 const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
   const { reportStore } = useStore();
-  const { currentReport, filter, setCurrentReport, getByFilter, getByChart } =
-    reportStore;
+  const {
+    currentReport,
+    filter,
+    setCurrentReport,
+    getByFilter,
+    getByChart,
+    clearFilter,
+  } = reportStore;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -46,7 +52,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
       setCurrentReport(undefined);
       searchParams.delete("report");
     }
-
+    clearFilter();
     setSearchParams(searchParams);
   };
 

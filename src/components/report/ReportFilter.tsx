@@ -57,7 +57,7 @@ const typeCompanyOptions: IOptions[] = [
 
 const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
   const { reportStore, optionStore } = useStore();
-  const { currentReport, filter, setFilter, getByFilter, getByChart } =
+  const { currentReport, filter, setFilter, getByFilter, getByChart, clearFilter, clear } =
     reportStore;
   const {
     branchCityOptions,
@@ -83,6 +83,10 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
     setShowChart(chartValue);
     setFilter({ ...filter, grafica: chartValue });
   }, [chartValue, setShowChart]);
+
+  useEffect(() => {
+    form.setFieldsValue(filter);
+  }, [clear]) 
 
   const onFinish = async (filter: IReportFilter) => {
     setLoading(true);
