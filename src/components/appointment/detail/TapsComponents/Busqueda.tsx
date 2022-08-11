@@ -266,7 +266,7 @@ const BusquedaForm: FC<GeneralesFormProps> = ({
             <TextInput
               formProps={{
                 name: "telefono",
-                label: "Telefono",
+                label: "Teléfono",
               }}
               max={100}
               //errors={errors.find((x) => x.name === "exp")?.errors}

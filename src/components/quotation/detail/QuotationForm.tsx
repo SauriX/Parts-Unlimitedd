@@ -490,7 +490,7 @@ const QuotationForm: FC<QuotationFormProps> = ({
             </Row>
           </Form>
           <Row>
-            <Col md={18} sm={24} xs={12}>
+            <Col md={17} sm={24} xs={12}>
               <Tabs defaultActiveKey="1">
                 <TabPane tab="Generales" key="1">
                   <GeneralesForm
@@ -522,7 +522,7 @@ const QuotationForm: FC<QuotationFormProps> = ({
                 </TabPane>
               </Tabs>
             </Col>
-            <Col md={6} sm={24} xs={12}>
+            <Col offset={1} md={6} sm={24} xs={12}>
               {id && (
                 <Button
                   style={{
@@ -541,7 +541,7 @@ const QuotationForm: FC<QuotationFormProps> = ({
               {!id && <br />}
               <br />
               <Descriptions
-                labelStyle={{ width: "60%" }}
+                labelStyle={{ width: "50%", marginLeft: "50px" }}
                 className="request-description"
                 bordered
                 column={1}

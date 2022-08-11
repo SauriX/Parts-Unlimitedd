@@ -500,7 +500,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                     setData={setData}
                   ></ExpedientesForm>
                 </TabPane>
-                <TabPane tab="Indiciaciones" key="3">
+                <TabPane tab="Indicaciones" key="3">
                   {/* <IndiciacionesForm data={data} clave={""}></IndiciacionesForm> */}
                   <IndiciacionesForm data={[]} clave={""}></IndiciacionesForm>
                 </TabPane>
@@ -513,7 +513,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                 </TabPane>
               </Tabs>
             </Col>
-            <Col md={5} sm={24} xs={12} style={{ marginLeft: "10px" }}>
+            <Col offset={1} md={6} sm={24} xs={12}>
               {id && (
                 <Button
                   style={{
