@@ -486,7 +486,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                   {type == "domicilio" && (
                     <GeneralesDomForm
                       data={generales}
-                      generales={setGenerales}
+                      generales={setGeneralesDom}
                       handle={generalesSumbit}
                       printing={loading}
                     ></GeneralesDomForm>

@@ -26,7 +26,7 @@ export default class QuotationStore {
   constructor() {
     makeAutoObservable(this);
   }
-
+  studyFilter: IPriceListInfoFilter = {};
   scopes?: IScopes;
   search: ISearchQuotation = new SearchQuotationValues();
   quotatios: IQuotationList[] = [];
@@ -40,6 +40,13 @@ export default class QuotationStore {
 
   clearsearch = () => {
     this.search = new SearchQuotationValues();
+  };
+  setStudyFilter = (branchId?: string, doctorId?: string, companyId?: string) => {
+    this.studyFilter = {
+      sucursalId: branchId,
+      medicoId: doctorId,
+      compañiaId: companyId,
+    };
   };
 
   /*   access = async () => {
@@ -139,7 +146,7 @@ export default class QuotationStore {
     try {
       const updatedReagent = await quotation.createSolicitud(reagent);
       alerts.success(messages.updated);
-        
+
       return updatedReagent;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -164,6 +171,26 @@ export default class QuotationStore {
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
+    }
+  };
+
+  getPriceStudys = async (filter?: IPriceListInfoFilter,id?:number) => {
+    filter!.estudioId=id;
+    try {
+      const price = await PriceList.getPriceStudy(filter);
+      return price;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  getPricePacks = async (filter?: IPriceListInfoFilter,id?:number) => {
+    filter!.paqueteId=id;
+    try {
+      const price = await PriceList.getPricePack(filter);
+      return price;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
     }
   };
 

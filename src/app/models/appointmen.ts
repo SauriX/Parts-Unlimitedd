@@ -14,6 +14,7 @@ export interface generalDomicilio{
     email:string,
     whatssap:string,
     activo:boolean,
+    numero:string
 }
 
 export interface ISearchAppointment{
@@ -136,6 +137,21 @@ export class AppointmentGeneralesFormValues implements IAppointmentGeneralesForm
     whatssap="";
     activo=false;
     constructor(init?:IAppointmentGeneralesForm) {
+        Object.assign(this, init);
+    }
+}
+export class AppointmentGeneralesFormDomValues implements generalDomicilio{
+    recoleccion="";
+    direccion="";
+    general="";
+    nomprePaciente="";
+    observaciones="";
+    tipoEnvio="";
+    email="";
+    whatssap="";
+    activo=false;
+    numero="";
+    constructor(init?:generalDomicilio) {
         Object.assign(this, init);
     }
 }

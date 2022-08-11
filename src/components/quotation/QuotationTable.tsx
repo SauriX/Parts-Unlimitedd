@@ -73,6 +73,7 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
   useEffect(()=>{
     const readData = async()=>{
       await getCity();
+      await getAll(search!); 
     }
     readData();
   },[getCity])
@@ -224,6 +225,10 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
                 <label htmlFor="">Presupuesto/Nombre: </label>
                 <Input value={search.presupuesto} onChange={(value)=>{ setSearch({ ...search,presupuesto:value.target.value  }) }} style={{width:"500px" , marginBottom:"30px"}} type={"text"} placeholder={""}></Input>
             </Col>
+
+            <Col md={6} sm={12}>
+                <Button type="primary" onClick={onfinish}>Buscar</Button>
+            </Col>
             <Col md={5} sm={12}>
             <SwitchInput
                 name="activo"
@@ -233,12 +238,9 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
                 }}
               />
             </Col>
-            <Col md={6} sm={12}>
-                <Button type="primary" onClick={onfinish}>Buscar</Button>
-            </Col>
             <Col xs={8} md={8} sm={12}>
                 <label>Teléfono: </label>
-                <Input max={10} min={10} value={search.telefono} onChange={(value)=>{setSearch({ ...search,telefono:value.target.value  })}}  style={{width:"300px",marginBottom:"30px"}} placeholder={""}></Input>
+                <Input maxLength={10} value={search.telefono} onChange={(value)=>{setSearch({ ...search,telefono:value.target.value  })}}  style={{width:"300px",marginBottom:"30px"}} placeholder={""}></Input>
             </Col>
             <Col xs={8} md={8} sm={12}>
                 <label>Fecha </label>
