@@ -1,18 +1,13 @@
 import moment from "moment";
 
 export interface ICashRegisterData {
-  porDia: IPerDayData[];
-  canceladas: ICanceledPerDayData[];
-  otroDia: IOtherDayData[];
+  porDia: ICommonData[];
+  canceladas: ICommonData[];
+  otroDia: ICommonData[];
+  invoice: Invoice[];
 }
 
-export interface IPerDayData extends CommonData {}
-
-export interface ICanceledPerDayData extends CommonData {}
-
-export interface IOtherDayData extends CommonData {}
-
-interface CommonData {
+interface ICommonData {
   id: string;
   solicitud: string;
   paciente: string;
@@ -29,6 +24,10 @@ interface CommonData {
   fecha: string;
   usuarioModifico: string;
   empresa: string;
+}
+
+interface Invoice {
+
 }
 
 export interface ICashRegisterFilter {
