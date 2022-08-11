@@ -62,7 +62,7 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
   useEffect(() => {
 
     if (searchParams.get("type") == "laboratorio") {
-      console.log("laboratorio");
+      console.log(studyOptionscita,"laboratorio");
       const options: IOptions[] = [
         {
           value: "study",
@@ -78,6 +78,7 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
       setOptions(options);
       console.log(options);
     } else {
+      console.log(studyOptions,"laboratorio");
       const options: IOptions[] = [
         {
           value: "study",
@@ -93,7 +94,7 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
       setOptions(options);
     }
     
-  }, [packOptionscita, studyOptionscita]);
+  }, [packOptionscita, studyOptionscita,studyOptions,packOptions]);
 
   const columns: IColumns<IRequestStudy | IRequestPack> = [
     {
@@ -188,7 +189,7 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
       if (study == null) {
         return;
       }
-
+setTotal(study.precio+total);
       // setData((prev) => [
       //   ...prev,
       //   {

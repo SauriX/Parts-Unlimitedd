@@ -97,9 +97,9 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
   const [generalesSumbit, setGeneralesSumbit] = useState(false);
   const [record, Setrecord] = useState<IProceedingList>();
   const [total, SetTotal] = useState<number>(0);
-  const [totalFinal, SetTotalFinal] = useState<number>();
-  const [cargo, SetCargo] = useState<number>();
-  const [descuento, SetDescuento] = useState<number>();
+  const [totalFinal, SetTotalFinal] = useState<number>(0);
+  const [cargo, SetCargo] = useState<number>(0);
+  const [descuento, SetDescuento] = useState<number>(0);
   const [typo, SetTypo] = useState<number>(1);
   const [typoD, SetTypoD] = useState<number>(1);
   const { TabPane } = Tabs;
@@ -116,7 +116,11 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
   }, [values]);
 
   useEffect(() => {
+
+
     const read = async () => {
+      console.log("here");
+      setValues((prev)=>({...prev,sucursale:profile?.sucursal}));
       if (type == "laboratorio") {
         await getAllLab(search);
       } else {
@@ -202,7 +206,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
   }, [data]);
 
   useEffect(() => {
-    form.setFieldsValue({sucursal:profile?.sucursal});
+
     const readExpedinte = async (id: string) => {
       setLoading(true);
       if (type == "laboratorio") {
@@ -485,7 +489,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                       generales={setGenerales}
                       handle={generalesSumbit}
                       printing={loading}
-                      branchId={values.sucursal}
+                      branchId={profile?.sucursal}
                     ></GeneralesForm>
                   )}
                   {type == "domicilio" && (
@@ -494,7 +498,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                       generales={setGeneralesDom}
                       handle={generalesSumbit}
                       printing={loading}
-                      branchId={values.sucursal}
+                      branchId={profile?.sucursal}
                     ></GeneralesDomForm>
                   )}
                 </TabPane>
@@ -558,6 +562,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                         onChange={(value) => {
                           setTipo(value.target.value, cargo!);
                         }}
+                        disabled={descuento!=0}
                       >
                         %
                       </Radio>
@@ -567,6 +572,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                         onChange={(value) => {
                           setTipo(value.target.value, cargo!);
                         }}
+                        disabled={descuento!=0}
                       >
                         $
                       </Radio>
@@ -576,11 +582,12 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                   <InputNumber
                     min={0}
                     value={cargo}
-                    required
+
                     onChange={(value) => {
                       SetCargo(value);
                       calculateTotalFinal(value, typo);
                     }}
+                    disabled={descuento!=0}
                   ></InputNumber>
                 </Descriptions.Item>
                 <Descriptions.Item
@@ -593,7 +600,9 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                         checked={typoD == 1}
                         onChange={(value) => {
                           setTipoD(value.target.value, descuento!);
+                          
                         }}
+                        disabled={cargo!=0}
                       >
                         %
                       </Radio>
@@ -603,6 +612,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                         onChange={(value) => {
                           setTipoD(value.target.value, descuento!);
                         }}
+                        disabled={cargo!=0}
                       >
                         $
                       </Radio>
@@ -616,6 +626,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                       SetDescuento(value);
                       calculateTotalFinalD(value, typo);
                     }}
+                    disabled={cargo!=0}
                   ></InputNumber>
                 </Descriptions.Item>
                 <Descriptions.Item label="Total">$ {totalFinal}</Descriptions.Item>

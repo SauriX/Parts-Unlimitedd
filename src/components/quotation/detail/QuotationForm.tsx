@@ -229,7 +229,8 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
       var hoy = new Date();
       var cumpleaños = hoy.getFullYear() - edad;
       hoy.setFullYear(cumpleaños);
-      setValues((prev) => ({ ...prev, fechaNacimiento: moment(hoy), edad: edad }));
+      form.setFieldsValue({ edad: edad, fechaNacimiento:moment(hoy) });
+     
     }
     if (field == "fechaNacimiento") {
       const edad = changedValues[field];
