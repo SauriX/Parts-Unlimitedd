@@ -36,7 +36,11 @@ import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
-import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
+import {
+  getDefaultColumnProps,
+  IColumns,
+  ISearch,
+} from "../../../app/common/table/utils";
 import { IFormError, IOptions } from "../../../app/models/shared";
 import moment from "moment";
 import { ITaxData } from "../../../app/models/taxdata";
@@ -62,17 +66,41 @@ type QuotationFormProps = {
   printing: boolean;
 };
 
-const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) => {
+const QuotationForm: FC<QuotationFormProps> = ({
+  id,
+  componentRef,
+  printing,
+}) => {
   const navigate = useNavigate();
-  const { modalStore, locationStore, optionStore, profileStore, quotationStore, priceListStore } = useStore();
-  const { getById, update, create, search, createsolictud, getAll, quotatios, printTicket } = quotationStore;
+  const {
+    modalStore,
+    locationStore,
+    optionStore,
+    profileStore,
+    quotationStore,
+    priceListStore,
+  } = useStore();
+  const {
+    getById,
+    update,
+    create,
+    search,
+    createsolictud,
+    getAll,
+    quotatios,
+    printTicket,
+  } = quotationStore;
   const [data, setData] = useState<IRequestStudy[]>([]);
   const { profile } = profileStore;
   const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
+  const [readonly, setReadonly] = useState(
+    searchParams.get("mode") === "readonly"
+  );
   const [form] = Form.useForm<IQuotationForm>();
-  const [values, setValues] = useState<IQuotationForm>(new QuotationFormValues());
+  const [values, setValues] = useState<IQuotationForm>(
+    new QuotationFormValues()
+  );
   const { getColoniesByZipCode } = locationStore;
   const { openModal, closeModal } = modalStore;
   const [colonies, setColonies] = useState<IOptions[]>([]);
@@ -228,7 +256,11 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
       var hoy = new Date();
       var cumpleaños = hoy.getFullYear() - edad;
       hoy.setFullYear(cumpleaños);
-      setValues((prev) => ({ ...prev, fechaNacimiento: moment(hoy), edad: edad }));
+      setValues((prev) => ({
+        ...prev,
+        fechaNacimiento: moment(hoy),
+        edad: edad,
+      }));
     }
     if (field == "fechaNacimiento") {
       const edad = changedValues[field];
@@ -303,7 +335,9 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
 
     var duplicados = parametrosDuplicados(reagent.estudy);
     if (duplicados.length > 0) {
-      duplicados.forEach((x) => alerts.warning(`El parametro ${x.nombre} sse Encuentra duplicado`));
+      duplicados.forEach((x) =>
+        alerts.warning(`El parametro ${x.nombre} sse Encuentra duplicado`)
+      );
       setLoading(false);
       return;
     }
@@ -349,7 +383,12 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
         )}
         {readonly && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
-            <ImageButton key="edit" title="Editar" image="editar" onClick={setEditMode} />
+            <ImageButton
+              key="edit"
+              title="Editar"
+              image="editar"
+              onClick={setEditMode}
+            />
           </Col>
         )}
       </Row>
@@ -374,13 +413,16 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
             onValuesChange={onValuesChange}
             style={{ marginBottom: "10px" }}
             onFinishFailed={({ errorFields }) => {
-              const errors = errorFields.map((x) => ({ name: x.name[0].toString(), errors: x.errors }));
+              const errors = errorFields.map((x) => ({
+                name: x.name[0].toString(),
+                errors: x.errors,
+              }));
               setErrors(errors);
             }}
             size="small"
           >
             <Row gutter={[0, 12]}>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "nomprePaciente",
@@ -390,10 +432,12 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
                   max={500}
                   showLabel
                   readonly={readonly}
-                  errors={errors.find((x) => x.name === "nomprePaciente")?.errors}
+                  errors={
+                    errors.find((x) => x.name === "nomprePaciente")?.errors
+                  }
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "expediente",
@@ -406,12 +450,11 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
                   errors={errors.find((x) => x.name === "expediente")?.errors}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
                 <NumberInput
                   formProps={{
                     name: "edad",
                     label: "Edad",
-                    style: { width: "130px", marginLeft: "170px" },
                   }}
                   width="small"
                   min={0}
@@ -419,24 +462,24 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
                   errors={errors.find((x) => x.name === "edad")?.errors}
                 ></NumberInput>
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
                 <DateInput
                   formProps={{
                     name: "fechaNacimiento",
                     label: "Fecha de Nacimiento",
-                    style: { width: "430px", marginLeft: "70px" },
+                    labelCol: { span: 10 },
                   }}
-                  width="small"
-                  errors={errors.find((x) => x.name === "fechaNacimiento")?.errors}
+                  errors={
+                    errors.find((x) => x.name === "fechaNacimiento")?.errors
+                  }
                 />
               </Col>
 
-              <Col span={12}>
+              <Col span={8}>
                 <SelectInput
                   formProps={{
                     name: "genero",
                     label: "Género",
-                    style: { width: "165px", marginLeft: "159px" },
                   }}
                   options={[
                     { value: "M", label: "M" },
@@ -508,7 +551,12 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
                 <Descriptions.Item label="Total">$ {total}</Descriptions.Item>
                 <Descriptions.Item
                   label={
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
                       <Text>Cargo</Text>
 
                       <Radio
@@ -534,7 +582,7 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
                 >
                   <InputNumber
                     min={0}
-                    max={typo==1?100:total}
+                    max={typo == 1 ? 100 : total}
                     value={cargo}
                     onChange={(value) => {
                       SetCargo(value);
@@ -542,10 +590,17 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
                     }}
                   ></InputNumber>
                 </Descriptions.Item>
-                <Descriptions.Item label="Total">$ {totalFinal}</Descriptions.Item>
+                <Descriptions.Item label="Total">
+                  $ {totalFinal}
+                </Descriptions.Item>
               </Descriptions>
               <Button
-                style={{ marginTop: "10px", marginLeft: "100px", backgroundColor: "#B4C7E7", color: "white" }}
+                style={{
+                  marginTop: "10px",
+                  marginLeft: "100px",
+                  backgroundColor: "#B4C7E7",
+                  color: "white",
+                }}
                 onClick={async () => {
                   await printTicket();
                 }}

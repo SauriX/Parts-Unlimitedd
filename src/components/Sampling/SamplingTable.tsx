@@ -207,7 +207,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       var datas = await getAll(values!);
       console.log(datas, "daata");
       setSoliCont(datas?.length!);
-      datas?.forEach((x) => studios.push(x.studys));
+      datas?.forEach((x:any) => studios.push(x.studys));
       setStudyCont(studios.length);
       setLoading(false);
     };
@@ -348,7 +348,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                     }}
                   />
                 </Col>
-                <Col span={8}>
+                <Col span={8} style={{textAlign: "right"}}>
                   <Button
                     type="primary"
                     onClick={() => {

@@ -408,7 +408,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
             size="small"
           >
             <Row gutter={[0, 12]}>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "nomprePaciente",
@@ -421,7 +421,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                   errors={errors.find((x) => x.name === "nomprePaciente")?.errors}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "expediente",
@@ -434,12 +434,11 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                   errors={errors.find((x) => x.name === "expediente")?.errors}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
                 <NumberInput
                   formProps={{
                     name: "edad",
                     label: "Edad",
-                    style: { width: "130px", marginLeft: "170px" },
                   }}
                   width="small"
                   min={0}
@@ -447,24 +446,22 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                   errors={errors.find((x) => x.name === "edad")?.errors}
                 ></NumberInput>
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
                 <DateInput
                   formProps={{
                     name: "fechaNacimiento",
                     label: "Fecha de Nacimiento",
-                    style: { width: "430px", marginLeft: "70px" },
+                    labelCol: {span: 10},
                   }}
-                  width="small"
                   errors={errors.find((x) => x.name === "fechaNacimiento")?.errors}
                 />
               </Col>
 
-              <Col span={12}>
+              <Col span={8}>
                 <SelectInput
                   formProps={{
                     name: "genero",
                     label: "Género",
-                    style: { width: "165px", marginLeft: "159px" },
                   }}
                   options={[
                     { value: "M", label: "M" },
