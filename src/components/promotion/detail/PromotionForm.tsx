@@ -64,6 +64,10 @@ const { width: windowWidth } = useWindowDimensions();
     searchedColumn: "",
   });
   const setFechaInicial=(fecha:moment.Moment)=>{
+    if(moment(moment.now())>fecha){
+      alerts.warning("la fecha no puede ser anterior a hoy");
+      return;
+    }
     console.log("fecha1");
     let estudio = estudios.map(x=> {
       let data:IPromotionEstudioList = {
@@ -90,6 +94,10 @@ const { width: windowWidth } = useWindowDimensions();
   };
 
   const setFechaFinal=(fecha:moment.Moment)=>{
+    if(moment(moment.now())>fecha&& fecha>=moment(values.fechaInicial!)){
+      alerts.warning("la fecha no puede ser anterior a hoy");
+      return;
+    }
     let estudio = estudios.map(x=> {
       let data:IPromotionEstudioList = {
         id:x.id,

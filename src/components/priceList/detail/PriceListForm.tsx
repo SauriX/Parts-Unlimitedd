@@ -432,6 +432,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
      
       form.setFieldsValue({ idArea: undefined });
     }
+    if(field){}
   };
 
   const filterByDepartament = async (departament: number) => {
