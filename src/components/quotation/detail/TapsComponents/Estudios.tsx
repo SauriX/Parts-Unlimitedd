@@ -1,4 +1,4 @@
-import { isFocusable } from "@testing-library/user-event/dist/utils";
+  import { isFocusable } from "@testing-library/user-event/dist/utils";
 import { Button, Checkbox, Col, Row, Select, Table, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { FC, useEffect, useState } from "react";
@@ -9,7 +9,7 @@ import {
   ISearch,
 } from "../../../../app/common/table/utils";
 import { IPriceListInfoFilter } from "../../../../app/models/priceList";
-import { IRequestStudy } from "../../../../app/models/request";
+import { IRequestPack, IRequestStudy } from "../../../../app/models/request";
 import { IOptions } from "../../../../app/models/shared";
 import { useStore } from "../../../../app/stores/store";
 import alerts from "../../../../app/util/alerts";
@@ -26,7 +26,7 @@ type RequestStudyProps = {
 
 const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total }) => {
   const { priceListStore, optionStore,quotationStore } = useStore();
-  const {  getPriceStudys, getPricePacks,studyFilter} = quotationStore;
+  const {  getPriceStudys, getPricePacks,studyFilter,studies,packs,isPack,isStudy} = quotationStore;
   const { studyOptions, packOptions, getStudyOptions, getPackOptions, } = optionStore;
 
   const [selectedRows, setSelectedRows] = useState<IRequestStudy[]>([]);
@@ -58,8 +58,9 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
 
     setOptions(options);
   }, [packOptions, studyOptions]);
+  const [selectedStudies, setSelectedStudies] = useState<IRequestStudy[]>([]);
 
-  const columns: IColumns<IRequestStudy> = [
+  const columns: IColumns<IRequestStudy | IRequestPack> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
@@ -75,7 +76,14 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
         width: "30%",
       }),
       render: (value, item) => {
-        return `${value} (${item.parametros.map((x) => x.clave).join(", ")})`;
+        if (isStudy(item)) {
+          return `${value} (${item.parametros.map((x) => x.clave).join(", ")})`;
+        } else {
+          return `${value} (${item.estudios
+            .flatMap((x) => x.parametros)
+            .map((x) => x.clave)
+            .join(", ")})`;
+        }
       },
     },
     {
@@ -134,12 +142,12 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
 
     if (option.group === "study") {
 
-      const study = await getPriceStudys(studyFilter,value);
-      if (study == null) {
+      const studys = await getPriceStudys(studyFilter,value);
+      if (studys == null) {
         return;
       }
-      var totalParcial = total + study.precio;
-      setTotal(totalParcial);
+      setData((prev)=>[...prev,studys]);
+     
       // setData((prev) => [
       //   ...prev,
       //   {
@@ -172,7 +180,7 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
       //     })),
       //   },
       // ]);
-      console.log(study);
+      
     }
 
     if (option.group === "pack") {
@@ -180,6 +188,8 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
       if (pack == null) {
         return;
       }
+
+
       // setData((prev) => [
       //   ...prev,
       //   {
@@ -278,16 +288,23 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
         /> */}
       </Col>
       <Col span={24}>
-        <Table<IRequestStudy>
+      <Table<IRequestStudy | IRequestPack>
           size="small"
-          rowKey={(record) => record.type + "-" + (record.estudioId ?? record.paqueteId)}
+          rowKey={(record) => record.type + "-" + record.clave}
           columns={columns}
-          dataSource={[...data]}
+          dataSource={[...studies, ...packs]}
           pagination={false}
           rowSelection={{
-            onSelect: (value) => {
-              console.log(value, "selected");
+            onSelect: (_item, _selected, c) => {
+              const studies = [
+                ...c.filter((x) => x.type === "study").map((x) => x as IRequestStudy),
+                ...c.filter((x) => x.type === "pack").flatMap((x) => (x as IRequestPack).estudios),
+              ];
+              setSelectedStudies(studies);
             },
+            getCheckboxProps: (item) => ({
+              disabled:false
+            }),
           }}
           sticky
           scroll={{ x: "auto" }}

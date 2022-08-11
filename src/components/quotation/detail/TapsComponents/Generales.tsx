@@ -29,7 +29,7 @@ type GeneralesFormProps = {
     branchId: string | undefined;
   };
 
-
+ 
 const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data,branchId })=>{
     const {optionStore,quotationStore}=useStore();
     const { getMedicOptions,getCompanyOptions,medicOptions: MedicOptions,companyOptions: CompanyOptions } = optionStore;

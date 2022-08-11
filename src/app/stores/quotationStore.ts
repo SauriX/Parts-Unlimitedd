@@ -13,7 +13,7 @@ import {
   ISolicitud,
   SearchQuotationValues,
 } from "../models/quotation";
-import { IRequestGeneral } from "../models/request";
+import { IRequestGeneral, IRequestPack, IRequestStudy } from "../models/request";
 
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -31,6 +31,8 @@ export default class QuotationStore {
   search: ISearchQuotation = new SearchQuotationValues();
   quotatios: IQuotationList[] = [];
   records: IProceedingList[] = [];
+  studies: IRequestStudy[] = [];
+  packs: IRequestPack[] = [];
   setSearch = (value: ISearchQuotation) => {
     this.search = value;
   };
@@ -178,7 +180,35 @@ export default class QuotationStore {
     filter!.estudioId=id;
     try {
       const price = await PriceList.getPriceStudy(filter);
-      return price;
+      const study: IRequestStudy = {
+        ...price,
+        type: "study",
+        estatusId: 0,
+        aplicaCargo: false,
+        aplicaCopago: false,
+        aplicaDescuento: false,
+        nuevo: true,
+      };
+      
+      const repeated = this.studies.filter(function (itm) {
+        return itm.parametros
+          .map((x) => x.id)
+          .filter((x) => study.parametros.map((y) => y.id).indexOf(x) !== -1);
+      });
+
+      if (repeated && repeated.length > 0) {
+        alerts.confirm(
+          "Coincidencias en estudios",
+          "Se encuentran coincidencias en parámetros de solicitud, en estudios: " +
+            repeated.map((x) => x.clave).join(", "),
+          async () => {
+            this.studies.unshift(study);
+          }
+        );
+      } else {
+        this.studies.unshift(study);
+      }
+      return study;
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
@@ -188,12 +218,37 @@ export default class QuotationStore {
     filter!.paqueteId=id;
     try {
       const price = await PriceList.getPricePack(filter);
-      return price;
+      const pack: IRequestPack = {
+        ...price,
+        type: "pack",
+        aplicaCargo: false,
+        aplicaCopago: false,
+        aplicaDescuento: false,
+        nuevo: true,
+        estudios: price.estudios.map((x) => ({
+          ...x,
+          type: "study",
+          aplicaCargo: false,
+          estatusId: 0,
+          aplicaCopago: false,
+          aplicaDescuento: false,
+          nuevo: true,
+        })),
+      };
+      console.log(pack);
+      this.packs.unshift(pack);
+      return pack;
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
   };
+  isPack(obj: IRequestStudy | IRequestPack): obj is IRequestPack {
+    return obj.type === "pack";
+  }
 
+  isStudy(obj: IRequestStudy | IRequestPack): obj is IRequestStudy {
+    return obj.type === "study";
+  } 
   exportList = async (search: ISearchQuotation) => {
     try {
       await quotation.exportList(search);

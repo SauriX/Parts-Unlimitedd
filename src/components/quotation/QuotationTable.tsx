@@ -243,20 +243,20 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
                 <Input maxLength={10} value={search.telefono} onChange={(value)=>{setSearch({ ...search,telefono:value.target.value  })}}  style={{width:"300px",marginBottom:"30px"}} placeholder={""}></Input>
             </Col>
             <Col xs={8} md={8} sm={12}>
-                <label>Fecha </label>
-                <DatePicker  value={moment(search.fechaAlta)} onChange={(value)=>{setSearch({ ...search,fechaAlta:value?.toDate()!  })}} style={{marginLeft:"10px",width:"200px"}} ></DatePicker>
+                <label>Fecha: </label>
+                <DatePicker  value={moment(search.fechaAlta)} onChange={(value)=>{setSearch({ ...search,fechaAlta:value?.toDate()!  })}} style={{width:"200px"}} ></DatePicker>
             </Col>
             <Col xs={8} md={8} sm={12}>
-                <label>Email: </label>
+                <label>Email:</label>
                 <Input  value={search.email} onChange={(value)=>{setSearch({ ...search,email:value.target.value  })}} type={"email"}  style={{width:"300px",marginBottom:"30px"}}></Input>
             </Col>
             <Col xs={8} md={8} sm={12}>
                 <label>Ciudad: </label>
-                <Select value={search.ciudad} options={cityOptions} onChange={(value)=>{setSearch({ ...search,ciudad:value  })}} style={{marginLeft:"10px",width:"300px",marginBottom:"30px"}} ></Select>
+                <Select value={search.ciudad} options={cityOptions} onChange={(value)=>{setSearch({ ...search,ciudad:value  })}} style={{width:"300px",marginBottom:"30px"}} ></Select>
             </Col>
             <Col xs={8} md={8} sm={12}>
                 <label>Sucursal: </label>
-                <Select options={BranchOptions} onChange={(value)=>{setSearch({ ...search,sucursal:value  })}} style={{marginLeft:"10px",width:"300px"}} />
+                <Select options={BranchOptions} onChange={(value)=>{setSearch({ ...search,sucursal:value  })}} style={{width:"300px"}} />
             </Col>
         </Row>
          {/* <VirtualTable columns={columns as any} dataSource={cotizaciones} scroll={{ y: 300, x: '100vw' }} />  */}

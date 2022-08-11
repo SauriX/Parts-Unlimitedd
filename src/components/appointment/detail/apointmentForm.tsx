@@ -202,6 +202,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
   }, [data]);
 
   useEffect(() => {
+    form.setFieldsValue({sucursal:profile?.sucursal});
     const readExpedinte = async (id: string) => {
       setLoading(true);
       if (type == "laboratorio") {
@@ -484,6 +485,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                       generales={setGenerales}
                       handle={generalesSumbit}
                       printing={loading}
+                      branchId={values.sucursal}
                     ></GeneralesForm>
                   )}
                   {type == "domicilio" && (
@@ -492,6 +494,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                       generales={setGeneralesDom}
                       handle={generalesSumbit}
                       printing={loading}
+                      branchId={values.sucursal}
                     ></GeneralesDomForm>
                   )}
                 </TabPane>

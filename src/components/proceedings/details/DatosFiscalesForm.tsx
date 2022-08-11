@@ -207,7 +207,7 @@ const DatosFiscalesForm = ({ local, recordId, onSelectRow }: DatosFiscalesFormPr
                     labelCol: { span: 8 },
                     wrapperCol: { span: 16 },
                   }}
-                  max={100}
+                  max={13}
                   required
                   errors={errors.find((x) => x.name === "rfc")?.errors}
                 />

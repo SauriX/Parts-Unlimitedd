@@ -167,6 +167,7 @@ const QuotationForm: FC<QuotationFormProps> = ({ id, componentRef, printing }) =
     SetTotal(suma);
   }, [data]);
   useEffect(() => {
+    form.setFieldsValue({sucursalId:profile?.sucursal});
     const readExpedinte = async (id: string) => {
       setLoading(true);
       var expediente = await getById(id);

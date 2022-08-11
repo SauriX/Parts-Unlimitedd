@@ -57,6 +57,7 @@ export interface IAppointmentForm{
     generalesDom?:generalDomicilio
     fecha?:moment.Moment
     status?:number
+    sucursal:string
 }
 export interface ISolicitud {
     Id :string;
@@ -171,6 +172,7 @@ export class SearchAppointmentValues implements ISearchAppointment{
     nomprePaciente="";
     genero="";
     edad=0;
+    sucursal="";
     fechaNacimiento= moment( moment.now());
     constructor(init?:IAppointmentForm) {
         Object.assign(this, init);

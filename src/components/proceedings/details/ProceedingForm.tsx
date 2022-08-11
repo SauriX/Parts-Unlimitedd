@@ -468,7 +468,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                     style: { width: "270px", marginLeft: "10px" },
                   }}
                   max={100}
-                  readonly={readonly}
+                  readonly={true}
                 />
               </Col>
 

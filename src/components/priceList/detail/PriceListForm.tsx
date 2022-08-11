@@ -160,6 +160,10 @@ const PriceListForm: FC<PriceListFormProps> = ({
       console.log(listSucursal);
   }
   const setStudy = (active: boolean, item: IPriceListEstudioList,typePAck:boolean,first:boolean=false,values:IPriceListForm) => {
+    if(item.precio==0 && !typePAck){
+      alerts.warning("el estudio debe tener assignado un precio");
+      return;
+    }
     console.log(first,"bandera");
      let estudiosSinPrecio:IPriceListEstudioList[] =[];
     console.log(item,"item");
@@ -167,6 +171,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       console.log("entro");
       if(active){
         if(typePAck){
+
           console.log("paquete");
           let estudiosPaquete = item.pack;
           let estudiosValidar :IPriceListEstudioList[] =[];
