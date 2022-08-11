@@ -95,10 +95,15 @@ export interface IPriceListInfoStudy {
   estudioId: number;
   clave: string;
   nombre: string;
+  taponId:number;
+  taponColor:string;
+  departamentoId: number;
+  areaId: number;
   dias: number;
   horas: number;
   precio: number;
   descuento: number;
+  descuentoPorcentaje: number;
   precioFinal: number;
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
@@ -112,10 +117,13 @@ export interface IPriceListInfoPack {
   paqueteId: number;
   clave: string;
   nombre: string;
+  departamentoId: number;
+  areaId: number;
   dias: number;
   horas: number;
   precio: number;
   descuento: number;
+  descuentoPorcentaje: number;
   precioFinal: number;
   estudios: IPriceListInfoStudy[];
 }

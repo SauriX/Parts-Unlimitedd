@@ -1,0 +1,10 @@
+.ant-collapse.request-filter-collapse > .ant-collapse-item > .ant-collapse-header,
+.ant-collapse.request-filter-collapse > .ant-collapse-item .ant-collapse-content-box {
+  padding-top: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.ant-collapse.request-filter-collapse button ~ button {
+  margin-left: 8px;
+}
