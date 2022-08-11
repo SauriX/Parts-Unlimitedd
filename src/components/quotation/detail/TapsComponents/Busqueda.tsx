@@ -75,6 +75,7 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
 
         }
     };
+    let navigate = useNavigate();
     const columns: IColumns<IProceedingList> = [
         {
           ...getDefaultColumnProps("expediente", "Expediente", {
@@ -164,16 +165,7 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
               title="Editar Expediente"
               icon={<EditOutlined />}
               onClick={() => {
-                handleIdExpediente(expediente);
-                console.log("here");
-                console.log(expediente);
-                handleCotizacion((prev) => ({ ...prev,expedienteid:expediente.id,
-                  expediente:expediente.expediente,
-                  nomprePaciente:expediente.nomprePaciente,
-                  edad:expediente.edad,
-                  fechaNacimiento:moment(expediente.fechaNacimiento.getFullYear(), 'YYYY-MM-DD'),
-                  genero:expediente.genero,
-                }))
+                navigate(`/${views.proceeding}/${value}?&mode=edit`);
               }}
             />
           ),
@@ -242,6 +234,7 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
                             style:{marginTop:"10px",marginBottom:"10px;"}
                             }}
                             max={100}
+                            type={"email"}
                             //errors={errors.find((x) => x.name === "exp")?.errors}
                         />
                     </Col>
@@ -252,7 +245,8 @@ const BusquedaForm:FC<GeneralesFormProps> = ({printing,handleIdExpediente,handle
                             label: "Teléfono",
                             style:{marginTop:"10px",marginBottom:"10px;"}
                             }}
-                            max={100}
+                            max={10}
+
                             //errors={errors.find((x) => x.name === "exp")?.errors}
                         />
                     </Col>

@@ -199,7 +199,14 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
           <Concidencias
             handle={async () => {
               let success = false;
+              tax.forEach(x=> {if(x.id.includes("tempId")){
+                x.id=""
+              }
+              return x; 
+            });
+            console.log(tax);
               reagent.taxData = tax;
+              
               if (!reagent.id) {
                 success = await create(reagent);
               } else {
@@ -370,7 +377,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                     name: "telefono",
                     label: "Teléfono",
                   }}
-                  max={100}
+                  max={10}
                   readonly={readonly}
                 ></TextInput>
               </Col>

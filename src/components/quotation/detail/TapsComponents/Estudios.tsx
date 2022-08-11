@@ -8,6 +8,7 @@ import {
   IColumns,
   ISearch,
 } from "../../../../app/common/table/utils";
+import { IPriceListInfoFilter } from "../../../../app/models/priceList";
 import { IRequestStudy } from "../../../../app/models/request";
 import { IOptions } from "../../../../app/models/shared";
 import { useStore } from "../../../../app/stores/store";
@@ -24,9 +25,9 @@ type RequestStudyProps = {
 };
 
 const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total }) => {
-  const { priceListStore, optionStore } = useStore();
-  const { getPriceStudy, getPricePack } = priceListStore;
-  const { studyOptions, packOptions, getStudyOptions, getPackOptions } = optionStore;
+  const { priceListStore, optionStore,quotationStore } = useStore();
+  const {  getPriceStudys, getPricePacks,studyFilter} = quotationStore;
+  const { studyOptions, packOptions, getStudyOptions, getPackOptions, } = optionStore;
 
   const [selectedRows, setSelectedRows] = useState<IRequestStudy[]>([]);
 
@@ -132,7 +133,8 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
     if (isNaN(value)) return;
 
     if (option.group === "study") {
-      const study = await getPriceStudy();
+
+      const study = await getPriceStudys(studyFilter,value);
       if (study == null) {
         return;
       }
@@ -174,7 +176,7 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
     }
 
     if (option.group === "pack") {
-      const pack = await getPricePack();
+      const pack = await getPricePacks(studyFilter,value);
       if (pack == null) {
         return;
       }

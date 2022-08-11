@@ -62,6 +62,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
   useEffect(()=>{
     const readData = async(search:ISearchMedical)=>{
       await getBranchOptions();
+      await getnow(search!);
     }
 
     readData(search);
@@ -83,7 +84,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
         readPriceList();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [getnow]);
  const onfinish =async ()=>{
   await getnow(search!);
  }
@@ -216,7 +217,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
             </Col>
             <Col xs={8} md={8} sm={12}>
                 <label>Teléfono: </label>
-                <Input value={search.telefono} onChange={(value)=>{setSearch({ ...search,telefono:value.target.value  })}}  style={{width:"300px",marginBottom:"30px"}} placeholder={""}></Input>
+                <Input min={10} max={10} value={search.telefono} onChange={(value)=>{setSearch({ ...search,telefono:value.target.value  })}}  style={{width:"300px",marginBottom:"30px"}} placeholder={""}></Input>
             </Col>
             <Col xs={8} md={8} sm={12}>
                 <label>Fecha Nacimiento: </label>
@@ -228,11 +229,11 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
             </Col>
             <Col xs={8} md={8} sm={12}>
                 <label>Ciudad: </label>
-                <Select value={search.ciudad} options={cityOptions} onChange={(value)=>{setSearch({ ...search,ciudad:value  })}} style={{marginLeft:"10px",width:"300px",marginBottom:"30px"}} ></Select>
+                <Select allowClear value={search.ciudad} options={cityOptions} onChange={(value)=>{setSearch({ ...search,ciudad:value  })}} style={{marginLeft:"10px",width:"300px",marginBottom:"30px"}} ></Select>
             </Col>
             <Col xs={8} md={8} sm={12}>
                 <label>Sucursal: </label>
-                <Select options={BranchOptions} onChange={(value)=>{setSearch({ ...search,sucursal:value  })}} style={{marginLeft:"10px",width:"300px"}} />
+                <Select allowClear options={BranchOptions} onChange={(value)=>{setSearch({ ...search,sucursal:value  })}} style={{marginLeft:"10px",width:"300px"}} />
             </Col>
         </Row>
       <Table<IProceedingList>

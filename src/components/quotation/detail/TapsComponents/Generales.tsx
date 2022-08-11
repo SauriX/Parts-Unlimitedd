@@ -25,17 +25,21 @@ type GeneralesFormProps = {
     printing: boolean;
     generales: React.Dispatch<React.SetStateAction<IQuotationGeneralesForm | undefined>>;
     handle: boolean,
-    data: IQuotationGeneralesForm | undefined
+    data: IQuotationGeneralesForm | undefined,
+    branchId: string | undefined;
   };
 
 
-const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>{
-    const {optionStore}=useStore();
+const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data,branchId })=>{
+    const {optionStore,quotationStore}=useStore();
     const { getMedicOptions,getCompanyOptions,medicOptions: MedicOptions,companyOptions: CompanyOptions } = optionStore;
+    const {setStudyFilter,studyFilter}=quotationStore;
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm<IQuotationGeneralesForm>();
     const [values, setValues] = useState<IQuotationGeneralesForm>(new QuotationGeneralesFormValues());
     const [errors, setErrors] = useState<IFormError[]>([]);
+    const doctorId = Form.useWatch("medico", form);
+    const companyId = Form.useWatch("compañia", form);
     const [type,SetType]=useState("");
     useEffect(()=>{
         form.setFieldsValue(data!);
@@ -81,6 +85,9 @@ const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>{
               }   */
         
     };
+    useEffect(() => {
+        setStudyFilter(branchId, doctorId, companyId);
+      }, [branchId, companyId, doctorId, setStudyFilter]);
     
     const onValuesChange = async (changedValues: IQuotationGeneralesForm) => {
         const field = Object.keys(changedValues)[0];

@@ -21,10 +21,10 @@ import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 
 import TextArea from "antd/lib/input/TextArea";
 import TextAreaInput from "../../../../app/common/form/proposal/TextAreaInput";
-import { AppointmentGeneralesFormValues, IAppointmentGeneralesForm } from "../../../../app/models/appointmen";
+import { AppointmentGeneralesFormDomValues, AppointmentGeneralesFormValues, generalDomicilio, IAppointmentGeneralesForm } from "../../../../app/models/appointmen";
 type GeneralesFormProps = {
     printing: boolean;
-    generales: React.Dispatch<React.SetStateAction<IAppointmentGeneralesForm | undefined>>;
+    generales: React.Dispatch<React.SetStateAction<generalDomicilio | undefined>>;
     handle: boolean,
     data: IAppointmentGeneralesForm | undefined
   };
@@ -34,8 +34,8 @@ const GeneralesDomForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>
     const {optionStore}=useStore();
     const { getMedicOptions,getCompanyOptions,medicOptions: MedicOptions,companyOptions: CompanyOptions } = optionStore;
     const [loading, setLoading] = useState(false);
-    const [form] = Form.useForm<IAppointmentGeneralesForm>();
-    const [values, setValues] = useState<IAppointmentGeneralesForm>(new AppointmentGeneralesFormValues());
+    const [form] = Form.useForm<generalDomicilio>();
+    const [values, setValues] = useState<generalDomicilio>(new AppointmentGeneralesFormDomValues());
     const [errors, setErrors] = useState<IFormError[]>([]);
     const [type,SetType]=useState("");
     useEffect(()=>{
@@ -57,7 +57,7 @@ const GeneralesDomForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>
     useEffect(()=>{
         form.submit();
     },[generales])
-    const onFinish = async (newValues: IAppointmentGeneralesForm) => {
+    const onFinish = async (newValues: generalDomicilio) => {
         const reagent = { ...values, ...newValues };
         console.log("onfinish");
         console.log(reagent);
@@ -103,7 +103,7 @@ const GeneralesDomForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>
     };
     return(
         <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
-            <Form<IAppointmentGeneralesForm>
+            <Form<generalDomicilio>
                 {...formItemLayout}
                 form={form} 
                 name="generales"
@@ -132,7 +132,7 @@ const GeneralesDomForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>
                     <Col span={12}>
                     <TextInput
                             formProps={{
-                                name: "compañia",
+                                name: "direccion",
                                 label: "Dirección",
                             }}
                           required  
@@ -142,7 +142,7 @@ const GeneralesDomForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>
                     <Col span={12}>
                     <TextInput
                             formProps={{
-                                name: "compañia",
+                                name: "numero",
                                 label: "Celular",
                             }}
                             
