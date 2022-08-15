@@ -487,7 +487,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
         ""
       )}
       <br />
-      Solicitudes:{soliCont}&nbsp;&nbsp;&nbsp; Estudios: {studyCont}
+      Solicitudes: {soliCont}&nbsp;&nbsp;&nbsp; Estudios: {studyCont}
       <br />
       <br />
       <Fragment>

@@ -20,7 +20,7 @@ import {
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
-import TextInput from "../../../app/common/form/TextInput";
+import TextInput from "../../../app/common/form/proposal/TextInput";
 import { useStore } from "../../../app/stores/store";
 import { IReagentForm, ReagentFormValues } from "../../../app/models/reagent";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -28,8 +28,8 @@ import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
-import NumberInput from "../../../app/common/form/NumberInput";
-import SelectInput from "../../../app/common/form/SelectInput";
+import NumberInput from "../../../app/common/form/proposal/NumberInput";
+import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
@@ -38,8 +38,9 @@ import { IOptions } from "../../../app/models/shared";
 import DatosFiscalesForm from "./DatosFiscalesForm";
 import Concidencias from "./Concidencias";
 import { IProceedingForm, ISearchMedical, ProceedingFormValues } from "../../../app/models/Proceeding";
-import moment from "moment";
+import moment, { Moment } from "moment";
 import { ITaxData } from "../../../app/models/taxdata";
+import DateInput from "../../../app/common/form/proposal/DateInput";
 type ProceedingFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
@@ -95,7 +96,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
       } else {
         clearLocation();
       }
-      form.setFieldsValue(expediente!);
+      form.setFieldsValue({...expediente!,fechaNacimiento:moment(expediente?.fechaNacimiento)});
       setTax(expediente?.taxData!);
       setValues(expediente!);
       setLoading(false);
@@ -132,9 +133,10 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
     navigate(`/${views.proceeding}/${id}?${searchParams}&mode=edit`);
     setReadonly(false);
   };
-  const calcularEdad = (fecha: Date) => {
+  const calcularEdad = (fecha: Moment) => {
+
     var hoy = new Date();
-    var cumpleanos = fecha;
+    var cumpleanos = fecha.toDate();
     var edad = hoy.getFullYear() - cumpleanos.getFullYear();
     var m = hoy.getMonth() - cumpleanos.getMonth();
 
@@ -144,6 +146,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
     form.setFieldsValue({ edad: edad });
     return edad;
   };
+
   const onValuesChange = async (changedValues: any) => {
     const field = Object.keys(changedValues)[0];
     if (field == "edad") {
@@ -151,7 +154,12 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
       var hoy = new Date();
       var cumpleaños = hoy.getFullYear() - edad;
       hoy.setFullYear(cumpleaños);
-      setValues((prev) => ({ ...prev, fechaNacimiento: hoy }));
+      //setValues((prev) => ({ ...prev, fechaNacimiento: hoy }));
+      form.setFieldsValue({fechaNacimiento:moment(hoy)});
+    }
+    if (field == "fechaNacimiento") {
+      const edad = changedValues[field];
+      calcularEdad(edad);
     }
     if (field === "cp") {
       const zipCode = changedValues[field] as string;
@@ -296,211 +304,254 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
           )}
           {printing && <Divider className="header-divider" />}
           <Form<IProceedingForm>
-            {...formItemLayout}
-            form={form}
-            name="proceeding"
-            initialValues={values}
-            onFinish={onFinish}
-            scrollToFirstError
-            onValuesChange={onValuesChange}
-          >
-            <Row>
-              <Col md={9} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "nombre",
-                    label: "Nombre(s)",
-                    style: { width: "500px" },
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={9} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "apellido",
-                    label: "Apellido (s)",
-                    style: { width: "500px" },
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={6} sm={24} xs={12}></Col>
-              <Col md={9} sm={24} xs={12}></Col>
-              <Col md={7} sm={24} xs={12}></Col>
-              <Col md={8} sm={24} xs={12}></Col>
-              <Col md={5} sm={24} xs={12}>
-                <SelectInput
-                  formProps={{
-                    name: "sexo",
-                    label: "Sexo",
-                    style: { width: "140px", marginLeft:  printing ? "":"73px" },
-                  }}
-                  required
-                  readonly={readonly}
-                  options={[
-                    { value: "M", label: "M" },
-                    { value: "F", label: "F" },
-                  ]}
-                ></SelectInput>
-              </Col>
-              <Col md={8} sm={24} xs={12}>
-                <label htmlFor="">Fecha Nacimiento: </label>
-                <DatePicker
-                  value={moment(values.fechaNacimiento)}
-                  disabled={readonly}
-                  onChange={(value) => {
-                    calcularEdad(value?.toDate()!);
-                    setValues((prev) => ({ ...prev, fechaNacimiento: value?.toDate() }));
-                  }}
-                  style={{ marginLeft: "10px" }}
-                />
-              </Col>
-              <Col md={5} sm={24} xs={12}>
-                <NumberInput
-                  formProps={{
-                    name: "edad",
-                    label: "Edad",
-                    style: { width: "140px" },
-                  }}
-                  min={0}
-                  readonly={readonly}
-                ></NumberInput>
-              </Col>
-              <Col md={5} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "telefono",
-                    label: "Teléfono",
-                  }}
-                  max={10}
-                  readonly={readonly}
-                ></TextInput>
-              </Col>
-              <Col md={7} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "correo",
-                    label: "E-Mail",
-                  }}
-                  type="email"
-                  max={100}
-                  readonly={readonly}
-                ></TextInput>
-              </Col>
+        {...formItemLayout}
+        onFinish={onFinish}
+        onValuesChange={onValuesChange}
+        form={form}
+        size="small"
+        onFinishFailed={error=>{console.log(error)}}
+      >
+        <Row gutter={[0, 12]}>
+          <Col span={12}>
+            <Form.Item
+              label="Nombre"
+              labelCol={{ span: 4 }}
+              wrapperCol={{ span: 20 }}
+              className="no-error-text"
+              help=""
+            >
+              <Input.Group>
+                <Row gutter={8}>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "nombre",
+                        label: "Nombre(s)",
+                        noStyle: true,
+                      }}
+                      max={500}
+                      showLabel
+   
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "apellido",
+                        label: "Apellido(s)",
+                        noStyle: true,
+                      }}
+                      max={500}
+                      showLabel
+                      
+                    />
+                  </Col>
+                </Row>
+              </Input.Group>
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <TextInput
+              formProps={{
+                name: "correo",
+                label: "E-Mail",
+                labelCol: { span: 6 },
+                wrapperCol: { span: 18 },
+              }}
+              max={500}
+              type="email"
+             
+            />
+          </Col>
+          <Col span={4}>
+            <TextInput
+              formProps={{
+                name: "expediente",
+                label: "Exp",
+              }}
+              max={500}
+              
+            />
+          </Col>
+          <Col span={4}>
+            <SelectInput
+              formProps={{
+                name: "sexo",
+                label: "Sexo",
+                labelCol: { span: 12 },
+                wrapperCol: { span: 12 },
+              }}
+              options={[
+                { label: "F", value: "F" },
+                { label: "M", value: "M" },
+              ]}
+              
+            />
+          </Col>
+          <Col span={8}>
+            <DateInput
+              formProps={{
+                name: "fechaNacimiento",
+                label: "Fecha Nacimiento",
+                labelCol: { span: 12 },
+                wrapperCol: { span: 12 },
+              }}
+              
+            />
+          </Col>
+          <Col span={4}>
+            <NumberInput
+              formProps={{
+                name: "edad",
+                label: "Edad",
+                labelCol: { span: 12 },
+                wrapperCol: { span: 12 },
+              }}
+              max={500}
+              min={0}
+              suffix={"años"}
+              
+            />
+          </Col>
+          <Col span={8}>
+            <Form.Item
+              label="Contacto"
+              labelCol={{ span: 6 }}
+              wrapperCol={{ span: 18 }}
+              help=""
+              className="no-error-text"
+            >
+              <Input.Group>
+                <Row gutter={8}>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "telefono",
+                        label: "Teléfono",
+                        noStyle: true,
+                      }}
+                      max={500}
+                      showLabel
+                      
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "celular",
+                        label: "Celular",
+                        noStyle: true,
+                      }}
+                      max={500}
+                      showLabel
+                      
+                    />
+                  </Col>
+                </Row>
+              </Input.Group>
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item
+              label="Dirección"
+              labelCol={{ span: 2 }}
+              wrapperCol={{ span: 22 }}
+              help=""
+              className="no-error-text"
+            >
+              <Input.Group>
+                <Row gutter={8}>
+                  <Col span={2}>
+                    <TextInput
+                      formProps={{
+                        name: "cp",
+                        label: "CP",
+                        noStyle: true,
+                      }}
+                      max={500}
+                      showLabel
+                      
+                    />
+                  </Col>
+                  <Col span={4}>
+                    <TextInput
+                      formProps={{
+                        name: "estado",
+                        label: "Estado",
+                        noStyle: true,
+                      }}
+                      max={500}
+                      showLabel
+                      
+                    />
+                  </Col>
+                  <Col span={5}>
+                    <TextInput
+                      formProps={{
+                        name: "municipio",
+                        label: "Municipio",
+                        noStyle: true,
+                      }}
+                      max={500}
+                      showLabel
+                      
+                    />
+                  </Col>
+                  <Col span={6}>
+                    <SelectInput
+                      formProps={{
+                        name: "colonia",
+                        label: "Colonia",
+                        noStyle: true,
+                      }}
 
-              <Col md={4} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "cp",
-                    label: "CP",
-                    style: { width: "100px", marginLeft: "40px" },
-                  }}
-                  readonly={readonly}
-                  required
-                  max={5}
-                ></TextInput>
-              </Col>
-              <Col md={4} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "estado",
-                    label: "Estado",
-                  }}
-                  max={100}
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={5} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "municipio",
-                    label: "Municipio",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={4} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "celular",
-                    label: "Celular",
-                  }}
-                  readonly={readonly}
-                  max={10}
-                  
-                ></TextInput>
-              </Col>
-
-              <Col md={1} sm={24} xs={12}></Col>
-              <Col md={6} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "calle",
-                    label: "Calle y Número",
-                  }}
-                  max={100}
-                  readonly={readonly}
-                ></TextInput>
-              </Col>
-
-              <Col md={5} sm={24} xs={12}>
-                <SelectInput
-                  formProps={{
-                    name: "colonia",
-                    label: "Colonia",
-                  }}
-                  options={colonies}
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={5} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "expediente",
-                    label: "Exp",
-                    style: { width: "270px", marginLeft: "10px" },
-                  }}
-                  max={100}
-                  readonly={true}
-                />
-              </Col>
-
-              <Col md={24} style={{ textAlign: "center" }}>
-                <Button
-                  onClick={() =>
-                    openModal({
-                      title: "Seleccionar o Ingresar Datos Fiscales",
-                      body: <DatosFiscalesForm></DatosFiscalesForm>,
-                      closable: true,
-                      width: "55%",
-                    })
-                  }
-                  style={{ backgroundColor: "#6EAA46", color: "white", borderColor: "#6EAA46" }}
-                >
-                  Datos Fiscales
-                </Button>
-                <Button onClick={addRequest}>Agregar Solicitud</Button>
-              </Col>
-              <Col md={5} sm={24} xs={12}>
-                <SelectInput
-                  formProps={{
-                    name: "sucursal",
-                    label: "Sucursal",
-                  }}
-                  required
-                  options={BranchOptions}
-                  readonly={readonly && profile!.admin}
-                />
-              </Col>
-            </Row>
-          </Form>
+                      showLabel
+                      options={colonies}
+                    />
+                  </Col>
+                  <Col span={7}>
+                    <TextInput
+                      formProps={{
+                        name: "calle",
+                        label: "Calle",
+                        noStyle: true,
+                      }}
+                      max={500}
+                      showLabel
+                      
+                    />
+                  </Col>
+                </Row>
+              </Input.Group>
+            </Form.Item>
+          </Col>
+          <Col span={16} style={{ textAlign: "end" }}>
+            <Button
+              onClick={() =>
+                openModal({
+                  title: "Seleccionar o Ingresar Datos Fiscales",
+                  body: <DatosFiscalesForm  />,
+                  width: 900,
+                })
+              }
+              style={{ backgroundColor: "#6EAA46", color: "white", borderColor: "#6EAA46" }}
+            >
+              Datos Fiscales
+            </Button>
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              formProps={{
+                name: "sucursal",
+                label: "Sucursal",
+                labelCol: { span: 6 },
+                wrapperCol: { span: 18 },
+              }}
+              options={BranchOptions}
+            />
+          </Col>
+        </Row>
+      </Form>
         </div>
       </div>
     </Spin>

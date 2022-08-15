@@ -121,6 +121,9 @@ export default class QuotationStore {
         x.nombre = parametros!.nombre;
         x.indicaciones = parametros?.indicaciones!;
         x.clave = parametros?.clave!;
+        x.areaId=parametros?.area!
+        x.departamentoId=parametros?.departamento!
+        x.taponId=Number(parametros?.tapon!)
       });
       console.log(reagent, "cotizacion");
       return reagent;
