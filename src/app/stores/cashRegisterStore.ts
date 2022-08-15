@@ -4,7 +4,7 @@ import alerts from "../util/alerts";
 import history from "../util/history";
 import { getErrors } from "../util/utils";
 import moment from "moment";
-import { CashRegisterFilterValues, ICashRegisterData, ICashRegisterFilter } from "../models/cashRegister";
+import { CashRegisterData, CashRegisterFilterValues, ICashRegisterData, ICashRegisterFilter } from "../models/cashRegister";
 import CashRegister from "../api/cashRegister";
 
 export default class CashRegisterStore {
@@ -15,7 +15,7 @@ export default class CashRegisterStore {
   scopes?: IScopes;
   filter: ICashRegisterFilter = new CashRegisterFilterValues();
   clear: boolean = false;
-  cashRegisterData: ICashRegisterData[] = [];
+  cashRegisterData: ICashRegisterData = new CashRegisterData();
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -29,7 +29,7 @@ export default class CashRegisterStore {
     const emptyFilter: ICashRegisterFilter = {
       sucursalId: [],
       tipoCompañia: [],
-      fecha: moment(Date.now()),
+      fechaIndividual: moment(Date.now()),
       hora: [moment().hour(0), moment().hour(23)],
     };
     this.filter = emptyFilter;
@@ -53,7 +53,7 @@ export default class CashRegisterStore {
       this.cashRegisterData = data;
     } catch (error: any) {
       alerts.warning(getErrors(error));
-      this.cashRegisterData = [];
+      this.cashRegisterData = new CashRegisterData();
     }
   };
 

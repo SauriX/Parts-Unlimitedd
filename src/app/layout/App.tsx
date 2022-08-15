@@ -3,6 +3,7 @@ import "../../App.less";
 import ReagentDetail from "../../components/reagent/detail/ReagentDetail";
 import MedicsDetail from "../../components/medics/detail/MedicsDetail";
 import IndicationDetail from "../../components/indication/detail/IndicationDetail";
+import EquipmentDetails from "../../components/equipment/detail/EquipmentDetails";
 import UserDetail from "../../components/user/detail/UserDetail";
 import NewUser from "../../components/user/detail/NewUser";
 import Home from "../../views/Home";
@@ -60,6 +61,7 @@ import CashRegister from "../../views/CashRegister";
 import DatosFiscalesForm from "../../components/proceedings/details/DatosFiscalesForm";
 import ApointmentDetail from "../../components/appointment/detail/apointmentDetail";
 import Sampling from "../../views/Sampling";
+import Equipment from "../../views/Equipment";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -102,6 +104,8 @@ function App() {
             <Route path="users" element={<User />} />
             <Route path="users/:id" element={<UserDetail />} />
             <Route path="new-user" element={<NewUser />} />
+            <Route path="equipment" element={<Equipment />} />
+            <Route path="equipment/:id" element={<EquipmentDetails />} />
             <Route path="roles" element={<Role />} />
             <Route path="reagents" element={<Reagent />} />
             <Route path="reagents/new" element={<ReagentDetail />} />
@@ -122,7 +126,10 @@ function App() {
             <Route path="branches/new-sucursal" element={<BranchDetail />} />
             <Route path="branches/:id" element={<BranchDetail />} />
             <Route path="parameters" element={<Parameters />} />
-            <Route path="parameters/new-parameter" element={<ParameterDetail />} />
+            <Route
+              path="parameters/new-parameter"
+              element={<ParameterDetail />}
+            />
             <Route path="parameters/:id" element={<ParameterDetail />} />
             <Route path="maquila" element={<Maquilador />} />
             <Route path="maquila/:id" element={<MaquiladorDetail />} />

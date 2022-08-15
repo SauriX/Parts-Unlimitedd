@@ -95,6 +95,8 @@ export const expandablePriceConfig = {
     </div>
   ),
   rowExpandable: () => true,
+  defaultExpandAllRows: true,
+  // expandable: {defaultExpandAllRows: true}
 };
 
 export default getCompanyStatsColumns;
