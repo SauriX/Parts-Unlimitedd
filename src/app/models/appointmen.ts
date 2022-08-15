@@ -14,6 +14,7 @@ export interface generalDomicilio{
     email:string,
     whatssap:string,
     activo:boolean,
+    numero:string
 }
 
 export interface ISearchAppointment{
@@ -56,6 +57,7 @@ export interface IAppointmentForm{
     generalesDom?:generalDomicilio
     fecha?:moment.Moment
     status?:number
+    sucursal:string
 }
 export interface ISolicitud {
     Id :string;
@@ -139,6 +141,21 @@ export class AppointmentGeneralesFormValues implements IAppointmentGeneralesForm
         Object.assign(this, init);
     }
 }
+export class AppointmentGeneralesFormDomValues implements generalDomicilio{
+    recoleccion="";
+    direccion="";
+    general="";
+    nomprePaciente="";
+    observaciones="";
+    tipoEnvio="";
+    email="";
+    whatssap="";
+    activo=false;
+    numero="";
+    constructor(init?:generalDomicilio) {
+        Object.assign(this, init);
+    }
+}
 export class SearchAppointmentValues implements ISearchAppointment{
     fecha= [moment(Date.now()),moment(Date.now())];
     nombre= ""
@@ -155,6 +172,7 @@ export class SearchAppointmentValues implements ISearchAppointment{
     nomprePaciente="";
     genero="";
     edad=0;
+    sucursal="";
     fechaNacimiento= moment( moment.now());
     constructor(init?:IAppointmentForm) {
         Object.assign(this, init);

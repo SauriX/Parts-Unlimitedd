@@ -414,15 +414,18 @@ export default class OptionStore {
   getStudyOptionscita = async (area:string) => {
     try {
       const studyOptions = await Study.getActive();
+      console.log(studyOptions,"studis");
       var studyOptionsf = studyOptions.filter(x=>x.area==area);
-      this.studyOptions = studyOptionsf.map((x) => ({
+      console.log(studyOptionsf,"filter");
+      var test= studyOptionsf.map((x) => ({
         key: "study-" + x.id,
         value: "study-" + x.id,
         label: x.clave + " - " + x.nombre,
         group: "study",
       }));
+      console.log(test,"final");
     } catch (error) {
-      this.studyOptions = [];
+      this.studyOptionscita = [];
     }
   };
   packOptions: IOptions[] = [];
@@ -446,14 +449,14 @@ export default class OptionStore {
     try {
       const packOptions = await Pack.getActive();
       var packOptionsf = packOptions.filter(x=>x.area==area);
-      this.packOptions = packOptionsf.map((x) => ({
+      this.packOptionscita = packOptionsf.map((x) => ({
         key: "pack-" + x.id,
         value: "pack-" + x.id,
         label: x.clave + " - " + x.nombre,
         group: "pack",
       }));
     } catch (error) {
-      this.packOptions = [];
+      this.packOptionscita = [];
     }
   };
   CompanyOptions: IOptions[] = [];

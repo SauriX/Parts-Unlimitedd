@@ -3,8 +3,8 @@ import { ITaxData } from "./taxdata";
 export interface ISearchMedical {
   expediente: string;
   telefono: string;
-  fechaNacimiento: Date;
-  fechaAlta: Date;
+  fechaNacimiento?: Date;
+  fechaAlta?: Date;
   ciudad: string;
   sucursal: string;
 }

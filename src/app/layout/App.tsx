@@ -53,9 +53,11 @@ import views from "../util/view";
 import Appointment from "../../views/Appointment";
 import ProceedingDetail from "../../components/proceedings/details/ProceedingDetail";
 import Request from "../../views/Request";
+import RequestDetail from "../../components/request/detail/RequestDetail";
 import Quotation from "../../views/Quotation";
 import QuotationDetail from "../../components/quotation/detail/QuotationDetail";
 import Report from "../../views/Report";
+import CashRegister from "../../views/CashRegister";
 import DatosFiscalesForm from "../../components/proceedings/details/DatosFiscalesForm";
 import ApointmentDetail from "../../components/appointment/detail/apointmentDetail";
 import Sampling from "../../views/Sampling";
@@ -159,38 +161,16 @@ function App() {
             <Route path="samplings/:id" element={<Sampling />} />
             <Route path="samplings/new" element={<Sampling />} />
             <Route path="reports" element={<Report />} />
+            <Route path="cash" element={<CashRegister />} />
             <Route path={views.appointment} element={<Appointment />} />
-            <Route
-              path={`${views.appointment}/:id`}
-              element={<ApointmentDetail />}
-            />
-            <Route
-              path={`${views.appointment}/new`}
-              element={<ApointmentDetail />}
-            />
-            <Route path={`${views.request}/:recordId`} element={<Request />} />
-            <Route
-              path={`${views.request}/:recordId/:requestId`}
-              element={<Request />}
-            />
-            <Route
-              path="forbidden"
-              element={
-                <ErrorComponent status={403} message={messages.forbidden} />
-              }
-            />
-            <Route
-              path="error"
-              element={
-                <ErrorComponent status={500} message={messages.serverError} />
-              }
-            />
-            <Route
-              path="*"
-              element={
-                <ErrorComponent status={404} message={messages.notFound} />
-              }
-            />
+            <Route path={`${views.appointment}/:id`} element={<ApointmentDetail />} />
+            <Route path={`${views.appointment}/new`} element={<ApointmentDetail />} />
+            <Route path={`${views.request}`} element={<Request />} />
+            <Route path={`${views.request}/:recordId`} element={<RequestDetail />} />
+            <Route path={`${views.request}/:recordId/:requestId`} element={<RequestDetail />} />
+            <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
+            <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
+            <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />
           </Route>
         </Route>
       </Routes>

@@ -31,6 +31,7 @@ import AppointmentStore from "./appointmentStore";
 import { IReportData } from "../models/report";
 import NotificationStore from "./notificationStore";
 import SamplingStore from "./samplingStore";
+import CashRegisterStore from "./cashRegisterStore";
 
 configure({
   enforceActions: "never",
@@ -63,6 +64,7 @@ interface Store {
   procedingStore: ProcedingStore;
   quotationStore: QuotationStore;
   reportStore: ReportStore;
+  cashRegisterStore: CashRegisterStore;
   requestStore: RequestStore;
   appointmentStore: AppointmentStore;
   notificationStore: NotificationStore;
@@ -96,6 +98,7 @@ export const store: Store = {
   procedingStore: new ProcedingStore(),
   quotationStore: new QuotationStore(),
   reportStore: new ReportStore(),
+  cashRegisterStore: new CashRegisterStore(),
   requestStore: new RequestStore(),
   appointmentStore: new AppointmentStore(),
   notificationStore: new NotificationStore(),

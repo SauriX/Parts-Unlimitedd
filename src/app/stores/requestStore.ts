@@ -4,7 +4,9 @@ import Request from "../api/request";
 import { IPriceListInfoFilter } from "../models/priceList";
 import {
   IRequest,
+  IRequestFilter,
   IRequestGeneral,
+  IRequestInfo,
   IRequestPack,
   IRequestPartiality,
   IRequestStudy,
@@ -41,6 +43,7 @@ export default class RequestStore {
   }
 
   studyFilter: IPriceListInfoFilter = {};
+  requests: IRequestInfo[] = [];
   request?: IRequest;
   totals: IRequestTotal = new RequestTotal();
   studies: IRequestStudy[] = [];
@@ -53,7 +56,11 @@ export default class RequestStore {
         solicitudId: this.request.solicitudId!,
         paquetes: this.packs,
         estudios: this.studies,
-        totales: this.totals,
+        total: {
+          ...this.totals,
+          expedienteId: this.request.expedienteId,
+          solicitudId: this.request.solicitudId!,
+        },
       };
       return data;
     }
@@ -145,6 +152,12 @@ export default class RequestStore {
     }
   };
 
+  setPartiality = (apply: boolean) => {
+    if (this.request) {
+      this.request.parcialidad = apply;
+    }
+  };
+
   setTotals = (totals: IRequestTotal) => {
     this.totals = totals;
     this.calculateTotals();
@@ -157,6 +170,15 @@ export default class RequestStore {
     } catch (error) {
       alerts.warning(getErrors(error));
       history.push("/notFound");
+    }
+  };
+
+  getRequests = async (filter: IRequestFilter) => {
+    try {
+      const requests = await Request.getRequests(filter);
+      this.requests = requests;
+    } catch (error) {
+      alerts.warning(getErrors(error));
     }
   };
 
@@ -177,20 +199,11 @@ export default class RequestStore {
     try {
       const data = await Request.getStudies(recordId, requestId);
       if (data.paquetes && data.paquetes.length > 0) {
-        data.paquetes.forEach((v, i, a) => {
-          a[i].estudios.forEach((v, i, a) => {
-            a[i].parametros = [];
-            a[i].indicaciones = [];
-          });
-        });
         this.packs = data.paquetes;
       }
-      data.estudios.forEach((v, i, a) => {
-        a[i].parametros = [];
-        a[i].indicaciones = [];
-      });
       this.studies = data.estudios;
-      console.log(data);
+      this.totals = data.total ?? new RequestTotal();
+      this.calculateTotals();
       return data;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -210,10 +223,30 @@ export default class RequestStore {
         aplicaCargo: false,
         aplicaCopago: false,
         aplicaDescuento: false,
+        nuevo: true,
       };
 
       console.log(study);
-      this.studies.unshift(study);
+
+      const repeated = this.studies.filter(function (itm) {
+        return itm.parametros
+          .map((x) => x.id)
+          .filter((x) => study.parametros.map((y) => y.id).indexOf(x) !== -1);
+      });
+
+      if (repeated && repeated.length > 0) {
+        alerts.confirm(
+          "Coincidencias en estudios",
+          "Se encuentran coincidencias en parámetros de solicitud, en estudios: " +
+            repeated.map((x) => x.clave).join(", "),
+          async () => {
+            this.studies.unshift(study);
+          }
+        );
+      } else {
+        this.studies.unshift(study);
+      }
+
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -232,6 +265,7 @@ export default class RequestStore {
         aplicaCargo: false,
         aplicaCopago: false,
         aplicaDescuento: false,
+        nuevo: true,
         estudios: price.estudios.map((x) => ({
           ...x,
           type: "study",
@@ -239,6 +273,7 @@ export default class RequestStore {
           aplicaCargo: false,
           aplicaCopago: false,
           aplicaDescuento: false,
+          nuevo: true,
         })),
       };
 
@@ -311,10 +346,34 @@ export default class RequestStore {
     }
   };
 
+  deleteStudy = async (id: number) => {
+    this.studies = this.studies.filter((x) => x.estudioId !== id);
+  };
+
+  deletePack = async (id: number) => {
+    this.packs = this.packs.filter((x) => x.paqueteId !== id);
+  };
+
   cancelStudies = async (request: IRequestStudyUpdate) => {
     try {
       await Request.cancelStudies(request);
       alerts.success(messages.updated);
+
+      const ids = request.estudios.map((x) => x.estudioId);
+
+      this.studies = this.studies.map((x) => {
+        x.estatusId = ids.includes(x.estudioId) ? status.requests.cancelado : x.estatusId;
+        return x;
+      });
+
+      this.packs = this.packs.map((x) => {
+        x.estudios = x.estudios.map((y) => {
+          y.estatusId = ids.includes(y.estudioId) ? status.requests.cancelado : y.estatusId;
+          return y;
+        });
+        return x;
+      });
+
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));

@@ -9,7 +9,7 @@ import {
   IColumns,
   ISearch,
 } from "../../../../app/common/table/utils";
-import { IRequestStudy } from "../../../../app/models/request";
+import { IRequestPack, IRequestStudy } from "../../../../app/models/request";
 import { IOptions } from "../../../../app/models/shared";
 import { useStore } from "../../../../app/stores/store";
 import alerts from "../../../../app/util/alerts";
@@ -23,10 +23,10 @@ type RequestStudyProps = {
   setData: React.Dispatch<React.SetStateAction<IRequestStudy[]>>;
   setTotal: React.Dispatch<React.SetStateAction<number>>;
 };
-
+ 
 const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total }) => {
-  const { priceListStore, optionStore } = useStore();
-  const { getPriceStudy, getPricePack } = priceListStore;
+  const { priceListStore, optionStore,appointmentStore } = useStore();
+  const {getPricePacks,getPriceStudys,isStudy,isPack,packs,studies,setStudyFilter,studyFilter}=appointmentStore;
   const {
     studyOptionscita,
     packOptionscita,
@@ -47,17 +47,22 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
   });
 
   useEffect(() => {
-    if (searchParams.get("type") == "laboratorio") {
-      getStudyOptionscita("Imagenologia");
-      getPackOptionscita("Imagenologia");
-    } else {
-      getStudyOptions();
-      getPackOptions();
+    const getdata = async ()=>{
+      if (searchParams.get("type") == "laboratorio") {
+        await getStudyOptionscita("Imagenologia");
+        await getPackOptionscita("Imagenologia");
+      } else {
+        await getStudyOptions();
+        await getPackOptions();
+      }
     }
+    getdata();
   }, [getPackOptionscita, getStudyOptionscita, getPackOptions, getStudyOptions]);
 
   useEffect(() => {
+
     if (searchParams.get("type") == "laboratorio") {
+      console.log(studyOptionscita,"laboratorio");
       const options: IOptions[] = [
         {
           value: "study",
@@ -71,14 +76,16 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
         },
       ];
       setOptions(options);
+      console.log(options);
     } else {
+      console.log(studyOptions,"laboratorio");
       const options: IOptions[] = [
         {
           value: "study",
           label: "Estudios",
           options: studyOptions,
         },
-        {
+        { 
           value: "pack",
           label: "Paquetes",
           options: packOptions,
@@ -86,9 +93,10 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
       ];
       setOptions(options);
     }
-  }, [packOptionscita, studyOptionscita]);
+    
+  }, [packOptionscita, studyOptionscita,studyOptions,packOptions]);
 
-  const columns: IColumns<IRequestStudy> = [
+  const columns: IColumns<IRequestStudy | IRequestPack> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
@@ -104,7 +112,14 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
         width: "30%",
       }),
       render: (value, item) => {
-        return `${value} (${item.parametros.map((x) => x.clave).join(", ")})`;
+        if (isStudy(item)) {
+          return `${value} (${item.parametros.map((x) => x.clave).join(", ")})`;
+        } else {
+          return `${value} (${item.estudios
+            .flatMap((x) => x.parametros)
+            .map((x) => x.clave)
+            .join(", ")})`;
+        }
       },
     },
     {
@@ -170,12 +185,11 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
     if (isNaN(value)) return;
 
     if (option.group === "study") {
-      const study = await getPriceStudy();
+      const study = await getPriceStudys(studyFilter,value);
       if (study == null) {
         return;
       }
-      var totalParcial = total + study.precio;
-      setTotal(totalParcial);
+setTotal(study.precio+total);
       // setData((prev) => [
       //   ...prev,
       //   {
@@ -212,7 +226,7 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
     }
 
     if (option.group === "pack") {
-      const pack = await getPricePack();
+      const pack = await getPricePacks(studyFilter,value);
       if (pack == null) {
         return;
       }
@@ -279,6 +293,7 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
       ];
     });
   };
+  const [selectedStudies, setSelectedStudies] = useState<IRequestStudy[]>([]);
 
   return (
     <Row gutter={[8, 8]}>
@@ -314,16 +329,23 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
         /> */}
       </Col>
       <Col span={24}>
-        <Table<IRequestStudy>
+      <Table<IRequestStudy | IRequestPack>
           size="small"
-          rowKey={(record) => record.type + "-" + (record.estudioId ?? record.paqueteId)}
+          rowKey={(record) => record.type + "-" + record.clave}
           columns={columns}
-          dataSource={[...data]}
+          dataSource={[...studies, ...packs]}
           pagination={false}
           rowSelection={{
-            onSelect: (value) => {
-              console.log(value, "selected");
+            onSelect: (_item, _selected, c) => {
+              const studies = [
+                ...c.filter((x) => x.type === "study").map((x) => x as IRequestStudy),
+                ...c.filter((x) => x.type === "pack").flatMap((x) => (x as IRequestPack).estudios),
+              ];
+              setSelectedStudies(studies);
             },
+            getCheckboxProps: (item) => ({
+              disabled:false
+            }),
           }}
           sticky
           scroll={{ x: "auto" }}

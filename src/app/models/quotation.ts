@@ -36,6 +36,8 @@ export interface IQuotationForm{
     cargo?:number
     typo?: number
     sucursalId?:string
+    departamentoId?:number;
+    areaId?:number;
 }
 export interface ISolicitud {
     Id :string;
