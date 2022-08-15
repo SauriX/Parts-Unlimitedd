@@ -8,14 +8,14 @@ import { useStore } from "../../app/stores/store";
 
 const { Search } = Input;
 
-type IndicationsHeaderProps = {
+type EquipmentHeaderProps = {
   handlePrint: () => void;
 };
 
-const IndicationHeader: FC<IndicationsHeaderProps> = ({ handlePrint }) => {
+const EquipmentHeader: FC<EquipmentHeaderProps> = ({ handlePrint }) => {
   const navigate = useNavigate();
-  const { indicationStore } = useStore();
-  const { exportList } = indicationStore;
+  const { equipmentStore } = useStore();
+  const { exportList } = equipmentStore;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -29,9 +29,7 @@ const IndicationHeader: FC<IndicationsHeaderProps> = ({ handlePrint }) => {
   return (
     <PageHeader
       ghost={false}
-      title={
-        <HeaderTitle title="Catálogo de Indicaciones" image="Indicaciones" />
-      }
+      title={<HeaderTitle title="Administración de Equipos" image="equipo" />}
       className="header-container"
       extra={[
         <ImageButton
@@ -58,7 +56,7 @@ const IndicationHeader: FC<IndicationsHeaderProps> = ({ handlePrint }) => {
           key="new"
           type="primary"
           onClick={() => {
-            navigate("/indications/0");
+            navigate("/equipment/0");
           }}
           icon={<PlusOutlined />}
         >
@@ -69,4 +67,4 @@ const IndicationHeader: FC<IndicationsHeaderProps> = ({ handlePrint }) => {
   );
 };
 
-export default IndicationHeader;
+export default EquipmentHeader;

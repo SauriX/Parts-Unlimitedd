@@ -3,6 +3,7 @@ import "../../App.less";
 import ReagentDetail from "../../components/reagent/detail/ReagentDetail";
 import MedicsDetail from "../../components/medics/detail/MedicsDetail";
 import IndicationDetail from "../../components/indication/detail/IndicationDetail";
+import EquipmentDetails from "../../components/equipment/detail/EquipmentDetails";
 import UserDetail from "../../components/user/detail/UserDetail";
 import NewUser from "../../components/user/detail/NewUser";
 import Home from "../../views/Home";
@@ -58,6 +59,7 @@ import Report from "../../views/Report";
 import DatosFiscalesForm from "../../components/proceedings/details/DatosFiscalesForm";
 import ApointmentDetail from "../../components/appointment/detail/apointmentDetail";
 import Sampling from "../../views/Sampling";
+import Equipment from "../../views/Equipment";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -100,6 +102,8 @@ function App() {
             <Route path="users" element={<User />} />
             <Route path="users/:id" element={<UserDetail />} />
             <Route path="new-user" element={<NewUser />} />
+            <Route path="equipment" element={<Equipment />} />
+            <Route path="equipment/:id" element={<EquipmentDetails />} />
             <Route path="roles" element={<Role />} />
             <Route path="reagents" element={<Reagent />} />
             <Route path="reagents/new" element={<ReagentDetail />} />
@@ -120,7 +124,10 @@ function App() {
             <Route path="branches/new-sucursal" element={<BranchDetail />} />
             <Route path="branches/:id" element={<BranchDetail />} />
             <Route path="parameters" element={<Parameters />} />
-            <Route path="parameters/new-parameter" element={<ParameterDetail />} />
+            <Route
+              path="parameters/new-parameter"
+              element={<ParameterDetail />}
+            />
             <Route path="parameters/:id" element={<ParameterDetail />} />
             <Route path="maquila" element={<Maquilador />} />
             <Route path="maquila/:id" element={<MaquiladorDetail />} />
@@ -153,13 +160,37 @@ function App() {
             <Route path="samplings/new" element={<Sampling />} />
             <Route path="reports" element={<Report />} />
             <Route path={views.appointment} element={<Appointment />} />
-            <Route path={`${views.appointment}/:id`} element={<ApointmentDetail />} />
-            <Route path={`${views.appointment}/new`} element={<ApointmentDetail />} />
+            <Route
+              path={`${views.appointment}/:id`}
+              element={<ApointmentDetail />}
+            />
+            <Route
+              path={`${views.appointment}/new`}
+              element={<ApointmentDetail />}
+            />
             <Route path={`${views.request}/:recordId`} element={<Request />} />
-            <Route path={`${views.request}/:recordId/:requestId`} element={<Request />} />
-            <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
-            <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
-            <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />
+            <Route
+              path={`${views.request}/:recordId/:requestId`}
+              element={<Request />}
+            />
+            <Route
+              path="forbidden"
+              element={
+                <ErrorComponent status={403} message={messages.forbidden} />
+              }
+            />
+            <Route
+              path="error"
+              element={
+                <ErrorComponent status={500} message={messages.serverError} />
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <ErrorComponent status={404} message={messages.notFound} />
+              }
+            />
           </Route>
         </Route>
       </Routes>
