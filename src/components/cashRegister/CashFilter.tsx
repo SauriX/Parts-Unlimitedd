@@ -54,6 +54,7 @@ const CashRegisterFilter = () => {
     await getByFilter(filter);
     setFilter(filter);
     setLoading(false);
+    console.log(filter);
   };
 
   return (
@@ -70,7 +71,7 @@ const CashRegisterFilter = () => {
             <Row justify="space-between" gutter={[12, 12]}>
               <Col span={8}>
                 <DateInput
-                  formProps={{ label: "Fecha", name: "fecha" }}
+                  formProps={{ label: "Fecha", name: "fechaIndividual" }}
                   required={true}
                 />
               </Col>
@@ -98,7 +99,7 @@ const CashRegisterFilter = () => {
           </Col>
           <Col span={2} style={{ textAlign: "right" }}>
             <Button key="new" type="primary" htmlType="submit">
-              Filtrar
+              Mostrar listado
             </Button>
           </Col>
         </Row>

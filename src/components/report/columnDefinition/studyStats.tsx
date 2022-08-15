@@ -3,6 +3,7 @@ import { IReportData } from "../../../app/models/report";
 import { getDefaultColumnProps } from "../../../app/common/table/utils";
 import { Card, Descriptions, List } from "antd";
 import moment from "moment";
+import { useState } from "react";
 
 const getStudyStatsColumns = (
   searchState: ISearch,
@@ -98,6 +99,7 @@ export const expandableStudyConfig = {
     </div>
   ),
   rowExpandable: () => true,
+  defaultExpandAllRows: true,
 };
 
 export default getStudyStatsColumns;

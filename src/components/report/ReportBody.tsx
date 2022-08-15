@@ -22,7 +22,7 @@ type ReportDefaultProps = {
 
 const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
   const { reportStore } = useStore();
-  const { reportData, chartData, currentReport } = reportStore;
+  const { reportData, chartData, currentReport, filter } = reportStore;
   const [loading, setLoading] = useState(false);
   const [dataChart, setDataChart] = useState<any[]>([]);
 
@@ -76,7 +76,7 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
       setColumns([]);
       setExpandable(undefined);
     }
-  }, [currentReport, searchState]);
+  }, [currentReport, searchState, filter]);
 
   useEffect(() => {
     if (

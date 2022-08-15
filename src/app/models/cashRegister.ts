@@ -1,13 +1,13 @@
 import moment from "moment";
 
 export interface ICashRegisterData {
-  porDia: ICommonData[];
-  canceladas: ICommonData[];
-  otroDia: ICommonData[];
-  invoice: Invoice[];
+  perDay: ICommonData[];
+  canceled: ICommonData[];
+  otherDay: ICommonData[];
+  cashTotal: Invoice;
 }
 
-interface ICommonData {
+export interface ICommonData {
   id: string;
   solicitud: string;
   paciente: string;
@@ -21,29 +21,55 @@ interface ICommonData {
   pp: number;
   total: number;
   saldo: number;
-  fecha: string;
+  fecha: Date;
   usuarioModifico: string;
   empresa: string;
 }
 
-interface Invoice {
-
+export interface Invoice {
+  sumaEfectivo: number;
+  sumaTDC: number;
+  sumaTransferencia: number;
+  sumaCheque: number;
+  sumaTDD: number;
+  total: number;
 }
 
 export interface ICashRegisterFilter {
-    sucursalId: string[];
-    tipoCompañia: number[];
-    fecha: moment.Moment;
-    hora: moment.Moment[];
+  sucursalId: string[];
+  tipoCompañia: number[];
+  fechaIndividual: moment.Moment;
+  hora: moment.Moment[];
+}
+
+export class CashRegisterFilterValues implements ICashRegisterFilter {
+  sucursalId = [];
+  tipoCompañia = [];
+  fechaIndividual = moment(Date.now());
+  hora = [
+    moment().hour(7).minutes(0).utc(),
+    moment().hour(19).minutes(0).utc(),
+  ];
+
+  constructor(init?: ICashRegisterFilter) {
+    Object.assign(this, init);
   }
-  
-  export class CashRegisterFilterValues implements ICashRegisterFilter {
-    sucursalId = [];
-    tipoCompañia = [];
-    fecha = moment(Date.now());
-    hora = [moment().hour(0), moment().hour(23)];
-  
-    constructor(init?: ICashRegisterFilter) {
-      Object.assign(this, init);
-    }
+}
+
+export class CashRegisterData implements ICashRegisterData {
+  perDay = [];
+  canceled = [];
+  otherDay = [];
+  cashTotal = {
+    sumaEfectivo: 0,
+    sumaTDC: 0,
+    sumaTransferencia: 0,
+    sumaCheque: 0,
+    sumaTDD: 0,
+    total: 0,
+  };
+
+  constructor(init?: ICashRegisterData) {
+    Object.assign(this, init);
   }
+}

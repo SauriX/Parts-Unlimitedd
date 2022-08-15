@@ -161,7 +161,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
   }
   const setStudy = (active: boolean, item: IPriceListEstudioList,typePAck:boolean,first:boolean=false,values:IPriceListForm) => {
     if(item.precio==0 && !typePAck){
-      alerts.warning("el estudio debe tener assignado un precio");
+      alerts.warning("El estudio debe tener asignado un precio");
       return;
     }
     console.log(first,"bandera");
