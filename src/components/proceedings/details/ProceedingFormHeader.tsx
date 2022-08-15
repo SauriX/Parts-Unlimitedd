@@ -35,7 +35,7 @@ const ProceedingFormHeader: FC<ProceedingProps> = ({ handlePrint, handleDownload
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="EXPEDIENTE"  />}
+      title={<HeaderTitle title="EXPEDIENTE"  image="expediente" />}
       className="header-container"
       extra={[
         id &&/* scopes?.imprimir && */  <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

@@ -5,6 +5,7 @@ import ReagentStore from "./reagentStore";
 import MedicsStore from "./medicsStore";
 import UserStore from "./userStore";
 import IndicationStore from "./indicationStore";
+import EquipmentStore from "./equipmentStore";
 import CatalogStore from "./catalogStore";
 import OptionStore from "./optionStore";
 import RoleStore from "./roleStore";
@@ -47,6 +48,7 @@ interface Store {
   medicsStore: MedicsStore;
   companyStore: CompanyStore;
   indicationStore: IndicationStore;
+  equipmentStore: EquipmentStore;
   catalogStore: CatalogStore;
   roleStore: RoleStore;
   locationStore: LocationStore;
@@ -66,7 +68,7 @@ interface Store {
   requestStore: RequestStore;
   appointmentStore: AppointmentStore;
   notificationStore: NotificationStore;
-  samplig:SamplingStore;
+  samplig: SamplingStore;
 }
 
 export const store: Store = {
@@ -80,6 +82,7 @@ export const store: Store = {
   medicsStore: new MedicsStore(),
   companyStore: new CompanyStore(),
   indicationStore: new IndicationStore(),
+  equipmentStore: new EquipmentStore(),
   catalogStore: new CatalogStore(),
   roleStore: new RoleStore(),
   locationStore: new LocationStore(),

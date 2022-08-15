@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Divider, Input, InputNumber, PageHeader, Row, Select, Table } from "antd";
+import { Button, Col, Collapse, DatePicker, Divider, Form, Input, InputNumber, PageHeader, Row, Select, Table } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
@@ -14,9 +14,16 @@ import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import views from "../../app/util/view";
-import { IProceedingList, ISearchMedical, ProceedingFormValues, SearchMedicalFormValues } from "../../app/models/Proceeding";
+import { IProceedingForm, IProceedingList, ISearchMedical, ProceedingFormValues, SearchMedicalFormValues } from "../../app/models/Proceeding";
 import moment from "moment";
 
+import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
+import SelectInput from "../../app/common/form/proposal/SelectInput";
+import TextInput from "../../app/common/form/proposal/TextInput";
+import { formItemLayout } from "../../app/util/utils";
+import { useForm } from "antd/lib/form/Form";
+import DateInput from "../../app/common/form/proposal/DateInput";
+const {Panel}=Collapse
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
@@ -50,7 +57,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
   let navigate = useNavigate();
 
   const { width: windowWidth } = useWindowDimensions();
-
+  const [form] = useForm();
   const [loading, setLoading] = useState(false);
   //const [search,SetSearch] = useState<ISearchMedical>(new SearchMedicalFormValues())
   const [searchState, setSearchState] = useState<ISearch>({
@@ -93,7 +100,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
       ...getDefaultColumnProps("expediente", "Expediente", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -121,7 +128,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
         ...getDefaultColumnProps("genero", "Genero", {
           searchState,
           setSearchState,
-          width: "5%",
+          width: "10%",
           minWidth: 150,
           windowSize: windowWidth,
         }),
@@ -202,40 +209,71 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
 
   return (
     <Fragment>
-        <Row>
-            <Col md={18} sm={12}>
-                <label htmlFor="">Expediente/Nombre/Codigo de barras/Huella digital: </label>
-                <Input 
-                value={search.expediente} 
-                onChange={(value)=>{setSearch({ ...search,expediente:value.target.value  })}} 
-                style={{width:"600px" , marginBottom:"30px"}} 
-                type={"text"} 
-                placeholder={""}></Input>
-            </Col>
-            <Col md={6} sm={12}>
-                <Button type="primary" onClick={onfinish}>Buscar</Button>
-            </Col>
-            <Col xs={8} md={8} sm={12}>
-                <label>Teléfono: </label>
-                <Input min={10} max={10} value={search.telefono} onChange={(value)=>{setSearch({ ...search,telefono:value.target.value  })}}  style={{width:"300px",marginBottom:"30px"}} placeholder={""}></Input>
-            </Col>
-            <Col xs={8} md={8} sm={12}>
-                <label>Fecha Nacimiento: </label>
-                <DatePicker  value={moment(search.fechaNacimiento)} onChange={(value)=>{setSearch({ ...search,fechaNacimiento:value?.toDate()!  })}} style={{marginLeft:"10px",width:"200px"}} ></DatePicker>
-            </Col>
-            <Col xs={8} md={8} sm={12}>
-                <label>Fecha Alta Exp.: </label>
-                <DatePicker value={moment(search.fechaAlta)}  onChange={(value)=>{setSearch({ ...search,fechaAlta:value?.toDate()!  })}} style={{marginLeft:"10px",width:"200px"}} ></DatePicker>
-            </Col>
-            <Col xs={8} md={8} sm={12}>
-                <label>Ciudad: </label>
-                <Select allowClear value={search.ciudad} options={cityOptions} onChange={(value)=>{setSearch({ ...search,ciudad:value  })}} style={{marginLeft:"10px",width:"300px",marginBottom:"30px"}} ></Select>
-            </Col>
+ {/*        <Row>
+
+
+
+
+
             <Col xs={8} md={8} sm={12}>
                 <label>Sucursal: </label>
                 <Select allowClear options={BranchOptions} onChange={(value)=>{setSearch({ ...search,sucursal:value  })}} style={{marginLeft:"10px",width:"300px"}} />
             </Col>
-        </Row>
+        </Row> */}
+            <Collapse ghost className="request-filter-collapse">
+      <Panel
+        header="Filtros"
+        key="filter"
+        extra={[
+          <Button
+            key="clean"
+            onClick={(e) => {
+              e.preventDefault();
+              form.resetFields();
+            }}
+          >
+            Limpiar
+          </Button>,
+          <Button
+            key="filter"
+            type="primary"
+            onClick={(e) => {
+              e.preventDefault();
+            }}
+          >
+            Filtrar
+          </Button>,
+        ]}
+      >
+        <Form<IProceedingForm> {...formItemLayout} form={form} size="small">
+          <Row gutter={[0, 12]}>
+   
+          <Col span={8}>
+              <DateRangeInput formProps={{ name: "fechaAlta", label: "Fecha de alta" }} />
+            </Col>
+            <Col span={16}>
+              <TextInput formProps={{ name: "expediente", label: "Expediente/Nombre/Codigo de barras/Huella digital" ,labelCol:{span:12}}} />
+            </Col>
+            <Col span={8}>
+              <TextInput formProps={{ name: "telefono", label: "Telefono" }} />
+            </Col>
+            <Col span={8}>
+              <DateInput formProps={{ name: "fechaNacimiento", label: "Fecha nacimiento" }} />
+            </Col>
+
+            <Col span={8}>
+              <SelectInput formProps={{ name: "ciudad", label: "Ciudad" }}  options={cityOptions} />
+            </Col>
+
+
+            <Col span={8}>
+              <SelectInput formProps={{ name: "sucursal", label: "Sucursal" }}  options={BranchOptions} />
+            </Col>
+
+          </Row>
+        </Form>
+      </Panel>
+    </Collapse>.
       <Table<IProceedingList>
         loading={loading || printing}
         size="small"
