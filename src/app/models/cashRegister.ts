@@ -47,8 +47,8 @@ export class CashRegisterFilterValues implements ICashRegisterFilter {
   tipoCompañia = [];
   fechaIndividual = moment(Date.now());
   hora = [
-    moment().hour(7).minutes(0).utc(),
-    moment().hour(19).minutes(0).utc(),
+    moment().hour(7).minutes(0).utcOffset(0, true),
+    moment().hour(19).minutes(0).utcOffset(0, true),
   ];
 
   constructor(init?: ICashRegisterFilter) {

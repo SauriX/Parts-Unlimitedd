@@ -3,7 +3,7 @@ import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import { getErrors } from "../util/utils";
-import moment from "moment";
+import moment from "moment-timezone";
 import { CashRegisterData, CashRegisterFilterValues, ICashRegisterData, ICashRegisterFilter } from "../models/cashRegister";
 import CashRegister from "../api/cashRegister";
 
@@ -29,8 +29,8 @@ export default class CashRegisterStore {
     const emptyFilter: ICashRegisterFilter = {
       sucursalId: [],
       tipoCompañia: [],
-      fechaIndividual: moment(Date.now()),
-      hora: [moment().hour(0), moment().hour(23)],
+      fechaIndividual: moment(Date.now()).tz("America/Monterrey"),
+      hora: [moment().hour(7).tz("America/Monterrey"), moment().tz("America/Monterrey").hour(19)],
     };
     this.filter = emptyFilter;
     this.clear = !this.clear;
