@@ -1,11 +1,4 @@
-.ant-descriptions.request-description {
-  .ant-descriptions-row {
-    th,
-    td {
-      padding: 4px 4px;
-    }
-  }
-
+[data-theme="light"] {
   .ant-descriptions-row:nth-child(even) {
     th,
     td {
@@ -26,6 +19,65 @@
       background-color: #4f81bd;
       color: white;
       font-weight: bold;
+    }
+  }
+}
+
+[data-theme="dark"] {
+  .ant-descriptions-row:nth-child(even) {
+    th,
+    td {
+      background-color: #303030;
+    }
+  }
+
+  .ant-descriptions-row:nth-child(odd) {
+    th,
+    td {
+      background-color: #404040;
+    }
+  }
+
+  .ant-descriptions-row:first-child {
+    th,
+    td {
+      background-color: #525252;
+      color: white;
+      font-weight: bold;
+    }
+  }
+}
+
+[data-theme="yellow"] {
+  .ant-descriptions-row:nth-child(even) {
+    th,
+    td {
+      background-color: #e9d297;
+    }
+  }
+
+  .ant-descriptions-row:nth-child(odd) {
+    th,
+    td {
+      background-color: #ebdbb2;
+    }
+  }
+
+  .ant-descriptions-row:first-child {
+    th,
+    td {
+      background-color: #b9a162;
+      color: white;
+      font-weight: bold;
+    }
+  }
+}
+
+.ant-descriptions.request-description {
+  .ant-descriptions-row {
+    th,
+    td {
+      padding: 4px 4px;
     }
   }
 

@@ -5,15 +5,15 @@ const { Text } = Typography;
 
 type DropdownOptionProps = {
   option: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   onClick: () => void;
 };
 
 const DropdownOption: FC<DropdownOptionProps> = ({ option, icon, onClick }) => {
   return (
     <Row className="menu-options" onClick={onClick}>
-      <Col span={6}>{icon}</Col>
-      <Col span={18}>
+      {icon && <Col span={6}>{icon}</Col>}
+      <Col span={icon ? 18 : 24}>
         <Text>{option}</Text>
       </Col>
     </Row>
