@@ -40,6 +40,7 @@ export interface IStudiesData {
   id: string;
   clave: string;
   estudio: string;
+  paquete: string;
   estatus: string;
   precio: number;
   precioFinal: number;

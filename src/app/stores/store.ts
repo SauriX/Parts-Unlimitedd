@@ -5,6 +5,7 @@ import ReagentStore from "./reagentStore";
 import MedicsStore from "./medicsStore";
 import UserStore from "./userStore";
 import IndicationStore from "./indicationStore";
+import EquipmentStore from "./equipmentStore";
 import CatalogStore from "./catalogStore";
 import OptionStore from "./optionStore";
 import RoleStore from "./roleStore";
@@ -30,6 +31,7 @@ import AppointmentStore from "./appointmentStore";
 import { IReportData } from "../models/report";
 import NotificationStore from "./notificationStore";
 import SamplingStore from "./samplingStore";
+import CashRegisterStore from "./cashRegisterStore";
 
 configure({
   enforceActions: "never",
@@ -46,6 +48,7 @@ interface Store {
   medicsStore: MedicsStore;
   companyStore: CompanyStore;
   indicationStore: IndicationStore;
+  equipmentStore: EquipmentStore;
   catalogStore: CatalogStore;
   roleStore: RoleStore;
   locationStore: LocationStore;
@@ -61,10 +64,11 @@ interface Store {
   procedingStore: ProcedingStore;
   quotationStore: QuotationStore;
   reportStore: ReportStore;
+  cashRegisterStore: CashRegisterStore;
   requestStore: RequestStore;
   appointmentStore: AppointmentStore;
   notificationStore: NotificationStore;
-  samplig:SamplingStore;
+  samplig: SamplingStore;
 }
 
 export const store: Store = {
@@ -78,6 +82,7 @@ export const store: Store = {
   medicsStore: new MedicsStore(),
   companyStore: new CompanyStore(),
   indicationStore: new IndicationStore(),
+  equipmentStore: new EquipmentStore(),
   catalogStore: new CatalogStore(),
   roleStore: new RoleStore(),
   locationStore: new LocationStore(),
@@ -93,6 +98,7 @@ export const store: Store = {
   procedingStore: new ProcedingStore(),
   quotationStore: new QuotationStore(),
   reportStore: new ReportStore(),
+  cashRegisterStore: new CashRegisterStore(),
   requestStore: new RequestStore(),
   appointmentStore: new AppointmentStore(),
   notificationStore: new NotificationStore(),

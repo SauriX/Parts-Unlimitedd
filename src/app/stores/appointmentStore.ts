@@ -8,6 +8,10 @@ import responses from "../util/responses";
 import messages from "../util/messages";
 import { IAppointmentForm, IAppointmentList, IExportForm, ISearchAppointment, SearchAppointmentValues } from "../models/appointmen";
 import Study from "../api/study";
+import { IRequestPack, IRequestStudy } from "../models/request";
+import { IPriceListInfoFilter } from "../models/priceList";
+import { IProceedingList } from "../models/Proceeding";
+import PriceList from "../api/priceList";
 export default class AppoinmentStore {
   constructor() {
     makeAutoObservable(this);
@@ -15,6 +19,10 @@ export default class AppoinmentStore {
   sucursales!:IAppointmentList[];
   sucursal!:IAppointmentForm;
   search:ISearchAppointment = new SearchAppointmentValues;
+  records: IProceedingList[] = [];
+  studies: IRequestStudy[] = [];
+  packs: IRequestPack[] = [];
+  studyFilter: IPriceListInfoFilter = {};
   setSearch= (value:ISearchAppointment)=>{
     this.search=value;
 };
@@ -28,7 +36,13 @@ export default class AppoinmentStore {
       history.push("/forbidden");
     }
   };
-
+  setStudyFilter = (branchId?: string, doctorId?: string, companyId?: string) => {
+    this.studyFilter = {
+      sucursalId: branchId,
+      medicoId: doctorId,
+      compañiaId: companyId,
+    };
+  };
   createLab = async (reagent: IAppointmentForm) => {
     try {
         console.log("here");
@@ -170,5 +184,77 @@ export default class AppoinmentStore {
       }
     }
   }; 
+  getPriceStudys = async (filter?: IPriceListInfoFilter,id?:number) => {
+    filter!.estudioId=id;
+    try {
+      const price = await PriceList.getPriceStudy(filter);
+      const study: IRequestStudy = {
+        ...price,
+        type: "study",
+        estatusId: 0,
+        aplicaCargo: false,
+        aplicaCopago: false,
+        aplicaDescuento: false,
+        nuevo: true,
+      };
+      
+      const repeated = this.studies.filter(function (itm) {
+        return itm.parametros
+          .map((x) => x.id)
+          .filter((x) => study.parametros.map((y) => y.id).indexOf(x) !== -1);
+      });
 
+      if (repeated && repeated.length > 0) {
+        alerts.confirm(
+          "Coincidencias en estudios",
+          "Se encuentran coincidencias en parámetros de solicitud, en estudios: " +
+            repeated.map((x) => x.clave).join(", "),
+          async () => {
+            this.studies.unshift(study);
+          }
+        );
+      } else {
+        this.studies.unshift(study);
+      }
+      return study;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  getPricePacks = async (filter?: IPriceListInfoFilter,id?:number) => {
+    filter!.paqueteId=id;
+    try {
+      const price = await PriceList.getPricePack(filter);
+      const pack: IRequestPack = {
+        ...price,
+        type: "pack",
+        aplicaCargo: false,
+        aplicaCopago: false,
+        aplicaDescuento: false,
+        nuevo: true,
+        estudios: price.estudios.map((x) => ({
+          ...x,
+          type: "study",
+          aplicaCargo: false,
+          estatusId: 0,
+          aplicaCopago: false,
+          aplicaDescuento: false,
+          nuevo: true,
+        })),
+      };
+      console.log(pack);
+      this.packs.unshift(pack);
+      return pack;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  isPack(obj: IRequestStudy | IRequestPack): obj is IRequestPack {
+    return obj.type === "pack";
+  }
+
+  isStudy(obj: IRequestStudy | IRequestPack): obj is IRequestStudy {
+    return obj.type === "study";
+  } 
 }

@@ -25,6 +25,7 @@
     "mobx": "^6.5.0",
     "mobx-react-lite": "^3.4.0",
     "moment": "^2.29.1",
+    "moment-timezone": "^0.5.34",
     "rc-resize-observer": "^1.2.0",
     "react": "^18.1.0",
     "react-beforeunload": "^2.5.3",

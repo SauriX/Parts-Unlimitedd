@@ -18,7 +18,7 @@ const IndicationHeader: FC<IndicationsHeaderProps> = ({ handlePrint }) => {
   const { exportList } = indicationStore;
 
   const [searchParams, setSearchParams] = useSearchParams();
-  
+
   console.log("Header");
 
   const download = () => {
@@ -29,18 +29,31 @@ const IndicationHeader: FC<IndicationsHeaderProps> = ({ handlePrint }) => {
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Indicaciones" image="Indicaciones" />}
+      title={
+        <HeaderTitle title="Catálogo de Indicaciones" image="Indicaciones" />
+      }
       className="header-container"
       extra={[
-        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        <ImageButton key="doc" title="Informe" image="doc" onClick={download} />,
-        <Search 
-        key="search" 
-        placeholder="Buscar" 
-        //defaultValue={searchParams.get("search") ?? ""}
-        onSearch={(value) => {
-          setSearchParams({ search: !value ? "all" : value });
-        }} />,
+        <ImageButton
+          key="print"
+          title="Imprimir"
+          image="print"
+          onClick={handlePrint}
+        />,
+        <ImageButton
+          key="doc"
+          title="Informe"
+          image="doc"
+          onClick={download}
+        />,
+        <Search
+          key="search"
+          placeholder="Buscar"
+          //defaultValue={searchParams.get("search") ?? ""}
+          onSearch={(value) => {
+            setSearchParams({ search: !value ? "all" : value });
+          }}
+        />,
         <Button
           key="new"
           type="primary"

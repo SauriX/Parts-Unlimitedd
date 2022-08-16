@@ -92,7 +92,7 @@ export interface IRequestStudy {
   clave: string;
   nombre: string;
   taponId: number;
-  taponColor: string;
+  taponColor:string;
   paqueteId?: number;
   paquete?: string;
   listaPrecioId: string;

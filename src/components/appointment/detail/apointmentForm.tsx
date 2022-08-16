@@ -97,9 +97,9 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
   const [generalesSumbit, setGeneralesSumbit] = useState(false);
   const [record, Setrecord] = useState<IProceedingList>();
   const [total, SetTotal] = useState<number>(0);
-  const [totalFinal, SetTotalFinal] = useState<number>();
-  const [cargo, SetCargo] = useState<number>();
-  const [descuento, SetDescuento] = useState<number>();
+  const [totalFinal, SetTotalFinal] = useState<number>(0);
+  const [cargo, SetCargo] = useState<number>(0);
+  const [descuento, SetDescuento] = useState<number>(0);
   const [typo, SetTypo] = useState<number>(1);
   const [typoD, SetTypoD] = useState<number>(1);
   const { TabPane } = Tabs;
@@ -116,7 +116,11 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
   }, [values]);
 
   useEffect(() => {
+
+
     const read = async () => {
+      console.log("here");
+      setValues((prev)=>({...prev,sucursale:profile?.sucursal}));
       if (type == "laboratorio") {
         await getAllLab(search);
       } else {
@@ -202,6 +206,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
   }, [data]);
 
   useEffect(() => {
+
     const readExpedinte = async (id: string) => {
       setLoading(true);
       if (type == "laboratorio") {
@@ -408,7 +413,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
             size="small"
           >
             <Row gutter={[0, 12]}>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "nomprePaciente",
@@ -421,7 +426,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                   errors={errors.find((x) => x.name === "nomprePaciente")?.errors}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "expediente",
@@ -434,12 +439,11 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                   errors={errors.find((x) => x.name === "expediente")?.errors}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
                 <NumberInput
                   formProps={{
                     name: "edad",
                     label: "Edad",
-                    style: { width: "130px", marginLeft: "170px" },
                   }}
                   width="small"
                   min={0}
@@ -447,24 +451,22 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                   errors={errors.find((x) => x.name === "edad")?.errors}
                 ></NumberInput>
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
                 <DateInput
                   formProps={{
                     name: "fechaNacimiento",
                     label: "Fecha de Nacimiento",
-                    style: { width: "430px", marginLeft: "70px" },
+                    labelCol: {span: 10},
                   }}
-                  width="small"
                   errors={errors.find((x) => x.name === "fechaNacimiento")?.errors}
                 />
               </Col>
 
-              <Col span={12}>
+              <Col span={8}>
                 <SelectInput
                   formProps={{
                     name: "genero",
                     label: "Género",
-                    style: { width: "165px", marginLeft: "159px" },
                   }}
                   options={[
                     { value: "M", label: "M" },
@@ -484,14 +486,16 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                       generales={setGenerales}
                       handle={generalesSumbit}
                       printing={loading}
+                      branchId={profile?.sucursal}
                     ></GeneralesForm>
                   )}
                   {type == "domicilio" && (
                     <GeneralesDomForm
                       data={generales}
-                      generales={setGenerales}
+                      generales={setGeneralesDom}
                       handle={generalesSumbit}
                       printing={loading}
+                      branchId={profile?.sucursal}
                     ></GeneralesDomForm>
                   )}
                 </TabPane>
@@ -503,7 +507,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                     setData={setData}
                   ></ExpedientesForm>
                 </TabPane>
-                <TabPane tab="Indiciaciones" key="3">
+                <TabPane tab="Indicaciones" key="3">
                   {/* <IndiciacionesForm data={data} clave={""}></IndiciacionesForm> */}
                   <IndiciacionesForm data={[]} clave={""}></IndiciacionesForm>
                 </TabPane>
@@ -516,7 +520,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                 </TabPane>
               </Tabs>
             </Col>
-            <Col md={5} sm={24} xs={12} style={{ marginLeft: "10px" }}>
+            <Col offset={1} md={6} sm={24} xs={12}>
               {id && (
                 <Button
                   style={{
@@ -555,6 +559,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                         onChange={(value) => {
                           setTipo(value.target.value, cargo!);
                         }}
+                        disabled={descuento!=0}
                       >
                         %
                       </Radio>
@@ -564,6 +569,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                         onChange={(value) => {
                           setTipo(value.target.value, cargo!);
                         }}
+                        disabled={descuento!=0}
                       >
                         $
                       </Radio>
@@ -573,11 +579,12 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                   <InputNumber
                     min={0}
                     value={cargo}
-                    required
+
                     onChange={(value) => {
                       SetCargo(value);
                       calculateTotalFinal(value, typo);
                     }}
+                    disabled={descuento!=0}
                   ></InputNumber>
                 </Descriptions.Item>
                 <Descriptions.Item
@@ -590,7 +597,9 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                         checked={typoD == 1}
                         onChange={(value) => {
                           setTipoD(value.target.value, descuento!);
+                          
                         }}
+                        disabled={cargo!=0}
                       >
                         %
                       </Radio>
@@ -600,6 +609,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                         onChange={(value) => {
                           setTipoD(value.target.value, descuento!);
                         }}
+                        disabled={cargo!=0}
                       >
                         $
                       </Radio>
@@ -613,6 +623,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                       SetDescuento(value);
                       calculateTotalFinalD(value, typo);
                     }}
+                    disabled={cargo!=0}
                   ></InputNumber>
                 </Descriptions.Item>
                 <Descriptions.Item label="Total">$ {totalFinal}</Descriptions.Item>

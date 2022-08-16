@@ -26,18 +26,22 @@ type GeneralesFormProps = {
     printing: boolean;
     generales: React.Dispatch<React.SetStateAction<IAppointmentGeneralesForm | undefined>>;
     handle: boolean,
-    data: IAppointmentGeneralesForm | undefined
+    data: IAppointmentGeneralesForm | undefined,
+    branchId: string | undefined;
   };
 
 
-const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>{
-    const {optionStore}=useStore();
+const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data,branchId })=>{
+    const {optionStore,quotationStore,appointmentStore}=useStore();
     const { getMedicOptions,getCompanyOptions,medicOptions: MedicOptions,companyOptions: CompanyOptions } = optionStore;
     const [loading, setLoading] = useState(false);
+    const {setStudyFilter,studyFilter}=appointmentStore;
     const [form] = Form.useForm<IAppointmentGeneralesForm>();
     const [values, setValues] = useState<IAppointmentGeneralesForm>(new AppointmentGeneralesFormValues());
     const [errors, setErrors] = useState<IFormError[]>([]);
     const [type,SetType]=useState("");
+    const doctorId = Form.useWatch("medico", form);
+    const companyId = Form.useWatch("compañia", form);
     useEffect(()=>{
         form.setFieldsValue(data!);
     },[data])
@@ -56,7 +60,10 @@ const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data })=>{
 
     useEffect(()=>{
         form.submit();
-    },[generales])
+    },[generales]);
+    useEffect(() => {
+        setStudyFilter(branchId, doctorId, companyId);
+      }, [branchId, companyId, doctorId, setStudyFilter]);
     const onFinish = async (newValues: IAppointmentGeneralesForm) => {
         const reagent = { ...values, ...newValues };
         console.log("onfinish");

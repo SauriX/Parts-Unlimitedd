@@ -647,7 +647,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                                     }}
                                     style={{ width: 240, marginRight: 20,marginLeft: 10 }}
                                 />
-                                {disabled&&!load&& 
+                                {disabled|| !load&& 
                                     <ImageButton
                                         key="agregar"
                                         title="Agregar Indicación"

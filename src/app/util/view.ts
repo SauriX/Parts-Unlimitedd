@@ -11,6 +11,7 @@ const views = {
   request: "requests",
   quotatiion: "cotizacion",
   report: "reportes",
+  cash: "cash",
   sampling:"samplings"
 };
 

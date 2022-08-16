@@ -416,13 +416,14 @@ export default class OptionStore {
       const studyOptions = await Study.getActive();
       console.log(studyOptions,"studis");
       var studyOptionsf = studyOptions.filter(x=>x.area==area);
-      console.log(studyOptions,"filter");
-      this.studyOptionscita = studyOptionsf.map((x) => ({
+      console.log(studyOptionsf,"filter");
+      var test= studyOptionsf.map((x) => ({
         key: "study-" + x.id,
         value: "study-" + x.id,
         label: x.clave + " - " + x.nombre,
         group: "study",
       }));
+      console.log(test,"final");
     } catch (error) {
       this.studyOptionscita = [];
     }

@@ -12,9 +12,12 @@ import { ThemeSwitcherProvider } from "react-css-theme-switcher";
 import moment from "moment";
 import "moment/locale/es-mx";
 
-var meses = "Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre".split(
-  "_"
-);
+moment.utc().local();
+
+var meses =
+  "Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre".split(
+    "_"
+  );
 var semanas = "Domingo_Lunes_Martes_Miércoles_Jueves_Viernes_Sábado".split("_");
 
 moment.updateLocale("es-mx", {

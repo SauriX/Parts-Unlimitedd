@@ -11,6 +11,8 @@ interface IProps {
     | "edit"
     | "Indicaciones"
     | "Eliminar_Clinica"
+    | "eliminar-configuracion"
+    | "agregar-configuracion"
     | "catalog";
   title?: string;
   onClick?: React.MouseEventHandler<HTMLElement>;

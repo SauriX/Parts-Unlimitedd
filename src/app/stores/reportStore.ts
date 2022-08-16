@@ -10,6 +10,7 @@ import alerts from "../util/alerts";
 import history from "../util/history";
 import { getErrors } from "../util/utils";
 import { reportType } from "../../components/report/utils";
+import moment from "moment-timezone";
 
 export default class ReportStore {
   constructor() {
@@ -19,6 +20,7 @@ export default class ReportStore {
   scopes?: IScopes;
   currentReport?: reportType;
   filter: IReportFilter = new ReportFilterValues();
+  clear: boolean = false;
   reportData: IReportData[] = [];
   chartData: any[] = [];
   tableData: any[] = [];
@@ -35,6 +37,21 @@ export default class ReportStore {
     this.filter = filter;
   };
 
+  clearFilter = () => {
+    const emptyFilter: IReportFilter = {
+      sucursalId: [],
+      medicoId: [],
+      compañiaId: [],
+      metodoEnvio: [],
+      tipoCompañia: [],
+      urgencia: [],
+      fecha: [moment(Date.now()).tz("America/Monterrey"), moment(Date.now()).tz("America/Monterrey").add(1, "day")],
+      grafica: false,
+    };
+    this.filter = emptyFilter;
+    this.clear = !this.clear;
+  };
+
   access = async () => {
     try {
       const scopes = await Report.access();
@@ -49,7 +66,6 @@ export default class ReportStore {
   getByFilter = async (report: string, filter: IReportFilter) => {
     try {
       const data = await Report.getByFilter(report, filter);
-      console.log("data inicial filter", data);
       this.reportData = data;
     } catch (error: any) {
       alerts.warning(getErrors(error));
