@@ -9,6 +9,7 @@ import {
   LogoutOutlined,
   NotificationOutlined,
   SettingOutlined,
+  BgColorsOutlined,
 } from "@ant-design/icons";
 import { v4 as uuid } from "uuid";
 import DropdownOption from "../common/header/DropdownOption";
@@ -20,6 +21,7 @@ import PasswordInput from "../common/form/PasswordInput";
 import HeaderTitle from "../common/header/HeaderTitle";
 import Notifications from "./Notifications";
 import Configuration from "../../components/configuration/Configuration";
+import { useThemeSwitcher } from "react-css-theme-switcher";
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
 
@@ -37,6 +39,7 @@ const LayoutComponent = () => {
   const { createHubConnection } = notificationStore;
   const { profile, menu, logoImg, isLoggedIn, logout, getProfile, getMenu } = profileStore;
 
+  const { switcher } = useThemeSwitcher();
   const location = useLocation();
 
   const [menus, setMenus] = useState<IItem[]>([]);
@@ -111,6 +114,12 @@ const LayoutComponent = () => {
     });
   };
 
+  const selectTheme = (theme: "dark" | "light" | "yellow") => {
+    switcher({
+      theme: theme,
+    });
+  };
+
   return (
     <Layout id="app-layout">
       <Header className="header">
@@ -130,6 +139,19 @@ const LayoutComponent = () => {
             <Popover
               placement="topLeft"
               content={
+                <Row style={{ width: 100 }}>
+                  <DropdownOption option="Claro" onClick={() => selectTheme("light")} />
+                  <DropdownOption option="Oscuro" onClick={() => selectTheme("dark")} />
+                  <DropdownOption option="Atardecer" onClick={() => selectTheme("yellow")} />
+                </Row>
+              }
+              trigger="click"
+            >
+              <BgColorsOutlined style={{ marginRight: 20 }} />
+            </Popover>
+            <Popover
+              placement="topLeft"
+              content={
                 <Row style={{ width: 150 }}>
                   <DropdownOption option="Cerrar sesión" icon={<LogoutOutlined />} onClick={logout} />
                 </Row>
@@ -142,7 +164,7 @@ const LayoutComponent = () => {
         </Row>
       </Header>
       <Layout>
-        <Sider width={250}>
+        <Sider className="side-container" width={250}>
           <Menu
             mode="inline"
             className="layout-menu"

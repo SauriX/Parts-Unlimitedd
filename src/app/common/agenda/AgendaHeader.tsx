@@ -77,10 +77,8 @@ const Header: FC<ChildrenProps> = ({ children }) => {
   return (
     <div style={{ width: 180 }}>
       <div style={{ padding: "0 5px", height: 30 }}>
-        <div style={{ borderRadius: 2, backgroundColor: "#014688", ...flexCenterd }}>
-          <Text strong style={{ color: "white" }}>
-            {children}
-          </Text>
+        <div className="agenda-header-cell" style={{ borderRadius: 2, ...flexCenterd }}>
+          <Text strong>{children}</Text>
         </div>
       </div>
     </div>
