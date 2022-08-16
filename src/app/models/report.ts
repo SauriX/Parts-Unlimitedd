@@ -97,7 +97,7 @@ export class ReportFilterValues implements IReportFilter {
   metodoEnvio = [];
   tipoCompañia = [];
   urgencia = [];
-  fecha = [moment(Date.now()).utc(), moment(Date.now()).add(1, "day").utc()];
+  fecha = [moment(Date.now()), moment(Date.now()).add(1, "day")];
   grafica = false;
 
   constructor(init?: IReportFilter) {
