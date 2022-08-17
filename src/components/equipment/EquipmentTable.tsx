@@ -23,8 +23,6 @@ import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import { useReactToPrint } from "react-to-print";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
-// import Search from "antd/es/transfer/search";
-// import Indications from "../../views/Indications";
 
 type EquipmentTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -62,6 +60,7 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
 
     readEquipment();
   }, [getAll, searchParams]);
+  useEffect(() => {});
 
   const columns: IColumns<IEquipmentList> = [
     {
@@ -96,14 +95,23 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
         windowSize: windowWidth,
       }),
     },
+
     {
-      ...getDefaultColumnProps("descripcion", "No. Serie/manetenimientos", {
-        searchState,
-        setSearchState,
-        width: "20%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
+      key: "num_serie",
+      dataIndex: "id",
+      title: "No. Serie/Mantenimientos",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "20%",
+      render: (value, user) => (
+        <Button
+          type="link"
+          onClick={() => {
+            navigate("#");
+          }}
+        >
+          {value}
+        </Button>
+      ),
     },
     {
       key: "activo",
@@ -140,12 +148,7 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={
-            <HeaderTitle
-              title="Catálogo de Indicaciones"
-              image="Indicaciones"
-            />
-          }
+          title={<HeaderTitle title="Catálogo de Equipos" image="Equipos" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
