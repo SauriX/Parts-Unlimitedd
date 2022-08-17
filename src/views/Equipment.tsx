@@ -4,12 +4,12 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
-import IndicationHeader from "../components/equipment/EquipmentHeader";
-import IndicationTable from "../components/equipment/EquipmentTable";
+import EquipmentHeader from "../components/equipment/EquipmentHeader";
+import EquipmentTable from "../components/equipment/EquipmentTable";
 
-const Indication = () => {
-  const { indicationStore } = useStore();
-  const { scopes, access, clearScopes } = indicationStore;
+const Equipment = () => {
+  const { equipmentStore } = useStore();
+  const { scopes, access, clearScopes } = equipmentStore;
 
   const [printing, setPrinting] = useState(false);
 
@@ -23,15 +23,6 @@ const Indication = () => {
       setPrinting(false);
     },
   });
-
-  // useEffect(() => {
-  //   const checkAccess = async () => {
-  //     await access();
-  //   };
-
-  //   checkAccess();
-  // }, [access]);
-
   console.log("Render");
 
   useEffect(() => {
@@ -40,15 +31,13 @@ const Indication = () => {
     };
   }, [clearScopes]);
 
-  //if (!scopes?.acceder) return null;
-
   return (
     <Fragment>
-      <IndicationHeader handlePrint={handlePrint} />
+      <EquipmentHeader handlePrint={handlePrint} />
       <Divider className="header-divider" />
-      <IndicationTable componentRef={componentRef} printing={printing} />
+      <EquipmentTable componentRef={componentRef} printing={printing} />
     </Fragment>
   );
 };
 
-export default observer(Indication);
+export default observer(Equipment);
