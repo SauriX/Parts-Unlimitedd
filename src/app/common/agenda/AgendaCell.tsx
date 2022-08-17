@@ -54,8 +54,8 @@ const AgendaCell = <T extends IAgenda>({
           setDragginEvent(undefined);
         }
       }}
+      className={`agenda-cell ${hovered ? "hovered" : ""}`}
       style={{
-        backgroundColor: hovered ? "#f0f0f0" : "white",
         height: "100%",
       }}
     >

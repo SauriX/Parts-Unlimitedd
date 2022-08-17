@@ -97,8 +97,11 @@ export const expandablePriceConfig = {
                 {x.estudio}
               </Descriptions.Item>
               <Descriptions.Item label="Precio" style={{ maxWidth: 30 }}>
-                ${x.precio}
+                ${x.precioFinal}
               </Descriptions.Item>
+              {x.paquete != null ? ( <Descriptions.Item label="Paquete" style={{ maxWidth: 30 }}>
+                {x.paquete}
+              </Descriptions.Item>) : ("")} 
             </Descriptions>
           </>
         );

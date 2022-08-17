@@ -70,7 +70,7 @@ const TimeRangeInput = ({
         <TimePicker.RangePicker
           // disabledDate={disabledDate}
           disabled={readonly}
-          format={"HH:mm"}
+          format="HH:mm"
           style={{
             paddingRight: paddingRight,
             width: width ?? "100%",
