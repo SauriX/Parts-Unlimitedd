@@ -33,6 +33,8 @@ export const reports: IOptionsReport[] = [
   { value: "canceladas", label: "Sol. Canceladas", type: "canceladas" },
   { value: "descuento", label: "Sol. Descuento", type: "descuento" },
   { value: "cargo", label: "Sol. Cargo", type: "cargo" },
+  { value: "maquila_interna", label: "Sol. Maquila Int.", type: "maquila_interna" },
+  { value: "maquila_externa", label: "Sol. Maquila Ext.", type: "maquila_externa" },
 ];
 
 export const status = {

@@ -26,6 +26,7 @@ export interface IReportData {
   precioEstudios: number;
   descuento: number;
   descuentoPorcentual: number;
+  promocion: number;
   subtotal: number;
   iva: number;
   totalEstudios: number;
@@ -41,6 +42,8 @@ export interface IStudiesData {
   clave: string;
   estudio: string;
   paquete: string;
+  promocion: number;
+  descuento: number;
   estatus: string;
   precio: number;
   precioFinal: number;

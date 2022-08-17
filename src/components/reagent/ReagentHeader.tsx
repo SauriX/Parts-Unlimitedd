@@ -1,14 +1,10 @@
 import { Button, PageHeader, Input } from "antd";
-import React, { FC } from "react";
+import { FC } from "react";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import { PlusOutlined } from "@ant-design/icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import ImageButton from "../../app/common/button/ImageButton";
-import { observer } from "mobx-react-lite";
 import { useStore } from "../../app/stores/store";
 import views from "../../app/util/view";
-import { faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
 import DownloadIcon from "../../app/common/icons/DownloadIcon";
 import PrintIcon from "../../app/common/icons/PrintIcon";
 

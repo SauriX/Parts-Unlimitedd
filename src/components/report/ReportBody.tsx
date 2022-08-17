@@ -87,6 +87,8 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
       currentReport == "canceladas" ||
       currentReport == "descuento" ||
       currentReport == "cargo" ||
+      currentReport == "maquila_interna" ||
+      currentReport == "maquila_externa" ||
       currentReport == "medicos-desglosado"
     ) {
       setDataChart(chartData);

@@ -101,6 +101,8 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
         currentReport == "canceladas" ||
         currentReport == "descuento" ||
         currentReport == "cargo" ||
+        currentReport == "maquila_interna" ||
+        currentReport == "maquila_externa" ||
         currentReport === "medicos-desglosado"
       ) {
         await getByChart(currentReport, filter);
