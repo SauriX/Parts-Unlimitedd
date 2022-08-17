@@ -18,9 +18,13 @@ import {
   SettingOutlined,
   LaptopOutlined,
 } from "@ant-design/icons";
+import { faFolder } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const IconSelector = ({ name }: { name: string }) => {
   switch (name) {
+    case "cat":
+      return <FontAwesomeIcon icon={faFolder} />;
     case "role":
       return <IdcardOutlined />;
     case "user":

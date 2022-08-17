@@ -14,9 +14,10 @@ export interface IEquipmentForm {
   nombre: string;
   descripcion: string;
   activo: boolean;
+  valores: IEquipmentBranch[];
 }
 export interface IEquipmentBranch {
-  num_serie?: string;
+  num_serie?: number;
   branchId: number;
   branch: string;
 }
@@ -27,6 +28,7 @@ export class EquipmentFormValues implements IEquipmentForm {
   nombre = "";
   descripcion = "";
   activo = true;
+  valores: IEquipmentBranch[] = [];
 
   constructor(init?: IEquipmentForm) {
     Object.assign(this, init);

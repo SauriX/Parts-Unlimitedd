@@ -73,9 +73,9 @@ export interface IPriceListEstudioList {
   activo?: boolean;
   departamento?: string;
   paqute?: boolean;
-  descuento?:number;
-  descuenNum?:number;
-  precioFinal?:number;
+  descuento?: number;
+  descuenNum?: number;
+  precioFinal?: number;
   pack?: IPackEstudioList[];
 }
 
@@ -95,8 +95,10 @@ export interface IPriceListInfoStudy {
   estudioId: number;
   clave: string;
   nombre: string;
-  taponId:number;
-  taponColor:string;
+  taponId: number;
+  taponColor: string;
+  taponClave: string;
+  taponNombre: string;
   departamentoId: number;
   areaId: number;
   dias: number;

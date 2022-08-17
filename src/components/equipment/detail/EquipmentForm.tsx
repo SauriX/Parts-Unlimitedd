@@ -11,6 +11,7 @@ import {
   List,
   Typography,
   Select,
+  Input,
 } from "antd";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import React, { FC, useEffect, useState } from "react";
@@ -40,6 +41,7 @@ import {
 import { IStudyList } from "../../../app/models/study";
 import { observer } from "mobx-react-lite";
 import Study from "../../../app/api/study";
+import SelectInput from "../../../app/common/form/SelectInput";
 
 type EquipmentFormProps = {
   id: number;
@@ -71,6 +73,10 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
     new EquipmentFormValues()
   );
   const [branch, setBranch] = useState<IEquipmentBranch>();
+  const [numSerie, setNumSerie] = useState<number>();
+  const [newEquipment, setNewEquipment] = useState<IEquipmentForm>(
+    new EquipmentFormValues()
+  );
   useEffect(() => {
     getSucursalesOptions();
   }, [getSucursalesOptions]);
@@ -98,8 +104,10 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
   }, [getAll, searchParams]);
 
   const onFinish = async (newValues: IEquipmentForm) => {
-    const equipment = { ...values, ...newValues };
-
+    // const equipment = { ...values, ...newValues };
+    console.log("values", values);
+    console.log("newValues", newValues);
+    const equipment = { ...newEquipment, ...newValues };
     let success = false;
 
     if (!equipment.id) {
@@ -112,58 +120,31 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
       navigate(`/equipment?search=${searchParams.get("search") ?? "all"}`);
     }
   };
-  const addValueEquipment = () => {
-    if (branch) {
-      const valuesEquipment: IEquipmentBranch[] = [];
+
+  const actualEquipment = () => {
+    if (id) {
+      const index = equipment.findIndex((x) => x.id === id);
+      return index + 1;
     }
+    return 0;
   };
 
-  // const actualEquipment = () => {
-  //   if (id) {
-  //     const index = equipment.findIndex((x) => x.id === id);
-  //     return index + 1;
-  //   }
-  //   return 0;
-  // };
-
-  // const prevnextEquipment = (index: number) => {
-  //   const indi = equipment[index];
-  //   navigate(
-  //     `/indications/${indi?.id}?mode=${searchParams.get(
-  //       "mode"
-  //     )}&search=${searchParams.get("search")}`
-  //   );
-  // };
+  const prevnextEquipment = (index: number) => {
+    const indi = equipment[index];
+    navigate(
+      `/equipment/${indi?.id}?mode=${searchParams.get(
+        "mode"
+      )}&search=${searchParams.get("search")}`
+    );
+  };
 
   useEffect(() => {
-    console.log(values);
+    console.log("valores cambiantes", values);
+    if (searchParams.get("mode") === "readonly") {
+      setNewEquipment({ ...values });
+    }
   }, [values]);
 
-  //POpConfirm
-  //   const {  Popconfirm, message  } = antd;
-
-  // function confirm(e) {
-  //   console.log(e);
-  //   message.success('El registro ha sido activado');
-  // }
-
-  // function cancel(e) {
-  //   console.log(e);
-  //   message.error('Operacion Cancelada');
-  // }
-
-  // ReactDOM.render(
-  //   <Popconfirm
-  //     title="¿Desea activar el registro? El registro será activado"
-  //     onConfirm={confirm}
-  //     onCancel={cancel}
-  //     okText="Si, Activar"
-  //     cancelText="Cancelar"
-  //   >
-  //     <a href="#">Delete</a>
-  //   </Popconfirm>,
-  //   mountNode,
-  // );
   console.log("Table");
   const { width: windowWidth } = useWindowDimensions();
   const [searchState, setSearchState] = useState<ISearch>({
@@ -197,12 +178,57 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
       }),
     },
   ];
+  const deleteEquipment = (num_serie: number) => {
+    const valuesEquipment = newEquipment.valores.filter(
+      (x) => x.num_serie !== num_serie
+    );
+
+    setNewEquipment((prev) => ({ ...prev, valores: valuesEquipment }));
+  };
+  const isDuplicate = (numSerie: any) => {
+    const valuesEquipment = newEquipment.valores.filter(
+      (x) => x.num_serie === numSerie
+    );
+    return valuesEquipment.length > 0;
+  };
+  const addConfiguration = () => {
+    if (isDuplicate(numSerie)) {
+      alerts.info(messages.confirmations.duplicate);
+      return;
+    }
+    if (numSerie && branch) {
+      const valuesEquipment: IEquipmentBranch[] = [
+        ...newEquipment.valores,
+        {
+          num_serie: numSerie,
+          branchId: branch.branchId,
+          branch: branch.branch,
+        },
+      ];
+
+      setNewEquipment((prev) => ({ ...prev, valores: valuesEquipment }));
+      setDisabled(false);
+    }
+  };
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
+        {!!id && (
+          <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
+            <Pagination
+              size="small"
+              total={equipment?.length ?? 0}
+              pageSize={1}
+              current={actualEquipment()}
+              onChange={(value) => {
+                prevnextEquipment(value - 1);
+              }}
+            />
+          </Col>
+        )}
         {!readonly && (
-          <Col md={id ? 24 : 48} sm={48} style={{ textAlign: "right" }}>
+          <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
             <Button
               onClick={() => {
                 navigate("/equipment");
@@ -214,7 +240,9 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
               type="primary"
               htmlType="submit"
               disabled={disabled}
-              onClick={() => {
+              onClick={(e) => {
+                // e.preventDefault();
+                // console.log("formularioi", form.getFieldsValue());
                 form.submit();
               }}
             >
@@ -243,12 +271,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
           {printing && (
             <PageHeader
               ghost={false}
-              title={
-                <HeaderTitle
-                  title="Catálogo de Indicaciones"
-                  image="Indicaciones"
-                />
-              }
+              title={<HeaderTitle title="Catálogo de Equipos" image="equipo" />}
               className="header-container"
             ></PageHeader>
           )}
@@ -291,126 +314,145 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
                 />
               </Col>
               <Col md={12} sm={24}>
-                <span>Categoría</span>
-                <Select
+                <SelectInput
                   options={[
-                    { value: 1, label: "Análisis" },
-                    { value: 2, label: "Cómputo" },
-                    { value: 3, label: "Impresión" },
+                    { value: "1", label: "Análisis" },
+                    { value: "2", label: "Cómputo" },
+                    { value: "3", label: "Impresión" },
                   ]}
-                  onChange={(value, option: any) => {
-                    if (value) {
-                      // setDepartment({
-                      //   departamentoId: value,
-                      //   departamento: option.label,
-                      // });
-                    } else {
-                      // setDepartment(undefined);
-                    }
+                  formProps={{
+                    name: "categoria",
+                    label: "Categoría",
                   }}
-                  style={{ width: 240, marginRight: 20, marginLeft: 10 }}
+                  readonly={readonly}
                 />
                 <SwitchInput
                   name="activo"
-                  onChange={(value) => {
-                    if (value) {
-                      alerts.info(messages.confirmations.enable);
-                    } else {
-                      alerts.info(messages.confirmations.disable);
-                    }
-                  }}
+                  // onChange={(value) => {
+                  //   if (value) {
+                  //     alerts.info(messages.confirmations.enable);
+                  //   } else {
+                  //     alerts.info(messages.confirmations.disable);
+                  //   }
+                  // }}
                   label="Activo"
                   readonly={readonly}
                 />
               </Col>
             </Row>
           </Form>
-        </div>
-      </div>
-      <Row>
-        <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
-          <PageHeader
-            ghost={false}
-            title={<HeaderTitle title="Valores de equipo:" />}
-            className="header-container"
-          ></PageHeader>
-          <Divider className="header-divider" />
 
-          <List
-            header={
-              <div>
-                <Form>
-                  <Row>
-                    <Col md={12} sm={24} style={{ marginRight: 20 }}>
-                      <TextInput
-                        formProps={{
-                          name: "num_serie",
-                          label: "Número de serie",
-                        }}
-                        max={100}
-                        required
-                        readonly={readonly}
-                      />
+          <Row>
+            <Col
+              md={24}
+              sm={12}
+              style={{ marginRight: 20, textAlign: "center" }}
+            >
+              <PageHeader
+                ghost={false}
+                title={<HeaderTitle title="Valores de equipo:" />}
+                className="header-container"
+              ></PageHeader>
+              <Divider className="header-divider" />
+
+              <List<IEquipmentBranch>
+                header={
+                  <div>
+                    <Form>
+                      <Row>
+                        <Col md={12} sm={24} style={{ marginRight: 20 }}>
+                          <Row>
+                            <Col>Número de serie: </Col>
+                            <Col
+                              md={12}
+                              sm={24}
+                              style={{ marginLeft: 20, textAlign: "center" }}
+                            >
+                              <Input
+                                type="number"
+                                max={100}
+                                required
+                                disabled={readonly}
+                                onChange={(value) => {
+                                  if (value.target.value) {
+                                    setNumSerie(+value.target.value);
+                                  } else {
+                                    setNumSerie(undefined);
+                                  }
+                                  console.log(value.target.value);
+                                }}
+                              />
+                            </Col>
+                          </Row>
+                        </Col>
+                        <Col md={11} sm={24} style={{ marginRight: 20 }}>
+                          Sucursal:
+                          <Select
+                            disabled={readonly}
+                            options={sucursales}
+                            onChange={(value, option: any) => {
+                              if (value) {
+                                setBranch({
+                                  branchId: value,
+                                  branch: option.label,
+                                });
+                              } else {
+                                setBranch(undefined);
+                              }
+                            }}
+                            style={{
+                              width: 240,
+                              marginRight: 20,
+                              marginLeft: 10,
+                            }}
+                          />
+                          {!readonly && (
+                            <ImageButton
+                              key="agregar"
+                              title="Agregar Configuración"
+                              image="agregar-configuracion"
+                              // onClick={addClinic}
+                              onClick={addConfiguration}
+                            />
+                          )}
+                        </Col>
+                      </Row>
+                    </Form>
+                  </div>
+                }
+                footer={<div></div>}
+                bordered
+                dataSource={newEquipment.valores}
+                renderItem={(item: any) => (
+                  <List.Item>
+                    <Col md={12} sm={24} style={{ textAlign: "left" }}>
+                      <Typography.Text mark></Typography.Text>
+                      {item.num_serie}
                     </Col>
-                    <Col md={11} sm={24} style={{ marginRight: 20 }}>
-                      Sucursal
-                      <Select
-                        options={sucursales}
-                        onChange={(value, option: any) => {
-                          if (value) {
-                            setBranch({
-                              branchId: value,
-                              branch: option.label,
-                            });
-                          } else {
-                            setBranch(undefined);
-                          }
-                        }}
-                        style={{ width: 240, marginRight: 20, marginLeft: 10 }}
-                      />
+                    <Col md={12} sm={24} style={{ textAlign: "left" }}>
+                      <Typography.Text mark></Typography.Text>
+                      {sucursales.find((x) => x.value === item.branchId)?.label}
+                    </Col>
+                    <Col md={12} sm={24} style={{ textAlign: "left" }}>
                       {!readonly && (
                         <ImageButton
-                          key="agregar"
-                          title="Agregar Configurción"
-                          image="agregar-configuracion"
-                          // onClick={addClinic}
+                          key="Eliminar"
+                          title="Eliminar Configuración"
+                          image="eliminar-configuracion"
                           onClick={() => {
-                            console.log("formulario", form.getFieldsValue());
-                            console.log("agregar configuracion");
+                            deleteEquipment(item.num_serie);
+                            console.log("eliminar configuracion", item);
                           }}
                         />
                       )}
                     </Col>
-                  </Row>
-                </Form>
-              </div>
-            }
-            footer={<div></div>}
-            bordered
-            // dataSource={values.departamentos}
-            dataSource={[]}
-            renderItem={(item: any) => (
-              <List.Item>
-                <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                  <Typography.Text mark></Typography.Text>
-                  {item.departamento}
-                </Col>
-                <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                  <ImageButton
-                    key="Eliminar"
-                    title="Eliminar Configuración"
-                    image="eliminar-configuracion"
-                    onClick={() => {
-                      // deleteClinic(item.departamentoId);
-                      console.log("eliminar configuracion");
-                    }}
-                  />
-                </Col>
-              </List.Item>
-            )}
-          />
-        </Col>
-      </Row>
+                  </List.Item>
+                )}
+              />
+            </Col>
+          </Row>
+        </div>
+      </div>
     </Spin>
   );
 };

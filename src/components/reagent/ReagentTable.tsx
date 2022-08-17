@@ -16,6 +16,9 @@ import { observer } from "mobx-react-lite";
 import { useReactToPrint } from "react-to-print";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import views from "../../app/util/view";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPencil } from "@fortawesome/free-solid-svg-icons";
+import FontIconButton from "../../app/common/button/FontIconButton";
 
 type ReagentTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -107,9 +110,9 @@ const ReagentTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (
-        <IconButton
+        <FontIconButton
           title="Editar reactivo"
-          icon={<EditOutlined />}
+          icon={faPencil}
           onClick={() => {
             navigate(`/${views.reagent}/${value}?${searchParams}&mode=edit`);
           }}

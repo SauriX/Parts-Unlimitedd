@@ -1,4 +1,4 @@
-import { Table, Spin, Row, Col, Button } from "antd";
+import { Table, Spin, Row, Col, Button, DatePicker } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
@@ -23,34 +23,37 @@ const RequestRequest = () => {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: 75,
+        width: "15%",
       }),
     },
     {
       ...getDefaultColumnProps("nombre", "Estudio", {
         searchState,
         setSearchState,
-        width: 175,
+        width: "35%",
       }),
     },
     {
       ...getDefaultColumnProps("estatus", "Estatus", {
         searchState,
         setSearchState,
-        width: 125,
+        width: "15%",
       }),
     },
     {
       ...getDefaultColumnProps("dias", "Días", {
         searchable: false,
-        width: 125,
+        width: "10%",
       }),
     },
     {
       ...getDefaultColumnProps("fecha", "Fecha", {
         searchable: false,
-        width: 125,
+        width: "25%",
       }),
+      render: () => {
+        return <DatePicker bordered={false} format="DD/MM/YYYY HH:mm:ss" showTime />;
+      },
     },
     Table.SELECTION_COLUMN,
   ];

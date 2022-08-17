@@ -1,5 +1,15 @@
 import React, { FC, useEffect, useState } from "react";
-import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Select } from "antd";
+import {
+  Spin,
+  Form,
+  Row,
+  Col,
+  Pagination,
+  Button,
+  PageHeader,
+  Divider,
+  Select,
+} from "antd";
 import { IDepartamenList } from "../../../app/models/departament";
 import { List, Typography } from "antd";
 import { formItemLayout } from "../../../app/util/utils";
@@ -9,7 +19,11 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
-import { IBranchForm, BranchFormValues, IBranchDepartment } from "../../../app/models/branch";
+import {
+  IBranchForm,
+  BranchFormValues,
+  IBranchDepartment,
+} from "../../../app/models/branch";
 import { IOptions } from "../../../app/models/shared";
 import NumberInput from "../../../app/common/form/NumberInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
@@ -17,6 +31,7 @@ import SelectInput from "../../../app/common/form/SelectInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import MaskInput from "../../../app/common/form/MaskInput";
+import { error } from "console";
 
 type BranchFormProps = {
   componentRef: React.MutableRefObject<any>;
@@ -131,7 +146,11 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
   };
   const addClinic = () => {
     if (department) {
-      if (values.departamentos.findIndex((x) => x.departamentoId === department.departamentoId) > -1) {
+      if (
+        values.departamentos.findIndex(
+          (x) => x.departamentoId === department.departamentoId
+        ) > -1
+      ) {
         alerts.warning("Ya esta agregada este departamento");
         return;
       }
@@ -213,6 +232,8 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
               type="primary"
               htmlType="submit"
               onClick={() => {
+                // e.preventDefault();
+                // console.log("form", form.getFieldsValue());
                 form.submit();
               }}
             >
@@ -227,7 +248,11 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
               title="Editar"
               image="editar"
               onClick={() => {
-                navigate(`/branches/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`);
+                navigate(
+                  `/branches/${id}?mode=edit&search=${
+                    searchParams.get("search") ?? "all"
+                  }`
+                );
               }}
             />
           </Col>
@@ -253,7 +278,8 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
             onFieldsChange={() => {
               setDisabled(
                 !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+                  form.getFieldsError().filter(({ errors }) => errors.length)
+                    .length > 0
               );
             }}
             onValuesChange={onValuesChange}
@@ -395,7 +421,6 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
                   }}
                   max={100}
                   readonly={true}
-                  
                 />
                 <TextInput
                   formProps={{
@@ -418,17 +443,17 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
                   readonly={CheckReadOnly()}
                 />
                 <SwitchInput
-                name="matriz"
-                onChange={(value) => {
-/*                   if (value) {
+                  name="matriz"
+                  onChange={(value) => {
+                    /*                   if (value) {
                     alerts.info(messages.confirmations.enable);
                   } else {
                     alerts.info(messages.confirmations.disable);
                   } */
-                }}
-                label="Matriz"
-                readonly={CheckReadOnly()}
-              />
+                  }}
+                  label="Matriz"
+                  readonly={CheckReadOnly()}
+                />
               </Col>
             </Row>
           </Form>
@@ -447,7 +472,10 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
                 options={departmentOptions}
                 onChange={(value, option: any) => {
                   if (value) {
-                    setDepartment({ departamentoId: value, departamento: option.label });
+                    setDepartment({
+                      departamentoId: value,
+                      departamento: option.label,
+                    });
                   } else {
                     setDepartment(undefined);
                   }
