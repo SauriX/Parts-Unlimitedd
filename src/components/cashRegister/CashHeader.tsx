@@ -1,8 +1,8 @@
-import { PageHeader, Select } from "antd";
+import { PageHeader } from "antd";
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
-import ImageButton from "../../app/common/button/ImageButton";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
+import DownloadIcon from "../../app/common/icons/DownloadIcon";
 
 type CashHeaderProps = {
   handleDownload: () => Promise<void>;
@@ -15,12 +15,7 @@ const ReportHeader: FC<CashHeaderProps> = ({ handleDownload }) => {
       title={<HeaderTitle title="Corte de Caja" image="caja-registradora" />}
       className="header-container"
       extra={[
-        <ImageButton
-          key="doc"
-          title="Informe"
-          image="doc"
-          onClick={handleDownload}
-        />,
+        <DownloadIcon key="download" onClick={handleDownload} />
       ]}
     ></PageHeader>
   );
