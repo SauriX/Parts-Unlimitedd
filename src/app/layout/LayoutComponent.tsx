@@ -22,6 +22,8 @@ import HeaderTitle from "../common/header/HeaderTitle";
 import Notifications from "./Notifications";
 import Configuration from "../../components/configuration/Configuration";
 import { useThemeSwitcher } from "react-css-theme-switcher";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import getMenuIcon from "../common/icons/menuIcon";
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
 
@@ -42,6 +44,7 @@ const LayoutComponent = () => {
   const { switcher } = useThemeSwitcher();
   const location = useLocation();
 
+  const [collapsed, setCollapsed] = useState(true);
   const [menus, setMenus] = useState<IItem[]>([]);
 
   const convertMenu = useCallback(
@@ -72,7 +75,7 @@ const LayoutComponent = () => {
           ) : (
             <Link to={x.ruta ?? x.descripcion}>{x.descripcion}</Link>
           ),
-        icon: <IconSelector name={x.icono} />,
+        icon: <FontAwesomeIcon icon={getMenuIcon(x.icono)} />,
         children: !!x.subMenus && x.subMenus.length > 0 ? convertMenu(x.subMenus) : undefined,
       }));
     },
@@ -164,7 +167,13 @@ const LayoutComponent = () => {
         </Row>
       </Header>
       <Layout>
-        <Sider className="side-container" width={250}>
+        <Sider
+          collapsible
+          className="side-container"
+          width={250}
+          collapsed={collapsed}
+          onCollapse={(value) => setCollapsed(value)}
+        >
           <Menu
             mode="inline"
             className="layout-menu"

@@ -23,6 +23,7 @@ const messages = {
     visibleweb: "Visible Web",
     disableTitle: "¿Desea desactivar el registro?",
     disable: "El registo podrá ser reactivado más tarde",
+    duplicate: "El número de seríe ya se encuentra registrado",
     deleteTitle: "¿Desea eliminar el registro?",
     delete: "El registro será eliminado",
     passwordTitle: "¿Desea enviar el correo para cambio de contraseña?",

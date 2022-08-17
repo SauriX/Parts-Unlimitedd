@@ -2,11 +2,15 @@ import { Button, PageHeader, Input } from "antd";
 import React, { FC } from "react";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import { PlusOutlined } from "@ant-design/icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../app/common/button/ImageButton";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../app/stores/store";
 import views from "../../app/util/view";
+import { faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
+import DownloadIcon from "../../app/common/icons/DownloadIcon";
+import PrintIcon from "../../app/common/icons/PrintIcon";
 
 const { Search } = Input;
 
@@ -43,8 +47,8 @@ const ReagentHeader: FC<ReagentHeaderProps> = ({ handlePrint, handleDownload }) 
       title={<HeaderTitle title="Catálogo de Reactivos" image="reagent" />}
       className="header-container"
       extra={[
-        scopes?.imprimir && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        scopes?.descargar && <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />,
+        scopes?.imprimir && <PrintIcon key="print" onClick={handlePrint} />,
+        scopes?.descargar && <DownloadIcon key="download" onClick={handleDownload} />,
         <Search
           key="search"
           placeholder="Buscar"
