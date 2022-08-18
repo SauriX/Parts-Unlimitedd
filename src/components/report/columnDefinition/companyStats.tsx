@@ -72,9 +72,7 @@ export const expandablePriceConfig = {
               key={x.id}
               size="small"
               bordered
-              labelStyle={{ fontWeight: "bold" }}
-              contentStyle={{ background: "#fff" }}
-              style={{ marginBottom: 5 }}
+              style={{ marginBottom: 5, color: "black" }}
             >
               <Descriptions.Item label="Clave" style={{ maxWidth: 30 }}>
                 {x.clave}
