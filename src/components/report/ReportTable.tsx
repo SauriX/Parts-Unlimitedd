@@ -115,11 +115,20 @@ const ReportTable = ({
         }}
       />
       <div style={{ textAlign: "right", marginTop: 10 }}>
-        {data.length > 0 && (
-          <Button type="primary" onClick={toggleRow} style={{marginRight: 10}}>
-            {!openRows ? "Abrir tabla" : "Cerrar tabla"}
-          </Button>
-        )}
+        {data.length > 0 &&
+          (report == "cargo" ||
+            report == "descuento" ||
+            report == "empresa" ||
+            report == "medicos-desglosado" ||
+            report == "canceladas") && (
+            <Button
+              type="primary"
+              onClick={toggleRow}
+              style={{ marginRight: 10 }}
+            >
+              {!openRows ? "Abrir tabla" : "Cerrar tabla"}
+            </Button>
+          )}
         <Tag color="lime">
           {!hasFooterRow ? data.length : Math.max(data.length - 1, 0)} Registros
         </Tag>
@@ -130,8 +139,6 @@ const ReportTable = ({
             title="Desglose Final"
             size="small"
             bordered
-            labelStyle={{ fontWeight: "bold" }}
-            contentStyle={{ background: "#fff" }}
             style={{ marginBottom: 5 }}
           >
             <Descriptions.Item label="Estudios" style={{ maxWidth: 30 }}>
