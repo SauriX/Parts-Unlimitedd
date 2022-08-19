@@ -6,6 +6,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
+import PrintIcon from "../../../app/common/icons/PrintIcon";
+import DownloadIcon from "../../../app/common/icons/DownloadIcon";
+import GoBackIcon from "../../../app/common/icons/GoBackIcon";
 
 type ReagentFormHeaderProps = {
   id: string;
@@ -33,13 +36,9 @@ const ReagentFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint, handle
       title={<HeaderTitle title="Catálogo de Reactivos" image="reagent" />}
       className="header-container"
       extra={[
-        !!id && scopes?.imprimir && (
-          <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />
-        ),
-        !!id && scopes?.descargar && (
-          <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />
-        ),
-        <ImageButton key="back" title="Regresar" image="back" onClick={getBack} />,
+        !!id && scopes?.imprimir && <PrintIcon key="print" onClick={handlePrint} />,
+        !!id && scopes?.descargar && <DownloadIcon key="download" onClick={handleDownload} />,
+        <GoBackIcon key="back" onClick={getBack} />,
       ]}
     ></PageHeader>
   );

@@ -169,14 +169,41 @@ function App() {
             <Route path="reports" element={<Report />} />
             <Route path="cash" element={<CashRegister />} />
             <Route path={views.appointment} element={<Appointment />} />
-            <Route path={`${views.appointment}/:id`} element={<ApointmentDetail />} />
-            <Route path={`${views.appointment}/new`} element={<ApointmentDetail />} />
+            <Route
+              path={`${views.appointment}/:id`}
+              element={<ApointmentDetail />}
+            />
+            <Route
+              path={`${views.appointment}/new`}
+              element={<ApointmentDetail />}
+            />
             <Route path={`${views.request}`} element={<Request />} />
-            <Route path={`${views.request}/:recordId`} element={<RequestDetail />} />
-            <Route path={`${views.request}/:recordId/:requestId`} element={<RequestDetail />} />
-            <Route path="forbidden" element={<ErrorComponent status={403} message={messages.forbidden} />} />
-            <Route path="error" element={<ErrorComponent status={500} message={messages.serverError} />} />
-            <Route path="*" element={<ErrorComponent status={404} message={messages.notFound} />} />
+            <Route
+              path={`${views.request}/:recordId`}
+              element={<RequestDetail />}
+            />
+            <Route
+              path={`${views.request}/:recordId/:requestId`}
+              element={<RequestDetail />}
+            />
+            <Route
+              path="forbidden"
+              element={
+                <ErrorComponent status={403} message={messages.forbidden} />
+              }
+            />
+            <Route
+              path="error"
+              element={
+                <ErrorComponent status={500} message={messages.serverError} />
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <ErrorComponent status={404} message={messages.notFound} />
+              }
+            />
           </Route>
         </Route>
       </Routes>

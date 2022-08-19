@@ -63,37 +63,4 @@ const getUrgentStatsColumns = (
   return columns;
 };
 
-export const expandableStudyConfig = {
-  expandedRowRender: (item: IReportData) => (
-    <div>
-      <h4>Estudios</h4>
-      {item.estudio.map((x) => {
-        return (
-          <>
-            <Descriptions
-              key={x.id}
-              size="small"
-              bordered
-              labelStyle={{ fontWeight: "bold" }}
-              contentStyle={{ background: "#fff" }}
-              style={{ marginBottom: 5 }}
-            >
-              <Descriptions.Item label="Clave" style={{ maxWidth: 30 }}>
-                {x.clave}
-              </Descriptions.Item>
-              <Descriptions.Item label="Estudio" style={{ maxWidth: 30 }}>
-                {x.estudio}
-              </Descriptions.Item>
-              <Descriptions.Item label="Estatus" style={{ maxWidth: 30 }}>
-                {x.estatus}
-              </Descriptions.Item>
-            </Descriptions>
-          </>
-        );
-      })}
-    </div>
-  ),
-  rowExpandable: () => true,
-};
-
 export default getUrgentStatsColumns;

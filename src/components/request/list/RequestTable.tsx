@@ -13,7 +13,7 @@ import { IRequestInfo, IRequestStudy, IRequestStudyInfo } from "../../../app/mod
 import { moneyFormatter } from "../../../app/util/utils";
 import views from "../../../app/util/view";
 
-const { Link } = Typography;
+const { Link, Text } = Typography;
 
 const RequestTable = () => {
   const { requestStore } = useStore();
@@ -46,21 +46,17 @@ const RequestTable = () => {
         width: 120,
       }),
       render: (value, item) => (
-        <Link
-          onClick={() => {
-            navigate(`/${views.request}/${item.expedienteId}/${item.solicitudId}`);
-          }}
-        >
-          {value}
-        </Link>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Link
+            onClick={() => {
+              navigate(`/${views.request}/${item.expedienteId}/${item.solicitudId}`);
+            }}
+          >
+            {value}
+          </Link>
+          <Text type="secondary">{item.clavePatologica}</Text>
+        </div>
       ),
-    },
-    {
-      ...getDefaultColumnProps("clavePatologica", "Clave Patológica", {
-        searchState,
-        setSearchState,
-        width: 180,
-      }),
     },
     {
       ...getDefaultColumnProps("afiliacion", "Afiliación", {
@@ -85,13 +81,6 @@ const RequestTable = () => {
     },
     {
       ...getDefaultColumnProps("procedencia", "Procedencia", {
-        searchState,
-        setSearchState,
-        width: 180,
-      }),
-    },
-    {
-      ...getDefaultColumnProps("factura", "Factura", {
         searchState,
         setSearchState,
         width: 180,

@@ -4,7 +4,7 @@ import AgendaBody from "./AgendaBody";
 import AgendaDatePicker from "./AgendaDatePicker";
 import AgendaHeader from "./AgendaHeader";
 import { IAgenda, IAgendaColumn, Days, getTimeHours, getWeekDates } from "./utils";
-import "./agenda.css";
+import "./agenda.less";
 
 type AgendaProps<T extends IAgenda> = {
   startTime: moment.Moment;
@@ -47,7 +47,7 @@ const Agenda = <T extends IAgenda>({
 
   const [calendarType, setCalendarType] = useState<"week" | "date">(defaultType ?? "date");
   const [selectedDate, setSelectedDate] = useState<moment.Moment>(moment());
-  const [selectedDates, setSelectedDates] = useState<moment.Moment[]>([moment()]);
+  const [selectedDates, setSelectedDates] = useState<moment.Moment[]>([]);
 
   useEffect(() => {
     const startDate = selectedDate.clone().startOf("week");
@@ -57,6 +57,10 @@ const Agenda = <T extends IAgenda>({
     console.log(dates);
     setSelectedDates(dates);
   }, [calendarType, excludeDays, selectedDate]);
+
+  if (selectedDates.length === 0) {
+    return null;
+  }
 
   return (
     <div style={{ display: "flex", flexDirection: "row", alignItems: "start" }}>

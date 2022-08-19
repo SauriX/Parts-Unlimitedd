@@ -48,9 +48,7 @@ const RequestFilter = () => {
               <SelectInput
                 formProps={{
                   name: "tipoFiltroFecha",
-                  label: "Rango de fechas por",
-                  labelCol: { span: 12 },
-                  wrapperCol: { span: 12 },
+                  label: "Fechas por",
                 }}
                 options={[
                   { value: 1, label: "Solicitudes hechas" },
@@ -69,7 +67,7 @@ const RequestFilter = () => {
             </Col>
             <Col span={8}>
               <SelectInput
-                formProps={{ name: "tipoSolicitud", label: "Tipo de solicitud" }}
+                formProps={{ name: "tipoSolicitud", label: "Tipo solicitud" }}
                 multiple
                 options={[]}
               />
