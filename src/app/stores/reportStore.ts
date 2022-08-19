@@ -10,7 +10,7 @@ import alerts from "../util/alerts";
 import history from "../util/history";
 import { getErrors } from "../util/utils";
 import { reportType } from "../../components/report/utils";
-import moment from "moment-timezone";
+import moment from "moment";
 
 export default class ReportStore {
   constructor() {
@@ -45,9 +45,10 @@ export default class ReportStore {
       metodoEnvio: [],
       tipoCompañia: [],
       urgencia: [],
-      fecha: [moment(Date.now()).tz("America/Monterrey"), moment(Date.now()).tz("America/Monterrey").add(1, "day")],
+      fecha: [moment(Date.now()).utcOffset(0, true), moment(Date.now()).utcOffset(0, true).add(1, "day")],
       grafica: false,
     };
+    this.reportData = [];
     this.filter = emptyFilter;
     this.clear = !this.clear;
   };

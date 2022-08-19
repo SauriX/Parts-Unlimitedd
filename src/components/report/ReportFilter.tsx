@@ -57,7 +57,7 @@ const typeCompanyOptions: IOptions[] = [
 
 const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
   const { reportStore, optionStore } = useStore();
-  const { currentReport, filter, setFilter, getByFilter, getByChart, clearFilter, clear } =
+  const { currentReport, filter, setFilter, getByFilter, getByChart, clear } =
     reportStore;
   const {
     branchCityOptions,

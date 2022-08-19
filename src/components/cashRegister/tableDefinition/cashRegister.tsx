@@ -13,7 +13,7 @@ const getCashRegisterColumns = (
       ...getDefaultColumnProps("solicitud", "Clave", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "35%",
       }),
       fixed: 'left',
     },
@@ -21,12 +21,12 @@ const getCashRegisterColumns = (
       ...getDefaultColumnProps("paciente", "Paciente", {
         searchState,
         setSearchState,
-        width: "55%",
+        width: "60%",
       }),
     },
     {
-      ...getDefaultColumnProps("total", "Total", {
-        width: "30%",
+      ...getDefaultColumnProps("total", "Total a pagar", {
+        width: "40%",
       }),
       render: (value) => moneyFormatter.format(value),
     },
@@ -76,9 +76,21 @@ const getCashRegisterColumns = (
       render: (value) => moneyFormatter.format(value),
     },
     {
+      ...getDefaultColumnProps("subtotal", "Subtotal", {
+        width: "30%",
+      }),
+      render: (value) => moneyFormatter.format(value),
+    },
+    {
       ...getDefaultColumnProps("pp", "PP", {
         width: "30%",
       }),
+    },
+    {
+      ...getDefaultColumnProps("totalRecibido", "Total Recibido", {
+        width: "40%",
+      }),
+      render: (value) => moneyFormatter.format(value),
     },
     {
       ...getDefaultColumnProps("saldo", "Saldo", {
@@ -93,7 +105,7 @@ const getCashRegisterColumns = (
     },
     {
       ...getDefaultColumnProps("usuarioModifico", "Usuario", {
-        width: "55%",
+        width: "60%",
       }),
     },
     {
