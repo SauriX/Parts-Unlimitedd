@@ -16,6 +16,8 @@ import getCompanyStatsColumns, {
 import getCanceledRequestColumns from "./columnDefinition/canceledRequest";
 import getDescountRequestColumns from "./columnDefinition/descountRequest";
 import getChargeRequestColumns from "./columnDefinition/chargeRequest";
+import getMaquilaExternColumns, { expandableMaquilaExternConfig } from "./columnDefinition/maquilaExtern";
+import getMaquilaInternColumns, { expandableMaquilaInternConfig } from "./columnDefinition/maquilaIntern";
 
 export type reportType =
   | "medicos"
@@ -31,6 +33,7 @@ export type reportType =
   | "cargo"
   | "maquila_interna"
   | "maquila_externa"
+  | "corte_caja"
   | undefined;
 
 export const getInputs = (
@@ -141,7 +144,6 @@ export const getReportConfig = (
     title = "Solicitudes Maquila Interna";
     image = "laboratorio-medico";
     hasFooterRow = false;
-    summary = true;
   } else if (reportName === "maquila_externa") {
     title = "Solicitudes Maquila Externa";
     image = "camion";
@@ -178,12 +180,11 @@ export const getColumns = (
     return getDescountRequestColumns(searchState, setSearchState);
   } else if (reportName === "cargo") {
     return getChargeRequestColumns(searchState, setSearchState);
+  } else if (reportName === "maquila_interna") {
+    return getMaquilaInternColumns(searchState, setSearchState);
+  } else if (reportName === "maquila_externa") {
+    return getMaquilaExternColumns(searchState, setSearchState);
   }
-  // } else if (reportName === "maquila_interna") {
-  //   return getInternalRequestColumns(searchState, setSearchState);
-  // } else if (reportName === "maquila_externa") {
-  //   return getExternalRequestColumns(searchState, setSearchState);
-  // }
 
   return [];
 };
@@ -200,6 +201,10 @@ export const getExpandableConfig = (
     reportName == "cargo" || reportName === "medicos-desglosado"
   ) {
     return expandablePriceConfig;
+  } else if (reportName === "maquila_interna") {
+    return expandableMaquilaInternConfig;
+  } else if (reportName === "maquila_externa") {
+    return expandableMaquilaExternConfig;
   }
 
   return undefined;

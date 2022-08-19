@@ -76,7 +76,8 @@ export interface IOptionsReport extends IOptions {
     | "descuento"
     | "cargo"
     | "maquila_interna"
-    | "maquila_externa";
+    | "maquila_externa"
+    | "corte_caja";
 }
 
 export type TreeData = {

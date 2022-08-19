@@ -1,7 +1,7 @@
 import { PageHeader, Select } from "antd";
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import DownloadIcon from "../../app/common/icons/DownloadIcon";
 import { IOptionsReport } from "../../app/models/shared";
@@ -15,6 +15,7 @@ type ReportHeaderProps = {
 };
 
 const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
+  const navigate = useNavigate();
   const { reportStore } = useStore();
   const {
     currentReport,
@@ -49,6 +50,9 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
         value == "maquila_externa"
       ) {
         await getByChart(value, filter);
+      }
+      else if (value == "corte_caja"){
+        navigate("cash");
       }
     } else {
       setCurrentReport(undefined);
