@@ -28,6 +28,7 @@ import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
+import { EditOutlined } from "@ant-design/icons";
 import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
@@ -41,12 +42,16 @@ import { IProceedingForm, ISearchMedical, ProceedingFormValues } from "../../../
 import moment, { Moment } from "moment";
 import { ITaxData } from "../../../app/models/taxdata";
 import DateInput from "../../../app/common/form/proposal/DateInput";
+import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
+import IconButton from "../../../app/common/button/IconButton";
+
 type ProceedingFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
 const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing }) => {
+  const { width: windowWidth } = useWindowDimensions();
   const navigate = useNavigate();
   const { modalStore, procedingStore, locationStore, optionStore, profileStore } = useStore();
   const { getById, update, create, coincidencias, getnow, setTax, clearTax, expedientes, search, tax } =
@@ -257,7 +262,105 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
   const addRequest = () => {
     navigate(`/${views.request}/${id}`);
   };
+  const columns: IColumns<any> = [
+    {
+      ...getDefaultColumnProps("clave", "Solicitud", {
 
+        
+        width: "10%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+      render: (value, maquilador) => (
+        <Button
+          type="link"
+          onClick={() => {
+            navigate(`/maquila/${maquilador.id}?${searchParams}&mode=readonly&search=${searchParams.get("search") ?? "all"}`);
+          
+          }}
+          >
+            {value}
+        </Button>
+      ),
+    },
+    {
+      ...getDefaultColumnProps("nombre", "Unidad", {
+
+        
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("direccion", "Compañia", {
+
+        
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("telefono", "Fact", {
+
+        
+        width: "8%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("correo", "Total", {
+
+        
+        width: "14%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      key: "activo",
+      dataIndex: "activo",
+      title: "Saldo",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value) => (value ? "Sí" : "No"),
+    },
+    {
+      key: "activo",
+      dataIndex: "activo",
+      title: "Tipo solicitud",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value) => (value ? "Sí" : "No"),
+    },
+    {
+      key: "activo",
+      dataIndex: "activo",
+      title: "Estudios",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value) => (value ? "Sí" : "No"),
+    },
+    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Editar",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "6%",
+      render: (value) => (
+        <IconButton
+          title="Editar Maquilador"
+          icon={<EditOutlined />}
+          onClick={() => {
+            navigate(`/maquila/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`);
+          }}
+          
+        />
+      ),
+    },
+  ];
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
@@ -552,6 +655,21 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
           </Col>
         </Row>
       </Form>
+      <Row>
+      <Col span={6}><Button style={{marginTop:"20px",marginLeft:"70%",marginBottom:"20px"}} type="primary"> Agregar solicitud</Button></Col>
+      <Col span={6}><Button style={{marginTop:"20px",marginLeft:"70%",marginBottom:"20px"}} type="primary"> Agregar cotización</Button></Col>
+      <Col span={6}><Button style={{marginTop:"20px",marginLeft:"70%",marginBottom:"20px"}} type="primary"> Agregar cita</Button></Col>
+      </Row>
+      <Table<any>
+        loading={loading || printing}
+        size="small"
+        rowKey={(record) => record.id}
+        columns={columns}
+        dataSource={[]}
+     /*    pagination={defaultPaginationProperties} */
+        sticky
+        scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+      />
         </div>
       </div>
     </Spin>

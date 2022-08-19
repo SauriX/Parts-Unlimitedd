@@ -83,6 +83,7 @@ const BusquedaForm: FC<GeneralesFormProps> = ({
   const [values, setValues] = useState<IQuotationExpedienteSearch>(
     new QuotationExpedienteSearchValues()
   );
+  let navigate = useNavigate();
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -200,21 +201,7 @@ const BusquedaForm: FC<GeneralesFormProps> = ({
           title="Editar Expediente"
           icon={<EditOutlined />}
           onClick={() => {
-            handleIdExpediente(expediente);
-            console.log("here");
-            console.log(expediente);
-            handleCotizacion((prev) => ({
-              ...prev,
-              expedienteid: expediente.id,
-              expediente: expediente.expediente,
-              nomprePaciente: expediente.nomprePaciente,
-              edad: expediente.edad,
-              fechaNacimiento: moment(
-                expediente.fechaNacimiento.getFullYear(),
-                "YYYY-MM-DD"
-              ),
-              genero: expediente.genero,
-            }));
+            navigate(`/${views.proceeding}/${expediente.id}?mode=edit`);
           }}
         />
       ),
