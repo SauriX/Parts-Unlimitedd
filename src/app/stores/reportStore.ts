@@ -45,7 +45,10 @@ export default class ReportStore {
       metodoEnvio: [],
       tipoCompañia: [],
       urgencia: [],
-      fecha: [moment(Date.now()).utcOffset(0, true), moment(Date.now()).utcOffset(0, true).add(1, "day")],
+      fecha: [
+        moment(Date.now()).utcOffset(0, true),
+        moment(Date.now()).utcOffset(0, true).add(1, "day"),
+      ],
       grafica: false,
     };
     this.reportData = [];

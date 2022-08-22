@@ -1,7 +1,6 @@
 import { IColumns, ISearch } from "../../../app/common/table/utils";
 import { getDefaultColumnProps } from "../../../app/common/table/utils";
 import { moneyFormatter } from "../../../app/util/utils";
-import React from "react";
 import { Invoice } from "../../../app/models/cashRegister";
 
 const getInvoiceColumns = (

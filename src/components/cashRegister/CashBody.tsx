@@ -19,7 +19,6 @@ const CashBody: FC<CashDefaultProps> = ({ printing }) => {
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
-      <Row gutter={[12, 12]}>
         <Col span={24}>
           <CashFilter />
         </Col>
@@ -56,7 +55,6 @@ const CashBody: FC<CashDefaultProps> = ({ printing }) => {
         <Col span={24}>
           <InvoiceTable data={cashRegisterData.cashTotal} loading={loading} />
         </Col>
-      </Row>
     </Spin>
   );
 };

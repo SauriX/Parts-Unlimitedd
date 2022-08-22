@@ -18,6 +18,8 @@ type ReportFilterProps = {
     | "compañia"
     | "urgencia"
     | "tipoCompañia"
+    | "fechaIndividual"
+    | "hora"
   )[];
   setShowChart: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -86,7 +88,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
 
   useEffect(() => {
     form.setFieldsValue(filter);
-  }, [clear]) 
+  }, [clear]);
 
   const onFinish = async (filter: IReportFilter) => {
     setLoading(true);
