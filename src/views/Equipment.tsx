@@ -23,7 +23,6 @@ const Equipment = () => {
       setPrinting(false);
     },
   });
-  console.log("Render");
 
   useEffect(() => {
     return () => {
