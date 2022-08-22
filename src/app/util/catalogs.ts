@@ -18,6 +18,7 @@ export const catalogs: IOptionsCatalog[] = [
 ];
 
 export const reports: IOptionsReport[] = [
+  {value: "corte_caja", label: "Corte de caja", type: "corte_caja"},
   { value: "expediente", label: "Expediente", type: "expediente" },
   { value: "estadistica", label: "Estadística Pacientes", type: "estadistica" },
   { value: "medicos", label: "Sol. Médico Condensado", type: "medicos" },
@@ -35,7 +36,6 @@ export const reports: IOptionsReport[] = [
   { value: "cargo", label: "Sol. Cargo", type: "cargo" },
   { value: "maquila_interna", label: "Sol. Maquila Int.", type: "maquila_interna" },
   { value: "maquila_externa", label: "Sol. Maquila Ext.", type: "maquila_externa" },
-  {value: "corte_caja", label: "Corte de caja", type: "corte_caja"}
 ];
 
 export const status = {

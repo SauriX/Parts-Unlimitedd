@@ -16,8 +16,12 @@ import getCompanyStatsColumns, {
 import getCanceledRequestColumns from "./columnDefinition/canceledRequest";
 import getDescountRequestColumns from "./columnDefinition/descountRequest";
 import getChargeRequestColumns from "./columnDefinition/chargeRequest";
-import getMaquilaExternColumns, { expandableMaquilaExternConfig } from "./columnDefinition/maquilaExtern";
-import getMaquilaInternColumns, { expandableMaquilaInternConfig } from "./columnDefinition/maquilaIntern";
+import getMaquilaExternColumns, {
+  expandableMaquilaExternConfig,
+} from "./columnDefinition/maquilaExtern";
+import getMaquilaInternColumns, {
+  expandableMaquilaInternConfig,
+} from "./columnDefinition/maquilaIntern";
 
 export type reportType =
   | "medicos"
@@ -57,7 +61,12 @@ export const getInputs = (
     | "tipoCompañia"
   )[] = ["fecha", "sucursal"];
 
-  if (reportName === "medicos" || reportName === "medicos-desglosado" || reportName === "maquila_interna" || reportName === "maquila_externa") {
+  if (
+    reportName === "medicos" ||
+    reportName === "medicos-desglosado" ||
+    reportName === "maquila_interna" ||
+    reportName === "maquila_externa"
+  ) {
     filters.push("medico");
   } else if (reportName === "contacto") {
     filters.push("medico");
@@ -148,6 +157,9 @@ export const getReportConfig = (
     title = "Solicitudes Maquila Externa";
     image = "camion";
     hasFooterRow = false;
+  } else if (reportName === "corte_caja") {
+    title = "Corte de Caja";
+    image = "caja-registradora";
   }
 
   return { title, image, hasFooterRow, summary };
@@ -198,7 +210,8 @@ export const getExpandableConfig = (
     reportName == "empresa" ||
     reportName == "canceladas" ||
     reportName == "descuento" ||
-    reportName == "cargo" || reportName === "medicos-desglosado"
+    reportName == "cargo" ||
+    reportName === "medicos-desglosado"
   ) {
     return expandablePriceConfig;
   } else if (reportName === "maquila_interna") {
