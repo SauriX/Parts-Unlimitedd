@@ -57,7 +57,7 @@ const typeCompanyOptions: IOptions[] = [
 
 const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
   const { reportStore, optionStore } = useStore();
-  const { currentReport, filter, setFilter, getByFilter, getByChart, clearFilter, clear } =
+  const { currentReport, filter, setFilter, getByFilter, getByChart, clear } =
     reportStore;
   const {
     branchCityOptions,
@@ -101,6 +101,8 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
         currentReport == "canceladas" ||
         currentReport == "descuento" ||
         currentReport == "cargo" ||
+        currentReport == "maquila_interna" ||
+        currentReport == "maquila_externa" ||
         currentReport === "medicos-desglosado"
       ) {
         await getByChart(currentReport, filter);

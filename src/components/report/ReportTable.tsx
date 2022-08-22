@@ -1,11 +1,10 @@
-import { Button, Descriptions, Table, Tag, Typography } from "antd";
+import { Button, Descriptions, Table, Tag } from "antd";
 import { observer } from "mobx-react-lite";
 import { Fragment, useEffect, useState } from "react";
 import { IColumns } from "../../app/common/table/utils";
 import { IReportData } from "../../app/models/report";
 import { ExpandableConfig } from "antd/lib/table/interface";
-import { useParams, useSearchParams } from "react-router-dom";
-const { Text } = Typography;
+import { useSearchParams } from "react-router-dom";
 
 type ReportTableProps = {
   loading: boolean;
@@ -14,10 +13,6 @@ type ReportTableProps = {
   hasFooterRow?: boolean;
   expandable?: ExpandableConfig<IReportData> | undefined;
   summary?: boolean;
-};
-
-type ReportName = {
-  report: string;
 };
 
 let totalEstudios = 0;
@@ -95,6 +90,24 @@ const ReportTable = ({
 
   return (
     <Fragment>
+      {data.length > 0 &&
+        (report == "cargo" ||
+          report == "descuento" ||
+          report == "empresa" ||
+          report == "medicos-desglosado" ||
+          report == "maquila_interna" ||
+          report == "maquila_externa" ||
+          report == "canceladas") && (
+          <div style={{ textAlign: "right", marginBottom: 10 }}>
+            <Button
+              type="primary"
+              onClick={toggleRow}
+              style={{ marginRight: 10 }}
+            >
+              {!openRows ? "Abrir tabla" : "Cerrar tabla"}
+            </Button>
+          </div>
+        )}
       <Table<IReportData>
         loading={loading}
         size="small"
@@ -115,11 +128,6 @@ const ReportTable = ({
         }}
       />
       <div style={{ textAlign: "right", marginTop: 10 }}>
-        {data.length > 0 && (
-          <Button type="primary" onClick={toggleRow} style={{marginRight: 10}}>
-            {!openRows ? "Abrir tabla" : "Cerrar tabla"}
-          </Button>
-        )}
         <Tag color="lime">
           {!hasFooterRow ? data.length : Math.max(data.length - 1, 0)} Registros
         </Tag>
@@ -130,8 +138,6 @@ const ReportTable = ({
             title="Desglose Final"
             size="small"
             bordered
-            labelStyle={{ fontWeight: "bold" }}
-            contentStyle={{ background: "#fff" }}
             style={{ marginBottom: 5 }}
           >
             <Descriptions.Item label="Estudios" style={{ maxWidth: 30 }}>

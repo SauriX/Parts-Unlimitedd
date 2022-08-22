@@ -1,13 +1,13 @@
 import { PageHeader, Select } from "antd";
 import { observer } from "mobx-react-lite";
 import { FC } from "react";
-import { useSearchParams } from "react-router-dom";
-import ImageButton from "../../app/common/button/ImageButton";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
+import DownloadIcon from "../../app/common/icons/DownloadIcon";
 import { IOptionsReport } from "../../app/models/shared";
 import { useStore } from "../../app/stores/store";
 import { reports } from "../../app/util/catalogs";
-import "./css/index.css";
+import "./css/report.less";
 import { reportType } from "./utils";
 
 type ReportHeaderProps = {
@@ -15,6 +15,7 @@ type ReportHeaderProps = {
 };
 
 const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
+  const navigate = useNavigate();
   const { reportStore } = useStore();
   const {
     currentReport,
@@ -44,9 +45,14 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
         value === "medicos-desglosado" ||
         value == "canceladas" ||
         value == "descuento" ||
-        value == "cargo"
+        value == "cargo" ||
+        value == "maquila_interna" ||
+        value == "maquila_externa"
       ) {
         await getByChart(value, filter);
+      }
+      else if (value == "corte_caja"){
+        navigate("cash");
       }
     } else {
       setCurrentReport(undefined);
@@ -63,12 +69,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
       className="header-container"
       extra={[
         currentReport && (
-          <ImageButton
-            key="doc"
-            title="Informe"
-            image="doc"
-            onClick={handleDownload}
-          />
+          <DownloadIcon key="download" onClick={handleDownload} />
         ),
         <Select
           key="reports"

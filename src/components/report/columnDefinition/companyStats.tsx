@@ -39,10 +39,10 @@ const getCompanyStatsColumns = (
       render: (value) => moneyFormatter.format(value),
     },
     {
-      ...getDefaultColumnProps("descuentoPorcentual", "Desc. %", {
+      ...getDefaultColumnProps("promocion", "Promoción", {
         width: "20%",
       }),
-      render: (value) => Math.round(value * 100) / 100 + "%",
+      render: (value) => moneyFormatter.format(value),
     },
     {
       ...getDefaultColumnProps("descuento", "Desc.", {
@@ -72,9 +72,7 @@ export const expandablePriceConfig = {
               key={x.id}
               size="small"
               bordered
-              labelStyle={{ fontWeight: "bold" }}
-              contentStyle={{ background: "#fff" }}
-              style={{ marginBottom: 5 }}
+              style={{ marginBottom: 5, color: "black" }}
             >
               <Descriptions.Item label="Clave" style={{ maxWidth: 30 }}>
                 {x.clave}
@@ -82,12 +80,24 @@ export const expandablePriceConfig = {
               <Descriptions.Item label="Estudio" style={{ maxWidth: 30 }}>
                 {x.estudio}
               </Descriptions.Item>
-              <Descriptions.Item label="Precio" style={{ maxWidth: 30 }}>
+              <Descriptions.Item label="Promoción Estudio" style={{ maxWidth: 30 }}>
+                ${x.descuento}
+              </Descriptions.Item>
+              <Descriptions.Item label="Precio Estudio" style={{ maxWidth: 30 }}>
                 ${x.precioFinal}
               </Descriptions.Item>
-              {x.paquete != null ? ( <Descriptions.Item label="Paquete" style={{ maxWidth: 30 }}>
-                {x.paquete}
-              </Descriptions.Item>) : ("")} 
+              {x.paquete != null ? (
+                <>
+                  <Descriptions.Item label="Paquete" style={{ maxWidth: 30 }}>
+                    {x.paquete}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Promoción Paquete" style={{ maxWidth: 30 }}>
+                    ${x.promocion}
+                  </Descriptions.Item>
+                </>
+              ) : (
+                ""
+              )}
             </Descriptions>
           </>
         );

@@ -38,6 +38,19 @@ const getInvoiceColumns = (
       render: (value) => moneyFormatter.format(value),
     },
     {
+      ...getDefaultColumnProps("subtotal", "Subtotal", {
+        searchState,
+        width: "20%",
+      }),
+      render: (value) => moneyFormatter.format(value),
+    },
+    {
+      ...getDefaultColumnProps("sumaPP", "PP", {
+        searchState,
+        width: "20%",
+      }),
+    },
+    {
       ...getDefaultColumnProps("total", "Total", {
         width: "20%",
       }),

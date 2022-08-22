@@ -74,7 +74,10 @@ export interface IOptionsReport extends IOptions {
     | "medicos-desglosado"
     | "canceladas"
     | "descuento"
-    | "cargo";
+    | "cargo"
+    | "maquila_interna"
+    | "maquila_externa"
+    | "corte_caja";
 }
 
 export type TreeData = {

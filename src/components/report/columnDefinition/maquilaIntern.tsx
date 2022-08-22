@@ -1,11 +1,10 @@
 import { IColumns, ISearch } from "../../../app/common/table/utils";
 import { IReportData } from "../../../app/models/report";
 import { getDefaultColumnProps } from "../../../app/common/table/utils";
-import { Card, Descriptions, List } from "antd";
-import moment from "moment";
-import { useState } from "react";
+import { Descriptions } from "antd";
+import "../css/report.less";
 
-const getStudyStatsColumns = (
+const getMaquilaInternColumns = (
   searchState: ISearch,
   setSearchState: React.Dispatch<React.SetStateAction<ISearch>>
 ) => {
@@ -52,54 +51,38 @@ const getStudyStatsColumns = (
         width: "20%",
       }),
     },
-    {
-      ...getDefaultColumnProps("fecha", "Fecha de Solicitud", {
-        width: "20%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("parcialidad", "Parcialidad", {
-        width: "20%",
-      }),
-      render: (value) => (value == true ? "Si" : "No"),
-    },
   ];
 
   return columns;
 };
 
-export const expandableStudyConfig = {
+export const expandableMaquilaInternConfig = {
   expandedRowRender: (item: IReportData) => (
     <div>
       <h4>Estudios</h4>
-      {item.estudio?.map((x) => {
-        return (
-          <>
-            <Descriptions
-              key={x.id}
-              size="small"
-              bordered
-              labelStyle={{ fontWeight: "bold" }}
-              contentStyle={{ background: "#fff" }}
-              style={{ marginBottom: 5 }}
-            >
-              <Descriptions.Item label="Clave" style={{ maxWidth: 30 }}>
-                {x.clave}
-              </Descriptions.Item>
-              <Descriptions.Item label="Estudio" style={{ maxWidth: 30 }}>
-                {x.estudio}
-              </Descriptions.Item>
-              <Descriptions.Item label="Estatus" style={{ maxWidth: 30 }}>
-                {x.estatus}
-              </Descriptions.Item>
-            </Descriptions>
-          </>
-        );
-      })}
+      <Descriptions
+        key={item.id}
+        size="small"
+        bordered
+        style={{ marginBottom: 5 }}
+      >
+        <Descriptions.Item label="Clave" style={{ maxWidth: 50 }}>
+          {item.claveEstudio}
+        </Descriptions.Item>
+        <Descriptions.Item label="Estudio" style={{ maxWidth: 50 }}>
+          {item.nombreEstudio}
+        </Descriptions.Item>
+        <Descriptions.Item label="Estatus" style={{ maxWidth: 50 }}>
+          {item.estatus}
+        </Descriptions.Item>
+        <Descriptions.Item label="Maquilador" style={{ maxWidth: 50 }}>
+          {item.sucursal}
+        </Descriptions.Item>
+      </Descriptions>
     </div>
   ),
   rowExpandable: () => true,
   defaultExpandAllRows: true,
 };
 
-export default getStudyStatsColumns;
+export default getMaquilaInternColumns;
