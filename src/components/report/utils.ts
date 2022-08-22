@@ -5,9 +5,7 @@ import getStudyStatsColumns, {
 } from "./columnDefinition/studyStats";
 import getContactStatsColumns from "./columnDefinition/contactStats";
 import getMedicalStatsColumns from "./columnDefinition/medicalStats";
-import getMedicalBreakdownStatsColumns, {
-  expandableMedicalBreakdownConfig,
-} from "./columnDefinition/medicalBreakdownStats";
+import getMedicalBreakdownStatsColumns from "./columnDefinition/medicalBreakdownStats";
 import getPatientStatsColumns from "./columnDefinition/patientStats";
 import getRequestByRecordColumns from "./columnDefinition/requestByRecord";
 import { ExpandableConfig } from "antd/lib/table/interface";
@@ -18,6 +16,12 @@ import getCompanyStatsColumns, {
 import getCanceledRequestColumns from "./columnDefinition/canceledRequest";
 import getDescountRequestColumns from "./columnDefinition/descountRequest";
 import getChargeRequestColumns from "./columnDefinition/chargeRequest";
+import getMaquilaExternColumns, {
+  expandableMaquilaExternConfig,
+} from "./columnDefinition/maquilaExtern";
+import getMaquilaInternColumns, {
+  expandableMaquilaInternConfig,
+} from "./columnDefinition/maquilaIntern";
 
 export type reportType =
   | "medicos"
@@ -31,6 +35,9 @@ export type reportType =
   | "canceladas"
   | "descuento"
   | "cargo"
+  | "maquila_interna"
+  | "maquila_externa"
+  | "corte_caja"
   | undefined;
 
 export const getInputs = (
@@ -54,7 +61,12 @@ export const getInputs = (
     | "tipoCompañia"
   )[] = ["fecha", "sucursal"];
 
-  if (reportName === "medicos" || reportName === "medicos-desglosado") {
+  if (
+    reportName === "medicos" ||
+    reportName === "medicos-desglosado" ||
+    reportName === "maquila_interna" ||
+    reportName === "maquila_externa"
+  ) {
     filters.push("medico");
   } else if (reportName === "contacto") {
     filters.push("medico");
@@ -137,6 +149,17 @@ export const getReportConfig = (
     image = "cargo";
     hasFooterRow = false;
     summary = true;
+  } else if (reportName === "maquila_interna") {
+    title = "Solicitudes Maquila Interna";
+    image = "laboratorio-medico";
+    hasFooterRow = false;
+  } else if (reportName === "maquila_externa") {
+    title = "Solicitudes Maquila Externa";
+    image = "camion";
+    hasFooterRow = false;
+  } else if (reportName === "corte_caja") {
+    title = "Corte de Caja";
+    image = "caja-registradora";
   }
 
   return { title, image, hasFooterRow, summary };
@@ -169,6 +192,10 @@ export const getColumns = (
     return getDescountRequestColumns(searchState, setSearchState);
   } else if (reportName === "cargo") {
     return getChargeRequestColumns(searchState, setSearchState);
+  } else if (reportName === "maquila_interna") {
+    return getMaquilaInternColumns(searchState, setSearchState);
+  } else if (reportName === "maquila_externa") {
+    return getMaquilaExternColumns(searchState, setSearchState);
   }
 
   return [];
@@ -183,11 +210,14 @@ export const getExpandableConfig = (
     reportName == "empresa" ||
     reportName == "canceladas" ||
     reportName == "descuento" ||
-    reportName == "cargo"
+    reportName == "cargo" ||
+    reportName === "medicos-desglosado"
   ) {
     return expandablePriceConfig;
-  } else if (reportName === "medicos-desglosado") {
-    return expandableMedicalBreakdownConfig;
+  } else if (reportName === "maquila_interna") {
+    return expandableMaquilaInternConfig;
+  } else if (reportName === "maquila_externa") {
+    return expandableMaquilaExternConfig;
   }
 
   return undefined;

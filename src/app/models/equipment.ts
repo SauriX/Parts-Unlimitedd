@@ -5,7 +5,7 @@ export interface IEquipmentList {
   descripcion: string;
   activo: boolean;
   dias?: number;
-  valuesEquipment: IEquipmentBranch[];
+  valores: IEquipmentBranch[];
 }
 
 export interface IEquipmentForm {

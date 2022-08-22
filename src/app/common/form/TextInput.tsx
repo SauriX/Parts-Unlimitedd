@@ -74,7 +74,7 @@ const TextInput = ({
         placeholder={placeholder ?? itemProps.label?.toString()}
         onClick={onClick}
         onKeyUp={onKeyUp}
-        onChange={onChange}
+        // onChange={onChange}
         style={{ width: width ?? "100%" }}
       />
     </Form.Item>
