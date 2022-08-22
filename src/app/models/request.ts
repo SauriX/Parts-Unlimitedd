@@ -109,6 +109,7 @@ export interface IRequestStudy {
   areaId: number;
   dias: number;
   horas: number;
+  fechaEntrega: moment.Moment;
   precio: number;
   descuento: number;
   descuentoPorcentaje: number;

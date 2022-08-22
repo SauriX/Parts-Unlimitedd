@@ -1,4 +1,5 @@
 import { Form, Row, Col, Checkbox, Input, Button, Table, Typography, Spin } from "antd";
+import { observer } from "mobx-react-lite";
 import React, { useState } from "react";
 import Request from "../../../../app/api/request";
 import { verifyAdminCreds } from "../../../../app/common/administrator/adminCreds";
@@ -34,7 +35,7 @@ type RequestRegisterProps = {
 
 const RequestRegister = ({ recordId }: RequestRegisterProps) => {
   const { requestStore, modalStore } = useStore();
-  const { printTicket } = requestStore;
+  const { request, printTicket } = requestStore;
   const { openModal } = modalStore;
 
   const [form] = Form.useForm<any>();
@@ -185,9 +186,11 @@ const RequestRegister = ({ recordId }: RequestRegisterProps) => {
           <Button
             type="default"
             onClick={async () => {
-              setLoading(true);
-              await printTicket("", "");
-              setLoading(false);
+              if (request) {
+                setLoading(true);
+                await printTicket(request.expedienteId, request.solicitudId!);
+                setLoading(false);
+              }
             }}
           >
             Imprimir
@@ -222,4 +225,4 @@ const RequestRegister = ({ recordId }: RequestRegisterProps) => {
   );
 };
 
-export default RequestRegister;
+export default observer(RequestRegister);

@@ -14,7 +14,7 @@ interface IProps {
   width?: string | number;
   onClick?: React.MouseEventHandler<HTMLInputElement> | undefined;
   onKeyUp?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
-  onChange?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
+  onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
 }
 
 const TextInput = ({

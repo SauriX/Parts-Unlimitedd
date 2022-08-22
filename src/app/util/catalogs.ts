@@ -36,7 +36,7 @@ export const reports: IOptionsReport[] = [
 ];
 
 export const status = {
-  requests: {
+  requestStudy: {
     pendiente: 1,
     tomaDeMuestra: 2,
     solicitado: 3,

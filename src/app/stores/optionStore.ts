@@ -29,6 +29,19 @@ export const urgencyOptions = [
   { label: "Urgencia con cargo", value: 3 },
 ];
 
+export const studyStatusOptions = [
+  { label: "Pendiente", value: 1 },
+  { label: "Toma de muestra", value: 2 },
+  { label: "Solicitado", value: 3 },
+  { label: "Capturado", value: 4 },
+  { label: "Validado", value: 5 },
+  { label: "Liberado", value: 6 },
+  { label: "Enviado", value: 7 },
+  { label: "En ruta", value: 8 },
+  { label: "Cancelado", value: 9 },
+  { label: "Entregado", value: 10 },
+];
+
 export default class OptionStore {
   constructor() {
     makeAutoObservable(this);
@@ -411,19 +424,19 @@ export default class OptionStore {
   };
   studyOptionscita: IOptions[] = [];
 
-  getStudyOptionscita = async (area:string) => {
+  getStudyOptionscita = async (area: string) => {
     try {
       const studyOptions = await Study.getActive();
-      console.log(studyOptions,"studis");
-      var studyOptionsf = studyOptions.filter(x=>x.area==area);
-      console.log(studyOptionsf,"filter");
-      var test= studyOptionsf.map((x) => ({
+      console.log(studyOptions, "studis");
+      var studyOptionsf = studyOptions.filter((x) => x.area == area);
+      console.log(studyOptionsf, "filter");
+      var test = studyOptionsf.map((x) => ({
         key: "study-" + x.id,
         value: "study-" + x.id,
         label: x.clave + " - " + x.nombre,
         group: "study",
       }));
-      console.log(test,"final");
+      console.log(test, "final");
     } catch (error) {
       this.studyOptionscita = [];
     }
@@ -445,10 +458,10 @@ export default class OptionStore {
   };
   packOptionscita: IOptions[] = [];
 
-  getPackOptionscita = async (area:string) => {
+  getPackOptionscita = async (area: string) => {
     try {
       const packOptions = await Pack.getActive();
-      var packOptionsf = packOptions.filter(x=>x.area==area);
+      var packOptionsf = packOptions.filter((x) => x.area == area);
       this.packOptionscita = packOptionsf.map((x) => ({
         key: "pack-" + x.id,
         value: "pack-" + x.id,
@@ -520,5 +533,4 @@ export default class OptionStore {
       this.CityOptions = [];
     }
   };
-  
 }
