@@ -252,7 +252,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
             <div ref={componentRef}>
                 <PageHeader
                     ghost={false}
-                    title={<HeaderTitle title="Catálogo de Lealtades" image="Lealtad" />}
+                    title={<HeaderTitle title="Catálogo de Lealtades" image="lealtad" />}
                     className="header-container"
                 ></PageHeader>
                 <Divider className="header-divider" />

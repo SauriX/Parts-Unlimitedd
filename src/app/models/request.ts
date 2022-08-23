@@ -16,7 +16,20 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   esNuevo: boolean;
 }
 
-export interface IRequestFilter {}
+export interface IRequestFilter {
+  tipoFecha?: number;
+  fechas?: moment.Moment[];
+  fechaInicial?: moment.Moment;
+  fechaFinal?: moment.Moment;
+  clave?: string;
+  procedencias?: number[];
+  estatus?: number[];
+  urgencias?: number[];
+  departamentos?: number[];
+  sucursales?: string[];
+  compañias?: string[];
+  medicos?: string[];
+}
 
 export interface IRequestInfo extends IRequestBase {
   clave: string;

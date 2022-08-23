@@ -12,7 +12,7 @@ const ReportHeader: FC<CashHeaderProps> = ({ handleDownload }) => {
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Corte de Caja" image="caja-registradora" />}
+      title={<HeaderTitle title="Corte de Caja" image="registradora" />}
       className="header-container"
       extra={[
         <DownloadIcon key="download" onClick={handleDownload} />

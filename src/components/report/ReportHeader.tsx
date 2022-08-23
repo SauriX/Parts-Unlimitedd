@@ -65,7 +65,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
       <>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title={currentReport == "corte_caja" ? "Corte de caja" : "Reportes"} image={currentReport == "corte_caja" ? "caja-registradora" : "grafico"} />}
+          title={<HeaderTitle title={currentReport == "corte_caja" ? "Corte de caja" : "Reportes"} image={currentReport == "corte_caja" ? "registradora" : "grafico"} />}
           className="header-container"
           extra={[
             currentReport && (

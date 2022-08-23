@@ -259,7 +259,7 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load: printing }) => {
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo Roles" image="role" />}
+              title={<HeaderTitle title="Catálogo Roles" image="rol" />}
               className="header-container"
             ></PageHeader>
           )}
