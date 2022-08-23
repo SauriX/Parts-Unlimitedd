@@ -96,7 +96,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo Roles" image="role" />}
+          title={<HeaderTitle title="Catálogo Roles" image="rol" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />

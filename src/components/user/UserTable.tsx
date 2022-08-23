@@ -164,9 +164,9 @@ const UserTable: FC<UserTableProps> = ({ componentRef, printing }) => {
     return (
       <div ref={componentRef}>
         <PageHeader
-            ghost={false} 
-            title={<HeaderTitle title="Catálogo usuarios" image="user" />}
-            className="header-container"
+          ghost={false}
+          title={<HeaderTitle title="Catálogo usuarios" image="usuario" />}
+          className="header-container"
         ></PageHeader>
         <Table<IUserList>
           loading={loading}

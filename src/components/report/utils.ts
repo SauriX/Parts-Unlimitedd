@@ -22,6 +22,7 @@ import getMaquilaExternColumns, {
 import getMaquilaInternColumns, {
   expandableMaquilaInternConfig,
 } from "./columnDefinition/maquilaIntern";
+import { imagesType } from "../../app/common/header/HeaderTitle";
 
 export type reportType =
   | "medicos"
@@ -95,12 +96,12 @@ export const getReportConfig = (
   reportName: reportType
 ): {
   title: string;
-  image: string;
+  image: imagesType;
   hasFooterRow: boolean;
   summary: boolean;
 } => {
   let title = "";
-  let image = "Reportes";
+  let image:imagesType = "reporte";
   let hasFooterRow = true;
   let summary = false;
 
@@ -114,11 +115,11 @@ export const getReportConfig = (
     image = "doctor";
   } else if (reportName === "contacto") {
     title = "Solicitudes por contacto";
-    image = "contactoos";
+    image = "contacto";
     hasFooterRow = false;
   } else if (reportName === "estudios") {
     title = "Relación Estudios por Paciente";
-    image = "estudios-paciente";
+    image = "estudio";
     hasFooterRow = false;
   } else if (reportName === "urgentes") {
     title = "Relación Estudios por Paciente Urgente";
@@ -151,7 +152,7 @@ export const getReportConfig = (
     summary = true;
   } else if (reportName === "maquila_interna") {
     title = "Solicitudes Maquila Interna";
-    image = "laboratorio-medico";
+    image = "laboratorio";
     hasFooterRow = false;
   } else if (reportName === "maquila_externa") {
     title = "Solicitudes Maquila Externa";
@@ -159,7 +160,7 @@ export const getReportConfig = (
     hasFooterRow = false;
   } else if (reportName === "corte_caja") {
     title = "Corte de Caja";
-    image = "caja-registradora";
+    image = "registradora";
   }
 
   return { title, image, hasFooterRow, summary };

@@ -1,6 +1,8 @@
 import { Table, Spin, Row, Col, Button, DatePicker } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
+import { isMoment } from "moment";
 import { useState } from "react";
 import { ISearch, IColumns, getDefaultColumnProps } from "../../../../app/common/table/utils";
 import { IRequestPartiality, IRequestStudy, IRequestStudyUpdate } from "../../../../app/models/request";
@@ -9,7 +11,7 @@ import { status } from "../../../../app/util/catalogs";
 
 const RequestRequest = () => {
   const { requestStore, modalStore } = useStore();
-  const { request, allStudies, setPartiality, addPartiality, sendStudiesToRequest } = requestStore;
+  const { request, allStudies, setStudy, setPartiality, addPartiality, sendStudiesToRequest } = requestStore;
 
   const [selectedStudies, setSelectedStudies] = useState<IRequestStudy[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -47,12 +49,24 @@ const RequestRequest = () => {
       }),
     },
     {
-      ...getDefaultColumnProps("fecha", "Fecha", {
+      ...getDefaultColumnProps("fechaEntrega", "Fecha", {
         searchable: false,
         width: "25%",
       }),
-      render: () => {
-        return <DatePicker bordered={false} format="DD/MM/YYYY HH:mm:ss" showTime />;
+      render: (value, item) => {
+        return (
+          <DatePicker
+            bordered={false}
+            value={value ? (isMoment(value) ? value : moment(value)) : moment()}
+            format="DD/MM/YYYY HH:mm"
+            minuteStep={5}
+            showTime
+            allowClear={false}
+            onChange={(value) => {
+              if (value) setStudy({ ...item, fechaEntrega: value.utcOffset(0, true) });
+            }}
+          />
+        );
       },
     },
     Table.SELECTION_COLUMN,
@@ -92,7 +106,7 @@ const RequestRequest = () => {
           </Button>
           <Button
             type="default"
-            disabled={!selectedStudies.some((x) => x.estatusId === status.requests.tomaDeMuestra)}
+            disabled={!selectedStudies.some((x) => x.estatusId === status.requestStudy.tomaDeMuestra)}
             onClick={updateStudies}
           >
             Solicitar estudio
@@ -111,7 +125,7 @@ const RequestRequest = () => {
                 setSelectedStudies(toJS(selectedRows));
               },
               getCheckboxProps: (record) => ({
-                disabled: record.estatusId !== status.requests.tomaDeMuestra,
+                disabled: record.estatusId !== status.requestStudy.tomaDeMuestra,
               }),
             }}
             sticky

@@ -153,7 +153,7 @@ type CompanyTableProps = {
         <div ref={componentRef}>
           <PageHeader
             ghost={false}
-            title={<HeaderTitle title="Catálogo de Compañias" image="Company" />}
+            title={<HeaderTitle title="Catálogo de Compañias" image="compañia" />}
             className="header-container"
           ></PageHeader>
           <Divider className="header-divider" />

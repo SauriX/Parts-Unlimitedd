@@ -303,7 +303,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
         <div ref={componentRef}>
         {load && (<PageHeader
             ghost={false}
-            title={<HeaderTitle title="Catálogo usuarios" image="user" />}
+            title={<HeaderTitle title="Catálogo usuarios" image="usuario" />}
             className="header-container"
         ></PageHeader>)}
         <Form<IUserForm>

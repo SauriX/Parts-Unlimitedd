@@ -103,6 +103,7 @@ export interface IPriceListInfoStudy {
   areaId: number;
   dias: number;
   horas: number;
+  fechaEntrega: moment.Moment;
   precio: number;
   descuento: number;
   descuentoPorcentaje: number;

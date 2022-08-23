@@ -142,6 +142,14 @@ export default class RequestStore {
     if (index > -1) {
       this.studies[index] = study;
     }
+
+    this.packs = this.packs.map((x) => {
+      const index = x.estudios.findIndex((x) => x.estudioId === study.estatusId);
+      if (index > -1) {
+        x.estudios[index] = study;
+      }
+      return x;
+    });
   };
 
   setPack = (pack: IRequestPack) => {
@@ -219,7 +227,7 @@ export default class RequestStore {
       const study: IRequestStudy = {
         ...price,
         type: "study",
-        estatusId: status.requests.pendiente,
+        estatusId: status.requestStudy.pendiente,
         aplicaCargo: false,
         aplicaCopago: false,
         aplicaDescuento: false,
@@ -269,7 +277,7 @@ export default class RequestStore {
         estudios: price.estudios.map((x) => ({
           ...x,
           type: "study",
-          estatusId: status.requests.pendiente,
+          estatusId: status.requestStudy.pendiente,
           aplicaCargo: false,
           aplicaCopago: false,
           aplicaDescuento: false,
@@ -362,13 +370,13 @@ export default class RequestStore {
       const ids = request.estudios.map((x) => x.estudioId);
 
       this.studies = this.studies.map((x) => {
-        x.estatusId = ids.includes(x.estudioId) ? status.requests.cancelado : x.estatusId;
+        x.estatusId = ids.includes(x.estudioId) ? status.requestStudy.cancelado : x.estatusId;
         return x;
       });
 
       this.packs = this.packs.map((x) => {
         x.estudios = x.estudios.map((y) => {
-          y.estatusId = ids.includes(y.estudioId) ? status.requests.cancelado : y.estatusId;
+          y.estatusId = ids.includes(y.estudioId) ? status.requestStudy.cancelado : y.estatusId;
           return y;
         });
         return x;
@@ -389,13 +397,13 @@ export default class RequestStore {
       const ids = request.estudios.map((x) => x.estudioId);
 
       this.studies = this.studies.map((x) => {
-        x.estatusId = ids.includes(x.estudioId) ? status.requests.tomaDeMuestra : x.estatusId;
+        x.estatusId = ids.includes(x.estudioId) ? status.requestStudy.tomaDeMuestra : x.estatusId;
         return x;
       });
 
       this.packs = this.packs.map((x) => {
         x.estudios = x.estudios.map((y) => {
-          y.estatusId = ids.includes(y.estudioId) ? status.requests.tomaDeMuestra : y.estatusId;
+          y.estatusId = ids.includes(y.estudioId) ? status.requestStudy.tomaDeMuestra : y.estatusId;
           return y;
         });
         return x;
@@ -416,13 +424,13 @@ export default class RequestStore {
       const ids = request.estudios.map((x) => x.estudioId);
 
       this.studies = this.studies.map((x) => {
-        x.estatusId = ids.includes(x.estudioId) ? status.requests.solicitado : x.estatusId;
+        x.estatusId = ids.includes(x.estudioId) ? status.requestStudy.solicitado : x.estatusId;
         return x;
       });
 
       this.packs = this.packs.map((x) => {
         x.estudios = x.estudios.map((y) => {
-          y.estatusId = ids.includes(y.estudioId) ? status.requests.solicitado : y.estatusId;
+          y.estatusId = ids.includes(y.estudioId) ? status.requestStudy.solicitado : y.estatusId;
           return y;
         });
         return x;

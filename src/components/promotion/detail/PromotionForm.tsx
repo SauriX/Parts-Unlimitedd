@@ -712,7 +712,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo de Promociones en listas de precios" image="promo" />}
+              title={<HeaderTitle title="Catálogo de Promociones en listas de precios" image="promocion" />}
               className="header-container"
             ></PageHeader>
           )}

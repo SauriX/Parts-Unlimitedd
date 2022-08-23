@@ -31,7 +31,7 @@ const PriceListFormHeader: FC<PriceListFormHeaderProps> = ({ id, handlePrint, ha
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Listas de Precios" image="ListaPrecio" />}
+      title={<HeaderTitle title="Catálogo de Listas de Precios" image="precio" />}
       className="header-container"
       extra={[
         

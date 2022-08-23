@@ -30,7 +30,7 @@ const IndicationHeader: FC<IndicationsHeaderProps> = ({ handlePrint }) => {
     <PageHeader
       ghost={false}
       title={
-        <HeaderTitle title="Catálogo de Indicaciones" image="Indicaciones" />
+        <HeaderTitle title="Catálogo de Indicaciones" image="indicacion" />
       }
       className="header-container"
       extra={[

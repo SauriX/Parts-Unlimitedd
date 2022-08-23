@@ -29,7 +29,7 @@ const IndicationFormHeader: FC<IndicationFormHeaderProps> = ({ id, handlePrint, 
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Indicaciones" image="Indicaciones" />}
+      title={<HeaderTitle title="Catálogo de Indicaciones" image="indicacion" />}
       className="header-container"
       extra={[
         id !=0 ?

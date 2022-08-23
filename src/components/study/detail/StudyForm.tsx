@@ -380,7 +380,7 @@ const StudyForm: FC<StudyFormProps> =({componentRef,load})=>{
                 {load && (
                     <PageHeader
                     ghost={false}
-                    title={<HeaderTitle title="Catálogo Estudios" image="estudios" />}
+                    title={<HeaderTitle title="Catálogo Estudios" image="estudio" />}
                     className="header-container"
                     ></PageHeader>
                 )}
