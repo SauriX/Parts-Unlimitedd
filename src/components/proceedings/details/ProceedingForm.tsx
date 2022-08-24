@@ -473,8 +473,8 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                 label: "Exp",
               }}
               max={500}
-              
-            />
+              readonly={true}
+            />  
           </Col>
           <Col span={4}>
             <SelectInput
