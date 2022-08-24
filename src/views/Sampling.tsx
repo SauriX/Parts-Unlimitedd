@@ -1,11 +1,8 @@
 import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
-import ProceedingHeader from "../components/proceedings/ProceedingHeader";
-import ProceedingTable from "../components/proceedings/ProceedingTable";
 import SamplingHeader from "../components/Sampling/SamplingHeader";
 import SamplingTable from "../components/Sampling/SamplingTable";
 
