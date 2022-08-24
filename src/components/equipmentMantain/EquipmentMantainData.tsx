@@ -99,7 +99,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
           title={
             <HeaderTitle
               title="Catálogo de Indicaciones"
-              image="Indicaciones"
+             
             />
           }
           className="header-container"

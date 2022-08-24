@@ -334,7 +334,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idma
                   title={
                     <HeaderTitle
                       title="Catálogo de Indicaciones"
-                      image="Indicaciones"
+                      
                     />
                   }
                   className="header-container"
