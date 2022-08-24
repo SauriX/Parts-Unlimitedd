@@ -95,21 +95,24 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
     },
 
     {
-      key: "num_serie",
-      dataIndex: "id",
+      key: "valores",
+      dataIndex: "valores",
       title: "No. Serie/Mantenimientos",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "20%",
-      render: (value, user) => (
-        <Button
-          type="link"
-          onClick={() => {
-            navigate("#");
-          }}
-        >
-          {value}
-        </Button>
-      ),
+      render: (value, user) =>
+        value.map((valor: any) => {
+          return (
+            <Button
+              type="link"
+              onClick={() => {
+                navigate("#");
+              }}
+            >
+              {valor.num_Serie}
+            </Button>
+          );
+        }),
     },
     {
       key: "activo",
@@ -146,7 +149,7 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Equipos" image="Equipos" />}
+          title={<HeaderTitle title="Catálogo de Equipos" image="equipo" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
@@ -160,7 +163,16 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
       </div>
     );
   };
+  const test = () => {
+    console.log(equipment);
+    const a: any[] = [];
+    for (const obj of equipment) {
+      a.push({ ...obj });
+    }
 
+    console.log(a);
+  };
+  test();
   return (
     <Fragment>
       <Table<IEquipmentList>

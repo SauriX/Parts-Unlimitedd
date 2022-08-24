@@ -14,7 +14,7 @@ const RoleHeader: FC<RoleHeaderProps> = ({ handlePrint,handleList }) => {
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo Roles" image="role" />}
+      title={<HeaderTitle title="Catálogo Roles" image="rol" />}
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

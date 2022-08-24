@@ -16,6 +16,13 @@ import getCompanyStatsColumns, {
 import getCanceledRequestColumns from "./columnDefinition/canceledRequest";
 import getDescountRequestColumns from "./columnDefinition/descountRequest";
 import getChargeRequestColumns from "./columnDefinition/chargeRequest";
+import getMaquilaExternColumns, {
+  expandableMaquilaExternConfig,
+} from "./columnDefinition/maquilaExtern";
+import getMaquilaInternColumns, {
+  expandableMaquilaInternConfig,
+} from "./columnDefinition/maquilaIntern";
+import { imagesType } from "../../app/common/header/HeaderTitle";
 
 export type reportType =
   | "medicos"
@@ -31,6 +38,7 @@ export type reportType =
   | "cargo"
   | "maquila_interna"
   | "maquila_externa"
+  | "corte_caja"
   | undefined;
 
 export const getInputs = (
@@ -54,7 +62,12 @@ export const getInputs = (
     | "tipoCompañia"
   )[] = ["fecha", "sucursal"];
 
-  if (reportName === "medicos" || reportName === "medicos-desglosado" || reportName === "maquila_interna" || reportName === "maquila_externa") {
+  if (
+    reportName === "medicos" ||
+    reportName === "medicos-desglosado" ||
+    reportName === "maquila_interna" ||
+    reportName === "maquila_externa"
+  ) {
     filters.push("medico");
   } else if (reportName === "contacto") {
     filters.push("medico");
@@ -83,12 +96,12 @@ export const getReportConfig = (
   reportName: reportType
 ): {
   title: string;
-  image: string;
+  image: imagesType;
   hasFooterRow: boolean;
   summary: boolean;
 } => {
   let title = "";
-  let image = "Reportes";
+  let image:imagesType = "reporte";
   let hasFooterRow = true;
   let summary = false;
 
@@ -102,11 +115,11 @@ export const getReportConfig = (
     image = "doctor";
   } else if (reportName === "contacto") {
     title = "Solicitudes por contacto";
-    image = "contactoos";
+    image = "contacto";
     hasFooterRow = false;
   } else if (reportName === "estudios") {
     title = "Relación Estudios por Paciente";
-    image = "estudios-paciente";
+    image = "estudio";
     hasFooterRow = false;
   } else if (reportName === "urgentes") {
     title = "Relación Estudios por Paciente Urgente";
@@ -139,13 +152,15 @@ export const getReportConfig = (
     summary = true;
   } else if (reportName === "maquila_interna") {
     title = "Solicitudes Maquila Interna";
-    image = "laboratorio-medico";
+    image = "laboratorio";
     hasFooterRow = false;
-    summary = true;
   } else if (reportName === "maquila_externa") {
     title = "Solicitudes Maquila Externa";
     image = "camion";
     hasFooterRow = false;
+  } else if (reportName === "corte_caja") {
+    title = "Corte de Caja";
+    image = "registradora";
   }
 
   return { title, image, hasFooterRow, summary };
@@ -178,12 +193,11 @@ export const getColumns = (
     return getDescountRequestColumns(searchState, setSearchState);
   } else if (reportName === "cargo") {
     return getChargeRequestColumns(searchState, setSearchState);
+  } else if (reportName === "maquila_interna") {
+    return getMaquilaInternColumns(searchState, setSearchState);
+  } else if (reportName === "maquila_externa") {
+    return getMaquilaExternColumns(searchState, setSearchState);
   }
-  // } else if (reportName === "maquila_interna") {
-  //   return getInternalRequestColumns(searchState, setSearchState);
-  // } else if (reportName === "maquila_externa") {
-  //   return getExternalRequestColumns(searchState, setSearchState);
-  // }
 
   return [];
 };
@@ -197,9 +211,14 @@ export const getExpandableConfig = (
     reportName == "empresa" ||
     reportName == "canceladas" ||
     reportName == "descuento" ||
-    reportName == "cargo" || reportName === "medicos-desglosado"
+    reportName == "cargo" ||
+    reportName === "medicos-desglosado"
   ) {
     return expandablePriceConfig;
+  } else if (reportName === "maquila_interna") {
+    return expandableMaquilaInternConfig;
+  } else if (reportName === "maquila_externa") {
+    return expandableMaquilaExternConfig;
   }
 
   return undefined;

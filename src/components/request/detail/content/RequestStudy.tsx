@@ -82,7 +82,7 @@ const RequestStudy = () => {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: 100,
       }),
       render: (value) => <Link>{value}</Link>,
     },
@@ -90,7 +90,7 @@ const RequestStudy = () => {
       ...getDefaultColumnProps("nombre", "Estudio", {
         searchState,
         setSearchState,
-        width: "25%",
+        width: 200,
       }),
       render: (value, item) => {
         if (isStudy(item)) {
@@ -108,13 +108,13 @@ const RequestStudy = () => {
       dataIndex: "n",
       title: "",
       align: "center",
-      width: "5%",
+      width: 30,
       render: (value) => "N",
     },
     {
       ...getDefaultColumnProps("precio", "Precio", {
         searchable: false,
-        width: "10%",
+        width: 85,
       }),
       align: "right",
       render: (value) => moneyFormatter.format(value),
@@ -124,7 +124,7 @@ const RequestStudy = () => {
       dataIndex: "aplicaDescuento",
       title: "D",
       align: "center",
-      width: "5%",
+      width: 35,
       render: (value, item) => (
         <Checkbox
           checked={value}
@@ -143,7 +143,7 @@ const RequestStudy = () => {
       dataIndex: "aplicaCargo",
       title: "C",
       align: "center",
-      width: "5%",
+      width: 35,
       render: (value, item) => (
         <Checkbox
           checked={value}
@@ -162,7 +162,7 @@ const RequestStudy = () => {
       dataIndex: "aplicaCopago",
       title: "CP",
       align: "center",
-      width: "5%",
+      width: 45,
       render: (value, item) => (
         <Checkbox
           checked={value}
@@ -179,13 +179,19 @@ const RequestStudy = () => {
     {
       ...getDefaultColumnProps("dias", "Días", {
         searchable: false,
-        width: "10%",
+        width: 70,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("promocion", "Promoción", {
+        searchable: false,
+        width: 200,
       }),
     },
     {
       ...getDefaultColumnProps("precioFinal", "Precio Final", {
         searchable: false,
-        width: "15%",
+        width: 120,
       }),
       align: "right",
       render: (value) => moneyFormatter.format(value),
@@ -194,7 +200,7 @@ const RequestStudy = () => {
       key: "taponColor",
       dataIndex: "taponColor",
       title: "",
-      width: "5%",
+      width: 35,
       align: "center",
       render: (value) => <ContainerBadge color={value} />,
     },
@@ -203,7 +209,7 @@ const RequestStudy = () => {
       key: "nuevo",
       dataIndex: "nuevo",
       title: "",
-      width: "5%",
+      width: 40,
       align: "center",
       render: (value, item) =>
         !!value ? (
@@ -298,12 +304,12 @@ const RequestStudy = () => {
             },
             getCheckboxProps: (item) => ({
               disabled: isStudy(item)
-                ? item.estatusId !== status.requests.pendiente
-                : item.estudios.some((x) => x.estatusId !== status.requests.pendiente),
+                ? item.estatusId !== status.requestStudy.pendiente
+                : item.estudios.some((x) => x.estatusId !== status.requestStudy.pendiente),
             }),
           }}
           sticky
-          scroll={{ x: "auto" }}
+          scroll={{ x: "fit-content" }}
         />
       </Col>
     </Row>

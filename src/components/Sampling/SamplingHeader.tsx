@@ -16,7 +16,7 @@ const  SampleHeader: FC<UserHeaderProps> = ({  handleList}) => {
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title={`Registrar Toma de Muestra`} image="sampling" />}
+      title={<HeaderTitle title={`Registrar Toma de Muestra`} image="tomaMuestra" />}
       className="header-container"
       extra={[
         <ImageButton key="doc" title="Informe" image="doc" onClick={handleList} />,

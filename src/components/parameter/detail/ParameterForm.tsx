@@ -314,7 +314,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
         {load && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo Parámetros" image="parameters" />}
+              title={<HeaderTitle title="Catálogo Parámetros" image="parametro" />}
               className="header-container"
             ></PageHeader>
           )}

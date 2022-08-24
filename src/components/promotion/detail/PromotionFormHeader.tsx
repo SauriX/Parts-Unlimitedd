@@ -31,7 +31,7 @@ const PromotionFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint, hand
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Promociones en listas de precios" image="promo" />}
+      title={<HeaderTitle title="Catálogo de Promociones en listas de precios" image="promocion" />}
       className="header-container"
       extra={[
         id &&scopes?.imprimir &&  <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

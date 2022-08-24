@@ -127,7 +127,7 @@ const IndicationTable: FC<IndicationsTableProps> = ({ componentRef, printing }) 
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Indicaciones" image="Indicaciones" />}
+          title={<HeaderTitle title="Catálogo de Indicaciones" image="indicacion" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />

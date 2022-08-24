@@ -57,8 +57,6 @@ import RequestDetail from "../../components/request/detail/RequestDetail";
 import Quotation from "../../views/Quotation";
 import QuotationDetail from "../../components/quotation/detail/QuotationDetail";
 import Report from "../../views/Report";
-import CashRegister from "../../views/CashRegister";
-import DatosFiscalesForm from "../../components/proceedings/details/DatosFiscalesForm";
 import ApointmentDetail from "../../components/appointment/detail/apointmentDetail";
 import Sampling from "../../views/Sampling";
 import Equipment from "../../views/Equipment";
@@ -167,7 +165,6 @@ function App() {
             <Route path="samplings/:id" element={<Sampling />} />
             <Route path="samplings/new" element={<Sampling />} />
             <Route path="reports" element={<Report />} />
-            <Route path="cash" element={<CashRegister />} />
             <Route path={views.appointment} element={<Appointment />} />
             <Route
               path={`${views.appointment}/:id`}

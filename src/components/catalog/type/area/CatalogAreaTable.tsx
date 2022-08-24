@@ -120,7 +120,7 @@ const CatalogAreaTable: FC<CatalogAreaTableProps> = ({ componentRef, printing })
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo General" image="catalog" />}
+          title={<HeaderTitle title="Catálogo General" image="catalogo" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />

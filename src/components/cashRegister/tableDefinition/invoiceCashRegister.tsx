@@ -1,7 +1,6 @@
 import { IColumns, ISearch } from "../../../app/common/table/utils";
 import { getDefaultColumnProps } from "../../../app/common/table/utils";
 import { moneyFormatter } from "../../../app/util/utils";
-import React from "react";
 import { Invoice } from "../../../app/models/cashRegister";
 
 const getInvoiceColumns = (
@@ -36,6 +35,19 @@ const getInvoiceColumns = (
         width: "20%",
       }),
       render: (value) => moneyFormatter.format(value),
+    },
+    {
+      ...getDefaultColumnProps("subtotal", "Subtotal", {
+        searchState,
+        width: "20%",
+      }),
+      render: (value) => moneyFormatter.format(value),
+    },
+    {
+      ...getDefaultColumnProps("sumaPP", "PP", {
+        searchState,
+        width: "20%",
+      }),
     },
     {
       ...getDefaultColumnProps("total", "Total", {

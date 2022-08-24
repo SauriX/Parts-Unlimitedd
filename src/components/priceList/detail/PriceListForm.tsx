@@ -765,7 +765,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
               title={
                 <HeaderTitle
                   title="Catálogo de Lista de Precios"
-                  image="ListaPrecio"
+                  image="precio"
                 />
               }
               className="header-container"

@@ -18,7 +18,7 @@ const  ApointmenHeader: FC<UserHeaderProps> = ({ handlePrint, handleList,tipo })
   return (
     <PageHeader
       ghost={false}
-      title={tipo=="laboratorio"&&<HeaderTitle title={`Cita laboratorio`} image="citas" />||<HeaderTitle title={`Cita domicilio`} image="domicilio"  />}
+      title={tipo=="laboratorio"&&<HeaderTitle title={`Cita laboratorio`} image="cita" />||<HeaderTitle title={`Cita domicilio`} image="domicilio"  />}
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

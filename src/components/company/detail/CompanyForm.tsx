@@ -398,7 +398,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo de Compañias" image="Company" />}
+              title={<HeaderTitle title="Catálogo de Compañias" image="compañia" />}
               className="header-container"
             ></PageHeader>
           )}

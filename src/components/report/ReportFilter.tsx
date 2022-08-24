@@ -18,6 +18,8 @@ type ReportFilterProps = {
     | "compañia"
     | "urgencia"
     | "tipoCompañia"
+    | "fechaIndividual"
+    | "hora"
   )[];
   setShowChart: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -57,7 +59,7 @@ const typeCompanyOptions: IOptions[] = [
 
 const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
   const { reportStore, optionStore } = useStore();
-  const { currentReport, filter, setFilter, getByFilter, getByChart, clearFilter, clear } =
+  const { currentReport, filter, setFilter, getByFilter, getByChart, clear } =
     reportStore;
   const {
     branchCityOptions,
@@ -86,7 +88,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
 
   useEffect(() => {
     form.setFieldsValue(filter);
-  }, [clear]) 
+  }, [clear]);
 
   const onFinish = async (filter: IReportFilter) => {
     setLoading(true);

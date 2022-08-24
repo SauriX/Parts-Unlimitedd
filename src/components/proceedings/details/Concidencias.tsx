@@ -109,7 +109,7 @@ const Coincidencias: FC<ProceedingTableProps> = ({  printing,expedientes,handle,
       <div >
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Lista de Precios" image="ListaPrecio" />}
+          title={<HeaderTitle title="Catálogo de Lista de Precios" image="precio" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />

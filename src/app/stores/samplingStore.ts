@@ -1,13 +1,8 @@
-import Search from "antd/lib/transfer/search";
 import { makeAutoObservable } from "mobx";
-import { getParsedCommandLineOfConfigFile } from "typescript";
-import Study from "../api/study";
-import { IStudyForm, IStudyList } from "../models/study";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import messages from "../util/messages";
-import responses from "../util/responses";
 import { getErrors } from "../util/utils";
 import Sampling from "../api/sampling";
 import { IsamplingForm, IsamplingList, IUpdate } from "../models/sampling";
@@ -50,10 +45,7 @@ export default class SamplingStore {
     }
   };
 
-
-
-
-   update = async (study: IUpdate) => {
+  update = async (study: IUpdate) => {
     try {
       await Sampling.update(study);
       alerts.success(messages.updated);
@@ -71,5 +63,4 @@ export default class SamplingStore {
       alerts.warning(getErrors(error));
     }
   };
-
 }

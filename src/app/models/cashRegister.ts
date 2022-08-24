@@ -19,7 +19,9 @@ export interface ICommonData {
   cheque: number;
   tdd: number;
   pp: number;
+  subtotal: number;
   total: number;
+  totalRecibido: number;
   saldo: number;
   fecha: Date;
   usuarioModifico: string;
@@ -32,6 +34,8 @@ export interface Invoice {
   sumaTransferencia: number;
   sumaCheque: number;
   sumaTDD: number;
+  sumaPP: number;
+  subtotal: number;
   total: number;
 }
 
@@ -45,7 +49,7 @@ export interface ICashRegisterFilter {
 export class CashRegisterFilterValues implements ICashRegisterFilter {
   sucursalId = [];
   tipoCompañia = [];
-  fechaIndividual = moment(Date.now());
+  fechaIndividual = moment(Date.now()).utcOffset(0, true);
   hora = [
     moment().hour(7).minutes(0).utcOffset(0, true),
     moment().hour(19).minutes(0).utcOffset(0, true),
@@ -66,6 +70,8 @@ export class CashRegisterData implements ICashRegisterData {
     sumaTransferencia: 0,
     sumaCheque: 0,
     sumaTDD: 0,
+    sumaPP: 0,
+    subtotal: 0,
     total: 0,
   };
 

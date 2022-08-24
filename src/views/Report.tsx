@@ -8,9 +8,10 @@ import ReportHeader from "../components/report/ReportHeader";
 import { reportType } from "../components/report/utils";
 
 const Report = () => {
-  const { reportStore } = useStore();
+  const { reportStore, cashRegisterStore } = useStore();
   const { scopes, filter, printPdf, setCurrentReport, clearScopes, access } =
     reportStore;
+  const {printPdf: cashPdf, filter: cashFilter} = cashRegisterStore;
 
   const [searchParams] = useSearchParams();
 
@@ -19,7 +20,9 @@ const Report = () => {
   const handleDownload = async () => {
     setLoading(true);
     const report = searchParams.get("report");
-    if (report) {
+    if (report == "corte_caja") {
+      await cashPdf(cashFilter);
+    } else if (report) {
       await printPdf(report, filter);
     }
     setLoading(false);

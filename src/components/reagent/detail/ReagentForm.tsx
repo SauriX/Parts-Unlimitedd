@@ -133,7 +133,7 @@ const ReagentForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo de Reactivos" image="reagent" />}
+              title={<HeaderTitle title="Catálogo de Reactivos" image="reactivo" />}
               className="header-container"
             ></PageHeader>
           )}

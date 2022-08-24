@@ -111,7 +111,7 @@ const CatalogNormalForm: FC<CatalogNormalFormProps> = ({ id, catalogName, compon
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo General" image="catalog" />}
+              title={<HeaderTitle title="Catálogo General" image="catalogo" />}
               className="header-container"
             ></PageHeader>
           )}

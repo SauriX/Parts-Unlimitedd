@@ -18,6 +18,7 @@ export const catalogs: IOptionsCatalog[] = [
 ];
 
 export const reports: IOptionsReport[] = [
+  {value: "corte_caja", label: "Corte de caja", type: "corte_caja"},
   { value: "expediente", label: "Expediente", type: "expediente" },
   { value: "estadistica", label: "Estadística Pacientes", type: "estadistica" },
   { value: "medicos", label: "Sol. Médico Condensado", type: "medicos" },
@@ -38,7 +39,7 @@ export const reports: IOptionsReport[] = [
 ];
 
 export const status = {
-  requests: {
+  requestStudy: {
     pendiente: 1,
     tomaDeMuestra: 2,
     solicitado: 3,

@@ -35,19 +35,24 @@ export interface IReportData {
   subtotalCargo: number;
   ivaCargo: number;
   totalCargo: number;
+  claveEstudio: string;
+  nombreEstudio: string;
+  maquila: string;
 }
 
 export interface IStudiesData {
   id: string;
   clave: string;
   estudio: string;
-  paquete: string;
-  promocion: number;
-  descuento: number;
   estatus: string;
-  precio: number;
-  precioFinal: number;
-  total: number;
+  paquete?: string;
+  promocion?: number;
+  descuento?: number;
+  precio?: number;
+  precioFinal?: number;
+  total?: number;
+  maquila?: string;
+  sucursal?: string;
 }
 export interface IReportRequestData {
   id: string;
@@ -82,6 +87,12 @@ export interface IMedicalBreakdownData {
   noSolicitudes: number;
 }
 
+export interface IMaquilaData {
+  id: string;
+  maquila: string;
+  noSolicitudes: number;
+}
+
 export interface IReportFilter {
   sucursalId: string[];
   medicoId: string[];
@@ -100,7 +111,7 @@ export class ReportFilterValues implements IReportFilter {
   metodoEnvio = [];
   tipoCompañia = [];
   urgencia = [];
-  fecha = [moment(Date.now()), moment(Date.now()).add(1, "day")];
+  fecha = [moment(Date.now()).utcOffset(0, true), moment(Date.now()).utcOffset(0, true).add(1, "day")];
   grafica = false;
 
   constructor(init?: IReportFilter) {

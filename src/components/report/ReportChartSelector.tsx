@@ -6,6 +6,7 @@ import {
   IReportContactData,
   IReportData,
   IReportStudyData,
+  IMaquilaData,
 } from "../../app/models/report";
 import ReportChart from "./ReportChart";
 
@@ -103,7 +104,16 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
       <ReportChart<IMedicalBreakdownData>
         data={data as IMedicalBreakdownData[]}
         serieX={"claveMedico"}
-        series={[{ title: "Solicitudes", dataIndex: "noSolicitudes" }]}
+        series={[{ title: "Cantidad de Solicitudes", dataIndex: "noSolicitudes" }]}
+        axisLabel={{ interval: 0, rotate: 0 }}
+      />
+    );
+  } else if (report === "maquila_interna" || report === "maquila_externa") {
+    return (
+      <ReportChart<IMaquilaData>
+        data={data as IMaquilaData[]}
+        serieX={"maquila"}
+        series={[{ title: "Cantidad de Solicitudes", dataIndex: "noSolicitudes" }]}
         axisLabel={{ interval: 0, rotate: 0 }}
       />
     );

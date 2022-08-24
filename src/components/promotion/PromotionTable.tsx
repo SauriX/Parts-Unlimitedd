@@ -148,7 +148,7 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Promociones en listas de precios" image="promo" />}
+          title={<HeaderTitle title="Catálogo de Promociones en listas de precios" image="promocion" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />

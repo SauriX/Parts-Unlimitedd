@@ -178,7 +178,7 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
             <PageHeader
               ghost={false}
               title={
-                <HeaderTitle title="Catálogo de Lealtades" image="Lealtad" />
+                <HeaderTitle title="Catálogo de Lealtades" image="lealtad" />
               }
               className="header-container"
             ></PageHeader>
