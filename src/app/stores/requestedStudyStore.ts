@@ -1,65 +1,66 @@
 import { makeAutoObservable } from "mobx";
+import RequestedStudy from "../api/requestedStuy";
+import {
+  IRequestedStudyForm,
+  IRequestedStudyList,
+  IUpdate,
+} from "../models/requestedStudy";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
-import Sampling from "../api/sampling";
-import { IsamplingForm, IsamplingList, IUpdate } from "../models/sampling";
 
-export default class SamplingStore {
+export default class RequestedStudyStore {
   constructor() {
     makeAutoObservable(this);
   }
 
   scopes?: IScopes;
-  studys: IsamplingList[] = [];
+  data: IRequestedStudyList[] = [];
 
   clearScopes = () => {
     this.scopes = undefined;
   };
 
   clearStudy = () => {
-    this.studys = [];
+    this.data = [];
   };
 
   access = async () => {
     try {
-      const scopes = await Sampling.access();
+      const scopes = await RequestedStudy.access();
       this.scopes = scopes;
-      console.log(scopes);
     } catch (error) {
       alerts.warning(getErrors(error));
       history.push("/forbidden");
     }
   };
 
-  getAll = async (search: IsamplingForm) => {
+  getAll = async (search: IRequestedStudyForm) => {
     try {
-      const study = await Sampling.getAll(search);
-      this.studys = study;
-      return study;
+      const study = await RequestedStudy.getAll(search);
+      this.data = study;
     } catch (error) {
       alerts.warning(getErrors(error));
-      this.studys = [];
+      this.data = [];
     }
   };
 
   update = async (study: IUpdate) => {
     try {
-      await Sampling.update(study);
+      await RequestedStudy.update(study);
       alerts.success(messages.updated);
-      return true;
-    } catch (error: any) {
+    } catch (error) {
       alerts.warning(getErrors(error));
       return false;
     }
   };
 
-  printTicket = async (recordId: string, requestId: string) => {
+  printOrder = async (recordId: string, requestId: string) => {
     try {
-      await Sampling.getOrderPdf(recordId, requestId);
-    } catch (error: any) {
+      await RequestedStudy.getOrderPdf(recordId, requestId);
+    } catch (error) {
       alerts.warning(getErrors(error));
     }
   };

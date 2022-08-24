@@ -74,24 +74,24 @@ export const expandablePriceConfig = {
               bordered
               style={{ marginBottom: 5, color: "black" }}
             >
-              <Descriptions.Item label="Clave" style={{ maxWidth: 30 }}>
+              <Descriptions.Item label="Clave" style={{ maxWidth: 30 }} className="description-content">
                 {x.clave}
               </Descriptions.Item>
-              <Descriptions.Item label="Estudio" style={{ maxWidth: 30 }}>
+              <Descriptions.Item label="Estudio" style={{ maxWidth: 30 }} className="description-content">
                 {x.estudio}
               </Descriptions.Item>
-              <Descriptions.Item label="Promoción Estudio" style={{ maxWidth: 30 }}>
+              <Descriptions.Item label="Promoción Estudio" style={{ maxWidth: 30 }} className="description-content">
                 ${x.descuento}
               </Descriptions.Item>
-              <Descriptions.Item label="Precio Estudio" style={{ maxWidth: 30 }}>
+              <Descriptions.Item label="Precio Estudio" style={{ maxWidth: 30 }} className="description-content">
                 ${x.precioFinal}
               </Descriptions.Item>
               {x.paquete != null ? (
                 <>
-                  <Descriptions.Item label="Paquete" style={{ maxWidth: 30 }}>
+                  <Descriptions.Item label="Paquete" style={{ maxWidth: 30 }} className="description-content">
                     {x.paquete}
                   </Descriptions.Item>
-                  <Descriptions.Item label="Promoción Paquete" style={{ maxWidth: 30 }}>
+                  <Descriptions.Item label="Promoción Paquete" style={{ maxWidth: 30 }} className="description-content">
                     ${x.promocion}
                   </Descriptions.Item>
                 </>
