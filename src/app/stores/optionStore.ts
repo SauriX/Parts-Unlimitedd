@@ -29,6 +29,19 @@ export const urgencyOptions = [
   { label: "Urgencia con cargo", value: 3 },
 ];
 
+export const studyStatusOptions = [
+  { label: "Pendiente", value: 1 },
+  { label: "Toma de muestra", value: 2 },
+  { label: "Solicitado", value: 3 },
+  { label: "Capturado", value: 4 },
+  { label: "Validado", value: 5 },
+  { label: "Liberado", value: 6 },
+  { label: "Enviado", value: 7 },
+  { label: "En ruta", value: 8 },
+  { label: "Cancelado", value: 9 },
+  { label: "Entregado", value: 10 },
+];
+
 export default class OptionStore {
   constructor() {
     makeAutoObservable(this);

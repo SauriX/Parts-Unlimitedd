@@ -69,7 +69,7 @@ const CatalogHeader: FC<CatalogHeaderProps> = ({ catalog, setCatalog, handlePrin
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo General" image="catalog" />}
+      title={<HeaderTitle title="Catálogo General" image="catalogo" />}
       className="header-container"
       extra={[
         catalog && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

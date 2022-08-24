@@ -134,7 +134,7 @@ const ConfigurationGeneralForm = () => {
         />
         <Row>
           <Col span={24} style={{ textAlign: "center" }}>
-            <ImgCrop shape="rect" aspect={2.5} minZoom={0.25} quality={0.8}>
+            <ImgCrop shape="rect" aspect={2.5} minZoom={0.25} quality={0.8} fillColor="transparent">
               <Upload
                 key="upload"
                 name="logo"

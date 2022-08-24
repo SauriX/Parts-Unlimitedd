@@ -17,7 +17,7 @@ const UserFormHeader: FC<UserFormHeaderProps> = ({ handlePrint,handleDownload })
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo usuarios" image="user" />}
+      title={<HeaderTitle title="Catálogo usuarios" image="usuario" />}
       className="header-container"
       extra={[
         id?<ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />:"",

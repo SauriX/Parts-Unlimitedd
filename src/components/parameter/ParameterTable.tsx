@@ -135,7 +135,7 @@ const ParameterTable:FC<ParameterTableProps> = ({  componentRef,  printing }) =>
       <div ref={componentRef}>
           <PageHeader
             ghost={false}
-            title={<HeaderTitle title="Catálogo de Parametros" image="parameters" />}
+            title={<HeaderTitle title="Catálogo de Parametros" image="parametro" />}
             className="header-container"
           ></PageHeader>
           <Divider className="header-divider" />

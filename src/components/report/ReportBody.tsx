@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "../../app/stores/store";
 import ReportFilter from "./ReportFilter";
 import { Col, PageHeader, Row, Spin } from "antd";
-import HeaderTitle from "../../app/common/header/HeaderTitle";
+import HeaderTitle, { imagesType } from "../../app/common/header/HeaderTitle";
 import {
   getColumns,
   getExpandableConfig,
@@ -39,7 +39,7 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
     )[]
   >([]);
   const [title, setTitle] = useState<string>();
-  const [image, setImage] = useState<string>();
+  const [image, setImage] = useState<imagesType | "">();
   const [expandable, setExpandable] = useState<ExpandableConfig<IReportData>>();
   const [summary, setSummary] = useState<boolean>();
   const [hasFooterRow, setHasFooterRow] = useState<boolean>();

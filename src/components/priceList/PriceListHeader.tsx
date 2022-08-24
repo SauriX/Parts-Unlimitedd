@@ -39,7 +39,7 @@ const PriceListHeader: FC<PriceListHeaderProps> = ({ handlePrint, handleDownload
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Listas de Precios" image="ListaPrecio" />}
+      title={<HeaderTitle title="Catálogo de Listas de Precios" image="precio" />}
       className="header-container"
       extra={[
         scopes?.imprimir && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

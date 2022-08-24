@@ -112,7 +112,7 @@ const CatalogDescriptionTable: FC<CatalogDescriptionTableProps> = ({
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo General" image="catalog" />}
+          title={<HeaderTitle title="Catálogo General" image="catalogo" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />

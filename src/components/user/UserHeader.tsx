@@ -17,7 +17,7 @@ const UserHeader: FC<UserHeaderProps> = ({ handlePrint,handleList }) => {
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo usuarios" image="user" />}
+      title={<HeaderTitle title="Catálogo usuarios" image="usuario" />}
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

@@ -38,7 +38,7 @@ const RouteHeader: FC<RouteHeaderProps> = ({ handlePrint, handleDownload }) => {
     return (
         <PageHeader
             ghost={false}
-            title={<HeaderTitle title="Catálogo de Rutas" image="rutas" />}
+            title={<HeaderTitle title="Catálogo de Rutas" image="ruta" />}
             className="header-container"
             extra={[
                 scopes?.imprimir && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

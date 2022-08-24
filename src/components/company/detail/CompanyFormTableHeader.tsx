@@ -38,7 +38,7 @@ const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Contactos" image="contactos" />}
+      title={<HeaderTitle title="Contactos" image="contacto" />}
       className="header-container"
       extra={[
         <Search

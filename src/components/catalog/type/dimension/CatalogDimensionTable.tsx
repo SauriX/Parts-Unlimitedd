@@ -120,7 +120,7 @@ const CatalogDimensionTable: FC<CatalogDimensionTableProps> = ({ componentRef, p
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo General" image="catalog" />}
+          title={<HeaderTitle title="Catálogo General" image="catalogo" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
