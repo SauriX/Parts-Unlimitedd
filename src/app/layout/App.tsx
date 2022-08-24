@@ -60,6 +60,9 @@ import Report from "../../views/Report";
 import ApointmentDetail from "../../components/appointment/detail/apointmentDetail";
 import Sampling from "../../views/Sampling";
 import Equipment from "../../views/Equipment";
+import EquipmentMantain from "../../views/EquipmentMantain";
+import EquipmentMantainForm from "../../components/equipmentMantain/detail/EquipmentMantainForm";
+import EquipmentMantainDetails from "../../components/equipmentMantain/detail/EquipmentMantainDetails";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -103,7 +106,10 @@ function App() {
             <Route path="users/:id" element={<UserDetail />} />
             <Route path="new-user" element={<NewUser />} />
             <Route path="equipment" element={<Equipment />} />
+            <Route path="equipmentMantain/:id" element={<EquipmentMantain />} />
+            <Route path="equipmentMantain/new/:id" element={<EquipmentMantainDetails/>} />
             <Route path="equipment/:id" element={<EquipmentDetails />} />
+            <Route path="equipmentMantain/edit/:id" element={<EquipmentMantainDetails />} />
             <Route path="roles" element={<Role />} />
             <Route path="reagents" element={<Reagent />} />
             <Route path="reagents/new" element={<ReagentDetail />} />
