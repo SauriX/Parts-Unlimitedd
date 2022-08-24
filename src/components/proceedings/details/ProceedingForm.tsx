@@ -651,6 +651,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
                 wrapperCol: { span: 18 },
               }}
               options={BranchOptions}
+              required
             />
           </Col>
         </Row>

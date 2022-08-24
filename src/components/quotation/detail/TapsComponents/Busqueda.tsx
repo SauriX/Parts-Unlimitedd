@@ -129,16 +129,18 @@ const BusquedaForm: FC<GeneralesFormProps> = ({
         <Button
           type="link"
           onClick={() => {
+            
             handleIdExpediente(expediente);
             console.log("here");
             console.log(expediente);
             handleCotizacion((prev) => ({
+             
               ...prev,
               expedienteid: expediente.id,
               expediente: expediente.expediente,
               nomprePaciente: expediente.nomprePaciente,
               edad: expediente.edad,
-              fechaNacimiento: moment(expediente.fechaNacimiento, "YYYY-MM-DD"),
+              fechaNacimiento: moment(expediente.fechaNacimiento, "DD-MM-YYYY"),
               genero: expediente.genero,
             }));
           }}

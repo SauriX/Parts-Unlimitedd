@@ -35,14 +35,7 @@ import SwitchInput from "../../app/common/form/SwitchInput";
 import moment from "moment";
 // import Search from "antd/es/transfer/search";
 // import Indications from "../../views/Indications";
-const equipment:IMantainList[] = [
-  {
-    id:"1",
-    clave:"test",
-    fecha:moment(moment.now()),
-    activo:true
-  }
-];
+
 type EquipmentTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
@@ -54,9 +47,9 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
   printing,
   id
 }) => {
-/*   const { equipmentStore } = useStore();
-  const { equipment, getAll } = equipmentStore;
- */
+   const { equipmentMantainStore} = useStore();
+  const { equipment, getAll,getequip,equip,setSearch,search ,setiD,idEq,printTicket} = equipmentMantainStore;
+ 
   const [searchParams] = useSearchParams();
   const [form] = Form.useForm<ISearchMantain>();
 
@@ -76,16 +69,28 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
 
   console.log("Table");
 
-/*   useEffect(() => {
+   useEffect(() => {
     const readEquipment = async () => {
       setLoading(true);
-      await getAll(searchParams.get("search") ?? "all");
+      var equipo = await getequip(id);
+      search!.idEquipo = equipo?.id!
+      await getAll(search!);
+     
+    setiD(id);
       setLoading(false);
     };
 
     readEquipment();
-  }, [getAll, searchParams]); */
+  }, [getAll, searchParams,getequip]); 
+  const onFinish = async (newValues: ISearchMantain) => {
+    // const equipment = { ...values, ...newValues };
+    console.log("values", values);
+    console.log("newValues", newValues);
+    const equipment = { ...search, ...newValues };
+    setSearch(equipment);
+    await getAll(equipment);
 
+  };
   const EquipmentTablePrint = () => {
     return (
       <div ref={componentRef}>
@@ -118,9 +123,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
           type="link"
           onClick={() => {
             navigate(
-              `/equipment/${user.id}?${searchParams}&mode=readonly&search=${
-                searchParams.get("search") ?? "all"
-              }`
+              `/equipmentMantain/edit/${user.id}`
             );
           }}
         >
@@ -149,9 +152,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
           icon={<EditOutlined />}
           onClick={() => {
             navigate(
-              `/equipment/${value}?${searchParams}&mode=edit&search=${
-                searchParams.get("search") ?? "all"
-              }`
+              `/equipmentMantain/edit/${value}`
             );
           }}
         />
@@ -163,16 +164,14 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
       title: "Imprimir",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => (
+      render: (value,item) => (
         <IconButton
           title="Editar equipo"
           icon={<PrinterOutlined />}
           onClick={() => {
-            navigate(
-              `/equipment/${value}?${searchParams}&mode=edit&search=${
-                searchParams.get("search") ?? "all"
-              }`
-            );
+            console.log("value",value)
+            console.log("item",item )
+                printTicket(item.id);
           }}
         />
       ),
@@ -188,11 +187,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
           title="Editar equipo"
           icon={<EyeOutlined />}
           onClick={() => {
-            navigate(
-              `/equipment/${value}?${searchParams}&mode=edit&search=${
-                searchParams.get("search") ?? "all"
-              }`
-            );
+            printTicket(value);
           }}
         />
       ),
@@ -230,11 +225,11 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
       <Row style={{ marginBottom: 24 }} gutter={[12,12]}>
         <Col md={10} sm={24} xs={12} style={{ textAlign: "center" }}>
             <div style={{backgroundColor:"#B4C7E7",textAlign:"justify", width:"30%",marginLeft:"50%"}}>
-            Clave: INT400
+            Clave: {equip?.clave}
             <br />  
-            Nombre: INTEGRA400  
+            Nombre: {equip?.nombre}
             <br /> 
-            Serie: <Link to={""}>EAC654489902</Link>
+            Serie: <Link to={""}>{equip?.serie}</Link>
             </div>
         </Col>
         <Col md={14} sm={24} xs={12} style={{ textAlign: "center" }}>
@@ -243,7 +238,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
             form={form}
             name="equipment"
             initialValues={values}
-            /* onFinish={onFinish} */
+             onFinish={onFinish} 
             scrollToFirstError
  /*            onFieldsChange={() => {
               setDisabled(
@@ -257,8 +252,8 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
               <Col md={10} sm={24}>
                 <DateRangeInput
                   formProps={{
-                    name: "clave",
-                    label: "Clave",
+                    name: "fecha",
+                    label: "fecha",
                   }}
 
                 />
@@ -266,7 +261,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
               <Col md={10} sm={24}>
                 <TextInput
                     formProps={{
-                      name: "nombre",
+                      name: "clave",
                       label: "Nombre",
                       labelCol:{span:10}
                     }}
@@ -275,7 +270,9 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
                 />
               </Col>
               <Col md={4} sm={24}>
-                  <Button >Buscar</Button>
+                  <Button onClick={()=>{
+                    form.submit();
+                  }}>Buscar</Button>
               </Col>
             </Row>
           </Form>

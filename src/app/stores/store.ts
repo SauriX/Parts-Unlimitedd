@@ -32,6 +32,7 @@ import { IReportData } from "../models/report";
 import NotificationStore from "./notificationStore";
 import SamplingStore from "./samplingStore";
 import CashRegisterStore from "./cashRegisterStore";
+import EquipmentMantainStore from "./EquipentMantainStore";
 
 configure({
   enforceActions: "never",
@@ -69,6 +70,7 @@ interface Store {
   appointmentStore: AppointmentStore;
   notificationStore: NotificationStore;
   samplig: SamplingStore;
+  equipmentMantainStore:EquipmentMantainStore;
 }
 
 export const store: Store = {
@@ -103,6 +105,7 @@ export const store: Store = {
   appointmentStore: new AppointmentStore(),
   notificationStore: new NotificationStore(),
   samplig: new SamplingStore(),
+  equipmentMantainStore:new EquipmentMantainStore(),
 };
 
 export const StoreContext = createContext(store);

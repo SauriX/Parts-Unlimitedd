@@ -55,41 +55,45 @@ import DateInput from "../../../app/common/form/proposal/DateInput";
 import Dragger from "antd/lib/upload/Dragger";
 import { IRequestImage } from "../../../app/models/request";
 import { RcFile } from "antd/lib/upload";
+import { IImageSend, ImantainForm, MantainValues } from "../../../app/models/equipmentMantain";
 
 type EquipmentFormProps = {
   id: number;
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
+  idmantain?:string;
 };
 
-const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing, }) => {
-  const { equipmentStore, optionStore } = useStore();
+const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idmantain }) => {
+  const { equipmentMantainStore ,optionStore} = useStore();
   const { getSucursalesOptions, sucursales } = optionStore;
-  const { getById, create, update, getAll, equipment } = equipmentStore;
+  const { getById, create, update, getAll, equipment,saveImage,setSearch,search,mantain,equip,idEq } = equipmentMantainStore;
 
   const navigate = useNavigate();
   const [type, setType] = useState<"orden" | "ine" | "formato">("orden");
   const [searchParams] = useSearchParams();
 
-  const [form] = Form.useForm<IEquipmentForm>();
-
+  const [form] = Form.useForm<ImantainForm>();
+  const [images,setImages] = useState<IImageSend[]>([]);
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
 
-  const [values, setValues] = useState<IEquipmentForm>(
-    new EquipmentFormValues()
+  const [values, setValues] = useState<ImantainForm>(
+    new MantainValues()
   );
 
   const [branch, setBranch] = useState<IEquipmentBranch>();
   useEffect(() => {
+    
     getSucursalesOptions();
   }, [getSucursalesOptions]);
 
   useEffect(() => {
-    const readEquipment = async (id: number) => {
+    const readEquipment = async (id: string) => {
+      
       setLoading(true);
       const equipment = await getById(id);
       form.setFieldsValue(equipment!);
@@ -97,33 +101,49 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing, }) 
       setLoading(false);
     };
 
-    if (id) {
-      readEquipment(id);
+    if (idmantain) {
+      readEquipment(idmantain!);
     }
   }, [form, getById, id]);
 
   useEffect(() => {
     const readEquipment = async () => {
       setLoading(true);
-      await getAll(searchParams.get("search") ?? "all");
+      await getAll(search!);
       setLoading(false);
     };
+    console.log("id",id);
     readEquipment();
   }, [getAll, searchParams]);
 
-  const onFinish = async (newValues: IEquipmentForm) => {
+  const onFinish = async (newValues: ImantainForm) => {
     const equipment = { ...values, ...newValues };
-
+    console.log(equipment,"equipment");
     let success = false;
-
+    
     if (!equipment.id) {
-      success = await create(equipment);
+     console.log(equip!)
+      equipment.idEquipo=equip!.id!;
+      equipment.ide=id;
+      var response  = await create(equipment);
+      console.log(response,"response");
+      
+      if(response?.id){
+      
+      
+        navigate(`/equipmentMantain/edit/${response.id}`);
+        
+      }
     } else {
+      equipment.clave = mantain?.clave!;
+      equipment.no_serie=mantain?.no_serie!;
       success = await update(equipment);
+       await sumbitImages();
     }
 
     if (success) {
-      navigate(`/equipment?search=${searchParams.get("search") ?? "all"}`);
+      console.log(idEq)
+      navigate(`/equipmentMantain/${idEq}`);
     }
   };
 
@@ -135,8 +155,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing, }) 
 
 
 
-    const { requestStore } = useStore();
-    const { request, saveImage } = requestStore;
+
 
 
     const [order, setOrder] = useState<string>();
@@ -144,29 +163,35 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing, }) 
     const [format, setFormat] = useState<string>();
 
     const submitImage = async (type: "orden" | "ine" | "formato", file: RcFile, imageUrl: string) => {
-      if (request) {
-        const requestImage: IRequestImage = {
-          solicitudId: request.solicitudId!,
-          expedienteId: request.expedienteId,
+      if (mantain) {
+        const requestImage:IImageSend = {
+          solicitudId: mantain.id!,
+          imagenUrl: "",
+          clave:mantain.clave,
           imagen: file,
           tipo: type,
         };
+        setImages((prev)=>([...prev,requestImage]));
 
-        const formData = objectToFormData(requestImage);
-        const ok = await saveImage(formData);
-
-        if (ok) {
-          if (type === "orden") {
-            setOrder(imageUrl);
-          } else if (type === "ine") {
-            setId(imageUrl);
-          } else if (type === "formato") {
-            setFormat(imageUrl);
-          }
-        }
       }
     };
 
+    const sumbitImages= async()=>{
+      const formData = objectToFormData(images);
+      const ok = await saveImage(formData);
+
+      if (ok) {
+        alerts.success("La imagen se ha guardado con éxito");
+        return true;
+/*         if (type === "orden") {
+          setOrder(imageUrl);
+        } else if (type === "ine") {
+          setId(imageUrl);
+        } else if (type === "formato") {  
+          setFormat(imageUrl);
+        } */
+      }
+    }
     useEffect(() => {
       console.log(values);
     }, [values]);
@@ -268,7 +293,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing, }) 
               <Col md={id ? 24 : 48} sm={48} style={{ textAlign: "right" }}>
                 <Button
                   onClick={() => {
-                    navigate("/equipment");
+                    navigate(`/equipmentMantain/${idEq}`);
                   }}
                 >
                   Cancelar
@@ -316,7 +341,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing, }) 
                 ></PageHeader>
               )}
               {printing && <Divider className="header-divider" />}
-              <Form<IEquipmentForm>
+              <Form<ImantainForm>
                 {...formItemLayout}
                 form={form}
                 name="equipment"
@@ -336,13 +361,13 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing, }) 
                     <DateInput
 
                       formProps={{
-                        name: "clave",
+                        name: "fecha",
                         label: "Fecha programda",
                       }}></DateInput>
                     <TextAreaInput
                       formProps={{
-                        name: "clave",
-                        label: "Observ",
+                        name: "descripcion",
+                        label: "Observacion",
                       }}
                       rows={10}
                     ></TextAreaInput>
@@ -350,21 +375,20 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing, }) 
                   </Col>
                   <Col md={12} sm={24}>
                     <Row gutter={[0, 12]}>
-                      <Col span={24}>
+                      {mantain?.id&&<Col span={24}>
                         <Segmented
                           className="requet-image-segment"
                           defaultValue={"orden"}
                           options={[
-                            { label: "Documento", value: "orden" },
                             { label: "Imagen", value: "ine" },
 
                           ]}
                           onChange={(value: any) => setType(value)}
                         />
-                      </Col>
-                      <Col span={24}>
+                      </Col>}
+                      {mantain?.id&&<Col span={24}>
                         <Dragger {...props}>{getContent()}</Dragger>
-                      </Col>
+                      </Col>}
                     </Row>
 
 

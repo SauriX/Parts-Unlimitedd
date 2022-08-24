@@ -111,7 +111,7 @@ function App() {
             <Route path="equipmentMantain/:id" element={<EquipmentMantain />} />
             <Route path="equipmentMantain/new/:id" element={<EquipmentMantainDetails/>} />
             <Route path="equipment/:id" element={<EquipmentDetails />} />
-            <Route path="equipmentMantain/:id" element={<EquipmentDetails />} />
+            <Route path="equipmentMantain/edit/:id" element={<EquipmentMantainDetails />} />
             <Route path="roles" element={<Role />} />
             <Route path="reagents" element={<Reagent />} />
             <Route path="reagents/new" element={<ReagentDetail />} />

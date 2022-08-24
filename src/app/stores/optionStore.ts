@@ -415,7 +415,7 @@ export default class OptionStore {
     try {
       const studyOptions = await Study.getActive();
       console.log(studyOptions,"studis");
-      var studyOptionsf = studyOptions.filter(x=>x.area==area);
+      var studyOptionsf = studyOptions.filter(x=>x.departamento.includes(area));
       console.log(studyOptionsf,"filter");
       var test= studyOptionsf.map((x) => ({
         key: "study-" + x.id,
@@ -423,6 +423,7 @@ export default class OptionStore {
         label: x.clave + " - " + x.nombre,
         group: "study",
       }));
+      this.packOptionscita= test;
       console.log(test,"final");
     } catch (error) {
       this.studyOptionscita = [];
@@ -448,7 +449,7 @@ export default class OptionStore {
   getPackOptionscita = async (area:string) => {
     try {
       const packOptions = await Pack.getActive();
-      var packOptionsf = packOptions.filter(x=>x.area==area);
+      var packOptionsf = packOptions.filter(x=>x.departamento==area);
       this.packOptionscita = packOptionsf.map((x) => ({
         key: "pack-" + x.id,
         value: "pack-" + x.id,

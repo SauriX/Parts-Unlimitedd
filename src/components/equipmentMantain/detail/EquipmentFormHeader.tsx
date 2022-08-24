@@ -16,8 +16,8 @@ const EquipmentFormHeader: FC<EquipmentFormHeaderProps> = ({
   id,
   handlePrint,
 }) => {
-  const { equipmentStore } = useStore();
-  const { exportForm } = equipmentStore;
+  const { equipmentStore,equipmentMantainStore } = useStore();
+  const { exportForm, idEq} = equipmentMantainStore;
 
   const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ const EquipmentFormHeader: FC<EquipmentFormHeaderProps> = ({
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Configuración de Equipo" image="equipo" />}
+      title={<HeaderTitle title="Mantenimiento de Equipo" image="equipo" />}
       className="header-container"
       extra={[
         id != 0 ? (
@@ -60,7 +60,7 @@ const EquipmentFormHeader: FC<EquipmentFormHeaderProps> = ({
           title="Regresar"
           image="back"
           onClick={() => {
-            navigate("/equipment");
+            navigate(`/equipmentMantain/${idEq}`);
           }}
         />,
       ]}
