@@ -40,7 +40,7 @@ const ReagentHeader: FC<ReagentHeaderProps> = ({ handlePrint, handleDownload }) 
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Reactivos" image="reagent" />}
+      title={<HeaderTitle title="Catálogo de Reactivos" image="reactivo" />}
       className="header-container"
       extra={[
         scopes?.imprimir && <PrintIcon key="print" onClick={handlePrint} />,

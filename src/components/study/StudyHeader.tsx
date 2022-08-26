@@ -17,7 +17,7 @@ const StudyHeader: FC<StudyHeaderProps> = ({ handlePrint,handleList }) => {
     return (
       <PageHeader
         ghost={false}
-        title={<HeaderTitle title="Catálogo Estudios" image="estudios" />}
+        title={<HeaderTitle title="Catálogo Estudios" image="estudio" />}
         className="header-container"
         extra={[
           <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

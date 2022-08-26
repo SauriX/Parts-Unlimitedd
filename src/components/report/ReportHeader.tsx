@@ -1,6 +1,6 @@
 import { PageHeader, Select } from "antd";
 import { observer } from "mobx-react-lite";
-import { FC } from "react";
+import { FC, Fragment } from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import DownloadIcon from "../../app/common/icons/DownloadIcon";
@@ -15,8 +15,7 @@ type ReportHeaderProps = {
 };
 
 const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
-  const navigate = useNavigate();
-  const { reportStore } = useStore();
+  const { reportStore, cashRegisterStore } = useStore();
   const {
     currentReport,
     filter,
@@ -25,6 +24,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
     getByChart,
     clearFilter,
   } = reportStore;
+  const {clearFilter: clearCash} = cashRegisterStore;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -51,42 +51,44 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
       ) {
         await getByChart(value, filter);
       }
-      else if (value == "corte_caja"){
-        navigate("cash");
-      }
     } else {
       setCurrentReport(undefined);
       searchParams.delete("report");
     }
     clearFilter();
+    clearCash();
     setSearchParams(searchParams);
   };
 
   return (
-    <PageHeader
-      ghost={false}
-      title={<HeaderTitle title="Reportes" image="grafico" />}
-      className="header-container"
-      extra={[
-        currentReport && (
-          <DownloadIcon key="download" onClick={handleDownload} />
-        ),
-        <Select
-          key="reports"
-          showSearch
-          placeholder="Reporte"
-          optionFilterProp="children"
-          defaultValue={searchParams.get("report")}
-          onChange={handleChange}
-          filterOption={(input: string, option: any) =>
-            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }
-          allowClear
-          style={{ width: 180, textAlign: "left" }}
-          options={reports}
-        ></Select>,
-      ]}
-    ></PageHeader>
+    <Fragment>
+      <>
+        <PageHeader
+          ghost={false}
+          title={<HeaderTitle title={currentReport == "corte_caja" ? "Corte de caja" : "Reportes"} image={currentReport == "corte_caja" ? "registradora" : "grafico"} />}
+          className="header-container"
+          extra={[
+            currentReport && (
+              <DownloadIcon key="download" onClick={handleDownload} />
+            ),
+            <Select
+              key="reports"
+              showSearch
+              placeholder="Reporte"
+              optionFilterProp="children"
+              defaultValue={searchParams.get("report")}
+              onChange={handleChange}
+              filterOption={(input: string, option: any) =>
+                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+              allowClear
+              style={{ width: 180, textAlign: "left" }}
+              options={reports}
+            ></Select>,
+          ]}
+        ></PageHeader>
+      </>
+    </Fragment>
   );
 };
 

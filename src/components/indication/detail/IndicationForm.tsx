@@ -218,7 +218,7 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing })
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo de Indicaciones" image="Indicaciones" />}
+              title={<HeaderTitle title="Catálogo de Indicaciones" image="indicacion" />}
               className="header-container"
             ></PageHeader>
           )}

@@ -457,7 +457,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo de Rutas" image="rutas" />}
+              title={<HeaderTitle title="Catálogo de Rutas" image="ruta" />}
               className="header-container"
             ></PageHeader>
           )}

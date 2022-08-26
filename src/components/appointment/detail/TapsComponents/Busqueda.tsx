@@ -137,7 +137,7 @@ const BusquedaForm: FC<GeneralesFormProps> = ({
               expediente: expediente.expediente,
               nomprePaciente: expediente.nomprePaciente,
               edad: expediente.edad,
-              fechaNacimiento: moment(expediente.fechaNacimiento, "YYYY-MM-DD"),
+              fechaNacimiento: moment(expediente.fechaNacimiento, "DD-MM-YYYY"  ),
               genero: expediente.genero,
             }));
           }}

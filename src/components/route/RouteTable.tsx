@@ -133,7 +133,7 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Rutas" image="rutas" />}
+          title={<HeaderTitle title="Catálogo de Rutas" image="ruta" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />

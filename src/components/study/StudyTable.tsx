@@ -165,7 +165,7 @@ const StudyTable:FC<StudyTableProps> = ({  componentRef,  printing }) => {
       <div ref={componentRef}>
           <PageHeader
             ghost={false}
-            title={<HeaderTitle title="Catálogo de Estudios" image="estudios" />}
+            title={<HeaderTitle title="Catálogo de Estudios" image="estudio" />}
             className="header-container"
           ></PageHeader>
           <Divider className="header-divider" />

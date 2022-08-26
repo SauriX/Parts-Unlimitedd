@@ -58,11 +58,12 @@ import RequestDetail from "../../components/request/detail/RequestDetail";
 import Quotation from "../../views/Quotation";
 import QuotationDetail from "../../components/quotation/detail/QuotationDetail";
 import Report from "../../views/Report";
-import CashRegister from "../../views/CashRegister";
-import DatosFiscalesForm from "../../components/proceedings/details/DatosFiscalesForm";
 import ApointmentDetail from "../../components/appointment/detail/apointmentDetail";
 import Sampling from "../../views/Sampling";
 import Equipment from "../../views/Equipment";
+import EquipmentMantain from "../../views/EquipmentMantain";
+import EquipmentMantainForm from "../../components/equipmentMantain/detail/EquipmentMantainForm";
+import EquipmentMantainDetails from "../../components/equipmentMantain/detail/EquipmentMantainDetails";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -107,7 +108,10 @@ function App() {
             <Route path="new-user" element={<NewUser />} />
             <Route path="trackingOrder" element={<CreationTrackingOrder />} />
             <Route path="equipment" element={<Equipment />} />
+            <Route path="equipmentMantain/:id" element={<EquipmentMantain />} />
+            <Route path="equipmentMantain/new/:id" element={<EquipmentMantainDetails/>} />
             <Route path="equipment/:id" element={<EquipmentDetails />} />
+            <Route path="equipmentMantain/edit/:id" element={<EquipmentMantainDetails />} />
             <Route path="roles" element={<Role />} />
             <Route path="reagents" element={<Reagent />} />
             <Route path="reagents/new" element={<ReagentDetail />} />
@@ -163,7 +167,6 @@ function App() {
             <Route path="samplings/:id" element={<Sampling />} />
             <Route path="samplings/new" element={<Sampling />} />
             <Route path="reports" element={<Report />} />
-            <Route path="cash" element={<CashRegister />} />
             <Route path={views.appointment} element={<Appointment />} />
             <Route
               path={`${views.appointment}/:id`}

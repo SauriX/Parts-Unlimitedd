@@ -46,7 +46,7 @@ const QuotationHeaderForm: FC<QuotationHeaderFormProps> = ({ handlePrint, handle
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Cotizaciones" image="" />}
+      title={<HeaderTitle title="Catálogo de Cotizaciones" />}
       className="header-container"
       extra={[
         id &&/* scopes?.imprimir && */  <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

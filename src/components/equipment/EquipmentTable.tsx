@@ -76,9 +76,7 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
           type="link"
           onClick={() => {
             navigate(
-              `/equipment/${user.id}?${searchParams}&mode=readonly&search=${
-                searchParams.get("search") ?? "all"
-              }`
+              `/equipmentMantain/${user.id}`
             );
           }}
         >

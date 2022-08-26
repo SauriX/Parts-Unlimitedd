@@ -66,16 +66,16 @@ export const expandableMaquilaExternConfig = {
         bordered
         style={{ marginBottom: 5 }}
       >
-        <Descriptions.Item label="Clave" style={{ maxWidth: 50 }}>
+        <Descriptions.Item label="Clave" style={{ maxWidth: 50 }} className="description-content">
           {item.claveEstudio}
         </Descriptions.Item>
-        <Descriptions.Item label="Estudio" style={{ maxWidth: 50 }}>
+        <Descriptions.Item label="Estudio" style={{ maxWidth: 50 }} className="description-content">
           {item.nombreEstudio}
         </Descriptions.Item>
-        <Descriptions.Item label="Estatus" style={{ maxWidth: 50 }}>
+        <Descriptions.Item label="Estatus" style={{ maxWidth: 50 }} className="description-content">
           {item.estatus}
         </Descriptions.Item>
-        <Descriptions.Item label="Maquilador" style={{ maxWidth: 50 }}>
+        <Descriptions.Item label="Maquilador" style={{ maxWidth: 50 }} className="description-content">
           {item.maquila}
         </Descriptions.Item>
       </Descriptions>

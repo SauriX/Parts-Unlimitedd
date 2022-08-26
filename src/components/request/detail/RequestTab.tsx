@@ -44,7 +44,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
 
     if (currentKey === "general") {
       ok = await submitGeneral(formGeneral);
-    } else if (currentKey === "studies") {
+    } else if (currentKey === "studies" || currentKey === "request" || currentKey === "sampler") {
       ok = await updateStudies(studyUpdate);
     }
 

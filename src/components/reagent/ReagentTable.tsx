@@ -126,7 +126,7 @@ const ReagentTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Reactivos" image="reagent" />}
+          title={<HeaderTitle title="Catálogo de Reactivos" image="reactivo" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />

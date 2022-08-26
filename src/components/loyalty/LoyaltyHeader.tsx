@@ -46,7 +46,7 @@ const LoyaltyHeader: FC<LoyaltyHeaderProps> = ({ handlePrint
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Lealtades" image="Lealtad" />}
+      title={<HeaderTitle title="Catálogo de Lealtades" image="lealtad" />}
       className="header-container"
       extra={[
         <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,

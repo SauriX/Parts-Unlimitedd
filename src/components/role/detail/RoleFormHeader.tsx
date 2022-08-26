@@ -17,7 +17,7 @@ const RoleFormHeader: FC<UserFormHeaderProps> = ({ handlePrint, handleDownload }
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Nuevo rol" image="role" />}
+      title={<HeaderTitle title="Nuevo rol" image="rol" />}
       className="header-container"
       extra={[
         id ? <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} /> : null,

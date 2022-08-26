@@ -118,7 +118,7 @@ const CatalogAreaForm: FC<CatalogAreaFormProps> = ({ id, componentRef, printing 
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo General" image="catalog" />}
+              title={<HeaderTitle title="Catálogo General" image="catalogo" />}
               className="header-container"
             ></PageHeader>
           )}

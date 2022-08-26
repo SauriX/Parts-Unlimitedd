@@ -33,7 +33,7 @@ const ReagentFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint, handle
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Reactivos" image="reagent" />}
+      title={<HeaderTitle title="Catálogo de Reactivos" image="reactivo" />}
       className="header-container"
       extra={[
         !!id && scopes?.imprimir && <PrintIcon key="print" onClick={handlePrint} />,

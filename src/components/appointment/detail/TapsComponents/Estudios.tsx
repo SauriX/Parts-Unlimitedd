@@ -49,8 +49,9 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
   useEffect(() => {
     const getdata = async ()=>{
       if (searchParams.get("type") == "laboratorio") {
-        await getStudyOptionscita("Imagenologia");
-        await getPackOptionscita("Imagenologia");
+        await getStudyOptionscita("IMAGENOLOGÍA");
+        await getPackOptionscita("IMAGENOLOGÍA");
+        
       } else {
         await getStudyOptions();
         await getPackOptions();
@@ -62,7 +63,7 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
   useEffect(() => {
 
     if (searchParams.get("type") == "laboratorio") {
-      console.log(studyOptionscita,"laboratorio");
+      console.log(packOptionscita,"laboratorio");
       const options: IOptions[] = [
         {
           value: "study",
@@ -78,7 +79,7 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
       setOptions(options);
       console.log(options);
     } else {
-      console.log(studyOptions,"laboratorio");
+      console.log(studyOptions,"laboratorios");
       const options: IOptions[] = [
         {
           value: "study",
