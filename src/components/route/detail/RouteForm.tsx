@@ -557,13 +557,13 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                     treeDefaultExpandAll
                     // defaultValue={}
                     onSelect={(value: any, node: any) => {
-                      console.log(value);
-                      console.log(node);
+                      console.log("valor", value);
+                      console.log("nodo", node);
 
                       const parent = treeData.find((x) =>
                         x.children.map((x) => x.value).includes(value)
                       );
-                      console.log(parent);
+                      console.log("parent", parent);
                     }}
                   />
                 </Form.Item>

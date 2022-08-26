@@ -32,6 +32,7 @@ import { IReportData } from "../models/report";
 import NotificationStore from "./notificationStore";
 import SamplingStore from "./samplingStore";
 import CashRegisterStore from "./cashRegisterStore";
+import TrackingOrderStore from "./trackingOrderStore";
 
 configure({
   enforceActions: "never",
@@ -49,6 +50,7 @@ interface Store {
   companyStore: CompanyStore;
   indicationStore: IndicationStore;
   equipmentStore: EquipmentStore;
+  trackingOrderStore: TrackingOrderStore;
   catalogStore: CatalogStore;
   roleStore: RoleStore;
   locationStore: LocationStore;
@@ -83,6 +85,7 @@ export const store: Store = {
   companyStore: new CompanyStore(),
   indicationStore: new IndicationStore(),
   equipmentStore: new EquipmentStore(),
+  trackingOrderStore: new TrackingOrderStore(),
   catalogStore: new CatalogStore(),
   roleStore: new RoleStore(),
   locationStore: new LocationStore(),

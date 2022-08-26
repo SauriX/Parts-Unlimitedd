@@ -4,6 +4,7 @@ import ReagentDetail from "../../components/reagent/detail/ReagentDetail";
 import MedicsDetail from "../../components/medics/detail/MedicsDetail";
 import IndicationDetail from "../../components/indication/detail/IndicationDetail";
 import EquipmentDetails from "../../components/equipment/detail/EquipmentDetails";
+import CreationTrackingOrder from "../../components/trackingOrder/creation/CreationTrackingOrder"; // TEST IMPORT
 import UserDetail from "../../components/user/detail/UserDetail";
 import NewUser from "../../components/user/detail/NewUser";
 import Home from "../../views/Home";
@@ -104,6 +105,7 @@ function App() {
             <Route path="users" element={<User />} />
             <Route path="users/:id" element={<UserDetail />} />
             <Route path="new-user" element={<NewUser />} />
+            <Route path="trackingOrder" element={<CreationTrackingOrder />} />
             <Route path="equipment" element={<Equipment />} />
             <Route path="equipment/:id" element={<EquipmentDetails />} />
             <Route path="roles" element={<Role />} />
