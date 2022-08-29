@@ -75,9 +75,7 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
         <Button
           type="link"
           onClick={() => {
-            navigate(
-              `/equipmentMantain/${user.id}`
-            );
+            navigate(`/equipmentMantain/${user.id}`);
           }}
         >
           {value}

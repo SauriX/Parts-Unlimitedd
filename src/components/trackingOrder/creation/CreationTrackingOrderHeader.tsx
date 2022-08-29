@@ -16,8 +16,8 @@ const CreationTrackingOrderHeader: FC<CreationTrackingOrderHeaderProps> = ({
   handlePrint,
 }) => {
   const navigate = useNavigate();
-  const { equipmentStore } = useStore();
-  const { exportList } = equipmentStore;
+  const { trackingOrderStore } = useStore();
+  const { exportList } = trackingOrderStore;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -31,7 +31,7 @@ const CreationTrackingOrderHeader: FC<CreationTrackingOrderHeaderProps> = ({
       title={
         <HeaderTitle
           title="Creación de orden de seguimiento"
-          image="ctrackingorder"
+          image="ordenseguimiento"
         />
       }
       className="header-container"
