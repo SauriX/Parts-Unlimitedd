@@ -140,12 +140,13 @@ const ReportTable = ({
             bordered
             style={{ marginBottom: 5 }}
           >
-            <Descriptions.Item label="Estudios" style={{ maxWidth: 30 }}>
+            <Descriptions.Item label="Estudios" style={{ maxWidth: 30 }} className="description-content">
               ${totalEstudios == 0 ? 0 : totalEstudios}
             </Descriptions.Item>
             <Descriptions.Item
               label={report == "cargo" ? "Cargo %" : "Desc. %"}
               style={{ maxWidth: 30 }}
+              className="description-content"
             >
               {isNaN(totalDescuentosPorcentual) ? 0 : totalDescuentosPorcentual}
               %
@@ -153,16 +154,17 @@ const ReportTable = ({
             <Descriptions.Item
               label={report == "cargo" ? "Cargo" : "Desc."}
               style={{ maxWidth: 30 }}
+              className="description-content"
             >
               ${totalDescuentos}
             </Descriptions.Item>
-            <Descriptions.Item label="Subtotal" style={{ maxWidth: 30 }}>
+            <Descriptions.Item label="Subtotal" style={{ maxWidth: 30 }} className="description-content">
               ${Math.round(subtotal * 100) / 100}
             </Descriptions.Item>
-            <Descriptions.Item label="IVA" style={{ maxWidth: 30 }}>
+            <Descriptions.Item label="IVA" style={{ maxWidth: 30 }} className="description-content">
               ${Math.round(IVA * 100) / 100}
             </Descriptions.Item>
-            <Descriptions.Item label="Total" style={{ maxWidth: 30 }}>
+            <Descriptions.Item label="Total" style={{ maxWidth: 30 }} className="description-content">
               ${total}
             </Descriptions.Item>
           </Descriptions>

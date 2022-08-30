@@ -1,7 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import Catalog from "../api/catalog";
 import Role from "../api/role";
-import { ICatalogNormalList } from "../models/catalog";
+import { ICatalogAreaList, ICatalogNormalList } from "../models/catalog";
 import { IOptions } from "../models/shared";
 import Parameter from "../api/parameter";
 import Reagent from "../api/reagent";
@@ -29,6 +29,11 @@ export const urgencyOptions = [
   { label: "Urgencia con cargo", value: 3 },
 ];
 
+export const requestedStudyOptions = [
+  { label: "Toma de Muestra", value: 2 },
+  { label: "Solicitado", value: 3 },
+];
+
 export const studyStatusOptions = [
   { label: "Pendiente", value: 1 },
   { label: "Toma de muestra", value: 2 },
@@ -51,7 +56,9 @@ export default class OptionStore {
 
   getDepartmentOptions = async () => {
     try {
-      const departments = await Catalog.getActive<ICatalogNormalList>("department");
+      const departments = await Catalog.getActive<ICatalogNormalList>(
+        "department"
+      );
       this.departmentOptions = departments.map((x) => ({
         value: x.id,
         label: x.nombre,
@@ -87,7 +94,10 @@ export default class OptionStore {
     try {
       const clinics = await Catalog.getActive<ICatalogNormalList>("clinic");
       console.log(clinics);
-      this.clinicOptions = clinics.map((x) => ({ value: x.id, label: x.nombre }));
+      this.clinicOptions = clinics.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
     } catch (error) {
       this.clinicOptions = [];
     }
@@ -185,9 +195,14 @@ export default class OptionStore {
 
   getpaymentMethodOptions = async () => {
     try {
-      const paymentMethod = await Catalog.getActive<ICatalogNormalList>("paymentMethod");
+      const paymentMethod = await Catalog.getActive<ICatalogNormalList>(
+        "paymentMethod"
+      );
       console.log(paymentMethod);
-      this.paymentMethodOptions = paymentMethod.map((x) => ({ value: x.id, label: x.nombre }));
+      this.paymentMethodOptions = paymentMethod.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
     } catch (error) {
       this.paymentMethodOptions = [];
     }
@@ -199,7 +214,10 @@ export default class OptionStore {
     try {
       const payment = await Catalog.getActive<ICatalogNormalList>("payment");
       console.log(payment);
-      this.paymentOptions = payment.map((x) => ({ value: x.id, label: x.nombre }));
+      this.paymentOptions = payment.map((x) => ({
+        value: x.id,
+        label: x.nombre,
+      }));
     } catch (error) {
       this.paymentOptions = [];
     }
@@ -209,7 +227,9 @@ export default class OptionStore {
 
   getprovenanceOptions = async () => {
     try {
-      const procedencia = await Catalog.getActive<ICatalogNormalList>("provenance");
+      const procedencia = await Catalog.getActive<ICatalogNormalList>(
+        "provenance"
+      );
       console.log(procedencia);
       this.provenanceOptions = procedencia.map((x) => ({
         value: x.id,
@@ -325,7 +345,9 @@ export default class OptionStore {
 
   getsampleTypeOptions = async () => {
     try {
-      const sampleType = await Catalog.getActive<ICatalogNormalList>("sampleType");
+      const sampleType = await Catalog.getActive<ICatalogNormalList>(
+        "sampleType"
+      );
       console.log(sampleType);
       this.sampleTypeOptions = sampleType.map((x) => ({
         value: x.id,
@@ -427,16 +449,17 @@ export default class OptionStore {
   getStudyOptionscita = async (area: string) => {
     try {
       const studyOptions = await Study.getActive();
-      console.log(studyOptions, "studis");
-      var studyOptionsf = studyOptions.filter((x) => x.area == area);
-      console.log(studyOptionsf, "filter");
-      var test = studyOptionsf.map((x) => ({
+      console.log(studyOptions,"studis");
+      var studyOptionsf = studyOptions.filter(x=>x.departamento.includes(area));
+      console.log(studyOptionsf,"filter");
+      var test= studyOptionsf.map((x) => ({
         key: "study-" + x.id,
         value: "study-" + x.id,
         label: x.clave + " - " + x.nombre,
         group: "study",
       }));
-      console.log(test, "final");
+      this.packOptionscita= test;
+      console.log(test,"final");
     } catch (error) {
       this.studyOptionscita = [];
     }
@@ -461,7 +484,7 @@ export default class OptionStore {
   getPackOptionscita = async (area: string) => {
     try {
       const packOptions = await Pack.getActive();
-      var packOptionsf = packOptions.filter((x) => x.area == area);
+      var packOptionsf = packOptions.filter(x=>x.departamento==area);
       this.packOptionscita = packOptionsf.map((x) => ({
         key: "pack-" + x.id,
         value: "pack-" + x.id,
@@ -518,6 +541,32 @@ export default class OptionStore {
       }));
     } catch (error) {
       this.branchCityOptions = [];
+    }
+  };
+
+  departmentAreaOptions: IOptions[] = [];
+  getDepartmentAreaOptions = async () => {
+    try {
+      const areas = await Catalog.getActive<ICatalogAreaList>("area");
+      let groupby = areas.reduce((group: any, area) => {
+        const { departamento } = area;
+        group[departamento] = group[departamento] ?? [];
+        group[departamento].push(area);
+        return group;
+      }, {});
+
+      console.log(groupby);
+      this.departmentAreaOptions = Object.keys(groupby).map((x) => ({
+        value: x,
+        label: x,
+        disabled: true,
+        options: groupby[x].map((a: ICatalogAreaList) => ({
+          value: a.id,
+          label: a.nombre,
+        }))
+      }));
+    } catch (error) {
+      this.departmentAreaOptions = [];
     }
   };
 

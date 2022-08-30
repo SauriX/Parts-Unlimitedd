@@ -93,6 +93,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getnow]);
  const onfinish =async ()=>{
+
   await getnow(search!);
  }
   const columns: IColumns<IProceedingList> = [
@@ -229,6 +230,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
             key="clean"
             onClick={(e) => {
               e.preventDefault();
+              
               form.resetFields();
             }}
           >
@@ -239,13 +241,16 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
             type="primary"
             onClick={(e) => {
               e.preventDefault();
+              form.submit();  
             }}
           >
             Filtrar
           </Button>,
         ]}
       >
-        <Form<IProceedingForm> {...formItemLayout} form={form} size="small">
+        <Form<IProceedingForm> {...formItemLayout} form={form}
+        onFinish={onfinish}
+        size="small">
           <Row gutter={[0, 12]}>
    
           <Col span={8}>
@@ -257,16 +262,16 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
             <Col span={8}>
               <TextInput formProps={{ name: "telefono", label: "Telefono" }} />
             </Col>
-            <Col span={8}>
+            <Col span={5}></Col>
+            <Col span={9}>
               <DateInput formProps={{ name: "fechaNacimiento", label: "Fecha nacimiento" }} />
             </Col>
 
             <Col span={8}>
               <SelectInput formProps={{ name: "ciudad", label: "Ciudad" }}  options={cityOptions} />
             </Col>
-
-
-            <Col span={8}>
+            <Col span={5}></Col>
+            <Col span={9}>
               <SelectInput formProps={{ name: "sucursal", label: "Sucursal" }}  options={BranchOptions} />
             </Col>
 
