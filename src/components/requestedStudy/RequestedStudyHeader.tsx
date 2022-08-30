@@ -4,6 +4,7 @@ import HeaderTitle from "../../app/common/header/HeaderTitle";
 import ImageButton from "../../app/common/button/ImageButton";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../app/stores/store";
+import React from "react";
 
 const { Text } = Typography;
 

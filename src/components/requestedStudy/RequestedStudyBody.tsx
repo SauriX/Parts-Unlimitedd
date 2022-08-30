@@ -1,6 +1,7 @@
 import { Button, Col, Row, Spin } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { observer } from "mobx-react-lite";
+import React from "react";
 import { Fragment, useState } from "react";
 import { IUpdate } from "../../app/models/requestedStudy";
 import { useStore } from "../../app/stores/store";

@@ -1,5 +1,6 @@
 import { Button, Col, Collapse, Form, Row, Spin } from "antd";
 import { observer } from "mobx-react-lite";
+import React from "react";
 import { Fragment, useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
