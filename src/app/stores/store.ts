@@ -111,6 +111,7 @@ export const store: Store = {
   notificationStore: new NotificationStore(),
   samplig: new SamplingStore(),
   requestedStudyStore: new RequestedStudyStore(),
+  equipmentMantainStore: new EquipmentMantainStore(),
 };
 
 export const StoreContext = createContext(store);
