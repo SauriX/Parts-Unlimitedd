@@ -8,6 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
 import { IRequest } from "../../../app/models/request";
+import { status } from "../../../app/util/catalogs";
 
 const RequestDetail = () => {
   const { profileStore, requestStore } = useStore();
@@ -18,7 +19,9 @@ const RequestDetail = () => {
   const { recordId, requestId } = useParams();
 
   const [loading, setLoading] = useState(false);
-  const [branchId, setBranchId] = useState<string | undefined>(profile!.sucursal);
+  const [branchId, setBranchId] = useState<string | undefined>(
+    profile!.sucursal
+  );
 
   useEffect(() => {
     const createRequest = async () => {
@@ -27,6 +30,7 @@ const RequestDetail = () => {
         sucursalId: profile!.sucursal,
         parcialidad: false,
         esNuevo: true,
+        estatusId: status.request.vigente,
       };
 
       const id = await create(req);
@@ -57,7 +61,11 @@ const RequestDetail = () => {
     <Fragment>
       <RequestHeader />
       <Divider className="header-divider" />
-      <RequestRecord recordId={recordId} branchId={profile!.sucursal} setBranchId={setBranchId} />
+      <RequestRecord
+        recordId={recordId}
+        branchId={profile!.sucursal}
+        setBranchId={setBranchId}
+      />
       <RequestTab recordId={recordId} branchId={branchId} />
     </Fragment>
   );

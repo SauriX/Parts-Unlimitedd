@@ -4,8 +4,15 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { isMoment } from "moment";
 import { useState } from "react";
-import { ISearch, IColumns, getDefaultColumnProps } from "../../../../app/common/table/utils";
-import { IRequestStudy, IRequestStudyUpdate } from "../../../../app/models/request";
+import {
+  ISearch,
+  IColumns,
+  getDefaultColumnProps,
+} from "../../../../app/common/table/utils";
+import {
+  IRequestStudy,
+  IRequestStudyUpdate,
+} from "../../../../app/models/request";
 import { useStore } from "../../../../app/stores/store";
 import { status } from "../../../../app/util/catalogs";
 
@@ -63,7 +70,8 @@ const RequestSampler = () => {
             showTime
             allowClear={false}
             onChange={(value) => {
-              if (value) setStudy({ ...item, fechaEntrega: value.utcOffset(0, true) });
+              if (value)
+                setStudy({ ...item, fechaEntrega: value.utcOffset(0, true) });
             }}
           />
         );
@@ -72,14 +80,16 @@ const RequestSampler = () => {
     Table.SELECTION_COLUMN,
   ];
 
-  const updateStudies = () => {
+  const updateStudies = async () => {
     if (request) {
       const data: IRequestStudyUpdate = {
         expedienteId: request.expedienteId,
         solicitudId: request.solicitudId!,
         estudios: selectedStudies,
       };
-      sendStudiesToSampling(data);
+      setLoading(true);
+      await sendStudiesToSampling(data);
+      setLoading(false);
     }
   };
 
@@ -89,7 +99,11 @@ const RequestSampler = () => {
         <Col span={24} style={{ textAlign: "right" }}>
           <Button
             type="default"
-            disabled={!selectedStudies.some((x) => x.estatusId === status.requestStudy.pendiente)}
+            disabled={
+              !selectedStudies.some(
+                (x) => x.estatusId === status.requestStudy.pendiente
+              )
+            }
             onClick={updateStudies}
           >
             Toma de muestra
