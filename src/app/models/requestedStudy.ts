@@ -11,7 +11,7 @@ export interface IRequestedStudyList {
   sexo: string;
   compañia: string;
   seleccion: boolean;
-  studys: IRequestedStudy[];
+  estudios: IRequestedStudy[];
 }
 
 export interface IRequestedStudy {
@@ -26,7 +26,8 @@ export interface IRequestedStudy {
 }
 
 export interface IUpdate {
-  id: number[];
+  solicitudId: string;
+  estudioId: number[];
 }
 
 export interface IRequestedStudyForm {
@@ -40,6 +41,17 @@ export interface IRequestedStudyForm {
   area: number[];
   tipoSolicitud: string[];
   estatus: number[];
+}
+
+export interface IStudyList {
+  id: number;
+  nombre: string;
+  area: string;
+  status: number;
+  registro: string;
+  entrega: string;
+  seleccion: boolean;
+  clave: string;
 }
 
 export class RequestedStudyFormValues implements IRequestedStudyForm {
