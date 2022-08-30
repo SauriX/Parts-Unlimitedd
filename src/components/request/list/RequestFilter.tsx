@@ -1,19 +1,14 @@
-import { Button, Col, Collapse, Form, Input, Row } from "antd";
+import { Button, Col, Collapse, Form, Row } from "antd";
 import { useForm } from "antd/es/form/Form";
-import form from "antd/lib/form";
 import { observer } from "mobx-react-lite";
-import React, { useEffect } from "react";
-import requests from "../../../app/api/agent";
-import DateInput from "../../../app/common/form/proposal/DateInput";
+import { useEffect } from "react";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
-import { IProceedingForm } from "../../../app/models/Proceeding";
 import { IRequestFilter } from "../../../app/models/request";
 import { originOptions, studyStatusOptions, urgencyOptions } from "../../../app/stores/optionStore";
 import { useStore } from "../../../app/stores/store";
 import { formItemLayout } from "../../../app/util/utils";
-import DatosFiscalesForm from "../../proceedings/details/DatosFiscalesForm";
 import "./css/index.css";
 
 const { Panel } = Collapse;

@@ -242,7 +242,7 @@ const DatosFiscalesForm = ({ local, recordId, onSelectRow }: DatosFiscalesFormPr
                             label: "CP",
                             noStyle: true,
                           }}
-                          max={500}
+                          max={5}
                           showLabel
                           errors={errors.find((x) => x.name === "cp")?.errors}
                         />

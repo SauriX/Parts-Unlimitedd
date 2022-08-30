@@ -4,6 +4,7 @@ import ReagentDetail from "../../components/reagent/detail/ReagentDetail";
 import MedicsDetail from "../../components/medics/detail/MedicsDetail";
 import IndicationDetail from "../../components/indication/detail/IndicationDetail";
 import EquipmentDetails from "../../components/equipment/detail/EquipmentDetails";
+import CreationTrackingOrder from "../../components/trackingOrder/creation/CreationTrackingOrder"; // TEST IMPORT
 import UserDetail from "../../components/user/detail/UserDetail";
 import NewUser from "../../components/user/detail/NewUser";
 import Home from "../../views/Home";
@@ -60,6 +61,7 @@ import Report from "../../views/Report";
 import ApointmentDetail from "../../components/appointment/detail/apointmentDetail";
 import Sampling from "../../views/Sampling";
 import Equipment from "../../views/Equipment";
+import RequestedStudy from "../../views/RequestedStudy";
 import EquipmentMantain from "../../views/EquipmentMantain";
 import EquipmentMantainForm from "../../components/equipmentMantain/detail/EquipmentMantainForm";
 import EquipmentMantainDetails from "../../components/equipmentMantain/detail/EquipmentMantainDetails";
@@ -105,6 +107,7 @@ function App() {
             <Route path="users" element={<User />} />
             <Route path="users/:id" element={<UserDetail />} />
             <Route path="new-user" element={<NewUser />} />
+            <Route path="trackingOrder" element={<CreationTrackingOrder />} />
             <Route path="equipment" element={<Equipment />} />
             <Route path="equipmentMantain/:id" element={<EquipmentMantain />} />
             <Route path="equipmentMantain/new/:id" element={<EquipmentMantainDetails/>} />
@@ -164,6 +167,9 @@ function App() {
             <Route path="samplings" element={<Sampling />} />
             <Route path="samplings/:id" element={<Sampling />} />
             <Route path="samplings/new" element={<Sampling />} />
+            <Route path="requestedstudy" element={<RequestedStudy />} />
+            <Route path="requestedstudy/:id" element={<RequestedStudy />} />
+            <Route path="requestedstudy/new" element={<RequestedStudy />} />
             <Route path="reports" element={<Report />} />
             <Route path={views.appointment} element={<Appointment />} />
             <Route

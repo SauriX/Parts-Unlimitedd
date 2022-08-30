@@ -29,6 +29,11 @@ export const urgencyOptions = [
   { label: "Urgencia con cargo", value: 3 },
 ];
 
+export const requestedStudyOptions = [
+  { label: "Toma de Muestra", value: 2 },
+  { label: "Solicitado", value: 3 },
+];
+
 export const studyStatusOptions = [
   { label: "Pendiente", value: 1 },
   { label: "Toma de muestra", value: 2 },
@@ -539,25 +544,31 @@ export default class OptionStore {
     }
   };
 
-  // departmentAreaOptions: IOptions[] = [];
-  // getDepartmentAreaOptions = async (id?: number) => {
-  //   try {
-  //     let route = `area/department/${id}`;
-  //     if (id == 0) {
-  //       route = "area";
-  //     }
+  departmentAreaOptions: IOptions[] = [];
+  getDepartmentAreaOptions = async () => {
+    try {
+      const areas = await Catalog.getActive<ICatalogAreaList>("area");
+      let groupby = areas.reduce((group: any, area) => {
+        const { departamento } = area;
+        group[departamento] = group[departamento] ?? [];
+        group[departamento].push(area);
+        return group;
+      }, {});
 
-  //     const area = Catalog.getActive<ICatalogAreaList>(route);
-  //     this.departmentAreaOptions = (await area).map((x) => ({
-  //       value: x.id,
-  //       label: x.nombre,
-  //       disabled: true,
-  //       options: x.departamento.
-  //     }));
-  //   } catch (error) {
-  //     this.departmentAreaOptions = [];
-  //   }
-  // };
+      console.log(groupby);
+      this.departmentAreaOptions = Object.keys(groupby).map((x) => ({
+        value: x,
+        label: x,
+        disabled: true,
+        options: groupby[x].map((a: ICatalogAreaList) => ({
+          value: a.id,
+          label: a.nombre,
+        }))
+      }));
+    } catch (error) {
+      this.departmentAreaOptions = [];
+    }
+  };
 
   CityOptions: IOptions[] = [];
   getCityOptions = async () => {
