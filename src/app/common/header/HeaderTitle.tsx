@@ -58,5 +58,6 @@ export type imagesType =
   | "ruta"
   | "sucursal"
   | "tomaMuestra"
-  | "usuario"
   | "ordenseguimiento";
+  | "sitio-web"
+  | "usuario";

@@ -1,10 +1,8 @@
 import { IColumns, ISearch } from "../../../app/common/table/utils";
 import { IReportData } from "../../../app/models/report";
 import { getDefaultColumnProps } from "../../../app/common/table/utils";
-import { Descriptions, Table, Typography } from "antd";
 import { moneyFormatter } from "../../../app/util/utils";
 import React from "react";
-const { Text } = Typography;
 
 const getCanceledRequestColumns = (
   searchState: ISearch,

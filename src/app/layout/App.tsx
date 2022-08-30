@@ -61,6 +61,7 @@ import Report from "../../views/Report";
 import ApointmentDetail from "../../components/appointment/detail/apointmentDetail";
 import Sampling from "../../views/Sampling";
 import Equipment from "../../views/Equipment";
+import RequestedStudy from "../../views/RequestedStudy";
 import EquipmentMantain from "../../views/EquipmentMantain";
 import EquipmentMantainForm from "../../components/equipmentMantain/detail/EquipmentMantainForm";
 import EquipmentMantainDetails from "../../components/equipmentMantain/detail/EquipmentMantainDetails";
@@ -166,6 +167,9 @@ function App() {
             <Route path="samplings" element={<Sampling />} />
             <Route path="samplings/:id" element={<Sampling />} />
             <Route path="samplings/new" element={<Sampling />} />
+            <Route path="requestedstudy" element={<RequestedStudy />} />
+            <Route path="requestedstudy/:id" element={<RequestedStudy />} />
+            <Route path="requestedstudy/new" element={<RequestedStudy />} />
             <Route path="reports" element={<Report />} />
             <Route path={views.appointment} element={<Appointment />} />
             <Route

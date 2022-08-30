@@ -73,7 +73,7 @@ interface Store {
   appointmentStore: AppointmentStore;
   notificationStore: NotificationStore;
   samplig: SamplingStore;
-  requestedStudy: RequestedStudyStore;
+  requestedStudyStore: RequestedStudyStore;
   equipmentMantainStore:EquipmentMantainStore;
 }
 
@@ -111,7 +111,6 @@ export const store: Store = {
   notificationStore: new NotificationStore(),
   samplig: new SamplingStore(),
   requestedStudy: new RequestedStudyStore(),
-  equipmentMantainStore:new EquipmentMantainStore(),
 };
 
 export const StoreContext = createContext(store);
