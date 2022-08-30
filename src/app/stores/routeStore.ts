@@ -16,6 +16,7 @@ export default class RouteStore {
 
   scopes?: IScopes;
   routes: IRouteList[] = [];
+  foundRoutes: IRouteForm[] = [];
   studies: IRouteEstudioList[] = [];
 
   clearScopes = () => {
@@ -40,8 +41,9 @@ export default class RouteStore {
   find = async (route: IRouteForm) => {
     try {
       const foundRoutes = await Route.find(route);
-
-      this.routes = foundRoutes;
+      console.log("found routes", foundRoutes);
+      this.foundRoutes = foundRoutes;
+      //   this.routes = foundRoutes;
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));

@@ -6,6 +6,8 @@ import {
   Table,
   List,
   Typography,
+  Input,
+  Switch,
 } from "antd";
 import React, { FC, Fragment, useEffect, useRef, useState } from "react";
 import {
@@ -18,13 +20,18 @@ import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import { EditOutlined } from "@ant-design/icons";
 import IconButton from "../../../app/common/button/IconButton";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ITrackingOrderList } from "../../../app/models/trackingOrder";
+import {
+  IEstudiosList,
+  ITrackingOrderList,
+} from "../../../app/models/trackingOrder";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import { useReactToPrint } from "react-to-print";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import SwitchInput from "../../../app/common/form/SwitchInput";
 import TextInput from "../../../app/common/form/TextInput";
+import { toJS } from "mobx";
+import { uniqueId } from "lodash";
 
 type TrackingOrderTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -36,7 +43,7 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
   printing,
 }) => {
   const { trackingOrderStore } = useStore();
-  const { trackingOrder, getAll } = trackingOrderStore;
+  const { trackingOrder, setEscaneado, setTemperature } = trackingOrderStore;
 
   const [searchParams] = useSearchParams();
 
@@ -53,20 +60,13 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
 
   // console.log("Table");
 
-  // useEffect(() => {
-  //   const readTrackingOrder = async () => {
-  //     setLoading(true);
-  //     await getAll(searchParams.get("search") ?? "all");
-  //     setLoading(false);
-  //   };
+  useEffect(() => {
+    console.log("estudios", toJS(trackingOrder));
+  }, [trackingOrder]);
 
-  //   readTrackingOrder();
-  // }, [getAll, searchParams]);
-  // useEffect(() => {});
-
-  const columns: IColumns<ITrackingOrderList> = [
+  const columns: IColumns<IEstudiosList> = [
     {
-      ...getDefaultColumnProps("clave", "Clave Estudio", {
+      ...getDefaultColumnProps("estudios", "Clave Estudio", {
         searchState,
         setSearchState,
         width: "15%",
@@ -74,18 +74,20 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
         windowSize: windowWidth,
       }),
       align: "center",
+      render: (text, record) => text.map((x: any) => x.clave).join(", "),
     },
     {
-      ...getDefaultColumnProps("nombre", "Estudio", {
+      ...getDefaultColumnProps("estudios", "Estudio", {
         searchState,
         setSearchState,
         width: "20%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
+      render: (text, record) => text.map((x: any) => x.estudio).join(", "),
     },
     {
-      ...getDefaultColumnProps("clave", "Solicitud", {
+      ...getDefaultColumnProps("estudios", "Solicitud", {
         searchState,
         setSearchState,
         width: "15%",
@@ -99,61 +101,65 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
           type="link"
           onClick={() => {
             navigate(
-              `/tracking-order/${
-                user.id
-              }?${searchParams}&mode=readonly&search=${
-                searchParams.get("search") ?? "all"
+              `/request/${
+                value.map((x: any) => x.solicitud)[0] //TODO: chage form solicitud id and url solicitud
+                // user.id
               }`
             );
           }}
         >
-          {value}
+          {value.map((x: any) => x.solicitud)[0]}
         </Button>
       ),
     },
 
     {
       key: "paciente",
-      dataIndex: "activo",
+      dataIndex: "estudios",
       title: "Paciente",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => (value ? "Sí" : "No"),
+      render: (value) => {
+        return value.map((x: any) => {
+          return x.paciente;
+        })[0];
+      },
     },
     {
       key: "escaneado",
-      dataIndex: "id",
+      dataIndex: "escaneado",
       title: "Escaneado",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => (
-        <SwitchInput
-          name="activo"
-          // onChange={(value) => {
-          //   if (value) {
-          //     alerts.info(messages.confirmations.enable);
-          //   } else {
-          //     alerts.info(messages.confirmations.disable);
-          //   }
-          // }}
-          readonly={false}
+      render: (value, fullrow) => (
+        <Switch
+          onChange={(value) => {
+            console.log("escaneado", value, fullrow);
+            setEscaneado(value, fullrow.id!);
+
+            //  else {
+            //   alerts.info(messages.confirmations.disable);
+            // }
+          }}
         />
       ),
     },
     {
       key: "temperatura",
-      dataIndex: "id",
+      dataIndex: "temperatura",
       title: "Temperatura",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => (
-        <TextInput
-          formProps={{
-            name: "clave",
-          }}
+      render: (value, fullrow) => (
+        <Input
           max={100}
           required
-          readonly={false}
+          value={value}
+          type={"number"}
+          min={0}
+          onChange={(newValue) => {
+            setTemperature(+newValue.target.value, fullrow.id);
+          }}
         />
       ),
     },
@@ -165,15 +171,18 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
         <PageHeader
           ghost={false}
           title={
-            <HeaderTitle title="Orden de Seguimiento" image="ctrackingOrder" />
+            <HeaderTitle
+              title="Orden de Seguimiento"
+              image="ordenseguimiento"
+            />
           }
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
-        <Table<ITrackingOrderList>
+        <Table<IEstudiosList>
           size="large"
-          rowKey={(record) => record.id}
-          columns={columns.slice(0, 8)}
+          rowKey={(record) => record.id!}
+          columns={columns}
           pagination={false}
           dataSource={[...trackingOrder]}
         />
@@ -183,10 +192,10 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
 
   return (
     <Fragment>
-      <Table<ITrackingOrderList>
+      <Table<IEstudiosList>
         loading={loading || printing}
         size="small"
-        rowKey={(record) => record.id}
+        rowKey={(record) => record.id!}
         columns={columns}
         dataSource={[...trackingOrder]}
         pagination={defaultPaginationProperties}

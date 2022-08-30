@@ -48,6 +48,7 @@ import moment from "moment";
 import DateRangeInput from "../../../app/common/form/DateRangeInput";
 import DateInput from "../../../app/common/form/proposal/DateInput";
 import { IDias, IRouteForm, RouteFormValues } from "../../../app/models/route";
+import { toJS } from "mobx";
 
 type TrackingOrderFormProps = {
   id: number;
@@ -63,7 +64,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   const { trackingOrderStore, profileStore, optionStore, routeStore } =
     useStore();
   const { profile } = profileStore;
-  const { find } = routeStore;
+  const { find, foundRoutes, routes } = routeStore;
   const {
     getSucursalesOptions,
     sucursales,
@@ -72,7 +73,15 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     MaquiladorOptions,
     getMaquiladorOptions,
   } = optionStore;
-  const { getById, create, update, getAll, trackingOrder } = trackingOrderStore;
+  const {
+    getById,
+    create,
+    update,
+    getAll,
+    trackingOrder,
+    getStudiesByStudiesRoute,
+    setTemperature,
+  } = trackingOrderStore;
 
   const navigate = useNavigate();
 
@@ -88,9 +97,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   const [values, setValues] = useState<ITrackingOrderForm>(
     new TrackingOrderFormValues()
   );
-  //   const [branch, setBranch] = useState<IEquipmentBranch>();
-  const [numSerie, setNumSerie] = useState<number>();
-  const [sucursalOrigen, setSucursalOrigen] = useState();
+
   const [newTrackingOrder, setNewTrackingOrder] = useState<ITrackingOrderForm>(
     new TrackingOrderFormValues()
   );
@@ -98,7 +105,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     {
       title: "Sucursales",
       value: "sucursalDestinoId",
-      checkable: false,
+      disabled: true,
       children: BranchOptions.map((x) => ({
         title: x.label,
         value: x.value,
@@ -107,35 +114,24 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     {
       title: "Maquiladores",
       value: "maquiladorId",
-      checkable: false,
+      disabled: true,
       children: MaquiladorOptions.map((x) => ({
         title: x.label,
         value: x.value,
       })),
     },
   ];
+  const setSucursalOrigenInicial = () => {
+    values.sucursalOrigenId = profile!.sucursal;
+    form.setFieldsValue(values!);
+  };
   useEffect(() => {
     getSucursalesOptions();
     getBranchOptions();
     getMaquiladorOptions();
-    // let sucursalProcedente = BranchOptions.find(
-    //   // (options) => options.value === profile?.sucursal
-    //   (options) => options.value === "fd25aab8-9626-4b2f-9786-0d90b5866e42"
-    // );
-    values.sucursalOrigenId = "fd25aab8-9626-4b2f-9786-0d90b5866e42";
-    form.setFieldsValue(values!);
-    // values.sucursalOrigenId = profile?.sucursal;
-    // console.log("sucursal origen", profile?.sucursal);
-    // console.log("sucursal origen", BranchOptions.length);
+    setSucursalOrigenInicial();
+  }, [getSucursalesOptions, getBranchOptions, getMaquiladorOptions, profile]);
 
-    // console.log("sucursal procedente", sucursalProcedente);
-    // setSucursalOrigen(sucursalProcedente ?? ({} as any));
-    // values.sucursalOrigenId = sucursalProcedente && ({} as any);
-  }, [getSucursalesOptions, getBranchOptions, getMaquiladorOptions]);
-  BranchOptions.forEach((element) => {
-    console.log("sucursal", element.label);
-    console.log("sucursal value", element.value);
-  });
   useEffect(() => {
     const readTrackingOrder = async (id: number) => {
       setLoading(true);
@@ -159,20 +155,47 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     { id: 6, dia: "S" },
     { id: 7, dia: "D" },
   ];
+  const routeFoundOptions = foundRoutes.map((route) => ({
+    value: route.id,
+    label: route.nombre,
+  }));
+  const initialSerachRoutes = async (initial = true) => {
+    let formValues = form.getFieldsValue();
+    formValues = { ...formValues };
+    console.log("Tracking order: ", formValues);
+    let routeForms: IRouteForm = new RouteFormValues();
+    routeForms.horaDeRecoleccion = moment().hours() + 1;
+    routeForms.sucursalOrigenId = formValues.sucursalOrigenId!;
+    const parent = treeData.find((x) =>
+      x.children.map((x) => x.value).includes(formValues.sucursalDestinoId!)
+    );
+    if (!initial) {
+      if (parent?.title === "Sucursales") {
+        console.log("sucursal");
+        routeForms.sucursalDestinoId =
+          formValues.sucursalDestinoId! === "sucursalDestinoId" ||
+          formValues.sucursalDestinoId! === "maquiladorId"
+            ? ""
+            : formValues.sucursalDestinoId!;
+      } else {
+        console.log("maquilador");
+        routeForms.maquiladorId =
+          formValues.sucursalDestinoId! === "sucursalDestinoId" ||
+          formValues.sucursalDestinoId! === "maquiladorId"
+            ? ""
+            : formValues.sucursalDestinoId!;
+      }
+    }
+    routeForms.dias = dias.filter((x) => x.id === moment().day());
+    console.log("formulario de envio", routeForms);
+
+    await find(routeForms);
+  };
 
   useEffect(() => {
     const readTrackingOrder = async () => {
       setLoading(true);
-      let formValues = form.getFieldsValue();
-      formValues = { ...formValues };
-      console.log("Tracking order: ", formValues);
-      let routeForms: IRouteForm = new RouteFormValues();
-      routeForms.horaDeRecoleccion = moment().hours();
-      routeForms.sucursalOrigenId = formValues.sucursalOrigenId!;
-      routeForms.dias = dias.filter((x) => x.id === moment().day());
-      console.log("formulario de envio", routeForms);
-      // await getAll(searchParams.get("search") ?? "all");
-      await find(routeForms);
+      await initialSerachRoutes();
       setLoading(false);
     };
     readTrackingOrder();
@@ -181,35 +204,34 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   const onFinish = async (newValues: ITrackingOrderForm) => {
     console.log("values", values);
     console.log("newValues", newValues);
-    const trackingOrder = { ...newTrackingOrder, ...newValues };
+    const trackingOrderSend = { ...newTrackingOrder, ...newValues };
     let success = false;
-
-    if (!trackingOrder.id) {
-      success = await create(trackingOrder);
-    } else {
-      success = await update(trackingOrder);
-    }
+    trackingOrderSend.sucursalDestinoId =
+      "" + trackingOrderSend.sucursalDestinoId;
+    trackingOrderSend.estudios = trackingOrder
+      .filter((order) => order.escaneado)
+      .map((order) => {
+        return {
+          clave: order.estudios.map((estudio) => estudio.clave).join(","),
+          estudio: order.estudios.map((estudio) => estudio.estudio).join(","),
+          solicitud: order.estudios.map((estudio) => estudio.solicitud)[0],
+          paciente: order.estudios.map((estudio) => estudio.paciente)[0],
+          escaneado: order.escaneado,
+          temperatura: order.temperatura,
+        };
+      });
+    console.log("trackingOrder", trackingOrderSend);
+    success = await create(trackingOrderSend);
+    // if (!trackingOrderSend.id) {
+    //   success = await create(trackingOrderSend);
+    // } else {
+    //   success = await update(trackingOrderSend);
+    // }
 
     if (success) {
-      navigate(`/tracking-order?search=${searchParams.get("search") ?? "all"}`);
+      console.log("guardado");
+      // navigate(`/tracking-order?search=${searchParams.get("search") ?? "all"}`);
     }
-  };
-
-  const actualTrackingOrder = () => {
-    if (id) {
-      const index = trackingOrder.findIndex((x) => x.id === id);
-      return index + 1;
-    }
-    return 0;
-  };
-
-  const prevnextTrackingOrder = (index: number) => {
-    const indi = trackingOrder[index];
-    navigate(
-      `/tracking-order/${indi?.id}?mode=${searchParams.get(
-        "mode"
-      )}&search=${searchParams.get("search")}`
-    );
   };
 
   useEffect(() => {
@@ -250,6 +272,17 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
       }),
     },
   ];
+  const findStudiesByStudiesRoute = async (value: any) => {
+    const ruta: any = foundRoutes.find((ruta) => ruta.id === value);
+    form.setFieldValue(
+      "sucursalDestinoId",
+      ruta.maquiladorId ?? ruta.sucursalDestinoId
+    );
+    const estudiosId = ruta.estudio.map((estudio: any) => estudio.id);
+    setLoading(true);
+    await getStudiesByStudiesRoute(estudiosId);
+    setLoading(false);
+  };
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
@@ -301,7 +334,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
               title={
                 <HeaderTitle
                   title="Creación de orden de seguimiento"
-                  image="ctrackingOrder"
+                  image="ordenseguimiento"
                 />
               }
               className="header-container"
@@ -315,9 +348,11 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
             initialValues={values}
             onFinish={onFinish}
             scrollToFirstError
-            onFieldsChange={(changes_values) => {
-              console.log("changes_values", changes_values);
-              console.log("CHANGE FORM", form.getFieldsValue());
+            onValuesChange={(changes_values: any) => {
+              const propertyForm = Object.keys(changes_values)[0];
+              if (propertyForm == "temperatura") {
+                setTemperature(changes_values[propertyForm]);
+              }
               setDisabled(
                 !form.isFieldsTouched() ||
                   form.getFieldsError().filter(({ errors }) => errors.length)
@@ -326,7 +361,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
             }}
           >
             <Row>
-              <Col md={6} sm={12}>
+              <Col md={6} sm={12} style={{ textAlign: "center" }}>
                 <DateInput
                   formProps={{ label: "Día de recolección", name: "fecha" }}
                   style={{ marginBottom: 24 }}
@@ -339,7 +374,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
 
                 <TextInput
                   formProps={{
-                    name: "muestra",
+                    name: "muestraId",
                     label: "Muestra",
                   }}
                   max={100}
@@ -347,22 +382,23 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                   readonly={readonly}
                 />
               </Col>
-              <Col md={6} sm={12}>
+              <Col md={6} sm={12} style={{ textAlign: "center" }}>
                 <Form.Item label="Destino" name="sucursalDestinoId">
                   <TreeSelect
                     dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                     treeData={treeData}
                     treeDefaultExpandAll
-                    // onSelect={(value: any, node: any) => {
-                    //   console.log("valor", value);
-                    //   console.log("nodo", node);
+                    // onChange={initialSerachRoutes}
 
-                    //   const parent = treeData.find((x) =>
-                    //     x.children.map((x) => x.value).includes(value)
-                    //   );
-                    //   console.log("parent", parent);
-                    // }}
-                    showCheckedStrategy={TreeSelect.SHOW_CHILD}
+                    onSelect={(value: any, node: any) => {
+                      console.log("valor", value);
+                      console.log("nodo", node);
+
+                      const parent = treeData.find((x) =>
+                        x.children.map((x) => x.value).includes(value)
+                      );
+                      console.log("parent", parent);
+                    }}
                   />
                 </Form.Item>
 
@@ -380,7 +416,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                   style={{ marginLeft: 58 }}
                 />
               </Col>
-              <Col md={6} sm={12}>
+              <Col md={6} sm={12} style={{ textAlign: "center" }}>
                 <SelectInput
                   formProps={{
                     name: "sucursalOrigenId",
@@ -390,23 +426,48 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                   readonly={true}
                   options={sucursales}
                 />
-                <SelectInput
-                  options={[]}
-                  formProps={{
-                    name: "categoria",
-                    label: "Ruta",
-                  }}
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={6} sm={12}>
+
                 <TextInput
                   formProps={{
                     name: "temperatura",
                     label: "Temperatura",
                   }}
+                  // type="number"
                   max={100}
                   required
+                  // onChange={(value: any) => {
+                  //   console.log("temepratura cambiada", value);
+                  //   setTemperature(value);
+                  // }}
+                  readonly={false}
+                />
+              </Col>
+              <Col md={6} sm={12} style={{ textAlign: "center" }}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  disabled={disabled}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    initialSerachRoutes(false);
+                    // console.log("formularioi", form.getFieldsValue());
+                  }}
+                  style={{ marginBottom: 24 }}
+                >
+                  Buscar rutas
+                </Button>
+                <SelectInput
+                  options={routeFoundOptions}
+                  formProps={{
+                    name: "ruta",
+                    label: "Ruta",
+                  }}
+                  onChange={(value) => {
+                    if (value) {
+                      findStudiesByStudiesRoute(value);
+                      form.setFieldValue("ruta", value);
+                    }
+                  }}
                   readonly={readonly}
                 />
               </Col>
