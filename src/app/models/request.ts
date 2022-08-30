@@ -10,6 +10,7 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   solicitudId?: string;
   sucursalId: string;
   clave?: string;
+  estatusId: number;
   clavePatologica?: string;
   parcialidad: boolean;
   registro?: string;
@@ -115,6 +116,7 @@ export interface IRequestStudy {
   promocionId?: number;
   promocion?: string;
   estatusId: number;
+  estatus?: string;
   aplicaDescuento: boolean;
   aplicaCargo: boolean;
   aplicaCopago: boolean;

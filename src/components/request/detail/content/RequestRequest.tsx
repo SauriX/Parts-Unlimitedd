@@ -4,14 +4,29 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { isMoment } from "moment";
 import { useState } from "react";
-import { ISearch, IColumns, getDefaultColumnProps } from "../../../../app/common/table/utils";
-import { IRequestPartiality, IRequestStudy, IRequestStudyUpdate } from "../../../../app/models/request";
+import {
+  ISearch,
+  IColumns,
+  getDefaultColumnProps,
+} from "../../../../app/common/table/utils";
+import {
+  IRequestPartiality,
+  IRequestStudy,
+  IRequestStudyUpdate,
+} from "../../../../app/models/request";
 import { useStore } from "../../../../app/stores/store";
 import { status } from "../../../../app/util/catalogs";
 
 const RequestRequest = () => {
   const { requestStore, modalStore } = useStore();
-  const { request, allStudies, setStudy, setPartiality, addPartiality, sendStudiesToRequest } = requestStore;
+  const {
+    request,
+    allStudies,
+    setStudy,
+    setPartiality,
+    addPartiality,
+    sendStudiesToRequest,
+  } = requestStore;
 
   const [selectedStudies, setSelectedStudies] = useState<IRequestStudy[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -63,7 +78,8 @@ const RequestRequest = () => {
             showTime
             allowClear={false}
             onChange={(value) => {
-              if (value) setStudy({ ...item, fechaEntrega: value.utcOffset(0, true) });
+              if (value)
+                setStudy({ ...item, fechaEntrega: value.utcOffset(0, true) });
             }}
           />
         );
@@ -72,14 +88,16 @@ const RequestRequest = () => {
     Table.SELECTION_COLUMN,
   ];
 
-  const updateStudies = () => {
+  const updateStudies = async () => {
     if (request) {
       const data: IRequestStudyUpdate = {
         expedienteId: request.expedienteId,
         solicitudId: request.solicitudId!,
         estudios: selectedStudies,
       };
-      sendStudiesToRequest(data);
+      setLoading(true);
+      await sendStudiesToRequest(data);
+      setLoading(false);
     }
   };
 
@@ -90,7 +108,9 @@ const RequestRequest = () => {
         solicitudId: request.solicitudId!,
         aplicar: !request.parcialidad,
       };
+      setLoading(true);
       const ok = await addPartiality(data);
+      setLoading(false);
       if (ok) {
         setPartiality(data.aplicar);
       }
@@ -102,11 +122,17 @@ const RequestRequest = () => {
       <Row gutter={[8, 12]}>
         <Col span={24} style={{ textAlign: "right" }}>
           <Button type="primary" onClick={updatePartiality}>
-            {request?.parcialidad ? "Aplicar parcialidad" : "Cancelar parcialidad"}
+            {request?.parcialidad
+              ? "Aplicar parcialidad"
+              : "Cancelar parcialidad"}
           </Button>
           <Button
             type="default"
-            disabled={!selectedStudies.some((x) => x.estatusId === status.requestStudy.tomaDeMuestra)}
+            disabled={
+              !selectedStudies.some(
+                (x) => x.estatusId === status.requestStudy.tomaDeMuestra
+              )
+            }
             onClick={updateStudies}
           >
             Solicitar estudio
@@ -125,7 +151,8 @@ const RequestRequest = () => {
                 setSelectedStudies(toJS(selectedRows));
               },
               getCheckboxProps: (record) => ({
-                disabled: record.estatusId !== status.requestStudy.tomaDeMuestra,
+                disabled:
+                  record.estatusId !== status.requestStudy.tomaDeMuestra,
               }),
             }}
             sticky
