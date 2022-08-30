@@ -14,7 +14,7 @@ export interface IProceedingList {
   nomprePaciente: string;
   genero: string;
   edad: number;
-  fechaNacimiento: Date;
+  fechaNacimiento: string;
   monederoElectronico: number;
   telefono: string;
 }

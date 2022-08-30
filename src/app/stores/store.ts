@@ -33,6 +33,8 @@ import NotificationStore from "./notificationStore";
 import SamplingStore from "./samplingStore";
 import CashRegisterStore from "./cashRegisterStore";
 import RequestedStudyStore from "./requestedStudyStore";
+import EquipmentMantainStore from "./EquipentMantainStore";
+import TrackingOrderStore from "./trackingOrderStore";
 
 configure({
   enforceActions: "never",
@@ -50,6 +52,7 @@ interface Store {
   companyStore: CompanyStore;
   indicationStore: IndicationStore;
   equipmentStore: EquipmentStore;
+  trackingOrderStore: TrackingOrderStore;
   catalogStore: CatalogStore;
   roleStore: RoleStore;
   locationStore: LocationStore;
@@ -71,6 +74,7 @@ interface Store {
   notificationStore: NotificationStore;
   samplig: SamplingStore;
   requestedStudyStore: RequestedStudyStore;
+  equipmentMantainStore:EquipmentMantainStore;
 }
 
 export const store: Store = {
@@ -85,6 +89,7 @@ export const store: Store = {
   companyStore: new CompanyStore(),
   indicationStore: new IndicationStore(),
   equipmentStore: new EquipmentStore(),
+  trackingOrderStore: new TrackingOrderStore(),
   catalogStore: new CatalogStore(),
   roleStore: new RoleStore(),
   locationStore: new LocationStore(),
@@ -105,7 +110,7 @@ export const store: Store = {
   appointmentStore: new AppointmentStore(),
   notificationStore: new NotificationStore(),
   samplig: new SamplingStore(),
-  requestedStudyStore: new RequestedStudyStore(),
+  requestedStudy: new RequestedStudyStore(),
 };
 
 export const StoreContext = createContext(store);

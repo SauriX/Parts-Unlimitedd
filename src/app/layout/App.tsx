@@ -4,6 +4,7 @@ import ReagentDetail from "../../components/reagent/detail/ReagentDetail";
 import MedicsDetail from "../../components/medics/detail/MedicsDetail";
 import IndicationDetail from "../../components/indication/detail/IndicationDetail";
 import EquipmentDetails from "../../components/equipment/detail/EquipmentDetails";
+import CreationTrackingOrder from "../../components/trackingOrder/creation/CreationTrackingOrder"; // TEST IMPORT
 import UserDetail from "../../components/user/detail/UserDetail";
 import NewUser from "../../components/user/detail/NewUser";
 import Home from "../../views/Home";
@@ -61,6 +62,9 @@ import ApointmentDetail from "../../components/appointment/detail/apointmentDeta
 import Sampling from "../../views/Sampling";
 import Equipment from "../../views/Equipment";
 import RequestedStudy from "../../views/RequestedStudy";
+import EquipmentMantain from "../../views/EquipmentMantain";
+import EquipmentMantainForm from "../../components/equipmentMantain/detail/EquipmentMantainForm";
+import EquipmentMantainDetails from "../../components/equipmentMantain/detail/EquipmentMantainDetails";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -103,8 +107,12 @@ function App() {
             <Route path="users" element={<User />} />
             <Route path="users/:id" element={<UserDetail />} />
             <Route path="new-user" element={<NewUser />} />
+            <Route path="trackingOrder" element={<CreationTrackingOrder />} />
             <Route path="equipment" element={<Equipment />} />
+            <Route path="equipmentMantain/:id" element={<EquipmentMantain />} />
+            <Route path="equipmentMantain/new/:id" element={<EquipmentMantainDetails/>} />
             <Route path="equipment/:id" element={<EquipmentDetails />} />
+            <Route path="equipmentMantain/edit/:id" element={<EquipmentMantainDetails />} />
             <Route path="roles" element={<Role />} />
             <Route path="reagents" element={<Reagent />} />
             <Route path="reagents/new" element={<ReagentDetail />} />
