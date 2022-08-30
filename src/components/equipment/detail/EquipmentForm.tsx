@@ -213,7 +213,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
-      <Row style={{ marginBottom: 24 }}>
+      <Row style={{ marginBottom: 24 }} gutter={[12, 2]}>
         {!!id && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
             <Pagination

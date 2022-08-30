@@ -75,7 +75,11 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
         <Button
           type="link"
           onClick={() => {
-            navigate(`/equipmentMantain/${user.id}`);
+            navigate(
+              `/equipment/${user.id}?${searchParams}&mode=readonly&search=${
+                searchParams.get("search") ?? "all"
+              }`
+            );
           }}
         >
           {value}
@@ -147,7 +151,9 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Equipos" image="equipo" />}
+          title={
+            <HeaderTitle title="Administración de Equipos" image="equipo" />
+          }
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
