@@ -1,3 +1,4 @@
+import { TrackingOrderListValues } from "./../models/trackingOrder";
 import Search from "antd/lib/transfer/search";
 import { makeAutoObservable } from "mobx";
 import { getParsedCommandLineOfConfigFile } from "typescript";
@@ -5,6 +6,7 @@ import TrackingOrder from "../api/trackingOrder";
 import {
   ITrackingOrderForm,
   ITrackingOrderList,
+  IEstudiosList,
 } from "../models/trackingOrder";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -19,8 +21,61 @@ export default class TrackingOrdertStore {
   }
 
   scopes?: IScopes;
-  trackingOrder: ITrackingOrderList[] = [];
+  trackingOrder: IEstudiosList[] = [];
+  estudios: IEstudiosList[] = [];
 
+  setEscaneado = (escaneado: boolean, id: string) => {
+    try {
+      const estudios = this.trackingOrder.map((estudio) => {
+        let a = new TrackingOrderListValues(estudio);
+        if (a.id === id) {
+          a.escaneado = escaneado;
+        }
+        return a;
+      });
+      this.trackingOrder = estudios;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  setTemperature = (temperature: number, id: string | null = null) => {
+    console.log("store temperature: ", temperature, id);
+    try {
+      if (id) {
+        const index = this.trackingOrder.findIndex((x) => x.id === id);
+        if (index !== -1) {
+          const trackingOrder = this.trackingOrder[index];
+          this.trackingOrder[index] = {
+            ...trackingOrder,
+            temperatura: temperature,
+          };
+        }
+      } else {
+        const estudios = this.trackingOrder.map((estudio) => {
+          estudio.temperatura = temperature;
+          return estudio;
+        });
+        this.trackingOrder = estudios;
+      }
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  getStudiesByStudiesRoute = async (studyId: number[]) => {
+    try {
+      const studies = await TrackingOrder.findStudies(studyId);
+
+      this.trackingOrder = studies.map((x) => {
+        let a = new TrackingOrderListValues(x);
+
+        return a;
+      });
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      this.trackingOrder = [];
+    }
+  };
   clearScopes = () => {
     this.scopes = undefined;
   };

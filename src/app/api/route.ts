@@ -11,7 +11,7 @@ const Route = {
     requests.post("/route", route),
   update: (route: IRouteForm): Promise<IRouteList> =>
     requests.put("/route", route),
-  find: (route: IRouteForm): Promise<IRouteList[]> =>
+  find: (route: IRouteForm): Promise<IRouteForm[]> =>
     requests.post("/route/find", route),
   exportList: (search: string): Promise<void> =>
     requests.download(`route/export/list/${!search ? "all" : search}`),
