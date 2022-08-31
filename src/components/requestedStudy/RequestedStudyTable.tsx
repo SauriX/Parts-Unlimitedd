@@ -7,20 +7,18 @@ import { IRequestedStudyList } from "../../app/models/requestedStudy";
 import { useStore } from "../../app/stores/store";
 
 type RequestedStudyTableProps = {
-  loading: boolean;
   data: IRequestedStudyList[];
   columns: IColumns<IRequestedStudyList>;
   expandable?: ExpandableConfig<IRequestedStudyList> | undefined;
 };
 
 const RequestedStudyTable = ({
-  loading,
   data,
   columns,
   expandable,
 }: RequestedStudyTableProps) => {
   const { requestedStudyStore } = useStore();
-  const { clearStudy } = requestedStudyStore;
+  const { loadingStudies } = requestedStudyStore;
   const [openRows, setOpenRows] = useState<boolean>(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
 
@@ -67,7 +65,7 @@ const RequestedStudyTable = ({
           </div>
         )}
       <Table<IRequestedStudyList>
-        loading={loading}
+        loading={loadingStudies}
         size="small"
         rowKey={(record) => record.id}
         columns={columns}

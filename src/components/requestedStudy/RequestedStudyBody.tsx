@@ -143,7 +143,6 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
           </Col>
         </Row>
         <RequestedStudyTable
-          loading={false}
           data={data}
           columns={RequestedStudyColumns()}
           expandable={RequestedStudyExpandable({
