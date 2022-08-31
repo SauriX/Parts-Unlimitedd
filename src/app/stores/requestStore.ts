@@ -155,7 +155,7 @@ export default class RequestStore {
 
   setStudy = (study: IRequestStudy) => {
     const index = this.studies.findIndex(
-      (x) => x.estudioId === study.estatusId
+      (x) => x.estudioId === study.estudioId
     );
 
     if (index > -1) {
@@ -164,7 +164,7 @@ export default class RequestStore {
 
     this.packs = this.packs.map((x) => {
       const index = x.estudios.findIndex(
-        (x) => x.estudioId === study.estatusId
+        (x) => x.estudioId === study.estudioId
       );
       if (index > -1) {
         x.estudios[index] = study;
