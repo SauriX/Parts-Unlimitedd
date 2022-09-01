@@ -23,6 +23,7 @@ export default class RequestedStudyStore {
   data: IRequestedStudyList[] = [];
   studies: IRequestedStudy[] = [];
   formValues: IRequestedStudyForm = new RequestedStudyFormValues();
+  loadingStudies: boolean = false;
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -48,12 +49,15 @@ export default class RequestedStudyStore {
 
   getAll = async (search: IRequestedStudyForm) => {
     try {
+      this.loadingStudies = true;
       const study = await RequestedStudy.getAll(search);
       this.data = study;
       return study;
     } catch (error) {
       alerts.warning(getErrors(error));
       this.data = [];
+    } finally {
+      this.loadingStudies = false;
     }
   };
 

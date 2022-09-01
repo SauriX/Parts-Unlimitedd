@@ -130,13 +130,13 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
       title: "Editar",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => (
+      render: (value, user) => (
         <IconButton
           title="Editar equipo"
           icon={<EditOutlined />}
           onClick={() => {
             navigate(
-              `/equipment/${value}?${searchParams}&mode=edit&search=${
+              `/equipment/${user.id}?${searchParams}&mode=edit&search=${
                 searchParams.get("search") ?? "all"
               }`
             );
