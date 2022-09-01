@@ -52,14 +52,14 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   const [currentKey, setCurrentKey] = useState<keys>("general");
 
   const onChangeTab = async (key: string) => {
-    const ok = await submit();
+    const ok = await submit(false);
 
     if (ok) {
       setCurrentKey(key as keys);
     }
   };
 
-  const submit = async () => {
+  const submit = async (showMessage: boolean = true) => {
     let ok = true;
 
     setLoading(true);
@@ -105,7 +105,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       <Button key="cancel" size="small" ghost danger onClick={cancel}>
         Cancelar
       </Button>
-      <Button key="save" size="small" type="primary" onClick={submit}>
+      <Button key="save" size="small" type="primary" onClick={() => submit}>
         Guardar
       </Button>
     </Space>

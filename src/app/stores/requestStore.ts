@@ -243,6 +243,16 @@ export default class RequestStore {
     }
   };
 
+  getImages = async (recordId: string, requestId: string) => {
+    try {
+      const data = await Request.getImages(recordId, requestId);
+      return data;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return [];
+    }
+  };
+
   getPriceStudy = async (studyId: number, filter: IPriceListInfoFilter) => {
     try {
       filter.estudioId = studyId;
@@ -497,7 +507,16 @@ export default class RequestStore {
 
   saveImage = async (request: FormData) => {
     try {
-      await Request.saveImage(request);
+      var imageName = await Request.saveImage(request);
+      return imageName;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  deleteImage = async (recordId: string, requestId: string, code: string) => {
+    try {
+      await Request.deleteImage(recordId, requestId, code);
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
