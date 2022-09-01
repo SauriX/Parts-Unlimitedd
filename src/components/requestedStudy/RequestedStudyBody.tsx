@@ -62,18 +62,32 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
     var success = await update(updateForm!);
     if (success) {
       setLoading(false);
+      {
+        activity == "register"
+          ? alerts.confirm(
+              "",
+              `Se han enviado ${
+                updateForm.flatMap((x) => x.estudioId).length
+              } estudios de ${
+                updateForm.length
+              } solicitud(es) a estatus Solicitado de manera exitosa `,
+              async () => {
+                setUpdateForm([]);
+              }
+            )
+          : alerts.confirm(
+              "",
+              `Se han enviado ${
+                updateForm.flatMap((x) => x.estudioId).length
+              } estudios de ${
+                updateForm.length
+              } solicitud(es) a estatus Toma de Muestra de manera exitosa `,
+              async () => {
+                setUpdateForm([]);
+              }
+            );
+      }
       setActivity("");
-      alerts.confirm(
-        "",
-        `Se han enviado ${
-          updateForm.flatMap((x) => x.estudioId).length
-        } estudios de ${
-          updateForm.length
-        } solicitud(es) a estatus Solicitado de manera exitosa `,
-        async () => {
-          setUpdateForm([]);
-        }
-      );
     } else {
       setLoading(false);
       setActivity("");
