@@ -16,7 +16,7 @@ import {
   RequestTotal,
 } from "../models/request";
 import alerts from "../util/alerts";
-import { status } from "../util/catalogs";
+import { status, statusName } from "../util/catalogs";
 import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
@@ -48,6 +48,7 @@ export default class RequestStore {
   totals: IRequestTotal = new RequestTotal();
   studies: IRequestStudy[] = [];
   packs: IRequestPack[] = [];
+  loadingRequests: boolean = false;
 
   get studyUpdate() {
     if (this.request) {
@@ -97,24 +98,36 @@ export default class RequestStore {
 
     const desc =
       this.totals.descuentoTipo === 1
-        ? ((this.studies.filter((x) => x.aplicaDescuento).reduce((acc, obj) => acc + obj.precio, 0) +
-            this.packs.filter((x) => x.aplicaDescuento).reduce((acc, obj) => acc + obj.precio, 0)) *
+        ? ((this.studies
+            .filter((x) => x.aplicaDescuento)
+            .reduce((acc, obj) => acc + obj.precio, 0) +
+            this.packs
+              .filter((x) => x.aplicaDescuento)
+              .reduce((acc, obj) => acc + obj.precio, 0)) *
             this.totals.descuento) /
           100
         : this.totals.descuento;
 
     const char =
       this.totals.cargoTipo === 1
-        ? ((this.studies.filter((x) => x.aplicaCargo).reduce((acc, obj) => acc + obj.precio, 0) +
-            this.packs.filter((x) => x.aplicaCargo).reduce((acc, obj) => acc + obj.precio, 0)) *
+        ? ((this.studies
+            .filter((x) => x.aplicaCargo)
+            .reduce((acc, obj) => acc + obj.precio, 0) +
+            this.packs
+              .filter((x) => x.aplicaCargo)
+              .reduce((acc, obj) => acc + obj.precio, 0)) *
             this.totals.cargo) /
           100
         : this.totals.cargo;
 
     const cop =
       this.totals.copagoTipo === 1
-        ? ((this.studies.filter((x) => x.aplicaCopago).reduce((acc, obj) => acc + obj.precio, 0) +
-            this.packs.filter((x) => x.aplicaCopago).reduce((acc, obj) => acc + obj.precio, 0)) *
+        ? ((this.studies
+            .filter((x) => x.aplicaCopago)
+            .reduce((acc, obj) => acc + obj.precio, 0) +
+            this.packs
+              .filter((x) => x.aplicaCopago)
+              .reduce((acc, obj) => acc + obj.precio, 0)) *
             this.totals.copago) /
           100
         : this.totals.copago;
@@ -128,7 +141,11 @@ export default class RequestStore {
     };
   };
 
-  setStudyFilter = (branchId?: string, doctorId?: string, companyId?: string) => {
+  setStudyFilter = (
+    branchId?: string,
+    doctorId?: string,
+    companyId?: string
+  ) => {
     this.studyFilter = {
       sucursalId: branchId,
       medicoId: doctorId,
@@ -137,14 +154,18 @@ export default class RequestStore {
   };
 
   setStudy = (study: IRequestStudy) => {
-    const index = this.studies.findIndex((x) => x.estudioId === study.estatusId);
+    const index = this.studies.findIndex(
+      (x) => x.estudioId === study.estudioId
+    );
 
     if (index > -1) {
       this.studies[index] = study;
     }
 
     this.packs = this.packs.map((x) => {
-      const index = x.estudios.findIndex((x) => x.estudioId === study.estatusId);
+      const index = x.estudios.findIndex(
+        (x) => x.estudioId === study.estudioId
+      );
       if (index > -1) {
         x.estudios[index] = study;
       }
@@ -183,10 +204,13 @@ export default class RequestStore {
 
   getRequests = async (filter: IRequestFilter) => {
     try {
+      this.loadingRequests = true;
       const requests = await Request.getRequests(filter);
       this.requests = requests;
     } catch (error) {
       alerts.warning(getErrors(error));
+    } finally {
+      this.loadingRequests = false;
     }
   };
 
@@ -219,6 +243,16 @@ export default class RequestStore {
     }
   };
 
+  getImages = async (recordId: string, requestId: string) => {
+    try {
+      const data = await Request.getImages(recordId, requestId);
+      return data;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return [];
+    }
+  };
+
   getPriceStudy = async (studyId: number, filter: IPriceListInfoFilter) => {
     try {
       filter.estudioId = studyId;
@@ -228,6 +262,7 @@ export default class RequestStore {
         ...price,
         type: "study",
         estatusId: status.requestStudy.pendiente,
+        estatus: statusName.requestStudy.pendiente,
         aplicaCargo: false,
         aplicaCopago: false,
         aplicaDescuento: false,
@@ -278,6 +313,7 @@ export default class RequestStore {
           ...x,
           type: "study",
           estatusId: status.requestStudy.pendiente,
+          estatus: statusName.requestStudy.pendiente,
           aplicaCargo: false,
           aplicaCopago: false,
           aplicaDescuento: false,
@@ -294,7 +330,11 @@ export default class RequestStore {
     }
   };
 
-  sendTestEmail = async (recordId: string, requestId: string, email: string) => {
+  sendTestEmail = async (
+    recordId: string,
+    requestId: string,
+    email: string
+  ) => {
     try {
       await Request.sendTestEmail(recordId, requestId, email);
       alerts.info("El correo se está enviando");
@@ -303,7 +343,11 @@ export default class RequestStore {
     }
   };
 
-  sendTestWhatsapp = async (recordId: string, requestId: string, phone: string) => {
+  sendTestWhatsapp = async (
+    recordId: string,
+    requestId: string,
+    phone: string
+  ) => {
     try {
       await Request.sendTestWhatsapp(recordId, requestId, phone);
       alerts.info("El whatsapp se está enviando");
@@ -362,6 +406,17 @@ export default class RequestStore {
     this.packs = this.packs.filter((x) => x.paqueteId !== id);
   };
 
+  cancelRequest = async (recordId: string, requestId: string) => {
+    try {
+      await Request.cancelRequest(recordId, requestId);
+      if (this.request) this.request.estatusId = status.request.cancelado;
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
   cancelStudies = async (request: IRequestStudyUpdate) => {
     try {
       await Request.cancelStudies(request);
@@ -369,18 +424,11 @@ export default class RequestStore {
 
       const ids = request.estudios.map((x) => x.estudioId);
 
-      this.studies = this.studies.map((x) => {
-        x.estatusId = ids.includes(x.estudioId) ? status.requestStudy.cancelado : x.estatusId;
-        return x;
-      });
-
-      this.packs = this.packs.map((x) => {
-        x.estudios = x.estudios.map((y) => {
-          y.estatusId = ids.includes(y.estudioId) ? status.requestStudy.cancelado : y.estatusId;
-          return y;
-        });
-        return x;
-      });
+      this.updateStudiesStatus(
+        ids,
+        status.requestStudy.cancelado,
+        statusName.requestStudy.cancelado
+      );
 
       return true;
     } catch (error: any) {
@@ -396,18 +444,11 @@ export default class RequestStore {
 
       const ids = request.estudios.map((x) => x.estudioId);
 
-      this.studies = this.studies.map((x) => {
-        x.estatusId = ids.includes(x.estudioId) ? status.requestStudy.tomaDeMuestra : x.estatusId;
-        return x;
-      });
-
-      this.packs = this.packs.map((x) => {
-        x.estudios = x.estudios.map((y) => {
-          y.estatusId = ids.includes(y.estudioId) ? status.requestStudy.tomaDeMuestra : y.estatusId;
-          return y;
-        });
-        return x;
-      });
+      this.updateStudiesStatus(
+        ids,
+        status.requestStudy.tomaDeMuestra,
+        statusName.requestStudy.tomaDeMuestra
+      );
 
       return true;
     } catch (error: any) {
@@ -423,18 +464,11 @@ export default class RequestStore {
 
       const ids = request.estudios.map((x) => x.estudioId);
 
-      this.studies = this.studies.map((x) => {
-        x.estatusId = ids.includes(x.estudioId) ? status.requestStudy.solicitado : x.estatusId;
-        return x;
-      });
-
-      this.packs = this.packs.map((x) => {
-        x.estudios = x.estudios.map((y) => {
-          y.estatusId = ids.includes(y.estudioId) ? status.requestStudy.solicitado : y.estatusId;
-          return y;
-        });
-        return x;
-      });
+      this.updateStudiesStatus(
+        ids,
+        status.requestStudy.solicitado,
+        statusName.requestStudy.solicitado
+      );
 
       return true;
     } catch (error: any) {
@@ -473,11 +507,45 @@ export default class RequestStore {
 
   saveImage = async (request: FormData) => {
     try {
-      await Request.saveImage(request);
+      var imageName = await Request.saveImage(request);
+      return imageName;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  deleteImage = async (recordId: string, requestId: string, code: string) => {
+    try {
+      await Request.deleteImage(recordId, requestId, code);
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
       return false;
     }
+  };
+
+  private updateStudiesStatus = (
+    ids: number[],
+    statusId: number,
+    statusName: string
+  ) => {
+    this.studies = this.studies.map((x) => {
+      if (ids.includes(x.estudioId)) {
+        x.estatusId = statusId;
+        x.estatus = statusName;
+      }
+      return x;
+    });
+
+    this.packs = this.packs.map((x) => {
+      x.estudios = x.estudios.map((y) => {
+        if (ids.includes(y.estudioId)) {
+          y.estatusId = statusId;
+          y.estatus = statusName;
+        }
+        return y;
+      });
+      return x;
+    });
   };
 }

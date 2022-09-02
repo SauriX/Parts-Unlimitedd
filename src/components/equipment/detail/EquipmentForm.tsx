@@ -140,7 +140,10 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
 
   useEffect(() => {
     console.log("valores cambiantes", values);
-    if (searchParams.get("mode") === "readonly") {
+    if (
+      searchParams.get("mode") === "readonly" ||
+      searchParams.get("mode") === "edit"
+    ) {
       setNewEquipment({ ...values });
     }
   }, [values]);
@@ -192,6 +195,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
     return valuesEquipment.length > 0;
   };
   const addConfiguration = () => {
+    setDisabled(false);
     if (isDuplicate(numSerie)) {
       alerts.info(messages.confirmations.duplicate);
       return;
@@ -213,7 +217,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
-      <Row style={{ marginBottom: 24 }}>
+      <Row style={{ marginBottom: 24 }} gutter={[12, 2]}>
         {!!id && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
             <Pagination
@@ -271,7 +275,9 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo de Equipos" image="equipo" />}
+              title={
+                <HeaderTitle title="Configuración de Equipo" image="equipo" />
+              }
               className="header-container"
             ></PageHeader>
           )}
@@ -292,7 +298,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
             }}
           >
             <Row>
-              <Col md={12} sm={24}>
+              <Col md={12} sm={24} xs={12} style={{ textAlign: "center" }}>
                 <TextInput
                   formProps={{
                     name: "clave",
@@ -313,7 +319,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
                   readonly={readonly}
                 />
               </Col>
-              <Col md={12} sm={24}>
+              <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
                 <SelectInput
                   options={[
                     { value: "1", label: "Análisis" },
@@ -360,7 +366,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
                   <div>
                     <Form>
                       <Row>
-                        <Col md={12} sm={24} style={{ marginRight: 20 }}>
+                        <Col md={12} sm={24} xs={6} style={{ marginRight: 20 }}>
                           <Row>
                             <Col>Número de serie: </Col>
                             <Col
@@ -385,7 +391,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
                             </Col>
                           </Row>
                         </Col>
-                        <Col md={11} sm={24} style={{ marginRight: 20 }}>
+                        <Col md={11} sm={24} xs={6} style={{ marginRight: 20 }}>
                           Sucursal:
                           <Select
                             disabled={readonly}
@@ -406,7 +412,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
                               marginLeft: 10,
                             }}
                           />
-                          {!readonly && (
+                          {!readonly && !printing && (
                             <ImageButton
                               key="agregar"
                               title="Agregar Configuración"
@@ -423,6 +429,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
                 footer={<div></div>}
                 bordered
                 dataSource={newEquipment.valores}
+                // dataSource={[]}
                 renderItem={(item: any) => (
                   <List.Item>
                     <Col md={12} sm={24} style={{ textAlign: "left" }}>
@@ -434,13 +441,14 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
                       {sucursales.find((x) => x.value === item.branchId)?.label}
                     </Col>
                     <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                      {!readonly && (
+                      {!readonly && !printing && (
                         <ImageButton
                           key="Eliminar"
                           title="Eliminar Configuración"
                           image="eliminar-configuracion"
                           onClick={() => {
                             deleteEquipment(item.num_serie);
+                            setDisabled(false);
                             console.log("eliminar configuracion", item);
                           }}
                         />

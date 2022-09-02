@@ -14,6 +14,7 @@ interface IProps {
   style?: React.CSSProperties;
   isGroup?: boolean;
   errors?: any[];
+  disabledDates?: (current: moment.Moment) => boolean;
 }
 
 const DateInput = ({
@@ -25,6 +26,7 @@ const DateInput = ({
   style,
   isGroup,
   errors,
+  disabledDates,
 }: IProps) => {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -56,9 +58,9 @@ const DateInput = ({
     });
   }
 
-  function disabledDate(current: moment.Moment) {
-    return current.isBefore(moment(), "day");
-  }
+  // function disabledDate(current: moment.Moment) {
+  //   return current.isBefore(moment(), "day");
+  // }
 
   return (
     <div className="custom-input">
@@ -72,7 +74,7 @@ const DateInput = ({
         className="no-error-text"
       >
         <DatePicker
-          //disabledDate={disabledDate}
+          disabledDate={disabledDates}
           disabled={readonly}
           format="DD/MM/YYYY"
           style={{

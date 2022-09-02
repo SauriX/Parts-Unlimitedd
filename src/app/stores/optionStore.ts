@@ -29,6 +29,11 @@ export const urgencyOptions = [
   { label: "Urgencia con cargo", value: 3 },
 ];
 
+export const requestedStudyOptions = [
+  { label: "Toma de Muestra", value: 2 },
+  { label: "Solicitado", value: 3 },
+];
+
 export const studyStatusOptions = [
   { label: "Pendiente", value: 1 },
   { label: "Toma de muestra", value: 2 },
@@ -444,17 +449,19 @@ export default class OptionStore {
   getStudyOptionscita = async (area: string) => {
     try {
       const studyOptions = await Study.getActive();
-      console.log(studyOptions,"studis");
-      var studyOptionsf = studyOptions.filter(x=>x.departamento.includes(area));
-      console.log(studyOptionsf,"filter");
-      var test= studyOptionsf.map((x) => ({
+      console.log(studyOptions, "studis");
+      var studyOptionsf = studyOptions.filter((x) =>
+        x.departamento.includes(area)
+      );
+      console.log(studyOptionsf, "filter");
+      var test = studyOptionsf.map((x) => ({
         key: "study-" + x.id,
         value: "study-" + x.id,
         label: x.clave + " - " + x.nombre,
         group: "study",
       }));
-      this.packOptionscita= test;
-      console.log(test,"final");
+      this.packOptionscita = test;
+      console.log(test, "final");
     } catch (error) {
       this.studyOptionscita = [];
     }
@@ -479,7 +486,7 @@ export default class OptionStore {
   getPackOptionscita = async (area: string) => {
     try {
       const packOptions = await Pack.getActive();
-      var packOptionsf = packOptions.filter(x=>x.departamento==area);
+      var packOptionsf = packOptions.filter((x) => x.departamento == area);
       this.packOptionscita = packOptionsf.map((x) => ({
         key: "pack-" + x.id,
         value: "pack-" + x.id,
@@ -539,25 +546,31 @@ export default class OptionStore {
     }
   };
 
-  // departmentAreaOptions: IOptions[] = [];
-  // getDepartmentAreaOptions = async (id?: number) => {
-  //   try {
-  //     let route = `area/department/${id}`;
-  //     if (id == 0) {
-  //       route = "area";
-  //     }
+  departmentAreaOptions: IOptions[] = [];
+  getDepartmentAreaOptions = async () => {
+    try {
+      const areas = await Catalog.getActive<ICatalogAreaList>("area");
+      let groupby = areas.reduce((group: any, area) => {
+        const { departamento } = area;
+        group[departamento] = group[departamento] ?? [];
+        group[departamento].push(area);
+        return group;
+      }, {});
 
-  //     const area = Catalog.getActive<ICatalogAreaList>(route);
-  //     this.departmentAreaOptions = (await area).map((x) => ({
-  //       value: x.id,
-  //       label: x.nombre,
-  //       disabled: true,
-  //       options: x.departamento.
-  //     }));
-  //   } catch (error) {
-  //     this.departmentAreaOptions = [];
-  //   }
-  // };
+      console.log(groupby);
+      this.departmentAreaOptions = Object.keys(groupby).map((x) => ({
+        value: x,
+        label: x,
+        disabled: true,
+        options: groupby[x].map((a: ICatalogAreaList) => ({
+          value: a.id,
+          label: a.nombre,
+        }))
+      }));
+    } catch (error) {
+      this.departmentAreaOptions = [];
+    }
+  };
 
   CityOptions: IOptions[] = [];
   getCityOptions = async () => {

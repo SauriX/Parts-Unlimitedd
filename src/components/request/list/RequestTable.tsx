@@ -9,7 +9,11 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import { IRequestInfo, IRequestStudy, IRequestStudyInfo } from "../../../app/models/request";
+import {
+  IRequestInfo,
+  IRequestStudy,
+  IRequestStudyInfo,
+} from "../../../app/models/request";
 import { moneyFormatter } from "../../../app/util/utils";
 import views from "../../../app/util/view";
 
@@ -17,11 +21,10 @@ const { Link, Text } = Typography;
 
 const RequestTable = () => {
   const { requestStore } = useStore();
-  const { requests, getRequests: getByFilter } = requestStore;
+  const { loadingRequests, requests, getRequests: getByFilter } = requestStore;
 
   let navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -29,9 +32,7 @@ const RequestTable = () => {
 
   useEffect(() => {
     const readRequests = async () => {
-      setLoading(true);
       await getByFilter({});
-      setLoading(false);
     };
 
     readRequests();
@@ -43,18 +44,22 @@ const RequestTable = () => {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: 120,
+        width: 150,
       }),
       render: (value, item) => (
         <div style={{ display: "flex", flexDirection: "column" }}>
           <Link
             onClick={() => {
-              navigate(`/${views.request}/${item.expedienteId}/${item.solicitudId}`);
+              navigate(
+                `/${views.request}/${item.expedienteId}/${item.solicitudId}`
+              );
             }}
           >
             {value}
           </Link>
-          <Text type="secondary">{item.clavePatologica}</Text>
+          <small>
+            <Text type="secondary">{item.clavePatologica}</Text>
+          </small>
         </div>
       ),
     },
@@ -131,7 +136,10 @@ const RequestTable = () => {
       render: (value: IRequestStudyInfo[]) => (
         <Row align="middle">
           {value.map((x, i) => (
-            <Col key={x.clave + x.estatus} style={{ display: "flex", alignItems: "center" }}>
+            <Col
+              key={x.clave + x.estatus}
+              style={{ display: "flex", alignItems: "center" }}
+            >
               <ContainerBadge color={x.color} text={x.estatus[0]} />
             </Col>
           ))}
@@ -143,6 +151,7 @@ const RequestTable = () => {
   return (
     <Table<IRequestInfo>
       size="small"
+      loading={loadingRequests}
       rowKey={(record) => record.solicitudId}
       columns={columns}
       dataSource={[...requests]}
@@ -153,8 +162,12 @@ const RequestTable = () => {
         expandedRowRender: (record) => (
           <Row align="middle" gutter={[25, 25]}>
             {record.estudios.map((x) => (
-              <Col key={x.clave + x.estatus} style={{ display: "flex", alignItems: "center" }}>
-                {x.nombre} <ContainerBadge color={x.color} text={x.estatus[0]} />
+              <Col
+                key={x.clave + x.estatus}
+                style={{ display: "flex", alignItems: "center" }}
+              >
+                {x.nombre}{" "}
+                <ContainerBadge color={x.color} text={x.estatus[0]} />
               </Col>
             ))}
           </Row>
@@ -171,7 +184,11 @@ const ContainerBadge = ({ color, text }: { color: string; text?: string }) => {
   return (
     <div
       className="badge-container-large"
-      style={{ marginLeft: 10, display: "inline-block", backgroundColor: color }}
+      style={{
+        marginLeft: 10,
+        display: "inline-block",
+        backgroundColor: color,
+      }}
     >
       {text}
     </div>

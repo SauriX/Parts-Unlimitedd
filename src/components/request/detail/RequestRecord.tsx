@@ -20,8 +20,18 @@ const formItemLayout = {
   wrapperCol: { span: 16 },
 };
 
-const RequestRecord = ({ recordId, branchId, setBranchId }: RequestRecordProps) => {
-  const { requestStore, procedingStore, locationStore, modalStore, optionStore } = useStore();
+const RequestRecord = ({
+  recordId,
+  branchId,
+  setBranchId,
+}: RequestRecordProps) => {
+  const {
+    requestStore,
+    procedingStore,
+    locationStore,
+    modalStore,
+    optionStore,
+  } = useStore();
   const { request } = requestStore;
   const { getById } = procedingStore;
   const { getColoniesByZipCode } = locationStore;
@@ -32,7 +42,7 @@ const RequestRecord = ({ recordId, branchId, setBranchId }: RequestRecordProps) 
 
   const branch = Form.useWatch("sucursal", form);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getBranchOptions();
@@ -60,7 +70,9 @@ const RequestRecord = ({ recordId, branchId, setBranchId }: RequestRecordProps) 
 
         if (record.cp) {
           const location = await getColoniesByZipCode(record.cp);
-          const colony = location?.colonias?.find((x) => x.id === record.colonia)?.nombre;
+          const colony = location?.colonias?.find(
+            (x) => x.id === record.colonia
+          )?.nombre;
           record.colonia = colony;
         }
 
@@ -303,7 +315,11 @@ const RequestRecord = ({ recordId, branchId, setBranchId }: RequestRecordProps) 
                   width: 900,
                 })
               }
-              style={{ backgroundColor: "#6EAA46", color: "white", borderColor: "#6EAA46" }}
+              style={{
+                backgroundColor: "#6EAA46",
+                color: "white",
+                borderColor: "#6EAA46",
+              }}
             >
               Datos Fiscales
             </Button>

@@ -27,6 +27,7 @@ import {
   faUsers,
   faVial,
   faVials,
+  faArrowsTurnToDots
 } from "@fortawesome/free-solid-svg-icons";
 
 const getMenuIcon = (name: string) => {
@@ -87,6 +88,8 @@ const getMenuIcon = (name: string) => {
       return faFileContract;
     case "cash":
       return faChartLine;
+    case "requestedstudy":
+      return faArrowsTurnToDots;
     default:
       return faCircle;
   }
