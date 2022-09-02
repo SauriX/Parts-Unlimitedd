@@ -844,10 +844,10 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
       </Form>
       <Row>
       <Col span={6}><Button style={{marginTop:"20px",marginLeft:"70%",marginBottom:"20px"}} onClick={()=>{
-        navigate(`/Request`);
+        navigate(`/request`);
       }} type="primary"> Agregar solicitud</Button></Col>
       <Col span={6}><Button style={{marginTop:"20px",marginLeft:"70%",marginBottom:"20px"}} onClick={()=>{
-        navigate(`/cotizacion/new?&mode=edit`);
+        navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
       }} type="primary"> Agregar cotización</Button></Col>
       <Col span={6}><Button style={{marginTop:"20px",marginLeft:"70%",marginBottom:"20px"}} onClick={()=>{
         navigate(`/appointments`);

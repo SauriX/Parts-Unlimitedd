@@ -79,6 +79,7 @@ const QuotationForm: FC<QuotationFormProps> = ({
     profileStore,
     quotationStore,
     priceListStore,
+    procedingStore
   } = useStore();
   const {
     getById,
@@ -90,6 +91,8 @@ const QuotationForm: FC<QuotationFormProps> = ({
     quotatios,
     printTicket,
   } = quotationStore;
+
+  const  {getByIdQuote}=procedingStore;
   const [data, setData] = useState<IRequestStudy[]>([]);
   const { profile } = profileStore;
   const [loading, setLoading] = useState(false);
@@ -232,7 +235,24 @@ const QuotationForm: FC<QuotationFormProps> = ({
     }
     
   }); */
+useEffect(()=>{
+  const getexp=async ()=>{
+      var expediente = await getByIdQuote(searchParams.get("exp")!);
 
+      setValues((prev)=>
+              ({...prev,
+                nomprePaciente:`${expediente?.nombre!} ${expediente?.apellido}`,
+                fechaNacimiento:moment(expediente?.fechaNacimiento),
+                expediente:expediente?.expediente!,
+                genero:expediente?.sexo!,
+                edad:expediente?.edad!
+              }));
+
+  }
+  if(searchParams.get("exp")){
+      getexp()
+  }
+},[searchParams.get("exp")]);
   const setEditMode = () => {
     navigate(`/${views.proceeding}/${id}?${searchParams}&mode=edit`);
     setReadonly(false);
