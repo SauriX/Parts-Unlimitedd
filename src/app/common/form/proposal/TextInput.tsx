@@ -108,6 +108,7 @@ const TextInput = ({
             width: width ?? "100%",
             ...(style ?? {}),
           }}
+          allowClear 
         />
       </Form.Item>
       {/* {(!!suffix || isGroup || !!errors) && ( */}
