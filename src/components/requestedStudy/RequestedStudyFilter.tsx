@@ -113,6 +113,7 @@ const RequestedStudyFilter = () => {
                         name: "buscar",
                         label: "Buscar",
                       }}
+                      
                     />
                   </Col>
                   <Col span={8}>
@@ -182,7 +183,6 @@ const RequestedStudyFilter = () => {
                       options={companyOptions}
                     ></SelectInput>
                   </Col>
-                  <Col span={8}></Col>
                 </Row>
               </Col>
             </Row>
