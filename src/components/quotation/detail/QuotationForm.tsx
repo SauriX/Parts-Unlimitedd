@@ -497,6 +497,7 @@ const QuotationForm: FC<QuotationFormProps> = ({
                     handle={generalesSumbit}
                     printing={loading}
                     branchId={values.sucursalId}
+                    id={id}
                   ></GeneralesForm>
                 </TabPane>
                 <TabPane tab="Estudios" key="2">

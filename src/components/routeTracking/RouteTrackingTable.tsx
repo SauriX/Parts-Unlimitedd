@@ -1,13 +1,5 @@
-import {
-  Button,
-  Divider,
-  PageHeader,
-  Spin,
-  Table,
-  List,
-  Typography,
-} from "antd";
-import React, { FC, Fragment, useEffect, useRef, useState } from "react";
+import { Button, Divider, PageHeader, Table, Tabs } from "antd";
+import React, { FC, Fragment, useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
@@ -18,23 +10,22 @@ import useWindowDimensions, { resizeWidth } from "../../app/util/window";
 import { EditOutlined } from "@ant-design/icons";
 import IconButton from "../../app/common/button/IconButton";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { IEquipmentList } from "../../app/models/equipment";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import { useReactToPrint } from "react-to-print";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
+import views from "../../app/util/view";
+import { IRouteList } from "../../app/models/route";
+import PendingSend from "./TapsComponents/PendingSend";
 
-type EquipmentTableProps = {
+type RouteTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
 
-const EquipmentTable: FC<EquipmentTableProps> = ({
-  componentRef,
-  printing,
-}) => {
-  const { equipmentStore } = useStore();
-  const { equipment, getAll } = equipmentStore;
+const RouteTrackingTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
+    const { TabPane } = Tabs;
+    const { routeStore } = useStore();
+  const { routes, getAll } = routeStore;
 
   const [searchParams] = useSearchParams();
 
@@ -49,35 +40,37 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
     searchedColumn: "",
   });
 
-  console.log("Table");
+  //console.log("Table");
 
   useEffect(() => {
-    const readEquipment = async () => {
+    const readRoutes = async () => {
       setLoading(true);
       await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
+      getAll("all");
+      // create(routes).then(x => { getAll("all")});
     };
 
-    readEquipment();
-  }, [getAll, searchParams]);
-  useEffect(() => {});
+    if (routes.length === 0) {
+      readRoutes();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const columns: IColumns<IEquipmentList> = [
+  const columns: IColumns<IRouteList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "20%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
-      render: (value, user) => (
+      render: (value, route) => (
         <Button
           type="link"
           onClick={() => {
-            navigate(
-              `/equipmentMantain/${user.id}`
-            );
+            navigate(`/${views.route}/${route.id}?${searchParams}&mode=readonly`);
           }}
         >
           {value}
@@ -93,29 +86,24 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
         windowSize: windowWidth,
       }),
     },
-
     {
-      key: "valores",
-      dataIndex: "valores",
-      title: "No. Serie/Mantenimientos",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "20%",
-      render: (value, user) =>
-        value.map((valor: any) => {
-          return (
-            <Button
-              type="link"
-              onClick={() => {
-                navigate(
-                  `/equipmentMantain/${user.id}`
-                );
-              }}
-            >
-              {valor.num_Serie}
-            </Button>
-          );
-        }),
+      ...getDefaultColumnProps("sucursalOrigen", "Sucursal Origen", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
     },
+    {
+        ...getDefaultColumnProps("sucursalDestino", "Destino", {
+          searchState,
+          setSearchState,
+          width: "20%",
+          minWidth: 150,
+          windowSize: windowWidth,
+        }),
+      },
     {
       key: "activo",
       dataIndex: "activo",
@@ -132,64 +120,51 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (
         <IconButton
-          title="Editar equipo"
+          title="Editar ruta"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(
-              `/equipment/${value}?${searchParams}&mode=edit&search=${
-                searchParams.get("search") ?? "all"
-              }`
-            );
+            navigate(`/${views.route}/${value}?${searchParams}&mode=edit`);
           }}
         />
       ),
     },
   ];
 
-  const EquipmentTablePrint = () => {
+  const ReagentTablePrint = () => {
     return (
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Equipos" image="equipo" />}
+          title={<HeaderTitle title="Catálogo de Rutas" image="ruta" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
-        <Table<IEquipmentList>
-          size="large"
+        <Table<IRouteList>
+          size="small"
           rowKey={(record) => record.id}
-          columns={columns.slice(0, 8)}
+          columns={columns.slice(0, 5)}
           pagination={false}
-          dataSource={[...equipment]}
+          dataSource={[...routes]}
         />
       </div>
     );
   };
-  const test = () => {
-    console.log(equipment);
-    const a: any[] = [];
-    for (const obj of equipment) {
-      a.push({ ...obj });
-    }
 
-    console.log(a);
-  };
-  test();
   return (
     <Fragment>
-      <Table<IEquipmentList>
-        loading={loading || printing}
-        size="small"
-        rowKey={(record) => record.id}
-        columns={columns}
-        dataSource={[...equipment]}
-        pagination={defaultPaginationProperties}
-        sticky
-        scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-      />
-      <div style={{ display: "none" }}>{<EquipmentTablePrint />}</div>
+        <Tabs defaultActiveKey="1" >
+            <TabPane tab="Pendientes de enviar" key="1">
+                <PendingSend></PendingSend>
+            </TabPane>
+            <TabPane tab="Pendientes de recibir" key="2">
+            Content of Tab Pane 2
+            </TabPane>
+            <TabPane tab="Reporte" key="3">
+            Content of Tab Pane 3
+            </TabPane>
+        </Tabs>
     </Fragment>
   );
 };
 
-export default observer(EquipmentTable);
+export default observer(RouteTrackingTable);

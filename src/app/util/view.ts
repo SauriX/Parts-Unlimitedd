@@ -12,7 +12,8 @@ const views = {
   quotatiion: "cotizacion",
   report: "reportes",
   cash: "cash",
-  sampling:"samplings"
+  sampling:"samplings",
+  routeTraking:"segRutas"
 };
 
 export default views;
