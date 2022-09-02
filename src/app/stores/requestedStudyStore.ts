@@ -13,6 +13,7 @@ import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 import { status } from "../util/catalogs";
+import moment from "moment";
 
 export default class RequestedStudyStore {
   constructor() {
@@ -24,6 +25,7 @@ export default class RequestedStudyStore {
   studies: IRequestedStudy[] = [];
   formValues: IRequestedStudyForm = new RequestedStudyFormValues();
   loadingStudies: boolean = false;
+  clear: boolean = false;
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -35,6 +37,27 @@ export default class RequestedStudyStore {
 
   setFormValues = (newFormValues: IRequestedStudyForm) => {
     this.formValues = newFormValues;
+  };
+
+  clearFilter = () => {
+    const emptyFilter: IRequestedStudyForm = {
+      sucursalId: [],
+      medicoId: [],
+      compañiaId: [],
+      fecha: [
+        moment(Date.now()).utcOffset(0, true),
+        moment(Date.now()).utcOffset(0, true).add(1, "day"),
+      ],
+      buscar: "",
+      procedencia: [],
+      departamento: [],
+      tipoSolicitud: [],
+      area: [],
+      estatus: [],
+    };
+    this.data = [];
+    this.formValues = emptyFilter;
+    this.clear = !this.clear;
   };
 
   access = async () => {
@@ -71,12 +94,17 @@ export default class RequestedStudyStore {
 
       this.data = this.data.map((x) => {
         x.estudios = x.estudios.map((z) => {
-          const updated = study.find((y) => y.solicitudId === x.id && y.estudioId.includes(z.id));
-          if(updated) {
-            z.status = z.status === status.requestStudy.tomaDeMuestra ? status.requestStudy.solicitado : status.requestStudy.tomaDeMuestra;
+          const updated = study.find(
+            (y) => y.solicitudId === x.id && y.estudioId.includes(z.id)
+          );
+          if (updated) {
+            z.status =
+              z.status === status.requestStudy.tomaDeMuestra
+                ? status.requestStudy.solicitado
+                : status.requestStudy.tomaDeMuestra;
           }
 
-          return z
+          return z;
         });
         return x;
       });

@@ -1,12 +1,11 @@
-import { Button, Col, Collapse, Form, Row, Spin } from "antd";
+import { Button, Col, Collapse, Form, Row } from "antd";
+import { useForm } from "antd/lib/form/Form";
 import { observer } from "mobx-react-lite";
-import React from "react";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
 import { IRequestedStudyForm } from "../../app/models/requestedStudy";
-import { IOptions } from "../../app/models/shared";
 import {
   originOptions,
   requestedStudyOptions,
@@ -18,7 +17,8 @@ const { Panel } = Collapse;
 
 const RequestedStudyFilter = () => {
   const { optionStore, requestedStudyStore } = useStore();
-  const { formValues, getAll, setFormValues } = requestedStudyStore;
+  const { formValues, getAll, setFormValues, clearFilter } =
+    requestedStudyStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -30,7 +30,7 @@ const RequestedStudyFilter = () => {
     getCompanyOptions,
   } = optionStore;
 
-  const [form] = Form.useForm<IRequestedStudyForm>();
+  const [form] = useForm();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -47,17 +47,18 @@ const RequestedStudyFilter = () => {
 
   const onFinish = async (newFormValues: IRequestedStudyForm) => {
     setLoading(true);
-    const reagent = { ...newFormValues };
+    const filter = { ...newFormValues };
     setFormValues(newFormValues);
-    getAll(reagent);
+    getAll(filter);
     setLoading(false);
+    setFormValues(formValues);
   };
 
   return (
     <Collapse ghost className="request-filter-collapse">
       <Panel
-        key={"filter"}
-        header={"Búsqueda"}
+        key="filter"
+        header="Búsqueda"
         extra={[
           <Button
             key="clean"
@@ -80,7 +81,16 @@ const RequestedStudyFilter = () => {
           </Button>,
         ]}
       >
-        <Spin spinning={loading}>
+        <div
+          style={{
+            backgroundColor: "#F2F2F2",
+            borderStyle: "solid",
+            borderColor: "#CBC9C9",
+            borderWidth: "1px",
+            borderRadius: "10px",
+            padding: "15px",
+          }}
+        >
           <Form<IRequestedStudyForm>
             {...formItemLayout}
             form={form}
@@ -91,7 +101,7 @@ const RequestedStudyFilter = () => {
           >
             <Row>
               <Col span={24}>
-                <Row justify="space-between" gutter={[12, 12]}>
+                <Row justify="space-between" gutter={[0, 12]}>
                   <Col span={8}>
                     <DateRangeInput
                       formProps={{ label: "Fecha", name: "fecha" }}
@@ -103,6 +113,7 @@ const RequestedStudyFilter = () => {
                         name: "buscar",
                         label: "Buscar",
                       }}
+                      
                     />
                   </Col>
                   <Col span={8}>
@@ -172,12 +183,11 @@ const RequestedStudyFilter = () => {
                       options={companyOptions}
                     ></SelectInput>
                   </Col>
-                  <Col span={8}></Col>
                 </Row>
               </Col>
             </Row>
           </Form>
-        </Spin>
+        </div>
       </Panel>
     </Collapse>
   );
