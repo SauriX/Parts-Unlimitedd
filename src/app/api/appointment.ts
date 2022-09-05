@@ -15,6 +15,10 @@ const Appointment = {
   exportList: (search: ISearchAppointment): Promise<void> =>
     requests.download(`Appointment/export/list`,search),
   exportForm: (data:IExportForm): Promise<void> => requests.download(`Appointment/export/form`,data),
+  sendTestEmail: (typo: string, requestId: string, email: string): Promise<void> =>
+  requests.get(`Appointment/email/${requestId}/${email}/${typo}`),
+sendTestWhatsapp: (typo: string, requestId: string, phone: string): Promise<void> =>
+  requests.get(`Appointment/whatsapp/${requestId}/${phone}/${typo}`),
 };
 
 export default Appointment;

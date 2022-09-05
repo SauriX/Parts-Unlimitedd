@@ -216,7 +216,23 @@ export default class QuotationStore {
       alerts.warning(getErrors(error));
     }
   };
+  sendTestEmail = async ( requestId: string, email: string) => {
+    try {
+      await quotation.sendTestEmail( requestId, email);
+      alerts.info("El correo se está enviando");
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
 
+  sendTestWhatsapp = async ( requestId: string, phone: string) => {
+    try {
+      await quotation.sendTestWhatsapp( requestId, phone);
+      alerts.info("El whatsapp se está enviando");
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
   getPricePacks = async (filter?: IPriceListInfoFilter,id?:number) => {
     filter!.paqueteId=id;
     try {

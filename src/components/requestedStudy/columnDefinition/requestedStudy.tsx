@@ -68,7 +68,7 @@ const RequestedStudyColumns = () => {
     },
 
     {
-      ...getDefaultColumnProps("compañia", "Compañia", {
+      ...getDefaultColumnProps("compañia", "Compañía", {
         searchState,
         setSearchState,
         width: "20%",

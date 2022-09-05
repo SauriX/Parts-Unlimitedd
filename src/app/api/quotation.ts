@@ -17,6 +17,10 @@ const Quotation = {
   requests.download(`PriceQuote/export/list`, search),
   exportForm: (id: string): Promise<void> => requests.download(`PriceQuote/export/form/${id}`),
   printTicket: (): Promise<void> => requests.print(`PriceQuote/ticket`),
+  sendTestEmail: ( requestId: string, email: string): Promise<void> =>
+  requests.get(`PriceQuote/email/${requestId}/${email}`),
+sendTestWhatsapp: ( requestId: string, phone: string): Promise<void> =>
+  requests.get(`PriceQuote/whatsapp/${requestId}/${phone}`),
 };
 
 export default Quotation;

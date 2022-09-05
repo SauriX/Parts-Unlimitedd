@@ -108,7 +108,9 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
             <Button
               type="link"
               onClick={() => {
-                navigate("#");
+                navigate(
+                  `/equipmentMantain/${user.id}`
+                );
               }}
             >
               {valor.num_Serie}

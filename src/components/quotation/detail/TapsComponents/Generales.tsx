@@ -27,13 +27,14 @@ type GeneralesFormProps = {
     handle: boolean,
     data: IQuotationGeneralesForm | undefined,
     branchId: string | undefined;
+    id:string;
   };
 
  
-const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data,branchId })=>{
+const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data,branchId,id })=>{
     const {optionStore,quotationStore}=useStore();
     const { getMedicOptions,getCompanyOptions,medicOptions: MedicOptions,companyOptions: CompanyOptions } = optionStore;
-    const {setStudyFilter,studyFilter}=quotationStore;
+    const {setStudyFilter,studyFilter,sendTestEmail,sendTestWhatsapp}=quotationStore;
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm<IQuotationGeneralesForm>();
     const [values, setValues] = useState<IQuotationGeneralesForm>(new QuotationGeneralesFormValues());
@@ -65,6 +66,7 @@ const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data,branchI
         console.log("onfinish");
         console.log(reagent);
         generales(reagent);
+        setValues(values);
         /*     setLoading(true);
         
             const reagent = { ...values, ...newValues };
@@ -205,7 +207,16 @@ const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data,branchI
                         type="primary"
                         htmlType="submit"
                         onClick={() => {
-                            /* form.submit(); */
+                            if(type=="Whatsapp"){
+                                sendTestWhatsapp(id,values.whatssap);
+                            }
+                            if(type=="Email"){
+                                sendTestEmail(id,values.whatssap);
+                            }
+                            if(type=="Ambos"){
+                                sendTestWhatsapp(id,values.whatssap);
+                                sendTestEmail(id,values.whatssap);
+                            }
                         }}
                         >
                         Prueba Envio
@@ -229,7 +240,16 @@ const GeneralesForm:FC<GeneralesFormProps> = ({  printing,generales,data,branchI
                         type="primary"
                         htmlType="submit"
                         onClick={() => {
-                            /* form.submit(); */
+                            if(type=="Whatsapp"){
+                                sendTestWhatsapp(id,values.whatssap);
+                            }
+                            if(type=="Email"){
+                                sendTestEmail(id,values.whatssap);
+                            }
+                            if(type=="Ambos"){
+                                sendTestWhatsapp(id,values.whatssap);
+                                sendTestEmail(id,values.whatssap);
+                            }
                         }}
                         >
                         Prueba Envio

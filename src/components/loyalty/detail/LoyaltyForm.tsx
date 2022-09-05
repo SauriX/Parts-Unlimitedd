@@ -25,7 +25,7 @@ import { ILoyaltyForm,  LoyaltyFormValues } from "../../../app/models/loyalty";
 import views from "../../../app/util/view";
 import moment from "moment";
 import DateRangeInput from "../../../app/common/form/DateRangeInput";
-import SelectInput from "../../../app/common/form/SelectInput";
+import SelectInput from "../../../app/common/form/proposal/SelectInput";
 // import { v4 as uuid } from "uuid";
 
 type LoyaltyFormProps = {
@@ -279,6 +279,7 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
                     name: "precioListaId",
                     label: "Lista de precios",
                   }}
+                  multiple
                   readonly={readonly}
                   options={priceListOptions}
                 />

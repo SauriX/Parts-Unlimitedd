@@ -77,6 +77,8 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
     updateLab,
     search,
     sucursales,
+    sendTestEmail,
+    sendTestWhatsapp
   } = appointmentStore;
   const [data, setData] = useState<IRequestStudy[]>([]);
   const { profile } = profileStore;
@@ -487,6 +489,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                       handle={generalesSumbit}
                       printing={loading}
                       branchId={profile?.sucursal}
+                      id={id}
                     ></GeneralesForm>
                   )}
                   {type == "domicilio" && (
@@ -496,6 +499,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                       handle={generalesSumbit}
                       printing={loading}
                       branchId={profile?.sucursal}
+                      id={id}
                     ></GeneralesDomForm>
                   )}
                 </TabPane>

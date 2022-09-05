@@ -17,6 +17,7 @@ import {
   Input,
   Tag,
   InputNumber,
+  Tooltip,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
@@ -44,6 +45,8 @@ import { ITaxData } from "../../../app/models/taxdata";
 import DateInput from "../../../app/common/form/proposal/DateInput";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import IconButton from "../../../app/common/button/IconButton";
+import { IQuotationList } from "../../../app/models/quotation";
+import Link from "antd/lib/typography/Link";
 
 type ProceedingFormProps = {
   id: string;
@@ -261,7 +264,102 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
 
   const addRequest = () => {
     navigate(`/${views.request}/${id}`);
-  };
+  }; 
+  const columnsP: IColumns<IQuotationList> = [
+    {
+      ...getDefaultColumnProps("presupuesto", "Presupuesto", {
+
+        width: 200,
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+      render: (value, cotizacion) => (
+        <Button
+          type="link"
+          onClick={() => {
+            navigate(`/${views.quotatiion}/${cotizacion.id}?${searchParams}&mode=readonly`);
+          }}
+        >
+          {value}
+        </Button>
+      ),
+    },
+    {
+      ...getDefaultColumnProps("nomprePaciente", "Nombre del paciente", {
+
+        width: 200,
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+        ...getDefaultColumnProps("estudios", "Estudios", {
+
+          width: 150,
+          minWidth: 150,
+          windowSize: windowWidth,
+        }),
+      },
+      {
+        ...getDefaultColumnProps("email", "Email", {
+
+          width: 150,
+          minWidth: 150,
+          windowSize: windowWidth,
+        }),
+      },
+      {
+        ...getDefaultColumnProps("whatsapp", "Whatsapp", {
+
+          width:100,
+          minWidth: 150,
+          windowSize: windowWidth,
+        }),
+      },
+      {
+        ...getDefaultColumnProps("fecha", "Fecha", {
+
+          width: 200,
+          minWidth: 150,
+          windowSize: windowWidth,
+        }),
+      },
+
+      {
+        ...getDefaultColumnProps("expediente", "Expediente", {
+
+          width: 100,
+          minWidth: 150,
+          windowSize: windowWidth,
+        }),
+      },
+      
+        {
+      key: "activo",
+      dataIndex: "activo",
+      title: "Activo",
+      align: "center",
+      width: 100,
+      render: (value) => (value ? "Sí" : "No"),
+    },
+    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Editar",
+      align: "center",
+      width:  200,
+      render: (value,cotizacion) => (
+        <IconButton
+          title="Editar Expediente"
+          icon={<EditOutlined />}
+          onClick={() => {
+            navigate(`/${views.quotatiion}/${cotizacion.id}?${searchParams}&mode=edit`);
+          }}
+        />
+      ),
+    },
+  ];
+
   const columns: IColumns<any> = [
     {
       ...getDefaultColumnProps("clave", "Solicitud", {
@@ -361,6 +459,94 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
       ),
     },
   ];
+  const columnsC: IColumns<any> = [
+    {
+      ...getDefaultColumnProps("noSolicitud", "Solicitud de cita", {
+
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+      render: (value, item) => (
+        <Link
+/*           draggable
+          onDragStart={() => {
+            SetCita(item);
+          }} */
+        >
+          {value}
+        </Link>
+      ),
+    },
+    {
+      ...getDefaultColumnProps("expediente", "Expediente", {
+
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("fecha", "Fecha", {
+
+        width: "15%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+      render: (value) => moment(value).format("DD/MM/YYYY HH:mm"),
+    },
+    {
+      ...getDefaultColumnProps("direccion", "Dirección", {
+
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+      render: (value) => (
+        <Tooltip title={value}>
+
+            {value}
+       
+        </Tooltip>
+      ),
+    },
+    {
+      ...getDefaultColumnProps("nombre", "Nombre", {
+
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("info", "Datos", {
+
+        width: "15%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+      render: (_, data) => (
+        <div>{`${data.edad} años, ${data.sexo.substring(0, 1)}`}</div>
+      ),
+    },
+    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Editar",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value) => (
+        <IconButton
+          title="Editar reactivo"
+          icon={<EditOutlined />}
+          onClick={() => {
+           // navigate(`/${views.appointment}/${value}?type=${tipo}&mode=edit`);
+          }}
+        />
+      ),
+    },
+  ];
+
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
@@ -657,15 +843,42 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
         </Row>
       </Form>
       <Row>
-      <Col span={6}><Button style={{marginTop:"20px",marginLeft:"70%",marginBottom:"20px"}} type="primary"> Agregar solicitud</Button></Col>
-      <Col span={6}><Button style={{marginTop:"20px",marginLeft:"70%",marginBottom:"20px"}} type="primary"> Agregar cotización</Button></Col>
-      <Col span={6}><Button style={{marginTop:"20px",marginLeft:"70%",marginBottom:"20px"}} type="primary"> Agregar cita</Button></Col>
+      <Col span={6}><Button style={{marginTop:"20px",marginLeft:"70%",marginBottom:"20px"}} onClick={()=>{
+        navigate(`/request`);
+      }} type="primary"> Agregar solicitud</Button></Col>
+      <Col span={6}><Button style={{marginTop:"20px",marginLeft:"70%",marginBottom:"20px"}} onClick={()=>{
+        navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
+      }} type="primary"> Agregar cotización</Button></Col>
+      <Col span={6}><Button style={{marginTop:"20px",marginLeft:"70%",marginBottom:"20px"}} onClick={()=>{
+        navigate(`/appointments`);
+      }} type="primary"> Agregar cita</Button></Col>
       </Row>
       <Table<any>
         loading={loading || printing}
         size="small"
         rowKey={(record) => record.id}
         columns={columns}
+        dataSource={[]}
+     /*    pagination={defaultPaginationProperties} */
+        sticky
+        scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+      />
+      <Divider orientation="left">Presupuestos</Divider>
+      <Table<any>
+        loading={loading || printing}
+        size="small"
+        rowKey={(record) => record.id}
+        columns={columnsP}
+        dataSource={[]}
+     /*    pagination={defaultPaginationProperties} */
+        sticky
+        scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+      />
+            <Table<any>
+        loading={loading || printing}
+        size="small"
+        rowKey={(record) => record.id}
+        columns={columnsC}
         dataSource={[]}
      /*    pagination={defaultPaginationProperties} */
         sticky

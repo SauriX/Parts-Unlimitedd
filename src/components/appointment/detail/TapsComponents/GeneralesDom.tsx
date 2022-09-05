@@ -28,10 +28,11 @@ type GeneralesFormProps = {
     handle: boolean,
     data: IAppointmentGeneralesForm | undefined
     branchId: string | undefined;
+    id:string;
   };
 
 
-const GeneralesDomForm:FC<GeneralesFormProps> = ({  printing,generales,data,branchId })=>{
+const GeneralesDomForm:FC<GeneralesFormProps> = ({  printing,generales,data,branchId,id })=>{
     const {optionStore,appointmentStore}=useStore();
     const { getMedicOptions,getCompanyOptions,medicOptions: MedicOptions,companyOptions: CompanyOptions, } = optionStore;
     const [loading, setLoading] = useState(false);
@@ -41,7 +42,7 @@ const GeneralesDomForm:FC<GeneralesFormProps> = ({  printing,generales,data,bran
     const [type,SetType]=useState("");
     const doctorId = Form.useWatch("medico", form);
     const companyId = Form.useWatch("compañia", form);
-    const {setStudyFilter,studyFilter}=appointmentStore;
+    const {setStudyFilter,studyFilter,sendTestEmail,sendTestWhatsapp}=appointmentStore;
     useEffect(()=>{
         form.setFieldsValue(data!);
     },[data])
@@ -69,6 +70,7 @@ const GeneralesDomForm:FC<GeneralesFormProps> = ({  printing,generales,data,bran
         console.log("onfinish");
         console.log(reagent);
         generales(reagent);
+        setValues(reagent);
         /*     setLoading(true);
         
             const reagent = { ...values, ...newValues };
@@ -207,7 +209,16 @@ const GeneralesDomForm:FC<GeneralesFormProps> = ({  printing,generales,data,bran
                         type="primary"
                         htmlType="submit"
                         onClick={() => {
-                            /* form.submit(); */
+                            if(type=="Whatsapp"){
+                                sendTestWhatsapp("dom",id,values.whatssap);
+                            }
+                            if(type=="Email"){
+                                sendTestEmail("dom",id,values.whatssap);
+                            }
+                            if(type=="Ambos"){
+                                sendTestWhatsapp("dom",id,values.whatssap);
+                                sendTestEmail("dom",id,values.whatssap);
+                            }
                         }}
                         >
                         Prueba Envio
@@ -231,7 +242,16 @@ const GeneralesDomForm:FC<GeneralesFormProps> = ({  printing,generales,data,bran
                         type="primary"
                         htmlType="submit"
                         onClick={() => {
-                            /* form.submit(); */
+                            if(type=="Whatsapp"){
+                                sendTestWhatsapp("dom",id,values.whatssap);
+                            }
+                            if(type=="Email"){
+                                sendTestEmail("dom",id,values.whatssap);
+                            }
+                            if(type=="Ambos"){
+                                sendTestWhatsapp("dom",id,values.whatssap);
+                                sendTestEmail("dom",id,values.whatssap);
+                            }
                         }}
                         >
                         Prueba Envio

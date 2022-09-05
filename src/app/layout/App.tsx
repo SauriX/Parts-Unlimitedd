@@ -65,6 +65,7 @@ import RequestedStudy from "../../views/RequestedStudy";
 import EquipmentMantain from "../../views/EquipmentMantain";
 import EquipmentMantainForm from "../../components/equipmentMantain/detail/EquipmentMantainForm";
 import EquipmentMantainDetails from "../../components/equipmentMantain/detail/EquipmentMantainDetails";
+import RouteTracking from "../../views/RouteTracking";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -172,6 +173,7 @@ function App() {
             <Route path="requestedstudy/new" element={<RequestedStudy />} />
             <Route path="reports" element={<Report />} />
             <Route path={views.appointment} element={<Appointment />} />
+            <Route path={views.routeTraking} element={<RouteTracking />} />
             <Route
               path={`${views.appointment}/:id`}
               element={<ApointmentDetail />}

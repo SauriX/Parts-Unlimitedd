@@ -70,7 +70,7 @@ export interface IRequestGeneral extends IRequestBase {
 export interface IRequestImage extends IRequestBase {
   imagen?: File | Blob;
   imagenUrl?: string;
-  tipo: "orden" | "ine" | "formato";
+  tipo: "orden" | "ine" | "ineReverso" | "formato";
 }
 
 export interface IRequestPartiality extends IRequestBase {
