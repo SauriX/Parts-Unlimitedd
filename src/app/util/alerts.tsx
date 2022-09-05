@@ -15,7 +15,14 @@ const alerts = {
   error(text: string) {
     message.error({ content: text, duration: 7 });
   },
-  confirm(title: string, text: React.ReactNode, onOk: () => Promise<void>, onCancel?: () => void) {
+  confirm(
+    title: string,
+    text: React.ReactNode,
+    onOk: () => Promise<void>,
+    onCancel?: () => void,
+    okText: string | null = null,
+    cancelText: string | null = null
+  ) {
     confirm({
       title,
       icon: <ExclamationCircleOutlined />,
@@ -26,6 +33,8 @@ const alerts = {
       onCancel() {
         onCancel && onCancel();
       },
+      okText: okText || "Aceptar",
+      cancelText: cancelText || "Cancelar",
     });
   },
 };
