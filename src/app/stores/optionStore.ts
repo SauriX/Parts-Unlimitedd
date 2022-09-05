@@ -374,6 +374,7 @@ export default class OptionStore {
   };
 
   sucursales: IOptions[] = [];
+  sucursalesClave: any = [];
 
   getSucursalesOptions = async () => {
     try {
@@ -382,6 +383,10 @@ export default class OptionStore {
       this.sucursales = priceListOptions1.map((x) => ({
         value: x.idSucursal,
         label: x.nombre,
+      }));
+      this.sucursalesClave = priceListOptions1.map((x) => ({
+        value: x.idSucursal,
+        clave: x.clave,
       }));
     } catch (error) {
       this.sucursales = [];
@@ -565,7 +570,7 @@ export default class OptionStore {
         options: groupby[x].map((a: ICatalogAreaList) => ({
           value: a.id,
           label: a.nombre,
-        }))
+        })),
       }));
     } catch (error) {
       this.departmentAreaOptions = [];

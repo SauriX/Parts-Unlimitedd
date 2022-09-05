@@ -34,12 +34,12 @@ import { toJS } from "mobx";
 import { uniqueId } from "lodash";
 
 type TrackingOrderTableProps = {
-  componentRef: React.MutableRefObject<any>;
+  // componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
 
 const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
-  componentRef,
+  // componentRef,
   printing,
 }) => {
   const { trackingOrderStore } = useStore();
@@ -60,9 +60,9 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
 
   // console.log("Table");
 
-  useEffect(() => {
-    console.log("estudios", toJS(trackingOrder));
-  }, [trackingOrder]);
+  // useEffect(() => {
+  //   console.log("estudios", toJS(trackingOrder));
+  // }, [trackingOrder]);
 
   const columns: IColumns<IEstudiosList> = [
     {
@@ -114,14 +114,14 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
     },
 
     {
-      key: "paciente",
+      key: "nombrePaciente",
       dataIndex: "estudios",
       title: "Paciente",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => {
         return value.map((x: any) => {
-          return x.paciente;
+          return x.nombrePaciente;
         })[0];
       },
     },
@@ -156,7 +156,6 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
           required
           value={value}
           type={"number"}
-          min={0}
           onChange={(newValue) => {
             setTemperature(+newValue.target.value, fullrow.id);
           }}
@@ -167,7 +166,8 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
 
   const TrackingOrderTablePrint = () => {
     return (
-      <div ref={componentRef}>
+      // <div ref={componentRef}>
+      <>
         <PageHeader
           ghost={false}
           title={
@@ -186,7 +186,8 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
           pagination={false}
           dataSource={[...trackingOrder]}
         />
-      </div>
+      </>
+      // </div>
     );
   };
 
@@ -202,7 +203,7 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />
-      <div style={{ display: "none" }}>{<TrackingOrderTablePrint />}</div>
+      {/* <div style={{ display: "none" }}>{<TrackingOrderTablePrint />}</div> */}
     </Fragment>
   );
 };
