@@ -7,34 +7,47 @@ export interface IEstudiosList {
   escaneado: boolean;
   temperatura: number;
   solicitud: string;
-  paciente: string;
+  nombrePaciente: string;
   id?: string;
+  solicitudId: string;
 }
 export interface ITrackingOrderList {
   id?: number;
   clave: string;
   estudio: string;
   solicitud: string;
-  paciente: string;
+  nombrePaciente: string;
   escaneado?: boolean;
   temperatura: number;
+  solicitudId: string;
+  estudioId: number;
+  expedienteId: string;
 }
 
 export interface ITrackingOrderForm {
   id: number | string;
-  fecha: moment.Moment;
-  ruta: string;
-  sucursalDestinoId: string;
   sucursalOrigenId?: string;
+  SucursalDestinoNombre: string;
+  sucursalDestinoId: string;
+  SucrusalOrigenNombre: string;
+  maquiladorId: number;
+  rutaId: string;
+  RutaNombre: string;
   muestraId: string;
-  solicitudId: string;
   escaneoCodigoBarras: boolean;
   temperatura: number;
+  activo: boolean;
+  clave: string;
+
+  estudios: ITrackingOrderList[];
+  horaDeRecoleccion: number | undefined;
+
+  fecha: moment.Moment;
+  solicitudId: string;
   claveEstudio: string;
   estudio: string;
   pacienteId: string;
   escaneado: boolean;
-  estudios: ITrackingOrderList[];
 }
 export class TrackingOrderListValues implements IEstudiosList {
   taponNombre = "";
@@ -42,7 +55,8 @@ export class TrackingOrderListValues implements IEstudiosList {
   escaneado = false;
   temperatura = 0;
   solicitud = "";
-  paciente = "";
+  nombrePaciente = "";
+  solicitudId = "";
   id = uniqueId();
   constructor(init?: IEstudiosList) {
     Object.assign(this, init);
@@ -51,9 +65,12 @@ export class TrackingOrderListValues implements IEstudiosList {
 export class TrackingOrderFormValues implements ITrackingOrderForm {
   id = "";
   fecha = moment();
-  ruta = "";
+  rutaId = "";
+  RutaNombre = "";
   sucursalDestinoId = "";
+  SucursalDestinoNombre = "";
   sucursalOrigenId = "";
+  SucrusalOrigenNombre = "";
   muestraId = "";
   solicitudId = "";
   escaneoCodigoBarras = false;
@@ -63,6 +80,10 @@ export class TrackingOrderFormValues implements ITrackingOrderForm {
   pacienteId = "";
   escaneado = false;
   estudios: ITrackingOrderList[] = [];
+  activo = true;
+  maquiladorId = 0;
+  horaDeRecoleccion = 0;
+  clave = "";
 
   constructor(init?: ITrackingOrderForm) {
     Object.assign(this, init);
