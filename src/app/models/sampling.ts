@@ -24,7 +24,7 @@ export interface IsamplingList {
   sexo: string;
   compañia: string;
   seleccion: boolean;
-  studys: IstudySampling[];
+  estudios: IstudySampling[];
 }
 export interface IstudySampling {
   id: number;

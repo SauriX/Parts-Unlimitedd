@@ -126,10 +126,13 @@ const SamplingTable: FC<ProceedingTableProps> = ({
   };
 
   const expandableStudyConfig = {
+    
     expandedRowRender: (item: IsamplingList) => (
+      
       <div>
         <h4>Estudios</h4>
-        {item.studys.map((x) => {
+        
+        {item.estudios.map((x) => {
           return (
             <>
               <Descriptions
@@ -139,13 +142,13 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                 contentStyle={{ background: "#fff" }}
                 style={{ marginBottom: 5 }}
               >
-                <Descriptions.Item label="Clave" style={{ maxWidth: 30 }}>
+                <Descriptions.Item label="Clave" style={{ maxWidth: 30,color:"#000000" }}>
                   {x.clave}
                 </Descriptions.Item>
-                <Descriptions.Item label="Estudio" style={{ maxWidth: 30 }}>
+                <Descriptions.Item label="Estudio" style={{ maxWidth: 30,color:"#000000" }}>
                   {x.nombre}
                 </Descriptions.Item>
-                <Descriptions.Item label="Estatus" style={{ maxWidth: 30 }}>
+                <Descriptions.Item label="Estatus" style={{ maxWidth: 30,color:"#000000" }}>
                   {x.status == 1 ? "Pendiente" : "Toma de muestra"}
                 </Descriptions.Item>
                 <Descriptions.Item label="Registro" style={{ maxWidth: 30 }}>
@@ -180,6 +183,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       </div>
     ),
     rowExpandable: () => true,
+   
   };
   console.log("Table");
   useEffect(() => {
@@ -201,10 +205,12 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     readData();
   }, [getCity]);
   useEffect(() => {
+    console.log("here");
     const readPriceList = async () => {
       setLoading(true);
       let studios = [];
       var datas = await getAll(values!);
+      
       console.log(datas, "daata");
       setSoliCont(datas?.length!);
       datas?.forEach((x:any) => studios.push(x.studys));
@@ -214,6 +220,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
 
     if (expedientes.length === 0) {
       readPriceList();
+      
     }
     console.log(getExpandableConfig("estudios"), "config");
     setExpandable(expandableStudyConfig);
@@ -228,7 +235,8 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     setLoading(true);
 
     const reagent = { ...values, ...newValues };
-    getAll(reagent);
+   var data =await  getAll(reagent);
+   console.log(data,"datas");
     setLoading(false);
   };
 

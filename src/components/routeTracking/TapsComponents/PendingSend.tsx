@@ -36,10 +36,11 @@ const PendingSend = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
   const expandableStudyConfig = {
+  
     expandedRowRender: (item: IsamplingList) => (
       <div>
         <h4>Estudios</h4>
-        {item.studys.map((x) => {
+        {item.estudios.map((x) => {
           return (
             <>
               <Descriptions
