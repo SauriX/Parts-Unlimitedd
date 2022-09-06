@@ -55,10 +55,11 @@ const PendingSend = () => {
   }, [getAll]);
   const navigate = useNavigate();
   const expandableStudyConfig = {
+  
     expandedRowRender: (item: IsamplingList) => (
       <div>
         <h4>Estudios</h4>
-        {item.studys.map((x) => {
+        {item.estudios.map((x) => {
           return (
             <>
               <Descriptions
