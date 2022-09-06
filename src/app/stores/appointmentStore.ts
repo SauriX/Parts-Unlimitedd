@@ -221,7 +221,23 @@ export default class AppoinmentStore {
       alerts.warning(getErrors(error));
     }
   };
+  sendTestEmail = async (typo: string, requestId: string, email: string) => {
+    try {
+      await Appointment.sendTestEmail(typo, requestId, email);
+      alerts.info("El correo se está enviando");
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
 
+  sendTestWhatsapp = async (typo: string, requestId: string, phone: string) => {
+    try {
+      await Appointment.sendTestWhatsapp(typo, requestId, phone);
+      alerts.info("El whatsapp se está enviando");
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
   getPricePacks = async (filter?: IPriceListInfoFilter,id?:number) => {
     filter!.paqueteId=id;
     try {
@@ -257,4 +273,5 @@ export default class AppoinmentStore {
   isStudy(obj: IRequestStudy | IRequestPack): obj is IRequestStudy {
     return obj.type === "study";
   } 
+  
 }

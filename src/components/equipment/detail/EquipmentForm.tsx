@@ -73,7 +73,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
     new EquipmentFormValues()
   );
   const [branch, setBranch] = useState<IEquipmentBranch>();
-  const [numSerie, setNumSerie] = useState<number>();
+  const [numSerie, setNumSerie] = useState<string>();
   const [newEquipment, setNewEquipment] = useState<IEquipmentForm>(
     new EquipmentFormValues()
   );
@@ -181,7 +181,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
       }),
     },
   ];
-  const deleteEquipment = (num_serie: number) => {
+  const deleteEquipment = (num_serie: string) => {
     const valuesEquipment = newEquipment.valores.filter(
       (x) => x.num_serie !== num_serie
     );
@@ -375,13 +375,12 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
                               style={{ marginLeft: 20, textAlign: "center" }}
                             >
                               <Input
-                                type="number"
-                                max={100}
+                                type="text"
                                 required
                                 disabled={readonly}
                                 onChange={(value) => {
                                   if (value.target.value) {
-                                    setNumSerie(+value.target.value);
+                                    setNumSerie(value.target.value);
                                   } else {
                                     setNumSerie(undefined);
                                   }

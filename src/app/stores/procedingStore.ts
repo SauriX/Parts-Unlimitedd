@@ -82,7 +82,21 @@ export default class ProcedingStore {
       //this.roles = [];
     }
   };
-
+  getByIdQuote = async (id: string) => {
+    try {
+      const rol = await Proceding.getById(id);
+      console.log(rol);
+      // this.expediente = rol; // Comentado porque no se usa
+      return rol;
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        //history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+      //this.roles = [];
+    }
+  };
   coincidencias = async (parameter: IProceedingForm) => {
     try {
       console.log(parameter);

@@ -17,12 +17,12 @@ const CreationTrackingOrderHeader: FC<CreationTrackingOrderHeaderProps> = ({
 }) => {
   const navigate = useNavigate();
   const { trackingOrderStore } = useStore();
-  const { exportList } = trackingOrderStore;
+  const { exportList, TranckingOrderSend, OrderId } = trackingOrderStore;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
   const download = () => {
-    exportList(searchParams.get("search") ?? "all");
+    exportList();
   };
 
   return (
