@@ -5,8 +5,8 @@ export interface ILoyaltyList {
   clave: string;
   nombre: string;
   tipoDescuento: string;
-  precioLista: string;
-  precioListaId:string,
+  precioListaId: string[];
+  precioLista: string[];
   cantidadDescuento: number;
   fechaInicial: Date;
   fechaFinal: Date;
@@ -20,22 +20,28 @@ export interface ILoyaltyForm {
   tipoDescuento: string;
   cantidadDescuento: number;
   cantidad: number;
-  precioListaId :string,
+  precioLista: ILoyaltyPriceList[] | string[];
   fechaInicial?: Date;
   fechaFinal?: Date;
   activo: boolean;
   fecha: moment.Moment[];
 }
+
+export interface ILoyaltyPriceList {
+  precioListaId: string;
+  nombre?: string;
+}
+
 export class LoyaltyFormValues implements ILoyaltyForm {
   id = "";
   clave = "";
   nombre = "";
-  precioListaId = "";
+  precioLista: ILoyaltyPriceList[] = [];
   tipoDescuento = "";
   cantidadDescuento = 0;
   cantidad = 0;
   activo = true;
-  fecha = [moment(Date.now()), moment(Date.now()).add("day", 1)];
+  fecha = [moment(Date.now()).utcOffset(0, true), moment(Date.now()).utcOffset(0, true).add(1, "day")];
 
   constructor(init?: ILoyaltyForm) {
     Object.assign(this, init);
