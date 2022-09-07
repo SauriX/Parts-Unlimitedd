@@ -844,7 +844,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
       </Form>
       <Row>
       <Col span={6}><Button style={{marginTop:"20px",marginLeft:"70%",marginBottom:"20px"}} onClick={()=>{
-        navigate(`/request`);
+        navigate(`/requests`);
       }} type="primary"> Agregar solicitud</Button></Col>
       <Col span={6}><Button style={{marginTop:"20px",marginLeft:"70%",marginBottom:"20px"}} onClick={()=>{
         navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
