@@ -27,7 +27,8 @@ import {
   faUsers,
   faVial,
   faVials,
-  faArrowsTurnToDots
+  faArrowsTurnToDots,
+  faLaptopMedical
 } from "@fortawesome/free-solid-svg-icons";
 
 const getMenuIcon = (name: string) => {
@@ -90,6 +91,8 @@ const getMenuIcon = (name: string) => {
       return faChartLine;
     case "requestedstudy":
       return faArrowsTurnToDots;
+    case "clinicresults":
+      return faLaptopMedical;
     default:
       return faCircle;
   }

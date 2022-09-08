@@ -853,6 +853,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
         navigate(`/appointments`);
       }} type="primary"> Agregar cita</Button></Col>
       </Row>
+      <Divider orientation="left">Solicitud</Divider>
       <Table<any>
         loading={loading || printing}
         size="small"
@@ -874,6 +875,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />
+      <Divider orientation="left">Cita</Divider>
             <Table<any>
         loading={loading || printing}
         size="small"
