@@ -5,6 +5,8 @@ import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../app/common/button/ImageButton";
 import { useStore } from "../../app/stores/store";
+import PrintIcon from "../../app/common/icons/PrintIcon";
+import DownloadIcon from "../../app/common/icons/DownloadIcon";
 
 const { Search } = Input;
 
@@ -13,12 +15,12 @@ type LoyaltyHeaderProps = {
   handleDownload: () => Promise<void>;
   // loyalty: ILoyaltyForm[];
   // setFilteredContacts: React.Dispatch<React.SetStateAction<ILoyaltyForm[]>>;
-
 };
 
-const LoyaltyHeader: FC<LoyaltyHeaderProps> = ({ handlePrint
+const LoyaltyHeader: FC<LoyaltyHeaderProps> = ({
+  handlePrint,
   // , loyalty,
-  // setFilteredContacts, 
+  // setFilteredContacts,
 }) => {
   const navigate = useNavigate();
   const { loyaltyStore } = useStore();
@@ -38,7 +40,7 @@ const LoyaltyHeader: FC<LoyaltyHeaderProps> = ({ handlePrint
   //       (x) =>
   //         x.clave.toString()?.includes(searchValue.toLowerCase()) ||
   //         x.nombre.toLowerCase().includes(searchValue.toLowerCase())
-          
+
   //     )
   //   );
   // }, [loyalty, searchValue, setFilteredContacts]);
@@ -49,14 +51,14 @@ const LoyaltyHeader: FC<LoyaltyHeaderProps> = ({ handlePrint
       title={<HeaderTitle title="Catálogo de Lealtades" image="lealtad" />}
       className="header-container"
       extra={[
-        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        <ImageButton key="doc" title="Informe" image="doc" onClick={download} />,
+        <PrintIcon key="imprimir" onClick={handlePrint} />,
+        <DownloadIcon key="doc" onClick={download} />,
         <Search
           key="search"
           placeholder="Buscar"
           onSearch={(value) => {
             setSearchParams({ search: !value ? "all" : value });
-             //setSearchValue(value);
+            //setSearchValue(value);
           }}
         />,
         <Button

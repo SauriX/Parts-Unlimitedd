@@ -876,7 +876,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   marginBottom: "20px",
                 }}
                 onClick={() => {
-                  navigate(`/request`);
+                  navigate(`/requests`);
                 }}
                 type="primary"
               >
@@ -950,6 +950,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               </Button>
             </Col>
           </Row>
+          <Divider orientation="left">Solicitud</Divider>
           <Table<any>
             loading={loading || printing}
             size="small"
@@ -971,6 +972,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
             sticky
             scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
           />
+          <Divider orientation="left">Cita</Divider>
           <Table<any>
             loading={loading || printing}
             size="small"
