@@ -42,6 +42,7 @@ export interface IProceedingForm {
 
   hasWallet: boolean;
   wallet: number;
+  fechaActivacionMonedero?: Date;
 }
 
 export class SearchMedicalFormValues implements ISearchMedical {

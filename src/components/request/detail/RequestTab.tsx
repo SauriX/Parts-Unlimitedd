@@ -80,8 +80,15 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     console.log("contiene medico", contieneMedico);
     const expediente = await getById(request?.expedienteId!);
     console.log("expediente", toJS(expediente));
-
-    if (expediente?.hasWallet && !studyFilter.compañiaId && contieneMedico) {
+    const fechaCreaccionSolicitud = moment(request?.registro);
+    const fechaActivacionMonedero = moment(expediente?.fechaActivacionMonedero);
+    console.log("#fechas", fechaActivacionMonedero, fechaCreaccionSolicitud);
+    if (
+      expediente?.hasWallet &&
+      !studyFilter.compañiaId &&
+      contieneMedico &&
+      fechaCreaccionSolicitud.isSameOrAfter(fechaCreaccionSolicitud)
+    ) {
       if (loyal?.tipoDescuento === "Porcentaje") {
         const bonoActual = (loyal?.cantidadDescuento! * totals.total) / 100;
         const bonoAnterior =
