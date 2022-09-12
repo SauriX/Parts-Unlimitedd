@@ -60,26 +60,21 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   const [currentKey, setCurrentKey] = useState<keys>("general");
 
   const onChangeTab = async (key: string) => {
-    const ok = await submit(false);
+    const ok = await submit();
 
     if (ok) {
       setCurrentKey(key as keys);
     }
   };
+
   useEffect(() => {
     getActive();
   }, [getActive]);
+
   const modificarSaldo = async () => {
-    console.log("filtros de estudios", toJS(studyFilter));
-    console.log("totales", toJS(totals));
-    console.log("solicitud general", toJS(request));
-    console.log("lealtades", toJS(loyaltys));
     const loyal = await getByDate(moment().toDate());
-    console.log("lealtad por fecha", toJS(loyal));
     const contieneMedico = loyal?.precioLista.some((l) => l === "Medicos");
-    console.log("contiene medico", contieneMedico);
     const expediente = await getById(request?.expedienteId!);
-    console.log("expediente", toJS(expediente));
 
     if (expediente?.hasWallet && !studyFilter.compañiaId && contieneMedico) {
       if (loyal?.tipoDescuento === "Porcentaje") {
@@ -88,13 +83,10 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
           (loyal?.cantidadDescuento! * totalsOriginal.total) / 100;
 
         let bonoFinal: number;
-        expediente.wallet > 0
-          ? (bonoFinal = expediente.wallet - bonoAnterior + bonoActual)
-          : (bonoFinal = expediente.wallet + bonoActual);
-
-        console.log("Bono Actual", bonoActual);
-        console.log("Bono Anterior", bonoAnterior);
-        console.log("Bono final", bonoFinal);
+        bonoFinal =
+          expediente.wallet > 0
+            ? expediente.wallet - bonoAnterior + bonoActual
+            : expediente.wallet + bonoActual;
 
         setOriginalTotal(totals);
 
@@ -107,7 +99,8 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       }
     }
   };
-  const submit = async (showMessage: boolean = true) => {
+
+  const submit = async () => {
     let ok = true;
 
     setLoading(true);
@@ -155,7 +148,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       <Button key="cancel" size="small" ghost danger onClick={cancel}>
         Cancelar
       </Button>
-      <Button key="save" size="small" type="primary" onClick={() => submit}>
+      <Button key="save" size="small" type="primary" onClick={submit}>
         Guardar
       </Button>
     </Space>
@@ -181,11 +174,11 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     } else if (tabName === "register") {
       component = <RequestRegister recordId={recordId} />;
     } else if (tabName === "request") {
-      component = <RequestRequest />;
+      component = <RequestRequest formGeneral={formGeneral} />;
     } else if (tabName === "print") {
       component = <RequestPrint />;
     } else if (tabName === "sampler") {
-      component = <RequestSampler />;
+      component = <RequestSampler formGeneral={formGeneral} />;
     } else if (tabName === "images") {
       component = <RequestImage />;
     }
