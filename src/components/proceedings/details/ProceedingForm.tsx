@@ -212,7 +212,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
           <Concidencias
             handle={async () => {
               let success = false;
-              tax.forEach(x=> {if(x.id.includes("tempId")){
+              tax.forEach(x=> {if(x.id!.includes("tempId")){
                 x.id=""
               }
               return x; 
