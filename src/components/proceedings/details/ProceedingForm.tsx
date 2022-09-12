@@ -261,7 +261,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
             handle={async () => {
               let success = false;
               tax.forEach((x) => {
-                if (x.id.includes("tempId")) {
+                if (x.id?.includes("tempId")) {
                   x.id = "";
                 }
                 return x;
