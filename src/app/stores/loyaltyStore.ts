@@ -47,6 +47,15 @@ export default class LoyaltyStore {
       this.loyaltys = [];
     }
   };
+  getActive = async () => {
+    try {
+      const Loyaltys = await Loyalty.getActive();
+      this.loyaltys = Loyaltys;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      this.loyaltys = [];
+    }
+  };
 
   getById = async (id: string) => {
     try {
@@ -58,6 +67,16 @@ export default class LoyaltyStore {
     } catch (error) {
       console.log(error);
       alerts.warning(getErrors(error));
+    }
+  };
+
+  getByDate = async (date: Date) => {
+    try {
+      const loyalty = await Loyalty.getByDate(date);
+      return loyalty;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      this.loyaltys = [];
     }
   };
 

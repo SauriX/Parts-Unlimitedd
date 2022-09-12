@@ -1,5 +1,7 @@
 import { Button, Col, Form, Row, Space, Spin, Tabs } from "antd";
+import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import {
   IRequestGeneral,
@@ -36,7 +38,7 @@ type keys =
   | "images";
 
 const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
-  const { requestStore } = useStore();
+  const { requestStore, procedingStore, loyaltyStore } = useStore();
   const {
     request,
     studyUpdate,
@@ -44,7 +46,13 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     updateGeneral,
     updateStudies,
     cancelRequest,
+    studyFilter,
+    totals,
+    totalsOriginal,
+    setOriginalTotal,
   } = requestStore;
+  const { activateWallet, getById } = procedingStore;
+  const { getActive, loyaltys, getByDate } = loyaltyStore;
 
   const [formGeneral] = Form.useForm<IRequestGeneral>();
 
@@ -58,7 +66,47 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       setCurrentKey(key as keys);
     }
   };
+  useEffect(() => {
+    getActive();
+  }, [getActive]);
+  const modificarSaldo = async () => {
+    console.log("filtros de estudios", toJS(studyFilter));
+    console.log("totales", toJS(totals));
+    console.log("solicitud general", toJS(request));
+    console.log("lealtades", toJS(loyaltys));
+    const loyal = await getByDate(moment().toDate());
+    console.log("lealtad por fecha", toJS(loyal));
+    const contieneMedico = loyal?.precioLista.some((l) => l === "Medicos");
+    console.log("contiene medico", contieneMedico);
+    const expediente = await getById(request?.expedienteId!);
+    console.log("expediente", toJS(expediente));
 
+    if (expediente?.hasWallet && !studyFilter.compañiaId && contieneMedico) {
+      if (loyal?.tipoDescuento === "Porcentaje") {
+        const bonoActual = (loyal?.cantidadDescuento! * totals.total) / 100;
+        const bonoAnterior =
+          (loyal?.cantidadDescuento! * totalsOriginal.total) / 100;
+
+        let bonoFinal: number;
+        expediente.wallet > 0
+          ? (bonoFinal = expediente.wallet - bonoAnterior + bonoActual)
+          : (bonoFinal = expediente.wallet + bonoActual);
+
+        console.log("Bono Actual", bonoActual);
+        console.log("Bono Anterior", bonoAnterior);
+        console.log("Bono final", bonoFinal);
+
+        setOriginalTotal(totals);
+
+        await activateWallet(request?.expedienteId!, bonoFinal);
+      } else {
+        await activateWallet(
+          request?.expedienteId!,
+          expediente.wallet - loyal?.cantidadDescuento!
+        );
+      }
+    }
+  };
   const submit = async (showMessage: boolean = true) => {
     let ok = true;
 
@@ -71,6 +119,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       currentKey === "sampler"
     ) {
       ok = await updateStudies(studyUpdate);
+      await modificarSaldo();
     }
     setLoading(false);
 
@@ -85,6 +134,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
         if (request) {
           setLoading(true);
           await cancelRequest(request.expedienteId, request.solicitudId!);
+          await modificarSaldo();
           setLoading(false);
         }
       }

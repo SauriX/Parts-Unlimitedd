@@ -876,7 +876,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   marginBottom: "20px",
                 }}
                 onClick={() => {
-                  navigate(`/requests`);
+                  navigate(`/requests/${id}`);
                 }}
                 type="primary"
               >

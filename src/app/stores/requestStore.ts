@@ -46,6 +46,7 @@ export default class RequestStore {
   requests: IRequestInfo[] = [];
   request?: IRequest;
   totals: IRequestTotal = new RequestTotal();
+  totalsOriginal: IRequestTotal = new RequestTotal();
   studies: IRequestStudy[] = [];
   packs: IRequestPack[] = [];
   loadingRequests: boolean = false;
@@ -82,7 +83,9 @@ export default class RequestStore {
 
     return [...studies, ...packStudies];
   }
-
+  setOriginalTotal = (totals: IRequestTotal) => {
+    this.totalsOriginal = totals;
+  };
   isPack(obj: IRequestStudy | IRequestPack): obj is IRequestPack {
     return obj.type === "pack";
   }

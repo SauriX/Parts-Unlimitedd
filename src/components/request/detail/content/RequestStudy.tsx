@@ -10,18 +10,24 @@ import {
   IColumns,
   ISearch,
 } from "../../../../app/common/table/utils";
-import { IRequestPack, IRequestStudy, IRequestStudyUpdate } from "../../../../app/models/request";
+import {
+  IRequestPack,
+  IRequestStudy,
+  IRequestStudyUpdate,
+} from "../../../../app/models/request";
 import { IOptions } from "../../../../app/models/shared";
 import { useStore } from "../../../../app/stores/store";
 import alerts from "../../../../app/util/alerts";
 import { moneyFormatter } from "../../../../app/util/utils";
 import { status } from "../../../../app/util/catalogs";
+import { toJS } from "mobx";
 
 const { Link } = Typography;
 
 const RequestStudy = () => {
   const { requestStore, priceListStore, optionStore } = useStore();
-  const { studyOptions, packOptions, getStudyOptions, getPackOptions } = optionStore;
+  const { studyOptions, packOptions, getStudyOptions, getPackOptions } =
+    optionStore;
   const {
     isStudy,
     request,
@@ -36,6 +42,8 @@ const RequestStudy = () => {
     deleteStudy,
     deletePack,
     cancelStudies,
+    setOriginalTotal,
+    totals,
   } = requestStore;
 
   const [selectedStudies, setSelectedStudies] = useState<IRequestStudy[]>([]);
@@ -50,6 +58,9 @@ const RequestStudy = () => {
     getStudyOptions();
     getPackOptions();
   }, [getPackOptions, getStudyOptions]);
+  useEffect(() => {
+    setOriginalTotal(totals);
+  }, []);
 
   useEffect(() => {
     console.log(selectedStudies);
@@ -61,14 +72,20 @@ const RequestStudy = () => {
         value: "study",
         label: "Estudios",
         options: studyOptions.filter(
-          (x) => !studies.map((s) => s.estudioId.toString()).includes(x.value.toString().split("-")[1])
+          (x) =>
+            !studies
+              .map((s) => s.estudioId.toString())
+              .includes(x.value.toString().split("-")[1])
         ),
       },
       {
         value: "pack",
         label: "Paquetes",
         options: packOptions.filter(
-          (x) => !packs.map((s) => s.paqueteId.toString()).includes(x.value.toString().split("-")[1])
+          (x) =>
+            !packs
+              .map((s) => s.paqueteId.toString())
+              .includes(x.value.toString().split("-")[1])
         ),
       },
     ];
@@ -239,7 +256,9 @@ const RequestStudy = () => {
   const deleteStudyOrPack = (item: IRequestStudy | IRequestPack) => {
     alerts.confirm(
       "Eliminar estudio",
-      `¿Desea eliminar el ${isStudy(item) ? "estudio" : "paquete"} ${item.nombre}?`,
+      `¿Desea eliminar el ${isStudy(item) ? "estudio" : "paquete"} ${
+        item.nombre
+      }?`,
       async () => {
         if (isStudy(item)) {
           deleteStudy(item.estudioId);
@@ -252,14 +271,18 @@ const RequestStudy = () => {
 
   const cancel = () => {
     if (request) {
-      alerts.confirm("Canelar estudio", `¿Desea cancelar los registros seleccionados?`, async () => {
-        const data: IRequestStudyUpdate = {
-          expedienteId: request.expedienteId,
-          solicitudId: request.solicitudId!,
-          estudios: selectedStudies,
-        };
-        cancelStudies(data);
-      });
+      alerts.confirm(
+        "Canelar estudio",
+        `¿Desea cancelar los registros seleccionados?`,
+        async () => {
+          const data: IRequestStudyUpdate = {
+            expedienteId: request.expedienteId,
+            solicitudId: request.solicitudId!,
+            estudios: selectedStudies,
+          };
+          cancelStudies(data);
+        }
+      );
     }
   };
 
@@ -297,15 +320,21 @@ const RequestStudy = () => {
           rowSelection={{
             onSelect: (_item, _selected, c) => {
               const studies = [
-                ...c.filter((x) => x.type === "study").map((x) => x as IRequestStudy),
-                ...c.filter((x) => x.type === "pack").flatMap((x) => (x as IRequestPack).estudios),
+                ...c
+                  .filter((x) => x.type === "study")
+                  .map((x) => x as IRequestStudy),
+                ...c
+                  .filter((x) => x.type === "pack")
+                  .flatMap((x) => (x as IRequestPack).estudios),
               ];
               setSelectedStudies(studies);
             },
             getCheckboxProps: (item) => ({
               disabled: isStudy(item)
                 ? item.estatusId !== status.requestStudy.pendiente
-                : item.estudios.some((x) => x.estatusId !== status.requestStudy.pendiente),
+                : item.estudios.some(
+                    (x) => x.estatusId !== status.requestStudy.pendiente
+                  ),
             }),
           }}
           sticky
@@ -317,7 +346,9 @@ const RequestStudy = () => {
 };
 
 const ContainerBadge = ({ color }: { color: string }) => {
-  return <div className="badge-container" style={{ backgroundColor: color }}></div>;
+  return (
+    <div className="badge-container" style={{ backgroundColor: color }}></div>
+  );
 };
 
 export default observer(RequestStudy);
