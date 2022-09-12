@@ -1,4 +1,7 @@
-import { TrackingOrderListValues } from "./../models/trackingOrder";
+import {
+  TrackingOrderFormValues,
+  TrackingOrderListValues,
+} from "./../models/trackingOrder";
 import Search from "antd/lib/transfer/search";
 import { makeAutoObservable } from "mobx";
 import { getParsedCommandLineOfConfigFile } from "typescript";
@@ -24,6 +27,29 @@ export default class TrackingOrdertStore {
   trackingOrder: IEstudiosList[] = [];
   estudios: IEstudiosList[] = [];
 
+  TranckingOrderSend: ITrackingOrderForm = new TrackingOrderFormValues();
+
+  setSendData = (tranckingOrderSend: ITrackingOrderForm) => {
+    this.TranckingOrderSend = tranckingOrderSend;
+  };
+
+  confirmarRecoleccionSend = async () => {
+    try {
+      await TrackingOrder.confirmarRecoleccion(this.OrderId);
+
+      alerts.success("Se confirmo exitosmente la orden: " + this.OrderCreated);
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  cancelarRecoleccionSend = async () => {
+    try {
+      await TrackingOrder.cancelarRecoleccion(this.OrderId);
+      alerts.success("Se cancelo exitosmente la orden: " + this.OrderCreated);
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
   setEscaneado = (escaneado: boolean, id: string) => {
     try {
       const estudios = this.trackingOrder.map((estudio) => {
@@ -39,7 +65,6 @@ export default class TrackingOrdertStore {
     }
   };
   setTemperature = (temperature: number, id: string | null = null) => {
-    console.log("store temperature: ", temperature, id);
     try {
       if (id) {
         const index = this.trackingOrder.findIndex((x) => x.id === id);
@@ -113,11 +138,16 @@ export default class TrackingOrdertStore {
       alerts.warning(getErrors(error));
     }
   };
-
+  OrderCreated = "";
+  OrderId = "";
   create = async (trackingOrder: ITrackingOrderForm) => {
     try {
-      await TrackingOrder.create(trackingOrder);
-      alerts.success(messages.created);
+      const orderCreated = await TrackingOrder.create(trackingOrder);
+      this.OrderCreated = orderCreated.clave;
+      console.log("OrderCreated", this.OrderCreated);
+      this.OrderId = orderCreated.id;
+      console.log("OrderId", this.OrderId);
+      alerts.success("Se creo exitosmente la orden: " + this.OrderCreated);
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -136,9 +166,12 @@ export default class TrackingOrdertStore {
     }
   };
 
-  exportList = async (search: string) => {
+  exportList = async () => {
     try {
-      await TrackingOrder.exportList(search);
+      console.log("export this.OrderId", this.OrderId);
+      if (!!this.OrderId) {
+        await TrackingOrder.exportList(this.TranckingOrderSend);
+      }
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }

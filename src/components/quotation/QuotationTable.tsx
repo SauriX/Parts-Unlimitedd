@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Divider, Input, InputNumber, PageHeader, Row, Select, Table } from "antd";
+import { Button, Col, Collapse, DatePicker, Divider, Form, Input, InputNumber, PageHeader, Row, Select, Table } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
@@ -18,11 +18,18 @@ import moment from "moment";
 import SwitchInput from "../../app/common/form/SwitchInput";
 import VirtualTable from "../../app/common/table/VirtualTable";
 import { IQuotationList, ISearchQuotation } from "../../app/models/quotation";
-
+import DateInput from "../../app/common/form/proposal/DateInput";
+import TextInput from "../../app/common/form/proposal/TextInput";
+import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
+import SelectInput from "../../app/common/form/proposal/SelectInput";
+import { formItemLayout } from "../../app/util/utils";
+import { useForm } from "antd/lib/form/Form";
+const {Panel}=Collapse
 type QuotationTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
+
 const cotizaciones =[{
     id:"12345678-1234-1234-1234-123456789124",
     presupuesto:"445666765 ",
@@ -52,7 +59,7 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
   const [searchParams] = useSearchParams();
 
   let navigate = useNavigate();
-
+  const [form] = useForm();
   const { width: windowWidth } = useWindowDimensions();
 
   const [loading, setLoading] = useState(false);
@@ -220,7 +227,7 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
   };
   return (
     <Fragment>
-        <Row>
+{/*         <Row>
             <Col md={13} sm={12}>
                 <label htmlFor="">Presupuesto/Nombre: </label>
                 <Input value={search.presupuesto} onChange={(value)=>{ setSearch({ ...search,presupuesto:value.target.value  }) }} style={{width:"500px" , marginBottom:"30px"}} type={"text"} placeholder={""}></Input>
@@ -258,7 +265,66 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
                 <label>Sucursal: </label>
                 <Select options={BranchOptions} onChange={(value)=>{setSearch({ ...search,sucursal:value  })}} style={{width:"300px"}} />
             </Col>
-        </Row>
+        </Row> */}
+
+<Collapse ghost className="request-filter-collapse">
+      <Panel
+        header="Filtros"
+        key="filter"
+        extra={[
+          <Button
+            key="clean"
+            onClick={(e) => {
+              e.preventDefault();
+              
+              form.resetFields();
+            }}
+          >
+            Limpiar
+          </Button>,
+          <Button
+            key="filter"
+            type="primary"
+            onClick={(e) => {
+              e.preventDefault();
+              form.submit();  
+            }}
+          >
+            Filtrar
+          </Button>,
+        ]}
+      >
+        <Form<ISearchQuotation> {...formItemLayout} form={form}
+        onFinish={onfinish}
+        size="small">
+          <Row gutter={[0, 12]}>
+   
+          <Col span={8}>
+              <DateRangeInput formProps={{ name: "fechaAlta", label: "Fecha de alta" }} />
+            </Col>
+            <Col span={16}>
+              <TextInput formProps={{ name: "expediente", label: "Expediente/Nombre/Codigo de barras/Huella digital" ,labelCol:{span:12}}} />
+            </Col>
+            <Col span={8}>
+              <TextInput formProps={{ name: "telefono", label: "Telefono" }} />
+            </Col>
+            <Col span={5}></Col>
+            <Col span={9}>
+              <DateInput formProps={{ name: "fechaNacimiento", label: "Fecha nacimiento" }} />
+            </Col>
+
+            <Col span={8}>
+              <SelectInput formProps={{ name: "ciudad", label: "Ciudad" }}  options={cityOptions} />
+            </Col>
+            <Col span={5}></Col>
+            <Col span={9}>
+              <SelectInput formProps={{ name: "sucursal", label: "Sucursal" }}  options={BranchOptions} />
+            </Col>
+
+          </Row>
+        </Form>
+      </Panel>
+    </Collapse>.
          {/* <VirtualTable columns={columns as any} dataSource={cotizaciones} scroll={{ y: 300, x: '100vw' }} />  */}
          <Table<IQuotationList>
           size="small"

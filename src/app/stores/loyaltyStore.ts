@@ -1,6 +1,10 @@
 import { makeAutoObservable } from "mobx";
 import Loyalty from "../api/loyalty";
-import { ILoyaltyForm, ILoyaltyList } from "../models/loyalty";
+import {
+  ILoyaltyForm,
+  ILoyaltyList,
+  ILoyaltyPriceList,
+} from "../models/loyalty";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
@@ -43,14 +47,36 @@ export default class LoyaltyStore {
       this.loyaltys = [];
     }
   };
+  getActive = async () => {
+    try {
+      const Loyaltys = await Loyalty.getActive();
+      this.loyaltys = Loyaltys;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      this.loyaltys = [];
+    }
+  };
 
   getById = async (id: string) => {
     try {
       const Loyaltys = await Loyalty.getById(id);
+      Loyaltys.precioLista = (Loyaltys.precioLista as ILoyaltyPriceList[]).map(
+        (x) => x.precioListaId
+      );
       return Loyaltys;
     } catch (error) {
       console.log(error);
       alerts.warning(getErrors(error));
+    }
+  };
+
+  getByDate = async (date: Date) => {
+    try {
+      const loyalty = await Loyalty.getByDate(date);
+      return loyalty;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      this.loyaltys = [];
     }
   };
 
@@ -97,9 +123,10 @@ export default class LoyaltyStore {
       }
     }
   };
+
   crearReagendado = async (loyaltys: ILoyaltyForm) => {
     try {
-      await Loyalty.create(loyaltys);
+      await Loyalty.crearReagendado(loyaltys);
       alerts.success(messages.created);
       return true;
     } catch (error) {

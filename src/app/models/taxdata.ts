@@ -6,7 +6,7 @@ export interface ITaxList {
   correo: string;
 }
 export interface ITaxData {
-  id?: string;
+  id: string;
   expedienteId?: string;
   rfc: string;
   razonSocial: string;

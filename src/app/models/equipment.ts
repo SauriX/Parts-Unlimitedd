@@ -17,7 +17,7 @@ export interface IEquipmentForm {
   valores: IEquipmentBranch[];
 }
 export interface IEquipmentBranch {
-  num_serie?: number;
+  num_serie?: string;
   branchId: number;
   branch: string;
 }

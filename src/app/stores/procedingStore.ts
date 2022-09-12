@@ -82,7 +82,21 @@ export default class ProcedingStore {
       //this.roles = [];
     }
   };
-
+  getByIdQuote = async (id: string) => {
+    try {
+      const rol = await Proceding.getById(id);
+      console.log(rol);
+      // this.expediente = rol; // Comentado porque no se usa
+      return rol;
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        //history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+      //this.roles = [];
+    }
+  };
   coincidencias = async (parameter: IProceedingForm) => {
     try {
       console.log(parameter);
@@ -94,7 +108,19 @@ export default class ProcedingStore {
       return [];
     }
   };
-
+  activateWallet = async (
+    id: string,
+    saldo: number = 0,
+    activo: boolean = true
+  ) => {
+    try {
+      const response = await Proceding.updateWallet(id, saldo, activo);
+      return response;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return [];
+    }
+  };
   create = async (parameter: IProceedingForm) => {
     try {
       console.log(parameter);

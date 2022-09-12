@@ -1,10 +1,10 @@
 import { PageHeader, Typography } from "antd";
 import { FC } from "react";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
-import ImageButton from "../../app/common/button/ImageButton";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../app/stores/store";
 import React from "react";
+import DownloadIcon from "../../app/common/icons/DownloadIcon";
 
 const { Text } = Typography;
 
@@ -31,10 +31,8 @@ const RequestedStudyHeader: FC<UserHeaderProps> = ({ handleList }) => {
         <Text key="studies">
           Estudios: <Text strong>{data.flatMap((x) => x.estudios).length}</Text>
         </Text>,
-        <ImageButton
+        <DownloadIcon
           key="doc"
-          title="Informe"
-          image="doc"
           onClick={handleList}
         />,
       ]}
