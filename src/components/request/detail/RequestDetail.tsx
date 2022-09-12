@@ -45,8 +45,15 @@ const RequestDetail = () => {
     const loyal = await getByDate(moment().toDate());
     const contieneMedico = loyal?.precioLista.some((l) => l === "Medicos");
     const expediente = await getByIdProceding(request?.expedienteId!);
+    const fechaCreaccionSolicitud = moment(request?.registro);
+    const fechaActivacionMonedero = moment(expediente?.fechaActivacionMonedero);
 
-    if (expediente?.hasWallet && !studyFilter.compañiaId && contieneMedico) {
+    if (
+      expediente?.hasWallet &&
+      !studyFilter.compañiaId &&
+      contieneMedico &&
+      fechaCreaccionSolicitud.isSameOrAfter(fechaCreaccionSolicitud)
+    ) {
       if (loyal?.tipoDescuento !== "Porcentaje") {
         await activateWallet(request?.expedienteId!, loyal?.cantidadDescuento!);
       }
