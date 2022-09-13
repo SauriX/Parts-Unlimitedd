@@ -1,4 +1,4 @@
-import { Table, Spin, Row, Col, Button, DatePicker } from "antd";
+import { Table, Spin, Row, Col, Button, DatePicker, FormInstance } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
@@ -10,13 +10,18 @@ import {
   getDefaultColumnProps,
 } from "../../../../app/common/table/utils";
 import {
+  IRequestGeneral,
   IRequestStudy,
   IRequestStudyUpdate,
 } from "../../../../app/models/request";
 import { useStore } from "../../../../app/stores/store";
 import { status } from "../../../../app/util/catalogs";
 
-const RequestSampler = () => {
+type RequestSamplerProps = {
+  formGeneral: FormInstance<IRequestGeneral>;
+};
+
+const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
   const { requestStore, modalStore } = useStore();
   const { request, allStudies, setStudy, sendStudiesToSampling } = requestStore;
 
@@ -70,8 +75,10 @@ const RequestSampler = () => {
             showTime
             allowClear={false}
             onChange={(value) => {
-              if (value)
+              if (value){
                 setStudy({ ...item, fechaEntrega: value.utcOffset(0, true) });
+                // formGeneral.setFieldValue("")
+              }
             }}
           />
         );
