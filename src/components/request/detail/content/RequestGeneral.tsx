@@ -51,7 +51,6 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
     sendTestWhatsapp,
   } = requestStore;
 
-  const origin = Form.useWatch("procedencia", form);
   const sendings = Form.useWatch("metodoEnvio", form);
   const doctorId = Form.useWatch("medicoId", form);
   const companyId = Form.useWatch("compañiaId", form);
@@ -73,13 +72,13 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
     setStudyFilter(branchId, doctorId, companyId);
   }, [branchId, companyId, doctorId, setStudyFilter]);
 
-  useEffect(() => {
-    if (origin === particular) {
-      form.setFieldsValue({
-        compañiaId: undefined,
-      });
-    }
-  }, [form, origin]);
+  // useEffect(() => {
+  //   if (companyId === particular) {
+  //     form.setFieldsValue({
+  //       compañiaId: undefined,
+  //     });
+  //   }
+  // }, [form, companyId]);
 
   useEffect(() => {
     const getRequestGeneral = async () => {
@@ -151,7 +150,11 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
   const sendWhatsapp = async () => {
     if (request) {
       setLoading(true);
-      await sendTestWhatsapp(request.expedienteId, request.solicitudId!, whatsapp);
+      await sendTestWhatsapp(
+        request.expedienteId,
+        request.solicitudId!,
+        whatsapp
+      );
       setLoading(false);
     }
   };
@@ -177,23 +180,24 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
           <Col span={24}>
             <SelectInput
               formProps={{
+                name: "compañiaId",
+                label: "Compañía",
+              }}
+              options={CompanyOptions}
+              // readonly={origin !== compañia}
+              // required={origin === compañia}
+            />
+          </Col>
+          <Col span={24}>
+            <SelectInput
+              formProps={{
                 name: "procedencia",
                 label: "Procedencia",
               }}
               options={originOptions}
               errors={errors.find((x) => x.name === "procedencia")?.errors}
               required
-            />
-          </Col>
-          <Col span={24}>
-            <SelectInput
-              formProps={{
-                name: "compañiaId",
-                label: "Compañía",
-              }}
-              options={CompanyOptions}
-              readonly={origin !== compañia}
-              required={origin === compañia}
+              readonly
             />
           </Col>
           <Col span={24}>
@@ -245,26 +249,29 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
               required={sendings?.includes("correo")}
             >
               <Input.Group>
-                <TextInput
-                  formProps={{
-                    name: "correo",
-                    label: "E-Mail",
-                    noStyle: true,
-                  }}
-                  width="50%"
-                  max={100}
-                  type="email"
-                  readonly={!sendings?.includes("correo")}
-                  required={sendings?.includes("correo")}
-                  errors={errors.find((x) => x.name === "correo")?.errors}
-                />
-                <Button
-                  type="primary"
-                  disabled={!sendings?.includes("correo")}
-                  onClick={sendEmail}
-                >
-                  Prueba
-                </Button>
+                <Row>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "correo",
+                        label: "E-Mail",
+                        noStyle: true,
+                      }}
+                      readonly={!sendings?.includes("correo")}
+                      required={sendings?.includes("correo")}
+                      errors={errors.find((x) => x.name === "correo")?.errors}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <Button
+                      type="primary"
+                      disabled={!sendings?.includes("correo")}
+                      onClick={sendEmail}
+                    >
+                      Prueba
+                    </Button>
+                  </Col>
+                </Row>
               </Input.Group>
             </Form.Item>
           </Col>

@@ -108,7 +108,19 @@ export default class ProcedingStore {
       return [];
     }
   };
-
+  activateWallet = async (
+    id: string,
+    saldo: number = 0,
+    activo: boolean = true
+  ) => {
+    try {
+      const response = await Proceding.updateWallet(id, saldo, activo);
+      return response;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return [];
+    }
+  };
   create = async (parameter: IProceedingForm) => {
     try {
       console.log(parameter);

@@ -9,11 +9,26 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
 import { IRequest } from "../../../app/models/request";
 import { status } from "../../../app/util/catalogs";
+import { toJS } from "mobx";
+import moment from "moment";
 
 const RequestDetail = () => {
-  const { profileStore, requestStore } = useStore();
+  const { profileStore, requestStore, loyaltyStore, procedingStore } =
+    useStore();
   const { profile } = profileStore;
-  const { getById, create } = requestStore;
+  const {
+    getById,
+    create,
+    totals,
+    setOriginalTotal,
+    studyFilter,
+    request,
+    totalsOriginal,
+  } = requestStore;
+  const { getById: getByIdProceding, activateWallet } = procedingStore;
+  const { loyaltys, getByDate } = loyaltyStore;
+
+  useEffect(() => {}, []);
 
   const navigate = useNavigate();
   const { recordId, requestId } = useParams();
@@ -23,6 +38,27 @@ const RequestDetail = () => {
     profile!.sucursal
   );
 
+  useEffect(() => {
+    setOriginalTotal(totals);
+  }, []);
+  const modificarSaldo = async () => {
+    const loyal = await getByDate(moment().toDate());
+    const contieneMedico = loyal?.precioLista.some((l) => l === "Medicos");
+    const expediente = await getByIdProceding(request?.expedienteId!);
+    const fechaCreaccionSolicitud = moment(request?.registro);
+    const fechaActivacionMonedero = moment(expediente?.fechaActivacionMonedero);
+
+    if (
+      expediente?.hasWallet &&
+      !studyFilter.compañiaId &&
+      contieneMedico &&
+      fechaCreaccionSolicitud.isSameOrAfter(fechaCreaccionSolicitud)
+    ) {
+      if (loyal?.tipoDescuento !== "Porcentaje") {
+        await activateWallet(request?.expedienteId!, loyal?.cantidadDescuento!);
+      }
+    }
+  };
   useEffect(() => {
     const createRequest = async () => {
       const req: IRequest = {
@@ -34,6 +70,7 @@ const RequestDetail = () => {
       };
 
       const id = await create(req);
+      await modificarSaldo();
 
       if (id) {
         navigate(`${id}`, { replace: true });

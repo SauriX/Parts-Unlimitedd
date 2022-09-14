@@ -1,5 +1,7 @@
 import { Button, Col, Form, Row, Space, Spin, Tabs } from "antd";
+import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import {
   IRequestGeneral,
@@ -36,7 +38,7 @@ type keys =
   | "images";
 
 const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
-  const { requestStore } = useStore();
+  const { requestStore, procedingStore, loyaltyStore } = useStore();
   const {
     request,
     studyUpdate,
@@ -44,7 +46,13 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     updateGeneral,
     updateStudies,
     cancelRequest,
+    studyFilter,
+    totals,
+    totalsOriginal,
+    setOriginalTotal,
   } = requestStore;
+  const { activateWallet, getById } = procedingStore;
+  const { getActive, loyaltys, getByDate } = loyaltyStore;
 
   const [formGeneral] = Form.useForm<IRequestGeneral>();
 
@@ -52,14 +60,55 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   const [currentKey, setCurrentKey] = useState<keys>("general");
 
   const onChangeTab = async (key: string) => {
-    const ok = await submit(false);
+    const ok = await submit();
 
     if (ok) {
       setCurrentKey(key as keys);
     }
   };
 
-  const submit = async (showMessage: boolean = true) => {
+  useEffect(() => {
+    getActive();
+  }, [getActive]);
+
+  const modificarSaldo = async () => {
+    const loyal = await getByDate(moment().toDate());
+    const contieneMedico = loyal?.precioLista.some((l) => l === "Medicos");
+    const expediente = await getById(request?.expedienteId!);
+    console.log("expediente", toJS(expediente));
+    const fechaCreaccionSolicitud = moment(request?.registro);
+    const fechaActivacionMonedero = moment(expediente?.fechaActivacionMonedero);
+    console.log("#fechas", fechaActivacionMonedero, fechaCreaccionSolicitud);
+    if (
+      expediente?.hasWallet &&
+      !studyFilter.compañiaId &&
+      contieneMedico &&
+      fechaCreaccionSolicitud.isSameOrAfter(fechaCreaccionSolicitud)
+    ) {
+      if (loyal?.tipoDescuento === "Porcentaje") {
+        const bonoActual = (loyal?.cantidadDescuento! * totals.total) / 100;
+        const bonoAnterior =
+          (loyal?.cantidadDescuento! * totalsOriginal.total) / 100;
+
+        let bonoFinal: number;
+        bonoFinal =
+          expediente.wallet > 0
+            ? expediente.wallet - bonoAnterior + bonoActual
+            : expediente.wallet + bonoActual;
+
+        setOriginalTotal(totals);
+
+        await activateWallet(request?.expedienteId!, bonoFinal);
+      } else {
+        await activateWallet(
+          request?.expedienteId!,
+          expediente.wallet - loyal?.cantidadDescuento!
+        );
+      }
+    }
+  };
+
+  const submit = async () => {
     let ok = true;
 
     setLoading(true);
@@ -71,6 +120,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       currentKey === "sampler"
     ) {
       ok = await updateStudies(studyUpdate);
+      await modificarSaldo();
     }
     setLoading(false);
 
@@ -85,6 +135,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
         if (request) {
           setLoading(true);
           await cancelRequest(request.expedienteId, request.solicitudId!);
+          await modificarSaldo();
           setLoading(false);
         }
       }
@@ -105,7 +156,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       <Button key="cancel" size="small" ghost danger onClick={cancel}>
         Cancelar
       </Button>
-      <Button key="save" size="small" type="primary" onClick={() => submit}>
+      <Button key="save" size="small" type="primary" onClick={submit}>
         Guardar
       </Button>
     </Space>
@@ -131,11 +182,11 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     } else if (tabName === "register") {
       component = <RequestRegister recordId={recordId} />;
     } else if (tabName === "request") {
-      component = <RequestRequest />;
+      component = <RequestRequest formGeneral={formGeneral} />;
     } else if (tabName === "print") {
       component = <RequestPrint />;
     } else if (tabName === "sampler") {
-      component = <RequestSampler />;
+      component = <RequestSampler formGeneral={formGeneral} />;
     } else if (tabName === "images") {
       component = <RequestImage />;
     }

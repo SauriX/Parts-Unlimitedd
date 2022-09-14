@@ -409,6 +409,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
             initialValues={values}
             onFinish={onFinish}
             scrollToFirstError
+            labelWrap
             onValuesChange={(changes_values: any) => {
               const propertyForm = Object.keys(changes_values)[0];
               if (propertyForm == "temperatura") {
@@ -468,7 +469,9 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                   name="escaneado"
                   label="Escaneo por código de barras"
                   readonly={readonly}
-                  style={{ marginLeft: 54 }}
+                  style={{
+                    marginLeft: 45,
+                  }}
                 />
               </Col>
               <Col md={6} sm={12} style={{ textAlign: "left" }}>
@@ -551,6 +554,9 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                         null,
                         "Cancelar captura de orden"
                       );
+                    } else {
+                      setConfirmCreationOrder(true);
+                      form.submit();
                     }
                   }}
                 >
