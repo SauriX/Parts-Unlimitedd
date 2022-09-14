@@ -1,11 +1,13 @@
 import { Button, Col, Collapse, Form, Row } from "antd";
 import { useForm } from "antd/lib/form/Form";
+import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
 import { IClinicResultForm } from "../../app/models/clinicResults";
+import { IOptions } from "../../app/models/shared";
 import {
   originOptions,
   studyStatusOptions,
@@ -13,6 +15,7 @@ import {
 } from "../../app/stores/optionStore";
 import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
+
 const { Panel } = Collapse;
 
 const ClinicResultsFilter = () => {
@@ -33,13 +36,18 @@ const ClinicResultsFilter = () => {
 
   const [form] = useForm();
   const [loading, setLoading] = useState(false);
+  const [studyFilter, setStudyFilter] = useState<any[]>(studiesOptions);
 
   useEffect(() => {
-    getBranchCityOptions();
-    getMedicOptions();
-    getCompanyOptions();
-    getDepartmentAreaOptions();
-    getStudiesOptions();
+    const update = async () => {
+      getBranchCityOptions();
+      getMedicOptions();
+      getCompanyOptions();
+      getDepartmentAreaOptions();
+      await getStudiesOptions();
+      setStudyFilter(studiesOptions);
+    };
+    update();
   }, [
     getBranchCityOptions,
     getMedicOptions,
@@ -142,11 +150,20 @@ const ClinicResultsFilter = () => {
                   <Col span={8}>
                     <SelectInput
                       formProps={{
-                        name: "departamento",
+                        name: "area",
                         label: "Departamento",
                       }}
                       multiple
                       options={departmentAreaOptions}
+                      onChange={(value) => {
+                        let filtradoEstudios = studiesOptions.filter(
+                          (estudio) => value.includes(+estudio.area)
+                        );
+                        setStudyFilter(filtradoEstudios);
+                        console.log(toJS(studiesOptions));
+                        console.log(filtradoEstudios);
+                        console.log(value);
+                      }}
                     ></SelectInput>
                   </Col>
                   <Col span={8}>
@@ -156,7 +173,7 @@ const ClinicResultsFilter = () => {
                         label: "Estudio",
                       }}
                       multiple
-                      options={studiesOptions}
+                      options={studyFilter}
                     ></SelectInput>
                   </Col>
                   <Col span={8}>

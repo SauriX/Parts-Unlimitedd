@@ -551,15 +551,15 @@ export default class OptionStore {
     }
   };
 
-  studiesOptions: IOptions[] = [];
+  studiesOptions: any[] = [];
   getStudiesOptions = async () => {
     try {
       const study = await Study.getActive();
-      var studyArea = study.filter((x) => x.area)
-      this.studiesOptions = studyArea.map((x) => ({
+      this.studiesOptions = study.map((x) => ({
         key: x.id,
         value: x.id,
         label: x.clave + " - " + x.nombre,
+        area: x.areaId,
       }));
     } catch (error) {
       this.studiesOptions = [];
