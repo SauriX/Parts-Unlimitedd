@@ -91,7 +91,7 @@ const getMenuIcon = (name: string) => {
       return faChartLine;
     case "requestedstudy":
       return faArrowsTurnToDots;
-    case "clinicresults":
+    case "clinicResults":
       return faLaptopMedical;
     default:
       return faCircle;

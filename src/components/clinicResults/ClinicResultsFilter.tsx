@@ -1,4 +1,3 @@
-import "./css/changeStatus.less";
 import { Button, Col, Collapse, Form, Row } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { observer } from "mobx-react-lite";
@@ -6,29 +5,30 @@ import { useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
-import { IRequestedStudyForm } from "../../app/models/requestedStudy";
+import { IClinicResultForm } from "../../app/models/clinicResults";
 import {
   originOptions,
-  requestedStudyOptions,
+  studyStatusOptions,
   urgencyOptions,
 } from "../../app/stores/optionStore";
 import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 const { Panel } = Collapse;
 
-const RequestedStudyFilter = () => {
-  const { optionStore, requestedStudyStore } = useStore();
-  const { formValues, getAll, setFormValues } =
-    requestedStudyStore;
+const ClinicResultsFilter = () => {
+  const { optionStore, clinicResultsStore } = useStore();
+  const { formValues, getAll, setFormValues, clearFilter } = clinicResultsStore;
   const {
     branchCityOptions,
     medicOptions,
     companyOptions,
+    studiesOptions,
     departmentAreaOptions,
     getDepartmentAreaOptions,
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
+    getStudiesOptions,
   } = optionStore;
 
   const [form] = useForm();
@@ -39,14 +39,16 @@ const RequestedStudyFilter = () => {
     getMedicOptions();
     getCompanyOptions();
     getDepartmentAreaOptions();
+    getStudiesOptions();
   }, [
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
     getDepartmentAreaOptions,
+    getStudiesOptions,
   ]);
 
-  const onFinish = async (newFormValues: IRequestedStudyForm) => {
+  const onFinish = async (newFormValues: IClinicResultForm) => {
     setLoading(true);
     const filter = { ...newFormValues };
     setFormValues(newFormValues);
@@ -65,6 +67,7 @@ const RequestedStudyFilter = () => {
             onClick={(e) => {
               e.stopPropagation();
               form.resetFields();
+              clearFilter();
             }}
           >
             Limpiar
@@ -82,10 +85,10 @@ const RequestedStudyFilter = () => {
         ]}
       >
         <div className="status-container">
-          <Form<IRequestedStudyForm>
+          <Form<IClinicResultForm>
             {...formItemLayout}
             form={form}
-            name="requestedStudy"
+            name="clinicResults"
             onFinish={onFinish}
             initialValues={formValues}
             scrollToFirstError
@@ -133,7 +136,7 @@ const RequestedStudyFilter = () => {
                         label: "Estatus",
                       }}
                       multiple
-                      options={requestedStudyOptions}
+                      options={studyStatusOptions}
                     ></SelectInput>
                   </Col>
                   <Col span={8}>
@@ -144,6 +147,16 @@ const RequestedStudyFilter = () => {
                       }}
                       multiple
                       options={departmentAreaOptions}
+                    ></SelectInput>
+                  </Col>
+                  <Col span={8}>
+                    <SelectInput
+                      formProps={{
+                        name: "estudio",
+                        label: "Estudio",
+                      }}
+                      multiple
+                      options={studiesOptions}
                     ></SelectInput>
                   </Col>
                   <Col span={8}>
@@ -183,4 +196,4 @@ const RequestedStudyFilter = () => {
   );
 };
 
-export default observer(RequestedStudyFilter);
+export default observer(ClinicResultsFilter);

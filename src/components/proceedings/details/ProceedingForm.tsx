@@ -860,7 +860,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
         rowKey={(record) => record.id}
         columns={columns}
         dataSource={[]}
-     /*    pagination={defaultPaginationProperties} */
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />
@@ -871,7 +870,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
         rowKey={(record) => record.id}
         columns={columnsP}
         dataSource={[]}
-     /*    pagination={defaultPaginationProperties} */
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />
@@ -882,7 +880,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({ id, componentRef, printing })
         rowKey={(record) => record.id}
         columns={columnsC}
         dataSource={[]}
-     /*    pagination={defaultPaginationProperties} */
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />

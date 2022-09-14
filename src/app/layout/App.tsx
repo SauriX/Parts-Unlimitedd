@@ -66,6 +66,7 @@ import EquipmentMantain from "../../views/EquipmentMantain";
 import EquipmentMantainForm from "../../components/equipmentMantain/detail/EquipmentMantainForm";
 import EquipmentMantainDetails from "../../components/equipmentMantain/detail/EquipmentMantainDetails";
 import RouteTracking from "../../views/RouteTracking";
+import ClinicResults from "../../views/ClinicResults";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -169,6 +170,7 @@ function App() {
             <Route path="samplings/:id" element={<Sampling />} />
             <Route path="samplings/new" element={<Sampling />} />
             <Route path="requestedstudy" element={<RequestedStudy />} />
+            <Route path="clinicResults" element={<ClinicResults />} />
             <Route path="requestedstudy/:id" element={<RequestedStudy />} />
             <Route path="requestedstudy/new" element={<RequestedStudy />} />
             <Route path="reports" element={<Report />} />

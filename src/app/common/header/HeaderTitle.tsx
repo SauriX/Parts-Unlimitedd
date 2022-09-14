@@ -60,4 +60,5 @@ export type imagesType =
   | "tomaMuestra"
   | "ordenseguimiento"
   | "sitio-web"
+  | "portapapeles"
   | "usuario";

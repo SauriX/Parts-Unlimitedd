@@ -1,33 +1,29 @@
-import { Descriptions, Checkbox } from "antd";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import { Descriptions } from "antd";
 import { useState } from "react";
-import PrintIcon from "../../../app/common/icons/PrintIcon";
 import {
   IColumns,
   ISearch,
   getDefaultColumnProps,
 } from "../../../app/common/table/utils";
-import { IRequestedStudyList } from "../../../app/models/requestedStudy";
-import { status } from "../../../app/util/catalogs";
+import { IClinicResultList } from "../../../app/models/clinicResults";
 
-type expandableProps = {
-  activity: string;
-  onChange: (e: CheckboxChangeEvent, id: number, solicitud: string) => void;
-  printOrder: (recordId: string, requestId: string) => Promise<void>;
-};
-
-const RequestedStudyColumns = () => {
+const ClinicResultsColumns = () => {
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-  const columns: IColumns<IRequestedStudyList> = [
+  const columns: IColumns<IClinicResultList> = [
     {
       ...getDefaultColumnProps("solicitud", "Clave", {
         searchState,
         setSearchState,
         width: "15%",
       }),
+      render: (_value, record) =>
+      <ul>
+        <li>{record.solicitud}</li>
+        <li>Sucursal: {record.sucursal}</li>
+      </ul>
     },
     {
       ...getDefaultColumnProps("nombre", "Nombre del Paciente", {
@@ -44,7 +40,7 @@ const RequestedStudyColumns = () => {
       }),
     },
     {
-      ...getDefaultColumnProps("sucursal", "Sucursal", {
+      ...getDefaultColumnProps("sucursalNombre", "Sucursal", {
         searchState,
         setSearchState,
         width: "15%",
@@ -71,18 +67,19 @@ const RequestedStudyColumns = () => {
         setSearchState,
         width: "20%",
       }),
+      render: (_value, record) =>
+      <ul>
+        <li>{record.compañia == null ? "No pertenece a una compañía" : record.compañia}</li>
+        <li>Procedencia: {record.procedencia == 1 ? "Compañía" : "Particulares"}</li>
+      </ul>
     },
   ];
   return columns;
 };
 
-export const RequestedStudyExpandable = ({
-  activity,
-  onChange,
-  printOrder,
-}: expandableProps) => {
+export const ClinicResultsExpandable = () => {
   return {
-    expandedRowRender: (item: IRequestedStudyList) => (
+    expandedRowRender: (item: IClinicResultList) => (
       <div>
         <h4>Estudios</h4>
         {item.estudios.map((x) => {
@@ -106,7 +103,7 @@ export const RequestedStudyExpandable = ({
                 style={{ maxWidth: 30 }}
                 className="description-content"
               >
-                {x.status == 2 ? "Toma de Muestra" : "Solicitado"}
+                {x.nombreEstatus}
               </Descriptions.Item>
               <Descriptions.Item
                 label="Registro"
@@ -122,42 +119,6 @@ export const RequestedStudyExpandable = ({
               >
                 {x.entrega}
               </Descriptions.Item>
-              {x.status === status.requestStudy.tomaDeMuestra &&
-                activity == "register" && (
-                  <Descriptions.Item
-                    label="Selecciona"
-                    style={{ maxWidth: 30 }}
-                    className="description-content"
-                  >
-                    <Checkbox onChange={(e) => onChange(e, x.id, item.id)}>
-                      Selecciona
-                    </Checkbox>
-                  </Descriptions.Item>
-                )}
-              {x.status === status.requestStudy.solicitado &&
-                activity == "cancel" && (
-                  <Descriptions.Item
-                    label="Selecciona"
-                    style={{ maxWidth: 30 }}
-                    className="description-content"
-                  >
-                    <Checkbox onChange={(e) => onChange(e, x.id, item.id)}>
-                      Selecciona
-                    </Checkbox>
-                  </Descriptions.Item>
-                )}
-              <Descriptions.Item
-                label="Imprimir Orden"
-                style={{ maxWidth: 20 }}
-                className="description-content"
-              >
-                <PrintIcon
-                  key="imprimir"
-                  onClick={() => {
-                    printOrder(item.order, item.id);
-                  }}
-                />
-              </Descriptions.Item>
             </Descriptions>
           );
         })}
@@ -168,4 +129,4 @@ export const RequestedStudyExpandable = ({
   };
 };
 
-export default RequestedStudyColumns;
+export default ClinicResultsColumns;
