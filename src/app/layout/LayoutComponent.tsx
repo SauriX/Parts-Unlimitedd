@@ -1,4 +1,17 @@
-import { Layout, Menu, Typography, Image, Avatar, Row, Col, Popover, Form, Spin, Button } from "antd";
+import "./css/drawerThemeColor.less";
+import {
+  Layout,
+  Menu,
+  Typography,
+  Image,
+  Avatar,
+  Row,
+  Col,
+  Popover,
+  Form,
+  Spin,
+  Button,
+} from "antd";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import IconSelector from "../common/icons/IconSelector";
@@ -35,11 +48,13 @@ interface IItem {
 }
 
 const LayoutComponent = () => {
-  const { profileStore, drawerStore, modalStore, notificationStore } = useStore();
+  const { profileStore, drawerStore, modalStore, notificationStore } =
+    useStore();
   const { openDrawer } = drawerStore;
   const { openModal } = modalStore;
   const { createHubConnection } = notificationStore;
-  const { profile, menu, logoImg, isLoggedIn, logout, getProfile, getMenu } = profileStore;
+  const { profile, menu, logoImg, isLoggedIn, logout, getProfile, getMenu } =
+    profileStore;
 
   const { switcher } = useThemeSwitcher();
   const location = useLocation();
@@ -49,6 +64,7 @@ const LayoutComponent = () => {
 
   const convertMenu = useCallback(
     (menus: IMenu[]): IItem[] => {
+      console.log("load drawer");
       return menus.map((x) => ({
         key: uuid(),
         label:
@@ -76,7 +92,10 @@ const LayoutComponent = () => {
             <Link to={x.ruta ?? x.descripcion}>{x.descripcion}</Link>
           ),
         icon: <FontAwesomeIcon icon={getMenuIcon(x.icono)} />,
-        children: !!x.subMenus && x.subMenus.length > 0 ? convertMenu(x.subMenus) : undefined,
+        children:
+          !!x.subMenus && x.subMenus.length > 0
+            ? convertMenu(x.subMenus)
+            : undefined,
       }));
     },
     [openDrawer]
@@ -97,7 +116,11 @@ const LayoutComponent = () => {
 
   useEffect(() => {
     if (profile && profile.requiereCambio) {
-      openModal({ title: "Configuración de contraseña", body: <SetPasswordComponent />, closable: false });
+      openModal({
+        title: "Configuración de contraseña",
+        body: <SetPasswordComponent />,
+        closable: false,
+      });
     }
   }, [openModal, profile]);
 
@@ -111,7 +134,10 @@ const LayoutComponent = () => {
   const openNotifications = () => {
     openDrawer({
       title: (
-        <HeaderTitle title="Notificaciones" icon={<NotificationOutlined className="header-title-icon" />} />
+        <HeaderTitle
+          title="Notificaciones"
+          icon={<NotificationOutlined className="header-title-icon" />}
+        />
       ),
       body: <Notifications />,
     });
@@ -130,7 +156,10 @@ const LayoutComponent = () => {
           <Col span={12}>
             <div className="header-logo-container">
               <Image
-                src={logoImg ?? `${process.env.REACT_APP_CATALOG_URL}/images/logo.png`}
+                src={
+                  logoImg ??
+                  `${process.env.REACT_APP_CATALOG_URL}/images/logo.png`
+                }
                 preview={false}
               />
             </div>
@@ -138,14 +167,26 @@ const LayoutComponent = () => {
           <Col span={12} className="header-data" style={{ textAlign: "right" }}>
             <Avatar icon={<UserOutlined />} />
             <Text>{profile?.nombre}</Text>
-            <NotificationOutlined className="trigger" onClick={openNotifications} />
+            <NotificationOutlined
+              className="trigger"
+              onClick={openNotifications}
+            />
             <Popover
               placement="topLeft"
               content={
                 <Row style={{ width: 100 }}>
-                  <DropdownOption option="Claro" onClick={() => selectTheme("light")} />
-                  <DropdownOption option="Oscuro" onClick={() => selectTheme("dark")} />
-                  <DropdownOption option="Atardecer" onClick={() => selectTheme("yellow")} />
+                  <DropdownOption
+                    option="Claro"
+                    onClick={() => selectTheme("light")}
+                  />
+                  <DropdownOption
+                    option="Oscuro"
+                    onClick={() => selectTheme("dark")}
+                  />
+                  <DropdownOption
+                    option="Atardecer"
+                    onClick={() => selectTheme("yellow")}
+                  />
                 </Row>
               }
               trigger="click"
@@ -156,7 +197,11 @@ const LayoutComponent = () => {
               placement="topLeft"
               content={
                 <Row style={{ width: 150 }}>
-                  <DropdownOption option="Cerrar sesión" icon={<LogoutOutlined />} onClick={logout} />
+                  <DropdownOption
+                    option="Cerrar sesión"
+                    icon={<LogoutOutlined />}
+                    onClick={logout}
+                  />
                 </Row>
               }
               trigger="click"
@@ -176,7 +221,7 @@ const LayoutComponent = () => {
         >
           <Menu
             mode="inline"
-            className="layout-menu"
+            className="menu-contrast-custom-theme"
             selectedKeys={[location.pathname.substring(1)]}
             style={{ height: "100%", borderRight: 0 }}
             items={menus}

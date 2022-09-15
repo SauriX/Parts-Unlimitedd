@@ -4,6 +4,9 @@ import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import ImageButton from "../../../app/common/button/ImageButton";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
+import PrintIcon from "../../../app/common/icons/PrintIcon";
+import DownloadIcon from "../../../app/common/icons/DownloadIcon";
+import GoBackIcon from "../../../app/common/icons/GoBackIcon";
 
 type BranchFormHeaderProps = {
   handlePrint: () => void;
@@ -12,7 +15,10 @@ type BranchFormHeaderProps = {
 type UrlParams = {
   id: string;
 };
-const BranchFormHeader: FC<BranchFormHeaderProps> = ({ handlePrint, handleDownload }) => {
+const BranchFormHeader: FC<BranchFormHeaderProps> = ({
+  handlePrint,
+  handleDownload,
+}) => {
   let { id } = useParams<UrlParams>();
   let navigate = useNavigate();
   return (
@@ -21,12 +27,10 @@ const BranchFormHeader: FC<BranchFormHeaderProps> = ({ handlePrint, handleDownlo
       title={<HeaderTitle title="Sucursales" image="laboratorio" />}
       className="header-container"
       extra={[
-        !!id && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        !!id && <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />,
-        <ImageButton
+        !!id && <PrintIcon key="print" onClick={handlePrint} />,
+        !!id && <DownloadIcon key="doc" onClick={handleDownload} />,
+        <GoBackIcon
           key="back"
-          title="Regresar"
-          image="back"
           onClick={() => {
             navigate("/branches");
           }}

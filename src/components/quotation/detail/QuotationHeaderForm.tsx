@@ -7,6 +7,9 @@ import ImageButton from "../../../app/common/button/ImageButton";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
 import views from "../../../app/util/view";
+import PrintIcon from "../../../app/common/icons/PrintIcon";
+import DownloadIcon from "../../../app/common/icons/DownloadIcon";
+import GoBackIcon from "../../../app/common/icons/GoBackIcon";
 
 const { Search } = Input;
 
@@ -16,9 +19,13 @@ type QuotationHeaderFormProps = {
   id: string;
 };
 
-const QuotationHeaderForm: FC<QuotationHeaderFormProps> = ({ handlePrint, handleDownload,id }) => {
-   const { quotationStore } = useStore();
-  const { /* scopes, */ getAll, exportList } = quotationStore; 
+const QuotationHeaderForm: FC<QuotationHeaderFormProps> = ({
+  handlePrint,
+  handleDownload,
+  id,
+}) => {
+  const { quotationStore } = useStore();
+  const { /* scopes, */ getAll, exportList } = quotationStore;
 
   const navigate = useNavigate();
 
@@ -27,7 +34,7 @@ const QuotationHeaderForm: FC<QuotationHeaderFormProps> = ({ handlePrint, handle
   const search = async (search: string | undefined) => {
     search = search === "" ? undefined : search;
 
-  /*   await getAll(search ?? "all"); */
+    /*   await getAll(search ?? "all"); */
 
     if (search) {
       searchParams.set("search", search);
@@ -41,7 +48,6 @@ const QuotationHeaderForm: FC<QuotationHeaderFormProps> = ({ handlePrint, handle
     searchParams.delete("mode");
     setSearchParams(searchParams);
     navigate(`/${views.quotatiion}?${searchParams}`);
-    
   };
   return (
     <PageHeader
@@ -49,11 +55,19 @@ const QuotationHeaderForm: FC<QuotationHeaderFormProps> = ({ handlePrint, handle
       title={<HeaderTitle title="Catálogo de Cotizaciones" />}
       className="header-container"
       extra={[
-        id &&/* scopes?.imprimir && */  <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-         id && /* scopes?.descargar *//*  && */  (
-          <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />
+        id && (
+          /* scopes?.imprimir && */ <PrintIcon
+            key="print"
+            onClick={handlePrint}
+          />
         ),
-        <ImageButton key="back" title="Regresar" image="back" onClick={getBack} />,
+        id && (
+          /* scopes?.descargar */ /*  && */ <DownloadIcon
+            key="download"
+            onClick={handleDownload}
+          />
+        ),
+        <GoBackIcon key="back" onClick={getBack} />,
       ]}
     ></PageHeader>
   );

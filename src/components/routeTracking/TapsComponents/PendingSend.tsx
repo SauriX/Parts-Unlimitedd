@@ -31,6 +31,7 @@ import {
 import { ExpandableConfig } from "antd/lib/table/interface";
 import ImageButton from "../../../app/common/button/ImageButton";
 import { getExpandableConfig } from "../../report/utils";
+import PrintIcon from "../../../app/common/icons/PrintIcon";
 const PendingSend = () => {
   const { procedingStore, optionStore, locationStore, samplig } = useStore();
   const { getAll, studys, printTicket, update } = samplig;
@@ -55,7 +56,6 @@ const PendingSend = () => {
   }, [getAll]);
   const navigate = useNavigate();
   const expandableStudyConfig = {
-  
     expandedRowRender: (item: IsamplingList) => (
       <div>
         <h4>Estudios</h4>
@@ -99,13 +99,19 @@ const PendingSend = () => {
                       Selecciona
                     </Checkbox>
                   )}
-                  <ImageButton
+                  <PrintIcon
+                    key="print"
+                    onClick={() => {
+                      //printTicket(item.order, item.id);
+                    }}
+                  />
+                  {/* <ImageButton
                     title="Imprimir"
                     image="print"
                     onClick={() => {
                       //printTicket(item.order, item.id);
                     }}
-                  ></ImageButton>
+                  ></ImageButton> */}
                 </Descriptions.Item>
               </Descriptions>
             </>
