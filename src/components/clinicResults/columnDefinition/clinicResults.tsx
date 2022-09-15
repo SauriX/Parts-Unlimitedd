@@ -40,7 +40,7 @@ const ClinicResultsColumns = () => {
       }),
     },
     {
-      ...getDefaultColumnProps("sucursalNombre", "Sucursal", {
+      ...getDefaultColumnProps("nombreMedico", "Médico", {
         searchState,
         setSearchState,
         width: "15%",
