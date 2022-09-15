@@ -104,7 +104,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
         //SetSolicitudesData();
       }
     }
-    setUpdateDate((prev) => ({ ...prev, id: ids }));
+    setUpdateDate((prev) => ({ ...prev, estudioId: ids ,solicitudId:solicitud}));
   };
   const updatedata = async () => {
     setLoading(true);
