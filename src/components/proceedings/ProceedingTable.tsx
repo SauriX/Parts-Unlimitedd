@@ -229,7 +229,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
           <Button
             key="clean"
             onClick={(e) => {
-              e.preventDefault();
+              e.stopPropagation();
               
               form.resetFields();
             }}
@@ -240,7 +240,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
             key="filter"
             type="primary"
             onClick={(e) => {
-              e.preventDefault();
+              e.stopPropagation();
               form.submit();  
             }}
           >

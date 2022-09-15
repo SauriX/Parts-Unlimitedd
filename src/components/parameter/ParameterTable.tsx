@@ -120,7 +120,7 @@ const ParameterTable:FC<ParameterTableProps> = ({  componentRef,  printing }) =>
         width: windowWidth < resizeWidth ? 100 : "10%",
         render: (value,parameter) => (
           <IconButton
-            title="Editar parametro "
+            title="Editar parámetro"
             icon={<EditOutlined />}
             onClick={() => {
               navigate(`/parameters/${parameter.id}?search=${searchParams.get("search") ?? "all"}`);
@@ -135,7 +135,7 @@ const ParameterTable:FC<ParameterTableProps> = ({  componentRef,  printing }) =>
       <div ref={componentRef}>
           <PageHeader
             ghost={false}
-            title={<HeaderTitle title="Catálogo de Parametros" image="parametro" />}
+            title={<HeaderTitle title="Catálogo de Parámetros" image="parametro" />}
             className="header-container"
           ></PageHeader>
           <Divider className="header-divider" />

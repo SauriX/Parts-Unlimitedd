@@ -33,6 +33,7 @@ import NotificationStore from "./notificationStore";
 import SamplingStore from "./samplingStore";
 import CashRegisterStore from "./cashRegisterStore";
 import RequestedStudyStore from "./requestedStudyStore";
+import ClinicResultsStore from "./clinicResultsStore";
 import EquipmentMantainStore from "./EquipentMantainStore";
 import TrackingOrderStore from "./trackingOrderStore";
 
@@ -74,6 +75,7 @@ interface Store {
   notificationStore: NotificationStore;
   samplig: SamplingStore;
   requestedStudyStore: RequestedStudyStore;
+  clinicResultsStore: ClinicResultsStore;
   equipmentMantainStore: EquipmentMantainStore;
 }
 
@@ -111,6 +113,7 @@ export const store: Store = {
   notificationStore: new NotificationStore(),
   samplig: new SamplingStore(),
   requestedStudyStore: new RequestedStudyStore(),
+  clinicResultsStore: new ClinicResultsStore(),
   equipmentMantainStore: new EquipmentMantainStore(),
 };
 
