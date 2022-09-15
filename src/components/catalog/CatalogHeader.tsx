@@ -8,6 +8,8 @@ import { IOptionsCatalog } from "../../app/models/shared";
 import { catalogs } from "../../app/util/catalogs";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../app/stores/store";
+import PrintIcon from "../../app/common/icons/PrintIcon";
+import DownloadIcon from "../../app/common/icons/DownloadIcon";
 
 const { Search } = Input;
 
@@ -18,7 +20,12 @@ type CatalogHeaderProps = {
   handleDownload: () => Promise<void>;
 };
 
-const CatalogHeader: FC<CatalogHeaderProps> = ({ catalog, setCatalog, handlePrint, handleDownload }) => {
+const CatalogHeader: FC<CatalogHeaderProps> = ({
+  catalog,
+  setCatalog,
+  handlePrint,
+  handleDownload,
+}) => {
   const { catalogStore } = useStore();
   const { setCurrentCatalog, getAll } = catalogStore;
 
@@ -42,7 +49,10 @@ const CatalogHeader: FC<CatalogHeaderProps> = ({ catalog, setCatalog, handlePrin
 
     if (selected) {
       searchParams.set("catalog", selected.value.toString());
-      await getAll(selected.value.toString(), searchParams.get("search") ?? undefined);
+      await getAll(
+        selected.value.toString(),
+        searchParams.get("search") ?? undefined
+      );
     } else {
       searchParams.delete("catalog");
     }
@@ -72,8 +82,8 @@ const CatalogHeader: FC<CatalogHeaderProps> = ({ catalog, setCatalog, handlePrin
       title={<HeaderTitle title="Catálogo General" image="catalogo" />}
       className="header-container"
       extra={[
-        catalog && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        catalog && <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />,
+        catalog && <PrintIcon key="print" onClick={handlePrint} />,
+        catalog && <DownloadIcon key="doc" onClick={handleDownload} />,
         <Search
           key="search"
           placeholder="Buscar"

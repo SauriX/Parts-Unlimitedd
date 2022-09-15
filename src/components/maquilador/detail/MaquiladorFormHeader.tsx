@@ -1,17 +1,23 @@
-import {PageHeader} from "antd";
+import { PageHeader } from "antd";
 import React, { FC } from "react";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import ImageButton from "../../../app/common/button/ImageButton";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
+import PrintIcon from "../../../app/common/icons/PrintIcon";
+import DownloadIcon from "../../../app/common/icons/DownloadIcon";
+import GoBackIcon from "../../../app/common/icons/GoBackIcon";
 
 // const { Search } = Input;
 type MaquiladorFormHeaderProps = {
   handlePrint: () => void;
-  id : number;
+  id: number;
 };
 
-const MaquiladorFormHeader: FC<MaquiladorFormHeaderProps> = ({id, handlePrint }) => {
+const MaquiladorFormHeader: FC<MaquiladorFormHeaderProps> = ({
+  id,
+  handlePrint,
+}) => {
   const { maquiladorStore } = useStore();
   const { exportForm } = maquiladorStore;
 
@@ -31,19 +37,14 @@ const MaquiladorFormHeader: FC<MaquiladorFormHeaderProps> = ({id, handlePrint })
       title={<HeaderTitle title="Catálogo de Maquilador" image="maquilador" />}
       className="header-container"
       extra={[
-        id !=0 ?
-        <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />:"",
-        id !=0 ?
-        <ImageButton key="doc" title="Informe" image="doc" onClick={download}  />:'',
-        <ImageButton
+        id != 0 ? <PrintIcon key="print" onClick={handlePrint} /> : "",
+        id != 0 ? <DownloadIcon key="doc" onClick={download} /> : "",
+        <GoBackIcon
           key="back"
-          title="Regresar"
-          image="back"
           onClick={() => {
             navigate("/maquila");
           }}
         />,
-        
       ]}
     ></PageHeader>
   );

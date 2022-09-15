@@ -6,6 +6,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
+import PrintIcon from "../../../app/common/icons/PrintIcon";
+import DownloadIcon from "../../../app/common/icons/DownloadIcon";
+import GoBackIcon from "../../../app/common/icons/GoBackIcon";
 
 type ReagentFormHeaderProps = {
   id: string;
@@ -13,9 +16,13 @@ type ReagentFormHeaderProps = {
   handleDownload: () => Promise<void>;
 };
 
-const PromotionFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint, handleDownload }) => {
+const PromotionFormHeader: FC<ReagentFormHeaderProps> = ({
+  id,
+  handlePrint,
+  handleDownload,
+}) => {
   const { promotionStore } = useStore();
-   const { scopes } = promotionStore; 
+  const { scopes } = promotionStore;
   console.log("el id de la promo");
   console.log(id);
   let navigate = useNavigate();
@@ -31,14 +38,21 @@ const PromotionFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint, hand
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Promociones en listas de precios" image="promocion" />}
+      title={
+        <HeaderTitle
+          title="Catálogo de Promociones en listas de precios"
+          image="promocion"
+        />
+      }
       className="header-container"
       extra={[
-        id &&scopes?.imprimir &&  <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-         id && scopes?.descargar &&  (
-          <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />
+        id && scopes?.imprimir && (
+          <PrintIcon key="print" onClick={handlePrint} />
         ),
-        <ImageButton key="back" title="Regresar" image="back" onClick={getBack} />,
+        id && scopes?.descargar && (
+          <DownloadIcon key="doc" onClick={handleDownload} />
+        ),
+        <GoBackIcon key="back" onClick={getBack} />,
       ]}
     ></PageHeader>
   );

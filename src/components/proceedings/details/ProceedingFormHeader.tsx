@@ -6,6 +6,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
 import { useStore } from "../../../app/stores/store";
 import views from "../../../app/util/view";
+import DownloadIcon from "../../../app/common/icons/DownloadIcon";
+import PrintIcon from "../../../app/common/icons/PrintIcon";
+import GoBackIcon from "../../../app/common/icons/GoBackIcon";
 
 const { Search } = Input;
 
@@ -15,37 +18,47 @@ type ProceedingProps = {
   id: string;
 };
 
-const ProceedingFormHeader: FC<ProceedingProps> = ({ handlePrint, handleDownload,id }) => {
-    const { procedingStore } = useStore();
-    const { clearTax } = procedingStore;  
-   console.log("el id de la promo");
-   console.log(id);
-   let navigate = useNavigate();
- 
-   const [searchParams, setSearchParams] = useSearchParams();
- 
-   const getBack = () => {
-     searchParams.delete("mode");
-     setSearchParams(searchParams);
-     clearTax();
-     navigate(`/${views.proceeding}?${searchParams}`);
-     
-   };
+const ProceedingFormHeader: FC<ProceedingProps> = ({
+  handlePrint,
+  handleDownload,
+  id,
+}) => {
+  const { procedingStore } = useStore();
+  const { clearTax } = procedingStore;
+  console.log("el id de la promo");
+  console.log(id);
+  let navigate = useNavigate();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const getBack = () => {
+    searchParams.delete("mode");
+    setSearchParams(searchParams);
+    clearTax();
+    navigate(`/${views.proceeding}?${searchParams}`);
+  };
   /*  console.log(scopes); */
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="EXPEDIENTE"  image="expediente" />}
+      title={<HeaderTitle title="EXPEDIENTE" image="expediente" />}
       className="header-container"
       extra={[
-        id &&/* scopes?.imprimir && */  <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-         id && /* scopes?.descargar *//*  && */  (
-          <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />
+        id && (
+          /* scopes?.imprimir && */ <PrintIcon
+            key="print"
+            onClick={handlePrint}
+          />
         ),
-        <ImageButton key="back" title="Regresar" image="back" onClick={getBack} />,
+        id && (
+          /* scopes?.descargar */ /*  && */ <DownloadIcon
+            key="doc"
+            onClick={handleDownload}
+          />
+        ),
+        <GoBackIcon key="back" onClick={getBack} />,
       ]}
     ></PageHeader>
-    
   );
 };
 

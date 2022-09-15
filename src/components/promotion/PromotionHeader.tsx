@@ -7,6 +7,8 @@ import ImageButton from "../../app/common/button/ImageButton";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../app/stores/store";
 import views from "../../app/util/view";
+import PrintIcon from "../../app/common/icons/PrintIcon";
+import DownloadIcon from "../../app/common/icons/DownloadIcon";
 
 const { Search } = Input;
 
@@ -15,9 +17,12 @@ type PromotionHeaderProps = {
   handleDownload: () => Promise<void>;
 };
 
-const PromotionHeader: FC<PromotionHeaderProps> = ({ handlePrint, handleDownload }) => {
+const PromotionHeader: FC<PromotionHeaderProps> = ({
+  handlePrint,
+  handleDownload,
+}) => {
   const { promotionStore } = useStore();
-   const { scopes, getAll, exportList } = promotionStore; 
+  const { scopes, getAll, exportList } = promotionStore;
 
   const navigate = useNavigate();
 
@@ -26,7 +31,7 @@ const PromotionHeader: FC<PromotionHeaderProps> = ({ handlePrint, handleDownload
   const search = async (search: string | undefined) => {
     search = search === "" ? undefined : search;
 
-     await getAll(search ?? "all"); 
+    await getAll(search ?? "all");
 
     if (search) {
       searchParams.set("search", search);
@@ -40,18 +45,25 @@ const PromotionHeader: FC<PromotionHeaderProps> = ({ handlePrint, handleDownload
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Promociones en listas de precios​" image="promocion" />}
+      title={
+        <HeaderTitle
+          title="Catálogo de Promociones en listas de precios​"
+          image="promocion"
+        />
+      }
       className="header-container"
       extra={[
-         scopes?.imprimir &&  <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-         scopes?.descargar &&  <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />,
+        scopes?.imprimir && <PrintIcon key="print" onClick={handlePrint} />,
+        scopes?.descargar && (
+          <DownloadIcon key="doc" onClick={handleDownload} />
+        ),
         <Search
           key="search"
           placeholder="Buscar"
           defaultValue={searchParams.get("search") ?? ""}
           onSearch={search}
         />,
-         scopes?.crear &&  (
+        scopes?.crear && (
           <Button
             key="new"
             type="primary"
