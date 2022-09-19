@@ -107,6 +107,7 @@ const ClinicResultsFilter = () => {
                   <Col span={8}>
                     <DateRangeInput
                       formProps={{ label: "Fecha", name: "fecha" }}
+                      required={true}
                     />
                   </Col>
                   <Col span={8}>
