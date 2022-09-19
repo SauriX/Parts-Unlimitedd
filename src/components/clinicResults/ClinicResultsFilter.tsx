@@ -2,6 +2,7 @@ import { Button, Col, Collapse, Form, Row } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
+import React from "react";
 import { useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
@@ -107,6 +108,7 @@ const ClinicResultsFilter = () => {
                   <Col span={8}>
                     <DateRangeInput
                       formProps={{ label: "Fecha", name: "fecha" }}
+                      required={true}
                     />
                   </Col>
                   <Col span={8}>
