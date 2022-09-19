@@ -1,3 +1,4 @@
+import "./css/changeStatus.less";
 import { Button, Col, Collapse, Form, Row } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { observer } from "mobx-react-lite";
@@ -17,7 +18,7 @@ const { Panel } = Collapse;
 
 const RequestedStudyFilter = () => {
   const { optionStore, requestedStudyStore } = useStore();
-  const { formValues, getAll, setFormValues, clearFilter } =
+  const { formValues, getAll, setFormValues } =
     requestedStudyStore;
   const {
     branchCityOptions,
@@ -51,7 +52,6 @@ const RequestedStudyFilter = () => {
     setFormValues(newFormValues);
     getAll(filter);
     setLoading(false);
-    setFormValues(formValues);
   };
 
   return (
@@ -81,16 +81,7 @@ const RequestedStudyFilter = () => {
           </Button>,
         ]}
       >
-        <div
-          style={{
-            backgroundColor: "#F2F2F2",
-            borderStyle: "solid",
-            borderColor: "#CBC9C9",
-            borderWidth: "1px",
-            borderRadius: "10px",
-            padding: "15px",
-          }}
-        >
+        <div className="status-container">
           <Form<IRequestedStudyForm>
             {...formItemLayout}
             form={form}
@@ -113,7 +104,6 @@ const RequestedStudyFilter = () => {
                         name: "buscar",
                         label: "Buscar",
                       }}
-                      
                     />
                   </Col>
                   <Col span={8}>

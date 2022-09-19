@@ -1,4 +1,15 @@
-import { Button, Checkbox, Col, Descriptions, Form, Input, PageHeader, Row, Table, Tag } from "antd";
+import {
+  Button,
+  Checkbox,
+  Col,
+  Descriptions,
+  Form,
+  Input,
+  PageHeader,
+  Row,
+  Table,
+  Tag,
+} from "antd";
 import { FC, Fragment, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
@@ -28,6 +39,7 @@ const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
 const [activiti, setActiviti] = useState<string>("");
 const [expandedRowKeys,setexpandedRowKeys]= useState<string[]>([]);
 const [openRows,setOpenRows]=useState<boolean>(false);
+const [expandable, setExpandable] =useState<ExpandableConfig<IRouteList>>();
 useEffect(()=>{
   setexpandedRowKeys(studys!.map((x)=>x.id));
   setOpenRows(true);
@@ -158,13 +170,26 @@ useEffect(()=>{
                       Selecciona
                     </Checkbox>
                   )}
-                  <ImageButton
+                  {x.status == 2 && (
+                    <Checkbox
+                      onChange={(e) => /*  onChange(e, x.id, item.id) */ {}}
+                    >
+                      Selecciona
+                    </Checkbox>
+                  )}
+                  <PrintIcon
+                    key="print"
+                    onClick={() => {
+                      //printTicket(item.order, item.id);
+                    }}
+                  />
+                  {/* <ImageButton
                     title="Imprimir"
                     image="print"
                     onClick={() => {
-                      exportForm(item.id);
+                      //printTicket(item.order, item.id);
                     }}
-                  ></ImageButton>
+                  ></ImageButton> */}
                 </Descriptions.Item>
               </Descriptions>
             </>

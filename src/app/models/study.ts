@@ -15,6 +15,7 @@ export interface IStudyList {
   maquilador: string;
   metodo: string;
   activo: boolean;
+  areaId: number;
 }
 
 export interface IStudyForm {

@@ -39,6 +39,10 @@ export interface IProceedingForm {
   colonian?: string;
   taxData?: ITaxData[];
   sucursal?: string;
+
+  hasWallet: boolean;
+  wallet: number;
+  fechaActivacionMonedero?: Date;
 }
 
 export class SearchMedicalFormValues implements ISearchMedical {
@@ -71,6 +75,9 @@ export class ProceedingFormValues implements IProceedingForm {
   celular = "";
   calle = "";
   colonia = undefined;
+
+  hasWallet = false;
+  wallet = 0;
   constructor(init?: IProceedingForm) {
     Object.assign(this, init);
   }

@@ -5,6 +5,8 @@ import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../app/common/button/ImageButton";
 import { useStore } from "../../app/stores/store";
+import PrintIcon from "../../app/common/icons/PrintIcon";
+import DownloadIcon from "../../app/common/icons/DownloadIcon";
 
 const { Search } = Input;
 
@@ -32,18 +34,8 @@ const EquipmentHeader: FC<EquipmentHeaderProps> = ({ handlePrint }) => {
       title={<HeaderTitle title="Administración de Equipos" image="equipo" />}
       className="header-container"
       extra={[
-        <ImageButton
-          key="print"
-          title="Imprimir"
-          image="print"
-          onClick={handlePrint}
-        />,
-        <ImageButton
-          key="doc"
-          title="Informe"
-          image="doc"
-          onClick={download}
-        />,
+        <PrintIcon key="print" onClick={handlePrint} />,
+        <DownloadIcon key="doc" onClick={download} />,
         <Search
           key="search"
           placeholder="Buscar"

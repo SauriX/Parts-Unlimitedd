@@ -7,6 +7,7 @@ import {
   Popover,
   Table,
   Space,
+  Spin,
 } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {
@@ -43,7 +44,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
   printing,
 }) => {
   const { loyaltyStore } = useStore();
-  const { loyaltys, getAll, create } = loyaltyStore;
+  const { loyaltys, getAll, crearReagendado } = loyaltyStore;
   const [searchParams] = useSearchParams();
 
   let navigate = useNavigate();
@@ -97,9 +98,12 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
               moment(newDate.split(" - ")[1]).toISOString().split("T")[0]
             ),
             fecha: [],
+            precioLista: (loy.precioListaId as string[]).map((x) => ({
+              precioListaId: x,
+            })),
           };
           loyalty.id = "00000000-0000-0000-0000-000000000000";
-          create(loyalty).then((x) => {
+          crearReagendado(loyalty).then((x) => {
             getAll("all");
           });
         }}
@@ -202,13 +206,18 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
       }),
     },
     {
-      ...getDefaultColumnProps("precioLista", "Lista de Precio", {
-        searchState,
-        setSearchState,
-        width: "8%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
+      // ...getDefaultColumnProps("precioLista", "Lista de Precio", {
+      //   searchState,
+      //   setSearchState,
+      //   width: "8%",
+      //   minWidth: 150,
+      //   windowSize: windowWidth,
+      // }),
+      title: "Lista de Precio",
+      key: "precioLista",
+      dataIndex: "precioLista",
+      width: windowWidth < resizeWidth ? 100 : "8%",
+      render: (value, loyaltys) => loyaltys.precioLista.join(", "),
     },
     {
       key: "activo",
@@ -278,7 +287,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
   };
 
   return (
-    <Fragment>
+    <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
       <Table<ILoyaltyList>
         loading={loading || printing}
         size="small"
@@ -290,7 +299,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />
       <div style={{ display: "none" }}>{<LoyaltyTablePrint />}</div>
-    </Fragment>
+    </Spin>
   );
 };
 

@@ -551,6 +551,21 @@ export default class OptionStore {
     }
   };
 
+  studiesOptions: any[] = [];
+  getStudiesOptions = async () => {
+    try {
+      const study = await Study.getActive();
+      this.studiesOptions = study.map((x) => ({
+        key: x.id,
+        value: x.id,
+        label: x.clave + " - " + x.nombre,
+        area: x.areaId,
+      }));
+    } catch (error) {
+      this.studiesOptions = [];
+    }
+  };
+
   departmentAreaOptions: IOptions[] = [];
   getDepartmentAreaOptions = async () => {
     try {
@@ -562,7 +577,6 @@ export default class OptionStore {
         return group;
       }, {});
 
-      console.log(groupby);
       this.departmentAreaOptions = Object.keys(groupby).map((x) => ({
         value: x,
         label: x,

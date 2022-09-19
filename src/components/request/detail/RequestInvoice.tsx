@@ -19,7 +19,9 @@ const RequestInvoice = () => {
       size="small"
     >
       <Descriptions.Item label="Concepto">Total</Descriptions.Item>
-      <Descriptions.Item label="Estudio">{moneyFormatter.format(totals.totalEstudios)}</Descriptions.Item>
+      <Descriptions.Item label="Estudio">
+        {moneyFormatter.format(totals.totalEstudios)}
+      </Descriptions.Item>
       <Descriptions.Item
         label={
           <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -53,7 +55,9 @@ const RequestInvoice = () => {
         ) : (
           <InputNumber<number>
             key={"desc-num"}
-            formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            formatter={(value) =>
+              `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            }
             parser={(value) => Number(value!.replace(/\$\s?|(,*)/g, ""))}
             value={totals.descuento}
             onChange={(value) => {
@@ -98,7 +102,9 @@ const RequestInvoice = () => {
         ) : (
           <InputNumber<number>
             key={"char-num"}
-            formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            formatter={(value) =>
+              `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            }
             parser={(value) => Number(value!.replace(/\$\s?|(,*)/g, ""))}
             value={totals.cargo}
             onChange={(value) => {
@@ -142,7 +148,9 @@ const RequestInvoice = () => {
         ) : (
           <InputNumber<number>
             key={"cop-num"}
-            formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            formatter={(value) =>
+              `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            }
             parser={(value) => Number(value!.replace(/\$\s?|(,*)/g, ""))}
             value={totals.copago}
             onChange={(value) => {
@@ -154,8 +162,12 @@ const RequestInvoice = () => {
           />
         )}
       </Descriptions.Item>
-      <Descriptions.Item label="Total">{moneyFormatter.format(totals.total)}</Descriptions.Item>
-      <Descriptions.Item label="Saldo">{moneyFormatter.format(totals.saldo)}</Descriptions.Item>
+      <Descriptions.Item label="Total">
+        {moneyFormatter.format(totals.total)}
+      </Descriptions.Item>
+      <Descriptions.Item label="Saldo">
+        {moneyFormatter.format(totals.saldo)}
+      </Descriptions.Item>
     </Descriptions>
   );
 };

@@ -4,7 +4,11 @@ import TextInput from "../../../app/common/form/proposal/TextInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
+import {
+  getDefaultColumnProps,
+  IColumns,
+  ISearch,
+} from "../../../app/common/table/utils";
 import { IFormError, IOptions } from "../../../app/models/shared";
 import { ITaxData } from "../../../app/models/taxdata";
 import IconButton from "../../../app/common/button/IconButton";
@@ -21,9 +25,14 @@ type DatosFiscalesFormProps = {
   onSelectRow?: (taxData: ITaxData) => void;
 };
 
-const DatosFiscalesForm = ({ local, recordId, onSelectRow }: DatosFiscalesFormProps) => {
+const DatosFiscalesForm = ({
+  local,
+  recordId,
+  onSelectRow,
+}: DatosFiscalesFormProps) => {
   const { procedingStore, locationStore } = useStore();
-  const { setTax, tax, getTaxData, createTaxData, updateTaxData } = procedingStore;
+  const { setTax, tax, getTaxData, createTaxData, updateTaxData } =
+    procedingStore;
   const { getColoniesByZipCode } = locationStore;
 
   const [form] = Form.useForm<ITaxData>();
@@ -94,19 +103,19 @@ const DatosFiscalesForm = ({ local, recordId, onSelectRow }: DatosFiscalesFormPr
     setLoading(true);
     setErrors([]);
     var taxes: ITaxData[] = local ? [...localTaxData] : [...(tax ?? [])];
-      
+
     newValues.expedienteId = recordId;
     if (newValues.id) {
       var existing = taxes.findIndex((x) => x.id === newValues.id);
       taxes[existing] = newValues;
     } else {
-      
-      newValues.id=`tempId${taxes.length}`;
+      newValues.id = `tempId${taxes.length}`;
       taxes.push(newValues);
     }
 
     if (local) {
-      if (!newValues.id) {
+      if (!newValues.id || newValues.id.startsWith("tempId")) {
+        delete newValues.id;
         const id = await createTaxData(newValues);
         if (id) {
           taxes[taxes.length - 1] = { ...taxes[taxes.length - 1], id };
@@ -186,7 +195,10 @@ const DatosFiscalesForm = ({ local, recordId, onSelectRow }: DatosFiscalesFormPr
             name="taxes"
             onFinish={onFinish}
             onFinishFailed={({ errorFields }) => {
-              const errors = errorFields.map((x) => ({ name: x.name[0].toString(), errors: x.errors }));
+              const errors = errorFields.map((x) => ({
+                name: x.name[0].toString(),
+                errors: x.errors,
+              }));
               setErrors(errors);
             }}
             scrollToFirstError
@@ -325,10 +337,12 @@ const DatosFiscalesForm = ({ local, recordId, onSelectRow }: DatosFiscalesFormPr
             sticky
             columns={columnsEstudios}
             pagination={false}
-            rowKey={(item) => item.id}
+            rowKey={(item) => item.id!}
             dataSource={local ? localTaxData : [...(tax ?? [])]}
             scroll={{ x: "max-content" }}
-            rowClassName={(taxData) => (taxData.id === selectedRow ? "custom-selected-row" : "")}
+            rowClassName={(taxData) =>
+              taxData.id === selectedRow ? "custom-selected-row" : ""
+            }
             onRow={(taxData) => {
               return {
                 onClick: () => {

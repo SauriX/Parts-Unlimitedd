@@ -1,4 +1,4 @@
-import { Table, Spin, Row, Col, Button, DatePicker } from "antd";
+import { Table, Spin, Row, Col, Button, DatePicker, FormInstance } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
@@ -10,6 +10,7 @@ import {
   getDefaultColumnProps,
 } from "../../../../app/common/table/utils";
 import {
+  IRequestGeneral,
   IRequestPartiality,
   IRequestStudy,
   IRequestStudyUpdate,
@@ -17,7 +18,11 @@ import {
 import { useStore } from "../../../../app/stores/store";
 import { status } from "../../../../app/util/catalogs";
 
-const RequestRequest = () => {
+type RequestRequestProps = {
+  formGeneral: FormInstance<IRequestGeneral>;
+};
+
+const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
   const { requestStore, modalStore } = useStore();
   const {
     request,

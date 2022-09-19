@@ -1,7 +1,6 @@
 import { Descriptions, Checkbox } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { useState } from "react";
-import ImageButton from "../../../app/common/button/ImageButton";
 import PrintIcon from "../../../app/common/icons/PrintIcon";
 import {
   IColumns,
@@ -9,7 +8,6 @@ import {
   getDefaultColumnProps,
 } from "../../../app/common/table/utils";
 import { IRequestedStudyList } from "../../../app/models/requestedStudy";
-import { useStore } from "../../../app/stores/store";
 import { status } from "../../../app/util/catalogs";
 
 type expandableProps = {

@@ -1,3 +1,4 @@
+import "./css/changeStatus.less";
 import {
   Button,
   Checkbox,
@@ -34,6 +35,7 @@ import ImageButton from "../../app/common/button/ImageButton";
 import { originOptions, urgencyOptions } from "../../app/stores/optionStore";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../app/util/alerts";
+import PrintIcon from "../../app/common/icons/PrintIcon";
 
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -126,12 +128,10 @@ const SamplingTable: FC<ProceedingTableProps> = ({
   };
 
   const expandableStudyConfig = {
-    
     expandedRowRender: (item: IsamplingList) => (
-      
       <div>
         <h4>Estudios</h4>
-        
+
         {item.estudios.map((x) => {
           return (
             <>
@@ -142,13 +142,22 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                 contentStyle={{ background: "#fff" }}
                 style={{ marginBottom: 5 }}
               >
-                <Descriptions.Item label="Clave" style={{ maxWidth: 30,color:"#000000" }}>
+                <Descriptions.Item
+                  label="Clave"
+                  style={{ maxWidth: 30, color: "#000000" }}
+                >
                   {x.clave}
                 </Descriptions.Item>
-                <Descriptions.Item label="Estudio" style={{ maxWidth: 30,color:"#000000" }}>
+                <Descriptions.Item
+                  label="Estudio"
+                  style={{ maxWidth: 30, color: "#000000" }}
+                >
                   {x.nombre}
                 </Descriptions.Item>
-                <Descriptions.Item label="Estatus" style={{ maxWidth: 30,color:"#000000" }}>
+                <Descriptions.Item
+                  label="Estatus"
+                  style={{ maxWidth: 30, color: "#000000" }}
+                >
                   {x.status == 1 ? "Pendiente" : "Toma de muestra"}
                 </Descriptions.Item>
                 <Descriptions.Item label="Registro" style={{ maxWidth: 30 }}>
@@ -168,13 +177,12 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                       Selecciona
                     </Checkbox>
                   )}
-                  <ImageButton
-                    title="Imprimir"
-                    image="print"
+                  <PrintIcon
+                    key="print"
                     onClick={() => {
                       printTicket(item.order, item.id);
                     }}
-                  ></ImageButton>
+                  />
                 </Descriptions.Item>
               </Descriptions>
             </>
@@ -183,7 +191,6 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       </div>
     ),
     rowExpandable: () => true,
-   
   };
   console.log("Table");
   useEffect(() => {
@@ -210,17 +217,16 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       setLoading(true);
       let studios = [];
       var datas = await getAll(values!);
-      
+
       console.log(datas, "daata");
       setSoliCont(datas?.length!);
-      datas?.forEach((x:any) => studios.push(x.studys));
+      datas?.forEach((x: any) => studios.push(x.studys));
       setStudyCont(studios.length);
       setLoading(false);
     };
 
     if (expedientes.length === 0) {
       readPriceList();
-      
     }
     console.log(getExpandableConfig("estudios"), "config");
     setExpandable(expandableStudyConfig);
@@ -235,8 +241,8 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     setLoading(true);
 
     const reagent = { ...values, ...newValues };
-   var data =await  getAll(reagent);
-   console.log(data,"datas");
+    var data = await getAll(reagent);
+    console.log(data, "datas");
     setLoading(false);
   };
 
@@ -322,8 +328,9 @@ const SamplingTable: FC<ProceedingTableProps> = ({
   return (
     <Fragment>
       <div
+        className="status-container"
         style={{
-          backgroundColor: "#F2F2F2",
+          // backgroundColor: "#F2F2F2",
           height: "auto",
           borderStyle: "solid",
           borderColor: "#CBC9C9",
@@ -356,7 +363,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                     }}
                   />
                 </Col>
-                <Col span={8} style={{textAlign: "right"}}>
+                <Col span={8} style={{ textAlign: "right" }}>
                   <Button
                     type="primary"
                     onClick={() => {
