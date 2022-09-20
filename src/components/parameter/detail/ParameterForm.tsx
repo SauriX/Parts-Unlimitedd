@@ -3,18 +3,13 @@ import {
   Form,
   Row,
   Col,
-  Transfer,
-  Tooltip,
-  Tree,
-  Tag,
   Pagination,
   Button,
   Divider,
   PageHeader,
   Table,
-  InputNumber,
 } from "antd";
-import React, { FC, useEffect, useMemo, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import SwitchInput from "../../../app/common/form/proposal/SwitchInput";
@@ -29,7 +24,6 @@ import {
   IParameterForm,
   ParameterFormValues,
 } from "../../../app/models/parameter";
-import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import ValorType from "./ValorType/ValorType";
 import { IOptions } from "../../../app/models/shared";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
@@ -67,7 +61,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     getPrintFormatsOptions,
     printFormat,
     getParameterOptions,
-    parameterOptions2,
     getUnitOptions,
     UnitOptions,
   } = optionStore;
@@ -76,9 +69,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const { width: windowWidth } = useWindowDimensions();
-  const [targetKeys, setTargetKeys] = useState<string[]>([]);
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
-  const parameter: IParameterForm = new ParameterFormValues();
   let navigate = useNavigate();
   const [values, setValues] = useState<IParameterForm>(
     new ParameterFormValues()
