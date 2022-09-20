@@ -17,7 +17,7 @@ import TextAreaInput from "../../app/common/form/TextAreaInput";
 import TextInput from "../../app/common/form/TextInput";
 import { FC, useState } from "react";
 import GoBackIcon from "../../app/common/icons/GoBackIcon";
-import ClinicalResultsForm from "./ClinicalResultsForm";
+import ClinicalResultsForm from "./desgloce/ClinicalResultsForm";
 import { useNavigate } from "react-router";
 const { Text } = Typography;
 type ClinicalFormProps = {
@@ -47,7 +47,7 @@ const ClinicalResultsHeader: FC<ClinicalFormProps> = ({
   const plainOptions = ["Imprimir logos", "Desmarcar todos", "Marcar todos"];
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
-      <Row justify="space-between">
+      <Row justify="space-between" align="bottom">
         <Col span={6} style={{ textAlign: "left" }}>
           <Pagination
             size="small"
@@ -71,14 +71,14 @@ const ClinicalResultsHeader: FC<ClinicalFormProps> = ({
           <GoBackIcon key="back" onClick={getBack} />,
         </Col>
       </Row>
-      <Divider orientation="left"></Divider>
+      <Divider orientation="left" style={{ marginTop: "10px" }}></Divider>
       <div className="status-container">
         <Form>
           <Row justify="space-between" gutter={[0, 12]}>
-            <Col span={12}>
+            <Col span={11}>
               <TextInput formProps={{ name: "nombre", label: "Nombre" }} />
             </Col>
-            <Col span={4} style={{ alignItems: "left" }}>
+            <Col span={11} style={{ alignItems: "left" }}>
               <Text key="expediente">
                 Expediente: <Text strong></Text>
               </Text>
@@ -86,15 +86,15 @@ const ClinicalResultsHeader: FC<ClinicalFormProps> = ({
                 formProps={{ name: "expediente", label: "Expediente" }}
               /> */}
             </Col>
-          </Row>
-          <Row justify="space-between" gutter={[0, 12]}>
+            {/* </Row> */}
+            {/* <Row justify="space-between" gutter={[0, 12]}> */}
             <Col span={4}>
               <SelectInput
                 formProps={{ name: "genero", label: "Genero" }}
                 options={[]}
               />
             </Col>
-            <Col span={5}>
+            <Col span={4}>
               <DateInput
                 formProps={{
                   name: "fechaNacimiento",
@@ -111,17 +111,17 @@ const ClinicalResultsHeader: FC<ClinicalFormProps> = ({
             <Col span={4}>
               <TextInput formProps={{ name: "celular", label: "Celular" }} />
             </Col>
-          </Row>
-          <Row>
-            <Col span={11}>
+            {/* </Row> */}
+            {/* <Row> */}
+            <Col span={11} style={{ marginLeft: "0%" }}>
               <TextInput formProps={{ name: "compania", label: "Compañía" }} />
             </Col>
             <Col span={11} style={{ textAlign: "right" }}>
               <TextInput formProps={{ name: "medico", label: "Médico" }} />
             </Col>
-          </Row>
-          <Row>
-            <Col span={12}>
+            {/* </Row> */}
+            {/* <Row> */}
+            <Col span={11}>
               <TextAreaInput
                 formProps={{
                   name: "observaciones",

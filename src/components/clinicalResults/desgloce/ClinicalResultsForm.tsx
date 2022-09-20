@@ -1,10 +1,10 @@
 import { Button, Card, Col, Descriptions, Row, Table } from "antd";
 import { observer } from "mobx-react-lite";
 import { Typography } from "antd";
-import useWindowDimensions, { resizeWidth } from "../../app/util/window";
-import { IColumns } from "../../app/common/table/utils";
-import SelectInput from "../../app/common/form/SelectInput";
-import TextAreaInput from "../../app/common/form/TextAreaInput";
+import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
+import { IColumns } from "../../../app/common/table/utils";
+import SelectInput from "../../../app/common/form/SelectInput";
+import TextAreaInput from "../../../app/common/form/TextAreaInput";
 const { Text, Title } = Typography;
 
 const ClinicalResultsForm = () => {
@@ -15,14 +15,35 @@ const ClinicalResultsForm = () => {
       dataIndex: "id",
       title: "Clave",
       align: "left",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: 100,
     },
     {
       key: "Clave",
       dataIndex: "id",
       title: "Estudio",
       align: "left",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: 200,
+    },
+    {
+      key: "Orden",
+      dataIndex: "id",
+      title: "Orden",
+      align: "left",
+      width: 50,
+    },
+    {
+      key: "Estatus",
+      dataIndex: "id",
+      title: "Estatus",
+      align: "left",
+      width: 50,
+    },
+    {
+      key: "Estatus",
+      dataIndex: "id",
+      title: "Seleccionar",
+      align: "left",
+      width: 50,
     },
   ];
   return (
@@ -103,7 +124,7 @@ const ClinicalResultsForm = () => {
       </Row>
       <Row>
         <Col span={24}>
-          <Card style={{ background: "#FFFFBF" }}>
+          <Card className="capture-observartions">
             <Row justify="space-between" gutter={[2, 12]}>
               <Col span={8}>
                 <Text key="expediente">
