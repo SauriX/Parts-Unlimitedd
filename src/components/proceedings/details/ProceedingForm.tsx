@@ -156,6 +156,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   }, [id, getById]);
 
   useEffect(() => {
+    console.log(searchParams.get("mode"))
     if (!profile?.admin) {
       form.setFieldsValue({ sucursal: profile?.sucursal });
     }
@@ -867,122 +868,124 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               </Col>
             </Row>
           </Form>
-          <Row>
-            <Col span={6}>
-              <Button
-                style={{
-                  marginTop: "20px",
-                  marginLeft: "70%",
-                  marginBottom: "20px",
-                }}
-                onClick={() => {
-                  navigate(`/requests/${id}`);
-                }}
-                type="primary"
-              >
-                {" "}
-                Agregar solicitud
-              </Button>
-            </Col>
-            <Col span={6}>
-              <Button
-                style={{
-                  marginTop: "20px",
-                  marginLeft: "70%",
-                  marginBottom: "20px",
-                }}
-                onClick={() => {
-                  navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
-                }}
-                type="primary"
-              >
-                {" "}
-                Agregar cotización
-              </Button>
-            </Col>
-            <Col span={6}>
-              <Button
-                style={{
-                  marginTop: "20px",
-                  marginLeft: "70%",
-                  marginBottom: "20px",
-                }}
-                onClick={() => {
-                  navigate(`/appointments`);
-                }}
-                type="primary"
-              >
-                {" "}
-                Agregar cita
-              </Button>
-            </Col>
-            <Col span={6}>
-              {values.hasWallet ? (
-                <Card
+          {searchParams.get("mode") === "edit" ? (<div>
+            <Row>
+              <Col span={6}>
+                <Button
                   style={{
                     marginTop: "20px",
-                    marginLeft: "10%",
+                    marginLeft: "70%",
                     marginBottom: "20px",
                   }}
-                  bodyStyle={{
-                    backgroundColor: "rgba(255, 255, 0, 1)",
-                    border: 0,
+                  onClick={() => {
+                    navigate(`/requests/${id}`);
                   }}
+                  type="primary"
                 >
-                  <p>Monedero Electronico: {values.wallet}</p>
-                </Card>
-              ) : (
-                ""
-              )}
-              <Button
-                style={{
-                  marginTop: "20px",
-                  marginLeft: "30%",
-                  marginBottom: "20px",
-                }}
-                onClick={() => {
-                  activarMonedero();
-                }}
-                type="primary"
-                disabled={values.hasWallet}
-              >
-                Activar monedero
-              </Button>
-            </Col>
-          </Row>
-          <Divider orientation="left">Solicitud</Divider>
-          <Table<any>
-            loading={loading || printing}
-            size="small"
-            rowKey={(record) => record.id}
-            columns={columns}
-            dataSource={[]}
-            /*    pagination={defaultPaginationProperties} */
-            sticky
-            scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-          />
-          <Divider orientation="left">Presupuestos</Divider>
-          <Table<any>
-            loading={loading || printing}
-            size="small"
-            rowKey={(record) => record.id}
-            columns={columnsP}
-            dataSource={[]}
-            /*    pagination={defaultPaginationProperties} */
-            sticky
-            scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-          />
-          <Divider orientation="left">Cita</Divider>
-          <Table<any>
-            loading={loading || printing}
-            size="small"
-            rowKey={(record) => record.id}
-            columns={columnsC}
-            dataSource={[]}
-            /*    pagination={defaultPaginationProperties} */
-            sticky
-            scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-          />
+                  {" "}
+                  Agregar solicitud
+                </Button>
+              </Col>
+              <Col span={6}>
+                <Button
+                  style={{
+                    marginTop: "20px",
+                    marginLeft: "70%",
+                    marginBottom: "20px",
+                  }}
+                  onClick={() => {
+                    navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
+                  }}
+                  type="primary"
+                >
+                  {" "}
+                  Agregar cotización
+                </Button>
+              </Col>
+              <Col span={6}>
+                <Button
+                  style={{
+                    marginTop: "20px",
+                    marginLeft: "70%",
+                    marginBottom: "20px",
+                  }}
+                  onClick={() => {
+                    navigate(`/appointments`);
+                  }}
+                  type="primary"
+                >
+                  {" "}
+                  Agregar cita
+                </Button>
+              </Col>
+              <Col span={6}>
+                {values.hasWallet ? (
+                  <Card
+                    style={{
+                      marginTop: "20px",
+                      marginLeft: "10%",
+                      marginBottom: "20px",
+                    }}
+                    bodyStyle={{
+                      backgroundColor: "rgba(255, 255, 0, 1)",
+                      border: 0,
+                    }}
+                  >
+                    <p>Monedero Electronico: {values.wallet}</p>
+                  </Card>
+                ) : (
+                  ""
+                )}
+                <Button
+                  style={{
+                    marginTop: "20px",
+                    marginLeft: "30%",
+                    marginBottom: "20px",
+                  }}
+                  onClick={() => {
+                    activarMonedero();
+                  }}
+                  type="primary"
+                  disabled={values.hasWallet}
+                >
+                  Activar monedero
+                </Button>
+              </Col>
+            </Row>
+            <Divider orientation="left">Solicitud</Divider>
+            <Table<any>
+              loading={loading || printing}
+              size="small"
+              rowKey={(record) => record.id}
+              columns={columns}
+              dataSource={[]}
+              /*    pagination={defaultPaginationProperties} */
+              sticky
+              scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+            />
+            <Divider orientation="left">Presupuestos</Divider>
+            <Table<any>
+              loading={loading || printing}
+              size="small"
+              rowKey={(record) => record.id}
+              columns={columnsP}
+              dataSource={[]}
+              /*    pagination={defaultPaginationProperties} */
+              sticky
+              scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+            />
+            <Divider orientation="left">Cita</Divider>
+            <Table<any>
+              loading={loading || printing}
+              size="small"
+              rowKey={(record) => record.id}
+              columns={columnsC}
+              dataSource={[]}
+              /*    pagination={defaultPaginationProperties} */
+              sticky
+              scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+            />
+          </div>) : ("")}
         </div>
       </div>
     </Spin>

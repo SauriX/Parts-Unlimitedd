@@ -7,6 +7,9 @@ import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
 import { idText } from "typescript";
+import PrintIcon from "../../../app/common/icons/PrintIcon";
+import DownloadIcon from "../../../app/common/icons/DownloadIcon";
+import GoBackIcon from "../../../app/common/icons/GoBackIcon";
 
 type PriceListFormHeaderProps = {
   id: string;
@@ -14,7 +17,11 @@ type PriceListFormHeaderProps = {
   handleDownload: () => Promise<void>;
 };
 
-const PriceListFormHeader: FC<PriceListFormHeaderProps> = ({ id, handlePrint, handleDownload }) => {
+const PriceListFormHeader: FC<PriceListFormHeaderProps> = ({
+  id,
+  handlePrint,
+  handleDownload,
+}) => {
   const { priceListStore } = useStore();
   const { scopes } = priceListStore;
 
@@ -31,19 +38,19 @@ const PriceListFormHeader: FC<PriceListFormHeaderProps> = ({ id, handlePrint, ha
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Listas de Precios" image="precio" />}
+      title={
+        <HeaderTitle title="Catálogo de Listas de Precios" image="precio" />
+      }
       className="header-container"
       extra={[
-        
         // !!id && scopes?.descargar && (
-        //   scopes?.imprimir && 
+        //   scopes?.imprimir &&
         //   <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
         //   <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />
         // ),
-        id?<ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />:"",
-        id?<ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />:"",
-
-        <ImageButton key="back" title="Regresar" image="back" onClick={getBack} />,
+        id ? <PrintIcon key="print" onClick={handlePrint} /> : "",
+        id ? <DownloadIcon key="doc" onClick={handleDownload} /> : "",
+        <GoBackIcon key="back" onClick={getBack} />,
       ]}
     ></PageHeader>
   );

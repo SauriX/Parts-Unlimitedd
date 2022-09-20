@@ -7,6 +7,9 @@ import ImageButton from "../../../app/common/button/ImageButton";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
 import views from "../../../app/util/view";
+import DownloadIcon from "../../../app/common/icons/DownloadIcon";
+import GoBackIcon from "../../../app/common/icons/GoBackIcon";
+import PrintIcon from "../../../app/common/icons/PrintIcon";
 
 const { Search } = Input;
 
@@ -16,18 +19,22 @@ type apointmentHeaderFormProps = {
   id: string;
 };
 
-const ApointmentHeaderForm: FC<apointmentHeaderFormProps> = ({ handlePrint, handleDownload,id }) => {
+const ApointmentHeaderForm: FC<apointmentHeaderFormProps> = ({
+  handlePrint,
+  handleDownload,
+  id,
+}) => {
   // const { apointmentStore } = useStore();
-  //const { /* scopes, */ getAll, exportList } = apointmentStore; 
+  //const { /* scopes, */ getAll, exportList } = apointmentStore;
 
   const navigate = useNavigate();
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [tipo,setTipo]=useState(searchParams.get("type"));
+  const [tipo, setTipo] = useState(searchParams.get("type"));
   const search = async (search: string | undefined) => {
     search = search === "" ? undefined : search;
 
-  /*   await getAll(search ?? "all"); */
+    /*   await getAll(search ?? "all"); */
 
     if (search) {
       searchParams.set("search", search);
@@ -41,19 +48,28 @@ const ApointmentHeaderForm: FC<apointmentHeaderFormProps> = ({ handlePrint, hand
     searchParams.delete("mode");
     setSearchParams(searchParams);
     navigate(`/${views.appointment}?${searchParams}`);
-    
   };
   return (
     <PageHeader
       ghost={false}
-      title={tipo=="laboratorio"&&<HeaderTitle title={`Cita laboratorio`} image="cita" />||<HeaderTitle title={`Cita domicilio`} image="domicilio" />}
+      title={
+        (tipo == "laboratorio" && (
+          <HeaderTitle title={`Cita laboratorio`} image="cita" />
+        )) || <HeaderTitle title={`Cita domicilio`} image="domicilio" />
+      }
       className="header-container"
       extra={[
-        id &&/* scopes?.imprimir && */  <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-         id && /* scopes?.descargar *//*  && */  (
-          <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />
+        id && (
+          /* scopes?.imprimir && */
+          <PrintIcon key="print" onClick={handlePrint} />
         ),
-        <ImageButton key="back" title="Regresar" image="back" onClick={getBack} />,
+        id && (
+          /* scopes?.descargar */ /*  && */ <DownloadIcon
+            key="doc"
+            onClick={handleDownload}
+          />
+        ),
+        <GoBackIcon key="back" onClick={getBack} />,
       ]}
     ></PageHeader>
   );

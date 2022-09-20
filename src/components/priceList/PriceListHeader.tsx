@@ -6,6 +6,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../app/common/button/ImageButton";
 import { useStore } from "../../app/stores/store";
 import views from "../../app/util/view";
+import PrintIcon from "../../app/common/icons/PrintIcon";
+import DownloadIcon from "../../app/common/icons/DownloadIcon";
 
 const { Search } = Input;
 
@@ -14,9 +16,12 @@ type PriceListHeaderProps = {
   handleDownload: () => Promise<void>;
 };
 
-const PriceListHeader: FC<PriceListHeaderProps> = ({ handlePrint, handleDownload }) => {
+const PriceListHeader: FC<PriceListHeaderProps> = ({
+  handlePrint,
+  handleDownload,
+}) => {
   const { priceListStore } = useStore();
-  const { scopes, getAll,} = priceListStore;
+  const { scopes, getAll } = priceListStore;
 
   const navigate = useNavigate();
 
@@ -39,11 +44,15 @@ const PriceListHeader: FC<PriceListHeaderProps> = ({ handlePrint, handleDownload
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Catálogo de Listas de Precios" image="precio" />}
+      title={
+        <HeaderTitle title="Catálogo de Listas de Precios" image="precio" />
+      }
       className="header-container"
       extra={[
-        scopes?.imprimir && <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        scopes?.descargar && <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />,
+        scopes?.imprimir && <PrintIcon key="print" onClick={handlePrint} />,
+        scopes?.descargar && (
+          <DownloadIcon key="doc" onClick={handleDownload} />
+        ),
         <Search
           key="search"
           placeholder="Buscar"

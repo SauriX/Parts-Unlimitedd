@@ -7,6 +7,8 @@ import ImageButton from "../../app/common/button/ImageButton";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../app/stores/store";
 import views from "../../app/util/view";
+import PrintIcon from "../../app/common/icons/PrintIcon";
+import DownloadIcon from "../../app/common/icons/DownloadIcon";
 
 const { Search } = Input;
 
@@ -15,8 +17,11 @@ type QuotationHeaderProps = {
   handleDownload: () => Promise<void>;
 };
 
-const QuotationHeader: FC<QuotationHeaderProps> = ({ handlePrint, handleDownload }) => {
-/*   const {  } = useStore();
+const QuotationHeader: FC<QuotationHeaderProps> = ({
+  handlePrint,
+  handleDownload,
+}) => {
+  /*   const {  } = useStore();
   const { scopes, getAll, exportList } = ; */
 
   const navigate = useNavigate();
@@ -26,7 +31,7 @@ const QuotationHeader: FC<QuotationHeaderProps> = ({ handlePrint, handleDownload
   const search = async (search: string | undefined) => {
     search = search === "" ? undefined : search;
 
-  /*   await getAll(search ?? "all"); */
+    /*   await getAll(search ?? "all"); */
 
     if (search) {
       searchParams.set("search", search);
@@ -43,20 +48,24 @@ const QuotationHeader: FC<QuotationHeaderProps> = ({ handlePrint, handleDownload
       title={<HeaderTitle title="Catálogo de Cotizaciones" />}
       className="header-container"
       extra={[
-        /* scopes?.imprimir && */ <ImageButton key="print" title="Imprimir" image="print" onClick={handlePrint} />,
-        /* scopes?.descargar && */ <ImageButton key="doc" title="Informe" image="doc" onClick={handleDownload} />,
-        /* scopes?.crear && */ (
-          <Button
-            key="new"
-            type="primary"
-            onClick={() => {
-              navigate(`/${views.quotatiion}/new?${searchParams}&mode=edit`);
-            }}
-            icon={<PlusOutlined />}
-          >
-            Nuevo
-          </Button>
-        ),
+        /* scopes?.imprimir && */ <PrintIcon
+          key="print"
+          onClick={handlePrint}
+        />,
+        /* scopes?.descargar && */ <DownloadIcon
+          key="doc"
+          onClick={handleDownload}
+        />,
+        /* scopes?.crear && */ <Button
+          key="new"
+          type="primary"
+          onClick={() => {
+            navigate(`/${views.quotatiion}/new?${searchParams}&mode=edit`);
+          }}
+          icon={<PlusOutlined />}
+        >
+          Nuevo
+        </Button>,
       ]}
     ></PageHeader>
   );
