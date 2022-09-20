@@ -29,15 +29,21 @@ import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import DateInput from "../../../app/common/form/proposal/DateInput";
 import { toJS } from "mobx";
 import alerts from "../../../app/util/alerts";
+import { useNavigate } from "react-router";
+import views from "../../../app/util/view";
 
 const { Search } = Input;
 const { Paragraph, Title } = Typography;
 
 const RequestWee = () => {
-  const { optionStore, weeClinicStore, procedingStore } = useStore();
+  const { optionStore, weeClinicStore, procedingStore, modalStore } =
+    useStore();
   const { branchCityOptions, getBranchCityOptions } = optionStore;
+  const { closeModal } = modalStore;
   const { Laboratorio_BusquedaFolios } = weeClinicStore;
-  const { coincidencias, create } = procedingStore;
+  const { coincidencias, create: createRecord } = procedingStore;
+
+  const navigate = useNavigate();
 
   const [form] = Form.useForm<IProceedingForm>();
 
@@ -84,14 +90,16 @@ const RequestWee = () => {
   }, [getBranchCityOptions]);
 
   const onSearch = async (value: string) => {
-    setLoading(true);
-    const folios = await Laboratorio_BusquedaFolios(value);
-    setLoading(false);
-    console.log(folios);
-    if (folios && folios.length > 0) {
-      setService(folios[0]);
-    } else {
-      setService(undefined);
+    if (value) {
+      setLoading(true);
+      const folios = await Laboratorio_BusquedaFolios(value);
+      setLoading(false);
+      console.log(folios);
+      if (folios && folios.length > 0) {
+        setService(folios[0]);
+      } else {
+        setService(undefined);
+      }
     }
   };
 
@@ -100,25 +108,48 @@ const RequestWee = () => {
       setLoading(true);
       values.nombre = service.nombre;
       values.apellido = service.paterno + " " + service.materno;
+      values.sexo = service.codGenero;
       const coincidences = await coincidencias(values);
       setCoincidences(coincidences);
       setRecord(values);
       setLoading(false);
 
       if (coincidences.length === 0) {
-        alerts.confirm(
-          "¿Desea crear la solicitud?",
-          `Se creará un expediente para ${service.nombreCompleto} y se registrará la solicitud`,
-          async () => {
-            alerts.success("Solicitud creada");
-          }
-        );
+        createNewRecord(values);
       }
     }
   };
 
-  const createRecord = async (newRecord?: IProceedingForm) => {
-    const data = newRecord ?? toJS(record);
+  const createNewRecord = async (newRecord?: IProceedingForm) => {
+    alerts.confirm(
+      "¿Desea crear la solicitud?",
+      `Se creará un expediente para ${
+        service!.nombreCompleto
+      } y se registrará la solicitud`,
+      async () => {
+        const data = newRecord ?? (toJS(record) as IProceedingForm);
+        setLoading(true);
+        const recordId = await createRecord(data);
+        setLoading(false);
+        if (recordId) {
+          navigate(`/${views.request}/${recordId}`);
+          closeModal();
+        }
+      }
+    );
+  };
+
+  const createFromExistingRecord = async (record: IProceedingList) => {
+    alerts.confirm(
+      "¿Desea crear la solicitud?",
+      `Se registrará una solicitud para ${record.nomprePaciente}`,
+      async () => {
+        if (record) {
+          navigate(`/${views.request}/${record.id}`);
+          closeModal();
+        }
+      }
+    );
   };
 
   return (
@@ -260,13 +291,16 @@ const RequestWee = () => {
                   onClick={() => {
                     form.resetFields();
                     setService(undefined);
+                    setCoincidences([]);
                   }}
                 >
                   Cancelar
                 </Button>
-                <Button type="primary" onClick={() => form.submit()}>
-                  Aceptar
-                </Button>
+                {coincidences.length === 0 && (
+                  <Button type="primary" onClick={() => form.submit()}>
+                    Aceptar
+                  </Button>
+                )}
               </Col>
             </Row>
           </Form>
@@ -287,14 +321,16 @@ const RequestWee = () => {
             rowSelection={{
               type: "radio",
               onSelect: (record) => {
-                console.log(record);
+                createFromExistingRecord(record);
               },
             }}
             scroll={{ x: "auto", y: 500 }}
           />
           <Row style={{ marginTop: 12 }}>
             <Col span={24} style={{ textAlign: "right" }}>
-              <Button type="primary">Continuar con expediente nuevo</Button>
+              <Button type="primary" onClick={() => createNewRecord()}>
+                Continuar con expediente nuevo
+              </Button>
             </Col>
           </Row>
         </>
