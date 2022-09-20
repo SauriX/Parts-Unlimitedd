@@ -270,7 +270,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               reagent.taxData = tax;
 
               if (!reagent.id) {
-                success = await create(reagent);
+                success = (await create(reagent)) != null;
               } else {
                 success = await update(reagent);
               }
@@ -293,7 +293,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       let success = false;
       reagent.taxData = tax;
       if (!reagent.id) {
-        success = await create(reagent);
+        success = (await create(reagent)) != null;
       } else {
         success = await update(reagent);
       }

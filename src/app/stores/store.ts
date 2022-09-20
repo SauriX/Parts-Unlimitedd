@@ -35,6 +35,7 @@ import CashRegisterStore from "./cashRegisterStore";
 import RequestedStudyStore from "./requestedStudyStore";
 import EquipmentMantainStore from "./EquipentMantainStore";
 import TrackingOrderStore from "./trackingOrderStore";
+import WeeClinicStore from "./weeClinicStore";
 
 configure({
   enforceActions: "never",
@@ -75,6 +76,7 @@ interface Store {
   samplig: SamplingStore;
   requestedStudyStore: RequestedStudyStore;
   equipmentMantainStore: EquipmentMantainStore;
+  weeClinicStore: WeeClinicStore;
 }
 
 export const store: Store = {
@@ -112,6 +114,7 @@ export const store: Store = {
   samplig: new SamplingStore(),
   requestedStudyStore: new RequestedStudyStore(),
   equipmentMantainStore: new EquipmentMantainStore(),
+  weeClinicStore: new WeeClinicStore(),
 };
 
 export const StoreContext = createContext(store);

@@ -6,7 +6,11 @@ import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import { IRequestFilter } from "../../../app/models/request";
-import { originOptions, studyStatusOptions, urgencyOptions } from "../../../app/stores/optionStore";
+import {
+  originOptions,
+  studyStatusOptions,
+  urgencyOptions,
+} from "../../../app/stores/optionStore";
 import { useStore } from "../../../app/stores/store";
 import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
@@ -34,7 +38,12 @@ const RequestFilter = () => {
     getMedicOptions();
     getCompanyOptions();
     getDepartmentOptions();
-  }, [getBranchCityOptions, getMedicOptions, getCompanyOptions, getDepartmentOptions]);
+  }, [
+    getBranchCityOptions,
+    getMedicOptions,
+    getCompanyOptions,
+    getDepartmentOptions,
+  ]);
 
   const onFinish = (values: IRequestFilter) => {
     const filter = { ...values };
@@ -72,73 +81,86 @@ const RequestFilter = () => {
           </Button>,
         ]}
       >
-        <Form<IRequestFilter> {...formItemLayout} form={form} onFinish={onFinish} size="small">
-          <Row gutter={[0, 12]}>
-            <Col span={8}>
-              <SelectInput
-                formProps={{
-                  name: "tipoFecha",
-                  label: "Fechas por",
-                }}
-                options={[
-                  { value: 1, label: "Solicitudes hechas" },
-                  { value: 2, label: "Solicitudes a entregar" },
-                ]}
-              />
-            </Col>
-            <Col span={8}>
-              <DateRangeInput formProps={{ name: "fechas", label: "Fechas" }} />
-            </Col>
-            <Col span={8}>
-              <TextInput formProps={{ name: "clave", label: "Clave" }} />
-            </Col>
-            <Col span={8}>
-              <SelectInput
-                formProps={{ name: "procedencias", label: "Procedencia" }}
-                multiple
-                options={originOptions}
-              />
-            </Col>
-            <Col span={8}>
-              <SelectInput
-                formProps={{ name: "urgencias", label: "Tipo solicitud" }}
-                multiple
-                options={urgencyOptions}
-              />
-            </Col>
-            <Col span={8}>
-              <SelectInput
-                formProps={{ name: "estatus", label: "Estatus" }}
-                multiple
-                options={studyStatusOptions}
-              />
-            </Col>
-            <Col span={8}>
-              <SelectInput
-                formProps={{ name: "departamentos", label: "Departamento" }}
-                multiple
-                options={departmentOptions}
-              />
-            </Col>
-            <Col span={8}>
-              <SelectInput
-                formProps={{ name: "sucursales", label: "Sucursal" }}
-                multiple
-                options={branchCityOptions}
-              />
-            </Col>
-            <Col span={8}>
-              <SelectInput
-                formProps={{ name: "compañias", label: "Compañia" }}
-                multiple
-                options={companyOptions}
-              />
-            </Col>
-            <Col span={8}>
-              <SelectInput formProps={{ name: "medicos", label: "Médico" }} multiple options={medicOptions} />
-            </Col>
-          </Row>
-        </Form>
+        <div className="status-container">
+          <Form<IRequestFilter>
+            {...formItemLayout}
+            form={form}
+            onFinish={onFinish}
+            size="small"
+          >
+            <Row gutter={[0, 12]}>
+              <Col span={8}>
+                <SelectInput
+                  formProps={{
+                    name: "tipoFecha",
+                    label: "Fechas por",
+                  }}
+                  options={[
+                    { value: 1, label: "Solicitudes hechas" },
+                    { value: 2, label: "Solicitudes a entregar" },
+                  ]}
+                />
+              </Col>
+              <Col span={8}>
+                <DateRangeInput
+                  formProps={{ name: "fechas", label: "Fechas" }}
+                />
+              </Col>
+              <Col span={8}>
+                <TextInput formProps={{ name: "clave", label: "Clave" }} />
+              </Col>
+              <Col span={8}>
+                <SelectInput
+                  formProps={{ name: "procedencias", label: "Procedencia" }}
+                  multiple
+                  options={originOptions}
+                />
+              </Col>
+              <Col span={8}>
+                <SelectInput
+                  formProps={{ name: "urgencias", label: "Tipo solicitud" }}
+                  multiple
+                  options={urgencyOptions}
+                />
+              </Col>
+              <Col span={8}>
+                <SelectInput
+                  formProps={{ name: "estatus", label: "Estatus" }}
+                  multiple
+                  options={studyStatusOptions}
+                />
+              </Col>
+              <Col span={8}>
+                <SelectInput
+                  formProps={{ name: "departamentos", label: "Departamento" }}
+                  multiple
+                  options={departmentOptions}
+                />
+              </Col>
+              <Col span={8}>
+                <SelectInput
+                  formProps={{ name: "sucursales", label: "Sucursal" }}
+                  multiple
+                  options={branchCityOptions}
+                />
+              </Col>
+              <Col span={8}>
+                <SelectInput
+                  formProps={{ name: "compañias", label: "Compañia" }}
+                  multiple
+                  options={companyOptions}
+                />
+              </Col>
+              <Col span={8}>
+                <SelectInput
+                  formProps={{ name: "medicos", label: "Médico" }}
+                  multiple
+                  options={medicOptions}
+                />
+              </Col>
+            </Row>
+          </Form>
+        </div>
       </Panel>
     </Collapse>
   );
