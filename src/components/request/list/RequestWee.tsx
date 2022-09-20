@@ -47,7 +47,6 @@ const RequestWee = () => {
 
   const [form] = Form.useForm<IProceedingForm>();
 
-  const [record, setRecord] = useState<IProceedingForm>();
   const [service, setService] = useState<IWeeLabBusquedaFolios>();
   const [coincidences, setCoincidences] = useState<IProceedingList[]>([]);
   const [loading, setLoading] = useState(false);
@@ -96,7 +95,17 @@ const RequestWee = () => {
       setLoading(false);
       console.log(folios);
       if (folios && folios.length > 0) {
-        setService(folios[0]);
+        const service = folios[0];
+        const values: any = {
+          nombre: service.nombre,
+          apellido: service.paterno + " " + service.materno,
+          sucursal: "00000000-0000-0000-0000-000000000000",
+        };
+        setLoading(true);
+        const coincidences = await coincidencias(values);
+        setLoading(false);
+        setCoincidences(coincidences);
+        setService(service);
       } else {
         setService(undefined);
       }
@@ -105,29 +114,21 @@ const RequestWee = () => {
 
   const onFinish = async (values: IProceedingForm) => {
     if (service) {
-      setLoading(true);
       values.nombre = service.nombre;
       values.apellido = service.paterno + " " + service.materno;
       values.sexo = service.codGenero;
-      const coincidences = await coincidencias(values);
-      setCoincidences(coincidences);
-      setRecord(values);
-      setLoading(false);
-
-      if (coincidences.length === 0) {
-        createNewRecord(values);
-      }
+      createNewRecord(values);
     }
   };
 
-  const createNewRecord = async (newRecord?: IProceedingForm) => {
+  const createNewRecord = async (newRecord: IProceedingForm) => {
     alerts.confirm(
       "¿Desea crear la solicitud?",
       `Se creará un expediente para ${
         service!.nombreCompleto
       } y se registrará la solicitud`,
       async () => {
-        const data = newRecord ?? (toJS(record) as IProceedingForm);
+        const data = newRecord;
         setLoading(true);
         const recordId = await createRecord(data);
         setLoading(false);
@@ -328,7 +329,7 @@ const RequestWee = () => {
           />
           <Row style={{ marginTop: 12 }}>
             <Col span={24} style={{ textAlign: "right" }}>
-              <Button type="primary" onClick={() => createNewRecord()}>
+              <Button type="primary" onClick={() => form.submit()}>
                 Continuar con expediente nuevo
               </Button>
             </Col>
