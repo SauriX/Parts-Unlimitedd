@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import Parameter from "../api/parameter";
-import { IParameterForm, IParameterList, Itipovalor, ItipoValorForm } from "../models/parameter";
+import { IParameterForm, IParameterList, IReagentList, Itipovalor, ItipoValorForm } from "../models/parameter";
 import alerts from "../util/alerts";
 import messages from "../util/messages";
 import responses from "../util/responses";
@@ -11,6 +11,7 @@ export default class ParameterStore {
     makeAutoObservable(this);
   }
   parameters: IParameterList[] = [];
+  reactivos: IReagentList [] = [];
   parameter?: IParameterForm;
   ValueTipe?: ItipoValorForm;
   ValuesTipe: ItipoValorForm[] = [];

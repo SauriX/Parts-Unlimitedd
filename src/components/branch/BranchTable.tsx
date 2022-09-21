@@ -149,7 +149,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       <div ref={componentRef}>
       <PageHeader
       ghost={false} 
-      title={<HeaderTitle title="sucursales" image="laboratorio" />}
+      title={<HeaderTitle title="Sucursales" image="laboratorio" />}
       className="header-container"
   ></PageHeader>
   <Divider className="header-divider" />

@@ -29,6 +29,7 @@ export interface IParameterForm {
   FormatoImpresionId?: number;
   funciones?: string;
   parametros?: string;
+  reactivos: IReagentList[];
 }
 export interface ItipoValorForm {
   id?: string;
@@ -49,10 +50,26 @@ export interface ItipoValorForm {
   descripcionTexto?: string | "";
   descripcionParrafo?: string | "";
 }
+
+export interface IReagentList {
+  id: string;
+  seleccion: boolean;
+  nombreContpaq: string;
+  claveContpaq: string;
+  nombreReactivo: string;
+}
+
+export interface IReagentForm {
+  id: string;
+  reactivo: string[];
+  seleccion: boolean;
+}
+
 export interface Itipovalor{
   values:ItipoValorForm[],
   idParameter:String,
 }
+
 export class ParameterFormValues implements IParameterForm {
   id = "";
   clave = "";
@@ -69,6 +86,7 @@ export class ParameterFormValues implements IParameterForm {
   fcsi = "";
   activo = false;
   estudios: IStudyList[] = [];
+  reactivos: IReagentList[] = [];
   FormatoImpresionId = undefined;
 
   constructor(init?: IParameterForm) {
