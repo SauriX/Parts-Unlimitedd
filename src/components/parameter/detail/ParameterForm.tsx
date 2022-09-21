@@ -22,6 +22,7 @@ import messages from "../../../app/util/messages";
 import { observer } from "mobx-react-lite";
 import {
   IParameterForm,
+  IReagentList,
   ParameterFormValues,
 } from "../../../app/models/parameter";
 import ValorType from "./ValorType/ValorType";
@@ -50,7 +51,7 @@ const functionOptions: IOptions[] = [
 
 const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
   const { parameterStore, optionStore } = useStore();
-  const { getAll, parameters, getById, create, update } = parameterStore;
+  const { getAll, parameters, getById, create, update, reactivos } = parameterStore;
   const {
     getDepartmentOptions,
     departmentOptions,
@@ -89,6 +90,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     { value: 9, label: "Etiqueta" },
     { value: 10, label: "Observación" },
   ];
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   useEffect(() => {
     const readuser = async (idUser: string) => {
@@ -145,6 +147,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
       await getParameterOptions();
     };
     read();
+    console.log("Reactivos" + reactivos)
   }, [getParameterOptions]);
   const CheckReadOnly = () => {
     let result = false;
@@ -231,6 +234,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     searchedText: "",
     searchedColumn: "",
   });
+
   const columns: IColumns<IStudyList> = [
     {
       ...getDefaultColumnProps("id", "Clave Estudio", {
@@ -249,6 +253,42 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
       }),
     },
   ];
+
+  const columnsReagent: IColumns<IReagentList> = [
+    {
+      ...getDefaultColumnProps("nombreReactivo", "Reactivo", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("claveContpaq", "Clave Contpaq", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("nombreContpaq", "Nombre Contpaq", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+  ];
+
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
 
   return (
     <Spin spinning={loading || load}>
@@ -531,6 +571,25 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                 scroll={{
                   x: windowWidth < resizeWidth ? "max-content" : "auto",
                 }}
+              />
+              <PageHeader
+                ghost={false}
+                title={
+                  <HeaderTitle title="Reactivos donde se encuentra el parámetro" />
+                }
+                className="header-container"
+              ></PageHeader>
+              <Divider className="header-divider" />
+              <Table<IReagentList>
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columnsReagent}
+                pagination={false}
+                dataSource={[...(values.reactivos ?? [])]}
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
+                rowSelection={rowSelection}
               />
             </Col>
           </Row>
