@@ -1,8 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { PageHeader, Pagination, Typography } from "antd";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
-import React, { FC } from "react";
-import GoBackIcon from "../../app/common/icons/GoBackIcon";
+import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
