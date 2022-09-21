@@ -1,6 +1,10 @@
 import { Button, Col, Form, Row, Typography } from "antd";
 import React from "react";
-import { ExclamationCircleOutlined, UserOutlined, LockOutlined } from "@ant-design/icons";
+import {
+  ExclamationCircleOutlined,
+  UserOutlined,
+  LockOutlined,
+} from "@ant-design/icons";
 import TextInput from "../form/proposal/TextInput";
 import PasswordInput from "../form/proposal/PasswordInput";
 
@@ -13,7 +17,9 @@ type Props = {
 const AdminCredsComponent = ({ getResult }: Props) => {
   const [form] = Form.useForm<any>();
 
-  const onFinish = () => {};
+  const onFinish = () => {
+    getResult(true);
+  };
 
   return (
     <Row gutter={[12, 12]}>
@@ -21,11 +27,18 @@ const AdminCredsComponent = ({ getResult }: Props) => {
         <ExclamationCircleOutlined style={{ color: "orange", fontSize: 48 }} />
       </Col>
       <Col span={24}>
-        <Paragraph>Tu perfil no cuenta con los privilegios para realizar esta acción.</Paragraph>
+        <Paragraph>
+          Tu perfil no cuenta con los privilegios para realizar esta acción.
+        </Paragraph>
         <Paragraph>Favor de ingresar los accesos administrativos.</Paragraph>
       </Col>
       <Col span={24}>
-        <Form<any> form={form} name="login" className="login-form" onFinish={onFinish}>
+        <Form<any>
+          form={form}
+          name="login"
+          className="login-form"
+          onFinish={onFinish}
+        >
           <Row gutter={[12, 12]}>
             <Col md={12} xs={24}>
               <TextInput

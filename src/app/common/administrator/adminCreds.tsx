@@ -11,11 +11,7 @@ export const verifyAdminCreds = () => {
       body: (
         <AdminCredsComponent
           getResult={(idAdmin) => {
-            if (idAdmin) {
-              resolve(true);
-            } else {
-              resolve(false);
-            }
+            resolve(idAdmin);
             closeModal();
           }}
         />
