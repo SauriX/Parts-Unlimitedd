@@ -74,18 +74,32 @@ const SamplingTable: FC<ProceedingTableProps> = ({
   const { width: windowWidth } = useWindowDimensions();
   const [expandable, setExpandable] =
     useState<ExpandableConfig<IsamplingList>>();
+    const [expandedRowKeys,setexpandedRowKeys]= useState<string[]>([]);
   const hasFooterRow = true;
   const [studyCont, setStudyCont] = useState(0);
   const [soliCont, setSoliCont] = useState(0);
   const [loading, setLoading] = useState(false);
   const [activiti, setActiviti] = useState<string>("");
+  const [openRows,setOpenRows]=useState<boolean>(false);
   //const [search,SetSearch] = useState<ISearchMedical>(new SearchMedicalFormValues())
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-
-  useEffect(() => {});
+  const togleRows =()=>{
+    if(openRows){
+      setOpenRows(false);
+      setexpandedRowKeys([]);
+    }else{
+      
+      setOpenRows(true);
+      setexpandedRowKeys(studys!.map((x)=>x.id));
+    }
+  }
+  useEffect(()=>{
+    setexpandedRowKeys(studys!.map((x)=>x.id));
+    setOpenRows(true);
+  },[studys]);
 
   const onChange = (e: CheckboxChangeEvent, id: number, solicitud: string) => {
     var data = ids;
@@ -232,7 +246,19 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     setExpandable(expandableStudyConfig);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
-
+  const onExpand = (isExpanded:boolean,record:IsamplingList)=>{
+    let expandRows:string[]= expandedRowKeys;
+    if(isExpanded){
+      expandRows.push(record.id);
+    }
+    else{
+      const index = expandRows.findIndex(x=>x===record.id);
+      if(index> -1){
+        expandRows.splice(index,1);
+      }
+    }
+    setexpandedRowKeys(expandRows);
+}
   useEffect(() => {
     console.log(activiti, "useffect");
     setExpandable(expandableStudyConfig);
@@ -506,6 +532,23 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       <br />
       <br />
       <Fragment>
+      <div style={{ textAlign: "right", marginBottom: 10 }}>
+
+<Button
+
+  type="primary"
+
+  onClick={togleRows}
+
+  style={{ marginRight: 10 }}
+
+>
+
+  {!openRows ? "Abrir tabla" : "Cerrar tabla"}
+
+</Button>
+
+</div>
         <Table<IsamplingList>
           loading={loading}
           size="small"
@@ -515,14 +558,8 @@ const SamplingTable: FC<ProceedingTableProps> = ({
           dataSource={[...studys]}
           scroll={{ y: 500 }}
           //(rowClassName={(item) => (item.claveMedico == "Total" || item.paciente === "Total" ? "Resumen Total" : "")}
-          expandable={expandable}
+          expandable={{...expandable,onExpand:onExpand,expandedRowKeys:expandedRowKeys}}
         />
-        <div style={{ textAlign: "right", marginTop: 10 }}>
-          <Tag color="lime">
-            {!hasFooterRow ? studys.length : Math.max(studys.length - 1, 0)}{" "}
-            Registros
-          </Tag>
-        </div>
       </Fragment>
     </Fragment>
   );

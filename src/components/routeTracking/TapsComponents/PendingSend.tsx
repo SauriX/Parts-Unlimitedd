@@ -173,7 +173,7 @@ useEffect(()=>{
                   )}
                   {x.status == 2 && (
                     <Checkbox
-                      onChange={(e) => /*  onChange(e, x.id, item.id) */ {}}
+                      onChange={(e) =>   onChange(e, x.id, item.id) }
                     >
                       Selecciona
                     </Checkbox>
@@ -181,7 +181,7 @@ useEffect(()=>{
                   <PrintIcon
                     key="print"
                     onClick={() => {
-                      //printTicket(item.order, item.id);
+                     //  printTicket(item.order, item.id);
                     }}
                   />
                   {/* <ImageButton
@@ -244,12 +244,14 @@ useEffect(()=>{
           }),
         },
         {
-          ...getDefaultColumnProps("status", "Estatus", {
-            searchState,
-            setSearchState,
-            width: "15%",
-          }),
+          key: "editar",
+          dataIndex: "id",
+          title: "Estatus",
+          align: "center",
+          width:  "10%",
+          render: (value) => (value ? "Activo" : "Inactivo"),
         },
+    
         {
           key: "editar",
           dataIndex: "id",
@@ -273,13 +275,12 @@ useEffect(()=>{
           title: "Impresion",
           align: "center",
           width:  "10%",
-          render: (value) => (
-            <IconButton
-              title="Editar ruta"
-              icon={<EditOutlined />}
-              onClick={() => {
-               
-              }}
+          render: (value,item) => (
+            <PrintIcon
+                    key="print"
+                    onClick={() => {
+                      printTicket(value, item.id);
+                    }}
             />
           ),
         },
