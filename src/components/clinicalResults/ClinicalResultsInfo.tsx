@@ -15,7 +15,7 @@ import SelectInput from "../../app/common/form/SelectInput";
 import TextAreaInput from "../../app/common/form/TextAreaInput";
 import TextInput from "../../app/common/form/TextInput";
 import { FC, useState } from "react";
-import ClinicalResultsForm from "./desgloce/ClinicalResultsForm";
+import ClinicalResultsForm from "./observaciones/ClinicalResultsForm";
 import { useNavigate } from "react-router";
 import ClinicalResultsHeader from "./ClinicalResultsHeader";
 
