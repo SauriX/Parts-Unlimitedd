@@ -30,6 +30,8 @@ const messages = {
     password: "Se enviará el correo de configuración",
     graphic: "Mostrar Gráfica",
     nographic: "No se mostrará la gráfica",
+    required: "El registro ahora será requerido",
+    unrequired: "El registro ya no será requerido",
   },
 };
 

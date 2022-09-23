@@ -1,3 +1,4 @@
+import { IReagentList } from "./reagent";
 import { IOptions } from "./shared";
 import { IStudyList } from "./study";
 export interface IParameterList {
@@ -21,16 +22,17 @@ export interface IParameterForm {
   valorInicial: string;
   departamentoId: number;
   areaId: number;
-  reactivoId: number;
   unidadSi: number;
   fcsi: string;
   activo: boolean;
+  requerido: boolean;
   estudios: IStudyList[];
   FormatoImpresionId?: number;
   funciones?: string;
   parametros?: string;
   reactivos: IReagentList[];
 }
+
 export interface ItipoValorForm {
   id?: string;
   parametroId?: string;
@@ -51,14 +53,6 @@ export interface ItipoValorForm {
   descripcionParrafo?: string | "";
 }
 
-export interface IReagentList {
-  id: string;
-  seleccion: boolean;
-  nombreContpaq: string;
-  claveContpaq: string;
-  nombreReactivo: string;
-}
-
 export interface IReagentForm {
   id: string;
   reactivo: string[];
@@ -76,15 +70,15 @@ export class ParameterFormValues implements IParameterForm {
   nombre = "";
   nombreCorto = "";
   unidades = 0;
-  tipoValor = 0;
+  tipoValor = "Sin valor";
   formula = "";
   valorInicial = "";
   departamentoId = 0;
   areaId = 0;
-  reactivoId = 0;
   unidadSi =0;
   fcsi = "";
   activo = false;
+  requerido = false;
   estudios: IStudyList[] = [];
   reactivos: IReagentList[] = [];
   FormatoImpresionId = undefined;

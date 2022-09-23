@@ -161,9 +161,6 @@ const ClinicResultsFilter = () => {
                           (estudio) => value.includes(+estudio.area)
                         );
                         setStudyFilter(filtradoEstudios);
-                        console.log(toJS(studiesOptions));
-                        console.log(filtradoEstudios);
-                        console.log(value);
                       }}
                     ></SelectInput>
                   </Col>
