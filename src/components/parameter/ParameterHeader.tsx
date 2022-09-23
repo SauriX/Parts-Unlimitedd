@@ -10,11 +10,9 @@ import DownloadIcon from "../../app/common/icons/DownloadIcon";
 
 const { Search } = Input;
 type ParameterHeaderProps = {
-  handlePrint: () => void;
   handleList: () => void;
 };
 const ParameterHeader: FC<ParameterHeaderProps> = ({
-  handlePrint,
   handleList,
 }) => {
   let navigate = useNavigate();
@@ -24,7 +22,6 @@ const ParameterHeader: FC<ParameterHeaderProps> = ({
       title={<HeaderTitle title="Catálogo Parámetros" image="parametro" />}
       className="header-container"
       extra={[
-        <PrintIcon key="print" onClick={handlePrint} />,
         <DownloadIcon key="doc" onClick={handleList} />,
         <Search
           key="search"
