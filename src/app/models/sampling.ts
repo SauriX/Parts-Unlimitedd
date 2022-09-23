@@ -37,7 +37,8 @@ export interface IstudySampling {
   clave: string;
 }
 export interface IUpdate {
-  id: number[];
+  solicitudId:string;
+  estudioId: number[];
 }
 export class samplingFormValues implements IsamplingForm {
   fecha = [moment(moment.now()), moment(moment.now())];

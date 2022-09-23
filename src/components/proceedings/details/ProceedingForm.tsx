@@ -691,7 +691,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     label: "Exp",
                   }}
                   max={500}
-                  readonly={true}
+                
                 />
               </Col>
               <Col span={4}>
