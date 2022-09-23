@@ -52,7 +52,7 @@ type PriceListFormProps = {
 
 const radioOptions = [
   { label: "Sucursales", value: "branch" },
-  { label: "Médicos", value: "medic" },
+
   { label: "Compañias", value: "company" },
 ];
 
@@ -150,9 +150,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
         case "compañia":
           setListSCM(listCompañia);
         break;
-        case "medicos":
-          setListSCM(listMedicos);
-        break;
+
 
       }
       console.log(listMedicos);
@@ -237,7 +235,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const setStudyPrice = (newprecio:number,item:IPriceListEstudioList,typePAck:boolean) =>{
     if(newprecio<0){
       alerts.warning("El Precio tiene que ser mayor a 0");
-      return;
+      newprecio=0;
     }
     var index = lista.findIndex(x=>x.id===item.id  && x.paqute===typePAck);
     var list = lista;
@@ -841,12 +839,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
                   
                   setSCMlist("sucursal");
                   setRadioValue("branch");
-                }
-                if (e.target.value === "medic") {
-
-                  setSCMlist("medicos");
-                  setRadioValue("medic");
-                }
+                } 
                 if (e.target.value === "company") {
                   
                   setSCMlist("compañia");

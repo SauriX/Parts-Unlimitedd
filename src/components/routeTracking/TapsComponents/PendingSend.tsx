@@ -216,28 +216,28 @@ useEffect(()=>{
 
     const columns: IColumns<IRouteList> = [
         {
-          ...getDefaultColumnProps("seguimiento", "# DE SEGUMIENTO", {
+          ...getDefaultColumnProps("seguimiento", " # De seguridad", {
             searchState,
             setSearchState,
             width: "20%",
           }),
         },
         {
-          ...getDefaultColumnProps("clave", "CLAVE DE RUTA", {
+          ...getDefaultColumnProps("clave", "Clave de ruta", {
             searchState,
             setSearchState,
             width: "15%",
           }),
         },
         {
-          ...getDefaultColumnProps("sucursal", "SUCURSAL", {
+          ...getDefaultColumnProps("sucursal", "Sucursal", {
             searchState,
             setSearchState,
             width: "20%",
           }),
         },
         {
-          ...getDefaultColumnProps("fecha", "FECHA DE ENTREGA", {
+          ...getDefaultColumnProps("fecha", " Fecha de entrega", {
             searchState,
             setSearchState,
             width: "15%",
@@ -272,7 +272,7 @@ useEffect(()=>{
         {
           key: "editar",
           dataIndex: "id",
-          title: "Impresion",
+          title: "Impresión",
           align: "center",
           width:  "10%",
           render: (value,item) => (
@@ -299,7 +299,7 @@ useEffect(()=>{
       ];
     return (
         <Fragment>
-            <Button style={{marginLeft:"45%",marginBottom:"5%"}} type="primary" danger>Crear orden  de seguimiento</Button>
+            <Button style={{marginLeft:"45%",marginBottom:"5%",backgroundColor:" #18AC50"}} type="primary" >Crear orden  de seguimiento</Button>
             <Form<any>>
                 <Row gutter={[0, 12]}>
                     <Col span={8}>
