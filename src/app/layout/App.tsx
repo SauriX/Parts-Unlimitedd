@@ -67,6 +67,7 @@ import EquipmentMantainForm from "../../components/equipmentMantain/detail/Equip
 import EquipmentMantainDetails from "../../components/equipmentMantain/detail/EquipmentMantainDetails";
 import RouteTracking from "../../views/RouteTracking";
 import ClinicResults from "../../views/ClinicResults";
+import ClinicalResults from "../../components/clinicalResults/ClinicalResultsInfo";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -110,11 +111,27 @@ function App() {
             <Route path="users/:id" element={<UserDetail />} />
             <Route path="new-user" element={<NewUser />} />
             <Route path="trackingOrder" element={<CreationTrackingOrder />} />
+            <Route
+              path="resultados-clinicos"
+              element={
+                <ClinicalResults
+                  id=""
+                  componentRef={{} as any}
+                  printing={loading}
+                />
+              }
+            />
             <Route path="equipment" element={<Equipment />} />
             <Route path="equipmentMantain/:id" element={<EquipmentMantain />} />
-            <Route path="equipmentMantain/new/:id" element={<EquipmentMantainDetails/>} />
+            <Route
+              path="equipmentMantain/new/:id"
+              element={<EquipmentMantainDetails />}
+            />
             <Route path="equipment/:id" element={<EquipmentDetails />} />
-            <Route path="equipmentMantain/edit/:id" element={<EquipmentMantainDetails />} />
+            <Route
+              path="equipmentMantain/edit/:id"
+              element={<EquipmentMantainDetails />}
+            />
             <Route path="roles" element={<Role />} />
             <Route path="reagents" element={<Reagent />} />
             <Route path="reagents/new" element={<ReagentDetail />} />

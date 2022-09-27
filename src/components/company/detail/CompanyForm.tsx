@@ -23,6 +23,7 @@ import CompanyFormTableHeader from "./CompanyFormTableHeader";
 import { useReactToPrint } from "react-to-print";
 import { EditOutlined } from "@ant-design/icons";
 import { v4 as uuid } from "uuid";
+import { originOptions } from "../../../app/stores/optionStore";
 
 type CompanyFormProps = {
   id: string;
@@ -465,7 +466,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   readonly={readonly}
                   required
-                  options={provenanceOptions}
+                  options={originOptions}
                 />
                 <SelectInput
                   formProps={{

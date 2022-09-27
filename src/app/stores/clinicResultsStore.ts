@@ -1,16 +1,12 @@
 import { makeAutoObservable } from "mobx";
 import ClinicResults from "../api/clinicResults";
-import {
-  IClinicResultForm,
-  IClinicResultList,
-  IClinicStudy,
-  ClinicResultsFormValues,
-} from "../models/clinicResults";
+
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import { getErrors } from "../util/utils";
 import moment from "moment";
+import { ClinicResultsFormValues, IClinicResultForm, IClinicResultList, IClinicStudy } from "../models/clinicResults";
 
 export default class ClinicResultsStores {
   constructor() {

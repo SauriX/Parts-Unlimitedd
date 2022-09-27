@@ -37,6 +37,7 @@ import ClinicResultsStore from "./clinicResultsStore";
 import EquipmentMantainStore from "./EquipentMantainStore";
 import TrackingOrderStore from "./trackingOrderStore";
 import WeeClinicStore from "./weeClinicStore";
+import RouteTrackingStore from "./routeTracking"
 
 configure({
   enforceActions: "never",
@@ -79,6 +80,7 @@ interface Store {
   clinicResultsStore: ClinicResultsStore;
   equipmentMantainStore: EquipmentMantainStore;
   weeClinicStore: WeeClinicStore;
+  routeTrackingStore:RouteTrackingStore;
 }
 
 export const store: Store = {
@@ -118,6 +120,7 @@ export const store: Store = {
   clinicResultsStore: new ClinicResultsStore(),
   equipmentMantainStore: new EquipmentMantainStore(),
   weeClinicStore: new WeeClinicStore(),
+  routeTrackingStore: new RouteTrackingStore(),
 };
 
 export const StoreContext = createContext(store);
