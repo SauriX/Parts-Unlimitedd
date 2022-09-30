@@ -10,12 +10,8 @@ export const verifyAdminCreds = () => {
       title: "Accesos administrativos",
       body: (
         <AdminCredsComponent
-          getResult={(idAdmin) => {
-            if (idAdmin) {
-              resolve(true);
-            } else {
-              resolve(false);
-            }
+          getResult={(isAdmin) => {
+            resolve(isAdmin);
             closeModal();
           }}
         />

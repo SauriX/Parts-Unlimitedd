@@ -15,7 +15,8 @@ import {
   IRequestStudyUpdate,
 } from "../../../../app/models/request";
 import { useStore } from "../../../../app/stores/store";
-import { status } from "../../../../app/util/catalogs";
+import alerts from "../../../../app/util/alerts";
+import { catalog, status } from "../../../../app/util/catalogs";
 
 type RequestSamplerProps = {
   formGeneral: FormInstance<IRequestGeneral>;
@@ -31,6 +32,18 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
     searchedText: "",
     searchedColumn: "",
   });
+
+  const updateDate = (item: IRequestStudy, value: moment.Moment | null) => {
+    if (value) {
+      setStudy({ ...item, fechaEntrega: value.utcOffset(0, true) });
+      const origin = formGeneral.getFieldValue("urgencia");
+      if (origin === catalog.urgency.normal) {
+        alerts.info("La solicitud se marcará como urgente");
+        formGeneral.setFieldValue("urgencia", catalog.urgency.urgente);
+        formGeneral.submit();
+      }
+    }
+  };
 
   const columns: IColumns<IRequestStudy> = [
     {
@@ -75,10 +88,7 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
             showTime
             allowClear={false}
             onChange={(value) => {
-              if (value){
-                setStudy({ ...item, fechaEntrega: value.utcOffset(0, true) });
-                // formGeneral.setFieldValue("")
-              }
+              updateDate(item, value);
             }}
           />
         );

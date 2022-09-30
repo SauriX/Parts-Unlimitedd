@@ -19,7 +19,7 @@ export default class EquipmentMantainStore {
   }
   search?:ISearchMantain = new SearchMantainValues();
   scopes?: IScopes;
-  equipment: IMantainList[] = [];
+  equipments: IMantainList[] = [];
   equip?: Idetail;
   mantain?:ImantainForm;
   idEq:number=0;
@@ -31,7 +31,7 @@ export default class EquipmentMantainStore {
     this.idEq=id;
   };
   clearEquipments = () => {
-    this.equipment = [];
+    this.equipments = [];
   };
   setSearch=(search:ISearchMantain)=>{
     this.search = search;
@@ -46,13 +46,13 @@ export default class EquipmentMantainStore {
     }
   };
 
-  getAll = async (search: ISearchMantain) => {
+  getAlls = async (search: ISearchMantain) => {
     try {
       const equipments = await Equipmentmantain.getAll(search);
-      this.equipment = equipments;
+      this.equipments = equipments;
     } catch (error) {
       alerts.warning(getErrors(error));
-      this.equipment = [];
+      this.equipments = [];
     }
   };
 

@@ -60,10 +60,20 @@ export default class ProfileStore {
     }
   };
 
+  validateAdmin = async (creds: ILoginForm) => {
+    try {
+      const admin = await Profile.validateAdmin(creds);
+      return admin;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
   login = async (creds: ILoginForm) => {
     try {
       const profile = await Profile.login(creds);
-      console.log(profile,"profile");
+      console.log(profile, "profile");
       this.setToken(profile.token);
       this.setProfile(profile);
 

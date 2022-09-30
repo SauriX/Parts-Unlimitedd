@@ -6,14 +6,17 @@ import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 import Sampling from "../api/sampling";
 import { IsamplingForm, IsamplingList, IUpdate } from "../models/sampling";
+import { IRouteList, SearchTracking } from "../models/routeTracking";
+import RouteTracking from "../api/routetracking";
+import responses from "../util/responses";
 
-export default class SamplingStore {
+export default class RouteTrackingStore {
   constructor() {
     makeAutoObservable(this);
   }
 
   scopes?: IScopes;
-  studys: IsamplingList[] = [];
+  studys: IRouteList[] = [];
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -34,9 +37,9 @@ export default class SamplingStore {
     }
   };
 
-  getAll = async (search: IsamplingForm) => {
+  getAll = async (search: SearchTracking) => {
     try {
-      const study = await Sampling.getAll(search);
+      const study = await RouteTracking.getAll(search);
       this.studys = study;
       return study;
     } catch (error) {
@@ -45,10 +48,11 @@ export default class SamplingStore {
     }
   };
 
-  update = async (study: IUpdate) => {
+  update = async (study: IUpdate[]) => {
+    console.log("this.update");
+    console.log(study);
     try {
-      console.log(study);
-      await Sampling.update(study);
+      await RouteTracking.update(study);
       alerts.success(messages.updated);
       return true;
     } catch (error: any) {
@@ -56,7 +60,17 @@ export default class SamplingStore {
       return false;
     }
   };
-
+  exportForm = async (id: string) => {
+    try {
+      await RouteTracking.exportForm(id);
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+    }
+  };
   printTicket = async (recordId: string, requestId: string) => {
     try {
       await Sampling.getOrderPdf(recordId, requestId);

@@ -63,6 +63,7 @@ const SelectInput = ({
           options={options}
           disabled={readonly}
           maxTagCount={"responsive"}
+          style={{ width: width ?? "100%" }}
         ></Select>
       </Form.Item>
       {/* {(!!suffix || isGroup || !!errors) && ( */}

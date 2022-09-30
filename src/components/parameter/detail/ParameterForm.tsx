@@ -35,6 +35,8 @@ import {
 } from "../../../app/common/table/utils";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import NumberInput from "../../../app/common/form/NumberInput";
+import { IReagentList } from "../../../app/models/reagent";
+import { ParameterReagentModal } from "../ParameterReagentModal";
 type ParameterFormProps = {
   componentRef: React.MutableRefObject<any>;
   load: boolean;
@@ -50,7 +52,15 @@ const functionOptions: IOptions[] = [
 
 const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
   const { parameterStore, optionStore } = useStore();
-  const { getAll, parameters, getById, create, update } = parameterStore;
+  const {
+    getAll,
+    parameters,
+    getById,
+    create,
+    update,
+    reagentsSelected,
+    setReagentSelected,
+  } = parameterStore;
   const {
     getDepartmentOptions,
     departmentOptions,
@@ -78,6 +88,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
   const [cursorPosition, setCursorPosition] = useState(0);
   let { id } = useParams<UrlParams>();
   const tipodeValorList: IOptions[] = [
+    { value: 0, label: "Sin valor" },
     { value: 1, label: "Numérico" },
     { value: 2, label: "Numérico por sexo" },
     { value: 3, label: "Numérico por edad" },
@@ -89,12 +100,14 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     { value: 9, label: "Etiqueta" },
     { value: 10, label: "Observación" },
   ];
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   useEffect(() => {
     const readuser = async (idUser: string) => {
       setLoading(true);
 
       const parameter = await getById(idUser);
+      setReagentSelected(parameter!.reactivos);
       await getareaOptions(parameter?.areaId);
       let val = parameter!.tipoValor | 0;
       setValueType(val);
@@ -177,6 +190,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     console.log("sumit");
     console.log(newValues);
     const Parameter = { ...values, ...newValues };
+    Parameter.reactivos = [...reagentsSelected];
     console.log(Parameter);
     Parameter.tipoValor = Parameter.tipoValor.toString();
     let success = false;
@@ -189,6 +203,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     }
     setLoading(false);
     if (success && flag == 0) {
+      setReagentSelected([]);
       navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
     }
   };
@@ -231,6 +246,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     searchedText: "",
     searchedColumn: "",
   });
+
   const columns: IColumns<IStudyList> = [
     {
       ...getDefaultColumnProps("id", "Clave Estudio", {
@@ -249,6 +265,49 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
       }),
     },
   ];
+
+  const columnsReagent: IColumns<IReagentList> = [
+    {
+      ...getDefaultColumnProps("nombre", "Reactivo", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("claveSistema", "Clave Contpaq", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("nombreSistema", "Nombre Contpaq", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+  ];
+
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+
+  const deleteReagent = () => {
+    const filterList = reagentsSelected.filter(
+      (x) => !selectedRowKeys.includes(x.id)
+    );
+    setReagentSelected(filterList);
+  };
 
   return (
     <Spin spinning={loading || load}>
@@ -386,14 +445,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                   </Col>
                   <Col span={8}>
                     <SelectInput
-                      formProps={{ name: "reactivoId", label: "Reactivo" }}
-                      options={reagents}
-                      readonly={CheckReadOnly()}
-                      required
-                    />
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
                       formProps={{
                         name: "unidades",
                         label: "Unidades",
@@ -503,6 +554,20 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                       readonly={CheckReadOnly()}
                     />
                   </Col>
+                  <Col span={8}>
+                    <SwitchInput
+                      name="requerido"
+                      label="Requerido"
+                      onChange={(value) => {
+                        if (value) {
+                          alerts.info(messages.confirmations.required);
+                        } else {
+                          alerts.info(messages.confirmations.unrequired);
+                        }
+                      }}
+                      readonly={CheckReadOnly()}
+                    />
+                  </Col>
                 </Row>
               </Col>
             </Row>
@@ -531,6 +596,45 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                 scroll={{
                   x: windowWidth < resizeWidth ? "max-content" : "auto",
                 }}
+              />
+              <br />
+              <PageHeader
+                ghost={false}
+                title={
+                  <HeaderTitle title="Reactivos donde se encuentra el parámetro" />
+                }
+                className="header-container"
+                extra={[
+                  reagentsSelected.length > 0 && selectedRowKeys.length > 0 ? (
+                    <Button type="primary" danger onClick={deleteReagent}>
+                      Eliminar
+                    </Button>
+                  ) : (
+                    ""
+                  ),
+                  <Button
+                    type="primary"
+                    onClick={async () => {
+                      await ParameterReagentModal(
+                        reagentsSelected.map((x) => x.id)
+                      );
+                    }}
+                  >
+                    Buscar
+                  </Button>,
+                ]}
+              ></PageHeader>
+              <Divider className="header-divider" />
+              <Table<IReagentList>
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columnsReagent}
+                pagination={false}
+                dataSource={[...reagentsSelected]}
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
+                rowSelection={rowSelection}
               />
             </Col>
           </Row>

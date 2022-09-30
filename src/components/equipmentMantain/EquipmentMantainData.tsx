@@ -20,7 +20,7 @@ import {
   ISearch,
 } from "../../app/common/table/utils";
 import useWindowDimensions, { resizeWidth } from "../../app/util/window";
-import { EditOutlined,PrinterOutlined,EyeOutlined } from "@ant-design/icons";
+import { EditOutlined, PrinterOutlined, EyeOutlined } from "@ant-design/icons";
 import IconButton from "../../app/common/button/IconButton";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { IEquipmentList } from "../../app/models/equipment";
@@ -47,9 +47,9 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
   printing,
   id
 }) => {
-   const { equipmentMantainStore} = useStore();
-  const { equipment, getAll,getequip,equip,setSearch,search ,setiD,idEq,printTicket} = equipmentMantainStore;
- 
+  const { equipmentMantainStore, equipmentStore } = useStore();
+  const { equipments, getAlls, getequip, equip, setSearch, search, setiD, idEq, printTicket } = equipmentMantainStore;
+  const { equipment, getAll } = equipmentStore;
   const [searchParams] = useSearchParams();
   const [form] = Form.useForm<ISearchMantain>();
 
@@ -69,27 +69,38 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
 
   console.log("Table");
 
-   useEffect(() => {
+  useEffect(() => {
     const readEquipment = async () => {
       setLoading(true);
       var equipo = await getequip(id);
       search!.idEquipo = equipo?.id!
-      await getAll(search!);
-     
-    setiD(id);
+      await getAlls(search!);
+      await getAll("all");
+      setiD(id);
       setLoading(false);
     };
 
     readEquipment();
-  }, [getAll, searchParams,getequip]); 
+  }, [getAll, searchParams, getequip, getAlls]);
   const onFinish = async (newValues: ISearchMantain) => {
     // const equipment = { ...values, ...newValues };
     console.log("values", values);
     console.log("newValues", newValues);
     const equipment = { ...search, ...newValues };
     setSearch(equipment);
-    await getAll(equipment);
+    await getAlls(equipment);
 
+  };
+  const actualMaquilador = () => {
+    if (id) {
+      const index = equipment.findIndex((x) => x.id === id);
+      return index + 1;
+    }
+    return 0;
+  };
+  const prevnextMaquilador = (index: number) => {
+    const maquila = equipment[index];
+    navigate(`/equipmentMantain/edit/${maquila.id}?mode=readonly?mode=${searchParams.get("mode")}`);
   };
   const EquipmentTablePrint = () => {
     return (
@@ -99,7 +110,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
           title={
             <HeaderTitle
               title="Catálogo de Indicaciones"
-             
+
             />
           }
           className="header-container"
@@ -123,7 +134,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
           type="link"
           onClick={() => {
             navigate(
-              `/equipmentMantain/edit/${user.id}`
+              `/equipmentMantain/edit/${user.id}?mode=readonly`
             );
           }}
         >
@@ -164,14 +175,14 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
       title: "Imprimir",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value,item) => (
+      render: (value, item) => (
         <IconButton
           title="Editar equipo"
           icon={<PrinterOutlined />}
           onClick={() => {
-            console.log("value",value)
-            console.log("item",item )
-                printTicket(item.id);
+            console.log("value", value)
+            console.log("item", item)
+            printTicket(item.id);
           }}
         />
       ),
@@ -208,51 +219,51 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
-      {!!id && (
+        {!!id && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
             <Pagination
               size="small"
-              total={/* maquilador.length */4}
+              total={equipment.length}
               pageSize={1}
-              current={/* actualMaquilador() */1}
-              onChange={() => {
-               // prevnextMaquilador(value - 1);
+              current={actualMaquilador()}
+              onChange={(value) => {
+                prevnextMaquilador(value - 1);
               }}
             />
           </Col>
         )}
       </Row>
-      <Row style={{ marginBottom: 24 }} gutter={[12,12]}>
+      <Row style={{ marginBottom: 24 }} gutter={[12, 12]}>
         <Col md={10} sm={24} xs={12} style={{ textAlign: "center" }}>
-            <div style={{backgroundColor:"#B4C7E7",textAlign:"justify", width:"30%",marginLeft:"50%"}}>
+          <div style={{ backgroundColor: "#B4C7E7", textAlign: "justify", width: "30%", marginLeft: "50%" }}>
             Clave: {equip?.clave}
-            <br />  
+            <br />
             Nombre: {equip?.nombre}
-            <br /> 
+            <br />
             Serie: <Link to={""}>{equip?.serie}</Link>
-            </div>
+          </div>
         </Col>
         <Col md={14} sm={24} xs={12} style={{ textAlign: "center" }}>
-        <Form<ISearchMantain>
-            
+          <Form<ISearchMantain>
+
             form={form}
             name="equipment"
             initialValues={values}
-             onFinish={onFinish} 
+            onFinish={onFinish}
             scrollToFirstError
- /*            onFieldsChange={() => {
-              setDisabled(
-                !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length)
-                    .length > 0
-              );
-            }} */
+          /*            onFieldsChange={() => {
+                       setDisabled(
+                         !form.isFieldsTouched() ||
+                           form.getFieldsError().filter(({ errors }) => errors.length)
+                             .length > 0
+                       );
+                     }} */
           >
             <Row>
               <Col md={10} sm={24}>
                 <DateRangeInput
                   formProps={{
-                    name: "fecha",
+                    name: "Fecha programda",
                     label: "fecha",
                   }}
 
@@ -260,30 +271,30 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
               </Col>
               <Col md={10} sm={24}>
                 <TextInput
-                    formProps={{
-                      name: "clave",
-                      label: "Nombre",
-                      labelCol:{span:10}
-                    }}
-                    max={100}
-                    
+                  formProps={{
+                    name: "clave",
+                    label: "Nombre",
+                    labelCol: { span: 10 }
+                  }}
+                  max={100}
+
                 />
               </Col>
               <Col md={4} sm={24}>
-                  <Button onClick={()=>{
-                    form.submit();
-                  }}>Buscar</Button>
+                <Button onClick={() => {
+                  form.submit();
+                }}>Buscar</Button>
               </Col>
             </Row>
           </Form>
-        </Col> 
+        </Col>
       </Row>
       <Table<IMantainList>
         loading={loading || printing}
         size="small"
         rowKey={(record) => record.id}
         columns={columns}
-        dataSource={[...equipment]}
+        dataSource={[...equipments]}
         pagination={defaultPaginationProperties}
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}

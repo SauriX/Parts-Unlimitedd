@@ -67,7 +67,7 @@ type EquipmentFormProps = {
 const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idmantain }) => {
   const { equipmentMantainStore ,optionStore} = useStore();
   const { getSucursalesOptions, sucursales } = optionStore;
-  const { getById, create, update, getAll, equipment,saveImage,setSearch,search,mantain,equip,idEq } = equipmentMantainStore;
+  const { getById, create, update, getAlls, equipments,saveImage,setSearch,search,mantain,equip,idEq } = equipmentMantainStore;
 
   const navigate = useNavigate();
   const [type, setType] = useState<"orden" | "ine" | "formato">("orden");
@@ -109,12 +109,12 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idma
   useEffect(() => {
     const readEquipment = async () => {
       setLoading(true);
-      await getAll(search!);
+      await getAlls(search!);
       setLoading(false);
     };
     console.log("id",id);
     readEquipment();
-  }, [getAll, searchParams]);
+  }, [getAlls, searchParams]);
 
   const onFinish = async (newValues: ImantainForm) => {
     const equipment = { ...values, ...newValues };
@@ -363,13 +363,16 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idma
                       formProps={{
                         name: "fecha",
                         label: "Fecha programda",
-                      }}></DateInput>
+                      }}
+                      readonly={readonly}
+                      ></DateInput>
                     <TextAreaInput
                       formProps={{
                         name: "descripcion",
                         label: "Observacion",
                       }}
                       rows={10}
+                      readonly={readonly}
                     ></TextAreaInput>
 
                   </Col>

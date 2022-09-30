@@ -16,7 +16,8 @@ import {
   IRequestStudyUpdate,
 } from "../../../../app/models/request";
 import { useStore } from "../../../../app/stores/store";
-import { status } from "../../../../app/util/catalogs";
+import alerts from "../../../../app/util/alerts";
+import { catalog, status } from "../../../../app/util/catalogs";
 
 type RequestRequestProps = {
   formGeneral: FormInstance<IRequestGeneral>;
@@ -39,6 +40,18 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
     searchedText: "",
     searchedColumn: "",
   });
+
+  const updateDate = (item: IRequestStudy, value: moment.Moment | null) => {
+    if (value) {
+      setStudy({ ...item, fechaEntrega: value.utcOffset(0, true) });
+      const origin = formGeneral.getFieldValue("urgencia");
+      if (origin === catalog.urgency.normal) {
+        alerts.info("La solicitud se marcará como urgente");
+        formGeneral.setFieldValue("urgencia", catalog.urgency.urgente);
+        formGeneral.submit();
+      }
+    }
+  };
 
   const columns: IColumns<IRequestStudy> = [
     {
@@ -83,8 +96,7 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
             showTime
             allowClear={false}
             onChange={(value) => {
-              if (value)
-                setStudy({ ...item, fechaEntrega: value.utcOffset(0, true) });
+              updateDate(item, value);
             }}
           />
         );

@@ -1,11 +1,18 @@
 import { makeAutoObservable } from "mobx";
 import Parameter from "../api/parameter";
-import { IParameterForm, IParameterList, Itipovalor, ItipoValorForm } from "../models/parameter";
+import {
+  IParameterForm,
+  IParameterList,
+  Itipovalor,
+  ItipoValorForm,
+} from "../models/parameter";
 import alerts from "../util/alerts";
 import messages from "../util/messages";
 import responses from "../util/responses";
 import { getErrors } from "../util/utils";
 import history from "../util/history";
+import { IReagentList } from "../models/reagent";
+
 export default class ParameterStore {
   constructor() {
     makeAutoObservable(this);
@@ -14,6 +21,16 @@ export default class ParameterStore {
   parameter?: IParameterForm;
   ValueTipe?: ItipoValorForm;
   ValuesTipe: ItipoValorForm[] = [];
+  reagentsSelected: IReagentList[] = [];
+
+  setReagentSelected = (reagentsSelected: IReagentList[]) => {
+    this.reagentsSelected = reagentsSelected;
+  };
+
+  getReagentSelected = () => {
+    return this.reagentsSelected;
+  };
+
   getAll = async (search: string = "all") => {
     try {
       console.log(search);
@@ -38,7 +55,7 @@ export default class ParameterStore {
   getById = async (id: string) => {
     try {
       const rol = await Parameter.getById(id);
-      rol.tipoValor = rol.tipoValor == null ? 0 : parseInt(rol.tipoValor);
+      rol.tipoValor = rol.tipoValor == null ? "Sin valor" : parseInt(rol.tipoValor);
       console.log(rol);
       this.parameter = rol;
       return rol;
@@ -88,7 +105,6 @@ export default class ParameterStore {
       alerts.success(messages.updated);
       return true;
     } catch (error: any) {
- 
       alerts.warning(getErrors(error));
       return false;
     }
@@ -115,14 +131,14 @@ export default class ParameterStore {
       return false;
     }
   };
-  addvalues = async (values: ItipoValorForm[], parametroId:string) => {
+  addvalues = async (values: ItipoValorForm[], parametroId: string) => {
     try {
-      var tipovalor:Itipovalor = {
-        values:values,
-        idParameter:parametroId
-      }
+      var tipovalor: Itipovalor = {
+        values: values,
+        idParameter: parametroId,
+      };
       var success = await Parameter.addValues(tipovalor);
-      console.log(success,"succes");
+      console.log(success, "succes");
       return true;
     } catch (error: any) {
       console.log();

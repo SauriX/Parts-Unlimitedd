@@ -82,3 +82,15 @@ export const statusName = {
     urgente: "Urgente",
   },
 };
+
+export const catalog = {
+  urgency: {
+    normal: 1,
+    urgente: 2,
+    urgenteCargo: 3,
+  },
+  origin: {
+    convenio: 1,
+    particular: 2,
+  },
+};

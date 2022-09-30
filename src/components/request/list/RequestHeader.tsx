@@ -7,13 +7,15 @@ import ImageButton from "../../../app/common/button/ImageButton";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
 import views from "../../../app/util/view";
+import RequestWee from "./RequestWee";
 
 const { Search } = Input;
 const { Text } = Typography;
 
 const RequestHeader = () => {
-  const { requestStore } = useStore();
+  const { requestStore, modalStore } = useStore();
   const { requests } = requestStore;
+  const { openModal } = modalStore;
 
   const navigate = useNavigate();
 
@@ -27,7 +29,8 @@ const RequestHeader = () => {
           Solicitudes: <Text strong>{requests.length}</Text>
         </Text>,
         <Text key="number">
-          Estudios: <Text strong>{requests.flatMap((x) => x.estudios).length}</Text>
+          Estudios:{" "}
+          <Text strong>{requests.flatMap((x) => x.estudios).length}</Text>
         </Text>,
         <Button
           key="new"
@@ -38,6 +41,19 @@ const RequestHeader = () => {
           icon={<PlusOutlined />}
         >
           Nuevo
+        </Button>,
+        <Button
+          key="wee"
+          onClick={() => {
+            openModal({
+              title: "Crear solicitud WeeClinic",
+              body: <RequestWee />,
+              width: 900,
+            });
+          }}
+          icon={<PlusOutlined />}
+        >
+          Nuevo WeeClinic
         </Button>,
       ]}
     ></PageHeader>

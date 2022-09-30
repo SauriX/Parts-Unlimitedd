@@ -125,12 +125,11 @@ export default class ProcedingStore {
     try {
       console.log(parameter);
       console.log("here");
-      await Proceding.create(parameter);
+      const record = await Proceding.create(parameter);
       alerts.success(messages.created);
-      return true;
+      return record.id;
     } catch (error: any) {
       alerts.warning(getErrors(error));
-      return false;
     }
   };
 

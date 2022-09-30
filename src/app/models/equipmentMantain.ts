@@ -37,7 +37,7 @@ export interface ImantainForm{
     clave :string
     no_serie :string
     ativo :boolean
-    imagenUrl:string
+    imagenUrl:string[]
     ide:number
 }
 export class MantainValues implements ImantainForm {
@@ -48,7 +48,7 @@ export class MantainValues implements ImantainForm {
     clave =""
     no_serie =""
     ativo=false
-    imagenUrl=""
+    imagenUrl=[]
     ide=0
     constructor(init?: ImantainForm) {
       Object.assign(this, init);

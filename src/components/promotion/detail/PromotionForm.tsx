@@ -19,10 +19,11 @@ import { IPackEstudioList } from "../../../app/models/packet";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
 import { IOptions } from "../../../app/models/shared";
-import { IDias, IPromotionBranch, IPromotionEstudioList, IPromotionForm, PromotionFormValues } from "../../../app/models/promotion";
+import { IDias, Imedic, IPromotionBranch, IPromotionEstudioList, IPromotionForm, PromotionFormValues } from "../../../app/models/promotion";
 import { IPriceListForm, ISucMedComList } from "../../../app/models/priceList";
 import moment from "moment";
 import PriceList from "../../../views/PriceList";
+import Medics from "../../../views/Medics";
 type ReagentFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
@@ -34,7 +35,7 @@ const { CheckableTag } = Tag;
 const PromotionForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
   const { optionStore,promotionStore } = useStore();
   const { getPriceById, getById, getAll, create, update,promotionLists } =promotionStore;
-const {priceListOptions,getPriceListOptions, getDepartmentOptions, departmentOptions,getareaOptions,areas} = optionStore;
+const {priceListOptions,getPriceListOptions, getDepartmentOptions, departmentOptions,getareaOptions,areas,getMedicOptions,medicOptions} = optionStore;
 const { width: windowWidth } = useWindowDimensions();
   const navigate = useNavigate();
   const { RangePicker } = DatePicker;
@@ -43,7 +44,9 @@ const { width: windowWidth } = useWindowDimensions();
   const [areaId, setAreaId] = useState<number>();
   const [discunt, setDiscunt] = useState<string>();
   const [branch,setBranch] = useState<IOptions[]>();
+ const [medic,setMedic] = useState<IOptions[]>([]);
   const [sucursal,setSucursal] = useState<ISucMedComList>();
+  const [medico, setmedico]=useState<Imedic>();
   const [sucursales,setSucursales] = useState<ISucMedComList[]>([]);
   const [estudios,setEstudios] = useState<IPromotionEstudioList[]>([]);
   const [form] = Form.useForm<IPromotionForm>();
@@ -63,11 +66,14 @@ const { width: windowWidth } = useWindowDimensions();
     searchedText: "",
     searchedColumn: "",
   });
-  const setFechaInicial=(fecha:moment.Moment)=>{
-    if(moment(moment.now())>fecha){
-      alerts.warning("la fecha no puede ser anterior a hoy");
-      return;
+  useEffect(()=>{
+    const getMedics= async () =>{
+      await getMedicOptions();
     }
+    getMedics();
+  },[getMedicOptions]);
+  const setFechaInicial=(fecha:moment.Moment)=>{
+
     console.log("fecha1");
     let estudio = estudios.map(x=> {
       let data:IPromotionEstudioList = {
@@ -94,10 +100,7 @@ const { width: windowWidth } = useWindowDimensions();
   };
 
   const setFechaFinal=(fecha:moment.Moment)=>{
-    if(moment(moment.now())>fecha&& fecha>=moment(values.fechaInicial!)){
-      alerts.warning("la fecha no puede ser anterior a hoy");
-      return;
-    }
+
     let estudio = estudios.map(x=> {
       let data:IPromotionEstudioList = {
         id:x.id,
@@ -605,6 +608,11 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
 
     setValues((prev) => ({ ...prev, branchs: clinics })); 
   };
+  const deletemedico = (id: string) => {
+    const clinics = values.medics.filter((x) => x.id !== id);
+
+   setValues((prev) => ({ ...prev, medics: clinics })); 
+ };
   const addClinic = () => {
      if (sucursal) {
       if (values.branchs.findIndex((x) => x.id === sucursal.id) > -1) {
@@ -628,6 +636,27 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
       console.log(values);
     } 
   };
+  const addmedic = () => {
+    if (medico) {
+     if (values.medics!.findIndex((x) => x.id === medico.id) > -1) {
+       alerts.warning("Ya esta agregada este departamento");
+       return;
+     }
+
+     const branchs: Imedic[] = [
+       ...values.medics,
+       {
+        id : medico.id,
+        clave : medico.clave,
+        activo : medico.activo,
+        nombre :medico.nombre
+       },
+     ];
+
+     setValues((prev) => ({ ...prev, medics: branchs }));
+     console.log(values);
+   } 
+ };
   const onFinish = async (newValues: IPromotionForm) => {
     setLoading(true);
 
@@ -879,6 +908,60 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
                 image="Eliminar_Clinica"
                 onClick={() => {
                   deleteClinic(item.id);
+                }}
+              />}
+            </Col>
+          </List.Item>
+        )}
+      />
+      <Divider orientation="left">Medicos</Divider>
+      <List<ISucMedComList>
+        header={
+          <div>
+            <Col md={12} sm={24} style={{ marginRight: 20 }}>
+            Clave/Nombre:
+              <Select
+                options={medicOptions}
+                onChange={(value, option: any) => {
+                  if(medic.length==0){
+                      setMedic(medicOptions);
+                  }
+                  if (value) {
+                    var sucursal = medic.filter(x=>x.value==value);
+                    setMedic(prev=>[...prev,sucursal[0]]);
+                  } else {
+                    setMedic([]);
+                  }
+                }}
+                style={{ width: 240, marginRight: 20, marginLeft: 10 }}
+              />
+              {!readonly && !printing&& (
+                <ImageButton
+                  key="agregar"
+                  title="Agregar "
+                  image="agregar-archivo"
+                  onClick={addmedic}
+                />
+              )}
+            </Col>
+          </div>
+        }
+        footer={<div></div>}
+        bordered
+        dataSource={values.medics}
+        renderItem={(item) => (
+          <List.Item>
+            <Col md={12} sm={24} style={{ textAlign: "left" }}>
+              <Typography.Text mark></Typography.Text>
+              {item.nombre}
+            </Col>
+            <Col md={12} sm={24} style={{ textAlign: "left" }}>
+      {!readonly && !printing&&        <ImageButton
+                key="Eliminar"
+                title="Eliminar"
+                image="Eliminar_Clinica"
+                onClick={() => {
+                  deletemedico(item.id);
                 }}
               />}
             </Col>

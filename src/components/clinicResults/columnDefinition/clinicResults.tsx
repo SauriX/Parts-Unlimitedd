@@ -127,21 +127,7 @@ export const ClinicResultsExpandable = () => {
                 style={{ maxWidth: 30 }}
                 className="description-content"
               >
-                {x.nombreEstatus}
-              </Descriptions.Item>
-              <Descriptions.Item
-                label="Registro"
-                style={{ maxWidth: 30 }}
-                className="description-content"
-              >
-                {x.registro}
-              </Descriptions.Item>
-              <Descriptions.Item
-                label="Entrega"
-                style={{ maxWidth: 30 }}
-                className="description-content"
-              >
-                {x.entrega}
+                {x.nombreEstatus} - {x.entrega}
               </Descriptions.Item>
             </Descriptions>
           );
