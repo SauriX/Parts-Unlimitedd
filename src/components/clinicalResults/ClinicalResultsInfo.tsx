@@ -1,5 +1,6 @@
 import "./css/containerInfo.less";
 import {
+  Collapse,
   Col,
   Form,
   Row,
@@ -14,129 +15,179 @@ import DateInput from "../../app/common/form/proposal/DateInput";
 import SelectInput from "../../app/common/form/SelectInput";
 import TextAreaInput from "../../app/common/form/TextAreaInput";
 import TextInput from "../../app/common/form/TextInput";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
+
 import ClinicalResultsForm from "./observaciones/ClinicalResultsForm";
+import ClinicalResultsDetails from "./desglose/ClinicalResultsDetail";
 import { useNavigate } from "react-router";
 import ClinicalResultsHeader from "./ClinicalResultsHeader";
+import { useParams } from "react-router-dom";
+import { useStore } from "../../app/stores/store";
+import { toJS } from "mobx";
+import { IRequest } from "../../app/models/request";
+import { v4 as uuid } from "uuid";
+
+import {
+  IProceedingForm,
+  ProceedingFormValues,
+} from "../../app/models/Proceeding";
+import { ITaxData } from "../../app/models/taxdata";
+import moment from "moment";
 
 const { Text } = Typography;
+const { Panel } = Collapse;
 type ClinicalFormProps = {
-  id: string;
-  componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
-const ClinicalResultsInfo: FC<ClinicalFormProps> = ({
-  id,
-  componentRef,
-  printing,
-}) => {
+
+type UrlParams = {
+  expedienteId: string;
+  requestId: string;
+};
+
+const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
+  const { requestStore, procedingStore, optionStore, requestedStudyStore } =
+    useStore();
+  const { request, getById } = requestStore;
+  const { getById: procedingById } = procedingStore;
+  const { printOrder } = requestedStudyStore;
+  const { departmentOptions, getDepartmentOptions } = optionStore;
+
   const [loading, setLoading] = useState(false);
-  const getPage = (id: string) => {
-    // return clinicalResult.findIndex((x) => x.id === id) + 1;
-    // return [].findIndex((x) => x.id === id) + 1;
-    return 1;
-  };
-  const setPage = (page: number) => {
-    // const loyalty = loyaltys[page - 1];
-    // navigate(`/${views.loyalty}/${studie.id}?${searchParams}`);
-  };
-  const getBack = () => {
-    // navigate(`/${views.request}`);
-  };
+  const [dataClinicalResult, setDataClinicalResult] = useState<any>();
+  const [procedingCurrent, setProcedingCurrent] = useState<any>(
+    new ProceedingFormValues()
+  );
+
+  const { expedienteId, requestId } = useParams<UrlParams>();
+
+  useEffect(() => {
+    const searchRequest = async () => {
+      setLoading(true);
+      await getDepartmentOptions();
+      await getById(expedienteId!, requestId!);
+      const procedingFound = await procedingById(expedienteId!);
+      setDataClinicalResult({ ...request, ...procedingFound });
+      setProcedingCurrent({ ...procedingFound });
+      form.setFieldsValue({
+        ...procedingFound,
+        fechaNacimiento: moment(procedingFound?.fechaNacimiento),
+        ...request,
+      });
+      setLoading(false);
+    };
+    searchRequest();
+  }, [getById, procedingById]);
+
+  useEffect(() => {
+    form.setFieldsValue({
+      ...dataClinicalResult,
+      fechaNacimiento: moment(dataClinicalResult?.fechaNacimiento),
+      ...request,
+    });
+  }, [request]);
   const navigate = useNavigate();
-  const plainOptions = ["Imprimir logos", "Desmarcar todos", "Marcar todos"];
+
+  const [form] = Form.useForm<any>();
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
-      {/* <Row justify="space-between" align="middle">
-        <Col span={6} style={{ textAlign: "left" }}>
-          <Pagination
-            size="small"
-            total={[].length}
-            pageSize={1}
-            current={getPage(id)}
-            onChange={setPage}
-          />
-        </Col>
-        <Col span={6} style={{ textAlign: "right" }}>
-          <Text>
-            Solicitud: <Text strong></Text>
-          </Text>
-        </Col>
-        <Col span={6} style={{ textAlign: "right" }}>
-          <Text>
-            Registro: <Text strong></Text>
-          </Text>
-        </Col>
-        <Col span={6} style={{ textAlign: "right" }}>
-          <GoBackIcon key="back" onClick={getBack} />
-        </Col>
-      </Row> */}
-      <ClinicalResultsHeader id={""} printing={false} />
+      <ClinicalResultsHeader printing={false} />
       <Divider orientation="left"></Divider>
-      <div className="status-container">
-        <Form>
-          <Row>
-            <Col span={24}>
-              <Row justify="space-between" gutter={[12, 4]}>
-                <Col span={10}>
-                  <TextInput formProps={{ name: "nombre", label: "Nombre" }} />
-                </Col>
-                <Col span={7}>
-                  <DateInput
-                    formProps={{
-                      name: "fechaNacimiento",
-                      label: "Fecha de Nacimiento",
-                    }}
-                  />
-                </Col>
-                <Col span={7} style={{ alignItems: "left" }}>
-                  <Text key="expediente">
-                    Expediente: <Text strong></Text>
-                  </Text>
-                </Col>
-                <Col span={6}>
-                  <SelectInput
-                    formProps={{ name: "genero", label: "Genero" }}
-                    options={[]}
-                  />
-                </Col>
-                <Col span={6}>
-                  <TextInput formProps={{ name: "edad", label: "Edad" }} />
-                </Col>
-                <Col span={6}>
-                  <TextInput
-                    formProps={{ name: "telefono", label: "Teléfono" }}
-                  />
-                </Col>
-                <Col span={6}>
-                  <TextInput
-                    formProps={{ name: "celular", label: "Celular" }}
-                  />
-                </Col>
-                <Col span={12}>
-                  <TextInput
-                    formProps={{ name: "compania", label: "Compañía" }}
-                  />
-                </Col>
-                <Col span={12} style={{ textAlign: "right" }}>
-                  <TextInput formProps={{ name: "medico", label: "Médico" }} />
-                </Col>
+      <Collapse ghost className="request-filter-collapse">
+        <Panel header="Información de la solicitud" key="informationRequest">
+          <div className="status-container">
+            <Form<any>
+              form={form}
+              name="clinicalResults"
+              onFinish={() => {}}
+              initialValues={dataClinicalResult}
+              scrollToFirstError
+            >
+              <Row>
                 <Col span={24}>
-                  <TextAreaInput
-                    formProps={{
-                      name: "observaciones",
-                      label: "Observaciones",
-                    }}
-                    rows={3}
-                  />
+                  <Row justify="space-between" gutter={[0, 0]}>
+                    <Col span={10}>
+                      <TextInput
+                        formProps={{ name: "nombre", label: "Nombre" }}
+                        readonly={true}
+                      />
+                    </Col>
+                    <Col span={12} style={{ textAlign: "right" }}>
+                      <TextInput
+                        formProps={{ name: "nombreMedico", label: "Médico" }}
+                        readonly={true}
+                      />
+                    </Col>
+                    <Col span={4}>
+                      <DateInput
+                        formProps={{
+                          name: "fechaNacimiento",
+                          label: "Fecha de Nacimiento",
+                        }}
+                        readonly={true}
+                      />
+                    </Col>
+
+                    <Col span={2}>
+                      <TextInput
+                        formProps={{ name: "edad", label: "Edad" }}
+                        readonly={true}
+                      />
+                    </Col>
+                    <Col span={2}>
+                      <SelectInput
+                        formProps={{ name: "sexo", label: "Genero" }}
+                        options={[]}
+                        readonly={true}
+                      />
+                    </Col>
+                    <Col span={3}>
+                      <TextInput
+                        formProps={{ name: "telefono", label: "Teléfono" }}
+                        readonly={true}
+                      />
+                    </Col>
+                    <Col span={3}>
+                      <TextInput
+                        formProps={{ name: "celular", label: "Celular" }}
+                        readonly={true}
+                      />
+                    </Col>
+                    <Col span={3} style={{ alignItems: "left" }}>
+                      <Text key="expediente">
+                        Expediente:{" "}
+                        <Text strong>{dataClinicalResult?.expediente}</Text>
+                      </Text>
+                    </Col>
+                    <Col span={10}>
+                      <TextInput
+                        formProps={{
+                          name: "nombreCompania",
+                          label: "Compañía",
+                        }}
+                        readonly={true}
+                      />
+                    </Col>
+
+                    <Col span={12}>
+                      <TextAreaInput
+                        formProps={{
+                          name: "observaciones",
+                          label: "Observaciones",
+                        }}
+                        rows={3}
+                        readonly={true}
+                      />
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
-            </Col>
-          </Row>
-        </Form>
-      </div>
-      <Divider orientation="left"></Divider>
+            </Form>
+          </div>
+        </Panel>
+      </Collapse>
+
       <Row>
         <Col span={12}>
           <Checkbox.Group
@@ -166,10 +217,10 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({
             style={{ marginLeft: "45%", marginBottom: "5%" }}
             type="primary"
             onClick={() => {
-              navigate("#");
+              printOrder(expedienteId!, requestId!);
             }}
           >
-            Imagen
+            Orden
           </Button>
         </Col>
         <Col span={6}>
@@ -191,7 +242,30 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({
       </Row>
       <Row>
         <Col span={24}>
-          <ClinicalResultsForm />
+          {request?.estudios?.map((req: any, index: any) => {
+            const idPatologia = departmentOptions.find(
+              (dep) => dep.label === "PATOLOGÍA"
+            )?.value;
+            if (idPatologia === req.departamento) {
+              return (
+                <>
+                  <ClinicalResultsForm
+                    key={index}
+                    estudio={req}
+                    estudioId={req.id}
+                    paciente={procedingCurrent}
+                    medico={request.nombreMedico!}
+                    claveMedico={request.claveMedico!}
+                    solicitud={request}
+                  />
+                  <Divider orientation="left"></Divider>
+                </>
+              );
+            } else {
+              return <ClinicalResultsDetails key={index} />;
+            }
+          })}
+          {/* <ClinicalResultsForm /> */}
         </Col>
       </Row>
     </Spin>

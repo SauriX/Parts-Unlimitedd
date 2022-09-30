@@ -113,14 +113,8 @@ function App() {
             <Route path="new-user" element={<NewUser />} />
             <Route path="trackingOrder" element={<CreationTrackingOrder />} />
             <Route
-              path="resultados-clinicos"
-              element={
-                <ClinicalResults
-                  id=""
-                  componentRef={{} as any}
-                  printing={loading}
-                />
-              }
+              path="clinicResultsDetails/:expedienteId/:requestId"
+              element={<ClinicalResults printing={loading} />}
             />
             <Route path="equipment" element={<Equipment />} />
             <Route path="equipmentMantain/:id" element={<EquipmentMantain />} />

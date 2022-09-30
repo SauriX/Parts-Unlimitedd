@@ -64,7 +64,6 @@ const LayoutComponent = () => {
 
   const convertMenu = useCallback(
     (menus: IMenu[]): IItem[] => {
-      console.log("load drawer");
       return menus.map((x) => ({
         key: uuid(),
         label:
