@@ -68,6 +68,7 @@ import EquipmentMantainDetails from "../../components/equipmentMantain/detail/Eq
 import RouteTracking from "../../views/RouteTracking";
 import ClinicResults from "../../views/ClinicResults";
 import ClinicalResults from "../../components/clinicalResults/ClinicalResultsInfo";
+import ShipmentTracking from "../../views/ShipmentTracking";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -209,6 +210,10 @@ function App() {
             <Route
               path={`${views.request}/:recordId/:requestId`}
               element={<RequestDetail />}
+            />
+            <Route
+              path={`${views.shipmenttracking}/:id`}
+              element={<ShipmentTracking  />}
             />
             <Route
               path="forbidden"

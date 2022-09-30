@@ -38,7 +38,7 @@ import EquipmentMantainStore from "./EquipentMantainStore";
 import TrackingOrderStore from "./trackingOrderStore";
 import WeeClinicStore from "./weeClinicStore";
 import RouteTrackingStore from "./routeTracking"
-
+import shipmentTackingStore from "./shipmentTrackingStore"
 configure({
   enforceActions: "never",
 });
@@ -81,6 +81,7 @@ interface Store {
   equipmentMantainStore: EquipmentMantainStore;
   weeClinicStore: WeeClinicStore;
   routeTrackingStore:RouteTrackingStore;
+  shipmentTracking:shipmentTackingStore;
 }
 
 export const store: Store = {
@@ -121,6 +122,7 @@ export const store: Store = {
   equipmentMantainStore: new EquipmentMantainStore(),
   weeClinicStore: new WeeClinicStore(),
   routeTrackingStore: new RouteTrackingStore(),
+  shipmentTracking: new shipmentTackingStore()
 };
 
 export const StoreContext = createContext(store);
