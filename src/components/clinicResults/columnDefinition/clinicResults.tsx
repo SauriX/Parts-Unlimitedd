@@ -1,4 +1,4 @@
-import { Descriptions } from "antd";
+import { Descriptions, Typography } from "antd";
 import { useState } from "react";
 import {
   IColumns,
@@ -6,12 +6,16 @@ import {
   getDefaultColumnProps,
 } from "../../../app/common/table/utils";
 import { IClinicResultList } from "../../../app/models/clinicResults";
+import { useNavigate } from "react-router-dom";
+
+const { Link, Text } = Typography;
 
 const ClinicResultsColumns = () => {
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
+  const navigate = useNavigate();
   const columns: IColumns<IClinicResultList> = [
     {
       ...getDefaultColumnProps("solicitud", "Clave", {
@@ -19,11 +23,24 @@ const ClinicResultsColumns = () => {
         setSearchState,
         width: "15%",
       }),
-      render: (_value, record) =>
-      <ul>
-        <li>{record.solicitud}</li>
-        <li>Sucursal: {record.sucursal}</li>
-      </ul>
+      render: (_value, record) => (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Link
+            onClick={() => {
+              navigate(
+                `/clinicResultsDetails/${record.expedienteId}/${record.id}`
+              );
+            }}
+          >
+            {record.solicitud}
+          </Link>
+          <small>
+            <Text type="secondary">
+              Sucrusal: <Text strong>{record.sucursal}</Text>{" "}
+            </Text>
+          </small>
+        </div>
+      ),
     },
     {
       ...getDefaultColumnProps("nombre", "Nombre del Paciente", {
@@ -67,11 +84,18 @@ const ClinicResultsColumns = () => {
         setSearchState,
         width: "20%",
       }),
-      render: (_value, record) =>
-      <ul>
-        <li>{record.compañia == null ? "No pertenece a una compañía" : record.compañia}</li>
-        <li>Procedencia: {record.procedencia == 1 ? "Compañía" : "Particulares"}</li>
-      </ul>
+      render: (_value, record) => (
+        <ul>
+          <li>
+            {record.compañia == null
+              ? "No pertenece a una compañía"
+              : record.compañia}
+          </li>
+          <li>
+            Procedencia: {record.procedencia == 1 ? "Compañía" : "Particulares"}
+          </li>
+        </ul>
+      ),
     },
   ];
   return columns;

@@ -43,6 +43,9 @@ export const objectToFormData = (obj: any, rootName?: any) => {
   const appendFormData = (data: any, root: any) => {
     root = root || "";
     if (data instanceof File) {
+      if (root.endsWith("]")) {
+        root = root.substring(0, root.lastIndexOf("["));
+      }
       formData.append(root, data);
     } else if (Array.isArray(data)) {
       for (var i = 0; i < data.length; i++) {

@@ -8,6 +8,10 @@ export interface IRequestBase {
 
 export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   solicitudId?: string;
+  nombreMedico?: string;
+  claveMedico?: string;
+  nombreCompania?: string;
+  observaciones?: string;
   sucursalId: string;
   clave?: string;
   estatusId: number;
@@ -15,6 +19,8 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   parcialidad: boolean;
   registro?: string;
   esNuevo: boolean;
+
+  estudios?: IRequestStudyInfo[];
 }
 
 export interface IRequestFilter {
@@ -48,11 +54,39 @@ export interface IRequestInfo extends IRequestBase {
 }
 
 export interface IRequestStudyInfo {
+  id: number;
+  estudioId: number;
   clave: string;
   nombre: string;
   estatusId: number;
   estatus: string;
   color: string;
+  fechaTomaMuestra: string;
+  fechaValidacion: string;
+  fechaSolicitado: string;
+  fechaCaptura: string;
+  fechaLiberado: string;
+  fechaEnviado: string;
+}
+
+export class RequestStudyInfoForm implements IRequestStudyInfo {
+  id = 0;
+  estudioId = 0;
+  clave = "";
+  nombre = "";
+  estatusId = 0;
+  estatus = "";
+  color = "";
+  fechaTomaMuestra = "";
+  fechaValidacion = "";
+  fechaSolicitado = "";
+  fechaCaptura = "";
+  fechaLiberado = "";
+  fechaEnviado = "";
+
+  constructor(init?: IRequestTotal) {
+    Object.assign(this, init);
+  }
 }
 
 export interface IRequestGeneral extends IRequestBase {

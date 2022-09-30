@@ -5,6 +5,7 @@ import {
   IClinicResultList,
   IClinicStudy,
   ClinicResultsFormValues,
+  IResultPathological,
 } from "../models/clinicResults";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -79,6 +80,53 @@ export default class ClinicResultsStores {
       this.data = [];
     } finally {
       this.loadingStudies = false;
+    }
+  };
+  createResultPathological = async (result: FormData) => {
+    // createResultPathological = async (result: IResultPathological) => {
+    try {
+      await ClinicResults.createResultPathological(result);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  getResultPathological = async (result: number) => {
+    try {
+      const resultPathological = await ClinicResults.getResultPathological(
+        result
+      );
+      return resultPathological;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  updateResultPathological = async (result: FormData) => {
+    // updateResultPathological = async (result: IResultPathological) => {
+    try {
+      await ClinicResults.updateResultPathological(result);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  updateStatusStudy = async (requestStudyId: number, status: number) => {
+    // updateResultPathological = async (result: IResultPathological) => {
+    try {
+      await ClinicResults.updateStatusStudy(requestStudyId, status);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  getRequestStudyById = async (requestStudyId: number) => {
+    try {
+      const requestStudy = await ClinicResults.getRequestStudyById(
+        requestStudyId
+      );
+      return requestStudy;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
     }
   };
 
