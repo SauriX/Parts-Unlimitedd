@@ -13,7 +13,8 @@ const views = {
   report: "reportes",
   cash: "cash",
   sampling:"samplings",
-  routeTraking:"segRutas"
+  routeTraking:"segRutas",
+  shipmenttracking:"ShipmentTracking"
 };
 
 export default views;

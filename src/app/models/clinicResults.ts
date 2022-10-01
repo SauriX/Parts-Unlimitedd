@@ -2,6 +2,7 @@ import moment from "moment";
 
 export interface IClinicResultList {
   id: string;
+  expedienteId: string;
   solicitud: string;
   nombre: string;
   order: string;
@@ -15,6 +16,19 @@ export interface IClinicResultList {
   seleccion: boolean;
   estudios: IClinicStudy[];
   procedencia: number;
+}
+export interface IResultPathological {
+  id?: string;
+  solicitudId: string;
+  estudioId: number;
+  requestStudyId: number;
+  descripcionMacroscopica: string;
+  descripcionMicroscopica: string;
+  imagenPatologica?: any;
+  diagnostico: string;
+  muestraRecibida: string;
+  medicoId: string;
+  listaImagenesCargadas: string[];
 }
 
 export interface IClinicStudy {
@@ -52,6 +66,23 @@ export interface IStudyList {
   entrega: string;
   seleccion: boolean;
   clave: string;
+}
+
+export class ResultPathologicalValues implements IResultPathological {
+  id? = "";
+  solicitudId = "";
+  estudioId = 0;
+  requestStudyId = 0;
+  descripcionMacroscopica = "";
+  descripcionMicroscopica = "";
+  imagenPatologica? = "";
+  diagnostico = "";
+  muestraRecibida = "";
+  medicoId = "";
+  listaImagenesCargadas = [];
+  constructor(init?: IClinicResultForm) {
+    Object.assign(this, init);
+  }
 }
 
 export class ClinicResultsFormValues implements IClinicResultForm {

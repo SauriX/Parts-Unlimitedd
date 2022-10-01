@@ -14,7 +14,23 @@ export default class MedicsStore {
   constructor() {
     makeAutoObservable(this);
   }
-
+  saveImage = async (request: FormData) => {
+    try {
+      var imageName = ""//await Request.saveImage(request);
+      return imageName;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  deleteImage = async (recordId: string, requestId: string, code: string) => {
+    try {
+      //await Request.deleteImage(recordId, requestId, code);
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
   scopes?: IScopes;
   medics: IMedicsList[] = [];
 

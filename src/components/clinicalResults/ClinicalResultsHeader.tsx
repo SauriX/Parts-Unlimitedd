@@ -1,41 +1,49 @@
 import { observer } from "mobx-react-lite";
 import { PageHeader, Pagination, Typography } from "antd";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useStore } from "../../app/stores/store";
+import { toJS } from "mobx";
 
 const { Text } = Typography;
 
 type ClinicalFormProps = {
-  id: string;
   printing: boolean;
 };
 
-const ClinicalResultsHeader: FC<ClinicalFormProps> = ({ id, printing }) => {
+const ClinicalResultsHeader: FC<ClinicalFormProps> = ({ printing }) => {
+  const { requestStore, clinicResultsStore } = useStore();
+  const { request, getById } = requestStore;
+  const { data } = clinicResultsStore;
+
   let navigate = useNavigate();
   const getPage = (id: string) => {
-    // return clinicalResult.findIndex((x) => x.id === id) + 1;
-    // return [].findIndex((x) => x.id === id) + 1;
-    return 1;
+    const index = data.findIndex((x) => x.id === id) + 1;
+
+    return index;
   };
   const setPage = (page: number) => {
-    // const loyalty = loyaltys[page - 1];
-    // navigate(`/${views.loyalty}/${studie.id}?${searchParams}`);
+    const currentRequest = data[page - 1];
+    navigate(
+      `/clinicResultsDetails/${currentRequest?.expedienteId!}/${currentRequest?.id!}`
+    );
   };
 
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title={`Solicitud: ${"0000000"}`} />}
+      title={<HeaderTitle title={`Solicitud: ${request?.clave}`} />}
       onBack={() => window.history.back()}
-      subTitle={`Registro ${"000000"}`}
+      subTitle={`Registro: ${request?.registro}`}
       className="header-container"
       extra={[
         <Pagination
+          key="pagination"
           size="small"
-          total={[].length}
+          total={data.length ?? 0}
           pageSize={1}
-          current={getPage(id)}
+          current={getPage(request?.solicitudId!)}
           onChange={setPage}
         />,
       ]}
