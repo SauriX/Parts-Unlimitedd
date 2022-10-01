@@ -1,6 +1,10 @@
-import { Button, Col, Row, Spin, Table } from "antd";
+import { Button, Col, InputNumber, Row, Spin, Table } from "antd";
+import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import { IColumns, getDefaultColumnProps } from "../../../../../app/common/table/utils";
+import {
+  IColumns,
+  getDefaultColumnProps,
+} from "../../../../../app/common/table/utils";
 import { IRequestStudy } from "../../../../../app/models/request";
 import { useStore } from "../../../../../app/stores/store";
 
@@ -36,6 +40,15 @@ const RequestPrintTag = () => {
     setLabels(grouped);
   }, [allStudies]);
 
+  const changeQty = (qty: number, record: IRequestTag) => {
+    let index = labels.findIndex((x) => x.taponClave === record.taponClave);
+    if (index > -1) {
+      const lbls = [...labels];
+      lbls[index] = { ...lbls[index], cantidad: qty };
+      setLabels(lbls);
+    }
+  };
+
   const columns: IColumns<IRequestTag> = [
     {
       ...getDefaultColumnProps("estudios", "Estudios", {
@@ -60,6 +73,17 @@ const RequestPrintTag = () => {
         searchable: false,
         width: "10%",
       }),
+      render: (_, record) => (
+        <InputNumber
+          value={record.cantidad}
+          bordered={false}
+          min={1}
+          style={{ width: "100%" }}
+          onChange={(qty) => {
+            changeQty(qty, record);
+          }}
+        />
+      ),
     },
     Table.SELECTION_COLUMN,
   ];
@@ -72,7 +96,7 @@ const RequestPrintTag = () => {
             size="small"
             rowKey={(record) => record.taponClave}
             columns={columns}
-            dataSource={[...labels]}
+            dataSource={labels}
             pagination={false}
             rowSelection={{
               fixed: "right",
@@ -98,4 +122,4 @@ const RequestPrintTag = () => {
   );
 };
 
-export default RequestPrintTag;
+export default observer(RequestPrintTag);
