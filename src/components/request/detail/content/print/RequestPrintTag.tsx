@@ -5,19 +5,12 @@ import {
   IColumns,
   getDefaultColumnProps,
 } from "../../../../../app/common/table/utils";
-import { IRequestStudy } from "../../../../../app/models/request";
+import { IRequestStudy, IRequestTag } from "../../../../../app/models/request";
 import { useStore } from "../../../../../app/stores/store";
-
-interface IRequestTag {
-  taponClave: string;
-  taponNombre: string;
-  estudios: string;
-  cantidad: number;
-}
 
 const RequestPrintTag = () => {
   const { requestStore } = useStore();
-  const { allStudies, printTicket } = requestStore;
+  const { request, allStudies, printTags } = requestStore;
 
   const [labels, setLabels] = useState<IRequestTag[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -46,6 +39,14 @@ const RequestPrintTag = () => {
       const lbls = [...labels];
       lbls[index] = { ...lbls[index], cantidad: qty };
       setLabels(lbls);
+    }
+  };
+
+  const print = async () => {
+    if (request) {
+      setLoading(true);
+      await printTags(request.expedienteId, request.solicitudId!, labels);
+      setLoading(false);
     }
   };
 
@@ -106,14 +107,7 @@ const RequestPrintTag = () => {
           />
         </Col>
         <Col span={24} style={{ textAlign: "right" }}>
-          <Button
-            type="default"
-            onClick={async () => {
-              setLoading(true);
-              await printTicket("", "");
-              setLoading(false);
-            }}
-          >
+          <Button type="default" onClick={print}>
             Imprimir
           </Button>
         </Col>

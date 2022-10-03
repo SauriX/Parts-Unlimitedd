@@ -5,6 +5,7 @@ import {
   IRequestInfo,
   IRequestPartiality,
   IRequestStudyUpdate,
+  IRequestTag,
   IRequestTotal,
 } from "../models/request";
 import requests from "./agent";
@@ -60,6 +61,12 @@ const Request = {
       `request/order/${recordId}/${requestId}`,
       "application/pdf"
     ),
+  printTags: (
+    recordId: string,
+    requestId: string,
+    tags: IRequestTag[]
+  ): Promise<void> =>
+    requests.print(`request/tags/${recordId}/${requestId}`, tags),
   saveImage: (formData: FormData): Promise<string> =>
     requests.put("request/images", formData),
   deleteImage: (
