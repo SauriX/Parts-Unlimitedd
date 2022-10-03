@@ -93,4 +93,8 @@ export const catalog = {
     convenio: 1,
     particular: 2,
   },
+  area: {
+    dop: 12,
+    vdrl: 42,
+  },
 };
