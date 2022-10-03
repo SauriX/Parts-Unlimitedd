@@ -169,6 +169,7 @@ const RequestImage = () => {
     };
 
     readImages();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [request?.clave]);
 
   const handlePreview = async (file: UploadFile) => {
