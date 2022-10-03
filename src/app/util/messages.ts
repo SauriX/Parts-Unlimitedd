@@ -32,6 +32,10 @@ const messages = {
     nographic: "No se mostrará la gráfica",
     required: "El registro ahora será requerido",
     unrequired: "El registro ya no será requerido",
+    deltaCheck: "Delta Check ha sido activado",
+    deltaUncheck: "Delta Check ha sido desactivado",
+    showFormato: "Mostrar Formato ha sido desactivado",
+    unshownFormato: "Mostrar Formato ha sido desactivado",
   },
 };
 
