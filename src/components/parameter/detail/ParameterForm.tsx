@@ -34,7 +34,7 @@ import {
   ISearch,
 } from "../../../app/common/table/utils";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
-import NumberInput from "../../../app/common/form/NumberInput";
+import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import { IReagentList } from "../../../app/models/reagent";
 import { ParameterReagentModal } from "../ParameterReagentModal";
 type ParameterFormProps = {
@@ -100,6 +100,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     { value: 9, label: "Etiqueta" },
     { value: 10, label: "Observación" },
   ];
+  const [deltaCheck, setDeltaCheck] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   useEffect(() => {
@@ -108,7 +109,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
 
       const parameter = await getById(idUser);
       setReagentSelected(parameter!.reactivos);
-      await getareaOptions(parameter?.areaId);
+      await getareaOptions(parameter?.departamentoId);
       let val = parameter!.tipoValor | 0;
       setValueType(val);
       form.setFieldsValue(parameter!);
@@ -302,6 +303,10 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     onChange: onSelectChange,
   };
 
+  const activeDeltaCheck = () => {
+    setDeltaCheck((deltaCheck) => !deltaCheck);
+  };
+
   const deleteReagent = () => {
     const filterList = reagentsSelected.filter(
       (x) => !selectedRowKeys.includes(x.id)
@@ -390,7 +395,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
           >
             <Row>
               <Col span={24}>
-                <Row justify="space-between" gutter={[0, 12]}>
+                <Row justify="space-between" gutter={[0, 24]}>
                   <Col span={8}>
                     <TextInput
                       formProps={{
@@ -403,40 +408,37 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                     />
                   </Col>
                   <Col span={8}>
-                    <SelectInput
+                    <NumberInput
                       formProps={{
-                        name: "departamentoId",
-                        label: "Departamento",
+                        name: "valorInicial",
+                        label: "Valor Inicial",
                       }}
-                      options={departmentOptions}
-                      readonly={CheckReadOnly()}
+                      min={1}
                       required
+                      readonly={CheckReadOnly()}
+                      max={99999999999999999999999}
                     />
                   </Col>
+                  {id && (
+                    <>
+                      <Col span={8}>
+                        <SelectInput
+                          formProps={{
+                            name: "tipoValor",
+                            label: "Tipo de valor",
+                          }}
+                          options={tipodeValorList}
+                          readonly={CheckReadOnly()}
+                          required
+                        />
+                      </Col>
+                    </>
+                  )}
                   <Col span={8}>
                     <TextInput
                       formProps={{
                         name: "nombre",
                         label: "Nombre",
-                      }}
-                      max={100}
-                      required
-                      readonly={CheckReadOnly()}
-                    />
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
-                      formProps={{ name: "areaId", label: "Área" }}
-                      options={areas}
-                      readonly={CheckReadOnly()}
-                      required
-                    />
-                  </Col>
-                  <Col span={8}>
-                    <TextInput
-                      formProps={{
-                        name: "nombreCorto",
-                        label: "Nombre corto",
                       }}
                       max={100}
                       required
@@ -455,6 +457,28 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                     />
                   </Col>
                   <Col span={8}>
+                    <TextInput
+                      formProps={{
+                        name: "fcsi",
+                        label: "FCSI",
+                      }}
+                      max={100}
+                      required
+                      readonly={CheckReadOnly()}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <TextInput
+                      formProps={{
+                        name: "nombreCorto",
+                        label: "Nombre corto",
+                      }}
+                      max={100}
+                      required
+                      readonly={CheckReadOnly()}
+                    />
+                  </Col>
+                  <Col span={8}>
                     <SelectInput
                       formProps={{
                         name: "unidadSi",
@@ -466,12 +490,26 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                     />
                   </Col>
                   <Col span={8}>
+                    <SwitchInput
+                      name="activo"
+                      label="Activo"
+                      onChange={(value) => {
+                        if (value) {
+                          alerts.info(messages.confirmations.enable);
+                        } else {
+                          alerts.info(messages.confirmations.disable);
+                        }
+                      }}
+                      readonly={CheckReadOnly()}
+                    />
+                  </Col>
+                  <Col span={8}>
                     <SelectInput
                       formProps={{
-                        name: "formatoImpresionId",
-                        label: "Formato de impresión",
+                        name: "departamentoId",
+                        label: "Departamento",
                       }}
-                      options={printFormat}
+                      options={departmentOptions}
                       readonly={CheckReadOnly()}
                       required
                     />
@@ -480,15 +518,37 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                     <>
                       <Col span={8}>
                         <SelectInput
-                          formProps={{
-                            name: "tipoValor",
-                            label: "Tipo de valor",
-                          }}
-                          options={tipodeValorList}
+                          formProps={{ name: "funciones", label: "Funciones" }}
+                          options={functionOptions}
                           readonly={CheckReadOnly()}
-                          required
                         />
                       </Col>
+                    </>
+                  )}
+                  <Col span={8}>
+                    <SwitchInput
+                      name="requerido"
+                      label="Requerido"
+                      onChange={(value) => {
+                        if (value) {
+                          alerts.info(messages.confirmations.required);
+                        } else {
+                          alerts.info(messages.confirmations.unrequired);
+                        }
+                      }}
+                      readonly={CheckReadOnly()}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <SelectInput
+                      formProps={{ name: "areaId", label: "Área" }}
+                      options={areas}
+                      readonly={CheckReadOnly()}
+                      required
+                    />
+                  </Col>
+                  {id && (
+                    <>
                       <Col span={8}>
                         <TextInput
                           formProps={{
@@ -508,66 +568,41 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                           }}
                         />
                       </Col>
-                      <Col span={8}>
-                        <SelectInput
-                          formProps={{ name: "funciones", label: "Funciones" }}
-                          options={functionOptions}
-                          readonly={CheckReadOnly()}
-                        />
-                      </Col>
                     </>
                   )}
                   <Col span={8}>
-                    <TextInput
-                      formProps={{
-                        name: "fcsi",
-                        label: "FCSI",
-                      }}
-                      max={100}
-                      required
-                      readonly={CheckReadOnly()}
-                    />
-                  </Col>
-                  <Col span={8}>
-                    <NumberInput
-                      formProps={{
-                        name: "valorInicial",
-                        label: "Valor Inicial",
-                      }}
-                      min={1}
-                      required
-                      readonly={CheckReadOnly()}
-                      max={99999999999999999999999}
-                    />
-                  </Col>
-                  <Col span={8}>
                     <SwitchInput
-                      name="activo"
-                      label="Activo"
+                      name="deltaCheck"
+                      label="Delta Check"
                       onChange={(value) => {
+                        activeDeltaCheck();
                         if (value) {
-                          alerts.info(messages.confirmations.enable);
+                          alerts.info(messages.confirmations.deltaCheck);
                         } else {
-                          alerts.info(messages.confirmations.disable);
+                          alerts.info(messages.confirmations.deltaUncheck);
                         }
                       }}
                       readonly={CheckReadOnly()}
                     />
                   </Col>
-                  <Col span={8}>
-                    <SwitchInput
-                      name="requerido"
-                      label="Requerido"
-                      onChange={(value) => {
-                        if (value) {
-                          alerts.info(messages.confirmations.required);
-                        } else {
-                          alerts.info(messages.confirmations.unrequired);
-                        }
-                      }}
-                      readonly={CheckReadOnly()}
-                    />
-                  </Col>
+                  {deltaCheck ? (
+                    <Col offset={12} span={8}>
+                      <SwitchInput
+                        name="mostrarFormato"
+                        label="Mostrar Formato"
+                        onChange={(value) => {
+                          if (value) {
+                            alerts.info(messages.confirmations.showFormato);
+                          } else {
+                            alerts.info(messages.confirmations.unshownFormato);
+                          }
+                        }}
+                        readonly={CheckReadOnly()}
+                      />
+                    </Col>
+                  ) : (
+                    ""
+                  )}
                 </Row>
               </Col>
             </Row>
@@ -579,25 +614,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
               sm={12}
               style={{ marginRight: 20, textAlign: "center" }}
             >
-              <PageHeader
-                ghost={false}
-                title={
-                  <HeaderTitle title="Estudios donde se encuentra el parámetro" />
-                }
-                className="header-container"
-              ></PageHeader>
-              <Divider className="header-divider" />
-              <Table<IStudyList>
-                size="small"
-                rowKey={(record) => record.id}
-                columns={columns.slice(0, 3)}
-                pagination={false}
-                dataSource={[...(values.estudios ?? [])]}
-                scroll={{
-                  x: windowWidth < resizeWidth ? "max-content" : "auto",
-                }}
-              />
-              <br />
               <PageHeader
                 ghost={false}
                 title={
@@ -635,6 +651,25 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                   x: windowWidth < resizeWidth ? "max-content" : "auto",
                 }}
                 rowSelection={rowSelection}
+              />
+              <br />
+              <PageHeader
+                ghost={false}
+                title={
+                  <HeaderTitle title="Estudios donde se encuentra el parámetro" />
+                }
+                className="header-container"
+              ></PageHeader>
+              <Divider className="header-divider" />
+              <Table<IStudyList>
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columns.slice(0, 3)}
+                pagination={false}
+                dataSource={[...(values.estudios ?? [])]}
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
               />
             </Col>
           </Row>

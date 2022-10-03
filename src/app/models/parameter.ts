@@ -26,6 +26,9 @@ export interface IParameterForm {
   fcsi: string;
   activo: boolean;
   requerido: boolean;
+  deltaCheck: boolean;
+  mostrarFormato: boolean;
+  valorCriticos: boolean;
   estudios: IStudyList[];
   FormatoImpresionId?: number;
   funciones?: string;
@@ -79,6 +82,9 @@ export class ParameterFormValues implements IParameterForm {
   fcsi = "";
   activo = false;
   requerido = false;
+  deltaCheck = false;
+  mostrarFormato = false;
+  valorCriticos = false;
   estudios: IStudyList[] = [];
   reactivos: IReagentList[] = [];
   FormatoImpresionId = undefined;

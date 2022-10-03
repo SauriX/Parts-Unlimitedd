@@ -23,16 +23,12 @@ import { useNavigate } from "react-router";
 import ClinicalResultsHeader from "./ClinicalResultsHeader";
 import { useParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
-import { toJS } from "mobx";
-import { IRequest } from "../../app/models/request";
-import { v4 as uuid } from "uuid";
 
 import {
-  IProceedingForm,
   ProceedingFormValues,
 } from "../../app/models/Proceeding";
-import { ITaxData } from "../../app/models/taxdata";
 import moment from "moment";
+import React from "react";
 
 const { Text } = Typography;
 const { Panel } = Collapse;

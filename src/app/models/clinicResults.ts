@@ -10,6 +10,7 @@ export interface IClinicResultList {
   sucursal: string;
   sucursalNombre: string;
   nombreMedico: string;
+  usuarioCreo: string;
   edad: string;
   sexo: string;
   compañia: string;
