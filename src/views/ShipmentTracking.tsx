@@ -44,13 +44,13 @@ const ShipmentTracking = () => {
     setLoading(false);
   };
 
-  useEffect(() => {
+/*   useEffect(() => {
     const checkAccess = async () => {
       await access();
     };
 
     checkAccess();
-  }, [access]);
+  }, [access]); */
 
 /*   useEffect(() => {
     return () => {

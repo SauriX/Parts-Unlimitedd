@@ -59,7 +59,7 @@ const RouteTrackingTable: FC<RouteTableProps> = ({ componentRef, printing }) => 
 
   const columns: IColumns<IRouteList> = [
     {
-      ...getDefaultColumnProps("clave", "Clave", {
+      ...getDefaultColumnProps("clave", "Claves", {
         searchState,
         setSearchState,
         width: "20%",

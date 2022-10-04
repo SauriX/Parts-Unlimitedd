@@ -41,6 +41,7 @@ const [activiti, setActiviti] = useState<string>("");
 const [expandedRowKeys,setexpandedRowKeys]= useState<string[]>([]);
 const [openRows,setOpenRows]=useState<boolean>(false);
 const [expandable, setExpandable] =useState<ExpandableConfig<IRouteList>>();
+let navigate = useNavigate();
 useEffect(()=>{
   setexpandedRowKeys(studys!.map((x)=>x.id));
   setOpenRows(true);
@@ -215,13 +216,24 @@ useEffect(()=>{
       
 
     const columns: IColumns<IRouteList> = [
-        {
-          ...getDefaultColumnProps("seguimiento", " # De seguridad", {
-            searchState,
-            setSearchState,
-            width: "20%",
-          }),
-        },
+      {
+        ...getDefaultColumnProps("seguimiento", "# De seguridad", {
+          searchState,
+          setSearchState,
+          width: "20%",
+          minWidth: 150,
+        }),
+        render: (value, route) => (
+          <Button
+            type="link"
+            onClick={() => {
+              navigate(`/ShipmentTracking/${route.id}`);
+            }}
+          >
+            {value}
+          </Button>
+        ),
+      },
         {
           ...getDefaultColumnProps("clave", "Clave de ruta", {
             searchState,

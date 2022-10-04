@@ -29,7 +29,7 @@ import {
   import HeaderTitle from "../../app/common/header/HeaderTitle";
   import { IStudyList } from "../../app/models/study";
   import views from "../../app/util/view";
-import {shipmentStudy} from "../../app/models/shipmentTracking";
+import {shipmentStudy, shipmenttracking} from "../../app/models/shipmentTracking";
 import { TrackingFormValues } from "../../app/models/routeTracking";
   type StudyTableProps = {
     componentRef: React.MutableRefObject<any>;
@@ -39,12 +39,28 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
     id: string;
   };
   const ShipmentTackingDetail: FC<StudyTableProps> = ({ componentRef, printing }) => {
+    const [loading, setLoading] = useState(false);
+    const [shipments,setShipments] = useState<shipmenttracking>();
+    const [estudios,setEstudios] = useState<shipmentStudy[]>([]);
     let navigate = useNavigate();
     const { id } = useParams<UrlParams>();
     const { routeTrackingStore,shipmentTracking} = useStore();
 
     const {getAll,studys}= routeTrackingStore;
     const { getashipment,shipment}=shipmentTracking;
+    useEffect(()=>{
+      var readshipment = async()=>{
+        setLoading(true);
+        console.log(id!,"el id");
+       var ship= await getashipment(id!);
+       console.log(ship,"te ship");
+       setEstudios(ship?.estudios!);
+          setLoading(false);
+   
+        
+      }
+      readshipment();
+    },[getashipment,id]); 
 
      useEffect(()=>{
       var readroute = async()=>{
@@ -54,13 +70,6 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
         readroute();
     },[getAll]);
 
-    useEffect(()=>{
-      var readshipment = async()=>{
-        console.log(id!,"el id");
-        await getashipment(id!);
-      }
-      readshipment();
-    },[getashipment]); 
 
     const [searchState, setSearchState] = useState<ISearch>({
         searchedText: "",
@@ -86,6 +95,7 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
             width: "20%",
             minWidth: 150,
             windowSize: windowWidth,
+          
           }),
         },
         {
@@ -125,7 +135,9 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
       ];
   
     return (
+      
       <Fragment>
+        <Spin spinning={loading }>
             <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
                 <Pagination
                 size="small"
@@ -137,6 +149,7 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
                 }}
                 />
             </Col>
+            <br />
               <Row>
               <Col md={8}>
                 Numero de Seguimiento: {shipment?.seguimiento}
@@ -173,9 +186,10 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
                                 />
                             </Col>
                             <Col md={2}></Col>
-                            Origen--------------------------------------------------------------------------
+                            Origen-------------------------------------------------------------------------
                             <br />
-                            Sucursal:{shipment?.sucursalOrigen}
+                            <br />
+                            Sucursal: {shipment?.sucursalOrigen}
                             <br />
                             Responsable de envio: {shipment?.responsableOrigen}
                             <br />
@@ -183,7 +197,8 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
                             <br />
                             Fecha de envío: {shipment?.fechaEnvio.format('MMMM Do, YYYY')}
                             <br />
-                            Hora de envío:{shipment?.horaEnvio.utc().format('HH:mm:ss')}
+                            Hora de envío: {shipment?.horaEnvio.utc().format('hA:mm')}
+                            <br />
                         </Row>
                     </div>
                 </Col>
@@ -220,22 +235,24 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
                             <br />
                             Fecha de entrega estimada: {shipment?.fechaEnestimada.format('MMMM Do, YYYY')}
                             <br />
-                            Hora de entrega estimada: {shipment?.horaEnestimada.utc().format('HH:mm:ss')}
+                            Hora de entrega estimada: {shipment?.horaEnestimada.utc().format('hA:mm')}
                             <br />
-                            Fecha de entrega real:{shipment?.fechaEnreal.format('MMMM Do, YYYY')}
+                             Fecha de entrega real:{ shipment!.fechaEnreal.format('MMMM Do, YYYY')=="Fecha inválida"?"":shipment!.fechaEnreal.format('MMMM Do, YYYY')}
                             <br />
-                            Hora de entrega real: {shipment?.horaEnreal.utc().format('HH:mm:ss')}
+                            Hora de entrega real: {shipment!.horaEnreal.utc().format('hA:mm')=="Fecha inválida"?"":shipment!.horaEnreal.utc().format('hA:mm')} 
                         </Row>
                     </div>
                 </Col>
             </Row>
+            </Spin>
             <Fragment>
+            <br />
             <Table<shipmentStudy>
-                loading={/* loading */false}
+                loading={ loading }
                 size="small"
-                rowKey={(record) => record.id}
+                rowKey={(record) => record.id}  
                 columns={columns}
-                dataSource={[...shipment?.estudios!]}
+                dataSource={ [...estudios]}
                 pagination={defaultPaginationProperties}
                 sticky
                 scroll={{ x: "max-content" }}
@@ -243,6 +260,7 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
 {/*             <div style={{ display: "none" }}>{<ParameterTablePrint />}</div> */}
             </Fragment>
       </Fragment>
+      
     );
   };
   

@@ -57,7 +57,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
     format: [],
   });
   const [type, setType] = useState<"orden" | "ine" | "ineReverso" | "formato">(
-    "orden"
+    "formato"
   );
   const uploadButton = (
     <div>
@@ -536,38 +536,10 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   rows={12}
                   readonly={readonly}
                 />
-                <Row gutter={[0, 12]}>
-                  <Col span={24}>
-                    <Segmented
-                      className="requet-image-segment"
-                      defaultValue={"orden"}
-                      options={[
-                        { label: "Orden", value: "orden" },
-                        { label: "INE", value: "ine" },
-                        { label: "Formato", value: "formato" },
-                      ]}
-                      onChange={(value: any) => setType(value)}
-                    />
-                  </Col>
-                  <Col span={24}>
-                    {type === "orden" ? (
-                      <Dragger {...props("orden")}>{getContent(images.order)}</Dragger>
-                    ) : type === "ine" ? (
-                      <Row gutter={[24, 24]}>
-                        <Col span={12}>
-                          <Dragger {...props("ine")}>{getContent(images.id)}</Dragger>
-                        </Col>
-                        <Col span={12}>
-                          <Dragger {...props("ineReverso")}>
-                            {getContent(images.idBack)}
-                          </Dragger>
-                        </Col>
-                      </Row>
-                    ) : type === "formato" ? (
-                      getFormatContent()
-                    ) : null}
-                  </Col>
-                </Row>
+{                  values.idMedico&&<div style={{marginLeft:"50%"}}>
+                    <label htmlFor="">Carga de firmas:</label>
+                  {getFormatContent()}
+                  </div>}
               </Col>
 
               <Col md={12} sm={24}>

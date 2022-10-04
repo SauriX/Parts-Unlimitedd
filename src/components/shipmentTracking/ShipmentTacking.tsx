@@ -47,27 +47,10 @@ const ShipmentTrackingHeader: FC<ShipmentTrackingProps> = ({
       className="header-container"
       extra={[
         scopes?.imprimir && <PrintIcon key="print" onClick={handlePrint} />,
-        scopes?.descargar && (
+       
           <DownloadIcon key="doc" onClick={handleDownload} />
-        ),
-        <Search
-          key="search"
-          placeholder="Buscar"
-          defaultValue={searchParams.get("search") ?? ""}
-          onSearch={search}
-        />,
-        scopes?.crear && (
-          <Button
-            key="new"
-            type="primary"
-            onClick={() => {
-              navigate("new");
-            }}
-            icon={<PlusOutlined />}
-          >
-            Nuevo
-          </Button>
-        ),
+      
+
       ]}
     ></PageHeader>
   );
