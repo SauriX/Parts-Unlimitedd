@@ -7,14 +7,12 @@ import {
   Form,
   Row,
   Table,
-  Upload,
   UploadFile,
 } from "antd";
 import { observer } from "mobx-react-lite";
 import { Typography } from "antd";
 import useWindowDimensions from "../../../app/util/window";
 import { IColumns } from "../../../app/common/table/utils";
-import SelectInput from "../../../app/common/form/SelectInput";
 import {
   IRequest,
   IRequestStudyInfo,
@@ -24,16 +22,9 @@ import { FC, useEffect, useState } from "react";
 import { toJS } from "mobx";
 import { IProceedingForm } from "../../../app/models/Proceeding";
 import { useStore } from "../../../app/stores/store";
-import { status, statusName } from "../../../app/util/catalogs";
-import moment from "moment";
-import TextInput from "../../../app/common/form/TextInput";
-import { Editor } from "react-draft-wysiwyg";
+import { status } from "../../../app/util/catalogs";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
 import { IResultPathological } from "../../../app/models/clinicResults";
-import { objectToFormData } from "../../../app/util/utils";
-import { RcFile } from "antd/lib/upload";
-import { uniqueId } from "lodash";
 const { Text, Title } = Typography;
 type ClinicalResultsDetailProps = {
   estudio: IRequestStudyInfo;
@@ -60,10 +51,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const [prueba, setPrueba] = useState<UploadFile[]>([]);
   const [currentResult, setCurrentResult] = useState<IResultPathological>();
   const { optionStore, clinicResultsStore } = useStore();
-  const {
-    getRequestStudyById,
-    updateStatusStudy,
-  } = clinicResultsStore;
+  const { getRequestStudyById, updateStatusStudy } = clinicResultsStore;
   const { medicOptions, getMedicOptions } = optionStore;
   const [form] = Form.useForm();
 
@@ -79,8 +67,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     form.setFieldValue("dr", claveMedico);
   }, [claveMedico]);
 
-  const loadInit = async () => {
-  };
+  const loadInit = async () => {};
 
   useEffect(() => {
     loadInit();
@@ -197,9 +184,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       </>
     );
   };
-  const guardarReporte = async (values: any) => {
-    
-  };
+  const guardarReporte = async (values: any) => {};
 
   const updateStatus = async () => {
     if (currentStudy.estatusId === status.requestStudy.solicitado) {
@@ -312,9 +297,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
               }}
             >
               <Row justify="space-between" gutter={[2, 12]}>
-                <Col span={8}>
-                  
-                </Col>
+                <Col span={8}></Col>
               </Row>
             </Form>
           </Card>
