@@ -21,10 +21,12 @@ const ClinicResults = {
     requests.put(`clinicResults/updateStatusStudy`, { requestStudyId, status }),
   getResultPathological: (search: number): Promise<IResultPathological> =>
     requests.post(`clinicResults/getPathological`, search),
-  getRequestStudyById: (requestStudy: number): Promise<IRequestStudyInfo> =>
+  getRequestStudyById: (requestStudy: number): Promise<any> =>
     requests.post(`clinicResults/getRequestStudyById`, requestStudy),
   exportList: (search: IClinicResultForm): Promise<void> =>
     requests.download(`clinicResults/export/list`, search),
+  printSelectedStudies: (configuration: any): Promise<void> =>
+    requests.print(`clinicResults/printSelectedStudies`, configuration),
 };
 
 export default ClinicResults;

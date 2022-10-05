@@ -29,6 +29,8 @@ export interface IResultPathological {
   muestraRecibida: string;
   medicoId: string;
   listaImagenesCargadas: string[];
+  estatus: number;
+  departamentoEstudio: string;
 }
 
 export interface IClinicStudy {
@@ -80,6 +82,8 @@ export class ResultPathologicalValues implements IResultPathological {
   muestraRecibida = "";
   medicoId = "";
   listaImagenesCargadas = [];
+  estatus = 0;
+  departamentoEstudio = "";
   constructor(init?: IClinicResultForm) {
     Object.assign(this, init);
   }
