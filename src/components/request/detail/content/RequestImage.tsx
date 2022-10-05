@@ -33,7 +33,7 @@ type imageTypes = {
   idBack: string;
   format: string[];
 };
-
+ 
 const RequestImage = () => {
   const { requestStore } = useStore();
   const { request, getImages, saveImage, deleteImage } = requestStore;
@@ -169,6 +169,7 @@ const RequestImage = () => {
     };
 
     readImages();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [request?.clave]);
 
   const handlePreview = async (file: UploadFile) => {

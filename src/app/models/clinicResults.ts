@@ -1,4 +1,5 @@
 import moment from "moment";
+import { IParameterList } from "./parameter";
 
 export interface IClinicResultList {
   id: string;
@@ -10,6 +11,7 @@ export interface IClinicResultList {
   sucursal: string;
   sucursalNombre: string;
   nombreMedico: string;
+  usuarioCreo: string;
   edad: string;
   sexo: string;
   compañia: string;
@@ -34,15 +36,19 @@ export interface IResultPathological {
 }
 
 export interface IClinicStudy {
-  id: number;
+  estudioId: number;
   nombre: string;
-  area: string;
-  status: number;
-  registro: string;
-  entrega: string;
-  seleccion: boolean;
+  areaId: number;
+  area?: string;
+  status?: number;
+  registro?: string;
+  entrega?: string;
+  nombreEstatus?: string;
+  seleccion?: boolean;
   clave: string;
-  nombreEstatus: string;
+  estatusId: number;
+  estatus?: string;
+  resultado?: string;
 }
 
 export interface IClinicResultForm {
@@ -68,6 +74,8 @@ export interface IStudyList {
   entrega: string;
   seleccion: boolean;
   clave: string;
+  parametros: IParameterList[];
+  resultado: string;
 }
 
 export class ResultPathologicalValues implements IResultPathological {

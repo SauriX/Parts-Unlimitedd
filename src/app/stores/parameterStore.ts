@@ -12,6 +12,7 @@ import responses from "../util/responses";
 import { getErrors } from "../util/utils";
 import history from "../util/history";
 import { IReagentList } from "../models/reagent";
+import Request from "../api/request";
 
 export default class ParameterStore {
   constructor() {

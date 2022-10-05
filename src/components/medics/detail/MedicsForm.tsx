@@ -1,6 +1,7 @@
-import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Select } from "antd";
-import React, { FC, useCallback, useEffect, useState } from "react";
-import { formItemLayout } from "../../../app/util/utils";
+import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Select, Segmented, Upload, Modal , Image, UploadProps, message,} from "antd";
+import React, { FC, Fragment, useCallback, useEffect, useState } from "react";
+import { formItemLayout, imageFallback,  uploadFakeRequest,  beforeUploadValidation,getBase64,objectToFormData,} from "../../../app/util/utils";
+import { InboxOutlined, PlusOutlined } from "@ant-design/icons";
 import TextInput from "../../../app/common/form/TextInput";
 import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
@@ -17,7 +18,11 @@ import { IOptions } from "../../../app/models/shared";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import MaskInput from "../../../app/common/form/MaskInput";
+import Dragger from "antd/lib/upload/Dragger";
+import { RcFile, UploadChangeParam, UploadFile } from "antd/lib/upload";
+import { IRequestImage } from "../../../app/models/request";
 // import { v4 as uuid } from "uuid";
+
 
 type MedicsFormProps = {
   id: string;
@@ -25,11 +30,22 @@ type MedicsFormProps = {
   printing: boolean;
 };
 const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
+  
   const { medicsStore, optionStore, locationStore } = useStore();
-  const { getById, create, update, getAll, medics } = medicsStore;
+  const { getById, create, update, getAll, medics ,} = medicsStore;
   const { clinicOptions, getClinicOptions } = optionStore;
   const { fieldOptions, getfieldsOptions } = optionStore;
   const { getColoniesByZipCode } = locationStore;
+  const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState(true);
+  const [colonies, setColonies] = useState<IOptions[]>([]);
+
+
+  const [values, setValues] = useState<IMedicsForm>(new MedicsFormValues());
+  const [clinic, setClinic] = useState<{ clave: ""; id: number }>();
+
+
+
 
   const navigate = useNavigate();
 
@@ -37,13 +53,38 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
 
   const [form] = Form.useForm<IMedicsForm>();
 
-  const [loading, setLoading] = useState(false);
-  const [disabled, setDisabled] = useState(true);
-  const [colonies, setColonies] = useState<IOptions[]>([]);
-  const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
-  const [values, setValues] = useState<IMedicsForm>(new MedicsFormValues());
-  const [clinic, setClinic] = useState<{ clave: ""; id: number }>();
 
+  const getContent = (url64: string) => {
+    if (!url64) {
+      return (
+        <>
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined />
+          </p>
+          <p className="ant-upload-text">
+            Dar click o arrastrar archivo para cargar
+          </p>
+          <p className="ant-upload-hint">
+            La imagén debe tener un tamaño máximo de 2MB y formato jpeg o png
+          </p>
+        </>
+      );
+    }
+
+    const url = url64;
+
+    return (
+      <Image
+        preview={false}
+        style={{ maxWidth: "90%" }}
+        src={url}
+        fallback={imageFallback}
+      />
+    );
+  };
+
+
+  
   const clearLocation = useCallback(() => {
     form.setFieldsValue({
       estadoId: undefined,
@@ -73,7 +114,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
     },
     [clearLocation, form, getColoniesByZipCode]
   );
-
+  const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
   useEffect(() => {
     const readMedics = async (id: string) => {
       setLoading(true);
@@ -324,7 +365,15 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
+                <TextInput
+                  formProps={{
+                    name: "password",
+                    label: "Contraseña",
+                  }}
+                  max={100}
 
+                  readonly={readonly}
+                />
                 <SelectInput
                   formProps={{
                     name: "especialidadId",
@@ -353,6 +402,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   rows={12}
                   readonly={readonly}
                 />
+
               </Col>
 
               <Col md={12} sm={24}>

@@ -22,19 +22,28 @@ axios.interceptors.response.use(undefined, async (error) => {
 
   const { status, headers } = error?.response;
 
-  if (status === responses.unauthorized && headers["www-authenticate"]?.includes("The token expired")) {
+  if (
+    status === responses.unauthorized &&
+    headers["www-authenticate"]?.includes("The token expired")
+  ) {
     window.localStorage.removeItem(tokenName);
     history.push("/login");
     throw new Error(messages.login);
   }
 
-  if (status === responses.unauthorized && headers["www-authenticate"]?.includes("invalid_token")) {
+  if (
+    status === responses.unauthorized &&
+    headers["www-authenticate"]?.includes("invalid_token")
+  ) {
     window.localStorage.removeItem(tokenName);
     history.push("/login");
     throw new Error(messages.login);
   }
 
-  if (status === responses.unauthorized && headers["www-authenticate"] === "Bearer") {
+  if (
+    status === responses.unauthorized &&
+    headers["www-authenticate"] === "Bearer"
+  ) {
     window.localStorage.removeItem(tokenName);
     history.push("/login");
     throw new Error(messages.login);
@@ -97,7 +106,7 @@ const requests = {
   download: (url: string, data?: Object | FormData) =>
     axios
       .post(url, data ?? {}, {
-        baseURL,
+        baseURL: url.startsWith("http") ? undefined : baseURL,
         responseType: "blob",
         headers:
           {} instanceof FormData
@@ -114,7 +123,9 @@ const requests = {
         const contentDisposition = response.headers["content-disposition"];
         if (contentDisposition) {
           if (contentDisposition.includes("filename*=UTF-8''")) {
-            name = decodeURI(contentDisposition.split("filename*=UTF-8''")[1].split(";")[0]);
+            name = decodeURI(
+              contentDisposition.split("filename*=UTF-8''")[1].split(";")[0]
+            );
           }
         }
 
@@ -134,9 +145,13 @@ const requests = {
             : { "Content-Type": "application/json" },
       })
       .then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));
+        const url = window.URL.createObjectURL(
+          new Blob([response.data], { type: "application/pdf" })
+        );
 
-        let iframe = document.querySelector("iframe.printframe") as HTMLIFrameElement;
+        let iframe = document.querySelector(
+          "iframe.printframe"
+        ) as HTMLIFrameElement;
 
         if (!iframe) {
           iframe = document.createElement("iframe");
@@ -168,7 +183,9 @@ const requests = {
             : { "Content-Type": "application/json" },
       })
       .then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data], { type: contentType }));
+        const url = window.URL.createObjectURL(
+          new Blob([response.data], { type: contentType })
+        );
 
         return url;
       }),

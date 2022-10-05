@@ -1,19 +1,16 @@
-import { Button, Col, Row, Spin, Table } from "antd";
+import { Button, Col, InputNumber, Row, Spin, Table } from "antd";
+import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import { IColumns, getDefaultColumnProps } from "../../../../../app/common/table/utils";
-import { IRequestStudy } from "../../../../../app/models/request";
+import {
+  IColumns,
+  getDefaultColumnProps,
+} from "../../../../../app/common/table/utils";
+import { IRequestStudy, IRequestTag } from "../../../../../app/models/request";
 import { useStore } from "../../../../../app/stores/store";
-
-interface IRequestTag {
-  taponClave: string;
-  taponNombre: string;
-  estudios: string;
-  cantidad: number;
-}
 
 const RequestPrintTag = () => {
   const { requestStore } = useStore();
-  const { allStudies, printTicket } = requestStore;
+  const { request, allStudies, printTags } = requestStore;
 
   const [labels, setLabels] = useState<IRequestTag[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -35,6 +32,23 @@ const RequestPrintTag = () => {
     }, []);
     setLabels(grouped);
   }, [allStudies]);
+
+  const changeQty = (qty: number, record: IRequestTag) => {
+    let index = labels.findIndex((x) => x.taponClave === record.taponClave);
+    if (index > -1) {
+      const lbls = [...labels];
+      lbls[index] = { ...lbls[index], cantidad: qty };
+      setLabels(lbls);
+    }
+  };
+
+  const print = async () => {
+    if (request) {
+      setLoading(true);
+      await printTags(request.expedienteId, request.solicitudId!, labels);
+      setLoading(false);
+    }
+  };
 
   const columns: IColumns<IRequestTag> = [
     {
@@ -60,6 +74,17 @@ const RequestPrintTag = () => {
         searchable: false,
         width: "10%",
       }),
+      render: (_, record) => (
+        <InputNumber
+          value={record.cantidad}
+          bordered={false}
+          min={1}
+          style={{ width: "100%" }}
+          onChange={(qty) => {
+            changeQty(qty, record);
+          }}
+        />
+      ),
     },
     Table.SELECTION_COLUMN,
   ];
@@ -72,7 +97,7 @@ const RequestPrintTag = () => {
             size="small"
             rowKey={(record) => record.taponClave}
             columns={columns}
-            dataSource={[...labels]}
+            dataSource={labels}
             pagination={false}
             rowSelection={{
               fixed: "right",
@@ -82,14 +107,7 @@ const RequestPrintTag = () => {
           />
         </Col>
         <Col span={24} style={{ textAlign: "right" }}>
-          <Button
-            type="default"
-            onClick={async () => {
-              setLoading(true);
-              await printTicket("", "");
-              setLoading(false);
-            }}
-          >
+          <Button type="default" onClick={print}>
             Imprimir
           </Button>
         </Col>
@@ -98,4 +116,4 @@ const RequestPrintTag = () => {
   );
 };
 
-export default RequestPrintTag;
+export default observer(RequestPrintTag);

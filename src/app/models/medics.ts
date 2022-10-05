@@ -44,6 +44,7 @@ export interface IMedicsForm {
   telefono?: string;
   activo: boolean;
   clinicas: IClinicList[];
+  password:string;
 }
 export class MedicsFormValues implements IMedicsForm {
   idMedico = "";
@@ -65,6 +66,7 @@ export class MedicsFormValues implements IMedicsForm {
   telefono = undefined;
   activo = true;
   clinicas: IClinicList[] = [];
+  password="";
 
   constructor(init?: IMedicsForm) {
     Object.assign(this, init);

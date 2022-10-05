@@ -1,19 +1,33 @@
-import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Select, FormItemProps } from "antd";
+import {
+  Spin,
+  Form,
+  Row,
+  Col,
+  Pagination,
+  Button,
+  PageHeader,
+  Divider,
+  Select,
+  FormItemProps,
+} from "antd";
 import React, { FC, useCallback, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
-import TextInput from "../../../app/common/form/TextInput";
-import SwitchInput from "../../../app/common/form/SwitchInput";
-import SelectInput from "../../../app/common/form/SelectInput";
+import TextInput from "../../../app/common/form/proposal/TextInput";
+import SwitchInput from "../../../app/common/form/proposal/SwitchInput";
+import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import { useStore } from "../../../app/stores/store";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { IMaquiladorForm, MaquiladorFormValues } from "../../../app/models/maquilador";
+import {
+  IMaquiladorForm,
+  MaquiladorFormValues,
+} from "../../../app/models/maquilador";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
 import { IOptions } from "../../../app/models/shared";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
-import MaskInput from "../../../app/common/form/MaskInput";
+import MaskInput from "../../../app/common/form/proposal/MaskInput";
 //import { v4 as uuid } from "uuid";
 
 type MaquiladorFormProps = {
@@ -21,7 +35,11 @@ type MaquiladorFormProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
-const MaquiladorForm: FC<MaquiladorFormProps> = ({ id, componentRef, printing }) => {
+const MaquiladorForm: FC<MaquiladorFormProps> = ({
+  id,
+  componentRef,
+  printing,
+}) => {
   const { maquiladorStore, locationStore } = useStore();
   const { getById, create, update, getAll, maquilador } = maquiladorStore;
   const { getColoniesByZipCode } = locationStore;
@@ -35,8 +53,12 @@ const MaquiladorForm: FC<MaquiladorFormProps> = ({ id, componentRef, printing })
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [colonies, setColonies] = useState<IOptions[]>([]);
-  const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
-  const [values, setValues] = useState<IMaquiladorForm>(new MaquiladorFormValues());
+  const [readonly, setReadonly] = useState(
+    searchParams.get("mode") === "readonly"
+  );
+  const [values, setValues] = useState<IMaquiladorForm>(
+    new MaquiladorFormValues()
+  );
   const clearLocation = useCallback(() => {
     form.setFieldsValue({
       estado: undefined,
@@ -128,7 +150,11 @@ const MaquiladorForm: FC<MaquiladorFormProps> = ({ id, componentRef, printing })
 
   const prevnextMaquilador = (index: number) => {
     const maquila = maquilador[index];
-    navigate(`/maquila/${maquila?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search")}`);
+    navigate(
+      `/maquila/${maquila?.id}?mode=${searchParams.get(
+        "mode"
+      )}&search=${searchParams.get("search")}`
+    );
   };
 
   useEffect(() => {
@@ -137,7 +163,9 @@ const MaquiladorForm: FC<MaquiladorFormProps> = ({ id, componentRef, printing })
 
   const botonEdit = () => {
     setReadonly(false);
-    navigate(`/maquila/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`);
+    navigate(
+      `/maquila/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`
+    );
   };
 
   const onValuesChange = async (changeValues: any, values: IMaquiladorForm) => {
@@ -220,7 +248,8 @@ const MaquiladorForm: FC<MaquiladorFormProps> = ({ id, componentRef, printing })
             onFieldsChange={() => {
               setDisabled(
                 !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+                  form.getFieldsError().filter(({ errors }) => errors.length)
+                    .length > 0
               );
             }}
           ></Form>
@@ -231,7 +260,12 @@ const MaquiladorForm: FC<MaquiladorFormProps> = ({ id, componentRef, printing })
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo de Maquilador" image="maquilador" />}
+              title={
+                <HeaderTitle
+                  title="Catálogo de Maquilador"
+                  image="maquilador"
+                />
+              }
               className="header-container"
             ></PageHeader>
           )}
@@ -247,155 +281,180 @@ const MaquiladorForm: FC<MaquiladorFormProps> = ({ id, componentRef, printing })
             onFieldsChange={() => {
               setDisabled(
                 !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+                  form.getFieldsError().filter(({ errors }) => errors.length)
+                    .length > 0
               );
             }}
           >
             <Row>
-              <Col md={12} sm={24}>
-                <TextInput
-                  formProps={{
-                    name: "clave",
-                    label: "Clave",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                  type="string"
-                />
-
-                <TextInput
-                  formProps={{
-                    name: "nombre",
-                    label: "Nombre",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                />
-                <TextInput
-                  formProps={{
-                    name: "correo",
-                    label: "Correo",
-                  }}
-                  max={100}
-                  readonly={readonly}
-                  type="email"
-                />
-                <MaskInput
-                  formProps={{
-                    name: "telefono",
-                    label: "Teléfono",
-                  }}
-                  mask={[
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                  ]}
-                  validator={(_, value: any) => {
-                    if (!value || value.indexOf("_") === -1) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject("El campo debe contener 10 dígitos");
-                  }}
-                  readonly={readonly}
-                />
-                <TextInput
-                  formProps={{
-                    name: "paginaWeb",
-                    label: "Página Web",
-                  }}
-                  max={100}
-                  readonly={readonly}
-                  type="url"
-                />
-                <SwitchInput
-                  name="activo"
-                  onChange={(value) => {
-                    if (value) {
-                      alerts.info(messages.confirmations.enable);
-                    } else {
-                      alerts.info(messages.confirmations.disable);
-                    }
-                  }}
-                  label="Activo"
-                  readonly={readonly}
-                />
-              </Col>
-
-              <Col md={12} sm={24}>
-                <TextInput
-                  formProps={{
-                    name: "codigoPostal",
-                    label: "Código P",
-                  }}
-                  max={5}
-                  required
-                  readonly={readonly}
-                />
-
-                <TextInput
-                  formProps={{
-                    name: "estado",
-                    label: "Estado",
-                  }}
-                  max={100}
-                  readonly={readonly}
-                />
-
-                <TextInput
-                  formProps={{
-                    name: "ciudad",
-                    label: "Ciudad",
-                  }}
-                  max={100}
-                  readonly={readonly}
-                />
-                <TextInput
-                  formProps={{
-                    name: "numeroExterior",
-                    label: "Número Exterior",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                />
-                <TextInput
-                  formProps={{
-                    name: "numeroInterior",
-                    label: "Número interior",
-                  }}
-                  max={100}
-                  readonly={readonly}
-                />
-                <TextInput
-                  formProps={{
-                    name: "calle",
-                    label: "Calle",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                />
-                <SelectInput
-                  formProps={{
-                    name: "coloniaId",
-                    label: "Colonia",
-                  }}
-                  required
-                  readonly={readonly}
-                  options={colonies}
-                />
+              <Col span={24}>
+                <Row justify="space-between" gutter={[0, 24]}>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "clave",
+                        label: "Clave",
+                      }}
+                      max={100}
+                      required
+                      readonly={readonly}
+                      type="string"
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "codigoPostal",
+                        label: "Código P",
+                      }}
+                      max={5}
+                      required
+                      readonly={readonly}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "nombre",
+                        label: "Nombre",
+                      }}
+                      max={100}
+                      required
+                      readonly={readonly}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "estado",
+                        label: "Estado",
+                      }}
+                      max={100}
+                      readonly={readonly}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "correo",
+                        label: "Correo",
+                      }}
+                      max={100}
+                      readonly={readonly}
+                      type="email"
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "ciudad",
+                        label: "Ciudad",
+                      }}
+                      max={100}
+                      readonly={readonly}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <MaskInput
+                      formProps={{
+                        name: "telefono",
+                        label: "Teléfono",
+                      }}
+                      mask={[
+                        /[0-9]/,
+                        /[0-9]/,
+                        /[0-9]/,
+                        "-",
+                        /[0-9]/,
+                        /[0-9]/,
+                        /[0-9]/,
+                        "-",
+                        /[0-9]/,
+                        /[0-9]/,
+                        "-",
+                        /[0-9]/,
+                        /[0-9]/,
+                      ]}
+                      validator={(_, value: any) => {
+                        if (!value || value.indexOf("_") === -1) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          "El campo debe contener 10 dígitos"
+                        );
+                      }}
+                      readonly={readonly}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "numeroExterior",
+                        label: "Número Exterior",
+                      }}
+                      max={100}
+                      required
+                      readonly={readonly}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "paginaWeb",
+                        label: "Página Web",
+                      }}
+                      max={100}
+                      readonly={readonly}
+                      type="url"
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "numeroInterior",
+                        label: "Número interior",
+                      }}
+                      max={100}
+                      readonly={readonly}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <SwitchInput
+                      name="activo"
+                      onChange={(value) => {
+                        if (value) {
+                          alerts.info(messages.confirmations.enable);
+                        } else {
+                          alerts.info(messages.confirmations.disable);
+                        }
+                      }}
+                      label="Activo"
+                      readonly={readonly}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "calle",
+                        label: "Calle",
+                      }}
+                      max={100}
+                      required
+                      readonly={readonly}
+                    />
+                  </Col>
+                  <Col offset={12} span={12}>
+                    <SelectInput
+                      formProps={{
+                        name: "coloniaId",
+                        label: "Colonia",
+                      }}
+                      required
+                      readonly={readonly}
+                      options={colonies}
+                    />
+                  </Col>
+                </Row>
               </Col>
             </Row>
           </Form>

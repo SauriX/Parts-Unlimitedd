@@ -11,6 +11,7 @@ import {
   IRequestPartiality,
   IRequestStudy,
   IRequestStudyUpdate,
+  IRequestTag,
   IRequestTotal,
   RequestStudyUpdate,
   RequestTotal,
@@ -83,9 +84,11 @@ export default class RequestStore {
 
     return [...studies, ...packStudies];
   }
+
   setOriginalTotal = (totals: IRequestTotal) => {
     this.totalsOriginal = totals;
   };
+
   isPack(obj: IRequestStudy | IRequestPack): obj is IRequestPack {
     return obj.type === "pack";
   }
@@ -503,6 +506,18 @@ export default class RequestStore {
     try {
       const url = await Request.getOrderPdfUrl(recordId, requestId);
       return url;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  printTags = async (
+    recordId: string,
+    requestId: string,
+    tags: IRequestTag[]
+  ) => {
+    try {
+      await Request.printTags(recordId, requestId, tags);
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }

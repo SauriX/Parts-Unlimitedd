@@ -61,4 +61,5 @@ export type imagesType =
   | "ordenseguimiento"
   | "sitio-web"
   | "portapapeles"
-  | "usuario";
+  | "usuario"
+  | "segruta";

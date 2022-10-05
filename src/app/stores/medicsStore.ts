@@ -15,6 +15,7 @@ export default class MedicsStore {
     makeAutoObservable(this);
   }
 
+
   scopes?: IScopes;
   medics: IMedicsList[] = [];
 

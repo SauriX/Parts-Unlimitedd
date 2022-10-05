@@ -232,6 +232,13 @@ export interface IRequestPack {
   estudios: IRequestStudy[];
 }
 
+export interface IRequestTag {
+  taponClave: string;
+  taponNombre: string;
+  estudios: string;
+  cantidad: number;
+}
+
 export interface IRequestTotal extends IRequestBase {
   totalEstudios: number;
   descuento: number;

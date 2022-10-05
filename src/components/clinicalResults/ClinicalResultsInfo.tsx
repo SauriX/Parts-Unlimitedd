@@ -28,12 +28,9 @@ import { toJS } from "mobx";
 import { IRequest, IRequestStudy } from "../../app/models/request";
 import { v4 as uuid } from "uuid";
 
-import {
-  IProceedingForm,
-  ProceedingFormValues,
-} from "../../app/models/Proceeding";
-import { ITaxData } from "../../app/models/taxdata";
+import { ProceedingFormValues } from "../../app/models/Proceeding";
 import moment from "moment";
+import React from "react";
 
 const { Text } = Typography;
 const { Panel } = Collapse;
@@ -296,7 +293,17 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
                 </div>
               );
             } else {
-              return <ClinicalResultsDetails key={req.id} />;
+              return (
+                <ClinicalResultsDetails
+                  key={req.id}
+                  estudio={req}
+                  estudioId={req.estudioId}
+                  paciente={procedingCurrent}
+                  medico={request?.nombreMedico!}
+                  claveMedico={request?.claveMedico!}
+                  solicitud={request!}
+                />
+              );
             }
           })}
           {/* <ClinicalResultsForm /> */}

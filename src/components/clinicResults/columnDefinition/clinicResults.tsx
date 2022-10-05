@@ -36,7 +36,7 @@ const ClinicResultsColumns = () => {
           </Link>
           <small>
             <Text type="secondary">
-              Sucrusal: <Text strong>{record.sucursal}</Text>{" "}
+              Sucursal: <Text strong>{record.sucursal}</Text>{" "}
             </Text>
           </small>
         </div>
@@ -77,6 +77,13 @@ const ClinicResultsColumns = () => {
         width: "15%",
       }),
     },
+    {
+      ...getDefaultColumnProps("usuarioCreo", "Usuario Registró", {
+        searchState,
+        setSearchState,
+        width: "20%",
+      }),
+    },
 
     {
       ...getDefaultColumnProps("compañia", "Compañía", {
@@ -105,11 +112,10 @@ export const ClinicResultsExpandable = () => {
   return {
     expandedRowRender: (item: IClinicResultList) => (
       <div>
-        <h4>Estudios</h4>
         {item.estudios.map((x) => {
           return (
             <Descriptions
-              key={x.id}
+              key={x.estudioId}
               size="small"
               bordered
               style={{ marginBottom: 5 }}
@@ -127,7 +133,7 @@ export const ClinicResultsExpandable = () => {
                 style={{ maxWidth: 30 }}
                 className="description-content"
               >
-                {x.nombreEstatus} - {x.entrega}
+                {x.nombreEstatus!.toUpperCase()} - {x.entrega}
               </Descriptions.Item>
             </Descriptions>
           );

@@ -11,6 +11,7 @@ import {
   IClinicResultList,
   IClinicStudy,
 } from "../models/clinicResults";
+import Request from "../api/request";
 
 export default class ClinicResultsStores {
   constructor() {
@@ -155,6 +156,17 @@ export default class ClinicResultsStores {
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
+    }
+  };
+
+  getStudies = async (recordId: string, requestId: string) => {
+    try {
+      const data = await Request.getStudies(recordId, requestId);
+      this.studies = data.estudios;
+      return data;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return [];
     }
   };
 }
