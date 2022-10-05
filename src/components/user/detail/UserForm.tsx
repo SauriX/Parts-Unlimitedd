@@ -1,7 +1,8 @@
-import { Spin, Form, Row, Col, Transfer, Tooltip, Tree, Tag, Pagination, Button, PageHeader } from "antd";
-import React, { FC, useEffect, useMemo, useState } from "react";
+import { Spin, Form, Row, Col, Transfer, Tooltip, Tree, Tag, Pagination, Button, PageHeader, Upload, Modal, UploadFile, UploadProps } from "antd";
+import React, { FC, Fragment, useEffect, useMemo, useState } from "react";
 import { IUserPermission, IUserForm, UserFormValues, IClave, claveValues } from "../../../app/models/user";
-import { formItemLayout } from "../../../app/util/utils";
+import { beforeUploadValidation, formItemLayout, uploadFakeRequest,getBase64,objectToFormData } from "../../../app/util/utils";
+import { InboxOutlined, PlusOutlined } from "@ant-design/icons";
 import TextInput from "../../../app/common/form/TextInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
 import SelectInput from "../../../app/common/form/SelectInput";
@@ -18,6 +19,8 @@ import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import { observer } from "mobx-react-lite";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
+import { RcFile } from "antd/lib/upload";
+import { IRequestImage } from "../../../app/models/request";
 type UserFormProps = {
   componentRef: React.MutableRefObject<any>;
   load: boolean;
@@ -25,12 +28,21 @@ type UserFormProps = {
 type UrlParams = {
   id: string;
 };
-
+type imageTypes = {
+  order: string;
+  id: string;
+  idBack: string;
+  format: string[];
+};
 const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
+  const [type, setType] = useState<"orden" | "ine" | "ineReverso" | "formato">(
+    "formato"
+  );
+  const baseUrl = process.env.REACT_APP_USERS_URL + "/images/users";
   const { userStore, roleStore, optionStore } = useStore();
-  const { roleOptions, getRoleOptions,getSucursalesOptions,sucursales } = optionStore;
+  const { roleOptions, getRoleOptions,getSucursalesOptions,sucursales, } = optionStore;
   const { getPermissionById } = roleStore;
-  const { getById, create, update, Clave, generatePass, changePassordF, getAll, users, getPermission } =
+  const { getById, create, update, Clave, generatePass, changePassordF, getAll, users, getPermission,saveImage,deleteImage } =
     userStore;
   const [form] = Form.useForm<IUserForm>();
 
@@ -42,13 +54,20 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
 
   const [permissionsAdded, setPermissionsAdded] = useState<TreeData[]>([]);
   const [permissionsAvailable, setPermissionsAvailable] = useState<TreeData[]>([]);
-
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
   const [permissionsAddedFiltered, setPermissionsAddedFiltered] = useState<TreeData[]>([]);
   const [permissionsAvailableFiltered, setPermissionsAvailableFiltered] = useState<TreeData[]>([]);
   let navigate = useNavigate();
 
   const [values, setValues] = useState<IUserForm>(new UserFormValues());
-
+  const [images, setImages] = useState<imageTypes>({
+    order: "",
+    id: "",
+    idBack: "",
+    format: [],
+  });
   const [searchParams, setSearchParams] = useSearchParams();
   let { id } = useParams<UrlParams>();
   let user: IUserForm = new UserFormValues();
@@ -158,6 +177,111 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
     targetKeys,
     setSelectedKeys
   );
+  const handlePreview = async (file: UploadFile) => {
+    setPreviewImage(file.url || (file.preview as string));
+    setPreviewVisible(true);
+    setPreviewTitle(
+      file.name || file.url!.substring(file.url!.lastIndexOf("/") + 1)
+    );
+  };
+  const submitImage = async (
+    type: "orden" | "ine" | "ineReverso" | "formato",
+    file: RcFile,
+    imageUrl: string
+  ) => {
+    if (values) {
+      const requestImage: IRequestImage = {
+        solicitudId:values.id!,
+        expedienteId: values.id!,
+        imagen: file,
+        tipo: type,
+      };
+
+      setLoading(true);
+      const formData = objectToFormData(requestImage);
+      const imageName = await saveImage(formData);
+      setLoading(false);
+
+      if (imageName) {
+        if (type === "orden") {
+          setImages({ ...images, order: imageUrl });
+        } else if (type === "ine") {
+          setImages({ ...images, id: imageUrl });
+        } else if (type === "ineReverso") {
+          setImages({ ...images, idBack: imageUrl });
+        } else if (type === "formato") {
+          
+          imageUrl = `${baseUrl}/${values?.clave}/${imageName}.png`;
+          setImages({
+            ...images,
+            format: [...images.format.filter((x) => x !== imageUrl), imageUrl],
+          });
+        }
+      }
+    }
+  };
+  const onChangeImageFormat: UploadProps["onChange"] = ({ file }) => {
+    getBase64(file.originFileObj, (imageStr) => {
+      submitImage(type, file.originFileObj!, imageStr!.toString());
+    });
+  };
+  const onRemoveImageFormat = async (file: UploadFile<any>) => {
+    if (values) {
+      setLoading(true);
+      const ok = await deleteImage(
+        values.id,
+        values.id!,
+        file.name
+      );
+      setLoading(false);
+      if (ok) {
+        setImages((prev) => ({
+          ...prev,
+          format: prev.format.filter((x) => !x.includes(file.name)),
+        }));
+      }
+      return ok;
+    }
+    return false;
+  };
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
+  const handleCancel = () => setPreviewVisible(false);
+
+
+  const getFormatContent = () => {
+    return (
+      <Fragment>
+        <Upload
+          customRequest={uploadFakeRequest}
+          beforeUpload={(file) => beforeUploadValidation(file)}
+          listType="picture-card"
+          fileList={images?.format.map((x) => ({
+            uid: x,
+            name: x.split("/")[x.split("/").length - 1].slice(0, -4),
+            url: x,
+          }))}
+          onPreview={handlePreview}
+          onChange={onChangeImageFormat}
+          onRemove={onRemoveImageFormat}
+        >
+          {uploadButton}
+        </Upload>
+        <Modal
+          visible={previewVisible}
+          title={previewTitle}
+          footer={null}
+          onCancel={handleCancel}
+        >
+          <img alt="example" style={{ width: "100%" }} src={previewImage} />
+        </Modal>
+      </Fragment>
+    );
+  };
   const onValuesChange = async (changeValues: any) => {
     const fields = Object.keys(changeValues)[0];
 
@@ -416,6 +540,10 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
             Usuario: {values.nombre} {values.primerApellido}
           </Tag>
         </Row>
+        {     values.id&&<div style={{marginLeft:"50%"}}>
+            <label htmlFor="">Carga de firmas:</label>
+             {getFormatContent()}
+        </div>}
         <div style={{ width: "100%", overflowX: "auto" }}>
           <div style={{ width: "fit-content", margin: "auto" }}>
             <Transfer<IUserPermission>
