@@ -59,6 +59,24 @@ export default class UserStore {
       this.users = [];
     }
   };
+  deleteImage = async (recordId: string, requestId: string, code: string) => {
+    try {
+      //await Request.deleteImage(recordId, requestId, code);
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+  saveImage = async (request: FormData) => {
+    try {
+      console.log(request);
+      var imageName = await User.saveImage(request);
+      return imageName;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
   exportList = async (search: string) => {
     try {
       await User.exportList(search);
