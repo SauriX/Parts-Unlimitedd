@@ -24,9 +24,7 @@ import ClinicalResultsHeader from "./ClinicalResultsHeader";
 import { useParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 
-import {
-  ProceedingFormValues,
-} from "../../app/models/Proceeding";
+import { ProceedingFormValues } from "../../app/models/Proceeding";
 import moment from "moment";
 import React from "react";
 
@@ -258,7 +256,17 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
                 </>
               );
             } else {
-              return <ClinicalResultsDetails key={index} />;
+              return (
+                <ClinicalResultsDetails
+                key={index}
+                estudio={req}
+                estudioId={req.id}
+                paciente={procedingCurrent}
+                medico={request.nombreMedico!}
+                claveMedico={request.claveMedico!}
+                solicitud={request}
+                />
+              );
             }
           })}
           {/* <ClinicalResultsForm /> */}
