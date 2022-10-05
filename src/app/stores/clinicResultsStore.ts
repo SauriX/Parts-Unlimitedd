@@ -25,6 +25,15 @@ export default class ClinicResultsStores {
   formValues: IClinicResultForm = new ClinicResultsFormValues();
   loadingStudies: boolean = false;
   clear: boolean = false;
+  studiesSelectedToPrint: any[] = [];
+
+  printSelectedStudies = async (configuration: any) => {
+    try {
+      await ClinicResults.printSelectedStudies(configuration);
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -33,7 +42,17 @@ export default class ClinicResultsStores {
   clearStudy = () => {
     this.data = [];
   };
-
+  addSelectedStudy = (estudioId: number) => {
+    this.studiesSelectedToPrint.push(estudioId);
+  };
+  clearSelectedStudies = () => {
+    this.studiesSelectedToPrint = [];
+  };
+  removeSelectedStudy = (estudioId: number) => {
+    this.studiesSelectedToPrint = this.studiesSelectedToPrint.filter(
+      (item) => item !== estudioId
+    );
+  };
   setFormValues = (newFormValues: IClinicResultForm) => {
     this.formValues = newFormValues;
   };
@@ -134,6 +153,7 @@ export default class ClinicResultsStores {
     // updateResultPathological = async (result: IResultPathological) => {
     try {
       await ClinicResults.updateStatusStudy(requestStudyId, status);
+      console.log("update", { requestStudyId, status });
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));

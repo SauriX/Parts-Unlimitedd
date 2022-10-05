@@ -26,6 +26,7 @@ export interface IProceedingForm {
   expediente: string;
   sexo: string;
   fechaNacimiento?: Date | moment.Moment;
+  fechaNacimientoFormat?: string;
   edad: number;
   edadCheck: boolean;
   telefono: string;

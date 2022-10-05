@@ -24,6 +24,8 @@ const User = {
   getPermission: (): Promise<IUserPermission[]> => requests.get(`user/permission`),
   update: (user: IUserForm): Promise<IUserList> => requests.put("user", user),
   changePass: (form: IChangePasswordForm): Promise<void> => requests.put("user/password", form),
+  saveImage: (formData: FormData): Promise<string> =>
+  requests.put("user/images", formData),
 };
 
 export default User;

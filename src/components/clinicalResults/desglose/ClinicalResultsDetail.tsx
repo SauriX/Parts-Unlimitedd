@@ -16,6 +16,7 @@ import useWindowDimensions from "../../../app/util/window";
 import { IColumns } from "../../../app/common/table/utils";
 import {
   IRequest,
+  IRequestStudy,
   IRequestStudyInfo,
   RequestStudyInfoForm,
 } from "../../../app/models/request";
@@ -38,7 +39,7 @@ import NumberInput from "../../../app/common/form/proposal/NumberInput";
 const { Text, Title } = Typography;
 
 type ClinicalResultsDetailProps = {
-  estudio: IRequestStudyInfo;
+  estudio: IRequestStudy;
   paciente: IProceedingForm;
   medico: string;
   claveMedico: string;
@@ -225,7 +226,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     const labResults: IClinicResultCaptureForm[] = newValuesForm.map(
       (newValues) => ({
         id: newValues.id,
-        estudioId: estudio.id,
+        estudioId: estudio.id!,
         nombre: newValues.nombre,
         solicitudId: solicitud.solicitudId!,
         parametroId: newValues.parametroId,
@@ -256,68 +257,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
 
   return (
     <>
-      <Row
-        style={{
-          marginBottom: "20px",
-          padding: "5px",
-          border: "3px solid #a39f9f",
-          borderRadius: "10px",
-          width: "100%",
-        }}
-        justify="space-between"
-        gutter={[2, 12]}
-      >
-        <Col span={4}>
-          <Title level={5}>Estatus</Title>
-          <div>
-            <Text>Toma de muestra</Text>
-          </div>
-          <div>
-            <Text>Solicitado</Text>
-          </div>
-          <div>
-            <Text>Capturado</Text>
-          </div>
-        </Col>
-
-        <Col span={4}>
-          <Title level={5}>Fecha de actualización</Title>
-          <div>
-            <Text>{estudio.fechaTomaMuestra}</Text>
-          </div>
-          <div>
-            <Text>{estudio.fechaSolicitado}</Text>
-          </div>
-          <div>
-            <Text>{estudio.fechaCaptura}</Text>
-          </div>
-        </Col>
-        <Col span={4}>
-          <Title level={5}>Estatus</Title>
-          <div>
-            <Text>Validado</Text>
-          </div>
-          <div>
-            <Text>Liberado</Text>
-          </div>
-          <div>
-            <Text>Enviado</Text>
-          </div>
-        </Col>
-        <Col span={4}>
-          <Title level={5}>Fecha de actualización</Title>
-          <div>
-            <Text>{estudio.fechaValidacion}</Text>
-          </div>
-          <div>
-            <Text>{estudio.fechaLiberado}</Text>
-          </div>
-          <div>
-            <Text>{estudio.fechaEnviado}</Text>
-          </div>
-        </Col>
-        {renderUpdateStatus()}
-      </Row>
       <Row style={{ marginBottom: "20px" }}>
         <Col span={24}>
           <Table<any>
