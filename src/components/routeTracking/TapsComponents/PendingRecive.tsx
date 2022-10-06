@@ -7,6 +7,7 @@ import {
     Input,
     PageHeader,
     Row,
+    Switch,
     Table,
     Tag,
   } from "antd";
@@ -29,13 +30,17 @@ import {
   import { CheckboxChangeEvent } from "antd/lib/checkbox";
   import alerts from "../../../app/util/alerts";
   import PrintIcon from "../../../app/common/icons/PrintIcon";
-  
+  import { ClockCircleOutlined,FileDoneOutlined,  } from '@ant-design/icons';
+import { Steps } from 'antd';
+import DateInput from "../../../app/common/form/proposal/DateInput";
+import moment from "moment";
   const PendingRecive = () => {
     const { procedingStore, optionStore, locationStore, samplig,routeTrackingStore } = useStore();
     const { getAll, studys, printTicket, update,exportForm } = routeTrackingStore;
     const [values, setValues] = useState<SearchTracking>(new TrackingFormValues());
     const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
   const [ids, setIds] = useState<number[]>([]);
+  const { Step } = Steps;
   const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
   const [activiti, setActiviti] = useState<string>("");
   const [expandedRowKeys,setexpandedRowKeys]= useState<string[]>([]);
@@ -197,6 +202,48 @@ import {
               </>
             );
           })}
+            <br />
+
+            <h4>Muestras incluidas por recibir:</h4>
+          {item.estudios.map((x) => {
+            return (
+              <>
+                <Descriptions
+                  size="small"
+                  bordered
+                  layout="vertical"
+                  style={{ marginBottom: 5 }}
+                >
+                  <Descriptions.Item label="Clave" className="description-content" style={{ maxWidth: 30 }}>
+                    {x.clave}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Estudio" className="description-content" style={{ maxWidth: 30 }}>
+                    {x.nombre}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Estatus" className="description-content" style={{ maxWidth: 30 }}>
+                    {x.status == 1 ? "Pendiente" : "Toma de muestra"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Registro" className="description-content" style={{ maxWidth: 30 }}>
+                    {x.registro}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Entrega" className="description-content" style={{ maxWidth: 30 }}>
+                    {x.entrega}
+                  </Descriptions.Item>
+                  <Descriptions.Item label=""  className="description-content"style={{ maxWidth: 30 }}>
+
+                  <Switch defaultChecked  />
+                    {/* <ImageButton
+                      title="Imprimir"
+                      image="print"
+                      onClick={() => {
+                        //printTicket(item.order, item.id);
+                      }}
+                    ></ImageButton> */}
+                  </Descriptions.Item>
+                </Descriptions>
+              </>
+            );
+          })}
         </div>
       ),
       rowExpandable: () => true,
@@ -217,7 +264,7 @@ import {
   
       const columns: IColumns<IRouteList> = [
         {
-          ...getDefaultColumnProps("seguimiento", "# De seguridad", {
+          ...getDefaultColumnProps("seguimiento", "# De seguimineto", {
             searchState,
             setSearchState,
             width: "20%",
@@ -242,38 +289,15 @@ import {
             }),
           },
           {
-            ...getDefaultColumnProps("sucursal", "Sucursal", {
-              searchState,
-              setSearchState,
-              width: "20%",
-            }),
-          },
-          {
-            ...getDefaultColumnProps("fecha", " Fecha de entrega", {
-              searchState,
-              setSearchState,
-              width: "15%",
-            }),
-          },
-          {
             key: "editar",
             dataIndex: "id",
-            title: "Estatus",
-            align: "center",
-            width:  "10%",
-            render: (value) => (value ? "Activo" : "Inactivo"),
-          },
-      
-          {
-            key: "editar",
-            dataIndex: "id",
-            title: "Editar",
+            title: "Seguimineto",
             align: "center",
             width:  "10%",
             render: (value) => (
               <IconButton
                 title="Editar ruta"
-                icon={<EditOutlined />}
+                icon={<ClockCircleOutlined />}
                 onClick={() => {
                  
                 }}
@@ -282,44 +306,61 @@ import {
           },
       
           {
-            key: "editar",
-            dataIndex: "id",
-            title: "Impresión",
-            align: "center",
-            width:  "10%",
-            render: (value,item) => (
-              <PrintIcon
-                      key="print"
-                      onClick={() => {
-                        printTicket(value, item.id);
-                      }}
-              />
-            ),
+            ...getDefaultColumnProps("fecha", "Sucursal de procedencia", {
+              searchState,
+              setSearchState,
+              width: "15%",
+            }),
           },
           {
             key: "editar",
-            dataIndex: "id",
-            title: "Seleccionar",
+            dataIndex: "fecha",
+            title: "Fecha de entrega",
+            align: "center",
+            width:  "10%",
+            render: (value) => (moment(value).format('MMMM Do, YYYY')),
+          },
+          {
+            key: "editar",
+            dataIndex: "fecha",
+            title: "Hora de entrega estimada",
+            align: "center",
+            width:  "10%",
+            render: (value) => (moment(value).utc().format('h:mmA')),
+          },
+
+          {
+            key: "editar",
+            dataIndex: "fecha",
+            title: "Hora y fecha de entrega real",
             align: "center",
             width:  "10%",
             render: (value) => (
-              <Checkbox >
-            
-            </Checkbox>
-            ),
+              <div>
+                {moment(value).utc().format('h:mmA')}
+                <br />
+                {moment(value).format('MMMM Do, YYYY')}
+              </div>
+              
+              ),
           },
+
         ];
       return (
           <Fragment>
-              <Button style={{marginLeft:"45%",marginBottom:"5%",backgroundColor:" #18AC50"}} type="primary" >Crear orden  de seguimiento</Button>
               <Form<any>>
                   <Row gutter={[0, 12]}>
-                      <Col span={8}>
-                          <DateRangeInput formProps={{ name: "fecha", label: "Fecha" }} ></DateRangeInput>
+                  <Col span={2}></Col>
+                      <Col span={4}>
+                          <DateInput formProps={{ name: "fecha", label: "Fecha" }} ></DateInput>
                       </Col>
                       <Col span={2}></Col>
                       <Col span={4}>
-                          <SelectInput options={[]} formProps={{ name: "sucursal", label: "Sucursal" }} style={{marginLeft:"10px"}}></SelectInput>  
+                      <SelectInput
+                    formProps={{ name: "sucursalId", label: "Sucursales" }}
+                    multiple
+                    options={[]/* branchCityOptions */}
+                  />
                       </Col>
                       <Col span={2}></Col>
                       <Col span={4}>
@@ -330,43 +371,20 @@ import {
                       </Col>
                   </Row>
               </Form>
+              <br />
+              <br />
               <Row style={{marginLeft:"20%",marginBottom:"2%"}}>
-                  <Col span={8}>
-                      <Button style={{marginTop:"8%",marginLeft:"2%"}}         type={activiti == "register" ? "primary" : "ghost"}
-          onClick={register} >Enviar ruta</Button>
-                      <Button style={{marginTop:"8%",marginLeft:"2%"}}  type={activiti == "cancel" ? "primary" : "ghost"}
-          onClick={cancel} >Cancelar envió</Button>
+                  <Col span={16}>
+                  <Steps>
+                <Step status="finish" title="Orden creada" /* icon={<UserOutlined />} */ />
+                <Step status="finish" title="Toma de muestra" /* icon={<SolutionOutlined />} */ />
+                <Step status="process" title="En ruta" /* icon={<LoadingOutlined />} */ />
+                <Step status="wait" title="Entregado" /* icon={<SmileOutlined />} */ />
+              </Steps>
                   </Col>
-                  <Col span={8}></Col>
+
                   <Col span={8}>
-                  {activiti == "register" ? (
-          <Button
-            style={{ marginTop: "10px", marginBottom: "10px", marginLeft: "70%" }}
-            type="primary"
-            disabled={ids.length <= 0}
-            onClick={() => {
-              updatedata();
-            }}
-          >
-            Enviar
-          </Button>
-        ) : (
-          ""
-        )}
-  {activiti == "cancel" ? (
-          <Button
-            style={{ marginTop: "10px", marginBottom: "10px", marginLeft: "70%" }}
-            type="primary"
-            disabled={ids.length <= 0}
-            onClick={() => {
-              updatedata();
-            }}
-          >
-            Cancelar Registro
-          </Button>
-        ) : (
-          ""
-        )}
+
                   </Col>
               </Row>
               <Fragment >
