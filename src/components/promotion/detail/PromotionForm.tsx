@@ -69,6 +69,7 @@ const { width: windowWidth } = useWindowDimensions();
   useEffect(()=>{
     const getMedics= async () =>{
       await getMedicOptions();
+    
     }
     getMedics();
   },[getMedicOptions]);
@@ -637,12 +638,13 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     } 
   };
   const addmedic = () => {
+    console.log(medico,"medico");
     if (medico) {
      if (values.medics!.findIndex((x) => x.id === medico.id) > -1) {
        alerts.warning("Ya esta agregada este departamento");
        return;
      }
-
+      console.log(medico);
      const branchs: Imedic[] = [
        ...values.medics,
        {
@@ -923,12 +925,23 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
               <Select
                 options={medicOptions}
                 onChange={(value, option: any) => {
+                  console.log(medicOptions,"optios");
+                  setMedic([...medicOptions]);
                   if(medic.length==0){
-                      setMedic(medicOptions);
+                      setMedic([...medicOptions]);
+                      console.log(medic);
                   }
                   if (value) {
+                    
                     var sucursal = medic.filter(x=>x.value==value);
                     setMedic(prev=>[...prev,sucursal[0]]);
+                    var medics:Imedic = sucursal.map(x=> ({
+                      id : x.value.toString(),
+                      clave : "",
+                      activo : true,
+                      nombre : x.label?.toString()!
+                    }))[0];
+                    setmedico(medics);
                   } else {
                     setMedic([]);
                   }

@@ -217,7 +217,7 @@ useEffect(()=>{
 
     const columns: IColumns<IRouteList> = [
       {
-        ...getDefaultColumnProps("seguimiento", "# De seguridad", {
+        ...getDefaultColumnProps("seguimiento", "# De segimiento", {
           searchState,
           setSearchState,
           width: "20%",
@@ -311,7 +311,7 @@ useEffect(()=>{
       ];
     return (
         <Fragment>
-            <Button style={{marginLeft:"45%",marginBottom:"5%",backgroundColor:" #18AC50"}} type="primary" >Crear orden  de seguimiento</Button>
+            <Button style={{marginLeft:"45%",marginBottom:"5%",backgroundColor:" #18AC50"}} onClick={()=>{navigate(`/trackingOrder`)}} type="primary" >Crear orden  de seguimiento</Button>
             <Form<any>>
                 <Row gutter={[0, 12]}>
                     <Col span={8}>
