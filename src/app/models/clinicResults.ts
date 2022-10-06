@@ -31,21 +31,34 @@ export interface IResultPathological {
   muestraRecibida: string;
   medicoId: string;
   listaImagenesCargadas: string[];
+  estatus: number;
+  departamentoEstudio: string;
 }
 
 export interface IClinicStudy {
-  estudioId: number;
+  id: number;
   nombre: string;
-  areaId: number;
   area?: string;
-  status?: number;
+  status: number;
   registro?: string;
   entrega?: string;
+  nombreEstatus?: string;
   seleccion?: boolean;
   clave: string;
-  estatusId: number;
-  estatus?: string;
+  parametros: IClinicResultCaptureForm[];
+}
+
+export interface IClinicResultCaptureForm {
+  id?: string;
+  nombre: string;
+  solicitudId: string;
+  estudioId: number;
+  tipoValorId: number;
+  valorInicial: number;
+  valorFinal: number;
+  parametroId: string;
   resultado?: string;
+  unidades: number;
 }
 
 export interface IClinicResultForm {
@@ -71,8 +84,6 @@ export interface IStudyList {
   entrega: string;
   seleccion: boolean;
   clave: string;
-  parametros: IParameterList[];
-  resultado: string;
 }
 
 export class ResultPathologicalValues implements IResultPathological {
@@ -87,6 +98,8 @@ export class ResultPathologicalValues implements IResultPathological {
   muestraRecibida = "";
   medicoId = "";
   listaImagenesCargadas = [];
+  estatus = 0;
+  departamentoEstudio = "";
   constructor(init?: IClinicResultForm) {
     Object.assign(this, init);
   }
@@ -107,6 +120,23 @@ export class ClinicResultsFormValues implements IClinicResultForm {
   area = [];
   estatus = [];
   estudio = [];
+
+  constructor(init?: IClinicResultForm) {
+    Object.assign(this, init);
+  }
+}
+
+export class ClinicResultsCaptureForm implements IClinicResultCaptureForm {
+  id = "";
+  solicitudId = "";
+  estudioId = 0;
+  tipoValorId = 0;
+  nombre = "";
+  valorInicial = 0;
+  valorFinal = 0;
+  parametroId = "";
+  resultado = "";
+  unidades = 0;
 
   constructor(init?: IClinicResultForm) {
     Object.assign(this, init);

@@ -9,6 +9,15 @@ export interface IParameterList {
   area: string;
   departamento: string;
   activo: boolean;
+  requerido: boolean;
+  deltaCheck: boolean;
+  mostrarFormato: boolean;
+  unidades: number;
+  tipoValor: number;
+  valorInicial: number;
+  valorFinal: number;
+  criticoMinimo: number;
+  criticoMaximo: number;
 }
 
 export interface IParameterForm {

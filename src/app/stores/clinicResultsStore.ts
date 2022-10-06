@@ -7,6 +7,7 @@ import { getErrors } from "../util/utils";
 import moment from "moment";
 import {
   ClinicResultsFormValues,
+  IClinicResultCaptureForm,
   IClinicResultForm,
   IClinicResultList,
   IClinicStudy,
@@ -24,6 +25,15 @@ export default class ClinicResultsStores {
   formValues: IClinicResultForm = new ClinicResultsFormValues();
   loadingStudies: boolean = false;
   clear: boolean = false;
+  studiesSelectedToPrint: any[] = [];
+
+  printSelectedStudies = async (configuration: any) => {
+    try {
+      await ClinicResults.printSelectedStudies(configuration);
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -32,7 +42,17 @@ export default class ClinicResultsStores {
   clearStudy = () => {
     this.data = [];
   };
-
+  addSelectedStudy = (estudioId: number) => {
+    this.studiesSelectedToPrint.push(estudioId);
+  };
+  clearSelectedStudies = () => {
+    this.studiesSelectedToPrint = [];
+  };
+  removeSelectedStudy = (estudioId: number) => {
+    this.studiesSelectedToPrint = this.studiesSelectedToPrint.filter(
+      (item) => item !== estudioId
+    );
+  };
   setFormValues = (newFormValues: IClinicResultForm) => {
     this.formValues = newFormValues;
   };
@@ -82,6 +102,25 @@ export default class ClinicResultsStores {
       this.loadingStudies = false;
     }
   };
+
+  createResults = async(results: IClinicResultCaptureForm[]) => {
+    try {
+      await ClinicResults.createResults(results);
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  }
+
+  updateResults = async(results: IClinicResultCaptureForm[]) => {
+    try {
+      await ClinicResults.updateResults(results);
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  }
+
   createResultPathological = async (result: FormData) => {
     // createResultPathological = async (result: IResultPathological) => {
     try {
@@ -114,6 +153,7 @@ export default class ClinicResultsStores {
     // updateResultPathological = async (result: IResultPathological) => {
     try {
       await ClinicResults.updateStatusStudy(requestStudyId, status);
+      console.log("update", { requestStudyId, status });
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -141,12 +181,35 @@ export default class ClinicResultsStores {
 
   getStudies = async (recordId: string, requestId: string) => {
     try {
-      const data = await Request.getStudies(recordId, requestId);
-      this.studies = data.estudios;
-      return data;
+      const params = await ClinicResults.getStudies(recordId, requestId);
+      this.studies = params.map(x => ({
+        id: x.estudioId,
+        clave: x.clave,
+        nombre: x.nombre,
+        status: x.estatusId,
+        parametros: x.parametros.map(y => ({
+          estudioId: x.estudioId,
+          solicitudId: requestId,
+          parametroId: y.id,
+          nombre: y.nombre,
+          valorInicial: y.valorInicial,
+          valorFinal: y.valorFinal,
+          unidades: y.unidades,
+          tipoValorId: y.tipoValor,
+        }))
+      }));
+      return params;
     } catch (error) {
       alerts.warning(getErrors(error));
       return [];
+    }
+  };
+
+  printResults = async (recordId: string, requestId: string) => {
+    try {
+      await Request.printTicket(recordId, requestId);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
     }
   };
 }

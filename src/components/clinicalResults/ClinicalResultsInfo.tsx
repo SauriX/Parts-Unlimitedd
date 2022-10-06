@@ -9,13 +9,14 @@ import {
   Checkbox,
   Divider,
   Button,
+  Radio,
 } from "antd";
 import { observer } from "mobx-react-lite";
 import DateInput from "../../app/common/form/proposal/DateInput";
 import SelectInput from "../../app/common/form/SelectInput";
 import TextAreaInput from "../../app/common/form/TextAreaInput";
 import TextInput from "../../app/common/form/TextInput";
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, Fragment } from "react";
 
 import ClinicalResultsForm from "./observaciones/ClinicalResultsForm";
 import ClinicalResultsDetails from "./desglose/ClinicalResultsDetail";
@@ -23,10 +24,11 @@ import { useNavigate } from "react-router";
 import ClinicalResultsHeader from "./ClinicalResultsHeader";
 import { useParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
+import { toJS } from "mobx";
+import { IRequest, IRequestStudy } from "../../app/models/request";
+import { v4 as uuid } from "uuid";
 
-import {
-  ProceedingFormValues,
-} from "../../app/models/Proceeding";
+import { ProceedingFormValues } from "../../app/models/Proceeding";
 import moment from "moment";
 import React from "react";
 
@@ -42,15 +44,25 @@ type UrlParams = {
 };
 
 const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
-  const { requestStore, procedingStore, optionStore, requestedStudyStore } =
-    useStore();
-  const { request, getById } = requestStore;
+  const {
+    requestStore,
+    procedingStore,
+    optionStore,
+    requestedStudyStore,
+    clinicResultsStore,
+  } = useStore();
+  const { request, getById, studies, getStudies } = requestStore;
   const { getById: procedingById } = procedingStore;
   const { printOrder } = requestedStudyStore;
   const { departmentOptions, getDepartmentOptions } = optionStore;
+  const { studiesSelectedToPrint, printSelectedStudies } = clinicResultsStore;
 
   const [loading, setLoading] = useState(false);
+  const [markAll, setMarkAll] = useState(false);
   const [dataClinicalResult, setDataClinicalResult] = useState<any>();
+  const [currentStudies, setCurrentStudies] = useState<any>();
+  const [printLogos, setPrintLogos] = useState(false);
+
   const [procedingCurrent, setProcedingCurrent] = useState<any>(
     new ProceedingFormValues()
   );
@@ -63,6 +75,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
       await getDepartmentOptions();
       await getById(expedienteId!, requestId!);
       const procedingFound = await procedingById(expedienteId!);
+      await getStudies(expedienteId!, requestId!);
       setDataClinicalResult({ ...request, ...procedingFound });
       setProcedingCurrent({ ...procedingFound });
       form.setFieldsValue({
@@ -85,6 +98,15 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
   const navigate = useNavigate();
 
   const [form] = Form.useForm<any>();
+  const sendToPrintSelectedStudies = async () => {
+    const studiesToPrint = {
+      solicidtudId: request?.solicitudId,
+      estudios: studiesSelectedToPrint,
+      imprimirLogos: printLogos,
+    };
+    await printSelectedStudies(studiesToPrint);
+    console.log("sendToPrintSelectedStudies", toJS(studiesSelectedToPrint));
+  };
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
@@ -93,10 +115,9 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
       <Collapse ghost className="request-filter-collapse">
         <Panel header="Información de la solicitud" key="informationRequest">
           <div className="status-container">
-            <Form<any>
+            <Form
               form={form}
               name="clinicalResults"
-              onFinish={() => {}}
               initialValues={dataClinicalResult}
               scrollToFirstError
             >
@@ -116,9 +137,9 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
                       />
                     </Col>
                     <Col span={4}>
-                      <DateInput
+                      <TextInput
                         formProps={{
-                          name: "fechaNacimiento",
+                          name: "fechaNacimientoFormat",
                           label: "Fecha de Nacimiento",
                         }}
                         readonly={true}
@@ -186,27 +207,43 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
 
       <Row>
         <Col span={12}>
-          <Checkbox.Group
-            // options={plainOptions}
-            onChange={(value) => {
-              console.log("value checkbox", value);
-            }}
-            style={{
-              width: "100%",
-            }}
-          >
-            <Row>
-              <Col span={8}>
-                <Checkbox value="logos">Imprimir logos</Checkbox>
-              </Col>
-              <Col span={8}>
-                <Checkbox value="marked">Desmarcar todos</Checkbox>
-              </Col>
-              <Col span={8}>
-                <Checkbox value="unmarked">Marcar todos</Checkbox>
-              </Col>
-            </Row>
-          </Checkbox.Group>
+          <Row>
+            <Col span={8}>
+              <Checkbox
+                value="logos"
+                onChange={(value) => {
+                  console.log("value logos", value.target.checked);
+                  if (value.target.checked) {
+                    setPrintLogos(true);
+                  } else {
+                    setPrintLogos(false);
+                  }
+                }}
+              >
+                Imprimir logos
+              </Checkbox>
+            </Col>
+            <Radio.Group
+              onChange={(value) => {
+                console.log("checked", value.target.value);
+                if (value.target.value === "unmarked") {
+                  setMarkAll(false);
+                }
+                if (value.target.value === "marked") {
+                  setMarkAll(true);
+                }
+              }}
+            >
+              <Row>
+                <Col span={12}>
+                  <Radio value="unmarked">Desmarcar todos</Radio>
+                </Col>
+                <Col span={12}>
+                  <Radio value="marked">Marcar todos</Radio>
+                </Col>
+              </Row>
+            </Radio.Group>
+          </Row>
         </Col>
         <Col span={6}>
           <Button
@@ -228,9 +265,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
               // color: "white",
             }}
             type="default"
-            onClick={() => {
-              navigate("#");
-            }}
+            onClick={sendToPrintSelectedStudies}
           >
             Imprimir
           </Button>
@@ -238,27 +273,37 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
       </Row>
       <Row>
         <Col span={24}>
-          {request?.estudios?.map((req: any, index: any) => {
+          {studies.map((req: IRequestStudy, index: any) => {
             const idPatologia = departmentOptions.find(
               (dep) => dep.label === "PATOLOGÍA"
             )?.value;
-            if (idPatologia === req.departamento) {
+            if (idPatologia === req.departamentoId) {
               return (
-                <>
-                  <ClinicalResultsForm
-                    key={index}
-                    estudio={req}
-                    estudioId={req.id}
-                    paciente={procedingCurrent}
-                    medico={request.nombreMedico!}
-                    claveMedico={request.claveMedico!}
-                    solicitud={request}
-                  />
+                <div key={req.id}>
                   <Divider orientation="left"></Divider>
-                </>
+                  <ClinicalResultsForm
+                    estudio={req}
+                    estudioId={req.estudioId}
+                    paciente={procedingCurrent}
+                    medico={request?.nombreMedico!}
+                    claveMedico={request?.claveMedico!}
+                    solicitud={request!}
+                    isMarked={markAll}
+                  />
+                </div>
               );
             } else {
-              return <ClinicalResultsDetails key={index} />;
+              return (
+                <ClinicalResultsDetails
+                  key={req.id}
+                  estudio={req}
+                  estudioId={req.estudioId}
+                  paciente={procedingCurrent}
+                  medico={request?.nombreMedico!}
+                  claveMedico={request?.claveMedico!}
+                  solicitud={request!}
+                />
+              );
             }
           })}
           {/* <ClinicalResultsForm /> */}
