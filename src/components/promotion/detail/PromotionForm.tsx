@@ -474,7 +474,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     {
       key: "editarc",
       dataIndex: "id",
-      title: "fecha inicio",
+      title: "Fecha inicio",
       align: "center",
       width: 200,
       render: (value,item) => (
@@ -483,7 +483,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     },    {
       key: "editarc",
       dataIndex: "id",
-      title: "fecha final",
+      title: "Fecha final",
       align: "center",
       width: 200,
       render: (value,item) => (
@@ -563,7 +563,9 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     }
   };
   const filterBySearch = (search:string)=>{
-     var estudio = estudios.filter(x=>x.clave.includes(search) || x.nombre.includes(search))
+   
+     var estudio = estudios.filter(x=>x.clave.toUpperCase().includes(search.toUpperCase()) || x.nombre.toUpperCase().includes(search.toUpperCase()))
+     console.log(estudio);
     setValues((prev) => ({ ...prev, estudio: estudio })); 
   };
    useEffect(() => {
@@ -916,7 +918,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
           </List.Item>
         )}
       />
-      <Divider orientation="left">Medicos</Divider>
+      <Divider orientation="left">Médicos</Divider>
       <List<ISucMedComList>
         header={
           <div>
