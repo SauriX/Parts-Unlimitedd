@@ -281,6 +281,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
           departamento: "",
           activo: true,
           unidades: 0,
+          unidadNombre: "",
           criticoMaximo: 0,
           criticoMinimo: 0,
           deltaCheck: false,

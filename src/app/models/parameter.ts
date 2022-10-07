@@ -13,6 +13,7 @@ export interface IParameterList {
   deltaCheck: boolean;
   mostrarFormato: boolean;
   unidades: number;
+  unidadNombre: string;
   tipoValor: string;
   valorInicial: number;
   valorFinal: number;

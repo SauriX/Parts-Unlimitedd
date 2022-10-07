@@ -141,6 +141,16 @@ export default class ClinicResultsStores {
       alerts.warning(getErrors(error));
     }
   };
+  // getLaboratoryResults = async (result: number[]) => {
+  //   try {
+  //     const labResult = await ClinicResults.getLaboratoryResults(
+  //       result.map(x => x.)
+  //     );
+  //     return labResult;
+  //   } catch (error: any) {
+  //     alerts.warning(getErrors(error));
+  //   }
+  // };
   updateResultPathological = async (result: FormData) => {
     // updateResultPathological = async (result: IResultPathological) => {
     try {
@@ -196,6 +206,7 @@ export default class ClinicResultsStores {
           valorInicial: y.valorInicial,
           valorFinal: y.valorFinal,
           unidades: y.unidades,
+          unidadNombre: y.unidadNombre,
           tipoValorId: y.tipoValor,
         }))
       }));

@@ -1,5 +1,5 @@
 import "../css/containerInfo.less";
-import { Button, Card, Checkbox, Col, Form, Row, Table } from "antd";
+import { Button, Card, Checkbox, Col, Form, Input, Row, Table } from "antd";
 import { observer } from "mobx-react-lite";
 import { Typography } from "antd";
 import useWindowDimensions from "../../../app/util/window";
@@ -9,6 +9,7 @@ import {
   IRequestStudy,
   IRequestStudyInfo,
   RequestStudyInfoForm,
+  RequestStudyValues,
 } from "../../../app/models/request";
 import { FC, useEffect, useState } from "react";
 import { IProceedingForm } from "../../../app/models/Proceeding";
@@ -23,6 +24,8 @@ import { IOptions } from "../../../app/models/shared";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import moment from "moment";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { formItemLayout } from "../../../app/util/utils";
 const { Text, Title } = Typography;
 
 type ClinicalResultsDetailProps = {
@@ -45,8 +48,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   isMarked,
 }) => {
   const [disabled, setDisabled] = useState(false);
-  const [currentStudy, setCurrentStudy] = useState<IRequestStudyInfo>(
-    new RequestStudyInfoForm()
+  const [currentStudy, setCurrentStudy] = useState<IRequestStudy>(
+    new RequestStudyValues()
   );
   const [values, setValues] = useState<IClinicResultCaptureForm>(
     new ClinicResultsCaptureForm()
@@ -58,6 +61,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const { optionStore, clinicResultsStore } = useStore();
   const {
     getStudies,
+    getRequestStudyById,
     updateStatusStudy,
     studies,
     createResults,
@@ -114,7 +118,11 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     form.setFieldValue("dr", claveMedico);
   }, [claveMedico]);
 
-  const loadInit = async () => {};
+  const loadInit = async () => {
+    const cStudy = await getRequestStudyById(estudio.id!);
+    setCurrentStudy(cStudy!);
+    console.log(currentStudy);
+  };
 
   useEffect(() => {
     loadInit();
@@ -285,61 +293,76 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     );
   };
 
-  const onFinish = async (newValuesForm: IClinicResultCaptureForm[]) => {
+  const onFinish = async (newValuesForm: any) => {
     setLoading(true);
-    const labResults: IClinicResultCaptureForm[] = newValuesForm.map(
-      (newValues) => ({
-        id: newValues.id,
-        estudioId: estudio.id!,
-        nombre: newValues.nombre,
-        solicitudId: solicitud.solicitudId!,
-        parametroId: newValues.parametroId,
-        tipoValorId: newValues.tipoValorId,
-        valorInicial: newValues.valorInicial,
-        valorFinal: newValues.valorFinal,
-        resultado: newValues.resultado,
-        unidades: newValues.unidades,
-      })
-    );
+    const labResults: IClinicResultCaptureForm[] = newValuesForm;
+    console.log(newValuesForm);
+    // .map(
+    //   (newValues) => ({
+    //     id: newValues.id,
+    //     estudioId: estudio.id!,
+    //     nombre: newValues.nombre,
+    //     solicitudId: solicitud.solicitudId!,
+    //     parametroId: newValues.parametroId,
+    //     tipoValorId: newValues.tipoValorId,
+    //     valorInicial: newValues.valorInicial,
+    //     valorFinal: newValues.valorFinal,
+    //     resultado: newValues.resultado,
+    //     unidades: newValues.unidades,
+    //     unidadNombre: newValues.unidadNombre,
+    //   })
+    // );
 
-    if (!!currentResult) {
-      await updateResults(labResults);
-      await updateStatus();
-    } else {
-      await createResults(labResults);
-      await updateStatus();
-    }
+    // if (!!currentResult) {
+    //   await updateResults(labResults);
+    //   await updateStatus();
+    // } else {
+    //   await createResults(labResults);
+    //   await updateStatus();
+    // }
 
     setLoading(false);
   };
 
-  const updateStatus = (esCancelacion: boolean = false) => {
+  const updateStatus = async (esCancelacion: boolean = false) => {
     if (currentStudy.estatusId === status.requestStudy.solicitado) {
-      // await updateStatusStudy(currentStudy.id!, status.requestStudy.capturado);
+      await updateStatusStudy(currentStudy.id!, status.requestStudy.capturado);
       return status.requestStudy.capturado;
     }
     if (currentStudy.estatusId === status.requestStudy.capturado) {
       const nuevoEstado = esCancelacion
         ? status.requestStudy.solicitado
         : status.requestStudy.validado;
-      // await updateStatusStudy(currentStudy.id!, nuevoEstado);
+      await updateStatusStudy(currentStudy.id!, nuevoEstado);
       return nuevoEstado;
     }
     if (currentStudy.estatusId === status.requestStudy.validado) {
       const nuevoEstado = esCancelacion
         ? status.requestStudy.capturado
         : status.requestStudy.liberado;
-      // await updateStatusStudy(currentStudy.id!, nuevoEstado);
+      await updateStatusStudy(currentStudy.id!, nuevoEstado);
       return nuevoEstado;
     }
     if (currentStudy.estatusId === status.requestStudy.liberado) {
       const nuevoEstado = esCancelacion
         ? status.requestStudy.validado
         : status.requestStudy.enviado;
-      // await updateStatusStudy(currentStudy.id!, nuevoEstado);
+      await updateStatusStudy(currentStudy.id!, nuevoEstado);
       return nuevoEstado;
     }
   };
+
+  const studyParams = studies.flatMap((study) => {
+    return study.parametros.map((parametro) => {
+      return {
+        nombre: parametro.nombre,
+        unidadNombre: parametro.unidadNombre,
+        valorInicial: parametro.valorInicial,
+        valorFinal: parametro.valorFinal,
+        resultado: parametro.resultado,
+      };
+    });
+  });
 
   return (
     <>
@@ -351,14 +374,14 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
             rowKey={(record) => record.id}
             columns={columns}
             pagination={false}
-            dataSource={[estudio]}
+            dataSource={[currentStudy]}
           />
         </Col>
       </Row>
       <Card className="capture-details">
-        <Form
+        <Form<IClinicResultCaptureForm>
           form={form}
-          initialValues={currentResult}
+          // initialValues={currentResult}
           onFinish={onFinish}
           name="dynamic_form_item"
           onValuesChange={(changes_values: any) => {
@@ -385,43 +408,51 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                   <h3>REFERENCIA</h3>
                 </Col>
               </Row>
+
               <Row justify="space-between" gutter={[0, 12]}>
                 {studies.map((x) => {
-                  return x.parametros.map((param) => {
-                    return (
-                      <>
-                        <Col span={6}>
-                          <h5>{param.nombre}</h5>
-                        </Col>
-                        <Col span={6}>
-                          {parseInt(param.tipoValorId) < 4 ? (
-                            <NumberInput
-                              formProps={{
-                                name: "resultado",
-                                label: " ",
-                              }}
-                              min={0}
-                            />
-                          ) : (
-                            <TextInput
-                              formProps={{
-                                name: "resultado",
-                                label: " ",
-                              }}
-                            />
-                          )}
-                        </Col>
-                        <Col span={6}>
-                          {UnitOptions.flatMap(
-                            (y) => y.label == param.unidades
-                          )}
-                        </Col>
-                        <Col span={6}>
-                          {param.valorInicial - param.valorFinal}
-                        </Col>
-                      </>
-                    );
-                  });
+                  return (
+                    <Form.List name="params" initialValue={x.parametros}>
+                      {(fields) => (
+                        <>
+                          {fields.map((field, index) => (
+                            <>
+                              {console.log(fields)}
+                              {console.log(x.parametros)}
+                              <Col span={6}>
+                                <h4>{form.getFieldValue(["params", field.name, "nombre"])}</h4>
+                              </Col>
+                              <Col span={6}>
+                                <Form.Item
+                                  {...field}
+                                  name={[field.name, "resultado"]}
+                                  fieldKey={[field.key, "resultado"]}
+                                  validateTrigger={["onChange", "onBlur"]}
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message:
+                                        "Ingresa un valor dentro del parámetro",
+                                    },
+                                  ]}
+                                  noStyle
+                                >
+                                  <Input
+                                    placeholder="Valor del parámetro"
+                                    style={{ width: "30%" }}
+                                  />
+                                </Form.Item>
+                              </Col>
+                              <Col span={6}>{form.getFieldValue(["params", field.name, "unidadNombre"])}</Col>
+                              <Col span={6}>
+                              {form.getFieldValue(["params", field.name, "valorInicial"])}
+                              </Col>
+                            </>
+                          ))}
+                        </>
+                      )}
+                    </Form.List>
+                  );
                 })}
               </Row>
             </Col>

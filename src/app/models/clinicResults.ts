@@ -59,6 +59,7 @@ export interface IClinicResultCaptureForm {
   parametroId: string;
   resultado?: string;
   unidades: number;
+  unidadNombre: string;
 }
 
 export interface IClinicResultForm {
@@ -142,6 +143,7 @@ export class ClinicResultsCaptureForm implements IClinicResultCaptureForm {
   parametroId = "";
   resultado = "";
   unidades = 0;
+  unidadNombre = "";
 
   constructor(init?: IClinicResultForm) {
     Object.assign(this, init);

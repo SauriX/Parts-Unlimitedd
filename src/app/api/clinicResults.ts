@@ -29,6 +29,8 @@ const ClinicResults = {
     requests.put(`clinicResults/updateStatusStudy`, { requestStudyId, status }),
   getResultPathological: (search: number): Promise<IResultPathological> =>
     requests.post(`clinicResults/getPathological`, search),
+  getLaboratoryResults: (search: number): Promise<IClinicResultCaptureForm[]> =>
+    requests.post(`clinicResults/getLaboratoryResults`, search),
   getRequestStudyById: (requestStudy: number): Promise<any> =>
     requests.post(`clinicResults/getRequestStudyById`, requestStudy),
   exportList: (search: IClinicResultForm): Promise<void> =>
