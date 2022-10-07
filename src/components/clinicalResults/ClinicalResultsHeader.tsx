@@ -34,7 +34,7 @@ const ClinicalResultsHeader: FC<ClinicalFormProps> = ({ printing }) => {
     <PageHeader
       ghost={false}
       title={<HeaderTitle title={`Solicitud: ${request?.clave}`} />}
-      onBack={() => window.history.back()}
+      onBack={() => navigate(`/clinicResults`)}
       subTitle={`Registro: ${request?.registro}`}
       className="header-container"
       extra={[

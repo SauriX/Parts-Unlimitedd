@@ -98,6 +98,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
   const navigate = useNavigate();
 
   const [form] = Form.useForm<any>();
+
   const sendToPrintSelectedStudies = async () => {
     const studiesToPrint = {
       solicidtudId: request?.solicitudId,
@@ -107,6 +108,10 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
     console.log("sendToPrintSelectedStudies", toJS(studiesSelectedToPrint));
     await printSelectedStudies(studiesToPrint);
   };
+
+  const isAnyStudySelected = () => {
+    return studiesSelectedToPrint.length > 0;
+  }
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
@@ -266,6 +271,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
             }}
             type="default"
             onClick={sendToPrintSelectedStudies}
+            disabled={isAnyStudySelected()}
           >
             Imprimir
           </Button>
@@ -302,6 +308,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
                   medico={request?.nombreMedico!}
                   claveMedico={request?.claveMedico!}
                   solicitud={request!}
+                  isMarked={markAll}
                 />
               );
             }
