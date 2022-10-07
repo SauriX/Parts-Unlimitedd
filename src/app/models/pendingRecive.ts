@@ -1,10 +1,11 @@
 import moment from "moment"
 
-export interface ISearch
+export interface ISearchPending
 {
     fecha:moment.Moment
     sucursal:string[]
     busqueda:string
+    sucursaldest:string
 }
 
 export interface IReciveStudy
@@ -26,10 +27,10 @@ export interface IExtraStudy
     escaneado:boolean
 }
 export interface  IStatus {
-    created:string
-    smpling:string
-    route:string
-    entregado:string
+    created:boolean
+    smpling:boolean
+    route:boolean
+    entregado:boolean
 }
 export interface IRecibe
 {
@@ -44,3 +45,13 @@ export interface IRecibe
     extra:IExtraStudy[]
     status:IStatus
 }
+
+export class searchValues implements ISearchPending {
+    fecha=moment(moment.now());
+    sucursal=[]
+    busqueda=""
+    sucursaldest=""
+    constructor(init?: ISearchPending) {
+      Object.assign(this, init);
+    }
+  }
