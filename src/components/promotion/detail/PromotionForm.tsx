@@ -931,11 +931,12 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
                   setMedic([...medicOptions]);
                   if(medic.length==0){
                       setMedic([...medicOptions]);
-                      console.log(medic);
+                      console.log(medic,"MEDIC");
                   }
-                  if (value) {
-                    
-                    var sucursal = medic.filter(x=>x.value==value);
+                  if (value) {  
+                    console.log(value);
+                    var sucursal = medicOptions.filter(x=>x.value==value);
+                    console.log("SUCURSAL",sucursal);
                     setMedic(prev=>[...prev,sucursal[0]]);
                     var medics:Imedic = sucursal.map(x=> ({
                       id : x.value.toString(),
