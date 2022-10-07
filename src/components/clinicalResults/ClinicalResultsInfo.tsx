@@ -104,8 +104,8 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
       estudios: studiesSelectedToPrint,
       imprimirLogos: printLogos,
     };
-    await printSelectedStudies(studiesToPrint);
     console.log("sendToPrintSelectedStudies", toJS(studiesSelectedToPrint));
+    await printSelectedStudies(studiesToPrint);
   };
 
   return (

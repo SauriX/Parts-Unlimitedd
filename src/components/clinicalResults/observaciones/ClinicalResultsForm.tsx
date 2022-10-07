@@ -33,7 +33,7 @@ import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
 import { IResultPathological } from "../../../app/models/clinicResults";
-import { objectToFormData } from "../../../app/util/utils";
+import { objectToFormData, toolBarOptions } from "../../../app/util/utils";
 import { RcFile } from "antd/lib/upload";
 import { uniqueId, values } from "lodash";
 const { Text, Title } = Typography;
@@ -97,7 +97,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
   }, [claveMedico]);
   useEffect(() => {
     setCheckedPrint(isMarked);
-    if (currentStudy.estatusId > status.requestStudy.capturado) {
+    if (currentStudy.estatusId >= status.requestStudy.capturado) {
       if (isMarked) {
         addSelectedStudy(currentStudy.id!);
       } else {
@@ -338,24 +338,35 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
         estudio.areaId === 30 ? "HISTOPATOLÓGICO" : "CITOLÓGICO",
     };
     const formData = objectToFormData(reporteClinico);
-
-    console.log("resultado actual", toJS(currentResult));
-    if (!!currentResult) {
-      // if (estudio.estatusId === status.requestStudy.solicitado) {
-      //   await updateResultPathological(formData);
-      // }
-      await updateResultPathological(formData);
-      // await updateStatus();
-      await loadInit();
-    } else {
-      if (estudio.estatusId === status.requestStudy.solicitado) {
-        await createResultPathological(formData);
-      }
-      // await updateStatus();
-      await loadInit();
-    }
-    console.log("reporte", reporteClinico);
-    console.log("final form", values);
+    console.log(
+      "MACRO",
+      JSON.stringify(convertToRaw(editorMacroscopica.getCurrentContent()))
+    );
+    console.log(
+      "MICRO",
+      toJS(convertToRaw(editorMicroscopica.getCurrentContent()))
+    );
+    console.log(
+      "DIAG",
+      toJS(convertToRaw(editorMicroscopica.getCurrentContent()))
+    );
+    // console.log("resultado actual", toJS(currentResult));
+    // if (!!currentResult) {
+    //   // if (estudio.estatusId === status.requestStudy.solicitado) {
+    //   //   await updateResultPathological(formData);
+    //   // }
+    //   await updateResultPathological(formData);
+    //   // await updateStatus();
+    //   await loadInit();
+    // } else {
+    //   if (estudio.estatusId === status.requestStudy.solicitado) {
+    //     await createResultPathological(formData);
+    //   }
+    //   // await updateStatus();
+    //   await loadInit();
+    // }
+    // console.log("reporte", reporteClinico);
+    // console.log("final form", values);
   };
   const updateStatus = (esCancelacion: boolean = false) => {
     if (currentStudy.estatusId === status.requestStudy.solicitado) {
@@ -497,6 +508,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                       toolbarClassName="toolbar-class"
                       onEditorStateChange={setEditorMacroscopica}
                       readOnly={disabled}
+                      toolbar={toolBarOptions}
                     />
                   </Col>
                 </Col>
@@ -511,6 +523,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                     toolbarClassName="toolbar-class"
                     onEditorStateChange={setEditorMicroscopica}
                     readOnly={disabled}
+                    toolbar={toolBarOptions}
                   />
                 </Col>
               </Row>
@@ -543,6 +556,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                     toolbarClassName="toolbar-class"
                     onEditorStateChange={setEditorDiagnostico}
                     readOnly={disabled}
+                    toolbar={toolBarOptions}
                   />
                 </Col>
               </Row>
