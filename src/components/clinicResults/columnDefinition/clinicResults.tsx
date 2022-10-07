@@ -115,7 +115,7 @@ export const ClinicResultsExpandable = () => {
         {item.estudios.map((x) => {
           return (
             <Descriptions
-              key={x.estudioId}
+              key={x.id}
               size="small"
               bordered
               style={{ marginBottom: 5 }}

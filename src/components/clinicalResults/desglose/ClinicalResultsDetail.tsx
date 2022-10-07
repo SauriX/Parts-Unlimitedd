@@ -7,14 +7,13 @@ import {
   Form,
   Row,
   Table,
-  Upload,
+  Input,
   UploadFile,
 } from "antd";
 import { observer } from "mobx-react-lite";
 import { Typography } from "antd";
 import useWindowDimensions from "../../../app/util/window";
 import { IColumns } from "../../../app/common/table/utils";
-import SelectInput from "../../../app/common/form/SelectInput";
 import {
   IRequest,
   IRequestStudy,
@@ -25,17 +24,20 @@ import { FC, useEffect, useState } from "react";
 import { toJS } from "mobx";
 import { IProceedingForm } from "../../../app/models/Proceeding";
 import { useStore } from "../../../app/stores/store";
-import { status, statusName } from "../../../app/util/catalogs";
-import moment from "moment";
-import TextInput from "../../../app/common/form/TextInput";
-import { Editor } from "react-draft-wysiwyg";
+import { status } from "../../../app/util/catalogs";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
-import { IResultPathological } from "../../../app/models/clinicResults";
+import {
+  ClinicResultsCaptureForm,
+  IClinicResultCaptureForm,
+  IResultPathological,
+} from "../../../app/models/clinicResults";
+import { IClinicList } from "../../../app/models/clinic";
 import { objectToFormData } from "../../../app/util/utils";
-import { RcFile } from "antd/lib/upload";
-import { uniqueId } from "lodash";
+import { IOptions } from "../../../app/models/shared";
+import TextInput from "../../../app/common/form/proposal/TextInput";
+import NumberInput from "../../../app/common/form/proposal/NumberInput";
 const { Text, Title } = Typography;
+
 type ClinicalResultsDetailProps = {
   estudio: IRequestStudy;
   paciente: IProceedingForm;
@@ -57,22 +59,46 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const [currentStudy, setCurrentStudy] = useState<IRequestStudyInfo>(
     new RequestStudyInfoForm()
   );
+  const [values, setValues] = useState<IClinicResultCaptureForm>(
+    new ClinicResultsCaptureForm()
+  );
   const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
   const [prueba, setPrueba] = useState<UploadFile[]>([]);
-  const [currentResult, setCurrentResult] = useState<IResultPathological>();
+  const [currentResult, setCurrentResult] =
+    useState<IClinicResultCaptureForm>();
+  const [loading, setLoading] = useState(false);
   const { optionStore, clinicResultsStore } = useStore();
-  const { getRequestStudyById, updateStatusStudy } = clinicResultsStore;
+  const {
+    getStudies,
+    updateStatusStudy,
+    studies,
+    createResults,
+    updateResults,
+  } = clinicResultsStore;
   const { medicOptions, getMedicOptions } = optionStore;
   const [form] = Form.useForm();
+
+  const tipodeValorList: IOptions[] = [
+    { value: 0, label: "Sin valor" },
+    { value: 1, label: "Numérico" },
+    { value: 2, label: "Numérico por sexo" },
+    { value: 3, label: "Numérico por edad" },
+    { value: 4, label: "Numérico por edad y sexo" },
+    { value: 5, label: "Opción múltiple" },
+    { value: 6, label: "Numérico con una columna" },
+    { value: 7, label: "Texto" },
+    { value: 8, label: "Párrafo" },
+    { value: 9, label: "Etiqueta" },
+    { value: 10, label: "Observación" },
+  ];
 
   useEffect(() => {
     const loadOptions = async () => {
       await getMedicOptions();
     };
     loadOptions();
-    console.log("estudio", toJS(estudio));
-    console.log("paciente", toJS(paciente));
   }, []);
+
   useEffect(() => {
     form.setFieldValue("dr", claveMedico);
   }, [claveMedico]);
@@ -107,35 +133,35 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       dataIndex: "clave",
       title: "Clave",
       align: "left",
-      width: 100,
+      width: "15%",
     },
     {
       key: "id",
       dataIndex: "nombre",
       title: "Estudio",
       align: "left",
-      width: 200,
+      width: "25%",
     },
     {
       key: "Orden",
       dataIndex: "orden",
       title: "Orden",
       align: "left",
-      width: 50,
+      width: "10%",
     },
     {
       key: "Estatus",
       dataIndex: "estatus",
       title: "Estatus",
       align: "left",
-      width: 50,
+      width: "10%",
     },
     {
       key: "Seleccionar",
       dataIndex: "imprimir",
       title: "Seleccionar",
       align: "left",
-      width: 50,
+      width: "10%",
       render: () => {
         return <Checkbox></Checkbox>;
       },
@@ -194,26 +220,39 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       </>
     );
   };
-  const guardarReporte = async (values: any) => {};
+
+  const onFinish = async (newValuesForm: IClinicResultCaptureForm[]) => {
+    setLoading(true);
+    const labResults: IClinicResultCaptureForm[] = newValuesForm.map(
+      (newValues) => ({
+        id: newValues.id,
+        estudioId: estudio.id!,
+        nombre: newValues.nombre,
+        solicitudId: solicitud.solicitudId!,
+        parametroId: newValues.parametroId,
+        tipoValorId: newValues.tipoValorId,
+        valorInicial: newValues.valorInicial,
+        valorFinal: newValues.valorFinal,
+        resultado: newValues.resultado,
+        unidades: newValues.unidades,
+      })
+    );
+
+    if (!!currentResult) {
+      await updateResults(labResults);
+      await updateStatus();
+    } else {
+      await createResults(labResults);
+      await updateStatus();
+    }
+
+    setLoading(false);
+  };
 
   const updateStatus = async () => {
     if (currentStudy.estatusId === status.requestStudy.solicitado) {
-      updateStatusStudy(currentStudy.id, status.requestStudy.capturado);
+      await updateStatusStudy(currentStudy.id, status.requestStudy.capturado);
     }
-  };
-
-  const removeTestFile = (file: any) => {
-    const index = prueba.indexOf(file);
-    const newFileList = prueba.slice();
-    setDeletedFiles((x) => [...x, prueba[index].name!]);
-    newFileList.splice(index, 1);
-    setPrueba(newFileList);
-  };
-  const beforeUploadTest = (value: any) => {
-    console.log("before PRUEBA", value);
-    setPrueba((x) => [...x, value]);
-    // setPrueba((x) => [...x, value]);
-    return false;
   };
 
   return (
@@ -229,28 +268,61 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
           />
         </Col>
       </Row>
-      <Row>
-        <Col span={24}>
-          <Card className="capture-observartions">
-            <Form
-              form={form}
-              initialValues={currentResult}
-              onFinish={guardarReporte}
-              onValuesChange={(changes_values: any) => {
-                setDisabled(
-                  !form.isFieldsTouched() ||
-                    form.getFieldsError().filter(({ errors }) => errors.length)
-                      .length > 0
-                );
-              }}
-            >
-              <Row justify="space-between" gutter={[2, 12]}>
-                <Col span={8}></Col>
+      <Card className="capture-details">
+        <Form
+          form={form}
+          initialValues={currentResult}
+          onFinish={onFinish}
+          name="dynamic_form_item"
+          onValuesChange={(changes_values: any) => {
+            setDisabled(
+              !form.isFieldsTouched() ||
+                form.getFieldsError().filter(({ errors }) => errors.length)
+                  .length > 0
+            );
+          }}
+        >
+          <Row>
+            <Col span={24}>
+              <Row justify="space-between" gutter={[0, 12]}>
+                {studies.map((x) => {
+                  return x.parametros.map((param) => {
+                    return (
+                      <>
+                        <Col span={6}>
+                          <h4>{param.nombre}</h4>
+                        </Col>
+                        <Col span={6}>
+                          {param.tipoValorId < 4 ? (
+                            <NumberInput
+                              formProps={{
+                                name: "resultado",
+                                label: "",
+                              }}
+                              min={0}
+                            />
+                          ) : (
+                            <TextInput
+                              formProps={{
+                                name: "resultado",
+                                label: "",
+                              }}
+                            />
+                          )}
+                        </Col>
+                        <Col span={6}>{param.unidades}</Col>
+                        <Col span={6}>
+                          {param.valorInicial - param.valorFinal}
+                        </Col>
+                      </>
+                    );
+                  });
+                })}
               </Row>
-            </Form>
-          </Card>
-        </Col>
-      </Row>
+            </Col>
+          </Row>
+        </Form>
+      </Card>
     </>
   );
 };
