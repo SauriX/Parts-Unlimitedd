@@ -286,7 +286,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
           deltaCheck: false,
           mostrarFormato: false,
           requerido: false,
-          tipoValor: 0,
+          tipoValor: "0",
           valorFinal: 0,
           valorInicial: 0,
         },

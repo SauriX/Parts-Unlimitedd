@@ -99,9 +99,9 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     setCheckedPrint(isMarked);
     if (currentStudy.estatusId > status.requestStudy.capturado) {
       if (isMarked) {
-        addSelectedStudy(currentStudy.id!);
+        addSelectedStudy({ id: currentStudy.id!,  tipo: "PATHOLOGICAL"});
       } else {
-        removeSelectedStudy(currentStudy.id!);
+        removeSelectedStudy({ id: currentStudy.id!,  tipo: "PATHOLOGICAL"});
       }
     }
   }, [isMarked]);
@@ -245,10 +245,10 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
             disabled={currentStudy.estatusId < status.requestStudy.capturado}
             onChange={(value) => {
               if (value.target.checked) {
-                addSelectedStudy(currentStudy.id!);
+                addSelectedStudy({ id: currentStudy.id!,  tipo: "PATHOLOGICAL"});
                 setCheckedPrint(true);
               } else {
-                removeSelectedStudy(currentStudy.id!);
+                removeSelectedStudy({ id: currentStudy.id!,  tipo: "PATHOLOGICAL"});
                 setCheckedPrint(false);
               }
             }}

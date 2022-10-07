@@ -13,7 +13,7 @@ export interface IParameterList {
   deltaCheck: boolean;
   mostrarFormato: boolean;
   unidades: number;
-  tipoValor: number;
+  tipoValor: string;
   valorInicial: number;
   valorFinal: number;
   criticoMinimo: number;

@@ -1,15 +1,5 @@
 import "../css/containerInfo.less";
-import {
-  Button,
-  Card,
-  Checkbox,
-  Col,
-  Form,
-  Row,
-  Table,
-  Input,
-  UploadFile,
-} from "antd";
+import { Button, Card, Checkbox, Col, Form, Row, Table } from "antd";
 import { observer } from "mobx-react-lite";
 import { Typography } from "antd";
 import useWindowDimensions from "../../../app/util/window";
@@ -21,7 +11,6 @@ import {
   RequestStudyInfoForm,
 } from "../../../app/models/request";
 import { FC, useEffect, useState } from "react";
-import { toJS } from "mobx";
 import { IProceedingForm } from "../../../app/models/Proceeding";
 import { useStore } from "../../../app/stores/store";
 import { status } from "../../../app/util/catalogs";
@@ -29,13 +18,11 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import {
   ClinicResultsCaptureForm,
   IClinicResultCaptureForm,
-  IResultPathological,
 } from "../../../app/models/clinicResults";
-import { IClinicList } from "../../../app/models/clinic";
-import { objectToFormData } from "../../../app/util/utils";
 import { IOptions } from "../../../app/models/shared";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import NumberInput from "../../../app/common/form/proposal/NumberInput";
+import moment from "moment";
 const { Text, Title } = Typography;
 
 type ClinicalResultsDetailProps = {
@@ -45,6 +32,7 @@ type ClinicalResultsDetailProps = {
   claveMedico: string;
   solicitud: IRequest;
   estudioId: number;
+  isMarked: boolean;
 };
 
 const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
@@ -54,6 +42,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   medico,
   claveMedico,
   solicitud,
+  isMarked,
 }) => {
   const [disabled, setDisabled] = useState(false);
   const [currentStudy, setCurrentStudy] = useState<IRequestStudyInfo>(
@@ -62,11 +51,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const [values, setValues] = useState<IClinicResultCaptureForm>(
     new ClinicResultsCaptureForm()
   );
-  const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
-  const [prueba, setPrueba] = useState<UploadFile[]>([]);
   const [currentResult, setCurrentResult] =
     useState<IClinicResultCaptureForm>();
   const [loading, setLoading] = useState(false);
+  const [checkedPrint, setCheckedPrint] = useState(false);
   const { optionStore, clinicResultsStore } = useStore();
   const {
     getStudies,
@@ -74,8 +62,11 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     studies,
     createResults,
     updateResults,
+    addSelectedStudy,
+    removeSelectedStudy,
   } = clinicResultsStore;
-  const { medicOptions, getMedicOptions } = optionStore;
+  const { medicOptions, getMedicOptions, getUnitOptions, UnitOptions } =
+    optionStore;
   const [form] = Form.useForm();
 
   const tipodeValorList: IOptions[] = [
@@ -93,11 +84,31 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   ];
 
   useEffect(() => {
+    setCheckedPrint(isMarked);
+    if (currentStudy.estatusId > status.requestStudy.capturado) {
+      if (isMarked) {
+        addSelectedStudy({ id: currentStudy.id!, tipo: "LABORATORY" });
+      } else {
+        removeSelectedStudy({ id: currentStudy.id!, tipo: "LABORATORY" });
+      }
+    }
+  }, [isMarked]);
+
+  useEffect(() => {
+    console.log(studies.map((x) => x.parametros));
     const loadOptions = async () => {
       await getMedicOptions();
+      await getStudies(solicitud.expedienteId, solicitud.solicitudId!);
     };
     loadOptions();
   }, []);
+
+  useEffect(() => {
+    const readdepartments = async () => {
+      await getUnitOptions();
+    };
+    readdepartments();
+  }, [getUnitOptions]);
 
   useEffect(() => {
     form.setFieldValue("dr", claveMedico);
@@ -133,37 +144,87 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       dataIndex: "clave",
       title: "Clave",
       align: "left",
-      width: "15%",
+      width: 100,
     },
     {
       key: "id",
       dataIndex: "nombre",
       title: "Estudio",
       align: "left",
-      width: "25%",
+      width: 200,
     },
+    {
+      key: "estatus",
+      dataIndex: "estatus",
+      title: "Estatus",
+      align: "left",
+      width: 50,
+      render: (value: any) => {
+        return value.nombre;
+      },
+    },
+    {
+      key: "estatusId",
+      dataIndex: "estatusId",
+      title: "Fecha Atualización",
+      align: "left",
+      width: 50,
+      render: (value: any, fullRow: any) => {
+        if (value === status.requestStudy.solicitado) {
+          return moment(fullRow.fechaSolicitud).format("DD/MM/YYYY");
+        }
+        if (value === status.requestStudy.capturado) {
+          return moment(fullRow.fechaCaptura).format("DD/MM/YYYY");
+        }
+        if (value === status.requestStudy.validado) {
+          return moment(fullRow.fechaValidacion).format("DD/MM/YYYY");
+        }
+        if (value === status.requestStudy.liberado) {
+          return moment(fullRow.fechaLiberacion).format("DD/MM/YYYY");
+        }
+        if (value === status.requestStudy.enviado) {
+          return moment(fullRow.fechaEnvio).format("DD/MM/YYYY");
+        }
+        return "";
+      },
+    },
+
     {
       key: "Orden",
       dataIndex: "orden",
       title: "Orden",
       align: "left",
-      width: "10%",
-    },
-    {
-      key: "Estatus",
-      dataIndex: "estatus",
-      title: "Estatus",
-      align: "left",
-      width: "10%",
+      width: 50,
     },
     {
       key: "Seleccionar",
       dataIndex: "imprimir",
       title: "Seleccionar",
-      align: "left",
-      width: "10%",
+      align: "center",
+      width: 50,
       render: () => {
-        return <Checkbox></Checkbox>;
+        return (
+          <Checkbox
+            checked={
+              currentStudy.estatusId < status.requestStudy.capturado
+                ? false
+                : checkedPrint
+            }
+            disabled={currentStudy.estatusId < status.requestStudy.capturado}
+            onChange={(value) => {
+              if (value.target.checked) {
+                addSelectedStudy({ id: currentStudy.id!, tipo: "LABORATORY" });
+                setCheckedPrint(true);
+              } else {
+                removeSelectedStudy({
+                  id: currentStudy.id!,
+                  tipo: "LABORATORY",
+                });
+                setCheckedPrint(false);
+              }
+            }}
+          ></Checkbox>
+        );
       },
     },
   ];
@@ -171,23 +232,26 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const renderUpdateStatus = () => {
     return (
       <>
-        {estudio.estatusId === status.requestStudy.solicitado && (
+        {currentStudy.estatusId >= status.requestStudy.solicitado && (
           <>
             <Col span={4}>
               <Button
                 type="default"
                 htmlType="submit"
                 disabled={
-                  estudio.estatusId === status.requestStudy.tomaDeMuestra ||
-                  estudio.estatusId === status.requestStudy.pendiente
+                  currentStudy.estatusId ===
+                    status.requestStudy.tomaDeMuestra ||
+                  currentStudy.estatusId === status.requestStudy.pendiente
                 }
-                onClick={() => {}}
+                onClick={async () => {
+                  await updateStatus(true);
+                }}
                 danger
               >
                 Cancelar{" "}
-                {estudio.estatusId === status.requestStudy.capturado
+                {currentStudy.estatusId === status.requestStudy.capturado
                   ? "Captura"
-                  : estudio.estatusId === status.requestStudy.validado
+                  : currentStudy.estatusId === status.requestStudy.validado
                   ? "Validación"
                   : ""}
               </Button>
@@ -206,11 +270,11 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                   borderColor: "#6EAA46",
                 }}
               >
-                {estudio.estatusId === status.requestStudy.capturado
+                {currentStudy.estatusId === status.requestStudy.capturado
                   ? "Validar"
-                  : estudio.estatusId === status.requestStudy.validado
+                  : currentStudy.estatusId === status.requestStudy.validado
                   ? "Liberar"
-                  : estudio.estatusId === status.requestStudy.solicitado
+                  : currentStudy.estatusId === status.requestStudy.solicitado
                   ? "Guardar captura"
                   : ""}
               </Button>
@@ -249,14 +313,37 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     setLoading(false);
   };
 
-  const updateStatus = async () => {
+  const updateStatus = (esCancelacion: boolean = false) => {
     if (currentStudy.estatusId === status.requestStudy.solicitado) {
-      await updateStatusStudy(currentStudy.id, status.requestStudy.capturado);
+      // await updateStatusStudy(currentStudy.id!, status.requestStudy.capturado);
+      return status.requestStudy.capturado;
+    }
+    if (currentStudy.estatusId === status.requestStudy.capturado) {
+      const nuevoEstado = esCancelacion
+        ? status.requestStudy.solicitado
+        : status.requestStudy.validado;
+      // await updateStatusStudy(currentStudy.id!, nuevoEstado);
+      return nuevoEstado;
+    }
+    if (currentStudy.estatusId === status.requestStudy.validado) {
+      const nuevoEstado = esCancelacion
+        ? status.requestStudy.capturado
+        : status.requestStudy.liberado;
+      // await updateStatusStudy(currentStudy.id!, nuevoEstado);
+      return nuevoEstado;
+    }
+    if (currentStudy.estatusId === status.requestStudy.liberado) {
+      const nuevoEstado = esCancelacion
+        ? status.requestStudy.validado
+        : status.requestStudy.enviado;
+      // await updateStatusStudy(currentStudy.id!, nuevoEstado);
+      return nuevoEstado;
     }
   };
 
   return (
     <>
+      <Row style={{ marginBottom: "20px" }}>{renderUpdateStatus()}</Row>
       <Row style={{ marginBottom: "20px" }}>
         <Col span={24}>
           <Table<any>
@@ -285,19 +372,33 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
           <Row>
             <Col span={24}>
               <Row justify="space-between" gutter={[0, 12]}>
+                <Col span={6}>
+                  <h3>EXAMEN</h3>
+                </Col>
+                <Col span={6}>
+                  <h3>RESULTADO</h3>
+                </Col>
+                <Col span={6}>
+                  <h3>UNIDADES</h3>
+                </Col>
+                <Col span={6}>
+                  <h3>REFERENCIA</h3>
+                </Col>
+              </Row>
+              <Row justify="space-between" gutter={[0, 12]}>
                 {studies.map((x) => {
                   return x.parametros.map((param) => {
                     return (
                       <>
                         <Col span={6}>
-                          <h4>{param.nombre}</h4>
+                          <h5>{param.nombre}</h5>
                         </Col>
                         <Col span={6}>
-                          {param.tipoValorId < 4 ? (
+                          {parseInt(param.tipoValorId) < 4 ? (
                             <NumberInput
                               formProps={{
                                 name: "resultado",
-                                label: "",
+                                label: " ",
                               }}
                               min={0}
                             />
@@ -305,12 +406,16 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                             <TextInput
                               formProps={{
                                 name: "resultado",
-                                label: "",
+                                label: " ",
                               }}
                             />
                           )}
                         </Col>
-                        <Col span={6}>{param.unidades}</Col>
+                        <Col span={6}>
+                          {UnitOptions.flatMap(
+                            (y) => y.label == param.unidades
+                          )}
+                        </Col>
                         <Col span={6}>
                           {param.valorInicial - param.valorFinal}
                         </Col>
