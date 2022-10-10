@@ -146,6 +146,7 @@ useEffect(()=>{
                 bordered
                 layout="vertical"
                 style={{ marginBottom: 5 }}
+                column={6}
               >
                 <Descriptions.Item label="Clave" className="description-content" style={{ maxWidth: 30 }}>
                   {x.clave}
