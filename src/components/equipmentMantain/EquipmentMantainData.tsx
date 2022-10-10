@@ -263,8 +263,8 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
               <Col md={10} sm={24}>
                 <DateRangeInput
                   formProps={{
-                    name: "Fecha programda",
-                    label: "fecha",
+                    name: "fecha",
+                    label: "Fecha",
                   }}
 
                 />

@@ -237,9 +237,9 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
                             <br />
                             Hora de entrega estimada: {shipment?.horaEnestimada.utc().format('hA:mm')}
                             <br />
-                             Fecha de entrega real:{ shipment!.fechaEnreal.format('MMMM Do, YYYY')=="Fecha inválida"?"":shipment!.fechaEnreal.format('MMMM Do, YYYY')}
+                             Fecha de entrega real:{ shipment?.fechaEnreal.format('MMMM Do, YYYY')=="Fecha inválida"?"":shipment?.fechaEnreal.format('MMMM Do, YYYY')}
                             <br />
-                            Hora de entrega real: {shipment!.horaEnreal.utc().format('hA:mm')=="Fecha inválida"?"":shipment!.horaEnreal.utc().format('hA:mm')} 
+                            Hora de entrega real: {shipment?.horaEnreal.utc().format('hA:mm')=="Fecha inválida"?"":shipment?.horaEnreal.utc().format('hA:mm')} 
                         </Row>
                     </div>
                 </Col>
