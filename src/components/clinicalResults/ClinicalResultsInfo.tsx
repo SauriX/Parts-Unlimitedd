@@ -277,6 +277,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
           </Button>
         </Col>
       </Row>
+      <Divider></Divider>
       <Row>
         <Col span={24}>
           {studies.map((req: IRequestStudy, index: any) => {
