@@ -53,12 +53,13 @@ export interface IClinicResultCaptureForm {
   nombre: string;
   solicitudId: string;
   estudioId: number;
-  tipoValorId: number;
+  tipoValorId: string;
   valorInicial: number;
   valorFinal: number;
   parametroId: string;
   resultado?: string;
   unidades: number;
+  unidadNombre: string;
 }
 
 export interface IClinicResultForm {
@@ -84,6 +85,11 @@ export interface IStudyList {
   entrega: string;
   seleccion: boolean;
   clave: string;
+}
+
+export interface IPrintTypes {
+  id: number;
+  tipo: string;
 }
 
 export class ResultPathologicalValues implements IResultPathological {
@@ -130,13 +136,14 @@ export class ClinicResultsCaptureForm implements IClinicResultCaptureForm {
   id = "";
   solicitudId = "";
   estudioId = 0;
-  tipoValorId = 0;
+  tipoValorId = "0";
   nombre = "";
   valorInicial = 0;
   valorFinal = 0;
   parametroId = "";
   resultado = "";
   unidades = 0;
+  unidadNombre = "";
 
   constructor(init?: IClinicResultForm) {
     Object.assign(this, init);

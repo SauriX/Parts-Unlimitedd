@@ -1,4 +1,5 @@
 import { IBranchCity, IBranchForm, IBranchInfo } from "../models/branch";
+import { ISearchPending,IRecibe } from "../models/pendingRecive";
 import { IRouteList, SearchTracking } from "../models/routeTracking";
 import { IUpdate } from "../models/sampling";
 import requests from "./agent";
@@ -9,6 +10,9 @@ const RouteTracking = {
     update: (update: IUpdate[]): Promise<void> => requests.put("RouteTracking", update),
     exportForm: (id: string): Promise<void> =>
     requests.download(`RouteTracking/export/form/${id}`),
+    getRecive: (search: ISearchPending): Promise<IRecibe[]> => requests.post(`RouteTracking/allrecive`,search),
+    exportFormpending: (id: ISearchPending): Promise<void> =>
+    requests.download(`RouteTracking/report`,id),
 
 /*   getById: (id: string): Promise<IBranchForm> => requests.get(`Branch/${id}`),
   getBranchByCity: (): Promise<IBranchCity[]> => requests.get(`Branch/getSucursalByCity`),

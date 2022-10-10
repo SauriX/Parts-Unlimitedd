@@ -36,7 +36,7 @@ import DateInput from "../../../app/common/form/proposal/DateInput";
 import moment from "moment";
 import { IRecibe, IStatus, searchValues,ISearchPending } from "../../../app/models/pendingRecive";
 import { formItemLayout } from "../../../app/util/utils";
-const pendings:IRecibe[] = [{
+/* const pendings:IRecibe[] = [{
   id:"1",
   nseguimiento:"1234456",
   claveroute:"R01",
@@ -136,10 +136,12 @@ const pendings:IRecibe[] = [{
     entregado:true,
   }
 },
-]
+] */
   const PendingRecive = () => {
-    const { procedingStore, optionStore, locationStore, samplig,routeTrackingStore } = useStore();
-    const { getAll, studys, printTicket, update,exportForm } = routeTrackingStore;
+    const { procedingStore, optionStore, locationStore, samplig,routeTrackingStore,profileStore } = useStore();
+    const { getAll, studys, printTicket, update,exportForm,getAllRecive,pendings,setSearchi,setventana} = routeTrackingStore;
+    const {branchCityOptions,getBranchCityOptions}=optionStore;
+    const {profile}=profileStore;
     //const [values, setValues] = useState<SearchTracking>(new TrackingFormValues());
     const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
   const [ids, setIds] = useState<number[]>([]);
@@ -178,24 +180,29 @@ const pendings:IRecibe[] = [{
     setOpenRows(true);
   },[pendings]);
     useEffect(() => {
+      console.log(profile,"user");
       const readPriceList = async () => {
-       
+       var search= values;
+       search.sucursaldest= profile!.sucursal;
         let studios = [];
-       // var datas = await getAll(values!);
+        var datas = await getAllRecive(search!);
+        setSearchi(search)
        // console.log(datas, "daata");
         //setSoliCont(datas?.length!);
-        //datas?.forEach((x:any) => studios.push(x.pendings));
-        //setStudyCont(studios.length);
+        datas?.forEach((x:any) => studios.push(x.pendings));
+       // setStudyCont(studios.length);
         //setLoading(false);
+        setventana("recive");
+        await getBranchCityOptions();
       };
-  
-      if (pendings.length === 0) {
+      
+      if (pendings!.length === 0) {
         readPriceList();
       }
       console.log(getExpandableConfig("estudios"), "config");
       setExpandable(expandableStudyConfig);
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [getAll]);
+    }, [getAllRecive]);
 
     const onExpand = (isExpanded:boolean,record:IRecibe)=>{
         let expandRows:string[]= expandedRowKeys;
@@ -267,12 +274,12 @@ const pendings:IRecibe[] = [{
                     {x.solicitud}
                   </Descriptions.Item>
                   <Descriptions.Item label="Hora de recolección" className="description-content" style={{ maxWidth: 30 }}>
-                    {x.horarecoleccion.utc().format('h:mmA')}
+                    {moment(x.horarecoleccion).utc().format('h:mmA')}
                   </Descriptions.Item>
-                  <Descriptions.Item label="Fecha Hora(Check)" className="description-content" style={{ maxWidth: 30 }}>
-                    {x.check.format('DD/MM/YYYY h:mmA')}
+{/*                   <Descriptions.Item label="Fecha Hora(Check)" className="description-content" style={{ maxWidth: 30 }}>
+                    {moment(x.check).format('DD/MM/YYYY h:mmA')}
                   </Descriptions.Item>
-                 
+                  */}
                 </Descriptions>
               </>
             );
@@ -280,7 +287,7 @@ const pendings:IRecibe[] = [{
             <br />
 
             <h4>Muestras incluidas por recibir:</h4>
-          {item.extra.map((x) => {
+          {item.extra!=null&& item.extra.map((x) => {
             return (
               <>
                 <Descriptions
@@ -337,7 +344,7 @@ const pendings:IRecibe[] = [{
   
       const columns: IColumns<IRecibe> = [
         {
-          ...getDefaultColumnProps("nseguimiento", "# De seguimineto", {
+          ...getDefaultColumnProps("nseguimiento", "# De seguimiento", {
             searchState,
             setSearchState,
             width: "20%",
@@ -364,7 +371,7 @@ const pendings:IRecibe[] = [{
           {
             key: "status",
             dataIndex: "status",
-            title: "Seguimineto",
+            title: "Seguimiento",
             align: "center",
             width:  "10%",
             render: (value) => (
@@ -380,7 +387,7 @@ const pendings:IRecibe[] = [{
           },
       
           {
-            ...getDefaultColumnProps("fecha", "Sucursal de procedencia", {
+            ...getDefaultColumnProps("sucursal", "Sucursal de procedencia", {
               searchState,
               setSearchState,
               width: "15%",
@@ -440,9 +447,20 @@ const pendings:IRecibe[] = [{
           ];
           const onFinish = async (newValues: ISearchPending) => {
            // setLoading(true);
-        
+        console.log("onfinish");
             const reagent = { ...values, ...newValues };
-           
+            console.log(profile,"user");
+
+             var search= reagent;
+             search.sucursaldest= profile!.sucursal;
+              let studios = [];
+              var datas = await getAllRecive(search!);
+             // console.log(datas, "daata");
+              //setSoliCont(datas?.length!);
+              datas?.forEach((x:any) => studios.push(x.pendings));
+             // setStudyCont(studios.length);
+              //setLoading(false);
+              setExpandable(expandableStudyConfig);
             console.log(reagent,"en el onfish")
             console.log(reagent);
             let success = false;
@@ -462,7 +480,7 @@ const pendings:IRecibe[] = [{
                 initialValues={values}
                 onFinish={onFinish}
                 scrollToFirstError
-                //onValuesChange={onValuesChange}
+                
                 >
                   <Row gutter={[0, 12]}>
                   <Col span={2}></Col>
@@ -474,7 +492,7 @@ const pendings:IRecibe[] = [{
                       <SelectInput
                     formProps={{ name: "sucursal", label: "Sucursales" }}
                     multiple
-                    options={[]/* branchCityOptions */}
+                    options={ branchCityOptions }
                   />
                       </Col>
                       <Col span={2}></Col>
@@ -482,7 +500,7 @@ const pendings:IRecibe[] = [{
                           <TextInput formProps={{ name: "busqueda", label: "Buscar" ,labelCol:{span:5}}} ></TextInput>
                       </Col>
                       <Col span={4}>
-                      <Button style={{marginLeft:"5%"}} type="primary">Buscar</Button>
+                      <Button style={{marginLeft:"5%"}} onClick={()=>{form.submit()}} type="primary">Buscar</Button>
                       </Col>
                   </Row>
               </Form>
@@ -531,14 +549,14 @@ const pendings:IRecibe[] = [{
                   rowKey={(record) => record.id}
                   columns={columns}
                   pagination={false}
-                  dataSource={[...pendings]}
+                  dataSource={[...pendings!]}
                   scroll={{ y: 500 }}
                   //(rowClassName={(item) => (item.claveMedico == "Total" || item.paciente === "Total" ? "Resumen Total" : "")}
                   expandable={{...expandable,onExpand:onExpand,expandedRowKeys:expandedRowKeys}}
                   />
                   <div style={{ textAlign: "right", marginTop: 10 }}>
                   <Tag color="lime">
-                      {!hasFooterRow ? 3 : Math.max(3 - 1, 0)}{" "}
+                      {!hasFooterRow ? pendings?.length : Math.max(pendings?.length!, 0)}{" "}
                       Registros
                   </Tag>
                   </div>

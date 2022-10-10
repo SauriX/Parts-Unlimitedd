@@ -5,7 +5,7 @@ import {
   IClinicStudy,
   IResultPathological,
 } from "../models/clinicResults";
-import { IRequestStudy, IRequestStudyInfo } from "../models/request";
+import { IRequestStudy, IRequestStudyInfo, IRequestStudyUpdate } from "../models/request";
 import { IScopes } from "../models/shared";
 import requests from "./agent";
 
@@ -13,7 +13,7 @@ const ClinicResults = {
   access: (): Promise<IScopes> => requests.get("scopes/report"),
   getAll: (search: IClinicResultForm): Promise<IClinicResultList[]> =>
     requests.post(`clinicResults/getList`, search),
-  getStudies: (recordId: string, requestId: string): Promise<IRequestStudy[]> =>
+  getStudies: (recordId: string, requestId: string): Promise<IRequestStudyUpdate> =>
     requests.get(`clinicResults/studies_params/${recordId}/${requestId}`),
   createResults: (results: IClinicResultCaptureForm[]): Promise<string[]> =>
     requests.post(`clinicResults/saveResults`, results),
@@ -29,6 +29,8 @@ const ClinicResults = {
     requests.put(`clinicResults/updateStatusStudy`, { requestStudyId, status }),
   getResultPathological: (search: number): Promise<IResultPathological> =>
     requests.post(`clinicResults/getPathological`, search),
+  getLaboratoryResults: (search: number): Promise<IClinicResultCaptureForm[]> =>
+    requests.post(`clinicResults/getLaboratoryResults`, search),
   getRequestStudyById: (requestStudy: number): Promise<any> =>
     requests.post(`clinicResults/getRequestStudyById`, requestStudy),
   exportList: (search: IClinicResultForm): Promise<void> =>

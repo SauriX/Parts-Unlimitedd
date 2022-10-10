@@ -11,6 +11,7 @@ import {
   IClinicResultForm,
   IClinicResultList,
   IClinicStudy,
+  IPrintTypes,
 } from "../models/clinicResults";
 import Request from "../api/request";
 
@@ -25,7 +26,7 @@ export default class ClinicResultsStores {
   formValues: IClinicResultForm = new ClinicResultsFormValues();
   loadingStudies: boolean = false;
   clear: boolean = false;
-  studiesSelectedToPrint: any[] = [];
+  studiesSelectedToPrint: IPrintTypes[] = [];
 
   printSelectedStudies = async (configuration: any) => {
     try {
@@ -42,15 +43,15 @@ export default class ClinicResultsStores {
   clearStudy = () => {
     this.data = [];
   };
-  addSelectedStudy = (estudioId: number) => {
-    this.studiesSelectedToPrint.push(estudioId);
+  addSelectedStudy = (estudio: IPrintTypes) => {
+    this.studiesSelectedToPrint.push(estudio);
   };
   clearSelectedStudies = () => {
     this.studiesSelectedToPrint = [];
   };
-  removeSelectedStudy = (estudioId: number) => {
+  removeSelectedStudy = (estudio: IPrintTypes) => {
     this.studiesSelectedToPrint = this.studiesSelectedToPrint.filter(
-      (item) => item !== estudioId
+      (item) => item.id !== estudio.id
     );
   };
   setFormValues = (newFormValues: IClinicResultForm) => {
@@ -140,6 +141,16 @@ export default class ClinicResultsStores {
       alerts.warning(getErrors(error));
     }
   };
+  // getLaboratoryResults = async (result: number[]) => {
+  //   try {
+  //     const labResult = await ClinicResults.getLaboratoryResults(
+  //       result.map(x => x.)
+  //     );
+  //     return labResult;
+  //   } catch (error: any) {
+  //     alerts.warning(getErrors(error));
+  //   }
+  // };
   updateResultPathological = async (result: FormData) => {
     // updateResultPathological = async (result: IResultPathological) => {
     try {
@@ -182,7 +193,7 @@ export default class ClinicResultsStores {
   getStudies = async (recordId: string, requestId: string) => {
     try {
       const params = await ClinicResults.getStudies(recordId, requestId);
-      this.studies = params.map(x => ({
+      this.studies = params.estudios.map(x => ({
         id: x.estudioId,
         clave: x.clave,
         nombre: x.nombre,
@@ -195,6 +206,7 @@ export default class ClinicResultsStores {
           valorInicial: y.valorInicial,
           valorFinal: y.valorFinal,
           unidades: y.unidades,
+          unidadNombre: y.unidadNombre,
           tipoValorId: y.tipoValor,
         }))
       }));
@@ -207,7 +219,7 @@ export default class ClinicResultsStores {
 
   printResults = async (recordId: string, requestId: string) => {
     try {
-      await Request.printTicket(recordId, requestId);
+      await ClinicResults.printResults(recordId, requestId);
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
