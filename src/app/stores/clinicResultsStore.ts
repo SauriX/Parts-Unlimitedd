@@ -14,6 +14,7 @@ import {
   IPrintTypes,
 } from "../models/clinicResults";
 import Request from "../api/request";
+import messages from "../util/messages";
 
 export default class ClinicResultsStores {
   constructor() {
@@ -107,6 +108,7 @@ export default class ClinicResultsStores {
   createResults = async(results: IClinicResultCaptureForm[]) => {
     try {
       await ClinicResults.createResults(results);
+      alerts.success(messages.created);
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -116,6 +118,7 @@ export default class ClinicResultsStores {
   updateResults = async(results: IClinicResultCaptureForm[]) => {
     try {
       await ClinicResults.updateResults(results);
+      alerts.success(messages.updated);
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -208,6 +211,7 @@ export default class ClinicResultsStores {
           unidades: y.unidades,
           unidadNombre: y.unidadNombre,
           tipoValorId: y.tipoValor,
+          solicitudEstudioId: x.id!,
         }))
       }));
       return params;
