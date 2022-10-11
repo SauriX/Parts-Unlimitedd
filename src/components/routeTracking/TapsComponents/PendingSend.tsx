@@ -184,7 +184,7 @@ useEffect(()=>{
                   <PrintIcon
                     key="print"
                     onClick={() => {
-                     //  printTicket(item.order, item.id);
+                      printTicket(x.expedienteid, x.solicitudid);
                     }}
                   />
                   {/* <ImageButton
@@ -290,10 +290,10 @@ useEffect(()=>{
           align: "center",
           width:  "10%",
           render: (value,item) => (
-            <PrintIcon
+            <PrintIcon  
                     key="print"
                     onClick={() => {
-                      printTicket(value, item.id);
+                      printTicket(item.id, item.id);
                     }}
             />
           ),
@@ -313,23 +313,24 @@ useEffect(()=>{
       ];
     return (
         <Fragment>
-            <Button style={{marginLeft:"45%",marginBottom:"5%",backgroundColor:" #18AC50"}} onClick={()=>{navigate(`/trackingOrder`);}} type="primary" >Crear orden  de seguimiento</Button>
+           
             <Form<any>>
                 <Row gutter={[0, 12]}>
-                    <Col span={8}>
+                    <Col span={6}>
                         <DateRangeInput formProps={{ name: "fecha", label: "Fecha" }} ></DateRangeInput>
                     </Col>
-                    <Col span={2}></Col>
+                    <Col span={1}></Col>
                     <Col span={4}>
                         <SelectInput options={[]} formProps={{ name: "sucursal", label: "Sucursal" }} style={{marginLeft:"10px"}}></SelectInput>  
                     </Col>
-                    <Col span={2}></Col>
+                    <Col span={1}></Col>
                     <Col span={4}>
                         <TextInput formProps={{ name: "buscar", label: "Buscar" ,labelCol:{span:5}}} ></TextInput>
                     </Col>
                     <Col span={4}>
                     <Button style={{marginLeft:"5%"}} type="primary">Buscar</Button>
                     </Col>
+                    <Col> <Button style={{backgroundColor:" #18AC50"}} onClick={()=>{navigate(`/trackingOrder`);}} type="primary" >Crear orden  de seguimiento</Button></Col>
                 </Row>
             </Form>
             <Row style={{marginLeft:"20%",marginBottom:"2%"}}>

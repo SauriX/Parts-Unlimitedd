@@ -347,7 +347,7 @@ import { formItemLayout } from "../../../app/util/utils";
           ...getDefaultColumnProps("nseguimiento", "# De seguimiento", {
             searchState,
             setSearchState,
-            width: "20%",
+            width: "15%",
             minWidth: 150,
           }),
           render: (value, route) => (
@@ -406,7 +406,7 @@ import { formItemLayout } from "../../../app/util/utils";
             dataIndex: "fecha",
             title: "Hora de entrega estimada",
             align: "center",
-            width:  "10%",
+            width:  "15%",
             render: (value) => (moment(value).utc().format('h:mmA')),
           },
 
@@ -415,7 +415,7 @@ import { formItemLayout } from "../../../app/util/utils";
             dataIndex: "fecha",
             title: "Hora y fecha de entrega real",
             align: "center",
-            width:  "10%",
+            width:  "15%",
             render: (value) => (
               <div>
                 {moment(value).utc().format('h:mmA')}
