@@ -19,6 +19,7 @@ export interface IParameterList {
   valorFinal: number;
   criticoMinimo: number;
   criticoMaximo: number;
+  solicitudEstudioId: number;
 }
 
 export interface IParameterForm {
