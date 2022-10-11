@@ -78,6 +78,7 @@ export interface IUserForm {
   confirmaContraseña: string;
   activo: boolean;
   permisos?: IUserPermission[];
+  images:string[]
 }
 export class UserFormValues implements IUserForm {
   id = "";
@@ -90,7 +91,7 @@ export class UserFormValues implements IUserForm {
   contraseña = "";
   confirmaContraseña = "";
   activo = true;
-
+images=[]
   constructor(init?: IUserForm) {
     Object.assign(this, init);
   }

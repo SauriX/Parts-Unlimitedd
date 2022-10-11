@@ -89,7 +89,8 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
       const user = await getById(idUser);
 
       form.setFieldsValue(user!);
-
+      setImages((values)=>({...values,format:user!.images}));
+      console.log(user,"user");
       setValues(user!);
       setLoading(false);
     };
@@ -211,7 +212,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
           setImages({ ...images, idBack: imageUrl });
         } else if (type === "formato") {
           
-          imageUrl = `${baseUrl}/${values?.clave}/${imageName}.png`;
+          imageUrl = `/${values?.clave}/${imageName}.png`;
           setImages({
             ...images,
             format: [...images.format.filter((x) => x !== imageUrl), imageUrl],
@@ -263,7 +264,7 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
           fileList={images?.format.map((x) => ({
             uid: x,
             name: x.split("/")[x.split("/").length - 1].slice(0, -4),
-            url: x,
+            url:`${baseUrl}${x}`,
           }))}
           onPreview={handlePreview}
           onChange={onChangeImageFormat}
