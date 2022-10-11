@@ -3,6 +3,7 @@ import {
   Button,
   Checkbox,
   Col,
+  Collapse,
   Descriptions,
   Form,
   Row,
@@ -36,7 +37,7 @@ import { originOptions, urgencyOptions } from "../../app/stores/optionStore";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../app/util/alerts";
 import PrintIcon from "../../app/common/icons/PrintIcon";
-
+const {Panel}=Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
@@ -152,9 +153,9 @@ const SamplingTable: FC<ProceedingTableProps> = ({
               <Descriptions
                 size="small"
                 bordered
-                labelStyle={{ fontWeight: "bold" }}
-                contentStyle={{ background: "#fff" }}
+                layout="vertical"
                 style={{ marginBottom: 5 }}
+                column={7}
               >
                 <Descriptions.Item
                   label="Clave"
@@ -365,6 +366,33 @@ const SamplingTable: FC<ProceedingTableProps> = ({
           padding: "10px",
         }}
       >
+         <Collapse ghost className="request-filter-collapse">
+         <Panel
+        header="Filtros"
+        key="filter"
+        extra={[
+          <Button
+            key="clean"
+            onClick={(e) => {
+              e.stopPropagation();
+              
+              form.resetFields();
+            }}
+          >
+            Limpiar
+          </Button>,
+          <Button
+            key="filter"
+            type="primary"
+            onClick={(e) => {
+              e.stopPropagation();
+              form.submit();  
+            }}
+          >
+            Filtrar
+          </Button>,
+        ]}
+      >
         <Form<IsamplingForm>
           {...formItemLayout}
           form={form}
@@ -390,14 +418,14 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                   />
                 </Col>
                 <Col span={8} style={{ textAlign: "right" }}>
-                  <Button
+{/*                   <Button
                     type="primary"
                     onClick={() => {
                       form.submit();
                     }}
                   >
                     Buscar
-                  </Button>
+                  </Button> */}
                 </Col>
                 <Col span={8}>
                   <SelectInput
@@ -484,6 +512,8 @@ const SamplingTable: FC<ProceedingTableProps> = ({
             </Col>
           </Row>
         </Form>
+        </Panel>
+        </Collapse>
       </div>
       <Button
         style={{ marginTop: "10px", marginBottom: "10px" }}
