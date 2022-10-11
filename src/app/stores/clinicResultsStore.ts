@@ -112,6 +112,7 @@ export default class ClinicResultsStores {
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
+      return false;
     }
   }
 
@@ -122,6 +123,7 @@ export default class ClinicResultsStores {
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
+      return false;
     }
   }
 
@@ -168,7 +170,7 @@ export default class ClinicResultsStores {
     try {
       await ClinicResults.updateStatusStudy(requestStudyId, status);
       console.log("update", { requestStudyId, status });
-      return true;
+      return true; 
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }

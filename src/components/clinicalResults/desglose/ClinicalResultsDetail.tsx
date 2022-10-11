@@ -48,6 +48,7 @@ type ClinicalResultsDetailProps = {
   solicitud: IRequest;
   estudioId: number;
   isMarked: boolean;
+  printing: boolean;
 };
 
 const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
@@ -58,6 +59,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   claveMedico,
   solicitud,
   isMarked,
+  printing
 }) => {
   const [disabled, setDisabled] = useState(false);
   const [currentStudy, setCurrentStudy] = useState<IRequestStudy>(
@@ -135,7 +137,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     setCurrentStudy(cStudy!);
     let captureResult = studies.find((x) => x.id == estudioId);
     form.setFieldValue("parametros", captureResult?.parametros);
-    console.log(captureResult?.parametros.map(x => x));
+    console.log(captureResult?.parametros.map((x) => x));
   };
 
   useEffect(() => {
@@ -319,13 +321,11 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     let success = false;
     if (!!currentResult) {
       await updateResults(labResults);
-      await updateStatus();
-      await loadInit();
     } else {
-      await createResults(labResults);
-      await updateStatus();
-      await loadInit();
+       await createResults(labResults);
     }
+    await updateStatus();
+    await loadInit();
 
     setLoading(false);
   };
@@ -340,6 +340,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
         ? status.requestStudy.solicitado
         : status.requestStudy.validado;
       await updateStatusStudy(currentStudy.id!, nuevoEstado);
+      console.log(nuevoEstado);
       return nuevoEstado;
     }
     if (currentStudy.estatusId === status.requestStudy.validado) {
@@ -364,7 +365,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
 
   return (
     <Fragment>
-      <Spin spinning={loading}>
+      <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
         <Row style={{ marginBottom: "20px" }}>{renderUpdateStatus()}</Row>
         <Row style={{ marginBottom: "20px" }}>
           <Col span={24}>
@@ -389,6 +390,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                     form.getFieldsError().filter(({ errors }) => errors.length)
                       .length > 0
                 );
+                form.setFieldValue("resultado", values.resultado);
               }}
             >
               <Row>
@@ -428,13 +430,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   name={[field.name, "resultado"]}
                                   fieldKey={[field.key, "resultado"]}
                                   validateTrigger={["onChange", "onBlur"]}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message:
-                                        "Ingresa un valor dentro del parámetro",
-                                    },
-                                  ]}
                                   noStyle
                                 >
                                   <Input

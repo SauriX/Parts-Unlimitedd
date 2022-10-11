@@ -469,9 +469,8 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
               <Row justify="center">
                 <Col span={6}>
                   <Title level={5}>
-                    REPORTE DE ESTUDIO
+                    REPORTE DE ESTUDIO{" "}
                     {estudio.areaId === 30 ? "HISTOPATOLÓGICO" : "CITOLÓGICO"}
-                    {currentStudy.id}
                   </Title>
                 </Col>
               </Row>

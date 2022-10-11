@@ -110,7 +110,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
   };
 
   const isAnyStudySelected = () => {
-    return studiesSelectedToPrint.length > 0;
+    return studiesSelectedToPrint.length <= 0;
   }
 
   return (
@@ -310,6 +310,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
                   claveMedico={request?.claveMedico!}
                   solicitud={request!}
                   isMarked={markAll}
+                  printing={loading}
                 />
               );
             }
