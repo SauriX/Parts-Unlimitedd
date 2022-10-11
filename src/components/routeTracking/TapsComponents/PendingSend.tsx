@@ -313,7 +313,7 @@ useEffect(()=>{
       ];
     return (
         <Fragment>
-            <Button style={{marginLeft:"45%",marginBottom:"2%",backgroundColor:" #18AC50"}} onClick={()=>{navigate(`/trackingOrder`);}} type="primary" >Crear orden  de seguimiento</Button>
+           
             <Form<any>>
                 <Row gutter={[0, 12]}>
                     <Col span={6}>
@@ -330,6 +330,7 @@ useEffect(()=>{
                     <Col span={4}>
                     <Button style={{marginLeft:"5%"}} type="primary">Buscar</Button>
                     </Col>
+                    <Col> <Button style={{backgroundColor:" #18AC50"}} onClick={()=>{navigate(`/trackingOrder`);}} type="primary" >Crear orden  de seguimiento</Button></Col>
                 </Row>
             </Form>
             <Row style={{marginLeft:"20%",marginBottom:"2%"}}>

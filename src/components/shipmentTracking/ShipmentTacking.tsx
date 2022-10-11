@@ -7,6 +7,8 @@ import { useStore } from "../../app/stores/store";
 import { PlusOutlined } from "@ant-design/icons";
 import PrintIcon from "../../app/common/icons/PrintIcon";
 import DownloadIcon from "../../app/common/icons/DownloadIcon";
+import GoBackIcon from "../../app/common/icons/GoBackIcon";
+import views from "../../app/util/view";
 
 const { Search } = Input;
 
@@ -39,7 +41,9 @@ const ShipmentTrackingHeader: FC<ShipmentTrackingProps> = ({
 
     setSearchParams(searchParams);
   };
-
+  const getBack = () => {
+    navigate(`/${views.routeTraking}`);
+  };
   return (
     <PageHeader
       ghost={false}
@@ -47,7 +51,7 @@ const ShipmentTrackingHeader: FC<ShipmentTrackingProps> = ({
       className="header-container"
       extra={[
         scopes?.imprimir && <PrintIcon key="print" onClick={handlePrint} />,
-       
+        <GoBackIcon key="back" onClick={getBack} />,
           <DownloadIcon key="doc" onClick={handleDownload} />
       
 
