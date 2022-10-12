@@ -219,7 +219,9 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
                 onChange={(value) => {
                   console.log("value logos", value.target.checked);
                   if (value.target.checked) {
+                    setLoading(true);
                     setPrintLogos(true);
+                    setLoading(false);
                   } else {
                     setPrintLogos(false);
                   }

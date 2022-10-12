@@ -214,7 +214,8 @@ export default class ClinicResultsStores {
           unidadNombre: y.unidadNombre,
           tipoValorId: y.tipoValor,
           solicitudEstudioId: x.id!,
-        }))
+        })),
+        
       }));
       return params;
     } catch (error) {

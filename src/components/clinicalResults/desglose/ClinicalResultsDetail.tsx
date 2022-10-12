@@ -137,7 +137,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     setCurrentStudy(cStudy!);
     let captureResult = studies.find((x) => x.id == estudioId);
     form.setFieldValue("parametros", captureResult?.parametros);
-    console.log(captureResult?.parametros.map((x) => x));
   };
 
   useEffect(() => {
@@ -257,7 +256,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
         {currentStudy.estatusId >= status.requestStudy.solicitado ? (
           <>
             <Divider></Divider>
-            <Col span={4}>
+            {currentStudy.estatusId <= 3 ? (<Col span={4}>
               <Button
                 type="default"
                 htmlType="submit"
@@ -279,11 +278,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                   ? "Captura"
                   : currentStudy.estatusId === status.requestStudy.validado
                   ? "Validación"
-                  : currentStudy.estatusId === status.requestStudy.solicitado
-                  ? "Solicitud"
                   : ""}
               </Button>
-            </Col>
+            </Col>) : ""}
             <Col span={4}>
               <Button
                 type="primary"
@@ -365,7 +362,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
 
   return (
     <Fragment>
-      <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
+      <Spin spinning={loading} >
         <Row style={{ marginBottom: "20px" }}>{renderUpdateStatus()}</Row>
         <Row style={{ marginBottom: "20px" }}>
           <Col span={24}>
@@ -393,9 +390,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                 form.setFieldValue("resultado", values.resultado);
               }}
             >
-              <Row>
+              <Row >
                 <Col span={24}>
-                  <Row justify="space-between" gutter={[0, 12]}>
+                  <Row justify="space-between" gutter={[0, 12]} style={{textAlign: "center"}}>
                     <Col span={6}>
                       <h3>EXAMEN</h3>
                     </Col>
@@ -409,7 +406,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                       <h3>REFERENCIA</h3>
                     </Col>
                   </Row>
-                  <Row justify="space-between" gutter={[0, 12]}>
+                  <Row justify="space-between" gutter={[0, 12]} style={{textAlign: "center"}}>
                     <Form.List name="parametros">
                       {(fields) => (
                         <>
@@ -434,7 +431,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                 >
                                   <Input
                                     placeholder="Resultado"
-                                    style={{ width: "50%" }}
+                                    style={{ width: "70%" }}
+                                    allowClear
                                     disabled={disableInput()}
                                   />
                                 </Form.Item>
@@ -464,7 +462,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
             </Form>
           </Card>
         ) : (
-          ""
+          null
         )}
       </Spin>
     </Fragment>
