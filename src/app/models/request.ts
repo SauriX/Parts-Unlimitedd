@@ -206,6 +206,7 @@ export class RequestStudyValues implements IRequestStudy {
   nuevo = false;
   parametros: IParameterList[] = [];
   indicaciones: IIndicationList[] = [];
+  promociones = [];
   fechaActualizacion = "";
   constructor(init?: IRequestStudy) {
     Object.assign(this, init);
