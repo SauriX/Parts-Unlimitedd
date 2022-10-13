@@ -512,6 +512,7 @@ export default class OptionStore {
       this.companyOptions = CompanyOptions.map((x) => ({
         value: x.id,
         label: x.nombreComercial,
+        group: x.procedenciaId,
       }));
     } catch (error) {
       this.companyOptions = [];

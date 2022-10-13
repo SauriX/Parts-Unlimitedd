@@ -1,5 +1,6 @@
 import { IIndicationList } from "./indication";
 import { IParameterList } from "./parameter";
+import { IPriceListInfoPromo } from "./priceList";
 
 export interface IRequestBase {
   solicitudId: string;
@@ -160,10 +161,11 @@ export interface IRequestStudy {
   horas: number;
   fechaEntrega: moment.Moment;
   precio: number;
-  descuento: number;
-  descuentoPorcentaje: number;
+  descuento?: number;
+  descuentoPorcentaje?: number;
   precioFinal: number;
   nuevo: boolean;
+  promociones: IPriceListInfoPromo[];
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
 }
@@ -187,8 +189,11 @@ export interface IRequestPack {
   precio: number;
   descuento: number;
   descuentoPorcentaje: number;
+  promocionDescuento?: number;
+  promocionDescuentoPorcentaje?: number;
   precioFinal: number;
   nuevo: boolean;
+  promociones: IPriceListInfoPromo[];
   estudios: IRequestStudy[];
 }
 

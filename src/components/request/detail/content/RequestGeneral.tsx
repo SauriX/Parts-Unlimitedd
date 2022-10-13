@@ -8,12 +8,13 @@ import SelectInput from "../../../../app/common/form/proposal/SelectInput";
 import TextAreaInput from "../../../../app/common/form/proposal/TextAreaInput";
 import TextInput from "../../../../app/common/form/proposal/TextInput";
 import { IRequestGeneral, IRequestStudy } from "../../../../app/models/request";
-import { IFormError } from "../../../../app/models/shared";
+import { IFormError, IOptions } from "../../../../app/models/shared";
 import {
   originOptions,
   urgencyOptions,
 } from "../../../../app/stores/optionStore";
 import { useStore } from "../../../../app/stores/store";
+import { catalog } from "../../../../app/util/catalogs";
 
 const formItemLayout = {
   labelCol: { span: 4 },
@@ -71,14 +72,6 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
   useEffect(() => {
     setStudyFilter(branchId, doctorId, companyId);
   }, [branchId, companyId, doctorId, setStudyFilter]);
-
-  // useEffect(() => {
-  //   if (companyId === particular) {
-  //     form.setFieldsValue({
-  //       compañiaId: undefined,
-  //     });
-  //   }
-  // }, [form, companyId]);
 
   useEffect(() => {
     const getRequestGeneral = async () => {
@@ -159,6 +152,10 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
     }
   };
 
+  const onCompanyChange = (_value: string, option: IOptions | IOptions[]) => {
+    form.setFieldValue("procedencia", (option as IOptions).group);
+  };
+
   return (
     <Spin spinning={loading}>
       <Form<IRequestGeneral>
@@ -172,7 +169,11 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
           }));
           setErrors(errors);
         }}
-        initialValues={{ metodoEnvio: [] }}
+        initialValues={{
+          metodoEnvio: [],
+          companyId: catalog.company.particulares,
+          procedencia: particular,
+        }}
         onValuesChange={onValuesChange}
         size="small"
       >
@@ -184,8 +185,9 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
                 label: "Compañía",
               }}
               options={CompanyOptions}
-              // readonly={origin !== compañia}
-              // required={origin === compañia}
+              required
+              errors={errors.find((x) => x.name === "compañiaId")?.errors}
+              onChange={onCompanyChange}
             />
           </Col>
           <Col span={24}>
@@ -195,8 +197,6 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
                 label: "Procedencia",
               }}
               options={originOptions}
-              errors={errors.find((x) => x.name === "procedencia")?.errors}
-              required
               readonly
             />
           </Col>
