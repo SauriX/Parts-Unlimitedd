@@ -868,7 +868,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               </Col>
             </Row>
           </Form>
-          {searchParams.get("mode") === "edit" ? (<div>
+          {searchParams.get("mode") === "edit" || searchParams.get("mode") === "readonly"? (<div>
             <Row>
               <Col span={6}>
                 <Button

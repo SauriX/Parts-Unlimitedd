@@ -362,7 +362,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idma
 
                       formProps={{
                         name: "fecha",
-                        label: "Fecha programda",
+                        label: "Fecha programada",
                       }}
                       readonly={readonly}
                       ></DateInput>

@@ -19,6 +19,29 @@ export interface IParameterList {
   valorFinal: number;
   criticoMinimo: number;
   criticoMaximo: number;
+  solicitudEstudioId: number;
+}
+
+export interface IParameterValueListDto {
+  id: string;
+  clave: string;
+  nombre: string;
+  nombreCorto: string;
+  area: string;
+  departamento: string;
+  activo: boolean;
+  requerido: boolean;
+  deltaCheck: boolean;
+  mostrarFormato: boolean;
+  unidades: number;
+  unidadNombre: string;
+  tipoValor: string;
+  valorInicial: number;
+  valorFinal: number;
+  criticoMinimo: number;
+  criticoMaximo: number;
+  solicitudEstudioId: number;
+  parametroValores: ItipoValorForm[];
 }
 
 export interface IParameterForm {

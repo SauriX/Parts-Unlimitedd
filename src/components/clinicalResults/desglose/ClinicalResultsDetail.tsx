@@ -1,5 +1,16 @@
 import "../css/containerInfo.less";
-import { Button, Card, Checkbox, Col, Form, Input, Row, Table } from "antd";
+import {
+  Button,
+  Card,
+  Checkbox,
+  Col,
+  Divider,
+  Form,
+  Input,
+  Row,
+  Spin,
+  Table,
+} from "antd";
 import { observer } from "mobx-react-lite";
 import { Typography } from "antd";
 import useWindowDimensions from "../../../app/util/window";
@@ -11,7 +22,7 @@ import {
   RequestStudyInfoForm,
   RequestStudyValues,
 } from "../../../app/models/request";
-import { FC, useEffect, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 import { IProceedingForm } from "../../../app/models/Proceeding";
 import { useStore } from "../../../app/stores/store";
 import { status } from "../../../app/util/catalogs";
@@ -19,6 +30,7 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import {
   ClinicResultsCaptureForm,
   IClinicResultCaptureForm,
+  IClinicStudy,
 } from "../../../app/models/clinicResults";
 import { IOptions } from "../../../app/models/shared";
 import TextInput from "../../../app/common/form/proposal/TextInput";
@@ -36,6 +48,7 @@ type ClinicalResultsDetailProps = {
   solicitud: IRequest;
   estudioId: number;
   isMarked: boolean;
+  printing: boolean;
 };
 
 const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
@@ -46,6 +59,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   claveMedico,
   solicitud,
   isMarked,
+  printing
 }) => {
   const [disabled, setDisabled] = useState(false);
   const [currentStudy, setCurrentStudy] = useState<IRequestStudy>(
@@ -121,12 +135,13 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const loadInit = async () => {
     const cStudy = await getRequestStudyById(estudio.id!);
     setCurrentStudy(cStudy!);
-    console.log(currentStudy);
+    let captureResult = studies.find((x) => x.id == estudioId);
+    form.setFieldValue("parametros", captureResult?.parametros);
   };
 
   useEffect(() => {
     loadInit();
-  }, []);
+  }, [studies, estudio, estudioId]);
 
   useEffect(() => {
     setDisabled(
@@ -140,11 +155,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     );
   }, [estudio]);
 
-  const changeStatus = () => {
-    if (estudio.estatusId === status.requestStudy.solicitado) {
-    }
-  };
-
   const { width: windowWidth } = useWindowDimensions();
   const columns: IColumns<any> = [
     {
@@ -152,21 +162,21 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       dataIndex: "clave",
       title: "Clave",
       align: "left",
-      width: 100,
+      width: "20%",
     },
     {
       key: "id",
       dataIndex: "nombre",
       title: "Estudio",
       align: "left",
-      width: 200,
+      width: "30%",
     },
     {
       key: "estatus",
       dataIndex: "estatus",
       title: "Estatus",
       align: "left",
-      width: 50,
+      width: "15%",
       render: (value: any) => {
         return value.nombre;
       },
@@ -174,10 +184,13 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     {
       key: "estatusId",
       dataIndex: "estatusId",
-      title: "Fecha Atualización",
+      title: "Fecha Actualización",
       align: "left",
-      width: 50,
+      width: "15%",
       render: (value: any, fullRow: any) => {
+        if (value === status.requestStudy.pendiente) {
+          return moment(fullRow.fechaSolicitud).format("DD/MM/YYYY");
+        }
         if (value === status.requestStudy.solicitado) {
           return moment(fullRow.fechaSolicitud).format("DD/MM/YYYY");
         }
@@ -202,14 +215,14 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       dataIndex: "orden",
       title: "Orden",
       align: "left",
-      width: 50,
+      width: "15%",
     },
     {
       key: "Seleccionar",
       dataIndex: "imprimir",
       title: "Seleccionar",
       align: "center",
-      width: 50,
+      width: "20%",
       render: () => {
         return (
           <Checkbox
@@ -240,9 +253,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const renderUpdateStatus = () => {
     return (
       <>
-        {currentStudy.estatusId >= status.requestStudy.solicitado && (
+        {currentStudy.estatusId >= status.requestStudy.solicitado ? (
           <>
-            <Col span={4}>
+            <Divider></Divider>
+            {currentStudy.estatusId <= 3 ? (<Col span={4}>
               <Button
                 type="default"
                 htmlType="submit"
@@ -252,7 +266,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                   currentStudy.estatusId === status.requestStudy.pendiente
                 }
                 onClick={async () => {
+                  setLoading(true);
                   await updateStatus(true);
+                  loadInit();
+                  setLoading(false);
                 }}
                 danger
               >
@@ -263,7 +280,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                   ? "Validación"
                   : ""}
               </Button>
-            </Col>
+            </Col>) : ""}
             <Col span={4}>
               <Button
                 type="primary"
@@ -288,6 +305,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
               </Button>
             </Col>
           </>
+        ) : (
+          ""
         )}
       </>
     );
@@ -295,31 +314,15 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
 
   const onFinish = async (newValuesForm: any) => {
     setLoading(true);
-    const labResults: IClinicResultCaptureForm[] = newValuesForm;
-    console.log(newValuesForm);
-    // .map(
-    //   (newValues) => ({
-    //     id: newValues.id,
-    //     estudioId: estudio.id!,
-    //     nombre: newValues.nombre,
-    //     solicitudId: solicitud.solicitudId!,
-    //     parametroId: newValues.parametroId,
-    //     tipoValorId: newValues.tipoValorId,
-    //     valorInicial: newValues.valorInicial,
-    //     valorFinal: newValues.valorFinal,
-    //     resultado: newValues.resultado,
-    //     unidades: newValues.unidades,
-    //     unidadNombre: newValues.unidadNombre,
-    //   })
-    // );
-
-    // if (!!currentResult) {
-    //   await updateResults(labResults);
-    //   await updateStatus();
-    // } else {
-    //   await createResults(labResults);
-    //   await updateStatus();
-    // }
+    const labResults: IClinicResultCaptureForm[] = newValuesForm.parametros;
+    let success = false;
+    if (!!currentResult) {
+      await updateResults(labResults);
+    } else {
+       await createResults(labResults);
+    }
+    await updateStatus();
+    await loadInit();
 
     setLoading(false);
   };
@@ -334,6 +337,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
         ? status.requestStudy.solicitado
         : status.requestStudy.validado;
       await updateStatusStudy(currentStudy.id!, nuevoEstado);
+      console.log(nuevoEstado);
       return nuevoEstado;
     }
     if (currentStudy.estatusId === status.requestStudy.validado) {
@@ -352,75 +356,70 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     }
   };
 
-  const studyParams = studies.flatMap((study) => {
-    return study.parametros.map((parametro) => {
-      return {
-        nombre: parametro.nombre,
-        unidadNombre: parametro.unidadNombre,
-        valorInicial: parametro.valorInicial,
-        valorFinal: parametro.valorFinal,
-        resultado: parametro.resultado,
-      };
-    });
-  });
+  const disableInput = () => {
+    return currentStudy.estatusId > 3;
+  };
 
   return (
-    <>
-      <Row style={{ marginBottom: "20px" }}>{renderUpdateStatus()}</Row>
-      <Row style={{ marginBottom: "20px" }}>
-        <Col span={24}>
-          <Table<any>
-            size="small"
-            rowKey={(record) => record.id}
-            columns={columns}
-            pagination={false}
-            dataSource={[currentStudy]}
-          />
-        </Col>
-      </Row>
-      <Card className="capture-details">
-        <Form<IClinicResultCaptureForm>
-          form={form}
-          // initialValues={currentResult}
-          onFinish={onFinish}
-          name="dynamic_form_item"
-          onValuesChange={(changes_values: any) => {
-            setDisabled(
-              !form.isFieldsTouched() ||
-                form.getFieldsError().filter(({ errors }) => errors.length)
-                  .length > 0
-            );
-          }}
-        >
-          <Row>
-            <Col span={24}>
-              <Row justify="space-between" gutter={[0, 12]}>
-                <Col span={6}>
-                  <h3>EXAMEN</h3>
-                </Col>
-                <Col span={6}>
-                  <h3>RESULTADO</h3>
-                </Col>
-                <Col span={6}>
-                  <h3>UNIDADES</h3>
-                </Col>
-                <Col span={6}>
-                  <h3>REFERENCIA</h3>
-                </Col>
-              </Row>
-
-              <Row justify="space-between" gutter={[0, 12]}>
-                {studies.map((x) => {
-                  return (
-                    <Form.List name="params" initialValue={x.parametros}>
+    <Fragment>
+      <Spin spinning={loading} >
+        <Row style={{ marginBottom: "20px" }}>{renderUpdateStatus()}</Row>
+        <Row style={{ marginBottom: "20px" }}>
+          <Col span={24}>
+            <Table<any>
+              size="small"
+              rowKey={(record) => record.id}
+              columns={columns}
+              pagination={false}
+              dataSource={[currentStudy]}
+            />
+          </Col>
+        </Row>
+        {currentStudy.estatusId >= 3 ? (
+          <Card className="capture-details">
+            <Form<IClinicResultCaptureForm>
+              form={form}
+              onFinish={onFinish}
+              name="dynamic_form_item"
+              onValuesChange={(changes_values: any) => {
+                setDisabled(
+                  !form.isFieldsTouched() ||
+                    form.getFieldsError().filter(({ errors }) => errors.length)
+                      .length > 0
+                );
+                form.setFieldValue("resultado", values.resultado);
+              }}
+            >
+              <Row >
+                <Col span={24}>
+                  <Row justify="space-between" gutter={[0, 12]} style={{textAlign: "center"}}>
+                    <Col span={6}>
+                      <h3>EXAMEN</h3>
+                    </Col>
+                    <Col span={6}>
+                      <h3>RESULTADO</h3>
+                    </Col>
+                    <Col span={6}>
+                      <h3>UNIDADES</h3>
+                    </Col>
+                    <Col span={6}>
+                      <h3>REFERENCIA</h3>
+                    </Col>
+                  </Row>
+                  <Row justify="space-between" gutter={[0, 12]} style={{textAlign: "center"}}>
+                    <Form.List name="parametros">
                       {(fields) => (
                         <>
                           {fields.map((field, index) => (
-                            <>
-                              {console.log(fields)}
-                              {console.log(x.parametros)}
+                            <Fragment key={field.key}>
                               <Col span={6}>
-                                <h4>{form.getFieldValue(["params", field.name, "nombre"])}</h4>
+                                <h4>
+                                  {form.getFieldValue([
+                                    "parametros",
+                                    field.name,
+                                    "nombre",
+                                  ])}
+                                </h4>
                               </Col>
                               <Col span={6}>
                                 <Form.Item
@@ -428,38 +427,45 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   name={[field.name, "resultado"]}
                                   fieldKey={[field.key, "resultado"]}
                                   validateTrigger={["onChange", "onBlur"]}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message:
-                                        "Ingresa un valor dentro del parámetro",
-                                    },
-                                  ]}
                                   noStyle
                                 >
                                   <Input
-                                    placeholder="Valor del parámetro"
-                                    style={{ width: "30%" }}
+                                    placeholder="Resultado"
+                                    style={{ width: "70%" }}
+                                    allowClear
+                                    disabled={disableInput()}
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={6}>{form.getFieldValue(["params", field.name, "unidadNombre"])}</Col>
                               <Col span={6}>
-                              {form.getFieldValue(["params", field.name, "valorInicial"])}
+                                {form.getFieldValue([
+                                  "parametros",
+                                  field.name,
+                                  "unidadNombre",
+                                ])}
                               </Col>
-                            </>
+                              <Col span={6}>
+                                {form.getFieldValue([
+                                  "parametros",
+                                  field.name,
+                                  "valorInicial",
+                                ])}
+                              </Col>
+                            </Fragment>
                           ))}
                         </>
                       )}
                     </Form.List>
-                  );
-                })}
+                  </Row>
+                </Col>
               </Row>
-            </Col>
-          </Row>
-        </Form>
-      </Card>
-    </>
+            </Form>
+          </Card>
+        ) : (
+          null
+        )}
+      </Spin>
+    </Fragment>
   );
 };
 export default observer(ClinicalResultsDetail);

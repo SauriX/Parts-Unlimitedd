@@ -110,9 +110,8 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
   };
 
   const isAnyStudySelected = () => {
-    console.log("activo", studiesSelectedToPrint.length > 0);
-    return !(studiesSelectedToPrint.length > 0);
-  };
+    return studiesSelectedToPrint.length <= 0;
+  }
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
@@ -220,7 +219,9 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
                 onChange={(value) => {
                   console.log("value logos", value.target.checked);
                   if (value.target.checked) {
+                    setLoading(true);
                     setPrintLogos(true);
+                    setLoading(false);
                   } else {
                     setPrintLogos(false);
                   }
@@ -278,6 +279,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
           </Button>
         </Col>
       </Row>
+      <Divider></Divider>
       <Row>
         <Col span={24}>
           {studies.map((req: IRequestStudy, index: any) => {
@@ -310,6 +312,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
                   claveMedico={request?.claveMedico!}
                   solicitud={request!}
                   isMarked={markAll}
+                  printing={loading}
                 />
               );
             }

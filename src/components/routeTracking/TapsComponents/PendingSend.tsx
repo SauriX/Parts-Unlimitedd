@@ -32,7 +32,7 @@ import PrintIcon from "../../../app/common/icons/PrintIcon";
 
 const PendingSend = () => {
   const { procedingStore, optionStore, locationStore, samplig,routeTrackingStore } = useStore();
-  const { getAll, studys, printTicket, update,exportForm } = routeTrackingStore;
+  const { getAll, studys, printTicket, update,exportForm,setventana } = routeTrackingStore;
   const [values, setValues] = useState<SearchTracking>(new TrackingFormValues());
   const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
 const [ids, setIds] = useState<number[]>([]);
@@ -52,6 +52,7 @@ useEffect(()=>{
       let studios = [];
       var datas = await getAll(values!);
       console.log(datas, "daata");
+      setventana("enviar");
       //setSoliCont(datas?.length!);
       datas?.forEach((x:any) => studios.push(x.studys));
       //setStudyCont(studios.length);
@@ -145,6 +146,7 @@ useEffect(()=>{
                 bordered
                 layout="vertical"
                 style={{ marginBottom: 5 }}
+                column={6}
               >
                 <Descriptions.Item label="Clave" className="description-content" style={{ maxWidth: 30 }}>
                   {x.clave}
@@ -182,7 +184,7 @@ useEffect(()=>{
                   <PrintIcon
                     key="print"
                     onClick={() => {
-                     //  printTicket(item.order, item.id);
+                      printTicket(x.expedienteid, x.solicitudid);
                     }}
                   />
                   {/* <ImageButton
@@ -217,7 +219,7 @@ useEffect(()=>{
 
     const columns: IColumns<IRouteList> = [
       {
-        ...getDefaultColumnProps("seguimiento", "# De seguridad", {
+        ...getDefaultColumnProps("seguimiento", "# De seguimiento", {
           searchState,
           setSearchState,
           width: "20%",
@@ -288,10 +290,10 @@ useEffect(()=>{
           align: "center",
           width:  "10%",
           render: (value,item) => (
-            <PrintIcon
+            <PrintIcon  
                     key="print"
                     onClick={() => {
-                      printTicket(value, item.id);
+                      printTicket(item.id, item.id);
                     }}
             />
           ),
@@ -302,8 +304,8 @@ useEffect(()=>{
           title: "Seleccionar",
           align: "center",
           width:  "10%",
-          render: (value) => (
-            <Checkbox >
+          render: (value,item) => (
+            <Checkbox /* onChange={(e)=>{onChange(e,x=item.estudios.map(x=>x.),value) }} */>
           
           </Checkbox>
           ),
@@ -311,23 +313,24 @@ useEffect(()=>{
       ];
     return (
         <Fragment>
-            <Button style={{marginLeft:"45%",marginBottom:"5%",backgroundColor:" #18AC50"}} type="primary" >Crear orden  de seguimiento</Button>
+           
             <Form<any>>
                 <Row gutter={[0, 12]}>
-                    <Col span={8}>
+                    <Col span={6}>
                         <DateRangeInput formProps={{ name: "fecha", label: "Fecha" }} ></DateRangeInput>
                     </Col>
-                    <Col span={2}></Col>
+                    <Col span={1}></Col>
                     <Col span={4}>
                         <SelectInput options={[]} formProps={{ name: "sucursal", label: "Sucursal" }} style={{marginLeft:"10px"}}></SelectInput>  
                     </Col>
-                    <Col span={2}></Col>
+                    <Col span={1}></Col>
                     <Col span={4}>
                         <TextInput formProps={{ name: "buscar", label: "Buscar" ,labelCol:{span:5}}} ></TextInput>
                     </Col>
                     <Col span={4}>
                     <Button style={{marginLeft:"5%"}} type="primary">Buscar</Button>
                     </Col>
+                    <Col> <Button style={{backgroundColor:" #18AC50"}} onClick={()=>{navigate(`/trackingOrder`);}} type="primary" >Crear orden  de seguimiento</Button></Col>
                 </Row>
             </Form>
             <Row style={{marginLeft:"20%",marginBottom:"2%"}}>
@@ -335,7 +338,7 @@ useEffect(()=>{
                     <Button style={{marginTop:"8%",marginLeft:"2%"}}         type={activiti == "register" ? "primary" : "ghost"}
         onClick={register} >Enviar ruta</Button>
                     <Button style={{marginTop:"8%",marginLeft:"2%"}}  type={activiti == "cancel" ? "primary" : "ghost"}
-        onClick={cancel} >Cancelar envió</Button>
+        onClick={cancel} >Cancelar envío</Button>
                 </Col>
                 <Col span={8}></Col>
                 <Col span={8}>
@@ -343,7 +346,7 @@ useEffect(()=>{
         <Button
           style={{ marginTop: "10px", marginBottom: "10px", marginLeft: "70%" }}
           type="primary"
-          disabled={ids.length <= 0}
+          /* disabled={ids.length <= 0} */
           onClick={() => {
             updatedata();
           }}

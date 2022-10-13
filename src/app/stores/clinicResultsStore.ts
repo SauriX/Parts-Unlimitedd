@@ -14,6 +14,7 @@ import {
   IPrintTypes,
 } from "../models/clinicResults";
 import Request from "../api/request";
+import messages from "../util/messages";
 
 export default class ClinicResultsStores {
   constructor() {
@@ -109,18 +110,22 @@ export default class ClinicResultsStores {
   createResults = async (results: IClinicResultCaptureForm[]) => {
     try {
       await ClinicResults.createResults(results);
+      alerts.success(messages.created);
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
+      return false;
     }
   };
 
   updateResults = async (results: IClinicResultCaptureForm[]) => {
     try {
       await ClinicResults.updateResults(results);
+      alerts.success(messages.updated);
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
+      return false;
     }
   };
 
@@ -167,7 +172,7 @@ export default class ClinicResultsStores {
     try {
       await ClinicResults.updateStatusStudy(requestStudyId, status);
       console.log("update", { requestStudyId, status });
-      return true;
+      return true; 
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
@@ -210,7 +215,9 @@ export default class ClinicResultsStores {
           unidades: y.unidades,
           unidadNombre: y.unidadNombre,
           tipoValorId: y.tipoValor,
+          solicitudEstudioId: x.id!,
         })),
+        
       }));
       return params;
     } catch (error) {

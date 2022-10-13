@@ -290,6 +290,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
           tipoValor: "0",
           valorFinal: 0,
           valorInicial: 0,
+          solicitudEstudioId: 0,
         },
       ];
 

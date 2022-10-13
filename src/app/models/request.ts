@@ -169,6 +169,7 @@ export interface IRequestStudy {
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
   fechaActualizacion?: string;
+  solicitudEstudioId?: number;
 }
 export class RequestStudyValues implements IRequestStudy {
   type: "study" | "pack" = "study";

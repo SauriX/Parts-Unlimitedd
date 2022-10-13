@@ -17,6 +17,12 @@ const ClinicResults = () => {
     setLoading(false);
   };
 
+  const handleSelectedPrint = async () => {
+    setLoading(true);
+    await exportList(formValues);
+    setLoading(false);
+  };
+
   useEffect(() => {
     const checkAccess = async () => {
       await access();
