@@ -51,11 +51,11 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
     requestedStudyStore,
     clinicResultsStore,
   } = useStore();
-  const { request, getById, studies, getStudies } = requestStore;
+  const { request, getById, studies,  } = requestStore;
   const { getById: procedingById } = procedingStore;
   const { printOrder } = requestedStudyStore;
   const { departmentOptions, getDepartmentOptions } = optionStore;
-  const { studiesSelectedToPrint, printSelectedStudies } = clinicResultsStore;
+  const { studiesSelectedToPrint, printSelectedStudies, getStudies } = clinicResultsStore;
 
   const [loading, setLoading] = useState(false);
   const [markAll, setMarkAll] = useState(false);
