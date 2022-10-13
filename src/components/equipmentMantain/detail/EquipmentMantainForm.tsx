@@ -14,11 +14,13 @@ import {
   Segmented,
   UploadProps,
   message,
+  Modal,
 
 } from "antd";
-import { InboxOutlined } from "@ant-design/icons";
+import { InboxOutlined, PlusOutlined } from "@ant-design/icons";
+
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, Fragment, useEffect, useState } from "react";
 import {
   formItemLayout, beforeUploadValidation,
   getBase64,
@@ -54,7 +56,7 @@ import Study from "../../../app/api/study";
 import DateInput from "../../../app/common/form/proposal/DateInput";
 import Dragger from "antd/lib/upload/Dragger";
 import { IRequestImage } from "../../../app/models/request";
-import { RcFile } from "antd/lib/upload";
+import Upload, { RcFile, UploadFile } from "antd/lib/upload";
 import { IImageSend, ImantainForm, MantainValues } from "../../../app/models/equipmentMantain";
 
 type EquipmentFormProps = {
@@ -67,14 +69,28 @@ type EquipmentFormProps = {
 const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idmantain }) => {
   const { equipmentMantainStore ,optionStore} = useStore();
   const { getSucursalesOptions, sucursales } = optionStore;
-  const { getById, create, update, getAlls, equipments,saveImage,setSearch,search,mantain,equip,idEq } = equipmentMantainStore;
-
+  const { getById, create, update, getAlls, equipments,saveImage,setSearch,search,mantain,equip,idEq,deleteImage } = equipmentMantainStore;
+  const [type, setType] = useState<"orden" | "ine" | "ineReverso" | "formato">(
+    "formato"
+  );
   const navigate = useNavigate();
-  const [type, setType] = useState<"orden" | "ine" | "formato">("orden");
-  const [searchParams] = useSearchParams();
 
+  const [searchParams] = useSearchParams();
+  const baseUrl = process.env.REACT_APP_CATALOG_URL + "/images/mantain";
+
+  type imageTypes = {
+    order: string;
+    id: string;
+    idBack: string;
+    format: string[];
+  };
   const [form] = Form.useForm<ImantainForm>();
-  const [images,setImages] = useState<IImageSend[]>([]);
+  const [images, setImages] = useState<imageTypes>({
+    order: "",
+    id: "",
+    idBack: "",
+    format: [],
+  });
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [readonly, setReadonly] = useState(
@@ -97,6 +113,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idma
       setLoading(true);
       const equipment = await getById(id);
       form.setFieldsValue(equipment!);
+      setImages((values)=>({...values,format:equipment!.imagenUrl}));
       setValues(equipment!);
       setLoading(false);
     };
@@ -109,7 +126,10 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idma
   useEffect(() => {
     const readEquipment = async () => {
       setLoading(true);
-      await getAlls(search!);
+      var searching=search!;
+      console.log(idmantain,"id");
+      searching.idEquipo=idmantain!;
+      await getAlls(searching);
       setLoading(false);
     };
     console.log("id",id);
@@ -162,19 +182,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idma
     const [ids, setId] = useState<string>();
     const [format, setFormat] = useState<string>();
 
-    const submitImage = async (type: "orden" | "ine" | "formato", file: RcFile, imageUrl: string) => {
-      if (mantain) {
-        const requestImage:IImageSend = {
-          solicitudId: mantain.id!,
-          imagenUrl: "",
-          clave:mantain.clave,
-          imagen: file,
-          tipo: type,
-        };
-        setImages((prev)=>([...prev,requestImage]));
 
-      }
-    };
 
     const sumbitImages= async()=>{
       const formData = objectToFormData(images);
@@ -195,51 +203,114 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idma
     useEffect(() => {
       console.log(values);
     }, [values]);
-
-    const props: UploadProps = {
-      name: "file",
-      multiple: false,
-      showUploadList: false,
-      customRequest: uploadFakeRequest,
-      beforeUpload: (file) => beforeUploadValidation(file),
-      onChange(info) {
-        const { status } = info.file;
-        if (status === "uploading") {
-          return;
-        } else if (status === "done") {
-          getBase64(info.file.originFileObj, (imageStr) => {
-            submitImage(type, info.file.originFileObj!, imageStr!.toString());
-          });
-        } else if (status === "error") {
-          message.error(`Error al cargar el archivo ${info.file.name}`);
-        }
-      },
+    const [previewVisible, setPreviewVisible] = useState(false);
+    const [previewImage, setPreviewImage] = useState("");
+    const [previewTitle, setPreviewTitle] = useState("");
+  
+    const handlePreview = async (file: UploadFile) => {
+      setPreviewImage(file.url || (file.preview as string));
+      setPreviewVisible(true);
+      setPreviewTitle(
+        file.name || file.url!.substring(file.url!.lastIndexOf("/") + 1)
+      );
     };
-    //POpConfirm
-    //   const {  Popconfirm, message  } = antd;
-
-    // function confirm(e) {
-    //   console.log(e);
-    //   message.success('El registro ha sido activado');
-    // }
-
-    // function cancel(e) {
-    //   console.log(e);
-    //   message.error('Operacion Cancelada');
-    // }
-
-    // ReactDOM.render(
-    //   <Popconfirm
-    //     title="¿Desea activar el registro? El registro será activado"
-    //     onConfirm={confirm}
-    //     onCancel={cancel}
-    //     okText="Si, Activar"
-    //     cancelText="Cancelar"
-    //   >
-    //     <a href="#">Delete</a>
-    //   </Popconfirm>,
-    //   mountNode,
-    // );
+    const onChangeImageFormat: UploadProps["onChange"] = ({ file }) => {
+      getBase64(file.originFileObj, (imageStr) => {
+        submitImage(type, file.originFileObj!, imageStr!.toString());
+      });
+    };
+    const submitImage = async (
+      type: "orden" | "ine" | "ineReverso" | "formato",
+      file: RcFile,
+      imageUrl: string
+    ) => {
+      if (mantain) {
+        const requestImage: IRequestImage = {
+          solicitudId: mantain.id!,
+          expedienteId: mantain.id!,
+          imagen: file,
+          tipo: type,
+        };
+  
+        setLoading(true);
+        const formData = objectToFormData(requestImage);
+        const imageName = await saveImage(formData);
+        setLoading(false);
+  
+        if (imageName) {
+          if (type === "orden") {
+            setImages({ ...images, order: imageUrl });
+          } else if (type === "ine") {
+            setImages({ ...images, id: imageUrl });
+          } else if (type === "ineReverso") {
+            setImages({ ...images, idBack: imageUrl });
+          } else if (type === "formato") {
+            imageUrl = `/${values?.clave}/${imageName}.png`;
+            console.log(imageName,"imagename");
+            setImages({
+              ...images,
+              format: [...images.format.filter((x) => x !== imageUrl), imageUrl],
+            });
+          }
+        }
+      }
+    };
+    
+  const onRemoveImageFormat = async (file: UploadFile<any>) => {
+    if (mantain) {
+      setLoading(true);
+      const ok = await deleteImage(
+        mantain.id,
+        mantain.id!,
+        file.name
+      );
+      setLoading(false);
+      if (ok) {
+        setImages((prev) => ({
+          ...prev,
+          format: prev.format.filter((x) => !x.includes(file.name)),
+        }));
+      }
+      return ok;
+    }
+    return false;
+  };
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
+  const handleCancel = () => setPreviewVisible(false);
+    const getFormatContent = () => {
+      return (
+        <Fragment>
+          <Upload
+            customRequest={uploadFakeRequest}
+            beforeUpload={(file) => beforeUploadValidation(file)}
+            listType="picture-card"
+            fileList={images?.format.map((x) => ({
+              uid: x,
+              name: x.split("/")[x.split("/").length - 1].slice(0, -4),
+              url:`${baseUrl}${x}`,
+            }))}
+            onPreview={handlePreview}
+            onChange={onChangeImageFormat}
+            onRemove={onRemoveImageFormat}
+          >
+            {uploadButton}
+          </Upload>
+          <Modal
+            visible={previewVisible}
+            title={previewTitle}
+            footer={null}
+            onCancel={handleCancel}
+          >
+            <img alt="example" style={{ width: "100%" }} src={previewImage} />
+          </Modal>
+        </Fragment>
+      );
+    };
     console.log("Table");
     const { width: windowWidth } = useWindowDimensions();
     const [searchState, setSearchState] = useState<ISearch>({
@@ -378,19 +449,10 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idma
                   </Col>
                   <Col md={12} sm={24}>
                     <Row gutter={[0, 12]}>
-                      {mantain?.id&&<Col span={24}>
-                        <Segmented
-                          className="requet-image-segment"
-                          defaultValue={"orden"}
-                          options={[
-                            { label: "Imagen", value: "ine" },
 
-                          ]}
-                          onChange={(value: any) => setType(value)}
-                        />
-                      </Col>}
                       {mantain?.id&&<Col span={24}>
-                        <Dragger {...props}>{getContent()}</Dragger>
+                        <label htmlFor="">Imagen</label>
+                        {getFormatContent()}
                       </Col>}
                     </Row>
 

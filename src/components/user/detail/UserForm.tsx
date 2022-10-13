@@ -1,7 +1,7 @@
-import { Spin, Form, Row, Col, Transfer, Tooltip, Tree, Tag, Pagination, Button, PageHeader, Upload, Modal, UploadFile, UploadProps } from "antd";
+import { Spin, Form, Row, Col, Transfer, Tooltip, Tree, Tag, Pagination, Button, PageHeader, Upload, Modal, UploadFile, UploadProps, message,Image, } from "antd";
 import React, { FC, Fragment, useEffect, useMemo, useState } from "react";
 import { IUserPermission, IUserForm, UserFormValues, IClave, claveValues } from "../../../app/models/user";
-import { beforeUploadValidation, formItemLayout, uploadFakeRequest,getBase64,objectToFormData } from "../../../app/util/utils";
+import { beforeUploadValidation, formItemLayout, uploadFakeRequest,getBase64,objectToFormData, imageFallback } from "../../../app/util/utils";
 import { InboxOutlined, PlusOutlined } from "@ant-design/icons";
 import TextInput from "../../../app/common/form/TextInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
@@ -19,8 +19,9 @@ import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import { observer } from "mobx-react-lite";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
-import { RcFile } from "antd/lib/upload";
+import { RcFile, UploadChangeParam } from "antd/lib/upload";
 import { IRequestImage } from "../../../app/models/request";
+import Dragger from "antd/lib/upload/Dragger";
 type UserFormProps = {
   componentRef: React.MutableRefObject<any>;
   load: boolean;
@@ -28,12 +29,16 @@ type UserFormProps = {
 type UrlParams = {
   id: string;
 };
+
+
 type imageTypes = {
   order: string;
   id: string;
   idBack: string;
   format: string[];
 };
+
+
 const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
   const [type, setType] = useState<"orden" | "ine" | "ineReverso" | "formato">(
     "formato"
@@ -205,7 +210,12 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
 
       if (imageName) {
         if (type === "orden") {
-          setImages({ ...images, order: imageUrl });
+          //setImages({ ...images, order: imageUrl });
+          imageUrl = `/${values?.clave}/${imageName}.png`;
+          setImages({
+            ...images,
+            format: [...images.format.filter((x) => x !== imageUrl), imageUrl],
+          });
         } else if (type === "ine") {
           setImages({ ...images, id: imageUrl });
         } else if (type === "ineReverso") {
@@ -221,6 +231,32 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
       }
     }
   };
+  const onChangeImage = (
+    info: UploadChangeParam<UploadFile<any>>,
+    type: "orden" | "ine" | "ineReverso" | "formato"
+  ) => {
+    console.log(" onChangeImage");
+    const { status } = info.file;
+    if (status === "uploading") {
+      return;
+    } else if (status === "done") {
+      getBase64(info.file.originFileObj, (imageStr) => {
+        submitImage(type, info.file.originFileObj!, imageStr!.toString());
+      });
+    } else if (status === "error") {
+      message.error(`Error al cargar el archivo ${info.file.name}`);
+    }
+  };
+  const props = (
+    type: "orden" | "ine" | "ineReverso" | "formato"
+  ): UploadProps => ({
+    name: "file",
+    multiple: false,
+    showUploadList: false,
+    customRequest: uploadFakeRequest,
+    beforeUpload: (file) => beforeUploadValidation(file),
+    onChange: (info) => onChangeImage(info, type),
+  });
   const onChangeImageFormat: UploadProps["onChange"] = ({ file }) => {
     getBase64(file.originFileObj, (imageStr) => {
       submitImage(type, file.originFileObj!, imageStr!.toString());
@@ -357,7 +393,34 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
   const onSelectParent = (key: string | number, children: DataNode[]) => {
     setSelectedKeys([...selectedKeys, ...children.map((y) => y.key.toString())]);
   };
-
+  const getContent = (url64: string) => {
+    if (!url64) {
+      return (
+        <>
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined />
+          </p>
+          <p className="ant-upload-text">
+            Dar click o arrastrar archivo para cargar
+          </p>
+          <p className="ant-upload-hint">
+            La imagén debe tener un tamaño máximo de 2MB y formato jpeg o png
+          </p>
+        </>
+      );
+    }
+  
+    const url = `${baseUrl}${url64}`;
+    console.log(url64,"url");
+    return (
+      <Image
+        preview={false}
+        style={{ maxWidth: "90%" }}
+        src={url}
+        fallback={imageFallback}
+      />
+    );
+  };
   const actualUser = () => {
     if (id) {
       const index = users.findIndex((x) => x.id === id);
@@ -541,9 +604,9 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
             Usuario: {values.nombre} {values.primerApellido}
           </Tag>
         </Row>
-        {     values.id&&<div style={{marginLeft:"50%"}}>
+        {     values.id&&<div style={{marginLeft:"7%",width:"50%",marginBottom:"1%"}}>
             <label htmlFor="">Carga de firmas:</label>
-             {getFormatContent()}
+            <Dragger {...props("orden")}>{getContent(images.format[images.format.length-1])}</Dragger>
         </div>}
         <div style={{ width: "100%", overflowX: "auto" }}>
           <div style={{ width: "fit-content", margin: "auto" }}>

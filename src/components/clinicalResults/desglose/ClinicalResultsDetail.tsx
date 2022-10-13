@@ -73,6 +73,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const [loading, setLoading] = useState(false);
   const [checkedPrint, setCheckedPrint] = useState(false);
   const { optionStore, clinicResultsStore } = useStore();
+
   const {
     getStudies,
     getRequestStudyById,
@@ -311,6 +312,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       </>
     );
   };
+  const guardarReporte = async (values: any) => {};
 
   const onFinish = async (newValuesForm: any) => {
     setLoading(true);
