@@ -204,6 +204,12 @@ const RequestStudy = () => {
         searchable: false,
         width: 200,
       }),
+      render: (value, record) =>
+        record.promociones && record.promociones.length > 0 ? (
+          <Select options={[]} bordered={false} style={{ width: "100%" }} />
+        ) : (
+          "Sin promociones disponibles"
+        ),
     },
     {
       ...getDefaultColumnProps("precioFinal", "Precio Final", {

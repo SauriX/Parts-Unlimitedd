@@ -16,7 +16,7 @@ interface IProps {
   style?: React.CSSProperties;
   showLabel?: boolean;
   errors?: any[];
-  onChange?: (value: any) => void;
+  onChange?: (value: any, option: IOptions | IOptions[]) => void;
 }
 
 const SelectInput = ({

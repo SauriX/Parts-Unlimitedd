@@ -1,5 +1,4 @@
 import moment from "moment";
-import { IParameterList } from "./parameter";
 
 export interface IClinicResultList {
   id: string;

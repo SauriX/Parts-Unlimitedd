@@ -15,6 +15,7 @@ const ClinicResults = {
     requests.post(`clinicResults/getList`, search),
   getStudies: (recordId: string, requestId: string): Promise<IRequestStudyUpdate> =>
     requests.get(`clinicResults/studies_params/${recordId}/${requestId}`),
+    getLabResultsById: (id: string): Promise<IClinicResultCaptureForm[]> => requests.get(`parameter/${id}`),
   createResults: (results: IClinicResultCaptureForm[]): Promise<string[]> =>
     requests.post(`clinicResults/saveResults`, results),
   updateResults: (results: IClinicResultCaptureForm[]): Promise<string[]> =>
