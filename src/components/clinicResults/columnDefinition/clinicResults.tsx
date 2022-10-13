@@ -133,7 +133,7 @@ export const ClinicResultsExpandable = () => {
                 style={{ maxWidth: 30 }}
                 className="description-content"
               >
-                {x.nombreEstatus.toUpperCase()} - {x.entrega}
+                {x.nombreEstatus!.toUpperCase()} - {x.entrega}
               </Descriptions.Item>
             </Descriptions>
           );

@@ -14,6 +14,7 @@ export interface IRouteList {
     fecha: moment.Moment;
     status: string;
     estudios: IstudyRoute[];
+
   }
   export interface IstudyRoute {
     id: number;
@@ -24,6 +25,8 @@ export interface IRouteList {
     entrega: string;
     seleccion: boolean;
     clave: string;
+    expedienteid:string;
+    solicitudid:string;
   }
 
   export class TrackingFormValues implements SearchTracking {

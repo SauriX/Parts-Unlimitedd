@@ -16,6 +16,7 @@ import HeaderTitle from "../../app/common/header/HeaderTitle";
 import views from "../../app/util/view";
 import { IRouteList } from "../../app/models/route";
 import PendingSend from "./TapsComponents/PendingSend";
+import PendingRecive from "./TapsComponents/PendingRecive";
 
 type RouteTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -59,7 +60,7 @@ const RouteTrackingTable: FC<RouteTableProps> = ({ componentRef, printing }) => 
 
   const columns: IColumns<IRouteList> = [
     {
-      ...getDefaultColumnProps("clave", "Clave", {
+      ...getDefaultColumnProps("clave", "Claves", {
         searchState,
         setSearchState,
         width: "20%",
@@ -157,7 +158,7 @@ const RouteTrackingTable: FC<RouteTableProps> = ({ componentRef, printing }) => 
                 <PendingSend></PendingSend>
             </TabPane>
             <TabPane tab="Pendientes de recibir" key="2">
-            Content of Tab Pane 2
+              <PendingRecive></PendingRecive>
             </TabPane>
             <TabPane tab="Reporte" key="3">
             Content of Tab Pane 3

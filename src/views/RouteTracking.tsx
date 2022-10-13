@@ -10,8 +10,8 @@ import RouteTrackingHeader from "../components/routeTracking/RouteHeader";
 import RouteTrackingTable from "../components/routeTracking/RouteTrackingTable";
 
 const RouteTracking = () => {
-  const { routeStore } = useStore();
-  const { scopes, access, clearScopes, exportList } = routeStore;
+  const { routeTrackingStore } = useStore();
+  const { scopes, access, clearScopes, exportFormPending,searchPending } = routeTrackingStore;
 
   const [searchParams] = useSearchParams();
 
@@ -31,7 +31,7 @@ const RouteTracking = () => {
 
   const handleDownload = async () => {
     setLoading(true);
-    await exportList(searchParams.get("search") ?? "all");
+    await exportFormPending(searchPending!);
     setLoading(false);
   };
 

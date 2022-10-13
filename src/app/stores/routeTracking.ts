@@ -9,6 +9,7 @@ import { IsamplingForm, IsamplingList, IUpdate } from "../models/sampling";
 import { IRouteList, SearchTracking } from "../models/routeTracking";
 import RouteTracking from "../api/routetracking";
 import responses from "../util/responses";
+import { IRecibe, ISearchPending, searchValues } from "../models/pendingRecive";
 
 export default class RouteTrackingStore {
   constructor() {
@@ -17,15 +18,21 @@ export default class RouteTrackingStore {
 
   scopes?: IScopes;
   studys: IRouteList[] = [];
-
+  pendings?:IRecibe[]=[];
+  ventana:string="enviar";
+  searchPending?:ISearchPending = new searchValues();
   clearScopes = () => {
     this.scopes = undefined;
   };
-
+setventana=(ventana:string)=>{
+  this.ventana=ventana
+};
   clearStudy = () => {
     this.studys = [];
   };
-
+  setSearchi= (search:ISearchPending)=>{
+    this.searchPending=search;
+  };
   access = async () => {
     try {
       const scopes = await Sampling.access();
@@ -47,7 +54,27 @@ export default class RouteTrackingStore {
       this.studys = [];
     }
   };
-
+  getAllRecive = async (search: ISearchPending) => {
+    try {
+      const study = await RouteTracking.getRecive(search);
+      this.pendings= study;
+      return study;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      this.pendings = [];
+    }
+  };
+  exportFormPending = async (id: ISearchPending) => {
+    try {
+      await RouteTracking.exportFormpending(id);
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+    }
+  };
   update = async (study: IUpdate[]) => {
     console.log("this.update");
     console.log(study);

@@ -7,10 +7,14 @@ import { getErrors } from "../util/utils";
 import moment from "moment";
 import {
   ClinicResultsFormValues,
+  IClinicResultCaptureForm,
   IClinicResultForm,
   IClinicResultList,
   IClinicStudy,
+  IPrintTypes,
 } from "../models/clinicResults";
+import Request from "../api/request";
+import messages from "../util/messages";
 
 export default class ClinicResultsStores {
   constructor() {
@@ -23,6 +27,15 @@ export default class ClinicResultsStores {
   formValues: IClinicResultForm = new ClinicResultsFormValues();
   loadingStudies: boolean = false;
   clear: boolean = false;
+  studiesSelectedToPrint: IPrintTypes[] = [];
+
+  printSelectedStudies = async (configuration: any) => {
+    try {
+      await ClinicResults.printSelectedStudies(configuration);
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -31,7 +44,17 @@ export default class ClinicResultsStores {
   clearStudy = () => {
     this.data = [];
   };
-
+  addSelectedStudy = (estudio: IPrintTypes) => {
+    this.studiesSelectedToPrint.push(estudio);
+  };
+  clearSelectedStudies = () => {
+    this.studiesSelectedToPrint = [];
+  };
+  removeSelectedStudy = (estudio: IPrintTypes) => {
+    this.studiesSelectedToPrint = this.studiesSelectedToPrint.filter(
+      (item) => item.id !== estudio.id
+    );
+  };
   setFormValues = (newFormValues: IClinicResultForm) => {
     this.formValues = newFormValues;
   };
@@ -81,6 +104,29 @@ export default class ClinicResultsStores {
       this.loadingStudies = false;
     }
   };
+
+  createResults = async(results: IClinicResultCaptureForm[]) => {
+    try {
+      await ClinicResults.createResults(results);
+      alerts.success(messages.created);
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  }
+
+  updateResults = async(results: IClinicResultCaptureForm[]) => {
+    try {
+      await ClinicResults.updateResults(results);
+      alerts.success(messages.updated);
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  }
+
   createResultPathological = async (result: FormData) => {
     // createResultPathological = async (result: IResultPathological) => {
     try {
@@ -100,6 +146,16 @@ export default class ClinicResultsStores {
       alerts.warning(getErrors(error));
     }
   };
+  // getLaboratoryResults = async (result: number[]) => {
+  //   try {
+  //     const labResult = await ClinicResults.getLaboratoryResults(
+  //       result.map(x => x.)
+  //     );
+  //     return labResult;
+  //   } catch (error: any) {
+  //     alerts.warning(getErrors(error));
+  //   }
+  // };
   updateResultPathological = async (result: FormData) => {
     // updateResultPathological = async (result: IResultPathological) => {
     try {
@@ -113,7 +169,8 @@ export default class ClinicResultsStores {
     // updateResultPathological = async (result: IResultPathological) => {
     try {
       await ClinicResults.updateStatusStudy(requestStudyId, status);
-      return true;
+      console.log("update", { requestStudyId, status });
+      return true; 
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
@@ -133,6 +190,43 @@ export default class ClinicResultsStores {
     try {
       await ClinicResults.exportList(search);
       return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  getStudies = async (recordId: string, requestId: string) => {
+    try {
+      const params = await ClinicResults.getStudies(recordId, requestId);
+      this.studies = params.estudios.map(x => ({
+        id: x.estudioId,
+        clave: x.clave,
+        nombre: x.nombre,
+        status: x.estatusId,
+        parametros: x.parametros.map(y => ({
+          estudioId: x.estudioId,
+          solicitudId: requestId,
+          parametroId: y.id,
+          nombre: y.nombre,
+          valorInicial: y.valorInicial,
+          valorFinal: y.valorFinal,
+          unidades: y.unidades,
+          unidadNombre: y.unidadNombre,
+          tipoValorId: y.tipoValor,
+          solicitudEstudioId: x.id!,
+        })),
+        
+      }));
+      return params;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return [];
+    }
+  };
+
+  printResults = async (recordId: string, requestId: string) => {
+    try {
+      await ClinicResults.printResults(recordId, requestId);
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }

@@ -30,18 +30,36 @@ export interface IResultPathological {
   muestraRecibida: string;
   medicoId: string;
   listaImagenesCargadas: string[];
+  estatus: number;
+  departamentoEstudio: string;
 }
 
 export interface IClinicStudy {
   id: number;
   nombre: string;
-  area: string;
+  area?: string;
   status: number;
-  registro: string;
-  entrega: string;
-  seleccion: boolean;
+  registro?: string;
+  entrega?: string;
+  nombreEstatus?: string;
+  seleccion?: boolean;
   clave: string;
-  nombreEstatus: string;
+  parametros: IClinicResultCaptureForm[];
+}
+
+export interface IClinicResultCaptureForm {
+  id?: string;
+  nombre: string;
+  solicitudId: string;
+  estudioId: number;
+  tipoValorId: string;
+  valorInicial: number;
+  valorFinal: number;
+  parametroId: string;
+  resultado?: string;
+  unidades: number;
+  unidadNombre: string;
+  solicitudEstudioId?: number;
 }
 
 export interface IClinicResultForm {
@@ -69,6 +87,11 @@ export interface IStudyList {
   clave: string;
 }
 
+export interface IPrintTypes {
+  id: number;
+  tipo: string;
+}
+
 export class ResultPathologicalValues implements IResultPathological {
   id? = "";
   solicitudId = "";
@@ -81,6 +104,8 @@ export class ResultPathologicalValues implements IResultPathological {
   muestraRecibida = "";
   medicoId = "";
   listaImagenesCargadas = [];
+  estatus = 0;
+  departamentoEstudio = "";
   constructor(init?: IClinicResultForm) {
     Object.assign(this, init);
   }
@@ -101,6 +126,25 @@ export class ClinicResultsFormValues implements IClinicResultForm {
   area = [];
   estatus = [];
   estudio = [];
+
+  constructor(init?: IClinicResultForm) {
+    Object.assign(this, init);
+  }
+}
+
+export class ClinicResultsCaptureForm implements IClinicResultCaptureForm {
+  id = "";
+  solicitudId = "";
+  estudioId = 0;
+  tipoValorId = "0";
+  nombre = "";
+  valorInicial = 0;
+  valorFinal = 0;
+  parametroId = "";
+  resultado = "";
+  unidades = 0;
+  solicitudEstudioId = 0;
+  unidadNombre = "";
 
   constructor(init?: IClinicResultForm) {
     Object.assign(this, init);

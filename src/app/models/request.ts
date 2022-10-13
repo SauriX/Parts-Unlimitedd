@@ -1,3 +1,4 @@
+import moment from "moment";
 import { IIndicationList } from "./indication";
 import { IParameterList } from "./parameter";
 import { IPriceListInfoPromo } from "./priceList";
@@ -137,6 +138,7 @@ export class RequestStudyUpdate implements IRequestStudyUpdate {
 
 export interface IRequestStudy {
   type: "study" | "pack";
+  id?: number;
   estudioId: number;
   clave: string;
   nombre: string;
@@ -168,8 +170,47 @@ export interface IRequestStudy {
   promociones: IPriceListInfoPromo[];
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
+  fechaActualizacion?: string;
+  solicitudEstudioId?: number;
 }
-
+export class RequestStudyValues implements IRequestStudy {
+  type: "study" | "pack" = "study";
+  id = 0;
+  estudioId = 0;
+  clave = "";
+  nombre = "";
+  taponId = 0;
+  taponColor = "";
+  taponClave = "";
+  taponNombre = "";
+  paqueteId = 0;
+  paquete = "";
+  listaPrecioId = "";
+  listaPrecio = "";
+  promocionId = 0;
+  promocion = "";
+  estatusId = 0;
+  estatus = "";
+  aplicaDescuento = false;
+  aplicaCargo = false;
+  aplicaCopago = false;
+  departamentoId = 0;
+  areaId = 0;
+  dias = 0;
+  horas = 0;
+  fechaEntrega = moment(moment.now());
+  precio = 0;
+  descuento = 0;
+  descuentoPorcentaje = 0;
+  precioFinal = 0;
+  nuevo = false;
+  parametros: IParameterList[] = [];
+  indicaciones: IIndicationList[] = [];
+  fechaActualizacion = "";
+  constructor(init?: IRequestStudy) {
+    Object.assign(this, init);
+  }
+}
 export interface IRequestPack {
   type: "study" | "pack";
   paqueteId: number;
