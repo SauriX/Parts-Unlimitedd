@@ -110,8 +110,9 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
   };
 
   const isAnyStudySelected = () => {
-    return studiesSelectedToPrint.length > 0;
-  }
+    console.log("activo", studiesSelectedToPrint.length > 0);
+    return !(studiesSelectedToPrint.length > 0);
+  };
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>

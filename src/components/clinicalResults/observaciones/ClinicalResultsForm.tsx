@@ -99,9 +99,9 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     setCheckedPrint(isMarked);
     if (currentStudy.estatusId >= status.requestStudy.capturado) {
       if (isMarked) {
-        addSelectedStudy({ id: currentStudy.id!,  tipo: "PATHOLOGICAL"});
+        addSelectedStudy({ id: currentStudy.id!, tipo: "PATHOLOGICAL" });
       } else {
-        removeSelectedStudy({ id: currentStudy.id!,  tipo: "PATHOLOGICAL"});
+        removeSelectedStudy({ id: currentStudy.id!, tipo: "PATHOLOGICAL" });
       }
     }
   }, [isMarked]);
@@ -111,7 +111,10 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     const cStudy = await getRequestStudyById(estudio.id!);
     console.log("estudio encontrado", toJS(cStudy));
     setCurrentStudy(cStudy!);
-    if (resultPathological !== null) {
+    if (
+      resultPathological?.imagenPatologica !== null &&
+      resultPathological?.imagenPatologica !== ""
+    ) {
       archivos = resultPathological?.imagenPatologica
         .split(",")
         .map((str: any) => {
@@ -177,6 +180,9 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       title: "Clave",
       align: "left",
       width: 100,
+      render: () => {
+        return estudio.areaId === 30 ? "HP" : "CITO";
+      },
     },
     {
       key: "id",
@@ -184,6 +190,9 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       title: "Estudio",
       align: "left",
       width: 200,
+      render: () => {
+        return estudio.areaId === 30 ? "HISTOPATOLOGÍA" : "CITOLOGÍA";
+      },
     },
     {
       key: "estatus",
@@ -198,7 +207,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     {
       key: "estatusId",
       dataIndex: "estatusId",
-      title: "Fecha Atualización",
+      title: "Fecha de Actualización",
       align: "left",
       width: 50,
       render: (value: any, fullRow: any) => {
@@ -245,10 +254,16 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
             disabled={currentStudy.estatusId < status.requestStudy.capturado}
             onChange={(value) => {
               if (value.target.checked) {
-                addSelectedStudy({ id: currentStudy.id!,  tipo: "PATHOLOGICAL"});
+                addSelectedStudy({
+                  id: currentStudy.id!,
+                  tipo: "PATHOLOGICAL",
+                });
                 setCheckedPrint(true);
               } else {
-                removeSelectedStudy({ id: currentStudy.id!,  tipo: "PATHOLOGICAL"});
+                removeSelectedStudy({
+                  id: currentStudy.id!,
+                  tipo: "PATHOLOGICAL",
+                });
                 setCheckedPrint(false);
               }
             }}
@@ -263,29 +278,33 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       <>
         {currentStudy.estatusId >= status.requestStudy.solicitado && (
           <>
-            <Col span={4}>
-              <Button
-                type="default"
-                htmlType="submit"
-                disabled={
-                  currentStudy.estatusId ===
-                    status.requestStudy.tomaDeMuestra ||
-                  currentStudy.estatusId === status.requestStudy.pendiente
-                }
-                onClick={async () => {
-                  await updateStatus(true);
-                  await loadInit();
-                }}
-                danger
-              >
-                Cancelar{" "}
-                {currentStudy.estatusId === status.requestStudy.capturado
-                  ? "Captura"
-                  : currentStudy.estatusId === status.requestStudy.validado
-                  ? "Validación"
-                  : ""}
-              </Button>
-            </Col>
+            {currentStudy.estatusId > status.requestStudy.solicitado &&
+              currentStudy.estatusId !== status.requestStudy.enviado && (
+                <Col span={4}>
+                  <Button
+                    type="default"
+                    htmlType="submit"
+                    disabled={
+                      currentStudy.estatusId ===
+                        status.requestStudy.tomaDeMuestra ||
+                      currentStudy.estatusId === status.requestStudy.pendiente
+                    }
+                    onClick={async () => {
+                      await updateStatus(true);
+                      await loadInit();
+                    }}
+                    danger
+                  >
+                    Cancelar
+                    {currentStudy.estatusId === status.requestStudy.capturado
+                      ? " Captura"
+                      : currentStudy.estatusId === status.requestStudy.validado
+                      ? " Validación"
+                      : ""}
+                  </Button>
+                </Col>
+              )}
+
             <Col span={4}>
               <Button
                 type="primary"
@@ -305,7 +324,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                   : currentStudy.estatusId === status.requestStudy.validado
                   ? "Liberar"
                   : currentStudy.estatusId === status.requestStudy.solicitado
-                  ? "Guardar captura"
+                  ? "Guardar Captura"
                   : ""}
               </Button>
             </Col>
@@ -333,67 +352,53 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       medicoId: values.medicoId,
       imagenPatologica: prueba,
       listaImagenesCargadas: deletedFiles,
-      estatus: updateStatus() ?? 0,
+      estatus: (await updateStatus()) ?? 0,
       departamentoEstudio:
         estudio.areaId === 30 ? "HISTOPATOLÓGICO" : "CITOLÓGICO",
     };
     const formData = objectToFormData(reporteClinico);
-    console.log(
-      "MACRO",
-      JSON.stringify(convertToRaw(editorMacroscopica.getCurrentContent()))
-    );
-    console.log(
-      "MICRO",
-      toJS(convertToRaw(editorMicroscopica.getCurrentContent()))
-    );
-    console.log(
-      "DIAG",
-      toJS(convertToRaw(editorMicroscopica.getCurrentContent()))
-    );
-    // console.log("resultado actual", toJS(currentResult));
-    // if (!!currentResult) {
-    //   // if (estudio.estatusId === status.requestStudy.solicitado) {
-    //   //   await updateResultPathological(formData);
-    //   // }
-    //   await updateResultPathological(formData);
-    //   // await updateStatus();
-    //   await loadInit();
-    // } else {
-    //   if (estudio.estatusId === status.requestStudy.solicitado) {
-    //     await createResultPathological(formData);
-    //   }
-    //   // await updateStatus();
-    //   await loadInit();
-    // }
-    // console.log("reporte", reporteClinico);
-    // console.log("final form", values);
+
+    console.log("resultado actual", toJS(currentResult));
+    if (!!currentResult) {
+      await updateResultPathological(formData);
+    } else {
+      await createResultPathological(formData);
+    }
+    await loadInit();
+    console.log("reporte", reporteClinico);
+    console.log("final form", values);
   };
-  const updateStatus = (esCancelacion: boolean = false) => {
+  const updateStatus = async (esCancelacion: boolean = false) => {
+    let nuevoEstado = 0;
     if (currentStudy.estatusId === status.requestStudy.solicitado) {
       // await updateStatusStudy(currentStudy.id!, status.requestStudy.capturado);
       return status.requestStudy.capturado;
     }
     if (currentStudy.estatusId === status.requestStudy.capturado) {
-      const nuevoEstado = esCancelacion
+      nuevoEstado = esCancelacion
         ? status.requestStudy.solicitado
         : status.requestStudy.validado;
-      // await updateStatusStudy(currentStudy.id!, nuevoEstado);
-      return nuevoEstado;
+
+      // return nuevoEstado;
     }
     if (currentStudy.estatusId === status.requestStudy.validado) {
-      const nuevoEstado = esCancelacion
+      nuevoEstado = esCancelacion
         ? status.requestStudy.capturado
         : status.requestStudy.liberado;
       // await updateStatusStudy(currentStudy.id!, nuevoEstado);
-      return nuevoEstado;
+      // return nuevoEstado;
     }
     if (currentStudy.estatusId === status.requestStudy.liberado) {
-      const nuevoEstado = esCancelacion
+      nuevoEstado = esCancelacion
         ? status.requestStudy.validado
         : status.requestStudy.enviado;
       // await updateStatusStudy(currentStudy.id!, nuevoEstado);
-      return nuevoEstado;
+      // return nuevoEstado;
     }
+    if (esCancelacion) {
+      await updateStatusStudy(currentStudy.id!, nuevoEstado);
+    }
+    return nuevoEstado;
   };
   const removeTestFile = (file: any) => {
     const index = prueba.indexOf(file);
@@ -405,7 +410,6 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
   const beforeUploadTest = (value: any) => {
     console.log("before PRUEBA", value);
     setPrueba((x) => [...x, value]);
-    // setPrueba((x) => [...x, value]);
     return false;
   };
 
@@ -466,14 +470,20 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
               <Row>
                 <Col>
                   <Text key="expediente">
-                    Estudio: <Text strong>{currentStudy.nombre}</Text>
+                    {/* Estudio: <Text strong>{currentStudy.nombre}</Text> */}
+                    Estudio:{" "}
+                    <Text strong>
+                      {estudio.areaId === 30 ? "HISTOPATOLOGÍA" : "CITOLOGÍA"}
+                    </Text>
                   </Text>
                 </Col>
               </Row>
               <Row>
                 <Col>
                   <Text key="expediente">
-                    Clave: <Text strong>{estudio.clave}</Text>
+                    {/* Clave: <Text strong>{estudio.clave}</Text> */}
+                    Clave:{" "}
+                    <Text strong>{estudio.areaId === 30 ? "HP" : "CITO"}</Text>
                   </Text>
                 </Col>
               </Row>
@@ -481,8 +491,8 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                 <Col span={6}>
                   <Title level={5}>
                     REPORTE DE ESTUDIO
-                    {estudio.areaId === 30 ? "HISTOPATOLÓGICO" : "CITOLÓGICO"}
-                    {currentStudy.id}
+                    {estudio.areaId === 30 ? " HISTOPATOLÓGICO" : " CITOLÓGICO"}
+                    {/* {currentStudy.id} */}
                   </Title>
                 </Col>
               </Row>
@@ -494,6 +504,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                   <TextInput
                     formProps={{ name: "muestraRecibida" }}
                     readonly={disabled}
+                    required
                   />
                 </Col>
               </Row>

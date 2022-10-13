@@ -45,6 +45,7 @@ export default class ClinicResultsStores {
   };
   addSelectedStudy = (estudio: IPrintTypes) => {
     this.studiesSelectedToPrint.push(estudio);
+    console.log("estudies", this.studiesSelectedToPrint.length);
   };
   clearSelectedStudies = () => {
     this.studiesSelectedToPrint = [];
@@ -53,6 +54,7 @@ export default class ClinicResultsStores {
     this.studiesSelectedToPrint = this.studiesSelectedToPrint.filter(
       (item) => item.id !== estudio.id
     );
+    console.log("estudies", this.studiesSelectedToPrint.length);
   };
   setFormValues = (newFormValues: IClinicResultForm) => {
     this.formValues = newFormValues;
@@ -104,23 +106,23 @@ export default class ClinicResultsStores {
     }
   };
 
-  createResults = async(results: IClinicResultCaptureForm[]) => {
+  createResults = async (results: IClinicResultCaptureForm[]) => {
     try {
       await ClinicResults.createResults(results);
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
     }
-  }
+  };
 
-  updateResults = async(results: IClinicResultCaptureForm[]) => {
+  updateResults = async (results: IClinicResultCaptureForm[]) => {
     try {
       await ClinicResults.updateResults(results);
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
     }
-  }
+  };
 
   createResultPathological = async (result: FormData) => {
     // createResultPathological = async (result: IResultPathological) => {
@@ -193,12 +195,12 @@ export default class ClinicResultsStores {
   getStudies = async (recordId: string, requestId: string) => {
     try {
       const params = await ClinicResults.getStudies(recordId, requestId);
-      this.studies = params.estudios.map(x => ({
+      this.studies = params.estudios.map((x) => ({
         id: x.estudioId,
         clave: x.clave,
         nombre: x.nombre,
         status: x.estatusId,
-        parametros: x.parametros.map(y => ({
+        parametros: x.parametros.map((y) => ({
           estudioId: x.estudioId,
           solicitudId: requestId,
           parametroId: y.id,
@@ -208,7 +210,7 @@ export default class ClinicResultsStores {
           unidades: y.unidades,
           unidadNombre: y.unidadNombre,
           tipoValorId: y.tipoValor,
-        }))
+        })),
       }));
       return params;
     } catch (error) {
