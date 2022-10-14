@@ -57,7 +57,7 @@ export interface IClinicResultCaptureForm {
   valorFinal: number;
   parametroId: string;
   resultado?: string;
-  unidades: number;
+  unidades?: number;
   unidadNombre: string;
   solicitudEstudioId?: number;
 }

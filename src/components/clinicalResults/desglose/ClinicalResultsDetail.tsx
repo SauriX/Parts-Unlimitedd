@@ -116,7 +116,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     console.log(studies.map((x) => x.parametros));
     const loadOptions = async () => {
       await getMedicOptions();
-      await getStudies(solicitud.expedienteId, solicitud.solicitudId!);
     };
     loadOptions();
   }, []);
