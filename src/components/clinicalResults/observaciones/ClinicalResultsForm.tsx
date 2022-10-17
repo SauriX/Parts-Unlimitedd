@@ -45,6 +45,7 @@ type ClinicalResultsFormProps = {
   solicitud: IRequest;
   estudioId: number;
   isMarked: boolean;
+  showHeaderTable: boolean;
 };
 const baseUrl =
   process.env.REACT_APP_MEDICAL_RECORD_URL + "/images/ResultsPathological";
@@ -56,6 +57,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
   claveMedico,
   solicitud,
   isMarked,
+  showHeaderTable,
 }) => {
   const [disabled, setDisabled] = useState(false);
   const [currentStudy, setCurrentStudy] = useState<IRequestStudy>(
@@ -181,7 +183,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       align: "left",
       width: 100,
       render: () => {
-        return estudio.areaId === 30 ? "HP" : "CITO";
+        return <strong>{estudio.areaId === 30 ? "HP" : "CITO"}</strong>;
       },
     },
     {
@@ -191,7 +193,11 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       align: "left",
       width: 200,
       render: () => {
-        return estudio.areaId === 30 ? "HISTOPATOLOGÍA" : "CITOLOGÍA";
+        return (
+          <strong>
+            {estudio.areaId === 30 ? "HISTOPATOLOGÍA" : "CITOLOGÍA"}
+          </strong>
+        );
       },
     },
     {
@@ -201,7 +207,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       align: "left",
       width: 50,
       render: (value: any) => {
-        return value.nombre;
+        return <strong>{value.nombre}</strong>;
       },
     },
     {
@@ -211,22 +217,29 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       align: "left",
       width: 50,
       render: (value: any, fullRow: any) => {
+        let ultimaActualizacion;
         if (value === status.requestStudy.solicitado) {
-          return moment(fullRow.fechaSolicitud).format("DD/MM/YYYY");
+          ultimaActualizacion = fullRow.fechaSolicitud;
+          // return moment(fullRow.fechaSolicitud).format("DD/MM/YYYY");
         }
         if (value === status.requestStudy.capturado) {
-          return moment(fullRow.fechaCaptura).format("DD/MM/YYYY");
+          ultimaActualizacion = fullRow.fechaCaptura;
+          // return moment(fullRow.fechaCaptura).format("DD/MM/YYYY");
         }
         if (value === status.requestStudy.validado) {
-          return moment(fullRow.fechaValidacion).format("DD/MM/YYYY");
+          ultimaActualizacion = fullRow.fechaValidacion;
+          // return moment(fullRow.fechaValidacion).format("DD/MM/YYYY");
         }
         if (value === status.requestStudy.liberado) {
-          return moment(fullRow.fechaLiberacion).format("DD/MM/YYYY");
+          ultimaActualizacion = fullRow.fechaLiberacion;
+          // return moment(fullRow.fechaLiberacion).format("DD/MM/YYYY");
         }
         if (value === status.requestStudy.enviado) {
-          return moment(fullRow.fechaEnvio).format("DD/MM/YYYY");
+          ultimaActualizacion = fullRow.fechaEnvio;
         }
-        return "";
+        return (
+          <strong>{moment(ultimaActualizacion).format("DD/MM/YYYY")}</strong>
+        );
       },
     },
 
@@ -236,6 +249,9 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       title: "Orden",
       align: "left",
       width: 50,
+      render: (value) => {
+        return <strong>{value}</strong>;
+      },
     },
     {
       key: "Seleccionar",
@@ -423,8 +439,8 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
             rowKey={(record) => record.id}
             columns={columns}
             pagination={false}
-            // dataSource={[estudio]}
             dataSource={[currentStudy]}
+            showHeader={showHeaderTable}
           />
         </Col>
       </Row>
