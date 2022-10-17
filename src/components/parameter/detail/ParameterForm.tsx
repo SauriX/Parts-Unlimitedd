@@ -118,8 +118,11 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     };
     if (id) {
       readuser(id);
+    } else {
+      setReagentSelected([])
     }
   }, [form, getById, id]);
+
   useEffect(() => {
     const readdepartments = async () => {
       await getDepartmentOptions();

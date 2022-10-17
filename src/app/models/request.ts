@@ -1,6 +1,7 @@
 import moment from "moment";
 import { IIndicationList } from "./indication";
 import { IParameterList } from "./parameter";
+import { IPriceListInfoPromo } from "./priceList";
 
 export interface IRequestBase {
   solicitudId: string;
@@ -162,10 +163,11 @@ export interface IRequestStudy {
   horas: number;
   fechaEntrega: moment.Moment;
   precio: number;
-  descuento: number;
-  descuentoPorcentaje: number;
+  descuento?: number;
+  descuentoPorcentaje?: number;
   precioFinal: number;
   nuevo: boolean;
+  promociones: IPriceListInfoPromo[];
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
   fechaActualizacion?: string;
@@ -204,6 +206,7 @@ export class RequestStudyValues implements IRequestStudy {
   nuevo = false;
   parametros: IParameterList[] = [];
   indicaciones: IIndicationList[] = [];
+  promociones = [];
   fechaActualizacion = "";
   constructor(init?: IRequestStudy) {
     Object.assign(this, init);
@@ -228,8 +231,11 @@ export interface IRequestPack {
   precio: number;
   descuento: number;
   descuentoPorcentaje: number;
+  promocionDescuento?: number;
+  promocionDescuentoPorcentaje?: number;
   precioFinal: number;
   nuevo: boolean;
+  promociones: IPriceListInfoPromo[];
   estudios: IRequestStudy[];
 }
 

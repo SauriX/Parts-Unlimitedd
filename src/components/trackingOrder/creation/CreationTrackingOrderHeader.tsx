@@ -7,6 +7,7 @@ import ImageButton from "../../../app/common/button/ImageButton";
 import { useStore } from "../../../app/stores/store";
 import DownloadIcon from "../../../app/common/icons/DownloadIcon";
 import PrintIcon from "../../../app/common/icons/PrintIcon";
+import GoBackIcon from "../../../app/common/icons/GoBackIcon";
 
 const { Search } = Input;
 
@@ -38,6 +39,12 @@ const CreationTrackingOrderHeader: FC<CreationTrackingOrderHeaderProps> = ({
       }
       className="header-container"
       extra={[
+        <GoBackIcon
+          key="back"
+          onClick={() => {
+            navigate(`/segRutas`);
+          }}
+        />,
         <PrintIcon onClick={handlePrint} />,
         <DownloadIcon onClick={download} />,
       ]}

@@ -48,6 +48,7 @@ type ClinicalResultsDetailProps = {
   solicitud: IRequest;
   estudioId: number;
   isMarked: boolean;
+  printing: boolean;
 };
 
 const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
@@ -58,6 +59,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   claveMedico,
   solicitud,
   isMarked,
+  printing
 }) => {
   const [disabled, setDisabled] = useState(false);
   const [currentStudy, setCurrentStudy] = useState<IRequestStudy>(
@@ -115,7 +117,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     console.log(studies.map((x) => x.parametros));
     const loadOptions = async () => {
       await getMedicOptions();
-      await getStudies(solicitud.expedienteId, solicitud.solicitudId!);
     };
     loadOptions();
   }, []);
@@ -136,7 +137,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     setCurrentStudy(cStudy!);
     let captureResult = studies.find((x) => x.id == estudioId);
     form.setFieldValue("parametros", captureResult?.parametros);
-    console.log(captureResult?.parametros.map(x => x));
   };
 
   useEffect(() => {
@@ -256,7 +256,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
         {currentStudy.estatusId >= status.requestStudy.solicitado ? (
           <>
             <Divider></Divider>
-            <Col span={4}>
+            {currentStudy.estatusId <= 3 ? (<Col span={4}>
               <Button
                 type="default"
                 htmlType="submit"
@@ -278,11 +278,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                   ? "Captura"
                   : currentStudy.estatusId === status.requestStudy.validado
                   ? "Validación"
-                  : currentStudy.estatusId === status.requestStudy.solicitado
-                  ? "Solicitud"
                   : ""}
               </Button>
-            </Col>
+            </Col>) : ""}
             <Col span={4}>
               <Button
                 type="primary"
@@ -321,13 +319,11 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     let success = false;
     if (!!currentResult) {
       await updateResults(labResults);
-      await updateStatus();
-      await loadInit();
     } else {
-      await createResults(labResults);
-      await updateStatus();
-      await loadInit();
+       await createResults(labResults);
     }
+    await updateStatus();
+    await loadInit();
 
     setLoading(false);
   };
@@ -342,6 +338,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
         ? status.requestStudy.solicitado
         : status.requestStudy.validado;
       await updateStatusStudy(currentStudy.id!, nuevoEstado);
+      console.log(nuevoEstado);
       return nuevoEstado;
     }
     if (currentStudy.estatusId === status.requestStudy.validado) {
@@ -366,7 +363,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
 
   return (
     <Fragment>
-      <Spin spinning={loading}>
+      <Spin spinning={loading} >
         <Row style={{ marginBottom: "20px" }}>{renderUpdateStatus()}</Row>
         <Row style={{ marginBottom: "20px" }}>
           <Col span={24}>
@@ -391,11 +388,12 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                     form.getFieldsError().filter(({ errors }) => errors.length)
                       .length > 0
                 );
+                form.setFieldValue("resultado", values.resultado);
               }}
             >
-              <Row>
+              <Row >
                 <Col span={24}>
-                  <Row justify="space-between" gutter={[0, 12]}>
+                  <Row justify="space-between" gutter={[0, 12]} style={{textAlign: "center"}}>
                     <Col span={6}>
                       <h3>EXAMEN</h3>
                     </Col>
@@ -409,7 +407,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                       <h3>REFERENCIA</h3>
                     </Col>
                   </Row>
-                  <Row justify="space-between" gutter={[0, 12]}>
+                  <Row justify="space-between" gutter={[0, 12]} style={{textAlign: "center"}}>
                     <Form.List name="parametros">
                       {(fields) => (
                         <>
@@ -430,18 +428,12 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   name={[field.name, "resultado"]}
                                   fieldKey={[field.key, "resultado"]}
                                   validateTrigger={["onChange", "onBlur"]}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message:
-                                        "Ingresa un valor dentro del parámetro",
-                                    },
-                                  ]}
                                   noStyle
                                 >
                                   <Input
                                     placeholder="Resultado"
-                                    style={{ width: "50%" }}
+                                    style={{ width: "70%" }}
+                                    allowClear
                                     disabled={disableInput()}
                                   />
                                 </Form.Item>
@@ -471,7 +463,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
             </Form>
           </Card>
         ) : (
-          ""
+          null
         )}
       </Spin>
     </Fragment>
