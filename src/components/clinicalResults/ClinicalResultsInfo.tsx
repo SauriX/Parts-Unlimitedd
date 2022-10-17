@@ -51,11 +51,11 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
     requestedStudyStore,
     clinicResultsStore,
   } = useStore();
-  const { request, getById, studies,  } = requestStore;
-  const { getById: procedingById } = procedingStore;
+  const { request, getById, studies, getStudies } = requestStore;
+  const { getById: procedingById} = procedingStore;
   const { printOrder } = requestedStudyStore;
   const { departmentOptions, getDepartmentOptions } = optionStore;
-  const { studiesSelectedToPrint, printSelectedStudies, getStudies } = clinicResultsStore;
+  const { studiesSelectedToPrint, printSelectedStudies, getStudies: getStudiesParams } = clinicResultsStore;
 
   const [loading, setLoading] = useState(false);
   const [markAll, setMarkAll] = useState(false);
@@ -76,6 +76,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
       await getById(expedienteId!, requestId!);
       const procedingFound = await procedingById(expedienteId!);
       await getStudies(expedienteId!, requestId!);
+      await getStudiesParams(expedienteId!, requestId!);
       setDataClinicalResult({ ...request, ...procedingFound });
       setProcedingCurrent({ ...procedingFound });
       form.setFieldsValue({

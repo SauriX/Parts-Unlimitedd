@@ -18,8 +18,6 @@ import { IColumns } from "../../../app/common/table/utils";
 import {
   IRequest,
   IRequestStudy,
-  IRequestStudyInfo,
-  RequestStudyInfoForm,
   RequestStudyValues,
 } from "../../../app/models/request";
 import { FC, Fragment, useEffect, useState } from "react";
@@ -30,15 +28,13 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import {
   ClinicResultsCaptureForm,
   IClinicResultCaptureForm,
-  IClinicStudy,
 } from "../../../app/models/clinicResults";
 import { IOptions } from "../../../app/models/shared";
-import TextInput from "../../../app/common/form/proposal/TextInput";
-import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import moment from "moment";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { formItemLayout } from "../../../app/util/utils";
+import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
+import alerts from "../../../app/util/alerts";
 const { Text, Title } = Typography;
+const { TextArea } = Input;
 
 type ClinicalResultsDetailProps = {
   estudio: IRequestStudy;
@@ -59,7 +55,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   claveMedico,
   solicitud,
   isMarked,
-  printing
+  printing,
 }) => {
   const [disabled, setDisabled] = useState(false);
   const [currentStudy, setCurrentStudy] = useState<IRequestStudy>(
@@ -75,11 +71,13 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const { optionStore, clinicResultsStore } = useStore();
   const {
     getStudies,
+    formValues,
     getRequestStudyById,
     updateStatusStudy,
     studies,
     createResults,
     updateResults,
+    cancelResults,
     addSelectedStudy,
     removeSelectedStudy,
   } = clinicResultsStore;
@@ -113,7 +111,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   }, [isMarked]);
 
   useEffect(() => {
-    console.log(studies.map((x) => x.parametros));
+    console.log(studies.map((x) => x.parametros.map(x => x)));
     const loadOptions = async () => {
       await getMedicOptions();
     };
@@ -135,6 +133,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     const cStudy = await getRequestStudyById(estudio.id!);
     setCurrentStudy(cStudy!);
     let captureResult = studies.find((x) => x.id == estudioId);
+
+    console.log(captureResult?.parametros)
     form.setFieldValue("parametros", captureResult?.parametros);
   };
 
@@ -255,31 +255,35 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
         {currentStudy.estatusId >= status.requestStudy.solicitado ? (
           <>
             <Divider></Divider>
-            {currentStudy.estatusId <= 3 ? (<Col span={4}>
-              <Button
-                type="default"
-                htmlType="submit"
-                disabled={
-                  currentStudy.estatusId ===
-                    status.requestStudy.tomaDeMuestra ||
-                  currentStudy.estatusId === status.requestStudy.pendiente
-                }
-                onClick={async () => {
-                  setLoading(true);
-                  await updateStatus(true);
-                  loadInit();
-                  setLoading(false);
-                }}
-                danger
-              >
-                Cancelar{" "}
-                {currentStudy.estatusId === status.requestStudy.capturado
-                  ? "Captura"
-                  : currentStudy.estatusId === status.requestStudy.validado
-                  ? "Validación"
-                  : ""}
-              </Button>
-            </Col>) : ""}
+            {currentStudy.estatusId <= 3 ? (
+              ""
+            ) : (
+              <Col span={4}>
+                <Button
+                  type="default"
+                  htmlType="submit"
+                  disabled={
+                    currentStudy.estatusId ===
+                      status.requestStudy.tomaDeMuestra ||
+                    currentStudy.estatusId === status.requestStudy.pendiente
+                  }
+                  onClick={async () => {
+                    setLoading(true);
+                    await updateStatus(true);
+                    loadInit();
+                    setLoading(false);
+                  }}
+                  danger
+                >
+                  Cancelar{" "}
+                  {currentStudy.estatusId === status.requestStudy.capturado
+                    ? "Captura"
+                    : currentStudy.estatusId === status.requestStudy.validado
+                    ? "Validación"
+                    : ""}
+                </Button>
+              </Col>
+            )}
             <Col span={4}>
               <Button
                 type="primary"
@@ -315,13 +319,13 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     setLoading(true);
     const labResults: IClinicResultCaptureForm[] = newValuesForm.parametros;
     let success = false;
-    if (!!currentResult) {
-      await updateResults(labResults);
-    } else {
-       await createResults(labResults);
+    success = await updateResults(labResults);
+    console.log(labResults)
+    if (success) {
+      await updateStatus();
+      await loadInit();
+      form.setFieldValue("resultado", labResults.flatMap(x => x.resultado!))
     }
-    await updateStatus();
-    await loadInit();
 
     setLoading(false);
   };
@@ -336,7 +340,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
         ? status.requestStudy.solicitado
         : status.requestStudy.validado;
       await updateStatusStudy(currentStudy.id!, nuevoEstado);
-      console.log(nuevoEstado);
+      cancelResults(currentStudy.id!);
+      form.submit()
       return nuevoEstado;
     }
     if (currentStudy.estatusId === status.requestStudy.validado) {
@@ -361,7 +366,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
 
   return (
     <Fragment>
-      <Spin spinning={loading} >
+      <Spin spinning={loading}>
         <Row style={{ marginBottom: "20px" }}>{renderUpdateStatus()}</Row>
         <Row style={{ marginBottom: "20px" }}>
           <Col span={24}>
@@ -388,10 +393,15 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                 );
                 form.setFieldValue("resultado", values.resultado);
               }}
+              disabled={disableInput()}
             >
-              <Row >
+              <Row>
                 <Col span={24}>
-                  <Row justify="space-between" gutter={[0, 12]} style={{textAlign: "center"}}>
+                  <Row
+                    justify="space-between"
+                    gutter={[0, 12]}
+                    style={{ textAlign: "center" }}
+                  >
                     <Col span={6}>
                       <h3>EXAMEN</h3>
                     </Col>
@@ -405,7 +415,13 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                       <h3>REFERENCIA</h3>
                     </Col>
                   </Row>
-                  <Row justify="space-between" gutter={[0, 12]} style={{textAlign: "center"}}>
+                  <Row
+                    justify="space-between"
+                    gutter={[0, 12]}
+                    style={{ textAlign: "center" }}
+                    align={"middle"}
+                  >
+                    
                     <Form.List name="parametros">
                       {(fields) => (
                         <>
@@ -421,6 +437,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                 </h4>
                               </Col>
                               <Col span={6}>
+                                
                                 <Form.Item
                                   {...field}
                                   name={[field.name, "resultado"]}
@@ -428,12 +445,25 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   validateTrigger={["onChange", "onBlur"]}
                                   noStyle
                                 >
-                                  <Input
+                                  {form.getFieldValue([
+                                  "parametros",
+                                  field.name,
+                                  "tipoValorId",
+                                ]) == 10 ? (
+                                    <TextArea
                                     placeholder="Resultado"
-                                    style={{ width: "70%" }}
+                                    style={{ width: "80%" }}
+                                    rows={4}
                                     allowClear
-                                    disabled={disableInput()}
+                                    autoSize
                                   />
+                                    ) : (
+                                      <Input
+                                        placeholder="Resultado"
+                                        style={{ width: "70%" }}
+                                        allowClear
+                                      />
+                                  )}
                                 </Form.Item>
                               </Col>
                               <Col span={6}>
@@ -441,14 +471,22 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   "parametros",
                                   field.name,
                                   "unidadNombre",
-                                ])}
+                                ]) == null
+                                  ? "No cuenta con unidades"
+                                  : form.getFieldValue([
+                                    "parametros",
+                                    field.name,
+                                    "unidadNombre",
+                                  ])}
                               </Col>
                               <Col span={6}>
                                 {form.getFieldValue([
                                   "parametros",
                                   field.name,
                                   "valorInicial",
-                                ])}
+                                ]) == null
+                                  ? "No cuenta con valores de referencia"
+                                  : "valorInicial"}
                               </Col>
                             </Fragment>
                           ))}
@@ -460,9 +498,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
               </Row>
             </Form>
           </Card>
-        ) : (
-          null
-        )}
+        ) : null}
       </Spin>
     </Fragment>
   );
