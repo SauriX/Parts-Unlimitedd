@@ -111,7 +111,14 @@ function App() {
             <Route path="users" element={<User />} />
             <Route path="users/:id" element={<UserDetail />} />
             <Route path="new-user" element={<NewUser />} />
-            <Route path="trackingOrder" element={<CreationTrackingOrder />} />
+            <Route
+              path="trackingOrder/new"
+              element={<CreationTrackingOrder />}
+            />
+            <Route
+              path="trackingOrder/:id"
+              element={<CreationTrackingOrder />}
+            />
             <Route
               path="clinicResultsDetails/:expedienteId/:requestId"
               element={<ClinicalResults printing={loading} />}
@@ -207,7 +214,7 @@ function App() {
             />
             <Route
               path={`${views.shipmenttracking}/:id`}
-              element={<ShipmentTracking  />}
+              element={<ShipmentTracking />}
             />
             <Route
               path="forbidden"
