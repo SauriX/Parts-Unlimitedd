@@ -93,7 +93,7 @@ const CatalogDimensionForm: FC<CatalogDimensionFormProps> = ({ id, componentRef,
         <Col md={12} sm={24} style={{ textAlign: "right" }}>
           <Button onClick={goBack}>Cancelar</Button>
           {readonly ? (
-            <ImageButton title="Editar" image="edit" onClick={() => setReadonly(false)} />
+            <ImageButton title="Editar" image="editar" onClick={() => setReadonly(false)} />
           ) : (
             <Button
               type="primary"

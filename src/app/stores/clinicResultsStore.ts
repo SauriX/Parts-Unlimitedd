@@ -129,6 +129,27 @@ export default class ClinicResultsStores {
     }
   };
 
+  cancelResults = async (id: number) => {
+    try {
+      this.studies = this.studies.map((x) => {
+        if (x.id === id) return x;
+        else {
+          return {
+            ...x,
+            parametros: x.parametros.map((p) => ({
+              ...p,
+              resultado: undefined,
+            })),
+          };
+        }
+      });
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
   createResultPathological = async (result: FormData) => {
     // createResultPathological = async (result: IResultPathological) => {
     try {
@@ -172,7 +193,14 @@ export default class ClinicResultsStores {
     try {
       await ClinicResults.updateStatusStudy(requestStudyId, status);
       console.log("update", { requestStudyId, status });
-      return true; 
+      // this.studies = this.studies.map((x) => {
+      //   if (x.id !== requestStudyId) return x;
+      //   else {
+      //     x.status = status;
+      //     return x;
+      //   }
+      // });
+      return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
@@ -206,8 +234,11 @@ export default class ClinicResultsStores {
         nombre: x.nombre,
         status: x.estatusId,
         parametros: x.parametros.map((y) => ({
+          id: y.resultadoId,
           estudioId: x.estudioId,
           solicitudId: requestId,
+          estatus: x.estatusId,
+          resultado: y.resultado,
           parametroId: y.id,
           nombre: y.nombre,
           valorInicial: y.valorInicial,
@@ -217,7 +248,6 @@ export default class ClinicResultsStores {
           tipoValorId: y.tipoValor,
           solicitudEstudioId: x.id!,
         })),
-        
       }));
       return params;
     } catch (error) {
