@@ -11,7 +11,8 @@ export interface IEstudiosList {
   id?: string;
   solicitudId: string;
 }
-export  interface ITrackingOrderList {
+
+export interface ITrackingOrderList {
   id?: number;
   clave: string;
   estudio: string;
@@ -24,7 +25,7 @@ export  interface ITrackingOrderList {
   expedienteId: string;
 }
 
-export  interface ITrackingOrderForm {
+export interface ITrackingOrderForm {
   id: number | string;
   sucursalOrigenId?: string;
   SucursalDestinoNombre: string;
@@ -38,7 +39,7 @@ export  interface ITrackingOrderForm {
   temperatura: number;
   activo: boolean;
   clave: string;
-
+  estudiosAgrupados?: IEstudiosList[];
   estudios: ITrackingOrderList[];
   horaDeRecoleccion: number | undefined;
 

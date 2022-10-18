@@ -1,13 +1,14 @@
-import moment from "moment";
-export  interface shipmentStudy{
+export  interface reciveStudy{
     id:string,
     estudio:string,
     paciente:string,
     solicitud:string,
     confirmacionOrigen:boolean,
-    confirmacionDestino:boolean
+    confirmacionDestino:boolean,
+    temperatura:number
 }
-export  interface shipmenttracking {
+
+export  interface reciveTracking {
     id:string,
     sucursalOrigen:string,
     sucursalDestino:string,
@@ -20,10 +21,8 @@ export  interface shipmenttracking {
     horaEnestimada:moment.Moment,
     fechaEnreal:moment.Moment,
     horaEnreal:moment.Moment,
-    estudios:shipmentStudy[],
+    estudios:reciveStudy[],
     seguimiento:string,
     ruta:string,
     nombre:string,
-    temperatura:number
 } 
-
