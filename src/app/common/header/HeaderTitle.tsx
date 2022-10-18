@@ -62,4 +62,5 @@ export type imagesType =
   | "sitio-web"
   | "portapapeles"
   | "usuario"
-  | "segruta";
+  | "segruta"
+  | "worklist";

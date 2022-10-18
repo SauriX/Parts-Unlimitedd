@@ -8,7 +8,8 @@ export interface IWorkList {
 }
 
 export interface IWorkListFilter {
-  area?: number;
+  areaId?: number;
+  area?: string;
   fecha: moment.Moment;
   horaInicio?: moment.Moment;
   horaFin?: moment.Moment;
@@ -17,7 +18,7 @@ export interface IWorkListFilter {
 }
 
 export class WorkListFilterFormValues implements IWorkListFilter {
-  area?: number;
+  areaId?: number;
   fecha: moment.Moment = moment();
   horaInicio?: moment.Moment;
   horaFin?: moment.Moment;

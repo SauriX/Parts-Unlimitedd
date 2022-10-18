@@ -30,6 +30,10 @@ const WorkListFilter = () => {
     const filter = { ...values };
     filter.horaInicio = filter.hora[0].utcOffset(0, true);
     filter.horaFin = filter.hora[1].utcOffset(0, true);
+    filter.area = departmentAreaOptions
+      .flatMap((x) => x.options)
+      .find((x) => x?.value === values.areaId)
+      ?.label?.toString();
     setFilter(filter);
   };
 
@@ -46,7 +50,7 @@ const WorkListFilter = () => {
           <Col span={5}>
             <SelectInput
               formProps={{
-                name: "area",
+                name: "areaId",
                 label: "Lista de trabajo",
               }}
               options={departmentAreaOptions}
