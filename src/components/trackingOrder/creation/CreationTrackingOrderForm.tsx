@@ -440,7 +440,6 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                     label: "Muestra",
                   }}
                   max={100}
-                  required
                   readonly={readonly}
                 />
                 <SwitchInput

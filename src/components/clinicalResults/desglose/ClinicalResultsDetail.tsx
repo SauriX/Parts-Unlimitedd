@@ -18,8 +18,6 @@ import { IColumns } from "../../../app/common/table/utils";
 import {
   IRequest,
   IRequestStudy,
-  IRequestStudyInfo,
-  RequestStudyInfoForm,
   RequestStudyValues,
 } from "../../../app/models/request";
 import { FC, Fragment, useEffect, useState } from "react";
@@ -30,15 +28,13 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import {
   ClinicResultsCaptureForm,
   IClinicResultCaptureForm,
-  IClinicStudy,
 } from "../../../app/models/clinicResults";
 import { IOptions } from "../../../app/models/shared";
-import TextInput from "../../../app/common/form/proposal/TextInput";
-import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import moment from "moment";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { formItemLayout } from "../../../app/util/utils";
+import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
+import alerts from "../../../app/util/alerts";
 const { Text, Title } = Typography;
+const { TextArea } = Input;
 
 type ClinicalResultsDetailProps = {
   estudio: IRequestStudy;
@@ -48,6 +44,8 @@ type ClinicalResultsDetailProps = {
   solicitud: IRequest;
   estudioId: number;
   isMarked: boolean;
+  printing: boolean;
+  showHeaderTable: boolean;
 };
 
 const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
@@ -58,6 +56,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   claveMedico,
   solicitud,
   isMarked,
+  printing,
+  showHeaderTable,
 }) => {
   const [disabled, setDisabled] = useState(false);
   const [currentStudy, setCurrentStudy] = useState<IRequestStudy>(
@@ -74,11 +74,13 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
 
   const {
     getStudies,
+    formValues,
     getRequestStudyById,
     updateStatusStudy,
     studies,
     createResults,
     updateResults,
+    cancelResults,
     addSelectedStudy,
     removeSelectedStudy,
   } = clinicResultsStore;
@@ -112,10 +114,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   }, [isMarked]);
 
   useEffect(() => {
-    console.log(studies.map((x) => x.parametros));
+    console.log(studies.map((x) => x.parametros.map((x) => x)));
     const loadOptions = async () => {
       await getMedicOptions();
-      await getStudies(solicitud.expedienteId, solicitud.solicitudId!);
     };
     loadOptions();
   }, []);
@@ -135,8 +136,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     const cStudy = await getRequestStudyById(estudio.id!);
     setCurrentStudy(cStudy!);
     let captureResult = studies.find((x) => x.id == estudioId);
+
+    console.log(captureResult?.parametros);
     form.setFieldValue("parametros", captureResult?.parametros);
-    console.log(captureResult?.parametros.map(x => x));
   };
 
   useEffect(() => {
@@ -163,6 +165,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       title: "Clave",
       align: "left",
       width: "20%",
+      render: () => {
+        return <strong>{estudio.clave}</strong>;
+      },
     },
     {
       key: "id",
@@ -170,6 +175,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       title: "Estudio",
       align: "left",
       width: "30%",
+      render: () => {
+        return <strong>{estudio.nombre}</strong>;
+      },
     },
     {
       key: "estatus",
@@ -178,7 +186,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       align: "left",
       width: "15%",
       render: (value: any) => {
-        return value.nombre;
+        return <strong>{value.nombre}</strong>;
       },
     },
     {
@@ -186,30 +194,29 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       dataIndex: "estatusId",
       title: "Fecha Actualización",
       align: "left",
-      width: "15%",
+      width: "20%",
       render: (value: any, fullRow: any) => {
-        if (value === status.requestStudy.pendiente) {
-          return moment(fullRow.fechaSolicitud).format("DD/MM/YYYY");
-        }
+        let ultimaActualizacion;
         if (value === status.requestStudy.solicitado) {
-          return moment(fullRow.fechaSolicitud).format("DD/MM/YYYY");
+          ultimaActualizacion = fullRow.fechaSolicitud;
         }
         if (value === status.requestStudy.capturado) {
-          return moment(fullRow.fechaCaptura).format("DD/MM/YYYY");
+          ultimaActualizacion = fullRow.fechaCaptura;
         }
         if (value === status.requestStudy.validado) {
-          return moment(fullRow.fechaValidacion).format("DD/MM/YYYY");
+          ultimaActualizacion = fullRow.fechaValidacion;
         }
         if (value === status.requestStudy.liberado) {
-          return moment(fullRow.fechaLiberacion).format("DD/MM/YYYY");
+          ultimaActualizacion = fullRow.fechaLiberacion;
         }
         if (value === status.requestStudy.enviado) {
-          return moment(fullRow.fechaEnvio).format("DD/MM/YYYY");
+          ultimaActualizacion = fullRow.fechaEnvio;
         }
-        return "";
+        return (
+          <strong>{moment(ultimaActualizacion).format("DD/MM/YYYY")}</strong>
+        );
       },
     },
-
     {
       key: "Orden",
       dataIndex: "orden",
@@ -256,33 +263,34 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
         {currentStudy.estatusId >= status.requestStudy.solicitado ? (
           <>
             <Divider></Divider>
-            <Col span={4}>
-              <Button
-                type="default"
-                htmlType="submit"
-                disabled={
-                  currentStudy.estatusId ===
-                    status.requestStudy.tomaDeMuestra ||
-                  currentStudy.estatusId === status.requestStudy.pendiente
-                }
-                onClick={async () => {
-                  setLoading(true);
-                  await updateStatus(true);
-                  loadInit();
-                  setLoading(false);
-                }}
-                danger
-              >
-                Cancelar{" "}
-                {currentStudy.estatusId === status.requestStudy.capturado
-                  ? "Captura"
-                  : currentStudy.estatusId === status.requestStudy.validado
-                  ? "Validación"
-                  : currentStudy.estatusId === status.requestStudy.solicitado
-                  ? "Solicitud"
-                  : ""}
-              </Button>
-            </Col>
+            {currentStudy.estatusId <= 3 ? (
+              ""
+            ) : (
+              <Col span={4}>
+                <Button
+                  type="default"
+                  htmlType="submit"
+                  disabled={
+                    currentStudy.estatusId ===
+                      status.requestStudy.tomaDeMuestra ||
+                    currentStudy.estatusId === status.requestStudy.pendiente
+                  }
+                  onClick={async () => {
+                    setLoading(true);
+                    await updateStatus(true);
+                    setLoading(false);
+                  }}
+                  danger
+                >
+                  Cancelar{" "}
+                  {currentStudy.estatusId === status.requestStudy.capturado
+                    ? "Captura"
+                    : currentStudy.estatusId === status.requestStudy.validado
+                    ? "Validación"
+                    : ""}
+                </Button>
+              </Col>
+            )}
             <Col span={4}>
               <Button
                 type="primary"
@@ -319,14 +327,15 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     setLoading(true);
     const labResults: IClinicResultCaptureForm[] = newValuesForm.parametros;
     let success = false;
-    if (!!currentResult) {
-      await updateResults(labResults);
+    success = await updateResults(labResults);
+    console.log(labResults);
+    if (success) {
       await updateStatus();
       await loadInit();
-    } else {
-      await createResults(labResults);
-      await updateStatus();
-      await loadInit();
+      form.setFieldValue(
+        "resultado",
+        labResults.flatMap((x) => x.resultado!)
+      );
     }
 
     setLoading(false);
@@ -342,6 +351,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
         ? status.requestStudy.solicitado
         : status.requestStudy.validado;
       await updateStatusStudy(currentStudy.id!, nuevoEstado);
+      cancelResults(currentStudy.id!);
+      form.submit();
       return nuevoEstado;
     }
     if (currentStudy.estatusId === status.requestStudy.validado) {
@@ -376,6 +387,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
               columns={columns}
               pagination={false}
               dataSource={[currentStudy]}
+              showHeader={showHeaderTable}
             />
           </Col>
         </Row>
@@ -391,11 +403,17 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                     form.getFieldsError().filter(({ errors }) => errors.length)
                       .length > 0
                 );
+                form.setFieldValue("resultado", values.resultado);
               }}
+              disabled={disableInput()}
             >
               <Row>
                 <Col span={24}>
-                  <Row justify="space-between" gutter={[0, 12]}>
+                  <Row
+                    justify="space-between"
+                    gutter={[0, 12]}
+                    style={{ textAlign: "center" }}
+                  >
                     <Col span={6}>
                       <h3>EXAMEN</h3>
                     </Col>
@@ -409,7 +427,12 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                       <h3>REFERENCIA</h3>
                     </Col>
                   </Row>
-                  <Row justify="space-between" gutter={[0, 12]}>
+                  <Row
+                    justify="space-between"
+                    gutter={[0, 12]}
+                    style={{ textAlign: "center" }}
+                    align={"middle"}
+                  >
                     <Form.List name="parametros">
                       {(fields) => (
                         <>
@@ -430,20 +453,27 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   name={[field.name, "resultado"]}
                                   fieldKey={[field.key, "resultado"]}
                                   validateTrigger={["onChange", "onBlur"]}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message:
-                                        "Ingresa un valor dentro del parámetro",
-                                    },
-                                  ]}
                                   noStyle
                                 >
-                                  <Input
-                                    placeholder="Resultado"
-                                    style={{ width: "50%" }}
-                                    disabled={disableInput()}
-                                  />
+                                  {form.getFieldValue([
+                                    "parametros",
+                                    field.name,
+                                    "tipoValorId",
+                                  ]) == 10 ? (
+                                    <TextArea
+                                      placeholder="Resultado"
+                                      style={{ width: "80%" }}
+                                      rows={4}
+                                      allowClear
+                                      autoSize
+                                    />
+                                  ) : (
+                                    <Input
+                                      placeholder="Resultado"
+                                      style={{ width: "80%" }}
+                                      allowClear
+                                    />
+                                  )}
                                 </Form.Item>
                               </Col>
                               <Col span={6}>
@@ -451,14 +481,22 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   "parametros",
                                   field.name,
                                   "unidadNombre",
-                                ])}
+                                ]) == null
+                                  ? "No cuenta con unidades"
+                                  : form.getFieldValue([
+                                      "parametros",
+                                      field.name,
+                                      "unidadNombre",
+                                    ])}
                               </Col>
                               <Col span={6}>
                                 {form.getFieldValue([
                                   "parametros",
                                   field.name,
                                   "valorInicial",
-                                ])}
+                                ]) == null
+                                  ? "No cuenta con valores de referencia"
+                                  : "valorInicial"}
                               </Col>
                             </Fragment>
                           ))}
@@ -470,9 +508,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
               </Row>
             </Form>
           </Card>
-        ) : (
-          ""
-        )}
+        ) : null}
       </Spin>
     </Fragment>
   );

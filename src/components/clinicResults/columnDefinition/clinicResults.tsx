@@ -36,6 +36,11 @@ const ClinicResultsColumns = () => {
           </Link>
           <small>
             <Text type="secondary">
+              <Text strong>{record.clavePatologica}</Text>{" "}
+            </Text>
+          </small>
+          <small>
+            <Text type="secondary">
               Sucursal: <Text strong>{record.sucursal}</Text>{" "}
             </Text>
           </small>

@@ -97,4 +97,7 @@ export const catalog = {
     dop: 12,
     vdrl: 42,
   },
+  company: {
+    particulares: "1b84fa7e-9b41-41fa-b8e0-f1d029bb94d4",
+  },
 };

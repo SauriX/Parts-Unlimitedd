@@ -90,8 +90,6 @@ export interface IPriceListInfoFilter {
 export interface IPriceListInfoStudy {
   listaPrecioId: string;
   listaPrecio: string;
-  promocionId?: number;
-  promocion?: string;
   estudioId: number;
   clave: string;
   nombre: string;
@@ -105,9 +103,12 @@ export interface IPriceListInfoStudy {
   horas: number;
   fechaEntrega: moment.Moment;
   precio: number;
-  descuento: number;
-  descuentoPorcentaje: number;
+  promocionId?: number;
+  promocion?: string;
+  descuento?: number;
+  descuentoPorcentaje?: number;
   precioFinal: number;
+  promociones: IPriceListInfoPromo[];
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
 }
@@ -115,8 +116,6 @@ export interface IPriceListInfoStudy {
 export interface IPriceListInfoPack {
   listaPrecioId: string;
   listaPrecio: string;
-  promocionId?: number;
-  promocion?: string;
   paqueteId: number;
   clave: string;
   nombre: string;
@@ -127,6 +126,18 @@ export interface IPriceListInfoPack {
   precio: number;
   descuento: number;
   descuentoPorcentaje: number;
+  promocionId?: number;
+  promocion?: string;
+  promocionDescuento?: number;
+  promocionDescuentoPorcentaje?: number;
   precioFinal: number;
+  promociones: IPriceListInfoPromo[];
   estudios: IPriceListInfoStudy[];
+}
+
+export interface IPriceListInfoPromo {
+  promocionId: number;
+  promocion: string;
+  descuento: number;
+  descuentoPorcentaje: number;
 }
