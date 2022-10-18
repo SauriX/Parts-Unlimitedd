@@ -1,7 +1,7 @@
 import { Form, Row, Col, Button, Typography, Table } from "antd";
 import React, { Fragment, useEffect, useState } from "react";
 import TextInput from "../../../app/common/form/TextInput";
-import { ExclamationCircleOutlined, SearchOutlined } from "@ant-design/icons";
+import { ExclamationCircleOutlined, SearchOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { IReagentList } from "../../../app/models/reagent";
 import { store, useStore } from "../../../app/stores/store";
 import { useSearchParams } from "react-router-dom";
@@ -108,12 +108,12 @@ const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
     <Fragment>
       <Row gutter={[12, 12]}>
         <Col span={24} style={{ textAlign: "center" }}>
-          <ExclamationCircleOutlined
-            style={{ color: "orange", fontSize: 48 }}
+          <PlusCircleOutlined
+            style={{ color: "green", fontSize: 48 }}
           />
         </Col>
         <Col span={24}>
-          <Paragraph>
+          <Paragraph style={{textAlign: "center"}}>
             Favor de ingresar el nombre o clave del reactivo.
           </Paragraph>
         </Col>

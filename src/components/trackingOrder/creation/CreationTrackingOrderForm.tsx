@@ -3,23 +3,15 @@ import {
   Form,
   Row,
   Col,
-  Pagination,
   Button,
   PageHeader,
   Divider,
-  Table,
-  List,
-  Typography,
-  Select,
-  Input,
-  DatePicker,
   TreeSelect,
 } from "antd";
-import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
+import useWindowDimensions from "../../../app/util/window";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
-import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
 import { useStore } from "../../../app/stores/store";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -36,24 +28,19 @@ import messages from "../../../app/util/messages";
 import {
   getDefaultColumnProps,
   IColumns,
-  defaultPaginationProperties,
   ISearch,
 } from "../../../app/common/table/utils";
-import { IStudyList } from "../../../app/models/study";
 import { observer } from "mobx-react-lite";
-import Study from "../../../app/api/study";
 import SelectInput from "../../../app/common/form/SelectInput";
 import CreationTrackingOrderTable from "./CreationTrackingOrderTable";
 import moment from "moment";
-import DateRangeInput from "../../../app/common/form/DateRangeInput";
 import DateInput from "../../../app/common/form/proposal/DateInput";
 import { IDias, IRouteForm, RouteFormValues } from "../../../app/models/route";
-import { toJS } from "mobx";
 import _ from "lodash";
 import NumberInput from "../../../app/common/form/NumberInput";
 
 type TrackingOrderFormProps = {
-  id: number;
+  id: string;
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
@@ -145,10 +132,11 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   }, [getSucursalesOptions, getBranchOptions, getMaquiladorOptions, profile]);
 
   useEffect(() => {
-    const readTrackingOrder = async (id: number) => {
+    const readTrackingOrder = async (id: string) => {
+      console.log("ENTRA A BUSCAR LA ORDEN DE ESTUDIOS");
       setLoading(true);
       const trackingOrder = await getById(id);
-      form.setFieldsValue(trackingOrder!);
+      // form.setFieldsValue(trackingOrder!);
       setValues(trackingOrder!);
       setLoading(false);
     };
@@ -156,7 +144,8 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     if (id) {
       readTrackingOrder(id);
     }
-  }, [form, getById, id]);
+    // }, [form, getById, id]);
+  }, [id]);
 
   const dias: IDias[] = [
     { id: 1, dia: "L" },
@@ -274,7 +263,13 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     setSendData(trackingOrderSend);
     if (confirmCreationOrder) {
       setLoading(true);
-      success = await create(trackingOrderSend);
+      if (id) {
+        trackingOrderSend.id = id;
+        await update(trackingOrderSend);
+        success = true;
+      } else {
+        success = await create(trackingOrderSend);
+      }
       setLoading(false);
     }
     // if (!trackingOrderSend.id) {
@@ -346,7 +341,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
         {!readonly && (
-          <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
+          <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
             <Button
               type="primary"
               htmlType="submit"
@@ -440,7 +435,6 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                     label: "Muestra",
                   }}
                   max={100}
-                  required
                   readonly={readonly}
                 />
                 <SwitchInput
@@ -528,12 +522,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
           </Form>
           <Row style={{ marginBottom: 24 }}>
             {!readonly && (
-              <Col
-                md={id ? 12 : 24}
-                sm={24}
-                xs={12}
-                style={{ textAlign: "center" }}
-              >
+              <Col md={24} sm={24} xs={12} style={{ textAlign: "center" }}>
                 <Button
                   type="primary"
                   htmlType="submit"
@@ -574,6 +563,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
             >
               <CreationTrackingOrderTable
                 // componentRef={componentRef}
+                id={id}
                 printing={printing}
               />
             </Col>

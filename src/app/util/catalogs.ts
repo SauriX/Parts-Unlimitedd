@@ -1,19 +1,19 @@
 import { IOptionsCatalog, IOptionsReport } from "../models/shared";
 
 export const catalogs: IOptionsCatalog[] = [
-  { value: "area", label: "Área", type: "area" },
-  { value: "bank", label: "Banco", type: "normal" },
-  { value: "clinic", label: "Clinica", type: "normal" },
+  { value: "area", label: "Áreas", type: "area" },
+  { value: "bank", label: "Bancos", type: "normal" },
+  { value: "clinic", label: "Clínicas", type: "normal" },
   { value: "department", label: "Departamentos", type: "normal" },
   { value: "dimension", label: "Dimensiones", type: "dimension" },
-  { value: "field", label: "Especialidad", type: "normal" },
-  { value: "payment", label: "Forma de pago", type: "normal" },
+  { value: "field", label: "Especialidades", type: "normal" },
+  { value: "payment", label: "Formas de pago", type: "normal" },
   { value: "indicator", label: "Indicadores", type: "description" },
   { value: "workList", label: "Listas de trabajo", type: "normal" },
-  { value: "delivery", label: "Paqueterias", type: "normal" },
+  { value: "delivery", label: "Paqueterías", type: "normal" },
   { value: "method", label: "Métodos", type: "normal" },
   { value: "paymentMethod", label: "Métodos de pago", type: "description" },
-  { value: "sampleType", label: "Tipo de Muestra", type: "normal" },
+  { value: "sampleType", label: "Tipos de Muestra", type: "normal" },
   { value: "useOfCFDI", label: "Uso de CFDI", type: "description" },
 ];
 
@@ -96,5 +96,8 @@ export const catalog = {
   area: {
     dop: 12,
     vdrl: 42,
+  },
+  company: {
+    particulares: "1b84fa7e-9b41-41fa-b8e0-f1d029bb94d4",
   },
 };

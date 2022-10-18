@@ -10,12 +10,12 @@ const TrackingOrder = {
   access: (): Promise<IScopes> => requests.get("scopes/tracking-order"),
   getAll: (search: string): Promise<IEstudiosList[]> =>
     requests.get(`tracking-order/all/${!search ? "all" : search}`),
-  getById: (id: number): Promise<ITrackingOrderForm> =>
+  getById: (id: string): Promise<ITrackingOrderForm> =>
     requests.get(`tracking-order/${id}`),
   create: (trackingOrder: ITrackingOrderForm): Promise<any> =>
     requests.post("tracking-order", trackingOrder),
   update: (trackingOrder: ITrackingOrderForm): Promise<void> =>
-    requests.put("tracking-order", trackingOrder),
+    requests.put("tracking-order/general", trackingOrder),
   exportList: (trackingOrder: ITrackingOrderForm): Promise<void> =>
     requests.download(`tracking-order/export/form`, trackingOrder),
   exportForm: (id: number): Promise<void> =>

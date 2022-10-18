@@ -70,6 +70,7 @@ import ClinicResults from "../../views/ClinicResults";
 import ClinicalResults from "../../components/clinicalResults/ClinicalResultsInfo";
 import ShipmentTracking from "../../views/ShipmentTracking";
 import ReciveTracking from "../../views/ReciveTracking";
+import WorkList from "../../views/WorkList";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -112,7 +113,14 @@ function App() {
             <Route path="users" element={<User />} />
             <Route path="users/:id" element={<UserDetail />} />
             <Route path="new-user" element={<NewUser />} />
-            <Route path="trackingOrder" element={<CreationTrackingOrder />} />
+            <Route
+              path="trackingOrder/new"
+              element={<CreationTrackingOrder />}
+            />
+            <Route
+              path="trackingOrder/:id"
+              element={<CreationTrackingOrder />}
+            />
             <Route
               path="clinicResultsDetails/:expedienteId/:requestId"
               element={<ClinicalResults printing={loading} />}
@@ -189,6 +197,7 @@ function App() {
             <Route path="reports" element={<Report />} />
             <Route path={views.appointment} element={<Appointment />} />
             <Route path={views.routeTraking} element={<RouteTracking />} />
+            <Route path={views.workLists} element={<WorkList />} />
             <Route
               path={`${views.appointment}/:id`}
               element={<ApointmentDetail />}
@@ -208,7 +217,7 @@ function App() {
             />
             <Route
               path={`${views.shipmenttracking}/:id`}
-              element={<ShipmentTracking  />}
+              element={<ShipmentTracking />}
             />
                         <Route
               path={`${views.recivetracking}/:id`}

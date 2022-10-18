@@ -35,15 +35,18 @@ import { uniqueId } from "lodash";
 
 type TrackingOrderTableProps = {
   // componentRef: React.MutableRefObject<any>;
+  id: string;
   printing: boolean;
 };
 
 const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
   // componentRef,
+  id,
   printing,
 }) => {
   const { trackingOrderStore } = useStore();
-  const { trackingOrder, setEscaneado, setTemperature } = trackingOrderStore;
+  const { trackingOrderStudies, trackingOrder, setEscaneado, setTemperature } =
+    trackingOrderStore;
 
   const [searchParams] = useSearchParams();
 
@@ -74,7 +77,9 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
         windowSize: windowWidth,
       }),
       align: "center",
-      render: (text, record) => text.map((x: any) => x.clave).join(", "),
+      render: (text, record) => {
+        return text.map((x: any) => x.clave).join(", ");
+      },
     },
     {
       ...getDefaultColumnProps("estudios", "Estudio", {
@@ -84,7 +89,9 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
         minWidth: 150,
         windowSize: windowWidth,
       }),
-      render: (text, record) => text.map((x: any) => x.estudio).join(", "),
+      render: (text, record) => {
+        return text.map((x: any) => x.estudio).join(", ");
+      },
     },
     {
       ...getDefaultColumnProps("estudios", "Solicitud", {
@@ -120,7 +127,7 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => {
-        return value.map((x: any) => {
+        value.map((x: any) => {
           return x.nombrePaciente;
         })[0];
       },
@@ -133,6 +140,7 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value, fullrow) => (
         <Switch
+          checked={value}
           onChange={(value) => {
             console.log("escaneado", value, fullrow);
             setEscaneado(value, fullrow.id!);
@@ -193,7 +201,7 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
 
   return (
     <Fragment>
-      <Table<IEstudiosList>
+      <Table<any>
         loading={loading || printing}
         size="small"
         rowKey={(record) => record.id!}

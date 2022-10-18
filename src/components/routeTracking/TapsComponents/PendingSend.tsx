@@ -19,12 +19,25 @@ import { EditOutlined } from "@ant-design/icons";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
-import { IsamplingForm, IsamplingList, IUpdate, samplingFormValues } from "../../../app/models/sampling";
-import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
+import {
+  IsamplingForm,
+  IsamplingList,
+  IUpdate,
+  samplingFormValues,
+} from "../../../app/models/sampling";
+import {
+  getDefaultColumnProps,
+  IColumns,
+  ISearch,
+} from "../../../app/common/table/utils";
 import { ExpandableConfig } from "antd/lib/table/interface";
 import ImageButton from "../../../app/common/button/ImageButton";
 import { getExpandableConfig } from "../../report/utils";
-import { IRouteList, SearchTracking, TrackingFormValues } from "../../../app/models/routeTracking";
+import {
+  IRouteList,
+  SearchTracking,
+  TrackingFormValues,
+} from "../../../app/models/routeTracking";
 import IconButton from "../../../app/common/button/IconButton";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../../app/util/alerts";
@@ -51,14 +64,13 @@ useEffect(()=>{
 },[studys]);
   useEffect(() => {
     const readPriceList = async () => {
-     
       let studios = [];
       var datas = await getAll(values!);
       getBranchCityOptions();
       console.log(datas, "daata");
       setventana("enviar");
       //setSoliCont(datas?.length!);
-      datas?.forEach((x:any) => studios.push(x.studys));
+      datas?.forEach((x: any) => studios.push(x.studys));
       //setStudyCont(studios.length);
       //setLoading(false);
     };
@@ -71,10 +83,8 @@ useEffect(()=>{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
   const updatedata = async () => {
-      
     var succes = await update(updateData!);
     if (succes) {
-
       alerts.confirm(
         "",
         `Se han enviado ${ids.length} estudios de ${solicitudesData.length} solicitud a estatus pendiente de manera exitosa `,
@@ -85,33 +95,30 @@ useEffect(()=>{
       setIds([]);
       SetSolicitudesData([]);
     } else {
-
     }
   };
-  const onExpand = (isExpanded:boolean,record:IRouteList)=>{
-      let expandRows:string[]= expandedRowKeys;
-      if(isExpanded){
-        expandRows.push(record.id);
+  const onExpand = (isExpanded: boolean, record: IRouteList) => {
+    let expandRows: string[] = expandedRowKeys;
+    if (isExpanded) {
+      expandRows.push(record.id);
+    } else {
+      const index = expandRows.findIndex((x) => x === record.id);
+      if (index > -1) {
+        expandRows.splice(index, 1);
       }
-      else{
-        const index = expandRows.findIndex(x=>x===record.id);
-        if(index> -1){
-          expandRows.splice(index,1);
-        }
-      }
-      setexpandedRowKeys(expandRows);
-  }
+    }
+    setexpandedRowKeys(expandRows);
+  };
 
-  const togleRows =()=>{
-    if(openRows){
+  const togleRows = () => {
+    if (openRows) {
       setOpenRows(false);
       setexpandedRowKeys([]);
-    }else{
-      
+    } else {
       setOpenRows(true);
-      setexpandedRowKeys(studys!.map((x)=>x.id));
+      setexpandedRowKeys(studys!.map((x) => x.id));
     }
-  }
+  };
   const onChange = (e: CheckboxChangeEvent, id: number, solicitud: string) => {
     var data = ids;
     var solis = solicitudesData;
@@ -131,14 +138,13 @@ useEffect(()=>{
         //SetSolicitudesData();
       }
     }
-    var datos:IUpdate ={
-        estudioId : ids,
-        solicitudId: solicitud
-    } 
-    setUpdateDate((prev) => ([ ...prev!, datos ]));
+    var datos: IUpdate = {
+      estudioId: ids,
+      solicitudId: solicitud,
+    };
+    setUpdateDate((prev) => [...prev!, datos]);
   };
   const expandableStudyConfig = {
-  
     expandedRowRender: (item: IRouteList) => (
       <div>
         <h4>Estudios</h4>
@@ -152,29 +158,61 @@ useEffect(()=>{
                 style={{ marginBottom: 5 }}
                 column={6}
               >
-                <Descriptions.Item label="Clave" className="description-content" style={{ maxWidth: 30 }}>
+                <Descriptions.Item
+                  label="Clave"
+                  className="description-content"
+                  style={{ maxWidth: 30 }}
+                >
                   {x.clave}
                 </Descriptions.Item>
-                <Descriptions.Item label="Estudio" className="description-content" style={{ maxWidth: 30 }}>
+                <Descriptions.Item
+                  label="Estudio"
+                  className="description-content"
+                  style={{ maxWidth: 30 }}
+                >
                   {x.nombre}
                 </Descriptions.Item>
-                <Descriptions.Item label="Estatus" className="description-content" style={{ maxWidth: 30 }}>
+                <Descriptions.Item
+                  label="Estatus"
+                  className="description-content"
+                  style={{ maxWidth: 30 }}
+                >
                   {x.status == 1 ? "Pendiente" : "Toma de muestra"}
                 </Descriptions.Item>
-                <Descriptions.Item label="Registro" className="description-content" style={{ maxWidth: 30 }}>
+                <Descriptions.Item
+                  label="Registro"
+                  className="description-content"
+                  style={{ maxWidth: 30 }}
+                >
                   {x.registro}
                 </Descriptions.Item>
-                <Descriptions.Item label="Entrega" className="description-content" style={{ maxWidth: 30 }}>
+                <Descriptions.Item
+                  label="Entrega"
+                  className="description-content"
+                  style={{ maxWidth: 30 }}
+                >
                   {x.entrega}
                 </Descriptions.Item>
-                <Descriptions.Item label=""  className="description-content"style={{ maxWidth: 30 }}>
-                  {x.status == 1 &&   (
-                    <Checkbox onChange={(e) => {onChange(e, x.id, item.id)}}>
+                <Descriptions.Item
+                  label=""
+                  className="description-content"
+                  style={{ maxWidth: 30 }}
+                >
+                  {x.status == 1 && (
+                    <Checkbox
+                      onChange={(e) => {
+                        onChange(e, x.id, item.id);
+                      }}
+                    >
                       Selecciona
                     </Checkbox>
                   )}
-                  {x.status == 2 &&   (
-                    <Checkbox onChange={(e) => {onChange(e, x.id, item.id)}}>
+                  {x.status == 2 && (
+                    <Checkbox
+                      onChange={(e) => {
+                        onChange(e, x.id, item.id);
+                      }}
+                    >
                       Selecciona
                     </Checkbox>
                   )}
@@ -214,12 +252,11 @@ useEffect(()=>{
     setActiviti("cancel");
   };
 
-    const [searchState, setSearchState] = useState<ISearch>({
-        searchedText: "",
-        searchedColumn: "",
-      });
-      const hasFooterRow = true;
-      
+  const [searchState, setSearchState] = useState<ISearch>({
+    searchedText: "",
+    searchedColumn: "",
+  });
+  const hasFooterRow = true;
 
     const columns: IColumns<IRouteList> = [
       {

@@ -43,6 +43,17 @@ const CatalogDescriptionTable: FC<CatalogDescriptionTableProps> = ({
 
   console.log("Table");
 
+  const catalogType = (catalogName: string) => {
+    switch(catalogName) {
+      case "indicator":
+        return "indicador"
+      case "paymentMethod":
+        return "método de pago"
+      case "useOfCFDI":
+        return "uso de CFDI"
+    }
+  }
+
   const columns: IColumns<ICatalogList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
@@ -97,7 +108,7 @@ const CatalogDescriptionTable: FC<CatalogDescriptionTableProps> = ({
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (
         <IconButton
-          title="Editar reactivo"
+          title={"Editar " + catalogType(catalogName)}
           icon={<EditOutlined />}
           onClick={() => {
             navigate(`/catalogs/${value}?${searchParams}&mode=edit`);

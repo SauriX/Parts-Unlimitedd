@@ -15,7 +15,8 @@ const views = {
   sampling:"samplings",
   routeTraking:"segRutas",
   shipmenttracking:"ShipmentTracking",
-  recivetracking:"ReciveTracking"
+  recivetracking:"ReciveTracking",
+  workLists: "workLists",
 };
 
 export default views;

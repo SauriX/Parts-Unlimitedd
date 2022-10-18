@@ -1,6 +1,5 @@
-import { DatePicker, Form, FormItemProps, Space, TimePicker, Tooltip } from "antd";
+import { Form, FormItemProps, Space, TimePicker, Tooltip } from "antd";
 import { Rule } from "antd/lib/form";
-import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { InfoCircleTwoTone } from "@ant-design/icons";
 import "./index.less";
