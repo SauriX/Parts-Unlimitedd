@@ -69,6 +69,7 @@ import RouteTracking from "../../views/RouteTracking";
 import ClinicResults from "../../views/ClinicResults";
 import ClinicalResults from "../../components/clinicalResults/ClinicalResultsInfo";
 import ShipmentTracking from "../../views/ShipmentTracking";
+import WorkList from "../../views/WorkList";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -188,6 +189,7 @@ function App() {
             <Route path="reports" element={<Report />} />
             <Route path={views.appointment} element={<Appointment />} />
             <Route path={views.routeTraking} element={<RouteTracking />} />
+            <Route path={views.workLists} element={<WorkList />} />
             <Route
               path={`${views.appointment}/:id`}
               element={<ApointmentDetail />}
@@ -207,7 +209,7 @@ function App() {
             />
             <Route
               path={`${views.shipmenttracking}/:id`}
-              element={<ShipmentTracking  />}
+              element={<ShipmentTracking />}
             />
             <Route
               path="forbidden"
