@@ -326,9 +326,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     const labResults: IClinicResultCaptureForm[] = newValuesForm.parametros;
     let success = false;
     success = await updateResults(labResults);
-    console.log(labResults);
     if (success) {
       await updateStatus();
+      console.log(updateStatus())
       await loadInit();
       form.setFieldValue(
         "resultado",
@@ -339,34 +339,42 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     setLoading(false);
   };
 
+  const cancelation = async (estado: number) => {
+    await updateStatusStudy(currentStudy.id!, estado);
+    if(estado === status.requestStudy.solicitado){
+      cancelResults(currentStudy.id!);
+    }
+    await loadInit();
+  };
+
   const updateStatus = async (esCancelacion: boolean = false) => {
+    let nuevoEstado = 0;
     if (currentStudy.estatusId === status.requestStudy.solicitado) {
       await updateStatusStudy(currentStudy.id!, status.requestStudy.capturado);
       return status.requestStudy.capturado;
     }
     if (currentStudy.estatusId === status.requestStudy.capturado) {
-      const nuevoEstado = esCancelacion
+      nuevoEstado = esCancelacion
         ? status.requestStudy.solicitado
         : status.requestStudy.validado;
-      await updateStatusStudy(currentStudy.id!, nuevoEstado);
-      cancelResults(currentStudy.id!);
-      form.submit();
-      return nuevoEstado;
     }
     if (currentStudy.estatusId === status.requestStudy.validado) {
-      const nuevoEstado = esCancelacion
+      nuevoEstado = esCancelacion
         ? status.requestStudy.capturado
         : status.requestStudy.liberado;
-      await updateStatusStudy(currentStudy.id!, nuevoEstado);
-      return nuevoEstado;
     }
     if (currentStudy.estatusId === status.requestStudy.liberado) {
-      const nuevoEstado = esCancelacion
+      nuevoEstado = esCancelacion
         ? status.requestStudy.validado
         : status.requestStudy.enviado;
-      await updateStatusStudy(currentStudy.id!, nuevoEstado);
-      return nuevoEstado;
     }
+    if(esCancelacion){
+      await cancelation(nuevoEstado);
+    } 
+    else {
+      await updateStatusStudy(currentStudy.id!, nuevoEstado);
+    }
+    return nuevoEstado
   };
 
   const disableInput = () => {

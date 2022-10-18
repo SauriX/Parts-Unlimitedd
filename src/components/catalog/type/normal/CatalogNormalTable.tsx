@@ -66,20 +66,15 @@ const CatalogNormalTable: FC<CatalogNormalTableProps> = ({ componentRef, printin
         return "especialidad"
       case "payment":
         return "forma de pago"
-      case "worklist":
+      case "workList":
         return "lista de trabajo"
       case "delivery":
         return "paquetería"
       case "method":
         return "método"
-      case "paymentMethod":
-        return "método de pago"
       case "sampleType":
         return "tipo de muestra"
-      case "useOfCFDI":
-        return "uso de CFDI"
     }
-  
   }
 
   
