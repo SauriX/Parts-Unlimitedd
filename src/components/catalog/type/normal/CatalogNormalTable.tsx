@@ -13,6 +13,7 @@ import {
 import { ICatalogList } from "../../../../app/models/catalog";
 import IconButton from "../../../../app/common/button/IconButton";
 import { useStore } from "../../../../app/stores/store";
+import { reports, catalogs } from "../../../../app/util/catalogs";
 import { observer } from "mobx-react-lite";
 
 type CatalogNormalTableProps = {
@@ -23,7 +24,7 @@ type CatalogNormalTableProps = {
 
 const CatalogNormalTable: FC<CatalogNormalTableProps> = ({ componentRef, printing, catalogName }) => {
   const { catalogStore } = useStore();
-  const { catalogs, getAll } = catalogStore;
+  const { catalogs: catalogOption, getAll } = catalogStore;
 
   const [searchParams] = useSearchParams();
 
@@ -47,12 +48,41 @@ const CatalogNormalTable: FC<CatalogNormalTableProps> = ({ componentRef, printin
       setLoading(false);
     };
 
-    if (catalogs.length === 0) {
+    if (catalogOption.length === 0) {
       readCatalogs();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const catalogType = (catalogName: string) => {
+    switch(catalogName) {
+      case "department":
+        return "departamento"
+      case "bank":
+        return "banco"
+      case "clinic":
+        return "clínica"
+      case "field":
+        return "especialidad"
+      case "payment":
+        return "forma de pago"
+      case "worklist":
+        return "lista de trabajo"
+      case "delivery":
+        return "paquetería"
+      case "method":
+        return "método"
+      case "paymentMethod":
+        return "método de pago"
+      case "sampleType":
+        return "tipo de muestra"
+      case "useOfCFDI":
+        return "uso de CFDI"
+    }
+  
+  }
+
+  
   const columns: IColumns<ICatalogList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
@@ -98,7 +128,7 @@ const CatalogNormalTable: FC<CatalogNormalTableProps> = ({ componentRef, printin
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (
         <IconButton
-          title="Editar reactivo"
+          title={"Editar " + catalogType(catalogName)}
           icon={<EditOutlined />}
           onClick={() => {
             navigate(`/catalogs/${value}?${searchParams}&mode=edit`);
@@ -122,7 +152,7 @@ const CatalogNormalTable: FC<CatalogNormalTableProps> = ({ componentRef, printin
           rowKey={(record) => record.id}
           columns={columns.slice(0, 4)}
           pagination={false}
-          dataSource={[...catalogs]}
+          dataSource={[...catalogOption]}
         />
       </div>
     );
@@ -135,7 +165,7 @@ const CatalogNormalTable: FC<CatalogNormalTableProps> = ({ componentRef, printin
         size="small"
         rowKey={(record) => record.id}
         columns={columns}
-        dataSource={[...catalogs]}
+        dataSource={[...catalogOption]}
         pagination={defaultPaginationProperties}
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}

@@ -105,7 +105,7 @@ const CatalogDimensionTable: FC<CatalogDimensionTableProps> = ({ componentRef, p
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (
         <IconButton
-          title="Editar reactivo"
+          title="Editar dimensión"
           icon={<EditOutlined />}
           onClick={() => {
             navigate(`/catalogs/${value}?${searchParams}&mode=edit`);

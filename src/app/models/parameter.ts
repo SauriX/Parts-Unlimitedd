@@ -15,8 +15,8 @@ export interface IParameterList {
   unidades: number;
   unidadNombre: string;
   tipoValor: number;
-  valorInicial: number;
-  valorFinal: number;
+  valorInicial: string;
+  valorFinal: string;
   criticoMinimo: number;
   criticoMaximo: number;
   solicitudEstudioId: number;

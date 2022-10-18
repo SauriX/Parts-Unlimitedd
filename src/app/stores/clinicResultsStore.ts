@@ -46,6 +46,7 @@ export default class ClinicResultsStores {
   };
   addSelectedStudy = (estudio: IPrintTypes) => {
     this.studiesSelectedToPrint.push(estudio);
+    console.log("estudies", this.studiesSelectedToPrint.length);
   };
   clearSelectedStudies = () => {
     this.studiesSelectedToPrint = [];
@@ -54,6 +55,7 @@ export default class ClinicResultsStores {
     this.studiesSelectedToPrint = this.studiesSelectedToPrint.filter(
       (item) => item.id !== estudio.id
     );
+    console.log("estudies", this.studiesSelectedToPrint.length);
   };
   setFormValues = (newFormValues: IClinicResultForm) => {
     this.formValues = newFormValues;

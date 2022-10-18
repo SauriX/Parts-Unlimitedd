@@ -45,6 +45,7 @@ type ClinicalResultsDetailProps = {
   estudioId: number;
   isMarked: boolean;
   printing: boolean;
+  showHeaderTable: boolean;
 };
 
 const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
@@ -56,6 +57,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   solicitud,
   isMarked,
   printing,
+  showHeaderTable,
 }) => {
   const [disabled, setDisabled] = useState(false);
   const [currentStudy, setCurrentStudy] = useState<IRequestStudy>(
@@ -111,7 +113,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   }, [isMarked]);
 
   useEffect(() => {
-    console.log(studies.map((x) => x.parametros.map(x => x)));
+    console.log(studies.map((x) => x.parametros.map((x) => x)));
     const loadOptions = async () => {
       await getMedicOptions();
     };
@@ -134,7 +136,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     setCurrentStudy(cStudy!);
     let captureResult = studies.find((x) => x.id == estudioId);
 
-    console.log(captureResult?.parametros)
+    console.log(captureResult?.parametros);
     form.setFieldValue("parametros", captureResult?.parametros);
   };
 
@@ -162,6 +164,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       title: "Clave",
       align: "left",
       width: "20%",
+      render: () => {
+        return <strong>{estudio.clave}</strong>;
+      },
     },
     {
       key: "id",
@@ -169,6 +174,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       title: "Estudio",
       align: "left",
       width: "30%",
+      render: () => {
+        return <strong>{estudio.nombre}</strong>;
+      },
     },
     {
       key: "estatus",
@@ -177,7 +185,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       align: "left",
       width: "15%",
       render: (value: any) => {
-        return value.nombre;
+        return <strong>{value.nombre}</strong>;
       },
     },
     {
@@ -185,30 +193,29 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       dataIndex: "estatusId",
       title: "Fecha Actualización",
       align: "left",
-      width: "15%",
+      width: "20%",
       render: (value: any, fullRow: any) => {
-        if (value === status.requestStudy.pendiente) {
-          return moment(fullRow.fechaSolicitud).format("DD/MM/YYYY");
-        }
+        let ultimaActualizacion;
         if (value === status.requestStudy.solicitado) {
-          return moment(fullRow.fechaSolicitud).format("DD/MM/YYYY");
+          ultimaActualizacion = fullRow.fechaSolicitud;
         }
         if (value === status.requestStudy.capturado) {
-          return moment(fullRow.fechaCaptura).format("DD/MM/YYYY");
+          ultimaActualizacion = fullRow.fechaCaptura;
         }
         if (value === status.requestStudy.validado) {
-          return moment(fullRow.fechaValidacion).format("DD/MM/YYYY");
+          ultimaActualizacion = fullRow.fechaValidacion;
         }
         if (value === status.requestStudy.liberado) {
-          return moment(fullRow.fechaLiberacion).format("DD/MM/YYYY");
+          ultimaActualizacion = fullRow.fechaLiberacion;
         }
         if (value === status.requestStudy.enviado) {
-          return moment(fullRow.fechaEnvio).format("DD/MM/YYYY");
+          ultimaActualizacion = fullRow.fechaEnvio;
         }
-        return "";
+        return (
+          <strong>{moment(ultimaActualizacion).format("DD/MM/YYYY")}</strong>
+        );
       },
     },
-
     {
       key: "Orden",
       dataIndex: "orden",
@@ -270,7 +277,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                   onClick={async () => {
                     setLoading(true);
                     await updateStatus(true);
-                    loadInit();
                     setLoading(false);
                   }}
                   danger
@@ -320,11 +326,14 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     const labResults: IClinicResultCaptureForm[] = newValuesForm.parametros;
     let success = false;
     success = await updateResults(labResults);
-    console.log(labResults)
+    console.log(labResults);
     if (success) {
       await updateStatus();
       await loadInit();
-      form.setFieldValue("resultado", labResults.flatMap(x => x.resultado!))
+      form.setFieldValue(
+        "resultado",
+        labResults.flatMap((x) => x.resultado!)
+      );
     }
 
     setLoading(false);
@@ -341,7 +350,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
         : status.requestStudy.validado;
       await updateStatusStudy(currentStudy.id!, nuevoEstado);
       cancelResults(currentStudy.id!);
-      form.submit()
+      form.submit();
       return nuevoEstado;
     }
     if (currentStudy.estatusId === status.requestStudy.validado) {
@@ -376,6 +385,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
               columns={columns}
               pagination={false}
               dataSource={[currentStudy]}
+              showHeader={showHeaderTable}
             />
           </Col>
         </Row>
@@ -421,7 +431,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                     style={{ textAlign: "center" }}
                     align={"middle"}
                   >
-                    
                     <Form.List name="parametros">
                       {(fields) => (
                         <>
@@ -437,7 +446,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                 </h4>
                               </Col>
                               <Col span={6}>
-                                
                                 <Form.Item
                                   {...field}
                                   name={[field.name, "resultado"]}
@@ -446,23 +454,23 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   noStyle
                                 >
                                   {form.getFieldValue([
-                                  "parametros",
-                                  field.name,
-                                  "tipoValorId",
-                                ]) == 10 ? (
+                                    "parametros",
+                                    field.name,
+                                    "tipoValorId",
+                                  ]) == 10 ? (
                                     <TextArea
-                                    placeholder="Resultado"
-                                    style={{ width: "80%" }}
-                                    rows={4}
-                                    allowClear
-                                    autoSize
-                                  />
-                                    ) : (
-                                      <Input
-                                        placeholder="Resultado"
-                                        style={{ width: "70%" }}
-                                        allowClear
-                                      />
+                                      placeholder="Resultado"
+                                      style={{ width: "80%" }}
+                                      rows={4}
+                                      allowClear
+                                      autoSize
+                                    />
+                                  ) : (
+                                    <Input
+                                      placeholder="Resultado"
+                                      style={{ width: "80%" }}
+                                      allowClear
+                                    />
                                   )}
                                 </Form.Item>
                               </Col>
@@ -474,10 +482,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                 ]) == null
                                   ? "No cuenta con unidades"
                                   : form.getFieldValue([
-                                    "parametros",
-                                    field.name,
-                                    "unidadNombre",
-                                  ])}
+                                      "parametros",
+                                      field.name,
+                                      "unidadNombre",
+                                    ])}
                               </Col>
                               <Col span={6}>
                                 {form.getFieldValue([

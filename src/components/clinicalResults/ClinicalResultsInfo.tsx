@@ -87,7 +87,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
       setLoading(false);
     };
     searchRequest();
-  }, [getById, procedingById]);
+  }, [getById, procedingById, expedienteId, requestId]);
 
   useEffect(() => {
     form.setFieldsValue({
@@ -106,13 +106,13 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
       estudios: studiesSelectedToPrint,
       imprimirLogos: printLogos,
     };
-    await printSelectedStudies(studiesToPrint);
     console.log("sendToPrintSelectedStudies", toJS(studiesSelectedToPrint));
+    await printSelectedStudies(studiesToPrint);
   };
 
   const isAnyStudySelected = () => {
     return studiesSelectedToPrint.length <= 0;
-  }
+  };
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
@@ -280,7 +280,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
           </Button>
         </Col>
       </Row>
-      <Divider></Divider>
+
       <Row>
         <Col span={24}>
           {studies.map((req: IRequestStudy, index: any) => {
@@ -299,6 +299,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
                     claveMedico={request?.claveMedico!}
                     solicitud={request!}
                     isMarked={markAll}
+                    showHeaderTable={index === 0}
                   />
                 </div>
               );
@@ -314,6 +315,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
                   solicitud={request!}
                   isMarked={markAll}
                   printing={loading}
+                  showHeaderTable={index === 0}
                 />
               );
             }
