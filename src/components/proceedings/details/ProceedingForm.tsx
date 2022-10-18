@@ -748,7 +748,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                             label: "Teléfono",
                             noStyle: true,
                           }}
-                          max={500}
+                          max={10}
                           showLabel
                         />
                       </Col>
@@ -759,7 +759,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                             label: "Celular",
                             noStyle: true,
                           }}
-                          max={500}
+                          max={10}
                           showLabel
                         />
                       </Col>
@@ -784,7 +784,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                             label: "CP",
                             noStyle: true,
                           }}
-                          max={500}
+                          max={5}
                           showLabel
                         />
                       </Col>

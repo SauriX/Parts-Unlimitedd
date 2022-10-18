@@ -29,13 +29,16 @@ import IconButton from "../../../app/common/button/IconButton";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../../app/util/alerts";
 import PrintIcon from "../../../app/common/icons/PrintIcon";
+import { formItemLayout } from "../../../app/util/utils";
 
 const PendingSend = () => {
   const { procedingStore, optionStore, locationStore, samplig,routeTrackingStore } = useStore();
   const { getAll, studys, printTicket, update,exportForm,setventana } = routeTrackingStore;
+  const { branchCityOptions,getBranchCityOptions } = optionStore;
   const [values, setValues] = useState<SearchTracking>(new TrackingFormValues());
   const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
 const [ids, setIds] = useState<number[]>([]);
+const [form] = Form.useForm<SearchTracking>();
 const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
 const [activiti, setActiviti] = useState<string>("");
 const [expandedRowKeys,setexpandedRowKeys]= useState<string[]>([]);
@@ -51,6 +54,7 @@ useEffect(()=>{
      
       let studios = [];
       var datas = await getAll(values!);
+      getBranchCityOptions();
       console.log(datas, "daata");
       setventana("enviar");
       //setSoliCont(datas?.length!);
@@ -174,7 +178,7 @@ useEffect(()=>{
                       Selecciona
                     </Checkbox>
                   )}
-                  {x.status == 2 && (
+                  {x.status == 3 && (
                     <Checkbox
                       onChange={(e) =>   onChange(e, x.id, item.id) }
                     >
@@ -298,37 +302,70 @@ useEffect(()=>{
             />
           ),
         },
-        {
+       /*  {
           key: "editar",
           dataIndex: "id",
           title: "Seleccionar",
           align: "center",
           width:  "10%",
           render: (value,item) => (
-            <Checkbox /* onChange={(e)=>{onChange(e,x=item.estudios.map(x=>x.),value) }} */>
+            <Checkbox  onChange={(e)=>{onChange(e,x=item.estudios.map(x=>x.),value) }} >
           
           </Checkbox>
           ),
-        },
+        }, */
       ];
+      const onFinish = async (newValues: SearchTracking) => {
+        // setLoading(true);
+     console.log("onfinish");
+         const reagent = { ...values, ...newValues };
+
+
+          var search= reagent;
+
+           let studios = [];
+           var datas = await getAll(search!);
+          // console.log(datas, "daata");
+           //setSoliCont(datas?.length!);
+           datas?.forEach((x:any) => studios.push(x.pendings));
+          // setStudyCont(studios.length);
+           //setLoading(false);
+           setExpandable(expandableStudyConfig);
+         console.log(reagent,"en el onfish")
+         console.log(reagent);
+         let success = false;
+     
+
+     
+        // setLoading(false);
+     
+
+       };
     return (
         <Fragment>
            
-            <Form<any>>
+            <Form<SearchTracking>
+                {...formItemLayout}
+                form={form}
+                name="reagent"
+                initialValues={values}
+                onFinish={onFinish}
+                scrollToFirstError
+              >
                 <Row gutter={[0, 12]}>
                     <Col span={6}>
-                        <DateRangeInput formProps={{ name: "fecha", label: "Fecha" }} ></DateRangeInput>
+                        <DateRangeInput formProps={{ name: "fechas", label: "Fecha" }} ></DateRangeInput>
                     </Col>
                     <Col span={1}></Col>
                     <Col span={4}>
-                        <SelectInput options={[]} formProps={{ name: "sucursal", label: "Sucursal" }} style={{marginLeft:"10px"}}></SelectInput>  
+                        <SelectInput options={branchCityOptions} formProps={{ name: "sucursal", label: "Sucursal" }} style={{marginLeft:"10px"}}></SelectInput>  
                     </Col>
                     <Col span={1}></Col>
                     <Col span={4}>
                         <TextInput formProps={{ name: "buscar", label: "Buscar" ,labelCol:{span:5}}} ></TextInput>
                     </Col>
                     <Col span={4}>
-                    <Button style={{marginLeft:"5%"}} type="primary">Buscar</Button>
+                    <Button style={{marginLeft:"5%"}} onClick={()=>{form.submit()}} type="primary">Buscar</Button>
                     </Col>
                     <Col> <Button style={{backgroundColor:" #18AC50"}} onClick={()=>{navigate(`/trackingOrder`);}} type="primary" >Crear orden  de seguimiento</Button></Col>
                 </Row>
@@ -344,9 +381,9 @@ useEffect(()=>{
                 <Col span={8}>
                 {activiti == "register" ? (
         <Button
-          style={{ marginTop: "10px", marginBottom: "10px", marginLeft: "70%" }}
+          style={{ marginTop: "8%", marginBottom: "10px", marginLeft: "70%" }}
           type="primary"
-          /* disabled={ids.length <= 0} */
+          disabled={ids.length <= 0}
           onClick={() => {
             updatedata();
           }}
@@ -358,7 +395,7 @@ useEffect(()=>{
       )}
 {activiti == "cancel" ? (
         <Button
-          style={{ marginTop: "10px", marginBottom: "10px", marginLeft: "70%" }}
+          style={{  marginTop: "8%", marginBottom: "10px", marginLeft: "70%"  }}
           type="primary"
           disabled={ids.length <= 0}
           onClick={() => {
