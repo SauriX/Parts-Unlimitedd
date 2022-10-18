@@ -97,7 +97,7 @@ const CatalogDescriptionTable: FC<CatalogDescriptionTableProps> = ({
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (
         <IconButton
-          title="Editar reactivo"
+          title="Editar descripción"
           icon={<EditOutlined />}
           onClick={() => {
             navigate(`/catalogs/${value}?${searchParams}&mode=edit`);

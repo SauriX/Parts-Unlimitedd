@@ -14,12 +14,14 @@ export interface IParameterList {
   mostrarFormato: boolean;
   unidades: number;
   unidadNombre: string;
-  tipoValor: string;
-  valorInicial: number;
-  valorFinal: number;
+  tipoValor: number;
+  valorInicial: string;
+  valorFinal: string;
   criticoMinimo: number;
   criticoMaximo: number;
   solicitudEstudioId: number;
+  resultadoId: string;
+  resultado: string;
 }
 
 export interface IParameterValueListDto {
@@ -41,7 +43,7 @@ export interface IParameterValueListDto {
   criticoMinimo: number;
   criticoMaximo: number;
   solicitudEstudioId: number;
-  parametroValores: ItipoValorForm[];
+  tipoValores: ItipoValorForm[];
 }
 
 export interface IParameterForm {
