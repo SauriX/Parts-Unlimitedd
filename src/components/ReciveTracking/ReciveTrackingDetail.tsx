@@ -40,6 +40,7 @@ import scan from "./alerts/scan";
 import Scan from "./alerts/scan";
 import Check from "./alerts/check";
 import Uncheck from "./alerts/uncheck";
+import End from "./alerts/end";
   type StudyTableProps = {
     componentRef: React.MutableRefObject<any>;
     printing: boolean;
@@ -221,7 +222,11 @@ import Uncheck from "./alerts/uncheck";
           }
         });
         if(contador>0){
-          SetAlertFind(true);
+          openModal({
+            title: "Escanear",
+            body:<End onFinish={onFinish} closeModal={closeModal}></End>,
+            width: 500,
+          })
         }else{
           onFinish();
         }
@@ -381,35 +386,7 @@ import Uncheck from "./alerts/uncheck";
                 
                 <Col md ={12}>
 
-                 {/* escaneo */}
 
-                  {/* alerta sin checar */}
-{                alertFin&&  <div style={{
-                                height: "auto",
-                                borderStyle: "solid",
-                                borderColor: "#000000",
-                                borderWidth: "1px",
-                                borderRadius: "10px",
-                                padding: "10px",
-                                width:"50%",
-                                marginLeft:"40%"
-                  }}>
-                  <Image
-                                        width={50}
-                                        height={50}
-                                        src="origen"
-                                        fallback={`/${process.env.REACT_APP_NAME}/admin/assets/danger.png`}
-                                        style={{marginLeft:"290%"}}
-                                />
-                                <br />
-                                Se detectaron muestras sin confirmación de entrega
-                                <br />
-                                <br />
-                        <Row>
-                          <Col md={12}><Button type="primary" onClick={()=>{onFinish()}} style={{backgroundColor:" #18AC50",marginLeft:"45%"}}>NOTIFICAR</Button></Col>
-                          <Col md={12} ><Button type="primary" onClick={()=>{SetAlertFind(false)}} danger>CANCELAR</Button></Col>
-                        </Row>
-                  </div>}
                   {/* extras */}
 {                false&&  <div style={{
                                 height: "auto",
