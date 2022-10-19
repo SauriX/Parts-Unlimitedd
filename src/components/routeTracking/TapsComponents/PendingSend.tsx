@@ -318,7 +318,7 @@ useEffect(()=>{
               title="Editar ruta"
               icon={<EditOutlined />}
               onClick={() => {
-               
+                navigate(`/trackingOrder/${value}`);
               }}
             />
           ),
@@ -404,7 +404,7 @@ useEffect(()=>{
                     <Col span={4}>
                     <Button style={{marginLeft:"5%"}} onClick={()=>{form.submit()}} type="primary">Buscar</Button>
                     </Col>
-                    <Col> <Button style={{backgroundColor:" #18AC50"}} onClick={()=>{navigate(`/trackingOrder`);}} type="primary" >Crear orden  de seguimiento</Button></Col>
+                    <Col> <Button style={{backgroundColor:" #18AC50"}} onClick={()=>{navigate(`/trackingOrder/new`);}} type="primary" >Crear orden  de seguimiento</Button></Col>
                 </Row>
             </Form>
             <Row style={{marginLeft:"20%",marginBottom:"2%"}}>
