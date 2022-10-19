@@ -161,7 +161,7 @@ const RouteTrackingTable: FC<RouteTableProps> = ({ componentRef, printing }) => 
               <PendingRecive></PendingRecive>
             </TabPane>
             <TabPane tab="Reporte" key="3">
-            Content of Tab Pane 3
+            Content of Tab Pane 3 
             </TabPane>
         </Tabs>
     </Fragment>
