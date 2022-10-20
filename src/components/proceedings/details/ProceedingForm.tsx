@@ -56,6 +56,7 @@ import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import IconButton from "../../../app/common/button/IconButton";
 import { IQuotationList } from "../../../app/models/quotation";
 import Link from "antd/lib/typography/Link";
+import MaskInput from "../../../app/common/form/proposal/MaskInput";
 
 type ProceedingFormProps = {
   id: string;
@@ -742,26 +743,64 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   <Input.Group>
                     <Row gutter={8}>
                       <Col span={12}>
-                        <TextInput
-                          formProps={{
-                            name: "telefono",
-                            label: "Teléfono",
-                            noStyle: true,
-                          }}
-                          max={10}
-                          showLabel
-                        />
+                      <MaskInput
+                  formProps={{
+                    name: "telefono",
+                    label: "Teléfono",
+                  }}
+                  mask={[
+                    /[0-9]/,
+                    /[0-9]/,
+                    /[0-9]/,
+                    "-",
+                    /[0-9]/,
+                    /[0-9]/,
+                    /[0-9]/,
+                    "-",
+                    /[0-9]/,
+                    /[0-9]/,
+                    "-",
+                    /[0-9]/,
+                    /[0-9]/,
+                  ]}
+                  validator={(_, value: any) => {
+                    if (!value || value.indexOf("_") === -1) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject("El campo debe contener 10 dígitos");
+                  }}
+                 
+                />
                       </Col>
                       <Col span={12}>
-                        <TextInput
-                          formProps={{
-                            name: "celular",
-                            label: "Celular",
-                            noStyle: true,
-                          }}
-                          max={10}
-                          showLabel
-                        />
+                      <MaskInput
+                  formProps={{
+                    name: "telefono",
+                    label: "Teléfono",
+                  }}
+                  mask={[
+                    /[0-9]/,
+                    /[0-9]/,
+                    /[0-9]/,
+                    "-",
+                    /[0-9]/,
+                    /[0-9]/,
+                    /[0-9]/,
+                    "-",
+                    /[0-9]/,
+                    /[0-9]/,
+                    "-",
+                    /[0-9]/,
+                    /[0-9]/,
+                  ]}
+                  validator={(_, value: any) => {
+                    if (!value || value.indexOf("_") === -1) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject("El campo debe contener 10 dígitos");
+                  }}
+     
+                />
                       </Col>
                     </Row>
                   </Input.Group>

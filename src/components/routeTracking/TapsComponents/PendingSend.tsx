@@ -483,7 +483,7 @@ useEffect(()=>{
                 />
                 <div style={{ textAlign: "right", marginTop: 10 }}>
                 <Tag color="lime">
-                    {!hasFooterRow ? 3 : Math.max(3 - 1, 0)}{" "}
+                    {!hasFooterRow ? 3 : Math.max(studys.length, 0)}{" "}
                     Registros
                 </Tag>
                 </div>
