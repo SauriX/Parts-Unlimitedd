@@ -51,6 +51,11 @@ export default class RequestStore {
   studies: IRequestStudy[] = [];
   packs: IRequestPack[] = [];
   loadingRequests: boolean = false;
+  loadingTabContentCount: number = 0;
+
+  get loadingTabContent() {
+    return this.loadingTabContentCount > 0;
+  }
 
   get studyUpdate() {
     if (this.request) {
@@ -222,6 +227,7 @@ export default class RequestStore {
 
   getGeneral = async (recordId: string, requestId: string) => {
     try {
+      this.loadingTabContentCount++;
       const request = await Request.getGeneral(recordId, requestId);
       request.metodoEnvio = [];
       if (request.correo) request.metodoEnvio.push("correo");
@@ -230,11 +236,14 @@ export default class RequestStore {
       return request;
     } catch (error) {
       alerts.warning(getErrors(error));
+    } finally {
+      this.loadingTabContentCount--;
     }
   };
 
   getStudies = async (recordId: string, requestId: string) => {
     try {
+      this.loadingTabContentCount++;
       const data = await Request.getStudies(recordId, requestId);
       if (data.paquetes && data.paquetes.length > 0) {
         this.packs = data.paquetes;
@@ -246,6 +255,8 @@ export default class RequestStore {
     } catch (error) {
       alerts.warning(getErrors(error));
       return [];
+    } finally {
+      this.loadingTabContentCount--;
     }
   };
 
@@ -342,10 +353,13 @@ export default class RequestStore {
     email: string
   ) => {
     try {
+      this.loadingTabContentCount++;
       await Request.sendTestEmail(recordId, requestId, email);
       alerts.info("El correo se está enviando");
     } catch (error) {
       alerts.warning(getErrors(error));
+    } finally {
+      this.loadingTabContentCount--;
     }
   };
 
@@ -355,10 +369,13 @@ export default class RequestStore {
     phone: string
   ) => {
     try {
+      this.loadingTabContentCount++;
       await Request.sendTestWhatsapp(recordId, requestId, phone);
       alerts.info("El whatsapp se está enviando");
     } catch (error) {
       alerts.warning(getErrors(error));
+    } finally {
+      this.loadingTabContentCount--;
     }
   };
 
@@ -373,12 +390,15 @@ export default class RequestStore {
 
   updateGeneral = async (request: IRequestGeneral) => {
     try {
+      this.loadingTabContentCount++;
       await Request.updateGeneral(request);
       alerts.success(messages.updated);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
+    } finally {
+      this.loadingTabContentCount--;
     }
   };
 
