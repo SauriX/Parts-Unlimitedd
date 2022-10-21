@@ -139,6 +139,7 @@ export class RequestStudyUpdate implements IRequestStudyUpdate {
 export interface IRequestStudy {
   type: "study" | "pack";
   id?: number;
+  identificador?: string;
   estudioId: number;
   clave: string;
   nombre: string;
@@ -214,6 +215,8 @@ export class RequestStudyValues implements IRequestStudy {
 }
 export interface IRequestPack {
   type: "study" | "pack";
+  id?: number;
+  identificador?: string;
   paqueteId: number;
   clave: string;
   nombre: string;
