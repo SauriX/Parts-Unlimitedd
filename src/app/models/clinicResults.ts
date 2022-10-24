@@ -53,7 +53,7 @@ export interface IClinicResultCaptureForm {
   nombre: string;
   solicitudId: string;
   estudioId: number;
-  tipoValorId: number;
+  tipoValorId: string;
   valorInicial: string;
   valorFinal: string;
   parametroId: string;
@@ -62,6 +62,7 @@ export interface IClinicResultCaptureForm {
   unidadNombre: string;
   solicitudEstudioId?: number;
   estatus: number;
+  formula?: string;
 }
 
 export interface IClinicResultForm {
@@ -138,13 +139,14 @@ export class ClinicResultsCaptureForm implements IClinicResultCaptureForm {
   id = "";
   solicitudId = "";
   estudioId = 0;
-  tipoValorId = 0;
+  tipoValorId = "";
   estatus = 0;
   nombre = "";
   valorInicial = "";
   valorFinal = "";
   parametroId = "";
   resultado = "";
+  formula = "";
   unidades = 0;
   solicitudEstudioId = 0;
   unidadNombre = "";
