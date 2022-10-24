@@ -127,9 +127,7 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => {
-        value.map((x: any) => {
-          return x.nombrePaciente;
-        })[0];
+        return value[0].nombrePaciente;
       },
     },
     {
