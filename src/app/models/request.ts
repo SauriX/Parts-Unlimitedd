@@ -21,6 +21,7 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   parcialidad: boolean;
   registro?: string;
   esNuevo: boolean;
+  folioWeeClinic?: string;
 
   estudios?: IRequestStudyInfo[];
 }

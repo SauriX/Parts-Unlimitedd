@@ -379,7 +379,12 @@ export default class RequestStore {
 
   create = async (request: IRequest) => {
     try {
-      const id = await Request.create(request);
+      let id = "";
+      if (!request.folioWeeClinic) {
+        id = await Request.create(request);
+      } else {
+        id = await Request.createWeeClinic(request);
+      }
       return id;
     } catch (error: any) {
       alerts.warning(getErrors(error));
