@@ -1,3 +1,4 @@
+import { InputNumber } from "antd";
 import { makeAutoObservable } from "mobx";
 import Pack from "../api/pack";
 import PriceList from "../api/priceList";
@@ -46,24 +47,8 @@ export default class PriceListStore {
   };
   getAllStudy = async () => {
     try {
-      const roles = await Study.getAll("all");
-      console.log(roles);
-      const activos = roles.filter((x) => x.activo);
-      console.log(roles);
-      var studies = activos.map((x) => {
-        let data: IPriceListEstudioList = {
-          id: x.id,
-          estudioId: x.id,
-          clave: x.clave,
-          nombre: x.nombre,
-          area: x.area,
-          departamento: x.departamento,
-          activo: false,
-          precio: 0,
-        };
-        return data;
-      });
-      this.studies = studies;
+      const studies = await Study. getAllPrice("all");
+
       return studies;
     } catch (error: any) {
       alerts.warning(getErrors(error));

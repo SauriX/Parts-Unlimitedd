@@ -1,10 +1,10 @@
-import { Table } from 'antd';
+import { InputNumber, Table } from 'antd';
 import classNames from 'classnames';
 import ResizeObserver from 'rc-resize-observer';
 import React, { useEffect, useRef, useState } from 'react';
 import { VariableSizeGrid as Grid } from 'react-window';
 
-const VirtualTable = (props: Parameters<typeof Table>[0]) => {
+const VirtualTable = (props: Parameters<typeof Table >[0]) => {
   const { columns, scroll } = props;
   const [tableWidth, setTableWidth] = useState(0);
 
@@ -85,9 +85,11 @@ const VirtualTable = (props: Parameters<typeof Table>[0]) => {
             className={classNames('virtual-table-cell', {
               'virtual-table-cell-last': columnIndex === mergedColumns.length - 1,
             })}
-            style={style}
+            style={style} 
           >
-            {(rawData[rowIndex] as any)[(mergedColumns as any)[columnIndex].dataIndex]}
+
+            { (rawData[rowIndex] as any) [(mergedColumns as any)[columnIndex].dataIndex]}
+            
           </div>
         )}
       </Grid>

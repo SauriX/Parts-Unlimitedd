@@ -14,6 +14,7 @@ import {
   Select,
   InputNumber,
 } from "antd";
+import { VList } from 'virtual-table-ant-design'
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
@@ -510,7 +511,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: 0,
         windowSize: windowWidth,
       }),
     },
@@ -518,7 +519,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: 0,
         windowSize: windowWidth,
       }),
     },
@@ -526,7 +527,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ...getDefaultColumnProps("precio", "Precio", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: 0,
         windowSize: windowWidth,
       }),
       render: (value,item) => (
@@ -543,7 +544,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ...getDefaultColumnProps("area", "Área", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: 0,
         windowSize: windowWidth,
       }),
     },
@@ -552,7 +553,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       dataIndex: "id",
       title: "Añadir",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: 0/*windowWidth < resizeWidth ? 100 : "10%"*/,
       render: (value,item) => (
         <Checkbox
           name="activo"
@@ -624,7 +625,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "10%",
+        width:0,
         windowSize: windowWidth,
       }),
     },
@@ -632,7 +633,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: 0,
         windowSize: windowWidth,
       }),
     },    {
@@ -640,7 +641,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       dataIndex: "id",
       title: "Desc %",
       align: "center",
-      width:  100,
+      width:  0,
       render: (value,item) => (
         <InputNumber type={"number"} readOnly={item.precio==0} min={0}  value={item.descuento}   onChange={(value)=>setStudydiscunt(value,item,item.paqute!)} ></InputNumber>
       ),
@@ -650,7 +651,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       dataIndex: "id",
       title: "Desc cantidad",
       align: "center",
-      width:  100 ,
+      width:  0 ,
       render: (value,item) => (
         <InputNumber type={"number"} min={0} readOnly={item.precio==0} value={item.descuenNum}   onChange={(value)=>setStudydiscuntc(value,item,item.paqute!)} ></InputNumber>
       ),
@@ -660,7 +661,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       dataIndex: "id",
       title: "Precio final",
       align: "center",
-      width:  100 ,
+      width:  0 ,
       render: (value,item) => (
         <InputNumber type={"number"} min={0} readOnly={item.precio==0} value={item.precioFinal}   onChange={(value)=>setStudyPricefinal(value,item,item.paqute!)} ></InputNumber>
       ),
@@ -669,7 +670,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ...getDefaultColumnProps("precio", "Precio", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: 0,
         windowSize: windowWidth,
       }),
       render: (value,item) => (
@@ -686,7 +687,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ...getDefaultColumnProps("area", "Área", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: 0,
         windowSize: windowWidth,
       }),
     },
@@ -695,7 +696,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       dataIndex: "id",
       title: "Añadir",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: 0,
       render: (value,item) => (
         <Checkbox
           name="activo"
@@ -933,14 +934,20 @@ const PriceListForm: FC<PriceListFormProps> = ({
                 columns={printing?columnsEstudios.slice(0,4):columnsEstudios}
                 pagination={false}
                 dataSource={[...(values.table?.filter(x=>!x.paqute) ?? [])]}
-                scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+                scroll={{ y: '50vh', x: true }}
+                components={VList({
+                  height: 500,
+                })}
               />
               <Table<IPriceListEstudioList>
                 size="large"
                 columns={printing?columnsEstudiosP.slice(0,4):columnsEstudiosP}
                 pagination={false}
                 dataSource={[...(values.table?.filter(x=>x.paqute) ?? [])]}
-                scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+                scroll={{ y: '50vh', x: true }}
+                components={VList({
+                  height: 500,
+                })}
               />
         </div>
       </div>

@@ -11619,6 +11619,11 @@ vinyl@^2.0.0:
     remove-trailing-separator "^1.0.1"
     replace-ext "^1.0.0"
 
+virtual-table-ant-design@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/virtual-table-ant-design/-/virtual-table-ant-design-1.0.8.tgz#6fd1eee188ba635a6d4a3d2f02589a133d72aa29"
+  integrity sha512-a4MnTn1AWIZFvl97MKc7jyjunTs7G4tOcqiwUAVwOrTYz2f8MAZl4XAy44UXLSo5KupnB2nuEXuCqkB26uNAkA==
+
 w3c-hr-time@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/w3c-hr-time/-/w3c-hr-time-1.0.2.tgz#0a89cdf5cc15822df9c360543676963e0cc308cd"
