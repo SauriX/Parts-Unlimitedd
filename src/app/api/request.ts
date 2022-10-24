@@ -38,6 +38,8 @@ const Request = {
     requests.get(`request/whatsapp/${recordId}/${requestId}/${phone}`),
   create: (request: IRequest): Promise<string> =>
     requests.post("request", request),
+  createWeeClinic: (request: IRequest): Promise<string> =>
+    requests.post("request/weeClinic", request),
   updateGeneral: (request: IRequestGeneral): Promise<void> =>
     requests.put("request/general", request),
   updateTotals: (request: IRequestTotal): Promise<void> =>

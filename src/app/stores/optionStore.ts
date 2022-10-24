@@ -19,8 +19,8 @@ import Pack from "../api/pack";
 import Location from "../api/location";
 
 export const originOptions = [
-  { label: "Compañía", value: 1 },
-  { label: "Particular", value: 2 },
+  { label: "COMPAÑIÍA", value: 1 },
+  { label: "PARTICULAR", value: 2 },
 ];
 
 export const urgencyOptions = [

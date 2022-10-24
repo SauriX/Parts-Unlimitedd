@@ -21,8 +21,7 @@ const formItemLayout = {
   wrapperCol: { span: 10 },
 };
 
-const compañia = 1;
-const particular = 2;
+const PARTICULAR = 2;
 
 const sendOptions = [
   { label: "Mandar via correo electronico", value: "correo" },
@@ -45,6 +44,7 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
     getMedicOptions,
   } = optionStore;
   const {
+    loadingTabContent,
     request,
     setStudyFilter,
     getGeneral,
@@ -59,7 +59,6 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
   const email = Form.useWatch("correo", form);
   const whatsapp = Form.useWatch("whatsapp", form);
 
-  const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState<IFormError[]>([]);
   const [previousSendings, setPreviousSendings] = useState<string[]>([]);
   const [requestGeneral, setRequestGeneral] = useState<IRequestGeneral>();
@@ -75,12 +74,10 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
 
   useEffect(() => {
     const getRequestGeneral = async () => {
-      setLoading(true);
       const requestGeneral = await getGeneral(
         request!.expedienteId,
         request!.solicitudId!
       );
-      setLoading(false);
       if (requestGeneral) {
         setRequestGeneral(requestGeneral);
         form.setFieldsValue(requestGeneral);
@@ -134,21 +131,17 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
 
   const sendEmail = async () => {
     if (request) {
-      setLoading(true);
       await sendTestEmail(request.expedienteId, request.solicitudId!, email);
-      setLoading(false);
     }
   };
 
   const sendWhatsapp = async () => {
     if (request) {
-      setLoading(true);
       await sendTestWhatsapp(
         request.expedienteId,
         request.solicitudId!,
         whatsapp
       );
-      setLoading(false);
     }
   };
 
@@ -157,191 +150,191 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
   };
 
   return (
-    <Spin spinning={loading}>
-      <Form<IRequestGeneral>
-        {...formItemLayout}
-        form={form}
-        onFinish={onFinish}
-        onFinishFailed={({ errorFields }) => {
-          const errors = errorFields.map((x) => ({
-            name: x.name[0].toString(),
-            errors: x.errors,
-          }));
-          setErrors(errors);
-        }}
-        initialValues={{
-          metodoEnvio: [],
-          companyId: catalog.company.particulares,
-          procedencia: particular,
-        }}
-        onValuesChange={onValuesChange}
-        size="small"
-      >
-        <Row gutter={[0, 12]}>
-          <Col span={24}>
-            <SelectInput
-              formProps={{
-                name: "compañiaId",
-                label: "Compañía",
-              }}
-              options={CompanyOptions}
-              required
-              errors={errors.find((x) => x.name === "compañiaId")?.errors}
-              onChange={onCompanyChange}
-            />
-          </Col>
-          <Col span={24}>
-            <SelectInput
-              formProps={{
-                name: "procedencia",
-                label: "Procedencia",
-              }}
-              options={originOptions}
-              readonly
-            />
-          </Col>
-          <Col span={24}>
-            <SelectInput
-              formProps={{
-                name: "medicoId",
-                label: "Médico",
-              }}
-              options={MedicOptions}
-            />
-          </Col>
-          <Col span={24}>
-            <TextInput
-              formProps={{
-                name: "afiliacion",
-                label: "Afiliación",
-              }}
-              max={100}
-            />
-          </Col>
-          <Col span={24}>
-            <SelectInput
-              formProps={{
-                name: "urgencia",
-                label: "Urgencia",
-              }}
-              options={urgencyOptions}
-              required
-              errors={errors.find((x) => x.name === "urgencia")?.errors}
-            />
-          </Col>
-          <Col span={24} style={{ textAlign: "start" }}>
-            <Form.Item
-              noStyle
-              name="metodoEnvio"
-              labelCol={{ span: 0 }}
-              wrapperCol={{ span: 24 }}
-            >
-              <Checkbox.Group options={sendOptions} />
-            </Form.Item>
-          </Col>
-          <Col span={24}>
-            <Form.Item
-              label="E-Mail"
-              labelCol={{ span: 4 }}
-              wrapperCol={{ span: 20 }}
-              className="no-error-text"
-              help=""
-              required={sendings?.includes("correo")}
-            >
-              <Input.Group>
-                <Row>
-                  <Col span={12}>
-                    <TextInput
-                      formProps={{
-                        name: "correo",
-                        label: "E-Mail",
-                        noStyle: true,
-                      }}
-                      readonly={!sendings?.includes("correo")}
-                      required={sendings?.includes("correo")}
-                      errors={errors.find((x) => x.name === "correo")?.errors}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <Button
-                      type="primary"
-                      disabled={!sendings?.includes("correo")}
-                      onClick={sendEmail}
-                    >
-                      Prueba
-                    </Button>
-                  </Col>
-                </Row>
-              </Input.Group>
-            </Form.Item>
-          </Col>
-          <Col span={24}>
-            <Form.Item
-              label="Whatsapp"
-              labelCol={{ span: 4 }}
-              wrapperCol={{ span: 20 }}
-              className="no-error-text"
-              help=""
-              required={sendings?.includes("whatsapp")}
-            >
-              <Input.Group>
-                <MaskInput
-                  formProps={{
-                    name: "whatsapp",
-                    label: "Whatsapp",
-                    noStyle: true,
-                  }}
-                  width="50%"
-                  mask={[
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                  ]}
-                  validator={(_, value: any) => {
-                    if (!value || value.indexOf("_") === -1) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject("El campo debe contener 10 dígitos");
-                  }}
-                  readonly={!sendings?.includes("whatsapp")}
-                  required={sendings?.includes("whatsapp")}
-                  errors={errors.find((x) => x.name === "whatsapp")?.errors}
-                />
-                <Button
-                  type="primary"
-                  disabled={!sendings?.includes("whatsapp")}
-                  onClick={sendWhatsapp}
-                >
-                  Prueba
-                </Button>
-              </Input.Group>
-            </Form.Item>
-          </Col>
-          <Col span={24}>
-            <TextAreaInput
-              formProps={{
-                name: "observaciones",
-                label: "Observaciones",
-                labelCol: { span: 24 },
-                wrapperCol: { span: 24 },
-              }}
-              rows={3}
-              errors={errors.find((x) => x.name === "observaciones")?.errors}
-            />
-          </Col>
-        </Row>
-      </Form>
-    </Spin>
+    <Form<IRequestGeneral>
+      {...formItemLayout}
+      form={form}
+      onFinish={onFinish}
+      onFinishFailed={({ errorFields }) => {
+        const errors = errorFields.map((x) => ({
+          name: x.name[0].toString(),
+          errors: x.errors,
+        }));
+        setErrors(errors);
+      }}
+      initialValues={{
+        metodoEnvio: [],
+        companyId: catalog.company.particulares,
+        procedencia: PARTICULAR,
+      }}
+      onValuesChange={onValuesChange}
+      size="small"
+    >
+      <Row gutter={[0, 12]}>
+        <Col span={24}>
+          <SelectInput
+            formProps={{
+              name: "compañiaId",
+              label: "Compañía",
+            }}
+            options={CompanyOptions}
+            required
+            errors={errors.find((x) => x.name === "compañiaId")?.errors}
+            onChange={onCompanyChange}
+          />
+        </Col>
+        <Col span={24}>
+          <SelectInput
+            formProps={{
+              name: "procedencia",
+              label: "Procedencia",
+            }}
+            options={originOptions}
+            readonly
+            required
+          />
+        </Col>
+        <Col span={24}>
+          <SelectInput
+            formProps={{
+              name: "medicoId",
+              label: "Médico",
+            }}
+            options={MedicOptions}
+            required
+          />
+        </Col>
+        <Col span={24}>
+          <TextInput
+            formProps={{
+              name: "afiliacion",
+              label: "Afiliación",
+            }}
+            max={100}
+          />
+        </Col>
+        <Col span={24}>
+          <SelectInput
+            formProps={{
+              name: "urgencia",
+              label: "Urgencia",
+            }}
+            options={urgencyOptions}
+            required
+            errors={errors.find((x) => x.name === "urgencia")?.errors}
+          />
+        </Col>
+        <Col span={24} style={{ textAlign: "start" }}>
+          <Form.Item
+            noStyle
+            name="metodoEnvio"
+            labelCol={{ span: 0 }}
+            wrapperCol={{ span: 24 }}
+          >
+            <Checkbox.Group options={sendOptions} />
+          </Form.Item>
+        </Col>
+        <Col span={24}>
+          <Form.Item
+            label="E-Mail"
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 20 }}
+            className="no-error-text"
+            help=""
+            required={sendings?.includes("correo")}
+          >
+            <Input.Group>
+              <Row>
+                <Col span={12}>
+                  <TextInput
+                    formProps={{
+                      name: "correo",
+                      label: "E-Mail",
+                      noStyle: true,
+                    }}
+                    readonly={!sendings?.includes("correo")}
+                    required={sendings?.includes("correo")}
+                    errors={errors.find((x) => x.name === "correo")?.errors}
+                  />
+                </Col>
+                <Col span={12}>
+                  <Button
+                    type="primary"
+                    disabled={!sendings?.includes("correo")}
+                    onClick={sendEmail}
+                  >
+                    Prueba
+                  </Button>
+                </Col>
+              </Row>
+            </Input.Group>
+          </Form.Item>
+        </Col>
+        <Col span={24}>
+          <Form.Item
+            label="Whatsapp"
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 20 }}
+            className="no-error-text"
+            help=""
+            required={sendings?.includes("whatsapp")}
+          >
+            <Input.Group>
+              <MaskInput
+                formProps={{
+                  name: "whatsapp",
+                  label: "Whatsapp",
+                  noStyle: true,
+                }}
+                width="50%"
+                mask={[
+                  /[0-9]/,
+                  /[0-9]/,
+                  /[0-9]/,
+                  "-",
+                  /[0-9]/,
+                  /[0-9]/,
+                  /[0-9]/,
+                  "-",
+                  /[0-9]/,
+                  /[0-9]/,
+                  "-",
+                  /[0-9]/,
+                  /[0-9]/,
+                ]}
+                validator={(_, value: any) => {
+                  if (!value || value.indexOf("_") === -1) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject("El campo debe contener 10 dígitos");
+                }}
+                readonly={!sendings?.includes("whatsapp")}
+                required={sendings?.includes("whatsapp")}
+                errors={errors.find((x) => x.name === "whatsapp")?.errors}
+              />
+              <Button
+                type="primary"
+                disabled={!sendings?.includes("whatsapp")}
+                onClick={sendWhatsapp}
+              >
+                Prueba
+              </Button>
+            </Input.Group>
+          </Form.Item>
+        </Col>
+        <Col span={24}>
+          <TextAreaInput
+            formProps={{
+              name: "observaciones",
+              label: "Observaciones",
+              labelCol: { span: 24 },
+              wrapperCol: { span: 24 },
+            }}
+            rows={3}
+            errors={errors.find((x) => x.name === "observaciones")?.errors}
+          />
+        </Col>
+      </Row>
+    </Form>
   );
 };
 

@@ -665,6 +665,14 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     setLoading(true);
 
     const reagent = { ...values, ...newValues };
+
+    var counter =0;
+    values.estudio.forEach(x=>{if(x.precioFinal==0){ counter++}})
+    if(counter>0){
+      alerts.warning("El precio final debe ser mayor a 0");
+      setLoading(false);
+      return
+    }
     reagent.dias= selectedTags; 
     console.log(reagent,"en el onfish")
     console.log(reagent);

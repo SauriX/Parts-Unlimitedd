@@ -1,4 +1,4 @@
-export interface IWeeLabBusquedaFolios {
+export interface IWeeLabFolioInfo {
   idOrden: string;
   folioOrden: string;
   dateInsert: string;

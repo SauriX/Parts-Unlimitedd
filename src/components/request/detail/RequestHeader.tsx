@@ -22,9 +22,9 @@ const ReagentHeader = () => {
     <PageHeader
       ghost={false}
       title={<HeaderTitle title="Solicitud" />}
+      onBack={getBack}
       className="header-container"
       extra={[
-        <GoBackIcon key="back" onClick={getBack} />,
         <Text key="request">
           Solicitud: <Text strong>{request?.clave}</Text>
         </Text>,

@@ -85,7 +85,7 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
       };
       const prevnextMaquilador = (index: number) => {
         const maquila = studys[index];
-        navigate(`/eShipmentTracking/${maquila.id}`);
+        navigate(`/ShipmentTracking/${maquila.id}`);
       };
     const columns: IColumns<shipmentStudy> = [
         {
@@ -195,9 +195,9 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
                             <br />
                             Medio de entrega: {shipment?.medioentrega}
                             <br />
-                            Fecha de envío: {shipment?.fechaEnvio.format('MMMM Do, YYYY')}
+                            Fecha de envío: {shipment?.fechaEnvio.format('MMMM D, YYYY')}
                             <br />
-                            Hora de envío: {shipment?.horaEnvio.utc().format('hA:mm')}
+                            Hora de envío: {shipment?.horaEnvio.utc().format('h:mmA')}
                             <br />
                         </Row>
                     </div>
@@ -233,13 +233,13 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
                             <br />
                             Responsable de recibido: {shipment?.responsableDestino}
                             <br />
-                            Fecha de entrega estimada: {shipment?.fechaEnestimada.format('MMMM Do, YYYY')}
+                            Fecha de entrega estimada: {shipment?.fechaEnestimada.format('MMMM D, YYYY')}
                             <br />
-                            Hora de entrega estimada: {shipment?.horaEnestimada.utc().format('hA:mm')}
+                            Hora de entrega estimada: {shipment?.horaEnestimada.utc().format('h:mmA')}
                             <br />
-                             Fecha de entrega real:{ shipment?.fechaEnreal.format('MMMM Do, YYYY')=="Fecha inválida"?"":shipment?.fechaEnreal.format('MMMM Do, YYYY')}
+                             Fecha de entrega real:{ shipment?.fechaEnreal.format('MMMM D, YYYY')=="Fecha inválida"?"":shipment?.fechaEnreal.format('MMMM D, YYYY')}
                             <br />
-                            Hora de entrega real: {shipment?.horaEnreal.utc().format('hA:mm')=="Fecha inválida"?"":shipment?.horaEnreal.utc().format('hA:mm')} 
+                            Hora de entrega real: {shipment?.horaEnreal.utc().format('h:mmA')=="Fecha inválida"?"":shipment?.horaEnreal.utc().format('h:mmA')} 
                         </Row>
                     </div>
                 </Col>

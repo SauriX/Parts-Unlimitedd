@@ -14,7 +14,9 @@ const views = {
   cash: "cash",
   sampling:"samplings",
   routeTraking:"segRutas",
-  shipmenttracking:"ShipmentTracking"
+  shipmenttracking:"ShipmentTracking",
+  recivetracking:"ReciveTracking",
+  workLists: "workLists",
 };
 
 export default views;

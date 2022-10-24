@@ -26,7 +26,9 @@ export default class QuotationStore {
   constructor() {
     makeAutoObservable(this);
   }
-  studyFilter: IPriceListInfoFilter = {};
+  studyFilter: IPriceListInfoFilter = {
+    medicoId:""
+  };
   scopes?: IScopes;
   search: ISearchQuotation = new SearchQuotationValues();
   quotatios: IQuotationList[] = [];
@@ -43,7 +45,7 @@ export default class QuotationStore {
   clearsearch = () => {
     this.search = new SearchQuotationValues();
   };
-  setStudyFilter = (branchId?: string, doctorId?: string, companyId?: string) => {
+  setStudyFilter = (branchId?: string, doctorId: string="", companyId?: string) => {
     this.studyFilter = {
       sucursalId: branchId,
       medicoId: doctorId,
