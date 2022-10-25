@@ -14,6 +14,7 @@ import {
 import useWindowDimensions, { resizeWidth } from "../../../../app/util/window";
 import { IParameterList } from "../../../../app/models/parameter";
 import { IIndicationForm, IIndicationList } from "../../../../app/models/indication";
+import { VList } from "virtual-table-ant-design";
 
 const { Paragraph } = Typography;
 
@@ -64,16 +65,16 @@ const IndicationTable = ({ getResult, selectedReagent }: Props) => {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "30%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
     },
     {
-      ...getDefaultColumnProps("nombre", "Nombre", {
+      ...getDefaultColumnProps("descripcion", "Descripción", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "60%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -108,7 +109,7 @@ const IndicationTable = ({ getResult, selectedReagent }: Props) => {
         </Col>
         <Col span={24}>
           <Paragraph style={{textAlign: "center"}}>
-            Favor de ingresar el nombre o clave del reactivo.
+            Favor de ingresar el nombre o clave dela indicación.
           </Paragraph>
         </Col>
         <Col span={24}>
@@ -143,12 +144,16 @@ const IndicationTable = ({ getResult, selectedReagent }: Props) => {
         columns={columns}
         dataSource={[...indication]}
         sticky
-        scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
         rowSelection={rowSelection}
+        scroll={{ y: '30vh', x: true }}
+        components={VList({
+          height: 500,
+        })}
       />
       <Button
         type="primary"
         onClick={acceptChanges}
+        style={{marginLeft:"90%"}}
       >
         Aceptar
       </Button>

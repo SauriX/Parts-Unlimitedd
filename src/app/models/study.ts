@@ -11,7 +11,6 @@ export interface IStudyList {
   titulo: string;
   area: string;
   departamento: string;
-  formato: string;
   maquilador: string;
   metodo: string;
   activo: boolean;
@@ -30,7 +29,7 @@ export interface IStudyForm {
   activo: boolean;
   area: number;
   departamento: number;
-  formato: number;
+
   maquilador: number;
   metodo: number;
   tipomuestra: number;

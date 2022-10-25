@@ -119,15 +119,6 @@ const StudyTable: FC<StudyTableProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-      ...getDefaultColumnProps("formato", "Formato", {
-        searchState,
-        setSearchState,
-        width: 200,
-
-        windowSize: windowWidth,
-      }),
-    },
-    {
       ...getDefaultColumnProps("maquilador", "Maquilador", {
         searchState,
         setSearchState,
