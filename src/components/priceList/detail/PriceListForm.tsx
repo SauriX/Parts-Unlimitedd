@@ -40,6 +40,7 @@ import {
   ISearch,
 } from "../../../app/common/table/utils";
 import SelectInput from "../../../app/common/form/SelectInput";
+import StudyTable from "./StudyTable";
 
 
 const { Search } = Input;
@@ -62,7 +63,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
   componentRef,
   printing,
 }) => {
-  const { priceListStore, optionStore } = useStore();
+  const { priceListStore, optionStore,modalStore } = useStore();
   const {
     priceLists,
     getById,
@@ -79,7 +80,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
   } = priceListStore;
   const { getDepartmentOptions, departmentOptions, getareaOptions, areas } =
     optionStore;
-
+const {openModal,closeModal}=modalStore
   const [areaId, setAreaId] = useState<number>();
   const navigate = useNavigate();
   const [radioValue, setRadioValue] = useState<any>();
@@ -185,7 +186,16 @@ const PriceListForm: FC<PriceListFormProps> = ({
             estudiosSinPrecio.push(x);
           }});
           if(estudiosSinPrecio.length>0){
-            estudiosSinPrecio.forEach(X=>alerts.warning(`El estudio ${X.nombre} no tiene precio asignado`));
+            openModal({
+              title: "Estudios sin precio asignado",
+              body: (
+                <StudyTable
+                  data={estudiosSinPrecio}
+                  closeModal={closeModal}
+                />
+              ),
+            });
+            
     
             return
           }else{
