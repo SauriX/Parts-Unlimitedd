@@ -296,7 +296,8 @@ const {openModal,closeModal}=modalStore
       user!.sucMedCom = user!.sucursales;
       setValues(user!);
       form.setFieldsValue(user!);
-      setLista(user?.table!);
+      
+      setLista(tabla);
       console.log(user);
       setListSucursal(branches);
       setListCompañia(Companies);
@@ -480,9 +481,17 @@ const {openModal,closeModal}=modalStore
     }
   }
   const filterBySearch = (search: string) => {
-    var estudios = lista.filter(
+    console.log(search);
+    console.log(lista);
+    if(search!=null){   
+      console.log("if");
+      var estudios = lista.filter(
       (x) => x.clave.includes(search) || x.nombre.includes(search) );
+      console.log(lista);
     setValues((prev) => ({ ...prev, table: estudios }));
+    return
+  }
+  setValues((prev) => ({ ...prev, table: lista }));
   }
 
   const onFinish = async (newValues: IPriceListForm) => {
