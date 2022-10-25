@@ -18,7 +18,7 @@ import {
 } from "../../../app/common/table/utils";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
-import { IWeeLabBusquedaFolios } from "../../../app/models/weeClinic";
+import { IWeeLabFolioInfo } from "../../../app/models/weeClinic";
 import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import {
@@ -40,14 +40,14 @@ const RequestWee = () => {
     useStore();
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const { closeModal } = modalStore;
-  const { Laboratorio_BusquedaFolios } = weeClinicStore;
+  const { searchPatientByFolio } = weeClinicStore;
   const { coincidencias, create: createRecord } = procedingStore;
 
   const navigate = useNavigate();
 
   const [form] = Form.useForm<IProceedingForm>();
 
-  const [service, setService] = useState<IWeeLabBusquedaFolios>();
+  const [service, setService] = useState<IWeeLabFolioInfo>();
   const [coincidences, setCoincidences] = useState<IProceedingList[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -91,11 +91,11 @@ const RequestWee = () => {
   const onSearch = async (value: string) => {
     if (value) {
       setLoading(true);
-      const folios = await Laboratorio_BusquedaFolios(value);
+      const folio = await searchPatientByFolio(value);
       setLoading(false);
-      console.log(folios);
-      if (folios && folios.length > 0) {
-        const service = folios[0];
+      console.log(folio);
+      if (folio) {
+        const service = folio;
         const values: any = {
           nombre: service.nombre,
           apellido: service.paterno + " " + service.materno,
@@ -122,6 +122,10 @@ const RequestWee = () => {
   };
 
   const createNewRecord = async (newRecord: IProceedingForm) => {
+    if (!service) {
+      alerts.warning("No se encontró el servicio");
+      return;
+    }
     alerts.confirm(
       "¿Desea crear la solicitud?",
       `Se creará un expediente para ${
@@ -133,7 +137,9 @@ const RequestWee = () => {
         const recordId = await createRecord(data);
         setLoading(false);
         if (recordId) {
-          navigate(`/${views.request}/${recordId}`);
+          navigate(
+            `/${views.request}/${recordId}?weeFolio=${service.folioOrden}`
+          );
           closeModal();
         }
       }
@@ -141,12 +147,18 @@ const RequestWee = () => {
   };
 
   const createFromExistingRecord = async (record: IProceedingList) => {
+    if (!service) {
+      alerts.warning("No se encontró el servicio");
+      return;
+    }
     alerts.confirm(
       "¿Desea crear la solicitud?",
       `Se registrará una solicitud para ${record.nomprePaciente}`,
       async () => {
         if (record) {
-          navigate(`/${views.request}/${record.id}`);
+          navigate(
+            `/${views.request}/${record.id}?weeFolio=${service.folioOrden}`
+          );
           closeModal();
         }
       }
@@ -225,6 +237,7 @@ const RequestWee = () => {
                       formProps={{
                         name: "correo",
                       }}
+                      placeholder="Correo"
                       type="email"
                       width="85%"
                       max={500}
@@ -240,6 +253,7 @@ const RequestWee = () => {
                       formProps={{
                         name: "telefono",
                       }}
+                      placeholder="Teléfono"
                       width="90%"
                       mask={[
                         /[0-9]/,
@@ -277,6 +291,7 @@ const RequestWee = () => {
                       formProps={{
                         name: "sucursal",
                       }}
+                      placeholder="Sucursal"
                       width="100%"
                       options={branchCityOptions}
                       required

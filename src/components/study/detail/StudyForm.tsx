@@ -44,6 +44,8 @@ import { IIndicationList } from "../../../app/models/indication";
 import { IReagentList } from "../../../app/models/reagent";
 import { IPacketList } from "../../../app/models/packet";
 import views from "../../../app/util/view";
+import { ParameterModal } from "./modals/ParameterModal";
+import { IndicationModal } from "./modals/IndicationModal";
 
 type StudyFormProps = {
   componentRef: React.MutableRefObject<any>;
@@ -78,8 +80,10 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     getTaponOption,
     taponOption,
   } = optionStore;
-
-  const { getById, getAll, study, update, create } = studyStore;
+  const [selectedRowKeysp, setSelectedRowKeysp] = useState<React.Key[]>([]);
+  const [selectedRowKeysi, setSelectedRowKeysi] = useState<React.Key[]>([]);
+  const [selectedRowKeysw, setSelectedRowKeysw] = useState<React.Key[]>([]);
+  const { getById, getAll, study, update, create,parameterSelected,setParameterSelected,indicationSelected,setIndicationSelected,workListSelected,setWorkListSelected } = studyStore;
   const [form] = Form.useForm<IStudyForm>();
   const { width: windowWidth } = useWindowDimensions();
   const [flag, setFlag] = useState(0);
@@ -93,6 +97,8 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   const [Reagent, setReagent] = useState<{ clave: ""; id: string }>();
   const [visible, setVisible] = useState<boolean>(false);
   let { id } = useParams<UrlParams>();
+  
+
   const [disabled, setDisabled] = useState(() => {
     let result = false;
     const mode = searchParams.get("mode");
@@ -101,6 +107,46 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     }
     return result;
   });
+  const [searchState, setSearchState] = useState<ISearch>({
+    searchedText: "",
+    searchedColumn: "",
+  });
+  const columnsParameter: IColumns<IParameterList> = [
+    {
+      ...getDefaultColumnProps("nombre", "Parametro", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("clave", "Clave", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+  ];
+  const columnsIndication: IColumns<IIndicationList> = [
+    {
+      ...getDefaultColumnProps("nombre", "Indicación", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("clave", "Clave", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+  ];
   useEffect(() => {
     const readuser = async (id: number) => {
       setLoading(true);
@@ -108,6 +154,8 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       const all = await getAll("all");
       console.log(all);
       const user = await getById(id);
+      setParameterSelected(user?.parameters!);
+      setIndicationSelected(user?.indicaciones!);
       form.setFieldsValue(user!);
 
       setValues(user!);
@@ -289,7 +337,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
           deltaCheck: false,
           mostrarFormato: false,
           requerido: false,
-          tipoValor: 0,
+          tipoValor: "",
           valorFinal: "",
           valorInicial: "",
           solicitudEstudioId: 0,
@@ -300,10 +348,11 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       console.log(values);
     }
   };
-  const deleteParameter = (id: string) => {
-    const parameterList = values.parameters.filter((x) => x.id !== id);
-
-    setValues((prev) => ({ ...prev, parameters: parameterList }));
+  const deleteParameter = () => {
+    const filterList = parameterSelected.filter(
+      (x) => !selectedRowKeysp.includes(x.id)
+    );
+    setParameterSelected(filterList);
   };
   const addIndication = () => {
     if (indication) {
@@ -328,11 +377,13 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       console.log(values);
     }
   };
-  const deleteIndicacion = (id: number) => {
-    const etiquetaList = values.indicaciones.filter((x) => x.id !== id);
-
-    setValues((prev) => ({ ...prev, indicaciones: etiquetaList }));
+  const deleteIndicacion = () => {
+    const filterList = indicationSelected.filter(
+      (x) => !selectedRowKeysi.includes(x.id)
+    );
+    setIndicationSelected(filterList);
   };
+
   const addReagent = () => {
     if (Reagent) {
       if (values.reactivos.findIndex((x) => x.id === Reagent!.id) > -1) {
@@ -360,10 +411,20 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
 
     setValues((prev) => ({ ...prev, reactivos: List }));
   };
-  const [searchState, setSearchState] = useState<ISearch>({
-    searchedText: "",
-    searchedColumn: "",
-  });
+  const onSelectChangep = (newSelectedRowKeys: React.Key[]) => {
+    setSelectedRowKeysp(newSelectedRowKeys);
+  };
+  const rowSelectionp = {
+    selectedRowKeysp,
+    onChange: onSelectChangep,
+  };
+  const onSelectChangei = (newSelectedRowKeys: React.Key[]) => {
+    setSelectedRowKeysi(newSelectedRowKeys);
+  };
+  const rowSelectioni = {
+    selectedRowKeysi,
+    onChange: onSelectChangei,
+  };
   const columns: IColumns<IPacketList> = [
     {
       ...getDefaultColumnProps("id", "Id", {
@@ -710,115 +771,87 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
             )}
           />
           <div></div>
-          <Divider orientation="left">Parámetros del estudio</Divider>
-          <List<IParameterList>
-            header={
-              <div>
-                <Col md={12} sm={24} style={{ marginRight: 20 }}>
-                  Nombre parámetro
-                  <Select
-                    options={parameterOptions}
-                    onChange={(value, option: any) => {
-                      if (value) {
-                        setParameter({ id: value, clave: option.label });
-                      } else {
-                        setParameter(undefined);
-                      }
+          <PageHeader
+                ghost={false}
+                title={
+                  <HeaderTitle title="Parámetros del estudio" />
+                }
+                className="header-container"
+                extra={[
+                  parameterSelected.length > 0 && selectedRowKeysp.length > 0 ? (
+                    <Button type="primary" danger onClick={deleteParameter}>
+                      Eliminar
+                    </Button>
+                  ) : (
+                    ""
+                  ),
+                  <Button
+                    type="primary"
+                    onClick={async () => {
+                      await ParameterModal(
+                        
+                        parameterSelected.map((x) => x.id)
+                      );
                     }}
-                    style={{ width: 240, marginRight: 20, marginLeft: 10 }}
-                  />
-                  {disabled ||
-                    (!load && (
-                      <ImageButton
-                        key="agregar"
-                        title="Agregar Parametro"
-                        image="agregar-archivo"
-                        onClick={addParameter}
-                      />
-                    ))}
-                </Col>
-              </div>
-            }
-            footer={<div></div>}
-            bordered
-            dataSource={values.parameters}
-            renderItem={(item) => (
-              <List.Item>
-                <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                  <Typography.Text mark></Typography.Text>
-                  {item.clave}
-                </Col>
-                <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                  {disabled && !load && (
-                    <ImageButton
-                      key="Eliminar"
-                      title="Eliminar Parametro"
-                      image="Eliminar_Clinica"
-                      onClick={() => {
-                        deleteParameter(item.id);
-                      }}
-                    />
-                  )}
-                </Col>
-              </List.Item>
-            )}
-          />
+                  >
+                    Buscar
+                  </Button>,
+                ]}
+              ></PageHeader>
+              <Divider className="header-divider" />
+              <Table<IParameterList>
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columnsParameter}
+                pagination={false}
+                dataSource={[...parameterSelected]}
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
+                rowSelection={rowSelectionp}
+              />
           <div></div>
-          <Divider orientation="left">Indicaciones</Divider>
-          <List<IWorkList>
-            header={
-              <div>
-                <Col md={12} sm={24} style={{ marginRight: 20 }}>
-                  Nombre Indicación
-                  <Select
-                    options={indicationOptions}
-                    onChange={(value, option: any) => {
-                      if (value) {
-                        setIndication({ id: value, clave: option.label });
-                      } else {
-                        setIndication(undefined);
-                      }
+          <PageHeader
+                ghost={false}
+                title={
+                  <HeaderTitle title="Indicaciones del estudio" />
+                }
+                className="header-container"
+                extra={[
+                  indicationSelected.length > 0 && selectedRowKeysi.length > 0 ? (
+                    <Button type="primary" danger onClick={deleteIndicacion}>
+                      Eliminar
+                    </Button>
+                  ) : (
+                    ""
+                  ),
+                  <Button
+                    type="primary"
+                    onClick={async () => {
+                      await IndicationModal(
+                        
+                       indicationSelected.map((x) => x.id)
+                      );
                     }}
-                    style={{ width: 240, marginRight: 20, marginLeft: 10 }}
-                  />
-                  {disabled ||
-                    (!load && (
-                      <ImageButton
-                        key="agregar"
-                        title="Agregar Indicación"
-                        image="agregar-archivo"
-                        onClick={addIndication}
-                      />
-                    ))}
-                </Col>
-              </div>
-            }
-            footer={<div></div>}
-            bordered
-            dataSource={values.indicaciones}
-            renderItem={(item) => (
-              <List.Item>
-                <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                  <Typography.Text mark></Typography.Text>
-                  {item.nombre}
-                </Col>
-                <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                  {!disabled && !load && (
-                    <ImageButton
-                      key="Eliminar"
-                      title="Eliminar Indicación"
-                      image="Eliminar_Clinica"
-                      onClick={() => {
-                        deleteIndicacion(item.id);
-                      }}
-                    />
-                  )}
-                </Col>
-              </List.Item>
-            )}
-          />
+                  >
+                    Buscar
+                  </Button>,
+                ]}
+              ></PageHeader>
+              <Divider className="header-divider" />
+              <Table<IIndicationList>
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columnsIndication}
+                pagination={false}
+                dataSource={[...indicationSelected]}
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
+                rowSelection={rowSelectionp}
+              />
           <div></div>
-          <Divider orientation="left">Reactivos</Divider>
+          {/* <Divider orientation="left">Reactivos</Divider>
           <List<IReagentList>
             header={
               <div>
@@ -870,7 +903,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                 </Col>
               </List.Item>
             )}
-          />
+          /> */}
           <Row>
             <Col
               md={24}

@@ -239,6 +239,7 @@ export default class ClinicResultsStores {
           solicitudId: requestId,
           estatus: x.estatusId,
           resultado: y.resultado,
+          formula: y.formula!,
           parametroId: y.id,
           nombre: y.nombre,
           valorInicial: y.valorInicial,

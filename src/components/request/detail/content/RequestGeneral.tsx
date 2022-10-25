@@ -190,6 +190,7 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
             }}
             options={originOptions}
             readonly
+            required
           />
         </Col>
         <Col span={24}>
@@ -199,6 +200,7 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
               label: "Médico",
             }}
             options={MedicOptions}
+            required
           />
         </Col>
         <Col span={24}>

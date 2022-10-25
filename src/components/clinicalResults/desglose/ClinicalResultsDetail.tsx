@@ -327,10 +327,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     setLoading(true);
     const labResults: IClinicResultCaptureForm[] = newValuesForm.parametros;
     let success = false;
+    await updateStatus();
+
     success = await updateResults(labResults);
     if (success) {
-      await updateStatus();
-      console.log(updateStatus())
       await loadInit();
       form.setFieldValue(
         "resultado",
@@ -343,7 +343,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
 
   const cancelation = async (estado: number) => {
     await updateStatusStudy(currentStudy.id!, estado);
-    if(estado === status.requestStudy.solicitado){
+    if (estado === status.requestStudy.solicitado) {
       cancelResults(currentStudy.id!);
     }
     await loadInit();
@@ -359,29 +359,41 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       nuevoEstado = esCancelacion
         ? status.requestStudy.solicitado
         : status.requestStudy.validado;
+      await updateStatusStudy(currentStudy.id!, nuevoEstado);
     }
     if (currentStudy.estatusId === status.requestStudy.validado) {
       nuevoEstado = esCancelacion
         ? status.requestStudy.capturado
         : status.requestStudy.liberado;
+      await updateStatusStudy(currentStudy.id!, nuevoEstado);
     }
     if (currentStudy.estatusId === status.requestStudy.liberado) {
       nuevoEstado = esCancelacion
         ? status.requestStudy.validado
         : status.requestStudy.enviado;
-    }
-    if(esCancelacion){
-      await cancelation(nuevoEstado);
-    } 
-    else {
       await updateStatusStudy(currentStudy.id!, nuevoEstado);
     }
-    return nuevoEstado
+    if (currentStudy.estatusId === status.requestStudy.enviado) {
+      nuevoEstado = esCancelacion
+        ? status.requestStudy.liberado
+        : status.requestStudy.enviado;
+      await updateStatusStudy(currentStudy.id!, nuevoEstado);
+    }
+    if (esCancelacion) {
+      await cancelation(nuevoEstado);
+    }
+    return nuevoEstado;
   };
 
   const disableInput = () => {
     return currentStudy.estatusId > 3;
   };
+
+  const referenceValues = (tipoValor: number, valorInicial: string, valorFinal: string) => {
+    if(tipoValor == 1) {
+      return {valorInicial}
+    }
+  }
 
   return (
     <Fragment>
@@ -444,70 +456,65 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                     <Form.List name="parametros">
                       {(fields) => (
                         <>
-                          {fields.map((field, index) => (
-                            <Fragment key={field.key}>
-                              <Col span={6}>
-                                <h4>
-                                  {form.getFieldValue([
-                                    "parametros",
-                                    field.name,
-                                    "nombre",
-                                  ])}
-                                </h4>
-                              </Col>
-                              <Col span={6}>
-                                <Form.Item
-                                  {...field}
-                                  name={[field.name, "resultado"]}
-                                  fieldKey={[field.key, "resultado"]}
-                                  validateTrigger={["onChange", "onBlur"]}
-                                  noStyle
-                                >
-                                  {form.getFieldValue([
-                                    "parametros",
-                                    field.name,
-                                    "tipoValorId",
-                                  ]) == 10 ? (
-                                    <TextArea
-                                      placeholder="Resultado"
-                                      style={{ width: "80%" }}
-                                      rows={4}
-                                      allowClear
-                                      autoSize
-                                    />
-                                  ) : (
-                                    <Input
-                                      placeholder="Resultado"
-                                      style={{ width: "80%" }}
-                                      allowClear
-                                    />
-                                  )}
-                                </Form.Item>
-                              </Col>
-                              <Col span={6}>
-                                {form.getFieldValue([
-                                  "parametros",
-                                  field.name,
-                                  "unidadNombre",
-                                ]) == null
-                                  ? "No cuenta con unidades"
-                                  : form.getFieldValue([
-                                      "parametros",
-                                      field.name,
-                                      "unidadNombre",
-                                    ])}
-                              </Col>
-                              <Col span={6}>
-                                {form.getFieldValue([
-                                  "parametros",
-                                  field.name,
-                                  "valorInicial",
-                                ]) == null
-                                  ? "No cuenta con valores de referencia"
-                                  : "valorInicial"}
-                              </Col>
-                            </Fragment>
-                          ))}
+                          {fields.map((field, index) => {
+                            let fieldValue = form.getFieldValue([
+                              "parametros",
+                              field.name,
+                            ])
+                            return (
+                              <Fragment key={field.key}>
+                                <Col span={6}>
+                                  <h4>
+                                    {fieldValue.nombre}
+                                  </h4>
+                                </Col>
+                                <Col span={6}>
+                                  <Form.Item
+                                    {...field}
+                                    name={[field.name, "resultado"]}
+                                    fieldKey={[field.key, "resultado"]}
+                                    validateTrigger={["onChange", "onBlur"]}
+                                    noStyle
+                                  >
+                                    {fieldValue.tipoValorId == 10 ? (
+                                      <TextArea
+                                        placeholder="Resultado"
+                                        style={{ width: "80%" }}
+                                        rows={4}
+                                        allowClear
+                                        autoSize
+                                      />
+                                    ) : (
+                                      <Input
+                                        placeholder="Resultado"
+                                        style={{ width: "80%" }}
+                                        allowClear
+                                        className={
+                                          form.getFieldValue([
+                                            "parametros",
+                                            field.name,
+                                            "resultado",
+                                          ])
+                                            ? "input-placeholder"
+                                            : ""
+                                        }
+                                      />
+                                    )}
+                                  </Form.Item>
+                                </Col>
+                                <Col span={6}>
+                                  {fieldValue.unidadNombre == null
+                                    ? "No cuenta con unidades"
+                                    : fieldValue.unidadNombre}
+                                </Col>
+                                <Col span={6}>
+                                  {fieldValue.valorInicial == null
+                                    ? "No cuenta con valores de referencia" : "Si"}
+                                    // : referenceValues(fieldValue.tipoValorId, fieldValue.valorInicial, fieldValue.valorFinal
+                                </Col>
+                              </Fragment>
+                            );
+                          })}
                         </>
                       )}
                     </Form.List>
