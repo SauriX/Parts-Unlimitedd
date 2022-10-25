@@ -6,7 +6,7 @@ export const IndicationModal = (selectedRowKeys: React.Key[]) => {
 
   return new Promise((resolve) => {
     openModal({
-      title: "Agregar parámetros",
+      title: "Agregar Indicaciones",
       body: (
         <IndicationTable
           getResult={(data) => {

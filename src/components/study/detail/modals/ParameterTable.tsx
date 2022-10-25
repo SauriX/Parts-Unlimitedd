@@ -13,6 +13,7 @@ import {
 } from "../../../../app/common/table/utils";
 import useWindowDimensions, { resizeWidth } from "../../../../app/util/window";
 import { IParameterList } from "../../../../app/models/parameter";
+import { VList } from "virtual-table-ant-design";
 
 const { Paragraph } = Typography;
 
@@ -72,7 +73,7 @@ const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
       ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "50%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -107,7 +108,7 @@ const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
         </Col>
         <Col span={24}>
           <Paragraph style={{textAlign: "center"}}>
-            Favor de ingresar el nombre o clave del reactivo.
+            Favor de ingresar el nombre o clave del parámetro.
           </Paragraph>
         </Col>
         <Col span={24}>
@@ -142,12 +143,16 @@ const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
         columns={columns}
         dataSource={[...parameters]}
         sticky
-        scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+        scroll={{ y: '30vh', x: true }}
+        components={VList({
+          height: 500,
+        })}
         rowSelection={rowSelection}
       />
       <Button
         type="primary"
         onClick={acceptChanges}
+        style={{marginLeft:"90%"}}
       >
         Aceptar
       </Button>
