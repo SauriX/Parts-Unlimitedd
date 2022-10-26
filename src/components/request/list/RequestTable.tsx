@@ -16,6 +16,7 @@ import {
 } from "../../../app/models/request";
 import { moneyFormatter } from "../../../app/util/utils";
 import views from "../../../app/util/view";
+import moment from "moment";
 
 const { Link, Text } = Typography;
 
@@ -32,7 +33,11 @@ const RequestTable = () => {
 
   useEffect(() => {
     const readRequests = async () => {
-      await getByFilter({});
+      await getByFilter({
+        tipoFecha: 1,
+        fechaInicial: moment().utcOffset(0, true),
+        fechaFinal: moment().utcOffset(0, true),
+      });
     };
 
     readRequests();
