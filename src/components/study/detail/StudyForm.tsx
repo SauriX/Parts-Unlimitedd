@@ -50,6 +50,8 @@ import views from "../../../app/util/view";
 import { ParameterModal } from "./modals/ParameterModal";
 import { IndicationModal } from "./modals/IndicationModal";
 import CheckableTag from "antd/lib/tag/CheckableTag";
+import userEvent from "@testing-library/user-event";
+import WorkList from "../../../views/WorkList";
 
 type StudyFormProps = {
   componentRef: React.MutableRefObject<any>;
@@ -87,7 +89,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   const [selectedRowKeysp, setSelectedRowKeysp] = useState<React.Key[]>([]);
   const [selectedRowKeysi, setSelectedRowKeysi] = useState<React.Key[]>([]);
   const [selectedRowKeysw, setSelectedRowKeysw] = useState<React.Key[]>([]);
-  const [selectedTags, setSelectedTags] = useState<IWorkList[]>();
+ 
   const { getById, getAll, study, update, create,parameterSelected,setParameterSelected,indicationSelected,setIndicationSelected,workListSelected,setWorkListSelected } = studyStore;
   const [form] = Form.useForm<IStudyForm>();
   const { width: windowWidth } = useWindowDimensions();
@@ -153,12 +155,12 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     setEditInputIndex(-1);
     setInputValue('');
   };
-  const handleChange = (tag: IWorkList, checked: boolean) => {
+/*   const handleChange = (tag: IWorkList, checked: boolean) => {
     const nextSelectedTags = checked ? [...selectedTags!, tag] : selectedTags!.filter(t => t.id !== tag.id);
     console.log('You are interested in: ', nextSelectedTags);
     setSelectedTags(nextSelectedTags);
   };
-
+ */
   const [disabled, setDisabled] = useState(() => {
     let result = false;
     const mode = searchParams.get("mode");
@@ -214,6 +216,12 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       const all = await getAll("all");
       console.log(all);
       const user = await getById(id);
+
+      if(user?.workLists!=""&& user?.workLists!=null){
+        var tags = user.workLists.split("-");
+        setTags(tags);
+        console.log(tags);
+      }
       setParameterSelected(user?.parameters!);
       setIndicationSelected(user?.indicaciones!);
       form.setFieldsValue(user!);
@@ -311,6 +319,15 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     setLoading(true);
     const User = { ...values, ...newValues };
     let success = false;
+    var worklist = "";
+    for(var i=0;i<tags.length;i++){
+      if(i==0){
+        worklist +=tags[i];
+      }else{
+        worklist +=`-${tags[i]}`;
+      }
+    }
+    User.workLists = worklist;
     if (!User.id) {
       success = await create(User);
     } else {
@@ -584,7 +601,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
             scrollToFirstError
           >
             <Row>
-              <Col md={6} sm={24} xs={6}>
+              <Col md={8} sm={24} xs={8}>
                 <TextInput
                   formProps={{
                     name: "clave",
@@ -595,7 +612,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
-              <Col md={6} sm={24} xs={6}>
+              <Col md={8} sm={24} xs={8}>
                 <SelectInput
                   formProps={{ name: "departamento", label: "Departamento" }}
                   options={departmentOptions.filter((x) => x.value != 1)}
@@ -603,7 +620,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   required
                 />
               </Col>
-              <Col md={6} xs={6}>
+              <Col md={8} xs={8}>
                 <SelectInput
                     formProps={{ name: "tapon", label: "Etiqueta" }}
                     options={taponOption}
@@ -611,14 +628,8 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                     required
                   />
               </Col>
-              <Col md={6} xs={6}>
-              <SwitchInput
-                  name="urgencia"
-                  label="Urgencia"
-                  readonly={disabled}
-                />
-              </Col>
-              <Col md={6} sm={24} xs={6}>
+
+              <Col md={8} sm={24} xs={8}>
                 <NumberInput
                   formProps={{
                     name: "orden",
@@ -630,7 +641,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
-              <Col md={6} sm={24} xs={6}>
+              <Col md={8} sm={24} xs={8}>
                 <SelectInput
                   formProps={{ name: "area", label: "Área" }}
                   options={areas}
@@ -638,7 +649,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   required
                 />
               </Col>
-              <Col md={6} sm={24} xs={6}>
+              <Col md={8} sm={24} xs={8}>
                 <NumberInput
                   formProps={{
                     name: "cantidad",
@@ -648,6 +659,111 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   max={9999999999999999}
                   readonly={disabled}
                   required
+                />
+              </Col>
+              <Col md={8} sm={24} xs={8}>
+                <TextInput
+                  formProps={{
+                    name: "nombre",
+                    label: "Nombre",
+                  }}
+                  max={100}
+                  required
+                  readonly={disabled}
+                />
+              </Col>
+              <Col md={8} sm={24} xs={8}>
+                <SelectInput
+                  formProps={{ name: "maquilador", label: "Maquilador" }}
+                  options={MaquiladorOptions}
+                  readonly={disabled}
+                  required
+                />
+              </Col>
+              <Col md={8} sm={24} xs={8}>
+                <SelectInput
+                  formProps={{ name: "tipomuestra", label: "Tipo de muestra" }}
+                  options={sampleTypeOptions}
+                  readonly={disabled}
+                  required
+                />
+              </Col>
+              <Col md={8} sm={24} xs={8}>
+                <NumberInput
+                  formProps={{
+                    name: "dias",
+                    label: "Días",
+                  }}
+                  min={0}
+                  max={9999999999999999}
+                  readonly={!visible || disabled}
+                />
+              </Col>
+              <Col md={8} sm={24} xs={8}>
+                <TextInput
+                  formProps={{
+                    name: "titulo",
+                    label: "Titulo",
+                  }}
+                  max={100}
+                  readonly={disabled}
+                />
+              </Col>
+              <Col md={8} sm={24} xs={8}>
+                <SelectInput
+                  formProps={{ name: "metodo", label: "Método" }}
+                  options={MethodOptions}
+                  readonly={disabled}
+                  required
+                />
+              </Col>
+              <Col md={8} xs={8}>
+                <NumberInput
+                    formProps={{
+                      name: "diasrespuesta",
+                      label: "Días de respuesta",
+                    }}
+                    min={0}
+                    max={9999999999999999}
+                    readonly={disabled}
+                  />
+              </Col>
+
+              <Col md={8} sm={24} xs={8}>
+                <TextInput
+                  formProps={{
+                    name: "nombreCorto",
+                    label: "Nombre corto",
+                  }}
+                  max={100}
+                  required
+                  readonly={disabled}
+                />
+              </Col>
+              <Col md={8} sm={24} xs={8}>
+              <NumberInput
+                  formProps={{
+                    name: "tiemporespuesta",
+                    label: "Tiempo de respuesta",
+                  }}
+                  min={1}
+                  max={9999999999999999}
+                  readonly={disabled}
+                  required
+                />
+              </Col>
+              <Col md={6} sm={24} xs={6}>
+                <SwitchInput
+                  name="prioridad"
+                  label="Prioridad"
+                  readonly={disabled}
+                />
+              </Col>
+              <Col md={6} xs={6}>
+              <SwitchInput
+                  name="urgencia"
+                  label="Urgencia"
+                  readonly={disabled}
                 />
               </Col>
               <Col md={6} sm={24} xs={6}>
@@ -661,75 +777,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
-
               <Col md={6} sm={24} xs={6}>
-                <TextInput
-                  formProps={{
-                    name: "nombre",
-                    label: "Nombre",
-                  }}
-                  max={100}
-                  required
-                  readonly={disabled}
-                />
-              </Col>
-              <Col md={6} sm={24} xs={6}>
-                <SelectInput
-                  formProps={{ name: "maquilador", label: "Maquilador" }}
-                  options={MaquiladorOptions}
-                  readonly={disabled}
-                  required
-                />
-              </Col>
-              <Col md={6} sm={24} xs={6}>
-                <SelectInput
-                  formProps={{ name: "tipomuestra", label: "Tipo de muestra" }}
-                  options={sampleTypeOptions}
-                  readonly={disabled}
-                  required
-                />
-              </Col>
-              <Col md={6} sm={24} xs={6}>
-                <NumberInput
-                  formProps={{
-                    name: "dias",
-                    label: "Días",
-                  }}
-                  min={0}
-                  max={9999999999999999}
-                  readonly={!visible || disabled}
-                />
-              </Col>
-              <Col md={6} sm={24} xs={6}>
-                <TextInput
-                  formProps={{
-                    name: "titulo",
-                    label: "Titulo",
-                  }}
-                  max={100}
-                  readonly={disabled}
-                />
-              </Col>
-              <Col md={6} sm={24} xs={6}>
-                <SelectInput
-                  formProps={{ name: "metodo", label: "Método" }}
-                  options={MethodOptions}
-                  readonly={disabled}
-                  required
-                />
-              </Col>
-              <Col md={7} xs={6}>
-                <NumberInput
-                    formProps={{
-                      name: "diasrespuesta",
-                      label: "Días de respuesta",
-                    }}
-                    min={0}
-                    max={9999999999999999}
-                    readonly={disabled}
-                  />
-              </Col>
-              <Col md={5} sm={24} xs={6}>
                 <SwitchInput
                   name="activo"
                   label="Activo"
@@ -740,36 +788,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                       alerts.info(messages.confirmations.disable);
                     }
                   }}
-                  readonly={disabled}
-                />
-              </Col>
-              <Col md={6} sm={24} xs={6}>
-                <TextInput
-                  formProps={{
-                    name: "nombreCorto",
-                    label: "Nombre corto",
-                  }}
-                  max={100}
-                  required
-                  readonly={disabled}
-                />
-              </Col>
-              <Col md={8} sm={24} xs={6}>
-              <NumberInput
-                  formProps={{
-                    name: "tiemporespuesta",
-                    label: "Tiempo de respuesta",
-                  }}
-                  min={1}
-                  max={9999999999999999}
-                  readonly={disabled}
-                  required
-                />
-              </Col>
-              <Col md={4} sm={24} xs={6}>
-                <SwitchInput
-                  name="prioridad"
-                  label="Prioridad"
                   readonly={disabled}
                 />
               </Col>
@@ -806,7 +824,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
           <Tag
             className="edit-tag"
             key={tag}
-            closable={index !== 0}
+            closable={true}
             onClose={() => handleClose(tag)}
           >
             <span
@@ -862,29 +880,31 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                 <Row>
                   <Col md={16}></Col>
                   <Col md={4}>
-                          {
-                            parameterSelected.length > 0 && selectedRowKeysp.length > 0 ? (
-                              <Button style={{marginLeft:"145%"}} type="primary" danger onClick={deleteParameter}>
-                                Eliminar
-                              </Button>
-                            ) : (
-                              ""
-                            )
-                          }
+
                   </Col>
                   <Col md={4}>
-                  <Button
-                  style={{marginLeft:"76%"}}
-                    type="primary"
-                    onClick={async () => {
-                      await ParameterModal(
-                        
-                        parameterSelected.map((x) => x.id)
-                      );
-                    }}
-                  >
-                    Buscar
-                  </Button>
+                    <div style={{display:"inline-block",marginLeft:"43%"}}>
+                    {
+                      parameterSelected.length > 0 && selectedRowKeysp.length > 0 && 
+                        <Button  type="primary" danger onClick={()=>{deleteParameter()}}>
+                          Eliminar
+                        </Button>
+                            
+                    }
+                    <Button
+                    
+                      type="primary"
+                      onClick={async () => {
+                        await ParameterModal(
+                          
+                          parameterSelected.map((x) => x.id)
+                        );
+                      }}
+                    >
+                      Buscar
+                    </Button>
+                    </div>
+
                   </Col>
                 </Row>
                 <br />
@@ -914,20 +934,20 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                 <Row>
                   <Col md={16}></Col>
                   <Col md={4}>
-                          {
-                            indicationSelected.length > 0 && selectedRowKeysi.length > 0 ? (
-                              <Button style={{marginLeft:"145%"}} type="primary" danger onClick={deleteIndicacion}>
-                                Eliminar
-                              </Button>
-                            ) : (
-                              ""
-                            )
 
-                          }
                   </Col>
                   <Col md={4}>
+                  <div style={{display:"inline-block",marginLeft:"43%"}}>
+                  {
+                            indicationSelected.length > 0 && selectedRowKeysi.length > 0 && 
+                              <Button  type="primary" danger onClick={deleteIndicacion}>
+                                Eliminar
+                              </Button>
+                          
+
+                          }
                   <Button
-                  style={{marginLeft:"76%"}}
+                  
                     type="primary"
                     onClick={async () => {
                       await IndicationModal(
@@ -938,6 +958,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   >
                     Buscar
                   </Button>
+                  </div>
                   </Col>
                 </Row>
                 <br />

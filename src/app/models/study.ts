@@ -29,7 +29,7 @@ export interface IStudyForm {
   activo: boolean;
   area: number;
   departamento: number;
-
+  workLists: string;
   maquilador: number;
   metodo: number;
   tipomuestra: number;
@@ -73,6 +73,7 @@ export class StudyFormValues implements IStudyForm {
   paquete: IPacketList[] = [];
   tapon = 0;
   cantidad = 0;
+  workLists="";
   constructor(init?: IStudyForm) {
     Object.assign(this, init);
   }
