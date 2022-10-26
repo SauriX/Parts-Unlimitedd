@@ -154,12 +154,12 @@ import { formItemLayout } from "../../../app/util/utils";
   const [form] = Form.useForm<ISearchPending>();
   const [values, setValues] = useState<ISearchPending>(new searchValues());
   const [estatus,setEstatus]=useState<IStatus>({
-    created:true,
-    smpling:true,
+    created:false,
+    smpling:false,
     route:false,
     entregado:false,
   });
-  const [current, setCurrent] = useState(1);
+  const [current, setCurrent] = useState<number>(-1);
   let navigate = useNavigate();
 
   useEffect(()=>{
@@ -168,12 +168,12 @@ import { formItemLayout } from "../../../app/util/utils";
       if(estatus.route){
         setCurrent(2);
       }
-      if(estatus.entregado){
+      if(estatus.route){
         setCurrent(3);
       }
-      if(!estatus.entregado&&!estatus.route){
+       if(estatus.created&&estatus.smpling&&!estatus.route &&!estatus.route){
         setCurrent(1);
-      }
+      } 
   },[estatus]);
   useEffect(()=>{
     setexpandedRowKeys(pendings!.map((x)=>x.id));
@@ -354,7 +354,7 @@ import { formItemLayout } from "../../../app/util/utils";
             <Button
               type="link"
               onClick={() => {
-                navigate(`/ShipmentTracking/${route.id}`);
+                navigate(`/ReciveTracking/${route.id}`);
               }}
             >
               {value}
@@ -399,7 +399,7 @@ import { formItemLayout } from "../../../app/util/utils";
             title: "Fecha de entrega",
             align: "center",
             width:  "10%",
-            render: (value) => (moment(value).format('MMMM Do, YYYY')),
+            render: (value) => (moment(value).format('MMMM D, YYYY')),
           },
           {
             key: "editar",
@@ -420,7 +420,7 @@ import { formItemLayout } from "../../../app/util/utils";
               <div>
                 {moment(value).utc().format('h:mmA')}
                 <br />
-                {moment(value).format('MMMM Do, YYYY')}
+                {moment(value).format('MMMM D, YYYY')}
               </div>
               
               ),

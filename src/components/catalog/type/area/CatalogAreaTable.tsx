@@ -105,7 +105,7 @@ const CatalogAreaTable: FC<CatalogAreaTableProps> = ({ componentRef, printing })
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (
         <IconButton
-          title="Editar reactivo"
+          title="Editar área"
           icon={<EditOutlined />}
           onClick={() => {
             navigate(`/catalogs/${value}?${searchParams}&mode=edit`);

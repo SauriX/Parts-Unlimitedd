@@ -17,6 +17,7 @@ export interface IClinicResultList {
   seleccion: boolean;
   estudios: IClinicStudy[];
   procedencia: number;
+  clavePatologica: string;
 }
 export interface IResultPathological {
   id?: string;
@@ -53,13 +54,15 @@ export interface IClinicResultCaptureForm {
   solicitudId: string;
   estudioId: number;
   tipoValorId: string;
-  valorInicial: number;
-  valorFinal: number;
+  valorInicial: string;
+  valorFinal: string;
   parametroId: string;
   resultado?: string;
-  unidades: number;
+  unidades?: number;
   unidadNombre: string;
   solicitudEstudioId?: number;
+  estatus: number;
+  formula?: string;
 }
 
 export interface IClinicResultForm {
@@ -136,12 +139,14 @@ export class ClinicResultsCaptureForm implements IClinicResultCaptureForm {
   id = "";
   solicitudId = "";
   estudioId = 0;
-  tipoValorId = "0";
+  tipoValorId = "";
+  estatus = 0;
   nombre = "";
-  valorInicial = 0;
-  valorFinal = 0;
+  valorInicial = "";
+  valorFinal = "";
   parametroId = "";
   resultado = "";
+  formula = "";
   unidades = 0;
   solicitudEstudioId = 0;
   unidadNombre = "";

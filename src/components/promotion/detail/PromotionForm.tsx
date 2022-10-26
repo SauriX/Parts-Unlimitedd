@@ -53,6 +53,7 @@ const { width: windowWidth } = useWindowDimensions();
   const [aeraSearch, setAreaSearch] = useState(areas);
   const [selectedTags, setSelectedTags] = useState<IDias[]>([]);
   const [loading, setLoading] = useState(false);
+  const [flag, setFlag] = useState(false);
   const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
   const [values, setValues] = useState<IPromotionForm>(new PromotionFormValues());
   const [depId, setDepId] = useState<number>();
@@ -74,7 +75,7 @@ const { width: windowWidth } = useWindowDimensions();
     getMedics();
   },[getMedicOptions]);
   const setFechaInicial=(fecha:moment.Moment)=>{
-
+console.log(fecha.toDate(),"fecha");
     console.log("fecha1");
     let estudio = estudios.map(x=> {
       let data:IPromotionEstudioList = {
@@ -95,7 +96,7 @@ const { width: windowWidth } = useWindowDimensions();
       }
     return data;
      });
-
+      console.log(estudio,"estudio");
      setEstudios(estudio!);
      setValues((prev) => ({ ...prev, estudio: estudio!,fechaInicial:fecha.toDate() }));
   };
@@ -147,8 +148,8 @@ const { width: windowWidth } = useWindowDimensions();
           descuentoPorcentaje:(values.tipoDescuento=="porcent"? values.cantidad:0),
           descuentoCantidad:(values.tipoDescuento!="porcent"? values.cantidad:0),
           precioFinal: 0,
-          fechaInicial: moment().toDate(),
-          fechaFinal:moment().toDate(),
+          fechaInicial: values.fechaInicial,
+          fechaFinal:values.fechaFinal,
           activo:false,
           precio: x.precio! ,
           paquete:false,
@@ -157,7 +158,8 @@ const { width: windowWidth } = useWindowDimensions();
         }
       return data;
        });
-       let paquetes = priceList?.paquete.map(x=> {
+       /* cambiar aqui*/
+        let paquetes = priceList?.paquete.map(x=> {
         let data:IPromotionEstudioList = {
           id:x.id,
           area:x.area,
@@ -166,23 +168,25 @@ const { width: windowWidth } = useWindowDimensions();
           descuentoPorcentaje:(values.tipoDescuento=="porcent"? values.cantidad:0),
           descuentoCantidad:(values.tipoDescuento!="porcent"? values.cantidad:0),
           precioFinal: 0,
-          fechaInicial: moment().toDate(),
-          fechaFinal:moment().toDate(),
+          fechaInicial: values.fechaInicial,
+          fechaFinal:values.fechaFinal,
           activo:false,
           precio: x.precioFinal!  ,
           paquete:true,
           selectedTags:[],
           departamento:x.departamento
         }
+
         console.log(x);
       return data;
        });
 
        estudio= estudio?.concat(paquetes!);
+       
        setEstudios(estudio!);
 
        setValues((prev) => ({ ...prev, estudio: estudio! }));
-       
+       setFlag(!flag);
     }
 
     if (field === "cantidad") {
@@ -665,6 +669,14 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     setLoading(true);
 
     const reagent = { ...values, ...newValues };
+
+    var counter =0;
+    values.estudio.forEach(x=>{if(x.precioFinal==0){ counter++}})
+    if(counter>0){
+      alerts.warning("El precio final debe ser mayor a 0");
+      setLoading(false);
+      return
+    }
     reagent.dias= selectedTags; 
     console.log(reagent,"en el onfish")
     console.log(reagent);
@@ -693,7 +705,14 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     navigate(`/${views.promo}/${id}?${searchParams}&mode=edit`);
     setReadonly(false);
   };
-
+useEffect(()=>{
+  if(values.tipoDescuento=="porcent"){
+    values.estudio.forEach(x=>{setStudydiscunt(x.descuentoPorcentaje,x,x.paquete!);})
+  }else{
+    values.estudio.forEach(x=>{setStudydiscuntc(x.descuentoCantidad,x,x.paquete!);});
+  }
+    selectedTags.forEach(x=>{handleChange(x, true)});
+},[flag]);
   const getPage = (id: string) => {
     return promotionLists.findIndex((x) => x.id === Number(id)) + 1;
   };

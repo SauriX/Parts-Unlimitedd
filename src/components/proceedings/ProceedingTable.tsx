@@ -23,7 +23,9 @@ import TextInput from "../../app/common/form/proposal/TextInput";
 import { formItemLayout } from "../../app/util/utils";
 import { useForm } from "antd/lib/form/Form";
 import DateInput from "../../app/common/form/proposal/DateInput";
-const {Panel}=Collapse
+import { IFormError } from "../../app/models/shared";
+import MaskInput from "../../app/common/form/proposal/MaskInput";
+const { Panel } = Collapse
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
@@ -48,12 +50,12 @@ type ProceedingTableProps = {
     telefono:"8167889100",
 }] */
 const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) => {
-  const { procedingStore,optionStore,locationStore } = useStore();
-  const { expedientes, getAll,getnow,setSearch,search } = procedingStore;
-  const {BranchOptions,getBranchOptions}= optionStore;
-  const {getCity,cityOptions}=locationStore;
+  const { procedingStore, optionStore, locationStore } = useStore();
+  const { expedientes, getAll, getnow, setSearch, search } = procedingStore;
+  const { BranchOptions, getBranchOptions } = optionStore;
+  const { getCity, cityOptions } = locationStore;
   const [searchParams] = useSearchParams();
-
+  const [errors, setErrors] = useState<IFormError[]>([]);
   let navigate = useNavigate();
 
   const { width: windowWidth } = useWindowDimensions();
@@ -66,20 +68,20 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
   });
 
   console.log("Table");
-  useEffect(()=>{
-    const readData = async(search:ISearchMedical)=>{
+  useEffect(() => {
+    const readData = async (search: ISearchMedical) => {
       await getBranchOptions();
       await getnow(search!);
     }
 
     readData(search);
-  },[getBranchOptions]);
-  useEffect(()=>{
-    const readData = async()=>{
+  }, [getBranchOptions]);
+  useEffect(() => {
+    const readData = async () => {
       await getCity();
     }
     readData();
-  },[getCity])
+  }, [getCity])
   useEffect(() => {
     const readPriceList = async () => {
       setLoading(true);
@@ -88,14 +90,14 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
     };
 
     if (expedientes.length === 0) {
-        readPriceList();
+      readPriceList();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getnow]);
- const onfinish =async ()=>{
-
-  await getnow(search!);
- }
+  const onfinish = async (values: ISearchMedical) => {
+    setSearch(values);
+    await getnow(values!);
+  }
   const columns: IColumns<IProceedingList> = [
     {
       ...getDefaultColumnProps("expediente", "Expediente", {
@@ -126,50 +128,50 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
       }),
     },
     {
-        ...getDefaultColumnProps("genero", "Genero", {
-          searchState,
-          setSearchState,
-          width: "10%",
-          minWidth: 150,
-          windowSize: windowWidth,
-        }),
-      },
-      {
-        ...getDefaultColumnProps("edad", "Edad", {
-          searchState,
-          setSearchState,
-          width: "10%",
-          minWidth: 150,
-          windowSize: windowWidth,
-        }),
-      },
-      {
-        ...getDefaultColumnProps("fechaNacimiento", "Fecha de nacimiento", {
-          searchState,
-          setSearchState,
-          width: "20%",
-          minWidth: 150,
-          windowSize: windowWidth,
-        }),
-      },
-      {
-        ...getDefaultColumnProps("monederoElectronico", "Monedero electrónico", {
-          searchState,
-          setSearchState,
-          width: "10%",
-          minWidth: 150,
-          windowSize: windowWidth,
-        }),
-      },
-      {
-        ...getDefaultColumnProps("telefono", "Teléfono", {
-          searchState,
-          setSearchState,
-          width: "10%",
-          minWidth: 150,
-          windowSize: windowWidth,
-        }),
-      },
+      ...getDefaultColumnProps("genero", "Genero", {
+        searchState,
+        setSearchState,
+        width: "10%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("edad", "Edad", {
+        searchState,
+        setSearchState,
+        width: "10%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("fechaNacimiento", "Fecha de nacimiento", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("monederoElectronico", "Monedero electrónico", {
+        searchState,
+        setSearchState,
+        width: "10%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("telefono", "Teléfono", {
+        searchState,
+        setSearchState,
+        width: "10%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
     {
       key: "editar",
       dataIndex: "id",
@@ -193,7 +195,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Lista de Expedientes"  />}
+          title={<HeaderTitle title="Catálogo de Lista de Expedientes" />}
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
@@ -210,7 +212,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
 
   return (
     <Fragment>
- {/*        <Row>
+      {/*        <Row>
 
 
 
@@ -221,64 +223,103 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
                 <Select allowClear options={BranchOptions} onChange={(value)=>{setSearch({ ...search,sucursal:value  })}} style={{marginLeft:"10px",width:"300px"}} />
             </Col>
         </Row> */}
-            <Collapse ghost className="request-filter-collapse">
-      <Panel
-        header="Filtros"
-        key="filter"
-        extra={[
-          <Button
-            key="clean"
-            onClick={(e) => {
-              e.stopPropagation();
-              
-              form.resetFields();
+      <Collapse ghost className="request-filter-collapse">
+        <Panel
+          header="Filtros"
+          key="filter"
+          extra={[
+            <Button
+              key="clean"
+              onClick={(e) => {
+                e.stopPropagation();
+
+                form.resetFields();
+              }}
+            >
+              Limpiar
+            </Button>,
+            <Button
+              key="filter"
+              type="primary"
+              onClick={(e) => {
+                e.stopPropagation();
+                form.submit();
+              }}
+            >
+              Filtrar
+            </Button>,
+          ]}
+        >
+          <Form<ISearchMedical> {...formItemLayout} form={form}
+            onFinish={onfinish}
+            size="small"
+            onFinishFailed={({ errorFields }) => {
+              const errors = errorFields.map((x) => ({ name: x.name[0].toString(), errors: x.errors }));
+              setErrors(errors);
             }}
           >
-            Limpiar
-          </Button>,
-          <Button
-            key="filter"
-            type="primary"
-            onClick={(e) => {
-              e.stopPropagation();
-              form.submit();  
-            }}
-          >
-            Filtrar
-          </Button>,
-        ]}
-      >
-        <Form<IProceedingForm> {...formItemLayout} form={form}
-        onFinish={onfinish}
-        size="small">
-          <Row gutter={[0, 12]}>
-   
-          <Col span={8}>
-              <DateRangeInput formProps={{ name: "fechaAlta", label: "Fecha de alta" }} />
-            </Col>
-            <Col span={16}>
-              <TextInput formProps={{ name: "expediente", label: "Expediente/Nombre/Codigo de barras/Huella digital" ,labelCol:{span:12}}} />
-            </Col>
-            <Col span={8}>
-              <TextInput formProps={{ name: "telefono", label: "Telefono" }} />
-            </Col>
-            <Col span={5}></Col>
-            <Col span={9}>
-              <DateInput formProps={{ name: "fechaNacimiento", label: "Fecha nacimiento" }} />
-            </Col>
+            <Row gutter={[0, 12]}>
 
-            <Col span={8}>
-              <SelectInput formProps={{ name: "ciudad", label: "Ciudad" }}  options={cityOptions} />
-            </Col>
-            <Col span={5}></Col>
-            <Col span={9}>
-              <SelectInput formProps={{ name: "sucursal", label: "Sucursal" }}  options={BranchOptions} />
-            </Col>
+              <Col span={8}>
+                <DateRangeInput formProps={{ name: "fechaAlta", label: "Fecha de alta" }} errors={errors.find((x) => x.name === "fechaAlta")?.errors}/>
+              </Col>
+              <Col span={16}>
+                <TextInput formProps={{ name: "expediente", label: "Expediente/Nombre/Codigo de barras/Huella digital", labelCol: { span: 12 } }}errors={errors.find((x) => x.name === "expediente")?.errors} />
+              </Col>
+              <Col span={8}>
+                <DescriptionItem
+                  title="Teléfono"
+                  content={
+                    <MaskInput
+                      formProps={{
+                        name: "telefono",
+                      }}
+                      width="90%"
+                      mask={[
+                        /[0-9]/,
+                        /[0-9]/,
+                        /[0-9]/,
+                        "-",
+                        /[0-9]/,
+                        /[0-9]/,
+                        /[0-9]/,
+                        "-",
+                        /[0-9]/,
+                        /[0-9]/,
+                        "-",
+                        /[0-9]/,
+                        /[0-9]/,
+                      ]}
+                      validator={(_, value: any) => {
+                        if (!value || value.indexOf("_") === -1) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          "El campo debe contener 10 dígitos"
+                        );
+                      }}
+                    />
+                  }
+                  contentWidth="60%"
+                />
+              </Col>
+              <Col span={5}></Col>
+              <Col span={9}>
+                <DateInput formProps={{ name: "fechaNacimiento", label: "Fecha nacimiento" }} errors={errors.find((x) => x.name === "fechaNacimiento")?.errors}/>
+              </Col>
 
-          </Row>
-        </Form>
-      </Panel>
-    </Collapse>.
+              <Col span={8}>
+                <SelectInput formProps={{ name: "ciudad", label: "Ciudad" }} options={cityOptions} errors={errors.find((x) => x.name === "ciudad")?.errors}/>
+              </Col>
+              <Col span={5}></Col>
+              <Col span={9}>
+                <SelectInput formProps={{ name: "sucursal", label: "Sucursal" }} options={BranchOptions} errors={errors.find((x) => x.name === "sucursal")?.errors}/>
+              </Col>
+
+            </Row>
+          </Form>
+        </Panel>
+      </Collapse>.
       <Table<IProceedingList>
         loading={loading || printing}
         size="small"
@@ -293,5 +334,34 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
     </Fragment>
   );
 };
+interface DescriptionItemProps {
+  title: string;
+  content: React.ReactNode;
+  contentWidth?: string;
+}
+const DescriptionItem = ({
+  title,
+  content,
+  contentWidth,
+}: DescriptionItemProps) => (
+  <div className="site-description-item-profile-wrapper">
+    <p
+      className="site-description-item-profile-p-label"
+      style={{
+        width: contentWidth
+          ? (100 - Number(contentWidth.slice(0, -1))).toString() + "%"
+          : "20%",
+      }}
+    >
+      {title}:
+    </p>
+    <div
+      className="site-description-item-profile-p-label"
+      style={{ width: contentWidth ?? "80%" }}
+    >
+      {content}
+    </div>
+  </div>
+);
 
 export default observer(ProceedingTable);

@@ -15,11 +15,15 @@ export interface IParameterList {
   unidades: number;
   unidadNombre: string;
   tipoValor: string;
-  valorInicial: number;
-  valorFinal: number;
+  valorInicial: string;
+  valorFinal: string;
   criticoMinimo: number;
   criticoMaximo: number;
   solicitudEstudioId: number;
+  resultadoId: string;
+  resultado: string;
+  formula?: string;
+  tipoValores?: ItipoValorForm[];
 }
 
 export interface IParameterValueListDto {
@@ -41,7 +45,7 @@ export interface IParameterValueListDto {
   criticoMinimo: number;
   criticoMaximo: number;
   solicitudEstudioId: number;
-  parametroValores: ItipoValorForm[];
+  tipoValores: ItipoValorForm[];
 }
 
 export interface IParameterForm {

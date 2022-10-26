@@ -25,6 +25,7 @@ export default class TrackingOrdertStore {
 
   scopes?: IScopes;
   trackingOrder: IEstudiosList[] = [];
+  trackingOrderStudies: ITrackingOrderList[] = [];
   estudios: IEstudiosList[] = [];
 
   TranckingOrderSend: ITrackingOrderForm = new TrackingOrderFormValues();
@@ -129,9 +130,16 @@ export default class TrackingOrdertStore {
     }
   };
 
-  getById = async (id: number) => {
+  getById = async (id: string) => {
     try {
       const trackingOrder = await TrackingOrder.getById(id);
+      // this.trackingOrderStudies = trackingOrder.estudios;
+      this.trackingOrder = trackingOrder.estudiosAgrupados!.map((x: any) => {
+        let a = new TrackingOrderListValues(x);
+
+        return a;
+      });
+      console.log(this.trackingOrderStudies);
       return trackingOrder;
     } catch (error) {
       console.log(error);
