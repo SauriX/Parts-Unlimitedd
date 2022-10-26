@@ -173,7 +173,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     } else if (tabName === "indications") {
       component = <RequestIndication />;
     } else if (tabName === "register") {
-      component = <RequestRegister recordId={recordId} />;
+      component = <RequestRegister  />;
     } else if (tabName === "request") {
       component = <RequestRequest formGeneral={formGeneral} />;
     } else if (tabName === "print") {

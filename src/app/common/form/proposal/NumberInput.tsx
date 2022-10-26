@@ -17,6 +17,16 @@ interface IProps {
   style?: React.CSSProperties;
   showLabel?: boolean;
   errors?: any[];
+  formatter?:
+    | ((
+        value: number | undefined,
+        info: {
+          userTyping: boolean;
+          input: string;
+        }
+      ) => string)
+    | undefined;
+  parser?: ((displayValue: string | undefined) => number) | undefined;
 }
 
 const NumberInput = ({
@@ -31,6 +41,8 @@ const NumberInput = ({
   style,
   showLabel: isGroup,
   errors,
+  formatter,
+  parser,
 }: IProps) => {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -86,18 +98,19 @@ const NumberInput = ({
         help=""
         className="no-error-text"
       >
-        <InputNumber
+        <InputNumber<number>
           // style={{ width: "100%" }}
           // autoComplete={itemProps.name?.toString()}
           autoComplete="off"
           placeholder={placeholder ?? itemProps.label?.toString()}
           disabled={readonly}
-          type={"number"}
           style={{
             paddingRight: paddingRight,
             width: width ?? "100%",
             ...(style ?? {}),
           }}
+          formatter={formatter}
+          parser={parser}
         />
       </Form.Item>
       {/* {(!!suffix || isGroup || !!errors) && ( */}

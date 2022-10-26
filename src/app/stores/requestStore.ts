@@ -15,6 +15,7 @@ import {
   IRequestTotal,
   RequestStudyUpdate,
   RequestTotal,
+  IRequestPayment,
 } from "../models/request";
 import alerts from "../util/alerts";
 import { status, statusName } from "../util/catalogs";
@@ -258,6 +259,16 @@ export default class RequestStore {
     }
   };
 
+  getPayments = async (recordId: string, requestId: string) => {
+    try {
+      const data = await Request.getPayments(recordId, requestId);
+      return data;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return [];
+    }
+  };
+
   getImages = async (recordId: string, requestId: string) => {
     try {
       const data = await Request.getImages(recordId, requestId);
@@ -391,6 +402,15 @@ export default class RequestStore {
     }
   };
 
+  createPayment = async (request: IRequestPayment) => {
+    try {
+      const payment = await Request.createPayment(request);
+      return payment;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
   updateGeneral = async (request: IRequestGeneral) => {
     try {
       this.loadingTabContentCount++;
@@ -508,6 +528,24 @@ export default class RequestStore {
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
+    }
+  };
+
+  cancelPayments = async (
+    recordId: string,
+    requestId: string,
+    payments: IRequestPayment[]
+  ) => {
+    try {
+      const cancelled = await Request.cancelPayments(
+        recordId,
+        requestId,
+        payments
+      );
+      return cancelled;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return [];
     }
   };
 

@@ -8,11 +8,8 @@ export const tokenName = "lab-ramos-token";
 export const getErrors = (error: any) => {
   try {
     let errors = messages.systemError;
-    if (error?.data?.errors && Object.keys.length > 0) {
-      errors = Object.values(error.data.errors)
-        .flat()
-        .map((e) => e + "\n")
-        .join("");
+    if (error?.data?.errors) {
+      errors = error.data.errors;
     } else {
       errors = error.message || error.statusText;
     }
