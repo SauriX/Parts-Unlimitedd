@@ -58,8 +58,12 @@ const Request = {
     requests.put(`request/cancel/${recordId}/${requestId}`, {}),
   cancelStudies: (request: IRequestStudyUpdate): Promise<void> =>
     requests.put("request/studies/cancel", request),
-  cancelPayment: (request: IRequestPayment): Promise<void> =>
-    requests.put("request/payment/cancel", request),
+  cancelPayments: (
+    recordId: string,
+    requestId: string,
+    payments: IRequestPayment[]
+  ): Promise<IRequestPayment[]> =>
+    requests.put(`request/payment/cancel/${recordId}/${requestId}`, payments),
   sendStudiesToSampling: (request: IRequestStudyUpdate): Promise<void> =>
     requests.put("request/studies/sampling", request),
   sendStudiesToRequest: (request: IRequestStudyUpdate): Promise<void> =>

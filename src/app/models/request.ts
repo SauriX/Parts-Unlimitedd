@@ -112,6 +112,9 @@ export interface IRequestPayment extends IRequestBase {
   cantidad: number;
   serie: string;
   numero: string;
+  estatusId: number;
+  usuarioRegistra: string;
+  fechaPago: moment.Moment;
 }
 
 export interface IRequestImage extends IRequestBase {

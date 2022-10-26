@@ -65,6 +65,12 @@ export const status = {
     entregado: 10,
     urgente: 11,
   },
+  requestPayment: {
+    pagado: 1,
+    facturado: 2,
+    cancelado: 3,
+    facturaCancelada: 4,
+  },
 };
 
 export const statusName = {

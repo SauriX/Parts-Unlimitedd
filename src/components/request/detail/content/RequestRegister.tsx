@@ -1,4 +1,4 @@
-import { Form, Row, Col, Button, Table, Spin } from "antd";
+import { Form, Row, Col, Button, Table, Spin, Divider } from "antd";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -11,15 +11,20 @@ import {
   IColumns,
   ISearch,
 } from "../../../../app/common/table/utils";
-import { IRequestStudy, IRequestPayment } from "../../../../app/models/request";
+import { IRequestPayment } from "../../../../app/models/request";
 import { IFormError } from "../../../../app/models/shared";
 import { useStore } from "../../../../app/stores/store";
+import alerts from "../../../../app/util/alerts";
+import { status } from "../../../../app/util/catalogs";
+import { moneyFormatter } from "../../../../app/util/utils";
 import RequestInvoiceTab from "./invoice/RequestInvoiceTab";
 
 const RequestRegister = () => {
-  const { requestStore, optionStore, modalStore } = useStore();
+  const { requestStore, optionStore, modalStore, profileStore } = useStore();
+  const { profile } = profileStore;
   const { paymentOptions, getPaymentOptions } = optionStore;
-  const { request, getPayments, printTicket, createPayment } = requestStore;
+  const { request, getPayments, printTicket, createPayment, cancelPayments } =
+    requestStore;
   const { openModal } = modalStore;
 
   const [form] = Form.useForm<IRequestPayment>();
@@ -27,6 +32,9 @@ const RequestRegister = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [payments, setPayments] = useState<IRequestPayment[]>([]);
   const [errors, setErrors] = useState<IFormError[]>([]);
+  const [selectedPayments, setSelectedPayments] = useState<IRequestPayment[]>(
+    []
+  );
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -39,9 +47,8 @@ const RequestRegister = () => {
   const columns: IColumns<IRequestPayment> = [
     {
       ...getDefaultColumnProps("id", "#", {
-        searchState,
-        setSearchState,
-        width: 75,
+        searchable: false,
+        width: 50,
       }),
       render: (_value, _record, index) => index + 1,
     },
@@ -49,7 +56,7 @@ const RequestRegister = () => {
       ...getDefaultColumnProps("documento", "Documento", {
         searchState,
         setSearchState,
-        width: 175,
+        width: 135,
       }),
       render: (_, record) => record.serie + " - " + record.numero,
     },
@@ -57,7 +64,7 @@ const RequestRegister = () => {
       ...getDefaultColumnProps("formaPago", "Forma de Pago", {
         searchState,
         setSearchState,
-        width: 150,
+        width: 275,
       }),
     },
     {
@@ -66,17 +73,23 @@ const RequestRegister = () => {
         setSearchState,
         width: 125,
       }),
+      align: "right",
+      render: (value) => moneyFormatter.format(value),
     },
     {
       ...getDefaultColumnProps("usuarioRegistra", "Usuario", {
-        searchable: false,
-        width: 175,
+        searchState,
+        setSearchState,
+        width: 250,
       }),
+      ellipsis: {
+        showTitle: false,
+      },
     },
     {
       ...getDefaultColumnProps("fechaPago", "Fecha", {
         searchable: false,
-        width: 125,
+        width: 100,
       }),
       render: (value) => moment(value).format("DD/MM/YYYY"),
     },
@@ -84,6 +97,7 @@ const RequestRegister = () => {
   ];
 
   const onFinish = async (values: IRequestPayment) => {
+    setErrors([]);
     const payment: IRequestPayment = {
       ...values,
       expedienteId: request!.expedienteId,
@@ -114,6 +128,47 @@ const RequestRegister = () => {
     readPayments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const cancel = async () => {
+    alerts.confirm(
+      "¿Desea cancelar el pago?",
+      "El pago será cancelado, ésta acción no se puede deshacer",
+      confirmCancel
+    );
+  };
+
+  const confirmCancel = async () => {
+    if (!profile || !profile.admin) {
+      const isAdmin = await verifyAdminCreds();
+      if (!isAdmin) {
+        alerts.warning("El usuario ingresado debe ser Administrador");
+        return;
+      }
+    }
+    if (request) {
+      const cancelled = await cancelPayments(
+        request.expedienteId,
+        request.solicitudId!,
+        selectedPayments
+      );
+      if (cancelled.length > 0) {
+        setSelectedPayments([]);
+        setPayments(
+          payments.map((x) => {
+            const payment = cancelled.find((p) => p.id === x.id);
+            if (payment) {
+              return {
+                ...x,
+                estatusId: payment.estatusId,
+                usuarioRegistra: payment.usuarioRegistra,
+              };
+            }
+            return x;
+          })
+        );
+      }
+    }
+  };
 
   return (
     <Spin spinning={loading}>
@@ -210,13 +265,21 @@ const RequestRegister = () => {
             size="small"
             rowKey={(record) => record.id}
             columns={columns}
-            dataSource={payments}
+            dataSource={payments.filter(
+              (x) =>
+                x.estatusId === status.requestPayment.pagado ||
+                x.estatusId === status.requestPayment.facturado
+            )}
             pagination={false}
             rowSelection={{
               fixed: "right",
+              onChange(selectedRowKeys, selectedRows, info) {
+                setSelectedPayments(selectedRows);
+              },
+              selectedRowKeys: selectedPayments.map((x) => x.id),
             }}
             sticky
-            scroll={{ x: "fit-content" }}
+            scroll={{ x: "max-content" }}
           />
         </Col>
         <Col span={24} style={{ textAlign: "right" }}>
@@ -236,15 +299,18 @@ const RequestRegister = () => {
             ghost
             danger
             type="primary"
-            onClick={async () => {
-              const hasPermission = await verifyAdminCreds();
-              console.log(hasPermission);
-            }}
+            disabled={selectedPayments.length === 0}
+            onClick={cancel}
           >
             Cancelar
           </Button>
           <Button
             type="primary"
+            disabled={
+              selectedPayments.filter(
+                (x) => x.estatusId === status.requestPayment.pagado
+              ).length === 0
+            }
             onClick={() => {
               openModal({
                 title: "Datos Fiscales",
@@ -255,7 +321,41 @@ const RequestRegister = () => {
           >
             Facturar
           </Button>
-          <Button type="primary">Descargar XML</Button>
+          <Button
+            type="primary"
+            disabled={
+              selectedPayments.filter(
+                (x) => x.estatusId === status.requestPayment.facturado
+              ).length === 0
+            }
+          >
+            Descargar XML
+          </Button>
+        </Col>
+        <Col span={24}>
+          <Divider orientation="left" className="register-cancelled-divider">
+            Pagos Cancelados
+          </Divider>
+          <Table<IRequestPayment>
+            size="small"
+            rowKey={(record) => record.id}
+            columns={columns}
+            dataSource={payments.filter(
+              (x) =>
+                x.estatusId === status.requestPayment.cancelado ||
+                x.estatusId === status.requestPayment.facturaCancelada
+            )}
+            pagination={false}
+            rowSelection={{
+              fixed: "right",
+              renderCell(value, record, index, originNode) {
+                return null;
+              },
+              hideSelectAll: true,
+            }}
+            sticky
+            scroll={{ x: "max-content" }}
+          />
         </Col>
       </Row>
     </Spin>

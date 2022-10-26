@@ -531,13 +531,21 @@ export default class RequestStore {
     }
   };
 
-  cancelPayment = async (request: IRequestPayment) => {
+  cancelPayments = async (
+    recordId: string,
+    requestId: string,
+    payments: IRequestPayment[]
+  ) => {
     try {
-      await Request.cancelPayment(request);
-      return true;
+      const cancelled = await Request.cancelPayments(
+        recordId,
+        requestId,
+        payments
+      );
+      return cancelled;
     } catch (error) {
       alerts.warning(getErrors(error));
-      return false;
+      return [];
     }
   };
 
