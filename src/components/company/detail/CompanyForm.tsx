@@ -37,7 +37,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     provenanceOptions,
     getprovenanceOptions,
     paymentOptions,
-    getpaymentOptions,
+    getPaymentOptions: getpaymentOptions,
     bankOptions,
     getbankOptions,
     cfdiOptions,

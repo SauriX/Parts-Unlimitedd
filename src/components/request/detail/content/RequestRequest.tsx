@@ -140,7 +140,7 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
       <Row gutter={[8, 12]}>
         <Col span={24} style={{ textAlign: "right" }}>
           <Button type="primary" onClick={updatePartiality}>
-            {request?.parcialidad
+            {!request?.parcialidad
               ? "Aplicar parcialidad"
               : "Cancelar parcialidad"}
           </Button>

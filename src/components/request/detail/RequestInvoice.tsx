@@ -58,7 +58,7 @@ const RequestInvoice = () => {
             formatter={(value) =>
               `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             }
-            parser={(value) => Number(value!.replace(/\$\s?|(,*)/g, ""))}
+            parser={(value) => Number(value!.replace(/\$ \s?|(,*)/g, ""))}
             value={totals.descuento}
             onChange={(value) => {
               setTotals({ ...totals, descuento: value });
