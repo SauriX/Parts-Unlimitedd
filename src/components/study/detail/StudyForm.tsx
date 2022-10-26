@@ -541,6 +541,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
               onChange={(value) => {
                 siguienteStudy(value - 1);
               }}
+              showSizeChanger={false}
             />
           )}
         </Col>
