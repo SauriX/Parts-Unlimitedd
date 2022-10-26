@@ -21,6 +21,7 @@ import Promotion from "../api/promotion";
 import Study from "../api/study";
 import Pack from "../api/pack";
 import Location from "../api/location";
+import { IWorkList } from "../models/workList";
 
 export const originOptions = [
   { label: "COMPAÑIÍA", value: 1 },
@@ -346,7 +347,22 @@ export default class OptionStore {
       this.workListOptions = [];
     }
   };
+  workListOptions2: IWorkList[] = [];
 
+  getworkListOptions2 = async () => {
+    try {
+      const workList = await Catalog.getActive<ICatalogNormalList>("workList");
+      console.log(workList);
+      this.workListOptions2 = workList.map((x) => ({
+        id: x.id,
+        nombre: x.nombre,
+        clave:x.clave,
+        activo:x.activo
+      }));
+    } catch (error) {
+      this.workListOptions2 = [];
+    }
+  };
   sampleTypeOptions: IOptions[] = [];
 
   getsampleTypeOptions = async () => {
