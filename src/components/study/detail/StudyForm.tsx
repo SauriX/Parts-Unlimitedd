@@ -216,7 +216,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       const all = await getAll("all");
       console.log(all);
       const user = await getById(id);
-
+      await getareaOptions(user?.departamento!);
       if(user?.workLists!=""&& user?.workLists!=null){
         var tags = user.workLists.split("-");
         setTags(tags);
