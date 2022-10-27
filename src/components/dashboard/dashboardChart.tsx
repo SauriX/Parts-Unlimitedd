@@ -8,7 +8,7 @@ type ReportChartProps<T> = {
   axisLabel?: { interval: number; rotate: number };
 };
 
-const ReportChart = <T extends unknown>({
+const DashboardChart = <T extends unknown>({
   data,
   serieX,
   series,
@@ -63,4 +63,4 @@ const ReportChart = <T extends unknown>({
 
   return <ReactECharts style={{ height: 500 }} option={options} notMerge />;
 };
-export default observer(ReportChart);
+export default observer(DashboardChart);
