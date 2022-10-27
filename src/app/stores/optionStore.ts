@@ -524,7 +524,6 @@ export default class OptionStore {
   getMedicOptions = async () => {
     try {
       const MedicOptions = await Medics.getActive();
-      console.log(MedicOptions);
       this.medicOptions = MedicOptions.map((x) => ({
         value: x.idMedico,
         label: x.nombreCompleto,
@@ -604,4 +603,17 @@ export default class OptionStore {
       this.CityOptions = [];
     }
   };
+
+  typeValue: IOptions[] = [];
+  getTypeValues = async (id: string) => {
+    try{
+      const type = Parameter.getAllValues(id, "5");
+      this.typeValue = (await type).map((x) => ({
+        value: x.id!,
+        label: x.descripcionTexto!,
+      }))
+    } catch(error) {
+      this.typeValue = [];
+    }
+  }
 }

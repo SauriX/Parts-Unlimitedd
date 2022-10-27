@@ -1,4 +1,5 @@
 import moment from "moment";
+import { ItipoValorForm } from "./parameter";
 
 export interface IClinicResultList {
   id: string;
@@ -57,12 +58,15 @@ export interface IClinicResultCaptureForm {
   valorInicial: string;
   valorFinal: string;
   parametroId: string;
-  resultado?: string;
+  resultado?: string | string[];
   unidades?: number;
   unidadNombre: string;
   solicitudEstudioId?: number;
   estatus: number;
   formula?: string;
+  nombreCorto?: string;
+  rango?: boolean;
+  tipoValores?: ItipoValorForm[];
 }
 
 export interface IClinicResultForm {

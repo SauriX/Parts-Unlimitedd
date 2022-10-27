@@ -70,12 +70,12 @@ const Login = () => {
       <div className={"contenedor-formularios"}>
         {/* <Spin spinning={logging}> */}
         <Form<ILoginForm> {...formItemLayout} form={form} name="login" onFinish={onFinish} scrollToFirstError>
-          <div>
             <Row>
               <Col md={24} sm={24} xs={24}>
                 <TextInput
                   formProps={{
                     name: "usuario",
+                    label:""
                   }}
                   placeholder={"Usuario"}
                   max={100}
@@ -86,6 +86,7 @@ const Login = () => {
                 <PasswordInput
                   formProps={{
                     name: "contraseña",
+                    label: ""
                   }}
                   placeholder={"Contraseña"}
                   max={8}
@@ -94,9 +95,8 @@ const Login = () => {
                 />
               </Col>
             </Row>
-          </div>
         </Form>
-        <Row style={{ marginBottom: 24, marginLeft: 50 }}>
+        <Row>
           <Col md={12} sm={24} style={{ textAlign: "center" }}>
             <Button
               type="primary"

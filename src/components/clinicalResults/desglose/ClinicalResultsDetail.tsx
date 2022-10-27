@@ -8,6 +8,7 @@ import {
   Form,
   Input,
   Row,
+  Select,
   Spin,
   Table,
 } from "antd";
@@ -20,7 +21,7 @@ import {
   IRequestStudy,
   RequestStudyValues,
 } from "../../../app/models/request";
-import { FC, Fragment, useEffect, useState } from "react";
+import { FC, Fragment, useEffect, useRef, useState } from "react";
 import { IProceedingForm } from "../../../app/models/Proceeding";
 import { useStore } from "../../../app/stores/store";
 import { status } from "../../../app/util/catalogs";
@@ -33,6 +34,8 @@ import { IOptions } from "../../../app/models/shared";
 import moment from "moment";
 import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
 import alerts from "../../../app/util/alerts";
+import { parse } from "path";
+import SelectInput from "../../../app/common/form/proposal/SelectInput";
 const { Text, Title } = Typography;
 const { TextArea } = Input;
 
@@ -51,12 +54,8 @@ type ClinicalResultsDetailProps = {
 const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   estudio,
   estudioId,
-  paciente,
-  medico,
   claveMedico,
-  solicitud,
   isMarked,
-  printing,
   showHeaderTable,
 }) => {
   const [disabled, setDisabled] = useState(false);
@@ -66,40 +65,26 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const [values, setValues] = useState<IClinicResultCaptureForm>(
     new ClinicResultsCaptureForm()
   );
-  const [currentResult, setCurrentResult] =
-    useState<IClinicResultCaptureForm>();
+
   const [loading, setLoading] = useState(false);
   const [checkedPrint, setCheckedPrint] = useState(false);
   const { optionStore, clinicResultsStore } = useStore();
   const {
-    getStudies,
-    formValues,
     getRequestStudyById,
     updateStatusStudy,
     studies,
-    createResults,
     updateResults,
     cancelResults,
     addSelectedStudy,
     removeSelectedStudy,
+    changeParameterRange,
   } = clinicResultsStore;
-  const { medicOptions, getMedicOptions, getUnitOptions, UnitOptions } =
-    optionStore;
+  const { getMedicOptions, getUnitOptions } = optionStore;
   const [form] = Form.useForm();
-
-  const tipodeValorList: IOptions[] = [
-    { value: 0, label: "Sin valor" },
-    { value: 1, label: "Numérico" },
-    { value: 2, label: "Numérico por sexo" },
-    { value: 3, label: "Numérico por edad" },
-    { value: 4, label: "Numérico por edad y sexo" },
-    { value: 5, label: "Opción múltiple" },
-    { value: 6, label: "Numérico con una columna" },
-    { value: 7, label: "Texto" },
-    { value: 8, label: "Párrafo" },
-    { value: 9, label: "Etiqueta" },
-    { value: 10, label: "Observación" },
-  ];
+  const resultValue = Form.useWatch(
+    "parametros",
+    form
+  ) as IClinicResultCaptureForm[];
 
   useEffect(() => {
     setCheckedPrint(isMarked);
@@ -113,7 +98,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   }, [isMarked]);
 
   useEffect(() => {
-    console.log(studies.map((x) => x.parametros.map((x) => x)));
     const loadOptions = async () => {
       await getMedicOptions();
     };
@@ -131,12 +115,29 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     form.setFieldValue("dr", claveMedico);
   }, [claveMedico]);
 
+  useEffect(() => {
+    console.log(resultValue);
+  }, [resultValue]);
+
   const loadInit = async () => {
     const cStudy = await getRequestStudyById(estudio.id!);
     setCurrentStudy(cStudy!);
+
     let captureResult = studies.find((x) => x.id == estudioId);
 
-    console.log(captureResult?.parametros);
+    if (captureResult && captureResult.parametros) {
+      captureResult.parametros = captureResult.parametros.map((x) => {
+        const obj = {
+          ...x,
+          resultado:
+            x.tipoValorId === "5"
+              ? x.resultado?.toString()?.split(",")
+              : x.resultado,
+        };
+        return obj;
+      });
+    }
+
     form.setFieldValue("parametros", captureResult?.parametros);
   };
 
@@ -173,9 +174,37 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       dataIndex: "nombre",
       title: "Estudio",
       align: "left",
-      width: "30%",
+      width: "20%",
       render: () => {
         return <strong>{estudio.nombre}</strong>;
+      },
+    },
+    {
+      key: "usuario",
+      dataIndex: "usuario",
+      title: "Usuario Modificó",
+      align: "left",
+      width: "20%",
+      render: (value: any, fullRow: any) => {
+        let ultimaActualizacion;
+        if (value === status.requestStudy.solicitado) {
+          ultimaActualizacion = fullRow.usuarioSolicitado;
+        }
+        if (value === status.requestStudy.capturado) {
+          ultimaActualizacion = fullRow.usuarioCapturado;
+        }
+        if (value === status.requestStudy.validado) {
+          ultimaActualizacion = fullRow.usuarioValidacion;
+        }
+        if (value === status.requestStudy.liberado) {
+          ultimaActualizacion = fullRow.usuarioLiberado;
+        }
+        if (value === status.requestStudy.enviado) {
+          ultimaActualizacion = fullRow.usuarioEnviado;
+        }
+        return (
+          <strong>ultimaActualizacion</strong>
+        );
       },
     },
     {
@@ -193,7 +222,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       dataIndex: "estatusId",
       title: "Fecha Actualización",
       align: "left",
-      width: "20%",
+      width: "15%",
       render: (value: any, fullRow: any) => {
         let ultimaActualizacion;
         if (value === status.requestStudy.solicitado) {
@@ -212,7 +241,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
           ultimaActualizacion = fullRow.fechaEnvio;
         }
         return (
-          <strong>{moment(ultimaActualizacion).format("DD/MM/YYYY")}</strong>
+          <strong>{moment(ultimaActualizacion).format("DD/MM/YYYY HH:mm")}</strong>
         );
       },
     },
@@ -221,14 +250,14 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       dataIndex: "orden",
       title: "Orden",
       align: "left",
-      width: "15%",
+      width: "5%",
     },
     {
       key: "Seleccionar",
       dataIndex: "imprimir",
       title: "Seleccionar",
       align: "center",
-      width: "20%",
+      width: "5%",
       render: () => {
         return (
           <Checkbox
@@ -323,17 +352,24 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
 
   const onFinish = async (newValuesForm: any) => {
     setLoading(true);
-    const labResults: IClinicResultCaptureForm[] = newValuesForm.parametros;
+    let labResults: IClinicResultCaptureForm[] = newValuesForm.parametros;
     let success = false;
     await updateStatus();
 
+    labResults = labResults.map((x) => {
+      const obj = {
+        ...x,
+        resultado: Array.isArray(x.resultado)
+          ? x.resultado.join()
+          : x.resultado,
+      };
+      return obj;
+    });
+
+    console.log(labResults)
     success = await updateResults(labResults);
     if (success) {
       await loadInit();
-      form.setFieldValue(
-        "resultado",
-        labResults.flatMap((x) => x.resultado!)
-      );
     }
 
     setLoading(false);
@@ -387,11 +423,22 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     return currentStudy.estatusId > 3;
   };
 
-  const referenceValues = (tipoValor: number, valorInicial: string, valorFinal: string) => {
-    if(tipoValor == 1) {
-      return {valorInicial}
+  const referenceValues = (
+    tipoValor: string,
+    valorInicial?: string,
+    valorFinal?: string
+  ) => {
+    if (
+      tipoValor == "1" ||
+      tipoValor == "2" ||
+      tipoValor == "3" ||
+      tipoValor == "4"
+    ) {
+      return valorInicial + " - " + valorFinal;
+    } else if (tipoValor == "7" || tipoValor == "8" || tipoValor == "10") {
+      return valorInicial + "";
     }
-  }
+  };
 
   return (
     <Fragment>
@@ -415,13 +462,12 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
               form={form}
               onFinish={onFinish}
               name="dynamic_form_item"
-              onValuesChange={(changes_values: any) => {
+              onValuesChange={() => {
                 setDisabled(
                   !form.isFieldsTouched() ||
                     form.getFieldsError().filter(({ errors }) => errors.length)
                       .length > 0
                 );
-                form.setFieldValue("resultado", values.resultado);
               }}
               disabled={disableInput()}
             >
@@ -454,62 +500,90 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                     <Form.List name="parametros">
                       {(fields) => (
                         <>
-                          {fields.map((field, index) => {
+                          {fields.map((field) => {
                             let fieldValue = form.getFieldValue([
                               "parametros",
                               field.name,
-                            ])
+                            ]) as IClinicResultCaptureForm;
+                            let fieldResult = resultValue?.find(
+                              (x) => x.id === fieldValue.id
+                            )?.resultado as string;
+                            let fieldRange =
+                              parseFloat(fieldValue.valorInicial) >
+                                parseFloat(fieldResult ?? 0) ||
+                              parseFloat(fieldResult ?? 0) >
+                                parseFloat(fieldValue.valorFinal);
                             return (
                               <Fragment key={field.key}>
-                                <Col span={6}>
-                                  <h4>
-                                    {fieldValue.nombre}
-                                  </h4>
-                                </Col>
-                                <Col span={6}>
-                                  <Form.Item
-                                    {...field}
-                                    name={[field.name, "resultado"]}
-                                    fieldKey={[field.key, "resultado"]}
-                                    validateTrigger={["onChange", "onBlur"]}
-                                    noStyle
-                                  >
-                                    {fieldValue.tipoValorId == 10 ? (
-                                      <TextArea
-                                        placeholder="Resultado"
-                                        style={{ width: "80%" }}
-                                        rows={4}
-                                        allowClear
-                                        autoSize
-                                      />
-                                    ) : (
-                                      <Input
-                                        placeholder="Resultado"
-                                        style={{ width: "80%" }}
-                                        allowClear
-                                        className={
-                                          form.getFieldValue([
-                                            "parametros",
-                                            field.name,
-                                            "resultado",
-                                          ])
-                                            ? "input-placeholder"
-                                            : ""
-                                        }
-                                      />
-                                    )}
-                                  </Form.Item>
-                                </Col>
-                                <Col span={6}>
-                                  {fieldValue.unidadNombre == null
-                                    ? "No cuenta con unidades"
-                                    : fieldValue.unidadNombre}
-                                </Col>
-                                <Col span={6}>
-                                  {fieldValue.valorInicial == null
-                                    ? "No cuenta con valores de referencia" : "Si"}
-                                    // : referenceValues(fieldValue.tipoValorId, fieldValue.valorInicial, fieldValue.valorFinal
-                                </Col>
+                                {fieldValue.tipoValorId == "9" ? (
+                                  <Col span={24}>
+                                    <br />
+                                  </Col>
+                                ) : (
+                                  <>
+                                    <Col span={6}>
+                                      <h4>{fieldValue.nombre}</h4>
+                                    </Col>
+                                    <Col span={6}>
+                                      <Form.Item
+                                        {...field}
+                                        name={[field.name, "resultado"]}
+                                        fieldKey={[field.key, "resultado"]}
+                                        validateTrigger={["onChange", "onBlur"]}
+                                        noStyle
+                                      >
+                                        {fieldValue.tipoValorId == "10" ? (
+                                          <TextArea
+                                            placeholder="Resultado"
+                                            style={{ width: "80%" }}
+                                            rows={4}
+                                            allowClear
+                                            autoSize
+                                          />
+                                        ) : fieldValue.tipoValorId == "5" ? (
+                                          <Select
+                                            mode="multiple"
+                                            options={fieldValue.tipoValores!.map(
+                                              (x) => ({
+                                                key: x.id,
+                                                value: x.opcion!,
+                                                label: x.opcion!,
+                                              })
+                                            )}
+                                            style={{ width: "80%" }}
+                                          />
+                                        ) : (
+                                          <Input
+                                            placeholder="Resultado"
+                                            style={
+                                              fieldRange && fieldResult
+                                                ? {
+                                                    width: "80%",
+                                                    borderColor: "red",
+                                                  }
+                                                : { width: "80%" }
+                                            }
+                                            allowClear
+                                          />
+                                        )}
+                                      </Form.Item>
+                                    </Col>
+                                    <Col span={6}>
+                                      {fieldValue.unidadNombre == null
+                                        ? "No cuenta con unidades"
+                                        : fieldValue.unidadNombre}
+                                    </Col>
+                                    <Col span={6}>
+                                      {fieldValue.valorInicial == null
+                                        ? "No cuenta con valores de referencia"
+                                        : referenceValues(
+                                            fieldValue.tipoValorId,
+                                            fieldValue.valorInicial,
+                                            fieldValue.valorFinal
+                                          )}
+                                    </Col>
+                                  </>
+                                )}
                               </Fragment>
                             );
                           })}
