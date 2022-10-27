@@ -334,7 +334,7 @@ useEffect(()=>{
             <PrintIcon  
                     key="print"
                     onClick={() => {
-                      printTicket(item.id, item.id);
+                      printTicket(item.estudios[0].expedienteid, item.estudios[0].solicitudid);
                     }}
             />
           ),

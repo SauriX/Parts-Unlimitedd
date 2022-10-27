@@ -116,6 +116,19 @@ export interface IRequestGeneral extends IRequestBase {
   observaciones: string;
 }
 
+export interface IRequestPayment extends IRequestBase {
+  id: string;
+  formaPagoId: number;
+  formaPago: string;
+  numeroCuenta: string;
+  cantidad: number;
+  serie: string;
+  numero: string;
+  estatusId: number;
+  usuarioRegistra: string;
+  fechaPago: moment.Moment;
+}
+
 export interface IRequestImage extends IRequestBase {
   imagen?: File | Blob;
   imagenUrl?: string;

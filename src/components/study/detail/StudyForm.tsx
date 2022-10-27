@@ -15,8 +15,10 @@ import {
   List,
   Select,
   Typography,
+  InputRef,
+  Input,
 } from "antd";
-import React, { FC, useEffect, useMemo, useState } from "react";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
@@ -30,6 +32,7 @@ import { observer } from "mobx-react-lite";
 import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import { IOptions } from "../../../app/models/shared";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
+import { PlusOutlined } from '@ant-design/icons';
 import {
   getDefaultColumnProps,
   IColumns,
@@ -44,6 +47,11 @@ import { IIndicationList } from "../../../app/models/indication";
 import { IReagentList } from "../../../app/models/reagent";
 import { IPacketList } from "../../../app/models/packet";
 import views from "../../../app/util/view";
+import { ParameterModal } from "./modals/ParameterModal";
+import { IndicationModal } from "./modals/IndicationModal";
+import CheckableTag from "antd/lib/tag/CheckableTag";
+import userEvent from "@testing-library/user-event";
+import WorkList from "../../../views/WorkList";
 
 type StudyFormProps = {
   componentRef: React.MutableRefObject<any>;
@@ -67,8 +75,8 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     MethodOptions,
     getsampleTypeOptions,
     sampleTypeOptions,
-    getworkListOptions,
-    workListOptions,
+    getworkListOptions2,
+    workListOptions2,
     getParameterOptions,
     parameterOptions,
     getIndication,
@@ -78,8 +86,11 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     getTaponOption,
     taponOption,
   } = optionStore;
-
-  const { getById, getAll, study, update, create } = studyStore;
+  const [selectedRowKeysp, setSelectedRowKeysp] = useState<React.Key[]>([]);
+  const [selectedRowKeysi, setSelectedRowKeysi] = useState<React.Key[]>([]);
+  const [selectedRowKeysw, setSelectedRowKeysw] = useState<React.Key[]>([]);
+ 
+  const { getById, getAll, study, update, create,parameterSelected,setParameterSelected,indicationSelected,setIndicationSelected,workListSelected,setWorkListSelected } = studyStore;
   const [form] = Form.useForm<IStudyForm>();
   const { width: windowWidth } = useWindowDimensions();
   const [flag, setFlag] = useState(0);
@@ -93,6 +104,63 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   const [Reagent, setReagent] = useState<{ clave: ""; id: string }>();
   const [visible, setVisible] = useState<boolean>(false);
   let { id } = useParams<UrlParams>();
+  const [tags, setTags] = useState<string[]>([]);
+  const [inputVisible, setInputVisible] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [editInputIndex, setEditInputIndex] = useState(-1);
+  const [editInputValue, setEditInputValue] = useState('');
+  const inputRef = useRef<InputRef>(null);
+  const editInputRef = useRef<InputRef>(null);
+
+  useEffect(() => {
+    if (inputVisible) {
+      inputRef.current?.focus();
+    }
+  }, [inputVisible]);
+
+  useEffect(() => {
+    editInputRef.current?.focus();
+  }, [inputValue]);
+
+  const handleClose = (removedTag: string) => {
+    const newTags = tags.filter(tag => tag !== removedTag);
+    console.log(newTags);
+    setTags(newTags);
+  };
+
+  const showInput = () => {
+    setInputVisible(true);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleInputConfirm = () => {
+    if (inputValue && tags.indexOf(inputValue) === -1) {
+      setTags([...tags, inputValue]);
+    }
+    setInputVisible(false);
+    setInputValue('');
+  };
+
+  const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditInputValue(e.target.value);
+  };
+
+  const handleEditInputConfirm = () => {
+    const newTags = [...tags];
+    newTags[editInputIndex] = editInputValue;
+    setTags(newTags);
+    setEditInputIndex(-1);
+    setInputValue('');
+  };
+/*   const handleChange = (tag: IWorkList, checked: boolean) => {
+    const nextSelectedTags = checked ? [...selectedTags!, tag] : selectedTags!.filter(t => t.id !== tag.id);
+    console.log('You are interested in: ', nextSelectedTags);
+    setSelectedTags(nextSelectedTags);
+  };
+ */
   const [disabled, setDisabled] = useState(() => {
     let result = false;
     const mode = searchParams.get("mode");
@@ -101,6 +169,46 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     }
     return result;
   });
+  const [searchState, setSearchState] = useState<ISearch>({
+    searchedText: "",
+    searchedColumn: "",
+  });
+  const columnsParameter: IColumns<IParameterList> = [
+    {
+      ...getDefaultColumnProps("nombre", "Parametro", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("clave", "Clave", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+  ];
+  const columnsIndication: IColumns<IIndicationList> = [
+    {
+      ...getDefaultColumnProps("nombre", "Indicación", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("clave", "Clave", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        windowSize: windowWidth,
+      }),
+    },
+  ];
   useEffect(() => {
     const readuser = async (id: number) => {
       setLoading(true);
@@ -108,6 +216,14 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       const all = await getAll("all");
       console.log(all);
       const user = await getById(id);
+
+      if(user?.workLists!=""&& user?.workLists!=null){
+        var tags = user.workLists.split("-");
+        setTags(tags);
+        console.log(tags);
+      }
+      setParameterSelected(user?.parameters!);
+      setIndicationSelected(user?.indicaciones!);
       form.setFieldsValue(user!);
 
       setValues(user!);
@@ -160,10 +276,10 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   }, [getsampleTypeOptions]);
   useEffect(() => {
     const readWorkList = async () => {
-      await getworkListOptions();
+      await getworkListOptions2();
     };
     readWorkList();
-  }, [getworkListOptions]);
+  }, [getworkListOptions2]);
   useEffect(() => {
     const readParameter = async () => {
       await getParameterOptions();
@@ -203,6 +319,15 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     setLoading(true);
     const User = { ...values, ...newValues };
     let success = false;
+    var worklist = "";
+    for(var i=0;i<tags.length;i++){
+      if(i==0){
+        worklist +=tags[i];
+      }else{
+        worklist +=`-${tags[i]}`;
+      }
+    }
+    User.workLists = worklist;
     if (!User.id) {
       success = await create(User);
     } else {
@@ -300,10 +425,11 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       console.log(values);
     }
   };
-  const deleteParameter = (id: string) => {
-    const parameterList = values.parameters.filter((x) => x.id !== id);
-
-    setValues((prev) => ({ ...prev, parameters: parameterList }));
+  const deleteParameter = () => {
+    const filterList = parameterSelected.filter(
+      (x) => !selectedRowKeysp.includes(x.id)
+    );
+    setParameterSelected(filterList);
   };
   const addIndication = () => {
     if (indication) {
@@ -328,11 +454,13 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       console.log(values);
     }
   };
-  const deleteIndicacion = (id: number) => {
-    const etiquetaList = values.indicaciones.filter((x) => x.id !== id);
-
-    setValues((prev) => ({ ...prev, indicaciones: etiquetaList }));
+  const deleteIndicacion = () => {
+    const filterList = indicationSelected.filter(
+      (x) => !selectedRowKeysi.includes(x.id)
+    );
+    setIndicationSelected(filterList);
   };
+
   const addReagent = () => {
     if (Reagent) {
       if (values.reactivos.findIndex((x) => x.id === Reagent!.id) > -1) {
@@ -360,10 +488,20 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
 
     setValues((prev) => ({ ...prev, reactivos: List }));
   };
-  const [searchState, setSearchState] = useState<ISearch>({
-    searchedText: "",
-    searchedColumn: "",
-  });
+  const onSelectChangep = (newSelectedRowKeys: React.Key[]) => {
+    setSelectedRowKeysp(newSelectedRowKeys);
+  };
+  const rowSelectionp = {
+    selectedRowKeysp,
+    onChange: onSelectChangep,
+  };
+  const onSelectChangei = (newSelectedRowKeys: React.Key[]) => {
+    setSelectedRowKeysi(newSelectedRowKeys);
+  };
+  const rowSelectioni = {
+    selectedRowKeysi,
+    onChange: onSelectChangei,
+  };
   const columns: IColumns<IPacketList> = [
     {
       ...getDefaultColumnProps("id", "Id", {
@@ -403,6 +541,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
               onChange={(value) => {
                 siguienteStudy(value - 1);
               }}
+              showSizeChanger={false}
             />
           )}
         </Col>
@@ -463,7 +602,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
             scrollToFirstError
           >
             <Row>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={8}>
                 <TextInput
                   formProps={{
                     name: "clave",
@@ -474,7 +613,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={8}>
                 <SelectInput
                   formProps={{ name: "departamento", label: "Departamento" }}
                   options={departmentOptions.filter((x) => x.value != 1)}
@@ -482,7 +621,16 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   required
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} xs={8}>
+                <SelectInput
+                    formProps={{ name: "tapon", label: "Etiqueta" }}
+                    options={taponOption}
+                    readonly={disabled}
+                    required
+                  />
+              </Col>
+
+              <Col md={8} sm={24} xs={8}>
                 <NumberInput
                   formProps={{
                     name: "orden",
@@ -494,7 +642,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={8}>
                 <SelectInput
                   formProps={{ name: "area", label: "Área" }}
                   options={areas}
@@ -502,7 +650,19 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   required
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={8}>
+                <NumberInput
+                  formProps={{
+                    name: "cantidad",
+                    label: "Cantidad",
+                  }}
+                  min={1}
+                  max={9999999999999999}
+                  readonly={disabled}
+                  required
+                />
+              </Col>
+              <Col md={8} sm={24} xs={8}>
                 <TextInput
                   formProps={{
                     name: "nombre",
@@ -513,25 +673,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
-                <SelectInput
-                  formProps={{ name: "formato", label: "Formato de impresión" }}
-                  options={printFormat}
-                  readonly={disabled}
-                  required
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "titulo",
-                    label: "Titulo",
-                  }}
-                  max={100}
-                  readonly={disabled}
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={8}>
                 <SelectInput
                   formProps={{ name: "maquilador", label: "Maquilador" }}
                   options={MaquiladorOptions}
@@ -539,37 +681,15 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   required
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "nombreCorto",
-                    label: "Nombre corto",
-                  }}
-                  max={100}
-                  required
-                  readonly={disabled}
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={8}>
                 <SelectInput
-                  formProps={{ name: "metodo", label: "Método" }}
-                  options={MethodOptions}
+                  formProps={{ name: "tipomuestra", label: "Tipo de muestra" }}
+                  options={sampleTypeOptions}
                   readonly={disabled}
                   required
                 />
               </Col>
-              <Col md={9} sm={24} xs={8}>
-                <SwitchInput
-                  name="visible"
-                  label="Visible"
-                  onChange={(values) => {
-                    setVisible(values);
-                    console.log(values);
-                  }}
-                  readonly={disabled}
-                />
-              </Col>
-              <Col md={3} sm={24} xs={4}>
+              <Col md={8} sm={24} xs={8}>
                 <NumberInput
                   formProps={{
                     name: "dias",
@@ -580,15 +700,85 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={!visible || disabled}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={8}>
+                <TextInput
+                  formProps={{
+                    name: "titulo",
+                    label: "Titulo",
+                  }}
+                  max={100}
+                  readonly={disabled}
+                />
+              </Col>
+              <Col md={8} sm={24} xs={8}>
                 <SelectInput
-                  formProps={{ name: "tipomuestra", label: "Tipo de muestra" }}
-                  options={sampleTypeOptions}
+                  formProps={{ name: "metodo", label: "Método" }}
+                  options={MethodOptions}
                   readonly={disabled}
                   required
                 />
               </Col>
-              <Col md={9} sm={24} xs={9}>
+              <Col md={8} xs={8}>
+                <NumberInput
+                    formProps={{
+                      name: "diasrespuesta",
+                      label: "Días de respuesta",
+                    }}
+                    min={0}
+                    max={9999999999999999}
+                    readonly={disabled}
+                  />
+              </Col>
+
+              <Col md={8} sm={24} xs={8}>
+                <TextInput
+                  formProps={{
+                    name: "nombreCorto",
+                    label: "Nombre corto",
+                  }}
+                  max={100}
+                  required
+                  readonly={disabled}
+                />
+              </Col>
+              <Col md={8} sm={24} xs={8}>
+              <NumberInput
+                  formProps={{
+                    name: "tiemporespuesta",
+                    label: "Tiempo de respuesta",
+                  }}
+                  min={1}
+                  max={9999999999999999}
+                  readonly={disabled}
+                  required
+                />
+              </Col>
+              <Col md={6} sm={24} xs={6}>
+                <SwitchInput
+                  name="prioridad"
+                  label="Prioridad"
+                  readonly={disabled}
+                />
+              </Col>
+              <Col md={6} xs={6}>
+              <SwitchInput
+                  name="urgencia"
+                  label="Urgencia"
+                  readonly={disabled}
+                />
+              </Col>
+              <Col md={6} sm={24} xs={6}>
+                <SwitchInput
+                  name="visible"
+                  label="Visible"
+                  onChange={(values) => {
+                    setVisible(values);
+                    console.log(values);
+                  }}
+                  readonly={disabled}
+                />
+              </Col>
+              <Col md={6} sm={24} xs={6}>
                 <SwitchInput
                   name="activo"
                   label="Activo"
@@ -602,223 +792,191 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
-              <Col md={3} sm={24} xs={3}></Col>
-              <Col md={12} sm={24} xs={8}>
-                <SelectInput
-                  formProps={{ name: "tapon", label: "Etiqueta" }}
-                  options={taponOption}
-                  readonly={disabled}
-                  required
-                />
-                <NumberInput
-                  formProps={{
-                    name: "cantidad",
-                    label: "Cantidad",
-                  }}
-                  min={1}
-                  max={9999999999999999}
-                  readonly={disabled}
-                  required
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}></Col>
-              <Col md={12} sm={24} xs={12}>
-                <NumberInput
-                  formProps={{
-                    name: "tiemporespuesta",
-                    label: "Tiempo de respuesta",
-                  }}
-                  min={1}
-                  max={9999999999999999}
-                  readonly={disabled}
-                  required
-                />
-                <NumberInput
-                  formProps={{
-                    name: "diasrespuesta",
-                    label: "Días de respuesta",
-                  }}
-                  min={0}
-                  max={9999999999999999}
-                  readonly={disabled}
-                />
-                <SwitchInput
-                  name="prioridad"
-                  label="Prioridad"
-                  readonly={disabled}
-                />
-                <SwitchInput
-                  name="urgencia"
-                  label="Urgencia"
-                  readonly={disabled}
-                />
-              </Col>
             </Row>
           </Form>
           <div></div>
-          <Divider orientation="left">Lista de trabajo</Divider>
-          <List<IWorkList>
-            header={
-              <div>
-                <Col md={12} sm={24} style={{ marginRight: 20 }}>
-                  Nombre Lista de trabajo
-                  <Select
-                    options={workListOptions}
-                    onChange={(value, option: any) => {
-                      if (value) {
-                        setWorkList({ id: value, clave: option.label });
-                      } else {
-                        setWorkList(undefined);
-                      }
-                    }}
-                    style={{ width: 240, marginRight: 20, marginLeft: 10 }}
-                  />
-                  {disabled ||
-                    (!load && (
-                      <ImageButton
-                        key="agregar"
-                        title="Agregar lista de trabajo"
-                        image="agregar-archivo"
-                        onClick={addWorkList}
-                      />
-                    ))}
-                </Col>
-              </div>
-            }
-            footer={<div></div>}
-            bordered
-            dataSource={values.workList}
-            renderItem={(item) => (
-              <List.Item>
-                <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                  <Typography.Text mark></Typography.Text>
-                  {item.nombre}
-                </Col>
-                <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                  {disabled && !load && (
-                    <ImageButton
-                      key="Eliminar"
-                      title="Eliminar lista de trabajo"
-                      image="Eliminar_Clinica"
-                      onClick={() => {
-                        deleteWorkList(item.id);
-                      }}
-                    />
-                  )}
-                </Col>
-              </List.Item>
-            )}
-          />
+          <PageHeader
+                ghost={false}
+                title={
+                  <HeaderTitle title="Listas de trabajo" />
+                }
+                className="header-container"
+
+              ></PageHeader>
+          {tags.map((tag, index) => {
+        if (editInputIndex === index) {
+          return (
+            <Input
+              ref={editInputRef}
+              key={tag}
+              size="small"
+              className="tag-input"
+              value={editInputValue}
+              onChange={handleEditInputChange}
+              onBlur={handleEditInputConfirm}
+              onPressEnter={handleEditInputConfirm}
+            />
+          );
+        }
+
+        const isLongTag:boolean = tag.length > 20;
+
+        const tagElem = (
+          <Tag
+            className="edit-tag"
+            key={tag}
+            closable={true}
+            onClose={() => handleClose(tag)}
+          >
+            <span
+              onDoubleClick={e => {
+                if (index !== 0) {
+                  setEditInputIndex(index);
+                  setEditInputValue(tag);
+                  e.preventDefault();
+                }
+              }}
+            >
+              {isLongTag ? `${tag.slice(0, 20)}...` : tag}
+            </span>
+          </Tag>
+        );
+        return isLongTag ? (
+          <Tooltip title={tag} key={tag}>
+            {tagElem}
+          </Tooltip>
+        ) : (
+          tagElem
+        );
+      })}
+      {inputVisible && (
+        <Input
+          ref={inputRef}
+          type="text"
+          size="small"
+          className="tag-input"
+          value={inputValue}
+          onChange={handleInputChange}
+          onBlur={handleInputConfirm}
+          onPressEnter={handleInputConfirm}
+        />
+      )}
+      {!inputVisible && (
+        <Tag className="site-tag-plus" onClick={showInput}>
+          <PlusOutlined /> Nueva 
+        </Tag>
+      )}
+        
           <div></div>
-          <Divider orientation="left">Parámetros del estudio</Divider>
-          <List<IParameterList>
-            header={
+          <PageHeader
+                ghost={false}
+                title={
+                  <HeaderTitle title="Parámetros del estudio" />
+                }
+                className="header-container"
+
+              ></PageHeader>
+              <Divider className="header-divider" />
               <div>
-                <Col md={12} sm={24} style={{ marginRight: 20 }}>
-                  Nombre parámetro
-                  <Select
-                    options={parameterOptions}
-                    onChange={(value, option: any) => {
-                      if (value) {
-                        setParameter({ id: value, clave: option.label });
-                      } else {
-                        setParameter(undefined);
-                      }
-                    }}
-                    style={{ width: 240, marginRight: 20, marginLeft: 10 }}
-                  />
-                  {disabled ||
-                    (!load && (
-                      <ImageButton
-                        key="agregar"
-                        title="Agregar Parametro"
-                        image="agregar-archivo"
-                        onClick={addParameter}
-                      />
-                    ))}
-                </Col>
-              </div>
-            }
-            footer={<div></div>}
-            bordered
-            dataSource={values.parameters}
-            renderItem={(item) => (
-              <List.Item>
-                <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                  <Typography.Text mark></Typography.Text>
-                  {item.clave}
-                </Col>
-                <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                  {disabled && !load && (
-                    <ImageButton
-                      key="Eliminar"
-                      title="Eliminar Parametro"
-                      image="Eliminar_Clinica"
-                      onClick={() => {
-                        deleteParameter(item.id);
+                <Row>
+                  <Col md={16}></Col>
+                  <Col md={4}>
+
+                  </Col>
+                  <Col md={4}>
+                    <div style={{display:"inline-block",marginLeft:"43%"}}>
+                    {
+                      parameterSelected.length > 0 && selectedRowKeysp.length > 0 && 
+                        <Button  type="primary" danger onClick={()=>{deleteParameter()}}>
+                          Eliminar
+                        </Button>
+                            
+                    }
+                    <Button
+                    
+                      type="primary"
+                      onClick={async () => {
+                        await ParameterModal(
+                          
+                          parameterSelected.map((x) => x.id)
+                        );
                       }}
-                    />
-                  )}
-                </Col>
-              </List.Item>
-            )}
-          />
+                    >
+                      Buscar
+                    </Button>
+                    </div>
+
+                  </Col>
+                </Row>
+                <br />
+              </div>
+              <Table<IParameterList>
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columnsParameter}
+                pagination={false}
+                dataSource={[...parameterSelected]}
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
+                rowSelection={rowSelectionp}
+              />
           <div></div>
-          <Divider orientation="left">Indicaciones</Divider>
-          <List<IWorkList>
-            header={
+          <PageHeader
+                ghost={false}
+                title={
+                  <HeaderTitle title="Indicaciones del estudio" />
+                }
+                className="header-container"
+
+              ></PageHeader>
+              <Divider className="header-divider" />
               <div>
-                <Col md={12} sm={24} style={{ marginRight: 20 }}>
-                  Nombre Indicación
-                  <Select
-                    options={indicationOptions}
-                    onChange={(value, option: any) => {
-                      if (value) {
-                        setIndication({ id: value, clave: option.label });
-                      } else {
-                        setIndication(undefined);
-                      }
+                <Row>
+                  <Col md={16}></Col>
+                  <Col md={4}>
+
+                  </Col>
+                  <Col md={4}>
+                  <div style={{display:"inline-block",marginLeft:"43%"}}>
+                  {
+                            indicationSelected.length > 0 && selectedRowKeysi.length > 0 && 
+                              <Button  type="primary" danger onClick={deleteIndicacion}>
+                                Eliminar
+                              </Button>
+                          
+
+                          }
+                  <Button
+                  
+                    type="primary"
+                    onClick={async () => {
+                      await IndicationModal(
+                        
+                       indicationSelected.map((x) => x.id)
+                      );
                     }}
-                    style={{ width: 240, marginRight: 20, marginLeft: 10 }}
-                  />
-                  {disabled ||
-                    (!load && (
-                      <ImageButton
-                        key="agregar"
-                        title="Agregar Indicación"
-                        image="agregar-archivo"
-                        onClick={addIndication}
-                      />
-                    ))}
-                </Col>
+                  >
+                    Buscar
+                  </Button>
+                  </div>
+                  </Col>
+                </Row>
+                <br />
               </div>
-            }
-            footer={<div></div>}
-            bordered
-            dataSource={values.indicaciones}
-            renderItem={(item) => (
-              <List.Item>
-                <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                  <Typography.Text mark></Typography.Text>
-                  {item.nombre}
-                </Col>
-                <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                  {!disabled && !load && (
-                    <ImageButton
-                      key="Eliminar"
-                      title="Eliminar Indicación"
-                      image="Eliminar_Clinica"
-                      onClick={() => {
-                        deleteIndicacion(item.id);
-                      }}
-                    />
-                  )}
-                </Col>
-              </List.Item>
-            )}
-          />
+              <Table<IIndicationList>
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columnsIndication}
+                pagination={false}
+                dataSource={[...indicationSelected]}
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
+                rowSelection={rowSelectioni}
+              />
           <div></div>
-          <Divider orientation="left">Reactivos</Divider>
+          {/* <Divider orientation="left">Reactivos</Divider>
           <List<IReagentList>
             header={
               <div>
@@ -870,7 +1028,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                 </Col>
               </List.Item>
             )}
-          />
+          /> */}
           <Row>
             <Col
               md={24}

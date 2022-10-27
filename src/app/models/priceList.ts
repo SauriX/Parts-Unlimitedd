@@ -1,3 +1,4 @@
+import React from "react";
 import { IIndicationList } from "./indication";
 import { IPackEstudioList } from "./packet";
 import { IParameterList } from "./parameter";
@@ -77,6 +78,8 @@ export interface IPriceListEstudioList {
   descuenNum?: number;
   precioFinal?: number;
   pack?: IPackEstudioList[];
+  form?:React.ReactNode
+  check?:React.ReactNode
 }
 
 export interface IPriceListInfoFilter {

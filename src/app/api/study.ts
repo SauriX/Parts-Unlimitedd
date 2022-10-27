@@ -1,10 +1,12 @@
 import { IStudyForm, IStudyList } from "../models/study";
 import { IScopes } from "../models/shared";
 import requests from "./agent";
+import { IPriceListEstudioList } from "../models/priceList";
 
 const Study = {
   access: (): Promise<IScopes> => requests.get("scopes/study"),
   getAll: (search: string): Promise<IStudyList[]> => requests.get(`study/all/${!search ? "all" : search}`),
+  getAllPrice: (search: string): Promise<IPriceListEstudioList[]> => requests.get(`study/allprice/${!search ? "all" : search}`),
   getActive: (): Promise<IStudyList[]> => requests.get(`study/active`),
   getById: (id: number): Promise<IStudyForm> => requests.get(`study/${id}`),
   create: (study: IStudyForm): Promise<boolean> => requests.post("/study", study),
