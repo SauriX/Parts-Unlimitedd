@@ -25,6 +25,7 @@ import {
 } from "../../../../app/models/parameter";
 import { useStore } from "../../../../app/stores/store";
 import alerts from "../../../../app/util/alerts";
+import messages from "../../../../app/util/messages";
 type Props = {
   idTipeVAlue: string;
   parameter: IParameterForm;
@@ -65,11 +66,27 @@ const ValorRNumerico: FC<Props> = ({ idTipeVAlue, parameter }) => {
     const value = { ...valuesValor, ...newValues };
 
     if (value.valorInicial! > value.valorFinal!) {
-      alerts.warning("El valor inicial no puede ser mayor a final");
+      alerts.warning(messages.warnings.initialValue);
       return;
     }
-    if (value.valorFinal === value.valorInicial) {
-      alerts.warning("El valor inicial no puede ser igual a final");
+    else if (value.valorFinal === value.valorInicial) {
+      alerts.warning(messages.warnings.finalValue);
+      return;
+    }
+    else if (value.criticoMinimo! > value.criticoMaximo!) {
+      alerts.warning(messages.warnings.minimumValue);
+      return;
+    }
+    else if (value.criticoMinimo === value.criticoMaximo) {
+      alerts.warning(messages.warnings.maximumValue);
+      return;
+    } 
+    else if (value.criticoMinimo! > value.valorInicial! || value.criticoMinimo === value.valorInicial) {
+      alerts.warning(messages.warnings.initialMinimumValue);
+      return;
+    }
+    else if (value.criticoMaximo! < value.valorFinal! || value.criticoMaximo === value.valorFinal) {
+      alerts.warning(messages.warnings.finalMaximumValue);
       return;
     }
     let success = false;
@@ -127,9 +144,9 @@ const ValorRNumerico: FC<Props> = ({ idTipeVAlue, parameter }) => {
         scrollToFirstError
       >
         <Row>
-          <Col md={12} sm={24} xs={12} style={{ marginTop: 20 }}>
-            <Row gutter={[12, 4]}>
-                <Col span={8}>
+          <Col md={24} sm={24} xs={12} style={{ marginTop: 20 }}>
+            <Row justify='center' gutter={[24, 4]}>
+                <Col span={6}>
                     <NumberInput
                       formProps={{
                         name: "valorInicial",
@@ -138,9 +155,10 @@ const ValorRNumerico: FC<Props> = ({ idTipeVAlue, parameter }) => {
                       max={9999999999}
                       min={0}
                       readonly={disabled}
+                      required
                     />
                 </Col>
-                <Col span={8}>
+                <Col span={6}>
                     <NumberInput
                       formProps={{
                         name: "valorFinal",
@@ -149,6 +167,31 @@ const ValorRNumerico: FC<Props> = ({ idTipeVAlue, parameter }) => {
                       max={9999999999}
                       min={0}
                       readonly={disabled}
+                      required
+                    />
+                </Col>
+                <Col span={6}>
+                    <NumberInput
+                      formProps={{
+                        name: "criticoMinimo",
+                        label: "Valor Crítico Mínimo",
+                      }}
+                      max={9999999999}
+                      min={0}
+                      readonly={disabled}
+                      required
+                    />
+                </Col>
+                <Col span={6}>
+                    <NumberInput
+                      formProps={{
+                        name: "criticoMaximo",
+                        label: "Valor Crítico Máximo",
+                      }}
+                      max={9999999999}
+                      min={0}
+                      readonly={disabled}
+                      required
                     />
                 </Col>
             </Row>

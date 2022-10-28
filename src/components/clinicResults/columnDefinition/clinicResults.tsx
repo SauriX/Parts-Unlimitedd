@@ -1,12 +1,13 @@
-import { Descriptions, TableColumnsType, Typography } from "antd";
+import { Descriptions, Table, TableColumnsType, Typography } from "antd";
 import { useState } from "react";
 import {
   IColumns,
   ISearch,
   getDefaultColumnProps,
 } from "../../../app/common/table/utils";
-import { IClinicResultList } from "../../../app/models/clinicResults";
+import { IClinicResultList, IClinicStudy } from "../../../app/models/clinicResults";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 const { Link, Text } = Typography;
 
@@ -96,55 +97,59 @@ const ClinicResultsColumns = () => {
         setSearchState,
         width: "20%",
       }),
-      render: (_value, record) => (
-        <ul>
-          <li>
-            {record.compañia == null
-              ? "No pertenece a una compañía"
-              : record.compañia}
-          </li>
-          <li>
-            Procedencia: {record.procedencia == 1 ? "Compañía" : "Particulares"}
-          </li>
-        </ul>
-      ),
+      render: (_value, record) =>
+        record.compañia == null
+          ? "No pertenece a una compañía"
+          : record.compañia,
     },
   ];
   return columns;
 };
 
+export const NestedClinicResults = () => {
+  const nestedColumns: IColumns<IClinicStudy> = [
+    {
+      ...getDefaultColumnProps("clave", "Estudio", {
+        width: "50%",
+      }),
+      render: (_value, record) => (
+        record.clave + " - " + record.nombre
+      )
+    },
+    {
+      ...getDefaultColumnProps("nombreEstatus", "Estatus", {
+        width: "50%",
+      }),
+      render: (_value, record) => (
+        record.nombreEstatus!
+      )
+    },
+  ]
+}
+
 export const ClinicResultsExpandable = () => {
+  const nestedColumns: IColumns<IClinicStudy> = [
+    {
+      ...getDefaultColumnProps("clave", "Estudio", {
+        width: "50%",
+      }),
+      render: (_value, record) => (
+        record.clave + " - " + record.nombre
+      )
+    },
+    {
+      ...getDefaultColumnProps("nombreEstatus", "Estatus", {
+        width: "50%",
+      }),
+      render: (_value, record) => (
+        record.nombreEstatus!
+      )
+    },
+  ]
+
   return {
     expandedRowRender: (item: IClinicResultList) => (
-      <div>
-        <Descriptions
-          size="small"
-          bordered
-          style={{ marginBottom: 5 }}
-          layout="vertical"
-        >
-        {item.estudios.map((x) => {
-          return (
-              <>
-                <Descriptions.Item
-                  label="Estudio"
-                  style={{ maxWidth: 30 }}
-                  className="description-content"
-                >
-                  {x.clave} - {x.nombre}
-                </Descriptions.Item>
-                <Descriptions.Item
-                  label="Estatus"
-                  style={{ maxWidth: 30 }}
-                  className="description-content"
-                >
-                  {x.nombreEstatus!.toUpperCase()} - {x.entrega}
-                </Descriptions.Item>
-              </>
-          );
-        })}
-        </Descriptions>
-      </div>
+      <Table columns={nestedColumns} dataSource={item.estudios}/>
     ),
     rowExpandable: () => true,
     defaultExpandAllRows: true,

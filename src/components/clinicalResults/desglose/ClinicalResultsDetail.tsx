@@ -36,6 +36,7 @@ import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
 import alerts from "../../../app/util/alerts";
 import { parse } from "path";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
+import { ObservationModal } from "./ObservationModal";
 const { Text, Title } = Typography;
 const { TextArea } = Input;
 
@@ -62,13 +63,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const [currentStudy, setCurrentStudy] = useState<IRequestStudy>(
     new RequestStudyValues()
   );
-  const [values, setValues] = useState<IClinicResultCaptureForm>(
-    new ClinicResultsCaptureForm()
-  );
 
   const [loading, setLoading] = useState(false);
   const [checkedPrint, setCheckedPrint] = useState(false);
-  const { optionStore, clinicResultsStore } = useStore();
+  const { optionStore, clinicResultsStore, parameterStore } = useStore();
 
   const {
     getRequestStudyById,
@@ -78,8 +76,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     cancelResults,
     addSelectedStudy,
     removeSelectedStudy,
-    changeParameterRange,
   } = clinicResultsStore;
+  // const {
+  //   observationsSelected,
+  // } = parameterStore;
   const { getMedicOptions, getUnitOptions } = optionStore;
   const [form] = Form.useForm();
   const resultValue = Form.useWatch(
@@ -181,8 +181,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       },
     },
     {
-      key: "usuario",
-      dataIndex: "usuario",
+      key: "estatusId",
+      dataIndex: "estatusId",
       title: "Usuario Modificó",
       align: "left",
       width: "20%",
@@ -192,7 +192,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
           ultimaActualizacion = fullRow.usuarioSolicitado;
         }
         if (value === status.requestStudy.capturado) {
-          ultimaActualizacion = fullRow.usuarioCapturado;
+          ultimaActualizacion = fullRow.usuarioCaptura;
         }
         if (value === status.requestStudy.validado) {
           ultimaActualizacion = fullRow.usuarioValidacion;
@@ -203,9 +203,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
         if (value === status.requestStudy.enviado) {
           ultimaActualizacion = fullRow.usuarioEnviado;
         }
-        return (
-          <strong>ultimaActualizacion</strong>
-        );
+        return <strong>{ultimaActualizacion}</strong>;
       },
     },
     {
@@ -242,7 +240,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
           ultimaActualizacion = fullRow.fechaEnvio;
         }
         return (
-          <strong>{moment(ultimaActualizacion).format("DD/MM/YYYY HH:mm")}</strong>
+          <strong>
+            {moment(ultimaActualizacion).format("DD/MM/YYYY HH:mm")}
+          </strong>
         );
       },
     },
@@ -350,7 +350,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       </>
     );
   };
-  const guardarReporte = async (values: any) => {};
 
   const onFinish = async (newValuesForm: any) => {
     setLoading(true);
@@ -368,7 +367,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       return obj;
     });
 
-    console.log(labResults)
+    console.log(labResults);
     success = await updateResults(labResults);
     if (success) {
       await loadInit();
@@ -497,7 +496,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                     justify="space-between"
                     gutter={[0, 12]}
                     style={{ textAlign: "center" }}
-                    align={"middle"}
+                    align="middle"
                   >
                     <Form.List name="parametros">
                       {(fields) => (
@@ -526,50 +525,86 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                     <Col span={6}>
                                       <h4>{fieldValue.nombre}</h4>
                                     </Col>
-                                    <Col span={6}>
-                                      <Form.Item
-                                        {...field}
-                                        name={[field.name, "resultado"]}
-                                        fieldKey={[field.key, "resultado"]}
-                                        validateTrigger={["onChange", "onBlur"]}
-                                        noStyle
-                                      >
-                                        {fieldValue.tipoValorId == "10" ? (
+
+                                    {fieldValue.tipoValorId == "10" ? (
+                                      <Col span={6}>
+                                        <Form.Item
+                                          {...field}
+                                          name={[field.name, "resultado"]}
+                                          fieldKey={[field.key, "resultado"]}
+                                          validateTrigger={[
+                                            "onChange",
+                                            "onBlur",
+                                          ]}
+                                          noStyle
+                                        >
                                           <TextArea
                                             placeholder="Resultado"
-                                            style={{ width: "80%" }}
+                                            style={{ width: "75%" }}
                                             rows={4}
                                             allowClear
                                             autoSize
                                           />
-                                        ) : fieldValue.tipoValorId == "5" ? (
-                                          <Select
-                                            mode="multiple"
-                                            options={fieldValue.tipoValores!.map(
-                                              (x) => ({
-                                                key: x.id,
-                                                value: x.opcion!,
-                                                label: x.opcion!,
-                                              })
-                                            )}
-                                            style={{ width: "80%" }}
-                                          />
-                                        ) : (
-                                          <Input
-                                            placeholder="Resultado"
-                                            style={
-                                              fieldRange && fieldResult
-                                                ? {
-                                                    width: "80%",
-                                                    borderColor: "red",
-                                                  }
-                                                : { width: "80%" }
-                                            }
-                                            allowClear
-                                          />
-                                        )}
-                                      </Form.Item>
-                                    </Col>
+                                        </Form.Item>
+                                        <Button
+                                          type="primary"
+                                          onClick={async () => {
+                                            const modal =
+                                              await ObservationModal();
+                                            form.setFieldValue(
+                                              [
+                                                "parametros",
+                                                field.name,
+                                                "resultado",
+                                              ],
+                                              modal
+                                            );
+                                          }}
+                                        >
+                                          ...
+                                        </Button>
+                                      </Col>
+                                    ) : (
+                                      <Col span={6}>
+                                        <Form.Item
+                                          {...field}
+                                          name={[field.name, "resultado"]}
+                                          fieldKey={[field.key, "resultado"]}
+                                          validateTrigger={[
+                                            "onChange",
+                                            "onBlur",
+                                          ]}
+                                          noStyle
+                                        >
+                                          {fieldValue.tipoValorId == "5" ? (
+                                            <Select
+                                              mode="multiple"
+                                              options={fieldValue.tipoValores!.map(
+                                                (x) => ({
+                                                  key: x.id,
+                                                  value: x.opcion!,
+                                                  label: x.opcion!,
+                                                })
+                                              )}
+                                              style={{ width: "80%" }}
+                                            />
+                                          ) : (
+                                            <Input
+                                              placeholder="Resultado"
+                                              style={
+                                                fieldRange && fieldResult
+                                                  ? {
+                                                      width: "80%",
+                                                      borderColor: "red",
+                                                    }
+                                                  : { width: "80%" }
+                                              }
+                                              allowClear
+                                            />
+                                          )}
+                                        </Form.Item>
+                                      </Col>
+                                    )}
                                     <Col span={6}>
                                       {fieldValue.unidadNombre == null
                                         ? "No cuenta con unidades"

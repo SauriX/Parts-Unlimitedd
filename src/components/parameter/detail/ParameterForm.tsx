@@ -589,7 +589,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                     />
                   </Col>
                   {deltaCheck ? (
-                    <Col offset={12} span={8}>
+                    <Col offset={16} span={8}>
                       <SwitchInput
                         name="mostrarFormato"
                         label="Mostrar Formato"
@@ -610,7 +610,9 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
               </Col>
             </Row>
           </Form>
+          <br />
           <ValorType form={values} value={ValueType}></ValorType>
+          <br />
           <Row>
             <Col
               md={24}

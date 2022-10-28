@@ -10,6 +10,7 @@ import {
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../../app/stores/store";
 import alerts from "../../../../app/util/alerts";
+import NumberInput from "../../../../app/common/form/proposal/NumberInput";
 
 type Props = {
   idTipeVAlue: string;
@@ -179,110 +180,108 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue, parameter }) => {
         onFinish={onFinish}
         autoComplete="off"
       >
-        <Form.List initialValue={lista} name="value">
-          {(Fields, { add, remove }) => (
-            <>
-              {Fields.map(({ key, name, ...valuesValor }) => (
-                <>
-                  <Row>
-                    <Col span={22}>
-                      <Row justify="space-between" gutter={[12, 4]}>
-                        <Col span={6}>
-                          <Form.Item
-                            label="Valor inicial hombre: "
-                            {...valuesValor}
-                            name={[name, "hombreValorInicial"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Missing Hombre valor",
-                              },
-                            ]}
-                          >
-                            <Input
-                              type={"number"}
-                              disabled={disabled}
-                              min={0}
-                              placeholder={"Hombre valor"}
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                          <Form.Item
-                            label="Valor final hombre: "
-                            {...valuesValor}
-                            name={[name, "hombreValorFinal"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Missing Hombre valor",
-                              },
-                            ]}
-                          >
-                            <Input
-                              type={"number"}
-                              min={0}
-                              disabled={disabled}
-                              placeholder="Hombre valor"
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                          <Form.Item
-                            label="Valor inicial mujer: "
-                            {...valuesValor}
-                            name={[name, "mujerValorInicial"]}
-                            rules={[{ required: true, message: "Mujer valor" }]}
-                          >
-                            <Input
-                              type={"number"}
-                              min={0}
-                              disabled={disabled}
-                              placeholder={"Mujer valor"}
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                          <Form.Item
-                            label="Valor inicial mujer: "
-                            {...valuesValor}
-                            name={[name, "mujerValorFinal"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Missing Mujer valor",
-                              },
-                            ]}
-                          >
-                            <Input
-                              type={"number"}
-                              min={0}
-                              disabled={disabled}
-                              placeholder="Mujer valor"
-                            />
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                    </Col>
-                    <Col span={2}>
-                      <MinusCircleOutlined onClick={() => remove(name)} />
-                    </Col>
-                  </Row>
-                </>
-              ))}
-              <Form.Item>
-                <Button
-                  type="dashed"
-                  onClick={() => add()}
-                  block
-                  icon={<PlusOutlined />}
-                >
-                  Agregar campo
-                </Button>
-              </Form.Item>
-            </>
-          )}
-        </Form.List>
+        <Row>
+          <Col span={24}>
+            <Row justify="space-between" gutter={[12, 12]}>
+              <Col span={6}>
+                <NumberInput
+                  formProps={{
+                    name: "hombreValorInicial",
+                    label: "Valor inicial masculino",
+                  }}
+                  max={9999999999}
+                  min={0}
+                  readonly={disabled}
+                  required
+                />
+              </Col>
+              <Col span={6}>
+                <NumberInput
+                  formProps={{
+                    name: "hombreValorFinal",
+                    label: "Valor final masculino",
+                  }}
+                  max={9999999999}
+                  min={0}
+                  readonly={disabled}
+                  required
+                />
+              </Col>
+              <Col span={6}>
+                <NumberInput
+                  formProps={{
+                    name: "mujerValorInicial",
+                    label: "Valor inicial femenino",
+                  }}
+                  max={9999999999}
+                  min={0}
+                  readonly={disabled}
+                  required
+                />
+              </Col>
+              <Col span={6}>
+                <NumberInput
+                  formProps={{
+                    name: "mujerValorFinal",
+                    label: "Valor final femenino",
+                  }}
+                  max={9999999999}
+                  min={0}
+                  readonly={disabled}
+                  required
+                />
+              </Col>
+              <Col span={6}>
+                <NumberInput
+                  formProps={{
+                    name: "hombreCriticoMinimo",
+                    label: "Valor critico mínimo masculino",
+                  }}
+                  max={9999999999}
+                  min={0}
+                  readonly={disabled}
+                  required
+                />
+              </Col>
+              <Col span={6}>
+                <NumberInput
+                  formProps={{
+                    name: "hombreCriticoMaximo",
+                    label: "Valor critico máximo masculino",
+                  }}
+                  max={9999999999}
+                  min={0}
+                  readonly={disabled}
+                  required
+                />
+              </Col>
+              <Col span={6}>
+                <NumberInput
+                  formProps={{
+                    name: "mujerCriticoMinimo",
+                    label: "Valor critico mínimo femenino",
+                  }}
+                  max={9999999999}
+                  min={0}
+                  readonly={disabled}
+                  required
+                />
+              </Col>
+              <Col span={6}>
+                <NumberInput
+                  formProps={{
+                    name: "mujerCriticoMaximo",
+                    label: "Valor critico máximo femenino",
+                  }}
+                  max={9999999999}
+                  min={0}
+                  readonly={disabled}
+                  required
+                />
+              </Col>
+            </Row>
+          </Col>
+        </Row>
       </Form>
     </div>
   );

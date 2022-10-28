@@ -5,6 +5,7 @@ import {
   IParameterList,
   Itipovalor,
   ItipoValorForm,
+  IObservations,
 } from "../models/parameter";
 import alerts from "../util/alerts";
 import messages from "../util/messages";
@@ -23,6 +24,7 @@ export default class ParameterStore {
   ValueTipe?: ItipoValorForm;
   ValuesTipe: ItipoValorForm[] = [];
   reagentsSelected: IReagentList[] = [];
+  // observationsSelected: IObservations[] = [];
 
   setReagentSelected = (reagentsSelected: IReagentList[]) => {
     this.reagentsSelected = reagentsSelected;
@@ -31,6 +33,14 @@ export default class ParameterStore {
   getReagentSelected = () => {
     return this.reagentsSelected;
   };
+
+  // setObservationSelected = (observationsSelected: IObservations[]) => {
+  //   this.observationsSelected = observationsSelected;
+  // }
+
+  // getObservationSelected = () => {
+  //   return this.observationsSelected;
+  // }
 
   getAll = async (search: string = "all") => {
     try {
