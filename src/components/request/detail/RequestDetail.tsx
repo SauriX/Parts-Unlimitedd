@@ -80,10 +80,12 @@ const RequestDetail = () => {
         parcialidad: false,
         esNuevo: true,
         estatusId: status.request.vigente,
+        esWeeClinic: false,
       };
 
       if (searchParams.has("weeFolio")) {
         req.folioWeeClinic = searchParams.get("weeFolio")!;
+        req.esWeeClinic = true;
         searchParams.delete("weeFolio");
         setSearchParams(searchParams);
       }

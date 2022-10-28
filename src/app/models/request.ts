@@ -22,6 +22,7 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   registro?: string;
   esNuevo: boolean;
   folioWeeClinic?: string;
+  esWeeClinic: boolean;
 
   estudios?: IRequestStudyInfo[];
 }
@@ -53,6 +54,8 @@ export interface IRequestInfo extends IRequestBase {
   descuento: number;
   total: number;
   saldo: number;
+  folioWeeClinic?: string;
+  esWeeClinic: boolean;
   estudios: IRequestStudyInfo[];
 }
 
