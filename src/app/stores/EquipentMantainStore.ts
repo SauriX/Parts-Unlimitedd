@@ -45,7 +45,15 @@ export default class EquipmentMantainStore {
       history.push("/forbidden");
     }
   };
-
+  deleteImage = async (recordId: string, requestId: string, code: string) => {
+    try {
+      //await Request.deleteImage(recordId, requestId, code);
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
   getAlls = async (search: ISearchMantain) => {
     try {
       const equipments = await Equipmentmantain.getAll(search);
@@ -115,8 +123,8 @@ export default class EquipmentMantainStore {
   };
   saveImage = async (request: FormData) => {
     try {
-      await Equipmentmantain.saveImage(request);
-      return true;
+      var name=await Equipmentmantain.saveImage(request);
+      return name;
     } catch (error) {
       alerts.warning(getErrors(error));
       return false;
