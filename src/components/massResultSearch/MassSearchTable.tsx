@@ -39,7 +39,6 @@ const MassSearchTable = () => {
           searchState,
           setSearchState,
           width: 120,
-          //   minWidth: "20em",
         }),
         align: "center",
         key: uuid(),
@@ -78,9 +77,7 @@ const MassSearchTable = () => {
       ...getDefaultColumnProps("clave", "Información del paciente", {
         searchState,
         setSearchState,
-        width: 225,
-        // minWidth: "20em",
-        // windowSize: windowWidth,
+        width: 150,
       }),
       align: "left",
       key: uuid(),
@@ -145,11 +142,8 @@ const MassSearchTable = () => {
           renderCell: () => {
             return (
               <>
-                <Row>
-                  <CheckInput />
-                  <PrintIcon key="doc" onClick={() => {}} />
-                  {/* <Col></Col> */}
-                </Row>
+                <CheckInput style={{ marginBottom: 0, paddingBottom: 0 }} />
+                <PrintIcon key="doc" onClick={() => {}} />
               </>
             );
           },

@@ -1,4 +1,5 @@
 export interface IMassSearch {
+  //formulario
   fechas: moment.Moment[];
   area: number;
   busqueda: string;
