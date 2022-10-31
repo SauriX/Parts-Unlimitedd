@@ -77,6 +77,7 @@ const ClinicResultsTable = ({
           onExpand: onExpand,
           expandedRowKeys: expandedRowKeys,
         }}
+        bordered
       />
     </Fragment>
   );

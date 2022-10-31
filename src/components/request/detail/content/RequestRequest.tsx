@@ -113,7 +113,8 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
         estudios: selectedStudies,
       };
       setLoading(true);
-      await sendStudiesToRequest(data);
+      const ok = await sendStudiesToRequest(data);
+      if (ok) setSelectedStudies([]);
       setLoading(false);
     }
   };
@@ -139,7 +140,7 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
       <Row gutter={[8, 12]}>
         <Col span={24} style={{ textAlign: "right" }}>
           <Button type="primary" onClick={updatePartiality}>
-            {request?.parcialidad
+            {!request?.parcialidad
               ? "Aplicar parcialidad"
               : "Cancelar parcialidad"}
           </Button>
@@ -158,7 +159,7 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
         <Col span={24}>
           <Table<IRequestStudy>
             size="small"
-            rowKey={(record) => record.estudioId}
+            rowKey={(record) => record.id ?? record.identificador!}
             columns={columns}
             dataSource={[...allStudies]}
             pagination={false}
@@ -171,6 +172,9 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
                 disabled:
                   record.estatusId !== status.requestStudy.tomaDeMuestra,
               }),
+              selectedRowKeys: selectedStudies.map(
+                (x) => x.id ?? x.identificador!
+              ),
             }}
             sticky
             scroll={{ x: "fit-content" }}

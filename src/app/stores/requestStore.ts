@@ -15,6 +15,7 @@ import {
   IRequestTotal,
   RequestStudyUpdate,
   RequestTotal,
+  IRequestPayment,
 } from "../models/request";
 import alerts from "../util/alerts";
 import { status, statusName } from "../util/catalogs";
@@ -51,6 +52,11 @@ export default class RequestStore {
   studies: IRequestStudy[] = [];
   packs: IRequestPack[] = [];
   loadingRequests: boolean = false;
+  loadingTabContentCount: number = 0;
+
+  get loadingTabContent() {
+    return this.loadingTabContentCount > 0;
+  }
 
   get studyUpdate() {
     if (this.request) {
@@ -99,8 +105,10 @@ export default class RequestStore {
 
   calculateTotals = () => {
     const total =
-      this.studies.reduce((acc, obj) => acc + obj.precio, 0) +
-      this.packs.reduce((acc, obj) => acc + obj.precio, 0);
+      this.studies
+        .filter((x) => x.estatusId !== status.requestStudy.cancelado)
+        .reduce((acc, obj) => acc + obj.precioFinal, 0) +
+      this.packs.reduce((acc, obj) => acc + obj.precioFinal, 0);
 
     const desc =
       this.totals.descuentoTipo === 1
@@ -160,18 +168,14 @@ export default class RequestStore {
   };
 
   setStudy = (study: IRequestStudy) => {
-    const index = this.studies.findIndex(
-      (x) => x.estudioId === study.estudioId
-    );
+    const index = this.studies.findIndex((x) => x.id === study.id);
 
     if (index > -1) {
       this.studies[index] = study;
     }
 
     this.packs = this.packs.map((x) => {
-      const index = x.estudios.findIndex(
-        (x) => x.estudioId === study.estudioId
-      );
+      const index = x.estudios.findIndex((x) => x.id === study.id);
       if (index > -1) {
         x.estudios[index] = study;
       }
@@ -180,7 +184,7 @@ export default class RequestStore {
   };
 
   setPack = (pack: IRequestPack) => {
-    const index = this.packs.findIndex((x) => x.paqueteId === pack.paqueteId);
+    const index = this.packs.findIndex((x) => x.id === pack.id);
 
     if (index > -1) {
       this.packs[index] = pack;
@@ -213,6 +217,7 @@ export default class RequestStore {
       this.loadingRequests = true;
       const requests = await Request.getRequests(filter);
       this.requests = requests;
+      return requests
     } catch (error) {
       alerts.warning(getErrors(error));
     } finally {
@@ -222,6 +227,7 @@ export default class RequestStore {
 
   getGeneral = async (recordId: string, requestId: string) => {
     try {
+      this.loadingTabContentCount++;
       const request = await Request.getGeneral(recordId, requestId);
       request.metodoEnvio = [];
       if (request.correo) request.metodoEnvio.push("correo");
@@ -230,11 +236,14 @@ export default class RequestStore {
       return request;
     } catch (error) {
       alerts.warning(getErrors(error));
+    } finally {
+      this.loadingTabContentCount--;
     }
   };
 
   getStudies = async (recordId: string, requestId: string) => {
     try {
+      this.loadingTabContentCount++;
       const data = await Request.getStudies(recordId, requestId);
       if (data.paquetes && data.paquetes.length > 0) {
         this.packs = data.paquetes;
@@ -242,6 +251,18 @@ export default class RequestStore {
       this.studies = data.estudios;
       this.totals = data.total ?? new RequestTotal();
       this.calculateTotals();
+      return data;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return [];
+    } finally {
+      this.loadingTabContentCount--;
+    }
+  };
+
+  getPayments = async (recordId: string, requestId: string) => {
+    try {
+      const data = await Request.getPayments(recordId, requestId);
       return data;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -277,8 +298,8 @@ export default class RequestStore {
 
       console.log(study);
 
-      const repeated = this.studies.filter(function (itm) {
-        return itm.parametros
+      const repeated = this.studies.filter(function (item) {
+        return item.parametros
           .map((x) => x.id)
           .filter((x) => study.parametros.map((y) => y.id).indexOf(x) !== -1);
       });
@@ -342,10 +363,13 @@ export default class RequestStore {
     email: string
   ) => {
     try {
+      this.loadingTabContentCount++;
       await Request.sendTestEmail(recordId, requestId, email);
       alerts.info("El correo se está enviando");
     } catch (error) {
       alerts.warning(getErrors(error));
+    } finally {
+      this.loadingTabContentCount--;
     }
   };
 
@@ -355,17 +379,34 @@ export default class RequestStore {
     phone: string
   ) => {
     try {
+      this.loadingTabContentCount++;
       await Request.sendTestWhatsapp(recordId, requestId, phone);
       alerts.info("El whatsapp se está enviando");
     } catch (error) {
       alerts.warning(getErrors(error));
+    } finally {
+      this.loadingTabContentCount--;
     }
   };
 
   create = async (request: IRequest) => {
     try {
-      const id = await Request.create(request);
+      let id = "";
+      if (!request.folioWeeClinic) {
+        id = await Request.create(request);
+      } else {
+        id = await Request.createWeeClinic(request);
+      }
       return id;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  createPayment = async (request: IRequestPayment) => {
+    try {
+      const payment = await Request.createPayment(request);
+      return payment;
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
@@ -373,12 +414,15 @@ export default class RequestStore {
 
   updateGeneral = async (request: IRequestGeneral) => {
     try {
+      this.loadingTabContentCount++;
       await Request.updateGeneral(request);
       alerts.success(messages.updated);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
+    } finally {
+      this.loadingTabContentCount--;
     }
   };
 
@@ -395,21 +439,66 @@ export default class RequestStore {
 
   updateStudies = async (request: IRequestStudyUpdate) => {
     try {
+      this.loadingTabContentCount++;
       await Request.updateStudies(request);
+      this.studies = this.studies.map((x) => ({ ...x, nuevo: false }));
+      this.packs = this.packs.map((x) => ({ ...x, nuevo: false }));
       alerts.success(messages.updated);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
+    } finally {
+      this.loadingTabContentCount--;
     }
   };
 
-  deleteStudy = async (id: number) => {
-    this.studies = this.studies.filter((x) => x.estudioId !== id);
+  changeStudyPromotion = (study: IRequestStudy, promoId?: number) => {
+    const index = this.studies.findIndex(
+      (x) => x.id === study.id && x.identificador === study.identificador
+    );
+    if (index > -1) {
+      const _study = { ...this.studies[index] };
+      const promo = this.studies[index].promociones.find(
+        (x) => x.promocionId === promoId
+      );
+      this.studies[index] = {
+        ..._study,
+        promocionId: promoId,
+        promocion: promo?.promocion,
+        descuento: promo?.descuento,
+        descuentoPorcentaje: promo?.descuentoPorcentaje,
+        precioFinal: _study.precio - (promo?.descuento ?? 0),
+      };
+      this.calculateTotals();
+    }
   };
 
-  deletePack = async (id: number) => {
-    this.packs = this.packs.filter((x) => x.paqueteId !== id);
+  changePackPromotion = (pack: IRequestPack, promoId?: number) => {
+    const index = this.packs.findIndex(
+      (x) => x.id === pack.id && x.identificador === pack.identificador
+    );
+    if (index > -1) {
+      const promo = this.packs[index].promociones.find(
+        (x) => x.promocionId === promoId
+      );
+      this.packs[index] = {
+        ...this.packs[index],
+        promocionId: promoId,
+        promocion: promo?.promocion,
+        promocionDescuento: promo?.descuento,
+        promocionDescuentoPorcentaje: promo?.descuentoPorcentaje,
+      };
+      this.calculateTotals();
+    }
+  };
+
+  deleteStudy = async (id: string) => {
+    this.studies = this.studies.filter((x) => x.identificador !== id);
+  };
+
+  deletePack = async (id: number | string) => {
+    this.packs = this.packs.filter((x) => x.identificador !== id);
   };
 
   cancelRequest = async (recordId: string, requestId: string) => {
@@ -428,7 +517,7 @@ export default class RequestStore {
       await Request.cancelStudies(request);
       alerts.success(messages.updated);
 
-      const ids = request.estudios.map((x) => x.estudioId);
+      const ids = request.estudios.map((x) => x.id!);
 
       this.updateStudiesStatus(
         ids,
@@ -443,12 +532,30 @@ export default class RequestStore {
     }
   };
 
+  cancelPayments = async (
+    recordId: string,
+    requestId: string,
+    payments: IRequestPayment[]
+  ) => {
+    try {
+      const cancelled = await Request.cancelPayments(
+        recordId,
+        requestId,
+        payments
+      );
+      return cancelled;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return [];
+    }
+  };
+
   sendStudiesToSampling = async (request: IRequestStudyUpdate) => {
     try {
       await Request.sendStudiesToSampling(request);
       alerts.success(messages.updated);
 
-      const ids = request.estudios.map((x) => x.estudioId);
+      const ids = request.estudios.map((x) => x.id!);
 
       this.updateStudiesStatus(
         ids,
@@ -468,7 +575,7 @@ export default class RequestStore {
       await Request.sendStudiesToRequest(request);
       alerts.success(messages.updated);
 
-      const ids = request.estudios.map((x) => x.estudioId);
+      const ids = request.estudios.map((x) => x.id!);
 
       this.updateStudiesStatus(
         ids,
@@ -548,7 +655,7 @@ export default class RequestStore {
     statusName: string
   ) => {
     this.studies = this.studies.map((x) => {
-      if (ids.includes(x.estudioId)) {
+      if (ids.includes(x.id!)) {
         x.estatusId = statusId;
         x.estatus = statusName;
       }
@@ -557,7 +664,7 @@ export default class RequestStore {
 
     this.packs = this.packs.map((x) => {
       x.estudios = x.estudios.map((y) => {
-        if (ids.includes(y.estudioId)) {
+        if (ids.includes(y.id!)) {
           y.estatusId = statusId;
           y.estatus = statusName;
         }

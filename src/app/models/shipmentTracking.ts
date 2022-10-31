@@ -24,5 +24,6 @@ export  interface shipmenttracking {
     seguimiento:string,
     ruta:string,
     nombre:string,
+    temperatura:number
 } 
 

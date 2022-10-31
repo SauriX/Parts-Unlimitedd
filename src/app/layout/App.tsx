@@ -69,6 +69,7 @@ import RouteTracking from "../../views/RouteTracking";
 import ClinicResults from "../../views/ClinicResults";
 import ClinicalResults from "../../components/clinicalResults/ClinicalResultsInfo";
 import ShipmentTracking from "../../views/ShipmentTracking";
+import ReciveTracking from "../../views/ReciveTracking";
 import WorkList from "../../views/WorkList";
 import MassResultSearch from "../../views/MassResultSearch";
 
@@ -219,6 +220,10 @@ function App() {
             <Route
               path={`${views.shipmenttracking}/:id`}
               element={<ShipmentTracking />}
+            />
+                        <Route
+              path={`${views.recivetracking}/:id`}
+              element={<ReciveTracking/>}
             />
             <Route
               path="forbidden"

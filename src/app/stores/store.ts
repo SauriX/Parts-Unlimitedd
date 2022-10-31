@@ -36,10 +36,10 @@ import RequestedStudyStore from "./requestedStudyStore";
 import ClinicResultsStore from "./clinicResultsStore";
 import EquipmentMantainStore from "./EquipentMantainStore";
 import TrackingOrderStore from "./trackingOrderStore";
-import WeeClinicStore from "./weeClinicStore";
-import RouteTrackingStore from "./routeTracking";
 import shipmentTackingStore from "./shipmentTrackingStore";
 import WorkListStore from "./workListStore";
+import WeeClinicStore from "./weeClinicStore";
+import RouteTrackingStore from "./routeTracking";
 import MassResultSearchStore from "./massResultSearch";
 configure({
   enforceActions: "never",

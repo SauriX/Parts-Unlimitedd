@@ -42,6 +42,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   const {
     request,
     studyUpdate,
+    loadingTabContent,
     getStudies,
     updateGeneral,
     updateStudies,
@@ -56,7 +57,6 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
 
   const [formGeneral] = Form.useForm<IRequestGeneral>();
 
-  const [loading, setLoading] = useState(false);
   const [currentKey, setCurrentKey] = useState<keys>("general");
 
   const onChangeTab = async (key: string) => {
@@ -111,7 +111,6 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   const submit = async () => {
     let ok = true;
 
-    setLoading(true);
     if (currentKey === "general") {
       ok = await submitGeneral(formGeneral);
     } else if (
@@ -122,7 +121,6 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       ok = await updateStudies(studyUpdate);
       await modificarSaldo();
     }
-    setLoading(false);
 
     return ok;
   };
@@ -133,10 +131,8 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       `¿Desea cancelar la solicitud?, esta acción no se puede deshacer`,
       async () => {
         if (request) {
-          setLoading(true);
           await cancelRequest(request.expedienteId, request.solicitudId!);
           await modificarSaldo();
-          setLoading(false);
         }
       }
     );
@@ -144,10 +140,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
 
   useEffect(() => {
     if (request) {
-      setLoading(true);
-      getStudies(request.expedienteId, request.solicitudId!).finally(() =>
-        setLoading(false)
-      );
+      getStudies(request.expedienteId, request.solicitudId!);
     }
   }, [getStudies, request]);
 
@@ -180,7 +173,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     } else if (tabName === "indications") {
       component = <RequestIndication />;
     } else if (tabName === "register") {
-      component = <RequestRegister recordId={recordId} />;
+      component = <RequestRegister  />;
     } else if (tabName === "request") {
       component = <RequestRequest formGeneral={formGeneral} />;
     } else if (tabName === "print") {
@@ -206,7 +199,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   }
 
   return (
-    <Spin spinning={loading}>
+    <Spin spinning={loadingTabContent}>
       <Tabs
         activeKey={currentKey}
         tabBarExtraContent={operations}

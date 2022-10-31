@@ -14,7 +14,7 @@ export interface IParameterList {
   mostrarFormato: boolean;
   unidades: number;
   unidadNombre: string;
-  tipoValor: number;
+  tipoValor: string;
   valorInicial: string;
   valorFinal: string;
   criticoMinimo: number;
@@ -22,6 +22,8 @@ export interface IParameterList {
   solicitudEstudioId: number;
   resultadoId: string;
   resultado: string;
+  formula?: string;
+  tipoValores?: ItipoValorForm[];
 }
 
 export interface IParameterValueListDto {

@@ -42,36 +42,31 @@ import IconButton from "../../../app/common/button/IconButton";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../../app/util/alerts";
 import PrintIcon from "../../../app/common/icons/PrintIcon";
+import { formItemLayout } from "../../../app/util/utils";
 
 const PendingSend = () => {
-  const {
-    procedingStore,
-    optionStore,
-    locationStore,
-    samplig,
-    routeTrackingStore,
-  } = useStore();
-  const { getAll, studys, printTicket, update, exportForm, setventana } =
-    routeTrackingStore;
-  const [values, setValues] = useState<SearchTracking>(
-    new TrackingFormValues()
-  );
+  const { procedingStore, optionStore, locationStore, samplig,routeTrackingStore } = useStore();
+  const { getAll, studys, printTicket, update,exportForm,setventana } = routeTrackingStore;
+  const { branchCityOptions,getBranchCityOptions } = optionStore;
+  const [values, setValues] = useState<SearchTracking>(new TrackingFormValues());
   const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
-  const [ids, setIds] = useState<number[]>([]);
-  const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
-  const [activiti, setActiviti] = useState<string>("");
-  const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
-  const [openRows, setOpenRows] = useState<boolean>(false);
-  const [expandable, setExpandable] = useState<ExpandableConfig<IRouteList>>();
-  let navigate = useNavigate();
-  useEffect(() => {
-    setexpandedRowKeys(studys!.map((x) => x.id));
-    setOpenRows(true);
-  }, [studys]);
+const [ids, setIds] = useState<number[]>([]);
+const [form] = Form.useForm<SearchTracking>();
+const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
+const [activiti, setActiviti] = useState<string>("");
+const [expandedRowKeys,setexpandedRowKeys]= useState<string[]>([]);
+const [openRows,setOpenRows]=useState<boolean>(false);
+const [expandable, setExpandable] =useState<ExpandableConfig<IRouteList>>();
+let navigate = useNavigate();
+useEffect(()=>{
+  setexpandedRowKeys(studys!.map((x)=>x.id));
+  setOpenRows(true);
+},[studys]);
   useEffect(() => {
     const readPriceList = async () => {
       let studios = [];
       var datas = await getAll(values!);
+      getBranchCityOptions();
       console.log(datas, "daata");
       setventana("enviar");
       //setSoliCont(datas?.length!);
@@ -221,8 +216,10 @@ const PendingSend = () => {
                       Selecciona
                     </Checkbox>
                   )}
-                  {x.status == 2 && (
-                    <Checkbox onChange={(e) => onChange(e, x.id, item.id)}>
+                  {x.status == 3 && (
+                    <Checkbox
+                      onChange={(e) =>   onChange(e, x.id, item.id) }
+                    >
                       Selecciona
                     </Checkbox>
                   )}
@@ -261,234 +258,237 @@ const PendingSend = () => {
   });
   const hasFooterRow = true;
 
-  const columns: IColumns<IRouteList> = [
-    {
-      ...getDefaultColumnProps("seguimiento", "# De seguimiento", {
-        searchState,
-        setSearchState,
-        width: "20%",
-        minWidth: 150,
-      }),
-      render: (value, route) => (
+    const columns: IColumns<IRouteList> = [
+      {
+        ...getDefaultColumnProps("seguimiento", "# De seguimiento", {
+          searchState,
+          setSearchState,
+          width: "20%",
+          minWidth: 150,
+        }),
+        render: (value, route) => (
+          <Button
+            type="link"
+            onClick={() => {
+              navigate(`/ShipmentTracking/${route.id}`);
+            }}
+          >
+            {value}
+          </Button>
+        ),
+      },
+        {
+          ...getDefaultColumnProps("clave", "Clave de ruta", {
+            searchState,
+            setSearchState,
+            width: "15%",
+          }),
+        },
+        {
+          ...getDefaultColumnProps("sucursal", "Sucursal", {
+            searchState,
+            setSearchState,
+            width: "20%",
+          }),
+        },
+        {
+          ...getDefaultColumnProps("fecha", " Fecha de entrega", {
+            searchState,
+            setSearchState,
+            width: "15%",
+          }),
+        },
+        {
+          key: "editar",
+          dataIndex: "id",
+          title: "Estatus",
+          align: "center",
+          width:  "10%",
+          render: (value) => (value ? "Activo" : "Inactivo"),
+        },
+    
+        {
+          key: "editar",
+          dataIndex: "id",
+          title: "Editar",
+          align: "center",
+          width:  "10%",
+          render: (value) => (
+            <IconButton
+              title="Editar ruta"
+              icon={<EditOutlined />}
+              onClick={() => {
+                navigate(`/trackingOrder/${value}`);
+              }}
+            />
+          ),
+        },
+    
+        {
+          key: "editar",
+          dataIndex: "id",
+          title: "Impresión",
+          align: "center",
+          width:  "10%",
+          render: (value,item) => (
+            <PrintIcon  
+                    key="print"
+                    onClick={() => {
+                      printTicket(item.estudios[0].expedienteid, item.estudios[0].solicitudid);
+                    }}
+            />
+          ),
+        },
+       /*  {
+          key: "editar",
+          dataIndex: "id",
+          title: "Seleccionar",
+          align: "center",
+          width:  "10%",
+          render: (value,item) => (
+            <Checkbox  onChange={(e)=>{onChange(e,x=item.estudios.map(x=>x.),value) }} >
+          
+          </Checkbox>
+          ),
+        }, */
+      ];
+      const onFinish = async (newValues: SearchTracking) => {
+        // setLoading(true);
+     console.log("onfinish");
+         const reagent = { ...values, ...newValues };
+
+
+          var search= reagent;
+
+           let studios = [];
+           var datas = await getAll(search!);
+          // console.log(datas, "daata");
+           //setSoliCont(datas?.length!);
+           datas?.forEach((x:any) => studios.push(x.pendings));
+          // setStudyCont(studios.length);
+           //setLoading(false);
+           setExpandable(expandableStudyConfig);
+         console.log(reagent,"en el onfish")
+         console.log(reagent);
+         let success = false;
+     
+
+     
+        // setLoading(false);
+     
+
+       };
+    return (
+        <Fragment>
+           
+            <Form<SearchTracking>
+                {...formItemLayout}
+                form={form}
+                name="reagent"
+                initialValues={values}
+                onFinish={onFinish}
+                scrollToFirstError
+              >
+                <Row gutter={[0, 12]}>
+                    <Col span={6}>
+                        <DateRangeInput formProps={{ name: "fechas", label: "Fecha" }} ></DateRangeInput>
+                    </Col>
+                    <Col span={1}></Col>
+                    <Col span={4}>
+                        <SelectInput options={branchCityOptions} formProps={{ name: "sucursal", label: "Sucursal" }} style={{marginLeft:"10px"}}></SelectInput>  
+                    </Col>
+                    <Col span={1}></Col>
+                    <Col span={4}>
+                        <TextInput formProps={{ name: "buscar", label: "Buscar" ,labelCol:{span:5}}} ></TextInput>
+                    </Col>
+                    <Col span={4}>
+                    <Button style={{marginLeft:"5%"}} onClick={()=>{form.submit()}} type="primary">Buscar</Button>
+                    </Col>
+                    <Col> <Button style={{backgroundColor:" #18AC50"}} onClick={()=>{navigate(`/trackingOrder/new`);}} type="primary" >Crear orden  de seguimiento</Button></Col>
+                </Row>
+            </Form>
+            <Row style={{marginLeft:"20%",marginBottom:"2%"}}>
+                <Col span={8}>
+                    <Button style={{marginTop:"8%",marginLeft:"2%"}}         type={activiti == "register" ? "primary" : "ghost"}
+        onClick={register} >Enviar ruta</Button>
+                    <Button style={{marginTop:"8%",marginLeft:"2%"}}  type={activiti == "cancel" ? "primary" : "ghost"}
+        onClick={cancel} >Cancelar envío</Button>
+                </Col>
+                <Col span={8}></Col>
+                <Col span={8}>
+                {activiti == "register" ? (
         <Button
-          type="link"
+          style={{ marginTop: "8%", marginBottom: "10px", marginLeft: "70%" }}
+          type="primary"
+          disabled={ids.length <= 0}
           onClick={() => {
-            navigate(`/ShipmentTracking/${route.id}`);
+            updatedata();
           }}
         >
-          {value}
+          Enviar
         </Button>
-      ),
-    },
-    {
-      ...getDefaultColumnProps("clave", "Clave de ruta", {
-        searchState,
-        setSearchState,
-        width: "15%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("sucursal", "Sucursal", {
-        searchState,
-        setSearchState,
-        width: "20%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("fecha", " Fecha de entrega", {
-        searchState,
-        setSearchState,
-        width: "15%",
-      }),
-    },
-    {
-      key: "editar",
-      dataIndex: "id",
-      title: "Estatus",
-      align: "center",
-      width: "10%",
-      render: (value) => (value ? "Activo" : "Inactivo"),
-    },
-
-    {
-      key: "editar",
-      dataIndex: "id",
-      title: "Editar",
-      align: "center",
-      width: "10%",
-      render: (value) => (
-        <IconButton
-          title="Editar ruta"
-          icon={<EditOutlined />}
-          onClick={() => {}}
-        />
-      ),
-    },
-
-    {
-      key: "editar",
-      dataIndex: "id",
-      title: "Impresión",
-      align: "center",
-      width: "10%",
-      render: (value, item) => (
-        <PrintIcon
-          key="print"
+      ) : (
+        ""
+      )}
+{activiti == "cancel" ? (
+        <Button
+          style={{  marginTop: "8%", marginBottom: "10px", marginLeft: "70%"  }}
+          type="primary"
+          disabled={ids.length <= 0}
           onClick={() => {
-            printTicket(item.id, item.id);
+            updatedata();
           }}
-        />
-      ),
-    },
-    {
-      key: "editar",
-      dataIndex: "id",
-      title: "Seleccionar",
-      align: "center",
-      width: "10%",
-      render: (value, item) => (
-        <Checkbox /* onChange={(e)=>{onChange(e,x=item.estudios.map(x=>x.),value) }} */
-        ></Checkbox>
-      ),
-    },
-  ];
-  return (
-    <Fragment>
-      <Form<any>>
-        <Row gutter={[0, 12]}>
-          <Col span={6}>
-            <DateRangeInput
-              formProps={{ name: "fecha", label: "Fecha" }}
-            ></DateRangeInput>
-          </Col>
-          <Col span={1}></Col>
-          <Col span={4}>
-            <SelectInput
-              options={[]}
-              formProps={{ name: "sucursal", label: "Sucursal" }}
-              style={{ marginLeft: "10px" }}
-            ></SelectInput>
-          </Col>
-          <Col span={1}></Col>
-          <Col span={4}>
-            <TextInput
-              formProps={{
-                name: "buscar",
-                label: "Buscar",
-                labelCol: { span: 5 },
-              }}
-            ></TextInput>
-          </Col>
-          <Col span={4}>
-            <Button style={{ marginLeft: "5%" }} type="primary">
-              Buscar
-            </Button>
-          </Col>
-          <Col>
-            {" "}
-            <Button
-              style={{ backgroundColor: " #18AC50" }}
-              onClick={() => {
-                navigate(`/trackingOrder/new`);
-              }}
-              type="primary"
-            >
-              Crear orden de seguimiento
-            </Button>
-          </Col>
-        </Row>
-      </Form>
-      <Row style={{ marginLeft: "20%", marginBottom: "2%" }}>
-        <Col span={8}>
-          <Button
-            style={{ marginTop: "8%", marginLeft: "2%" }}
-            type={activiti == "register" ? "primary" : "ghost"}
-            onClick={register}
-          >
-            Enviar ruta
-          </Button>
-          <Button
-            style={{ marginTop: "8%", marginLeft: "2%" }}
-            type={activiti == "cancel" ? "primary" : "ghost"}
-            onClick={cancel}
-          >
-            Cancelar envío
-          </Button>
-        </Col>
-        <Col span={8}></Col>
-        <Col span={8}>
-          {activiti == "register" ? (
-            <Button
-              style={{
-                marginTop: "10px",
-                marginBottom: "10px",
-                marginLeft: "70%",
-              }}
-              type="primary"
-              /* disabled={ids.length <= 0} */
-              onClick={() => {
-                updatedata();
-              }}
-            >
-              Enviar
-            </Button>
-          ) : (
-            ""
-          )}
-          {activiti == "cancel" ? (
-            <Button
-              style={{
-                marginTop: "10px",
-                marginBottom: "10px",
-                marginLeft: "70%",
-              }}
-              type="primary"
-              disabled={ids.length <= 0}
-              onClick={() => {
-                updatedata();
-              }}
-            >
-              Cancelar Registro
-            </Button>
-          ) : (
-            ""
-          )}
-        </Col>
-      </Row>
-      <Fragment>
-        {studys.length > 0 && (
-          <div style={{ textAlign: "right", marginBottom: 10 }}>
-            <Button
-              type="primary"
-              onClick={togleRows}
-              style={{ marginRight: 10 }}
-            >
-              {!openRows ? "Abrir tabla" : "Cerrar tabla"}
-            </Button>
-          </div>
-        )}
-        <Table<IRouteList>
-          loading={false}
-          size="small"
-          rowKey={(record) => record.id}
-          columns={columns}
-          pagination={false}
-          dataSource={[...studys]}
-          scroll={{ y: 500 }}
-          //(rowClassName={(item) => (item.claveMedico == "Total" || item.paciente === "Total" ? "Resumen Total" : "")}
-          expandable={{
-            ...expandable,
-            onExpand: onExpand,
-            expandedRowKeys: expandedRowKeys,
-          }}
-        />
-        <div style={{ textAlign: "right", marginTop: 10 }}>
-          <Tag color="lime">
-            {!hasFooterRow ? 3 : Math.max(3 - 1, 0)} Registros
-          </Tag>
-        </div>
-      </Fragment>
-    </Fragment>
-  );
-};
+        >
+          Cancelar Registro
+        </Button>
+      ) : (
+        ""
+      )}
+                </Col>
+            </Row>
+            <Fragment >
+            {studys.length > 0 &&
+
+(
+
+  <div style={{ textAlign: "right", marginBottom: 10 }}>
+
+    <Button
+
+      type="primary"
+
+      onClick={togleRows}
+
+      style={{ marginRight: 10 }}
+
+    >
+
+      {!openRows ? "Abrir tabla" : "Cerrar tabla"}
+
+    </Button>
+
+  </div>
+
+)}
+                <Table<IRouteList>
+                loading={false}
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columns}
+                pagination={false}
+                dataSource={[...studys]}
+                scroll={{ y: 500 }}
+                //(rowClassName={(item) => (item.claveMedico == "Total" || item.paciente === "Total" ? "Resumen Total" : "")}
+                expandable={{...expandable,onExpand:onExpand,expandedRowKeys:expandedRowKeys}}
+                />
+                <div style={{ textAlign: "right", marginTop: 10 }}>
+                <Tag color="lime">
+                    {!hasFooterRow ? 3 : Math.max(studys.length, 0)}{" "}
+                    Registros
+                </Tag>
+                </div>
+            </Fragment>
+        </Fragment>
+    );
+}
 export default observer(PendingSend);

@@ -9,6 +9,9 @@ import history from "../util/history";
 import messages from "../util/messages";
 import responses from "../util/responses";
 import { getErrors } from "../util/utils";
+import { IParameterList } from "../models/parameter";
+import { IIndicationList } from "../models/indication";
+import { IWorkList } from "../models/workList";
 
 export default class StudyStore {
   constructor() {
@@ -17,7 +20,30 @@ export default class StudyStore {
 
   scopes?: IScopes;
   study: IStudyList[] = [];
+  parameterSelected: IParameterList[] = [];
+  indicationSelected: IIndicationList[] = [];
+  workListSelected: IWorkList[] = [];
+  setParameterSelected = (parametersSelected: IParameterList[]) => {
+    this.parameterSelected = parametersSelected;
+  };
 
+  getParameterSelected = () => {
+    return this.parameterSelected;
+  };
+  setIndicationSelected = (indicationsSelected: IIndicationList[]) => {
+    this.indicationSelected = indicationsSelected;
+  };
+
+  getIndicationSelected = () => {
+    return this.indicationSelected;
+  };
+  setWorkListSelected = (workListSelected:IWorkList[]) => {
+    this.workListSelected = workListSelected;
+  };
+
+  getWorkListSelected = () => {
+    return this.workListSelected;
+  };
   clearScopes = () => {
     this.scopes = undefined;
   };

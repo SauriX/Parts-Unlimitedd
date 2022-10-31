@@ -12,9 +12,10 @@ const views = {
   quotatiion: "cotizacion",
   report: "reportes",
   cash: "cash",
-  sampling: "samplings",
-  routeTraking: "segRutas",
-  shipmenttracking: "ShipmentTracking",
+  sampling:"samplings",
+  routeTraking:"segRutas",
+  shipmenttracking:"ShipmentTracking",
+  recivetracking:"ReciveTracking",
   workLists: "workLists",
 };
 

@@ -1,5 +1,14 @@
 import { isFocusable } from "@testing-library/user-event/dist/utils";
-import { Button, Checkbox, Col, Row, Select, Table, Typography } from "antd";
+import {
+  Button,
+  Checkbox,
+  Col,
+  Row,
+  Select,
+  Table,
+  Tooltip,
+  Typography,
+} from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
 import { FC, useEffect, useState } from "react";
@@ -43,11 +52,13 @@ const RequestStudy = () => {
     deletePack,
     cancelStudies,
     setOriginalTotal,
+    changeStudyPromotion,
+    changePackPromotion,
     totals,
   } = requestStore;
 
   const [selectedStudies, setSelectedStudies] = useState<IRequestStudy[]>([]);
-
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [options, setOptions] = useState<IOptions[]>([]);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
@@ -58,41 +69,29 @@ const RequestStudy = () => {
     getStudyOptions();
     getPackOptions();
   }, [getPackOptions, getStudyOptions]);
-  useEffect(() => {
-    setOriginalTotal(totals);
-  }, []);
 
   useEffect(() => {
-    console.log(selectedStudies);
-  }, [selectedStudies]);
+    setOriginalTotal(totals);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const options: IOptions[] = [
       {
         value: "study",
         label: "Estudios",
-        options: studyOptions.filter(
-          (x) =>
-            !studies
-              .map((s) => s.estudioId.toString())
-              .includes(x.value.toString().split("-")[1])
-        ),
+        options: studyOptions,
       },
       {
         value: "pack",
         label: "Paquetes",
-        options: packOptions.filter(
-          (x) =>
-            !packs
-              .map((s) => s.paqueteId.toString())
-              .includes(x.value.toString().split("-")[1])
-        ),
+        options: packOptions,
       },
     ];
 
     setOptions(options);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [packOptions, studyOptions, packs.length, studies.length]);
+  }, [packOptions, studyOptions]);
 
   const columns: IColumns<IRequestStudy | IRequestPack> = [
     {
@@ -109,15 +108,26 @@ const RequestStudy = () => {
         setSearchState,
         width: 200,
       }),
+      ellipsis: {
+        showTitle: false,
+      },
       render: (value, item) => {
+        let content = "";
         if (isStudy(item)) {
-          return `${value} (${item.parametros.map((x) => x.clave).join(", ")})`;
+          content = `${value} (${item.parametros
+            .map((x) => x.clave)
+            .join(", ")})`;
         } else {
-          return `${value} (${item.estudios
+          content = `${value} (${item.estudios
             .flatMap((x) => x.parametros)
             .map((x) => x.clave)
             .join(", ")})`;
         }
+        return (
+          <Tooltip placement="topLeft" title={content}>
+            {content}
+          </Tooltip>
+        );
       },
     },
     {
@@ -200,13 +210,30 @@ const RequestStudy = () => {
       }),
     },
     {
-      ...getDefaultColumnProps("promocion", "Promoción", {
+      ...getDefaultColumnProps("promocionId", "Promoción", {
         searchable: false,
         width: 200,
       }),
-      render: (value, record) =>
-        record.promociones && record.promociones.length > 0 ? (
-          <Select options={[]} bordered={false} style={{ width: "100%" }} />
+      render: (value, item) =>
+        item.promociones && item.promociones.length > 0 ? (
+          <Select
+            options={item.promociones.map((x) => ({
+              value: x.promocionId,
+              label: `${x.promocion} (${x.descuentoPorcentaje}%)`,
+            }))}
+            value={value}
+            bordered={false}
+            style={{ width: "100%" }}
+            allowClear
+            placeholder="Seleccionar promoción"
+            onChange={(promoId?: number) => {
+              if (isStudy(item)) {
+                changeStudyPromotion(item, promoId);
+              } else {
+                changePackPromotion(item, promoId);
+              }
+            }}
+          />
         ) : (
           "Sin promociones disponibles"
         ),
@@ -237,8 +264,9 @@ const RequestStudy = () => {
       render: (value, item) =>
         !!value ? (
           <IconButton
+            danger
             title="Eliminar"
-            icon={<DeleteOutlined style={{ color: "red" }} />}
+            icon={<DeleteOutlined />}
             onClick={() => deleteStudyOrPack(item)}
           />
         ) : null,
@@ -267,9 +295,9 @@ const RequestStudy = () => {
       }?`,
       async () => {
         if (isStudy(item)) {
-          deleteStudy(item.estudioId);
+          deleteStudy(item.identificador!);
         } else {
-          deletePack(item.paqueteId);
+          deletePack(item.identificador!);
         }
       }
     );
@@ -286,7 +314,11 @@ const RequestStudy = () => {
             solicitudId: request.solicitudId!,
             estudios: selectedStudies,
           };
-          cancelStudies(data);
+          const ok = await cancelStudies(data);
+          if (ok) {
+            setSelectedStudies([]);
+            setSelectedRowKeys([]);
+          }
         }
       );
     }
@@ -319,12 +351,14 @@ const RequestStudy = () => {
       <Col span={24}>
         <Table<IRequestStudy | IRequestPack>
           size="small"
-          rowKey={(record) => record.type + "-" + record.clave}
+          rowKey={(record) =>
+            record.type + "-" + (record.id ?? record.identificador!)
+          }
           columns={columns}
           dataSource={[...studies, ...packs]}
           pagination={false}
           rowSelection={{
-            onSelect: (_item, _selected, c) => {
+            onSelect: (_item, selected, c) => {
               const studies = [
                 ...c
                   .filter((x) => x.type === "study")
@@ -334,14 +368,20 @@ const RequestStudy = () => {
                   .flatMap((x) => (x as IRequestPack).estudios),
               ];
               setSelectedStudies(studies);
+              setSelectedRowKeys(
+                c.map((x) => x.type + "-" + (x.id ?? x.identificador!))
+              );
             },
             getCheckboxProps: (item) => ({
-              disabled: isStudy(item)
-                ? item.estatusId !== status.requestStudy.pendiente
-                : item.estudios.some(
-                    (x) => x.estatusId !== status.requestStudy.pendiente
-                  ),
+              disabled:
+                item.nuevo ||
+                (isStudy(item)
+                  ? item.estatusId !== status.requestStudy.pendiente
+                  : item.estudios.some(
+                      (x) => x.estatusId !== status.requestStudy.pendiente
+                    )),
             }),
+            selectedRowKeys: selectedRowKeys,
           }}
           sticky
           scroll={{ x: "fit-content" }}

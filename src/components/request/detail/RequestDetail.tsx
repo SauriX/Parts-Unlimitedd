@@ -1,16 +1,18 @@
-import { Divider } from "antd";
+import { Divider, Spin } from "antd";
 import { Fragment, useEffect, useState } from "react";
 import RequestHeader from "./RequestHeader";
 import RequestRecord from "./RequestRecord";
 import RequestTab from "./RequestTab";
 import "./css/index.less";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
 import { IRequest } from "../../../app/models/request";
 import { status } from "../../../app/util/catalogs";
 import { toJS } from "mobx";
 import moment from "moment";
+import views from "../../../app/util/view";
+import Center from "../../../app/layout/Center";
 
 const RequestDetail = () => {
   const { profileStore, requestStore, loyaltyStore, procedingStore } =
@@ -32,8 +34,10 @@ const RequestDetail = () => {
 
   const navigate = useNavigate();
   const { recordId, requestId } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [branchId, setBranchId] = useState<string | undefined>(
     profile!.sucursal
   );
@@ -76,21 +80,32 @@ const RequestDetail = () => {
         parcialidad: false,
         esNuevo: true,
         estatusId: status.request.vigente,
+        esWeeClinic: false,
       };
 
+      if (searchParams.has("weeFolio")) {
+        req.folioWeeClinic = searchParams.get("weeFolio")!;
+        req.esWeeClinic = true;
+        searchParams.delete("weeFolio");
+        setSearchParams(searchParams);
+      }
+
+      setCreating(true);
       const id = await create(req);
       await modificarSaldo();
+      setCreating(false);
 
       if (id) {
         navigate(`${id}`, { replace: true });
       } else {
-        navigate("/error", { replace: true });
+        navigate(`/${views.request}`, { replace: true });
       }
     };
 
     const getRequestById = async () => {
       setLoading(true);
       await getById(recordId!, requestId!);
+      setLoading(false);
     };
 
     if (recordId && !requestId) {
@@ -98,10 +113,22 @@ const RequestDetail = () => {
     } else if (recordId && requestId) {
       getRequestById();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recordId, requestId]);
 
   if (!recordId) return null;
+
+  if (creating) {
+    return (
+      <Center>
+        <Spin
+          spinning={creating}
+          tip="Creando Solicitud..."
+          size="large"
+        ></Spin>
+      </Center>
+    );
+  }
 
   return (
     <Fragment>

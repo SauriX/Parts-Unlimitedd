@@ -105,7 +105,8 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
         estudios: selectedStudies,
       };
       setLoading(true);
-      await sendStudiesToSampling(data);
+      const ok = await sendStudiesToSampling(data);
+      if (ok) setSelectedStudies([]);
       setLoading(false);
     }
   };
@@ -129,7 +130,7 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
         <Col span={24}>
           <Table<IRequestStudy>
             size="small"
-            rowKey={(record) => record.estudioId}
+            rowKey={(record) => record.id ?? record.identificador!}
             columns={columns}
             dataSource={[...allStudies]}
             pagination={false}
@@ -141,6 +142,9 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
               getCheckboxProps: (record) => ({
                 disabled: record.estatusId !== status.requestStudy.pendiente,
               }),
+              selectedRowKeys: selectedStudies.map(
+                (x) => x.id ?? x.identificador!
+              ),
             }}
             sticky
             scroll={{ x: "fit-content" }}

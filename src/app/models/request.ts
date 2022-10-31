@@ -21,6 +21,8 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   parcialidad: boolean;
   registro?: string;
   esNuevo: boolean;
+  folioWeeClinic?: string;
+  esWeeClinic: boolean;
 
   estudios?: IRequestStudyInfo[];
 }
@@ -52,6 +54,8 @@ export interface IRequestInfo extends IRequestBase {
   descuento: number;
   total: number;
   saldo: number;
+  folioWeeClinic?: string;
+  esWeeClinic: boolean;
   estudios: IRequestStudyInfo[];
 }
 
@@ -103,6 +107,19 @@ export interface IRequestGeneral extends IRequestBase {
   observaciones: string;
 }
 
+export interface IRequestPayment extends IRequestBase {
+  id: string;
+  formaPagoId: number;
+  formaPago: string;
+  numeroCuenta: string;
+  cantidad: number;
+  serie: string;
+  numero: string;
+  estatusId: number;
+  usuarioRegistra: string;
+  fechaPago: moment.Moment;
+}
+
 export interface IRequestImage extends IRequestBase {
   imagen?: File | Blob;
   imagenUrl?: string;
@@ -139,6 +156,7 @@ export class RequestStudyUpdate implements IRequestStudyUpdate {
 export interface IRequestStudy {
   type: "study" | "pack";
   id?: number;
+  identificador?: string;
   estudioId: number;
   clave: string;
   nombre: string;
@@ -214,6 +232,8 @@ export class RequestStudyValues implements IRequestStudy {
 }
 export interface IRequestPack {
   type: "study" | "pack";
+  id?: number;
+  identificador?: string;
   paqueteId: number;
   clave: string;
   nombre: string;

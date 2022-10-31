@@ -1,4 +1,4 @@
-import { Descriptions, Typography } from "antd";
+import { Descriptions, TableColumnsType, Typography } from "antd";
 import { useState } from "react";
 import {
   IColumns,
@@ -117,32 +117,33 @@ export const ClinicResultsExpandable = () => {
   return {
     expandedRowRender: (item: IClinicResultList) => (
       <div>
+        <Descriptions
+          size="small"
+          bordered
+          style={{ marginBottom: 5 }}
+          layout="vertical"
+        >
         {item.estudios.map((x) => {
           return (
-            <Descriptions
-              key={x.id}
-              size="small"
-              bordered
-              style={{ marginBottom: 5 }}
-              layout="vertical"
-            >
-              <Descriptions.Item
-                label="Estudio"
-                style={{ maxWidth: 30 }}
-                className="description-content"
-              >
-                {x.clave} - {x.nombre}
-              </Descriptions.Item>
-              <Descriptions.Item
-                label="Estatus"
-                style={{ maxWidth: 30 }}
-                className="description-content"
-              >
-                {x.nombreEstatus!.toUpperCase()} - {x.entrega}
-              </Descriptions.Item>
-            </Descriptions>
+              <>
+                <Descriptions.Item
+                  label="Estudio"
+                  style={{ maxWidth: 30 }}
+                  className="description-content"
+                >
+                  {x.clave} - {x.nombre}
+                </Descriptions.Item>
+                <Descriptions.Item
+                  label="Estatus"
+                  style={{ maxWidth: 30 }}
+                  className="description-content"
+                >
+                  {x.nombreEstatus!.toUpperCase()} - {x.entrega}
+                </Descriptions.Item>
+              </>
           );
         })}
+        </Descriptions>
       </div>
     ),
     rowExpandable: () => true,
