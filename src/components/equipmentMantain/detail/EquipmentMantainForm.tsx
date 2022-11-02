@@ -428,7 +428,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idma
                 }}
               >
                 <Row>
-                  <Col md={12} sm={24}>
+                  <Col md={11} sm={24}>
                     <DateInput
 
                       formProps={{
@@ -447,7 +447,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idma
                     ></TextAreaInput>
 
                   </Col>
-                  <Col md={12} sm={24}>
+                  <Col style={{marginLeft:"2%"}} md={12} sm={24}>
                     <Row gutter={[0, 12]}>
 
                       {mantain?.id&&<Col span={24}>

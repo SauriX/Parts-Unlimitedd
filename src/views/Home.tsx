@@ -37,30 +37,8 @@ const Home = () => {
   const [solicitudes,setSolicitudes] = useState<number>(0);
   const [proxCierre,setProxCierre] = useState<number>(0);
   const [calendarType, setCalendarType] = useState<"week" | "date">( "date");
-  const [data,setData]=useState<IDashBoard[]>([{
-    pendiente: 0,
-    toma: 0,
-    ruta: 0,
-    solicitud: 0,
-    capturado: 0,
-    validado: 0,
-    liberado: 0,
-    enviado: 0,
-    entregado:0,   
-  }]);
-  const cleandata = ()=>{
-    setData([{
-      pendiente: 0,
-      toma: 0,
-      ruta: 0,
-      solicitud: 0,
-      capturado: 0,
-      validado: 0,
-      liberado: 0,
-      enviado: 0,
-      entregado:0,   
-    }]);
-  }
+  const [data,setData]=useState<IDashBoard[]>([]);
+
   useEffect(()=>{
     const readcitas = async()=>{
 
@@ -72,7 +50,18 @@ const Home = () => {
   },[getAllLab]);
   useEffect(()=>{
     const readRequest = async ()=>{
-      cleandata();
+      var temp:IDashBoard[] =[{
+        pendiente: undefined,
+        toma: undefined,
+        ruta: undefined,
+        solicitud: undefined,
+        capturado: undefined,
+        validado: undefined,
+        liberado: undefined,
+        enviado: undefined,
+        entregado:undefined,   
+      }]
+      
       var filter:IRequestFilter={ fechaInicial:moment(moment.now()),fechaFinal: moment(moment.now()),tipoFecha:1};
       if(vista==2){
 
@@ -92,55 +81,85 @@ const Home = () => {
       requests?.forEach(solicitud=> solicitud.estudios.forEach(x=>{
                     switch(x.estatusId) { 
                       case 1: { 
-                        var datos = [...data];
+                        var datos = temp;
+                        if(datos[0].pendiente==undefined){
+                          datos[0].pendiente=0;
+                        }
+                       
                         datos[0].pendiente++
                        setData(datos)
                         break; 
                       } 
                       case 2: { 
-                        var datos = [...data];
+                        var datos = temp;
+                        if(datos[0].toma==undefined){
+                          datos[0].toma=0;
+                        }
+                       
                         datos[0].toma++
                         setData(datos)
                         break; 
                       }
                       case 3: { 
-                        var datos = [...data];
+                        var datos = temp;
+                        if(datos[0].solicitud==undefined){
+                          datos[0].solicitud=0;
+                        }
+                       
                         datos[0].solicitud++
                         setData(datos)
                         break; 
                       } 
                       case 4: { 
-                        var datos = [...data];
+                        var datos = temp;
+                        if(datos[0].capturado==undefined){
+                          datos[0].capturado=0;
+                        }
                         datos[0].capturado++
                        setData(datos)
                         break; 
                       } 
                       case 5: { 
-                        var datos = [...data];
+                        var datos = temp;
+                        if(datos[0].validado==undefined){
+                          datos[0].validado=0;
+                        }
                         datos[0].validado++
                        setData(datos)
                         break; 
                       } 
                       case 6: { 
-                        var datos = [...data];
+                        var datos = temp;
+                        if(datos[0].liberado==undefined){
+                          datos[0].liberado=0;
+                        }
                         datos[0].liberado++
                        setData(datos)
                         break; 
                       } 
                       case 7: { 
-                        var datos = [...data];
+                        var datos = temp;
+                        if(datos[0].enviado==undefined){
+                          datos[0].enviado=0;
+                        }
                         datos[0].enviado++
                        setData(datos)
                         break; 
                       } 
                       case 8: { 
-                        var datos = [...data];
+                        var datos = temp;
+                        if(datos[0].ruta==undefined){
+                          datos[0].ruta=0;
+                        }
                         datos[0].ruta++
                        setData(datos)
                         break; 
                       } 
                       case 10: { 
-                       var datos = [...data];
+                        var datos = temp; 
+                        if(datos[0].entregado==undefined){
+                          datos[0].entregado=0;
+                        }
                         datos[0].entregado++
                        setData(datos)
                         break; 
@@ -151,12 +170,14 @@ const Home = () => {
                       } 
                   }
               }));
-              
+
       setProxCierre(cierre);
     }
     readRequest()
     
   },[getRequests,vista]);
+
+
   useEffect(()=>{
     const readsend = async () =>{
     var search: SearchTracking = new TrackingFormValues()
@@ -370,7 +391,7 @@ const Home = () => {
                       { title: "Enviado", dataIndex: "enviado" },
                       { title: "Entregado", dataIndex: "entregado" },
                     ]}
-                    axisLabel={{ interval: 0, rotate: 30 }}
+                    axisLabel={{ interval: 0, rotate: 0 }}
           ></DashboardChart>}
         </Col>
         {vista==2&&!calendar&&<Col md={6}>

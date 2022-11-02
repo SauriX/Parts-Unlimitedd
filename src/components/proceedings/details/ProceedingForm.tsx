@@ -775,8 +775,8 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                       <Col span={12}>
                       <MaskInput
                   formProps={{
-                    name: "telefono",
-                    label: "Teléfono",
+                    name: "celular",
+                    label: "Celular",
                   }}
                   mask={[
                     /[0-9]/,
