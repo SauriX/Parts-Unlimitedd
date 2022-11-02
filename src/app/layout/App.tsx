@@ -71,6 +71,7 @@ import ClinicalResults from "../../components/clinicalResults/ClinicalResultsInf
 import ShipmentTracking from "../../views/ShipmentTracking";
 import ReciveTracking from "../../views/ReciveTracking";
 import WorkList from "../../views/WorkList";
+import MassResultSearch from "../../views/MassResultSearch";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -195,6 +196,7 @@ function App() {
             <Route path="requestedstudy/:id" element={<RequestedStudy />} />
             <Route path="requestedstudy/new" element={<RequestedStudy />} />
             <Route path="reports" element={<Report />} />
+            <Route path="massResultSearch" element={<MassResultSearch />} />
             <Route path={views.appointment} element={<Appointment />} />
             <Route path={views.routeTraking} element={<RouteTracking />} />
             <Route path={views.workLists} element={<WorkList />} />
