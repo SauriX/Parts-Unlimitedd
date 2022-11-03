@@ -8,7 +8,8 @@ import EquipmentFormHeader from "./EquipmentFormHeader";
 import { ConsoleLogger } from "@microsoft/signalr/dist/esm/Utils";
 
 type UrlParams = {
-  id: string;
+  id: string,
+  ide:string,
 };
 
 const EquipmentMantainDetails = () => {
@@ -34,10 +35,10 @@ const EquipmentMantainDetails = () => {
     },
   });
 
-  const { id } = useParams<UrlParams>();
+  const { id,ide } = useParams<UrlParams>();
   const equipmentId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
   console.log(equipmentId,"elid");
-   const mantainid = !id?"":isNaN(Number(id)) ? id : null;
+   const mantainid = !ide?"":isNaN(Number(id)) ? id : null;
 
 
 /*   if (equipmentId === undefined) {

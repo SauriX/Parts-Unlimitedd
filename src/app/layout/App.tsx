@@ -134,7 +134,7 @@ function App() {
             />
             <Route path="equipment/:id" element={<EquipmentDetails />} />
             <Route
-              path="equipmentMantain/edit/:id"
+              path="equipmentMantain/edit/:ide/:id"
               element={<EquipmentMantainDetails />}
             />
             <Route path="roles" element={<Role />} />
