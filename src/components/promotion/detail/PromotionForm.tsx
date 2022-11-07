@@ -75,6 +75,8 @@ const { width: windowWidth } = useWindowDimensions();
     getMedics();
   },[getMedicOptions]);
   const setFechaInicial=(fecha:moment.Moment)=>{
+
+
 console.log(fecha.toDate(),"fecha");
     console.log("fecha1");
     let estudio = estudios.map(x=> {
@@ -669,11 +671,34 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     setLoading(true);
 
     const reagent = { ...values, ...newValues };
+    var c =moment(reagent.fechaInicial).format("YYYY-MM-DD");
 
+    var d = moment(reagent.fechaFinal).format("YYYY-MM-DD");
+
+  if(d < c){
+    setLoading(false);
+      alerts.warning("La fecha inicial debe ser menor a la final");
+      return;
+  }
     var counter =0;
-    values.estudio.forEach(x=>{if(x.precioFinal==0){ counter++}})
+    var counterF = 0;
+    values.estudio.forEach(x=>{if(x.precioFinal==0){ counter++;};
+    var c =moment(x.fechaInicial).format("YYYY-MM-DD");
+
+    var d = moment(x.fechaFinal).format("YYYY-MM-DD");
+  if(d < c){
+
+    counterF++
+  }
+  
+  })
     if(counter>0){
       alerts.warning("El precio final debe ser mayor a 0");
+      setLoading(false);
+      return
+    }
+    if(counterF>0){
+      alerts.warning("La fecha inicial debe ser menor a la final en los estudios");
       setLoading(false);
       return
     }

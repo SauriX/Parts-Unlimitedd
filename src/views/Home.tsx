@@ -1,5 +1,5 @@
-import { Col, Row, Select,Image } from "antd";
-import React, { Fragment, useEffect, useState } from "react";
+import { Col, Row, Select,Image, Calendar } from "antd";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import {
   CalendarOutlined,
   AuditOutlined
@@ -10,61 +10,64 @@ import { useStore } from "../app/stores/store";
 import { IRequestFilter } from "../app/models/request";
 import moment from "moment";
 import { SearchTracking, TrackingFormValues } from "../app/models/routeTracking";
-
+import AppointmentCalendar from "../components/dashboard/dashCalendar";
+import { useReactToPrint } from "react-to-print";
 const Home = () => {
+  const [printing, setPrinting] = useState(false);
+  const componentRef = useRef<any>();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    onBeforeGetContent: () => {
+      setPrinting(true);
+    },
+    onAfterPrint: () => {
+      setPrinting(false);
+    },
+  });
   const { appointmentStore,requestStore,routeTrackingStore,profileStore} = useStore();
   const {profile}=profileStore;
   const { getAllDom,getAllLab,search }=appointmentStore;
   const {getRequests}=requestStore;
   const {getAll,getAllRecive,searchPending,setSearchi}=routeTrackingStore;
+  const [calendar,setCalendar]= useState<boolean>(false);
   const [vista,setVista]=useState<number>(1);
   const [citas,setCitas]=useState<number>(0);
   const [enviar,setEnviar]=useState<number>(0);
   const [recibir,setRecibir]=useState<number>(0);
   const [solicitudes,setSolicitudes] = useState<number>(0);
   const [proxCierre,setProxCierre] = useState<number>(0);
-  const [data,setData]=useState<IDashBoard[]>([{
-    pendiente: 0,
-    toma: 0,
-    ruta: 0,
-    solicitud: 0,
-    capturado: 0,
-    validado: 0,
-    liberado: 0,
-    enviado: 0,
-    entregado:0,   
-  }]);
-  const cleandata = ()=>{
-    setData([{
-      pendiente: 0,
-      toma: 0,
-      ruta: 0,
-      solicitud: 0,
-      capturado: 0,
-      validado: 0,
-      liberado: 0,
-      enviado: 0,
-      entregado:0,   
-    }]);
-  }
+  const [calendarType, setCalendarType] = useState<"week" | "date">( "date");
+  const [data,setData]=useState<IDashBoard[]>([]);
+
   useEffect(()=>{
     const readcitas = async()=>{
-      var domicilio = await getAllDom(search);
+
       var lab = await getAllLab(search);
-      var citasTotales = domicilio?.length! + lab?.length!;
+      var citasTotales =  lab?.length!;
       setCitas(citasTotales);
     }
     readcitas()
-  },[getAllDom,getAllLab]);
+  },[getAllLab]);
   useEffect(()=>{
     const readRequest = async ()=>{
-      cleandata();
+      var temp:IDashBoard[] =[{
+        pendiente: undefined,
+        toma: undefined,
+        ruta: undefined,
+        solicitud: undefined,
+        capturado: undefined,
+        validado: undefined,
+        liberado: undefined,
+        enviado: undefined,
+        entregado:undefined,   
+      }]
+      
       var filter:IRequestFilter={ fechaInicial:moment(moment.now()),fechaFinal: moment(moment.now()),tipoFecha:1};
       if(vista==2){
 
         var weeknumber = moment(moment.now()).week();
         var primer=moment().isoWeek(weeknumber).startOf("W");
-        var final = moment().isoWeek(weeknumber).endOf("W").subtract(2,"d");
+        var final = moment().isoWeek(weeknumber).endOf("W").subtract(1,"d");
         filter={ fechaInicial:primer,fechaFinal:final,tipoFecha:1};
         
       }
@@ -78,55 +81,85 @@ const Home = () => {
       requests?.forEach(solicitud=> solicitud.estudios.forEach(x=>{
                     switch(x.estatusId) { 
                       case 1: { 
-                        var datos = [...data];
+                        var datos = temp;
+                        if(datos[0].pendiente==undefined){
+                          datos[0].pendiente=0;
+                        }
+                       
                         datos[0].pendiente++
                        setData(datos)
                         break; 
                       } 
                       case 2: { 
-                        var datos = [...data];
+                        var datos = temp;
+                        if(datos[0].toma==undefined){
+                          datos[0].toma=0;
+                        }
+                       
                         datos[0].toma++
                         setData(datos)
                         break; 
                       }
                       case 3: { 
-                        var datos = [...data];
+                        var datos = temp;
+                        if(datos[0].solicitud==undefined){
+                          datos[0].solicitud=0;
+                        }
+                       
                         datos[0].solicitud++
                         setData(datos)
                         break; 
                       } 
                       case 4: { 
-                        var datos = [...data];
+                        var datos = temp;
+                        if(datos[0].capturado==undefined){
+                          datos[0].capturado=0;
+                        }
                         datos[0].capturado++
                        setData(datos)
                         break; 
                       } 
                       case 5: { 
-                        var datos = [...data];
+                        var datos = temp;
+                        if(datos[0].validado==undefined){
+                          datos[0].validado=0;
+                        }
                         datos[0].validado++
                        setData(datos)
                         break; 
                       } 
                       case 6: { 
-                        var datos = [...data];
+                        var datos = temp;
+                        if(datos[0].liberado==undefined){
+                          datos[0].liberado=0;
+                        }
                         datos[0].liberado++
                        setData(datos)
                         break; 
                       } 
                       case 7: { 
-                        var datos = [...data];
+                        var datos = temp;
+                        if(datos[0].enviado==undefined){
+                          datos[0].enviado=0;
+                        }
                         datos[0].enviado++
                        setData(datos)
                         break; 
                       } 
                       case 8: { 
-                        var datos = [...data];
+                        var datos = temp;
+                        if(datos[0].ruta==undefined){
+                          datos[0].ruta=0;
+                        }
                         datos[0].ruta++
                        setData(datos)
                         break; 
                       } 
                       case 10: { 
-                       var datos = [...data];
+                        var datos = temp; 
+                        if(datos[0].entregado==undefined){
+                          datos[0].entregado=0;
+                        }
                         datos[0].entregado++
                        setData(datos)
                         break; 
@@ -137,12 +170,14 @@ const Home = () => {
                       } 
                   }
               }));
-              
+
       setProxCierre(cierre);
     }
     readRequest()
     
   },[getRequests,vista]);
+
+
   useEffect(()=>{
     const readsend = async () =>{
     var search: SearchTracking = new TrackingFormValues()
@@ -150,7 +185,7 @@ const Home = () => {
 
     const weeknumber = moment(moment.now()).week();
     const primer=moment().isoWeek(weeknumber).startOf("W");
-    const final = moment().isoWeek(weeknumber).endOf("W").subtract(2,"d");
+    const final = moment().isoWeek(weeknumber).endOf("W").subtract(1,"d");
     if(vista==2){
 
       envia=envia?.filter(x=> Date.parse(moment(x.fecha).format('YYYY MM DD'))  >Date.parse(moment(primer).format('YYYY MM DD'))&&Date.parse(moment(x.fecha).format('YYYY MM DD'))<Date.parse(moment(final).format('YYYY MM DD')));
@@ -171,7 +206,7 @@ const Home = () => {
 
     if(vista==2){
       var contador = 0;
-      for(var i=0;i<=4;i++){   
+      for(var i=0;i<=5;i++){   
         var dia = moment().isoWeek(weeknumber).startOf("W");
          dia = dia.add(i,"d");
         var recibe = await getAllRecive({...searchPending!,fecha:dia,sucursaldest:profile?.sucursal!});
@@ -189,11 +224,11 @@ const Home = () => {
       <Row>
         <Col md={6}>
           <label style={{marginLeft:"20%"}} htmlFor="">Ver por: </label>
-          <Select onChange={(values)=>{setVista(values)}} defaultValue={1} style={{width:"40%"}} options={[{value:1,label:"Diario"},{value:2,label:"Semanal"}]}></Select>
+          <Select onChange={(values)=>{setVista(values); if(values==2){setCalendarType("week");}else{setCalendarType("date");}}} defaultValue={1} style={{width:"40%"}} options={[{value:1,label:"Diario"},{value:2,label:"Semanal"}]}></Select>
         </Col>
         <Col md={18}></Col>
         <Col md={6}>
-          <div style={{
+          <div onClick={()=>{setCalendar(!calendar)}} style={{
                   background:"#253B65",
                   height: "auto",
                   borderStyle: "solid",
@@ -201,7 +236,7 @@ const Home = () => {
                   borderWidth: "1px",
                   borderRadius: "10px",
                   padding: "10px",
-                  marginTop:"20%",
+                  marginTop:"10%",
                   width:"70%",
                   marginLeft:"20%",
                   color:"#F0F0F0"
@@ -209,11 +244,11 @@ const Home = () => {
         >
          <b style={{fontSize:"20px"}}>
           Citas
-          <Image width={40} style={{marginLeft:"370%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/citas.png`} preview={false}/>
+          <Image width={40} style={{marginLeft:"320%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/citas.png`} preview={false}/>
   
          </b>
         </div>
-        <div style={{marginLeft:"20%",textAlign:"center",
+        <div onClick={()=>{setCalendar(!calendar)}} style={{marginLeft:"20%",textAlign:"center",
                   height: "auto",
                   borderColor: "#CBC9C9",
                   borderWidth: "1px",
@@ -235,17 +270,18 @@ const Home = () => {
                   borderWidth: "1px",
                   borderRadius: "10px",
                   padding: "10px",
-                  marginTop:"20%",
+                  marginTop:"10%",
                   width:"70%",
                   marginLeft:"20%",
                   color:"#F0F0F0"
                 }}
         >
          <b style={{fontSize:"20px"}}>
-         Solicitudes
+         Solicitudes 
+         <Image width={40} style={{marginLeft:"170%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/solicitud.png`} preview={false}/>
          
-         <Image width={40} style={{marginLeft:"220%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/solicitud.png`} preview={false}/>
          </b>
+       
         </div>
         <div style={{marginLeft:"20%",textAlign:"center",
                   height: "auto",
@@ -269,7 +305,7 @@ const Home = () => {
                   borderWidth: "1px",
                   borderRadius: "10px",
                   padding: "10px",
-                  marginTop:"20%",
+                  marginTop:"10%",
                   width:"70%",
                   marginLeft:"20%",
                   color:"#F0F0F0"
@@ -278,7 +314,7 @@ const Home = () => {
          <b style={{fontSize:"20px"}}>
          Próximas a cierre
          
-         <Image width={40} style={{marginLeft:"65%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/cierre.png`} preview={false}/>
+         <Image width={40} style={{marginLeft:"55%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/cierre.png`} preview={false}/>
          </b>
         </div>
         <div style={{marginLeft:"20%",textAlign:"center",
@@ -303,7 +339,7 @@ const Home = () => {
                   borderWidth: "1px",
                   borderRadius: "10px",
                   padding: "10px",
-                  marginTop:"20%",
+                  marginTop:"10%",
                   width:"80%",
                   marginLeft:"20%",
                   color:"#F0F0F0"
@@ -312,7 +348,7 @@ const Home = () => {
          <b style={{fontSize:"20px"}}>
          Muestras a enviar: {enviar}
          
-         <Image width={40} style={{marginLeft:"90%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/enviar.png`} preview={false}/>
+         <Image width={40} style={{marginLeft:"70%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/enviar.png`} preview={false}/>
          </b>
         </div>
         <div style={{
@@ -332,15 +368,16 @@ const Home = () => {
          <b style={{fontSize:"20px"}}>
          Muestras a recibir: {recibir}
          
-         <Image width={40} style={{marginLeft:"90%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/recibir.png`} preview={false}/>
+         <Image width={40} style={{marginLeft:"70%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/recibir.png`} preview={false}/>
          </b>
         </div>
         </Col>
       </Row>
       <br />
       <Row>
-        <Col md={vista==2?18:24}>
-          <DashboardChart<IDashBoard>
+        <Col md={vista==2&&!calendar?18:24}>
+       { calendar &&<AppointmentCalendar type={calendarType} componentRef={componentRef} printing={printing}></AppointmentCalendar>}
+{         !calendar&& <DashboardChart<IDashBoard>
                     data={data as IDashBoard[]}
                     
                     series={[
@@ -354,10 +391,10 @@ const Home = () => {
                       { title: "Enviado", dataIndex: "enviado" },
                       { title: "Entregado", dataIndex: "entregado" },
                     ]}
-                    axisLabel={{ interval: 0, rotate: 30 }}
-          ></DashboardChart>
+                    axisLabel={{ interval: 0, rotate: 0 }}
+          ></DashboardChart>}
         </Col>
-        {vista==2&&<Col md={6}>
+        {vista==2&&!calendar&&<Col md={6}>
         <div style={{
                   background:"#253B65",
                   height: "auto",

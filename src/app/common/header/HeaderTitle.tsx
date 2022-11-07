@@ -73,4 +73,5 @@ export type imagesType =
   | "portapapeles"
   | "usuario"
   | "segruta"
-  | "worklist";
+  | "worklist"
+  | "massSearch";

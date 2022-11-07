@@ -95,6 +95,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getnow]);
   const onfinish = async (values: ISearchMedical) => {
+    console.log(values);
     setSearch(values);
     await getnow(values!);
   }
