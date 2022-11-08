@@ -21,21 +21,13 @@ import {
   IRequestStudy,
   RequestStudyValues,
 } from "../../../app/models/request";
-import { FC, Fragment, useEffect, useRef, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 import { IProceedingForm } from "../../../app/models/Proceeding";
 import { useStore } from "../../../app/stores/store";
 import { status } from "../../../app/util/catalogs";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import {
-  ClinicResultsCaptureForm,
-  IClinicResultCaptureForm,
-} from "../../../app/models/clinicResults";
-import { IOptions } from "../../../app/models/shared";
+import { IClinicResultCaptureForm } from "../../../app/models/clinicResults";
 import moment from "moment";
-import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
-import alerts from "../../../app/util/alerts";
-import { parse } from "path";
-import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import { ObservationModal } from "./ObservationModal";
 const { Text, Title } = Typography;
 const { TextArea } = Input;
@@ -66,12 +58,14 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
 
   const [loading, setLoading] = useState(false);
   const [checkedPrint, setCheckedPrint] = useState(false);
+  const [hideWhenCancel, setHideWhenCancel] = useState(false);
   const { optionStore, clinicResultsStore, parameterStore } = useStore();
-
+  const [resultParam, setResultParam] = useState<any[]>([]);
   const {
     getRequestStudyById,
     updateStatusStudy,
     studies,
+    data,
     updateResults,
     cancelResults,
     addSelectedStudy,
@@ -117,12 +111,13 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   }, [claveMedico]);
 
   useEffect(() => {
-    console.log(resultValue);
+    
   }, [resultValue]);
 
   const loadInit = async () => {
     const cStudy = await getRequestStudyById(estudio.id!);
     setCurrentStudy(cStudy!);
+    console.log(cStudy)
 
     let captureResult = studies.find((x) => x.id == estudioId);
 
@@ -134,11 +129,15 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
             x.tipoValorId === "5"
               ? x.resultado?.toString()?.split(",")
               : x.resultado,
+          rango:
+            x.criticoMinimo! >= parseFloat(x.resultado as string) ||
+            parseFloat(x.resultado as string) >= x.criticoMaximo!,
         };
         return obj;
       });
     }
 
+    setResultParam(captureResult === undefined ? [] : captureResult.parametros);
     form.setFieldValue("parametros", captureResult?.parametros);
   };
 
@@ -165,7 +164,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       dataIndex: "clave",
       title: "Clave",
       align: "left",
-      width: "20%",
+      width: "15%",
       render: () => {
         return <strong>{estudio.clave}</strong>;
       },
@@ -181,11 +180,11 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       },
     },
     {
-      key: "estatusId",
+      key: "estatusId2",
       dataIndex: "estatusId",
       title: "Usuario Modificó",
       align: "left",
-      width: "20%",
+      width: "15%",
       render: (value: any, fullRow: any) => {
         let ultimaActualizacion;
         if (value === status.requestStudy.solicitado) {
@@ -211,9 +210,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       dataIndex: "estatus",
       title: "Estatus",
       align: "left",
-      width: "15%",
-      render: (value: any) => {
-        return <strong>{value.nombre}</strong>;
+      width: "10%",
+      render: () => {
+        return <strong>{estudio.nombreEstatus!}</strong>;
       },
     },
     {
@@ -249,9 +248,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     {
       key: "Orden",
       dataIndex: "orden",
-      title: "Orden",
+      title: "Acciones",
       align: "left",
-      width: "5%",
+      width: "20%",
+      render: () => renderUpdateStatus()
     },
     {
       key: "Seleccionar",
@@ -290,12 +290,13 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     return (
       <>
         {currentStudy.estatusId >= status.requestStudy.solicitado ? (
-          <>
-            <Divider></Divider>
+          <Row>
+            <Col span={24}>
+            <Row justify="space-between" gutter={[12, 24]}>
             {currentStudy.estatusId <= 3 ? (
               ""
             ) : (
-              <Col span={4}>
+              <Col span={12}>
                 <Button
                   type="default"
                   htmlType="submit"
@@ -320,7 +321,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                 </Button>
               </Col>
             )}
-            <Col span={4}>
+            <Col span={12}>
               <Button
                 type="primary"
                 htmlType="submit"
@@ -335,15 +336,17 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                 }}
               >
                 {currentStudy.estatusId === status.requestStudy.capturado
-                  ? "Validar"
+                  ? "Validar estudio"
                   : currentStudy.estatusId === status.requestStudy.validado
-                  ? "Liberar"
+                  ? "Liberar estudio"
                   : currentStudy.estatusId === status.requestStudy.solicitado
                   ? "Guardar captura"
                   : ""}
               </Button>
             </Col>
-          </>
+            </Row>
+            </Col>
+          </Row>
         ) : (
           ""
         )}
@@ -370,6 +373,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     console.log(labResults);
     success = await updateResults(labResults);
     if (success) {
+      setHideWhenCancel(false);
       await loadInit();
     }
 
@@ -408,14 +412,14 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
         : status.requestStudy.enviado;
       await updateStatusStudy(currentStudy.id!, nuevoEstado);
     }
-    if (currentStudy.estatusId === status.requestStudy.enviado) {
-      nuevoEstado = esCancelacion
-        ? status.requestStudy.liberado
-        : status.requestStudy.enviado;
-      await updateStatusStudy(currentStudy.id!, nuevoEstado);
-    }
     if (esCancelacion) {
       await cancelation(nuevoEstado);
+      removeSelectedStudy({
+        id: currentStudy.id!,
+        tipo: "LABORATORY",
+      });
+      setHideWhenCancel(true);
+      setCheckedPrint(false);
     }
     return nuevoEstado;
   };
@@ -443,8 +447,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
 
   return (
     <Fragment>
+      {currentStudy.estatusId >= 3 && currentStudy.estatusId != 9 ? (
       <Spin spinning={loading}>
-        <Row style={{ marginBottom: "20px" }}>{renderUpdateStatus()}</Row>
+        
         <Row style={{ marginBottom: "20px" }}>
           <Col span={24}>
             <Table<any>
@@ -457,7 +462,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
             />
           </Col>
         </Row>
-        {currentStudy.estatusId >= 3 ? (
           <Card className="capture-details">
             <Form<IClinicResultCaptureForm>
               form={form}
@@ -526,7 +530,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                       <h4>{fieldValue.nombre}</h4>
                                     </Col>
 
-                                    {fieldValue.tipoValorId == "10" ? (
+                                    {fieldValue.tipoValorId == "10" || fieldValue.tipoValorId == "7" ? (
                                       <Col span={6}>
                                         <Form.Item
                                           {...field}
@@ -550,7 +554,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                           type="primary"
                                           onClick={async () => {
                                             const modal =
-                                              await ObservationModal();
+                                              await ObservationModal(
+                                                fieldValue.parametroId, fieldValue.tipoValorId
+                                              );
                                             form.setFieldValue(
                                               [
                                                 "parametros",
@@ -632,8 +638,91 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
               </Row>
             </Form>
           </Card>
-        ) : null}
+        {resultParam.some((x) => x.rango) && !hideWhenCancel && (
+          <Card className="capture-details">
+            <Title level={4}>Valores Críticos</Title>
+            <Row justify="space-between" style={{ textAlign: "center" }}>
+              <Col span={8}>
+                <h3>EXAMEN</h3>
+              </Col>
+              <Col span={8}>
+                <h3>RESULTADO CRÍTICO</h3>
+              </Col>
+              <Col span={8}>
+                <h3>REFERENCIAS CRÍTICAS</h3>
+              </Col>
+            </Row>
+            {resultParam?.map((x) =>
+              x.rango ? (
+                <Row justify="space-between" style={{ textAlign: "center" }}>
+                  <Col span={8}>
+                    <h4>{x.nombre}</h4>
+                  </Col>
+                  <Col span={8}>
+                    <h4 style={{ color: "red" }}>
+                      {x.resultado} {x.unidadNombre}
+                    </h4>
+                  </Col>
+                  <Col span={8}>
+                    <h4>
+                      {"<"} {x.criticoMinimo} - {x.criticoMaximo} {">"}
+                    </h4>
+                  </Col>
+                </Row>
+              ) : null
+            )}
+          </Card>
+        )}
+        {resultParam.some((x) => x.deltaCheck && !!x.ultimoResultado && x.resultado) &&
+          !hideWhenCancel && (
+            <Card className="capture-details">
+              <Title level={4}>Análisis previo</Title>
+              <Row>
+                <Col span={24}>
+                  <Row justify="space-between" style={{ textAlign: "center" }}>
+                    <Col span={6}>
+                      <h3>EXAMEN</h3>
+                    </Col>
+                    <Col span={6}>
+                      <h4>RESULTADO ACTUAL</h4>
+                    </Col>
+                    <Col span={6}>
+                      <h4>RESULTADO PREVIO</h4>
+                    </Col>
+                    <Col span={6}>
+                      <h4>DIFERENCIA</h4>
+                    </Col>
+                    {resultParam?.map((x) =>
+                      x.deltaCheck ? (
+                        <>
+                          <Col span={6}>
+                            <h4>{x.nombre}</h4>
+                          </Col>
+                          <Col span={6}>
+                            <h4>
+                              {x.resultado} {x.unidadNombre}
+                            </h4>
+                          </Col>
+                          <Col span={6}>
+                            <h4>
+                              {x.ultimoResultado} {x.unidadNombre}
+                            </h4>
+                          </Col>
+                          <Col span={6}>
+                            <h4>
+                              {parseFloat(x.resultado) - parseFloat(x.ultimoResultado)} {x.unidadNombre}
+                            </h4>
+                          </Col>
+                        </>
+                      ) : null
+                    )}
+                  </Row>
+                </Col>
+              </Row>
+            </Card>
+          )}
       </Spin>
+      ) : null}
     </Fragment>
   );
 };

@@ -153,7 +153,6 @@ const RangoEdad: FC<Props> = ({
       alerts.warning(`En ${description} inicial no puede ser igual al final`);
       return;
     }
-    if (parameter.formula != "") {
       var succes = await addvalues(val, id!);
       if (succes) {
         succes = await update(parameter);
@@ -161,9 +160,6 @@ const RangoEdad: FC<Props> = ({
           navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
         }
       }
-    } else {
-      alerts.warning("Necesita ingresar una formula");
-    }
   };
   const onValuesChange = async (changeValues: any, values: any) => {
     const fields = Object.keys(changeValues)[0];

@@ -113,6 +113,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
       let val = parameter!.tipoValor | 0;
       setValueType(val);
       form.setFieldsValue(parameter!);
+      setDeltaCheck(parameter?.deltaCheck!)
       setValues(parameter!);
       setLoading(false);
     };
@@ -320,21 +321,8 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
   return (
     <Spin spinning={loading || load}>
       <Row style={{ marginBottom: 24 }}>
-        {id && (
-          <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
-            <Pagination
-              size="small"
-              total={parameters.length}
-              pageSize={1}
-              current={actualParameter()}
-              onChange={(value) => {
-                siguienteParameter(value - 1);
-              }}
-            />
-          </Col>
-        )}
         {!CheckReadOnly() && (
-          <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
+          <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
             <Button
               onClick={() => {
                 navigate(`/parameters`);
@@ -417,7 +405,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                         label: "Valor Inicial",
                       }}
                       min={1}
-                      required
                       readonly={CheckReadOnly()}
                       max={99999999999999999999999}
                     />
@@ -455,7 +442,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                         label: "Unidades",
                       }}
                       options={UnitOptions}
-                      required
                       readonly={CheckReadOnly()}
                     />
                   </Col>
@@ -466,7 +452,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                         label: "FCSI",
                       }}
                       max={100}
-                      required
+
                       readonly={CheckReadOnly()}
                     />
                   </Col>
@@ -477,7 +463,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                         label: "Nombre corto",
                       }}
                       max={100}
-                      required
                       readonly={CheckReadOnly()}
                     />
                   </Col>
@@ -488,7 +473,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                         label: "Unidad SI",
                       }}
                       options={UnitOptions}
-                      required
                       readonly={CheckReadOnly()}
                     />
                   </Col>
@@ -514,7 +498,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                       }}
                       options={departmentOptions}
                       readonly={CheckReadOnly()}
-                      required
                     />
                   </Col>
                   {id && (
@@ -547,7 +530,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                       formProps={{ name: "areaId", label: "Área" }}
                       options={areas}
                       readonly={CheckReadOnly()}
-                      required
                     />
                   </Col>
                   {id && (
@@ -559,7 +541,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                             label: "Fórmula",
                           }}
                           max={100}
-                          required
                           readonly={CheckReadOnly()}
                           onClick={(e: any) => {
                             const position = e.target.selectionStart ?? 0;

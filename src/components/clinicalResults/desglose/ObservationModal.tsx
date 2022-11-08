@@ -1,7 +1,7 @@
 import { store } from "../../../app/stores/store";
 import Observations from "./Observations";
 
-export const ObservationModal = () => {
+export const ObservationModal = (id: string, tipo: string) => {
   const { openModal, closeModal } = store.modalStore;
 
   return new Promise((resolve) => {
@@ -12,8 +12,7 @@ export const ObservationModal = () => {
           getResult={(data) => {
             resolve(data);
             closeModal();
-          }}
-        />
+          } } id={id} tipo={tipo}    />
       ),
       onClose: () => {
         resolve(undefined);

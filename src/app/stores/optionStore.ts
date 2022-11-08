@@ -627,12 +627,12 @@ export default class OptionStore {
   };
 
   typeValue: IOptions[] = [];
-  getTypeValues = async (id: string) => {
+  getTypeValues = async (id: string, tipo: string) => {
     try{
-      const type = Parameter.getAllValues(id, "5");
+      const type = Parameter.getAllValues(id, tipo);
       this.typeValue = (await type).map((x) => ({
         value: x.id!,
-        label: x.descripcionTexto!,
+        label: x.descripcionTexto as string,
       }))
     } catch(error) {
       this.typeValue = [];

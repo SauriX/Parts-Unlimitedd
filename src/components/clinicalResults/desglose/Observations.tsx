@@ -17,44 +17,35 @@ import {
   getDefaultColumnProps,
 } from "../../../app/common/table/utils";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
+import { IOptions } from "../../../app/models/shared";
 
 const { Paragraph } = Typography;
 
 type Props = {
   getResult: (isAdmin: string) => any;
+  id: string;
+  tipo: string;
 };
 
-const ParameterReagent = ({ getResult }: Props) => {
+const ParameterReagent = ({ getResult, id, tipo }: Props) => {
   const [form] = Form.useForm<any>();
   const [selectedObservation, setSelectedObservation] = useState<string>();
   const { width: windowWidth } = useWindowDimensions();
   const [loading, setLoading] = useState(false);
+  const { optionStore } = useStore();
+  const { getTypeValues, typeValue } = optionStore;
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
 
-  const observations: IObservations[] = [
-    {
-      id: 0,
-      observacion:
-        "Se recomienda no consumir ningún tipo de líquido por lo menos 2 horas entre medicamentos.",
-    },
-    {
-      id: 1,
-      observacion:
-        "Se recomienda reposo durante 5 días y tomar mucho líquido, preferentemente agua natural.",
-    },
-    {
-      id: 2,
-      observacion:
-        "Se recomienda no consumir ningún alimento alto en grasas o derivados de animales.",
-    },
-  ];
+  useEffect(() => {
+    getTypeValues(id, tipo);
+  }, [typeValue]);
 
-  const columns: IColumns<IObservations> = [
+  const columns: IColumns<IOptions> = [
     {
-      ...getDefaultColumnProps("observacion", "Observación", {
+      ...getDefaultColumnProps("label", "Observación", {
         searchState,
         setSearchState,
         width: "100%",
@@ -64,8 +55,8 @@ const ParameterReagent = ({ getResult }: Props) => {
     },
   ];
 
-  const onSelectChange = (item: IObservations) => {
-    setSelectedObservation(item.observacion);
+  const onSelectChange = (item: IOptions) => {
+    setSelectedObservation(item.label as string);
   };
 
   const rowSelection = {
@@ -90,12 +81,12 @@ const ParameterReagent = ({ getResult }: Props) => {
           </Paragraph>
         </Col>
       </Row>
-      <Table<IObservations>
+      <Table
         loading={loading}
         size="small"
-        rowKey={(record) => record.id}
+        rowKey={(record) => record.value}
         columns={columns}
-        dataSource={[...observations]}
+        dataSource={[...typeValue]}
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
         rowSelection={{
@@ -103,6 +94,7 @@ const ParameterReagent = ({ getResult }: Props) => {
           ...rowSelection,
         }}
       />
+      <br />
       <Button
         type="primary"
         onClick={acceptChanges}

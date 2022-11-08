@@ -199,6 +199,7 @@ export interface IRequestStudy {
   indicaciones: IIndicationList[];
   fechaActualizacion?: string;
   solicitudEstudioId?: number;
+  nombreEstatus?: string;
 }
 export class RequestStudyValues implements IRequestStudy {
   type: "study" | "pack" = "study";

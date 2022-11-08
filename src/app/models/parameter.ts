@@ -22,6 +22,7 @@ export interface IParameterList {
   solicitudEstudioId: number;
   resultadoId: string;
   resultado: string;
+  ultimoResultado?: string;
   formula?: string;
   tipoValores?: ItipoValorForm[];
 }

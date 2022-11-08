@@ -68,24 +68,25 @@ const ValorRNumerico: FC<Props> = ({ idTipeVAlue, parameter }) => {
     if (value.valorInicial! > value.valorFinal!) {
       alerts.warning(messages.warnings.initialValue);
       return;
-    }
-    else if (value.valorFinal === value.valorInicial) {
+    } else if (value.valorFinal === value.valorInicial) {
       alerts.warning(messages.warnings.finalValue);
       return;
-    }
-    else if (value.criticoMinimo! > value.criticoMaximo!) {
+    } else if (value.criticoMinimo! > value.criticoMaximo!) {
       alerts.warning(messages.warnings.minimumValue);
       return;
-    }
-    else if (value.criticoMinimo === value.criticoMaximo) {
+    } else if (value.criticoMinimo === value.criticoMaximo) {
       alerts.warning(messages.warnings.maximumValue);
       return;
-    } 
-    else if (value.criticoMinimo! > value.valorInicial! || value.criticoMinimo === value.valorInicial) {
+    } else if (
+      value.criticoMinimo! > value.valorInicial! ||
+      value.criticoMinimo === value.valorInicial
+    ) {
       alerts.warning(messages.warnings.initialMinimumValue);
       return;
-    }
-    else if (value.criticoMaximo! < value.valorFinal! || value.criticoMaximo === value.valorFinal) {
+    } else if (
+      value.criticoMaximo! < value.valorFinal! ||
+      value.criticoMaximo === value.valorFinal
+    ) {
       alerts.warning(messages.warnings.finalMaximumValue);
       return;
     }
@@ -93,19 +94,11 @@ const ValorRNumerico: FC<Props> = ({ idTipeVAlue, parameter }) => {
     if (!value.id) {
       value.nombre = idTipeVAlue;
       value.parametroId = id || "";
-      if (parameter.formula.includes("")) {
-        success = await addValue(value);
-        success = await update(parameter);
-      } else {
-        alerts.warning("Necesita ingresar una formula");
-      }
+      success = await addValue(value);
+      success = await update(parameter);
     } else {
-      if (parameter.formula.includes("")) {
-        success = await updatevalue(value);
-        success = await update(parameter);
-      } else {
-        alerts.warning("Necesita ingresar una formula");
-      }
+      success = await updatevalue(value);
+      success = await update(parameter);
     }
     if (success) {
       navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
@@ -145,55 +138,53 @@ const ValorRNumerico: FC<Props> = ({ idTipeVAlue, parameter }) => {
       >
         <Row>
           <Col md={24} sm={24} xs={12} style={{ marginTop: 20 }}>
-            <Row justify='center' gutter={[24, 4]}>
-                <Col span={6}>
-                    <NumberInput
-                      formProps={{
-                        name: "valorInicial",
-                        label: "Valor Inicial",
-                      }}
-                      max={9999999999}
-                      min={0}
-                      readonly={disabled}
-                      required
-                    />
-                </Col>
-                <Col span={6}>
-                    <NumberInput
-                      formProps={{
-                        name: "valorFinal",
-                        label: "Valor Final",
-                      }}
-                      max={9999999999}
-                      min={0}
-                      readonly={disabled}
-                      required
-                    />
-                </Col>
-                <Col span={6}>
-                    <NumberInput
-                      formProps={{
-                        name: "criticoMinimo",
-                        label: "Valor Crítico Mínimo",
-                      }}
-                      max={9999999999}
-                      min={0}
-                      readonly={disabled}
-                      required
-                    />
-                </Col>
-                <Col span={6}>
-                    <NumberInput
-                      formProps={{
-                        name: "criticoMaximo",
-                        label: "Valor Crítico Máximo",
-                      }}
-                      max={9999999999}
-                      min={0}
-                      readonly={disabled}
-                      required
-                    />
-                </Col>
+            <Row justify="center" gutter={[24, 4]}>
+              <Col span={6}>
+                <NumberInput
+                  formProps={{
+                    name: "valorInicial",
+                    label: "Valor Inicial",
+                  }}
+                  max={9999999999}
+                  min={0}
+                  readonly={disabled}
+                  required
+                />
+              </Col>
+              <Col span={6}>
+                <NumberInput
+                  formProps={{
+                    name: "valorFinal",
+                    label: "Valor Final",
+                  }}
+                  max={9999999999}
+                  min={0}
+                  readonly={disabled}
+                  required
+                />
+              </Col>
+              <Col span={6}>
+                <NumberInput
+                  formProps={{
+                    name: "criticoMinimo",
+                    label: "Valor Crítico Mínimo",
+                  }}
+                  max={9999999999}
+                  min={0}
+                  readonly={disabled}
+                />
+              </Col>
+              <Col span={6}>
+                <NumberInput
+                  formProps={{
+                    name: "criticoMaximo",
+                    label: "Valor Crítico Máximo",
+                  }}
+                  max={9999999999}
+                  min={0}
+                  readonly={disabled}
+                />
+              </Col>
             </Row>
           </Col>
         </Row>

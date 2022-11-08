@@ -256,7 +256,11 @@ export default class ClinicResultsStores {
           tipoValorId: y.tipoValor,
           solicitudEstudioId: x.id!,
           tipoValores: y.tipoValores!,
-          rango: parseFloat(y.valorInicial) > parseFloat(y.resultado) || parseFloat(y.resultado) > parseFloat(y.valorFinal)
+          criticoMinimo: y.criticoMinimo,
+          criticoMaximo: y.criticoMaximo,
+          ultimoResultado: y.ultimoResultado,
+          deltaCheck: y.deltaCheck,
+          rango: y.criticoMinimo >= parseFloat(y.resultado) || parseFloat(y.resultado) >= y.criticoMaximo
         })),
       }));
       return params;
