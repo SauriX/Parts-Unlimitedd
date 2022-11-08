@@ -6,19 +6,17 @@ import {
   Form,
   Input,
   Row,
-  Select,
-  Space,
   Spin,
   Table,
   Typography,
 } from "antd";
-import {
-  getDefaultColumnProps,
-  IColumns,
-} from "../../../app/common/table/utils";
+import { IColumns } from "../../../app/common/table/utils";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
-import { IWeeLabFolioInfo } from "../../../app/models/weeClinic";
+import {
+  IWeeLabFolioInfo,
+  IWeePatientInfoStudy,
+} from "../../../app/models/weeClinic";
 import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import {
@@ -27,17 +25,23 @@ import {
 } from "../../../app/models/Proceeding";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import DateInput from "../../../app/common/form/proposal/DateInput";
-import { toJS } from "mobx";
 import alerts from "../../../app/util/alerts";
 import { useNavigate } from "react-router";
 import views from "../../../app/util/view";
+import moment from "moment";
 
 const { Search } = Input;
-const { Paragraph, Title } = Typography;
+const { Link, Title } = Typography;
 
 const RequestWee = () => {
-  const { optionStore, weeClinicStore, procedingStore, modalStore } =
-    useStore();
+  const {
+    optionStore,
+    weeClinicStore,
+    procedingStore,
+    modalStore,
+    profileStore,
+  } = useStore();
+  const { profile } = profileStore;
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const { closeModal } = modalStore;
   const { searchPatientByFolio } = weeClinicStore;
@@ -48,6 +52,8 @@ const RequestWee = () => {
   const [form] = Form.useForm<IProceedingForm>();
 
   const [service, setService] = useState<IWeeLabFolioInfo>();
+  const [selectedStudies, setSelectedStudies] = useState<string[]>([]);
+  const [selectedRecord, setSelectedRecord] = useState<IProceedingList>();
   const [coincidences, setCoincidences] = useState<IProceedingList[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -84,6 +90,33 @@ const RequestWee = () => {
     },
   ];
 
+  const servicesColumns: IColumns<IWeePatientInfoStudy> = [
+    {
+      key: "cantidad",
+      dataIndex: "cantidad",
+      title: "Cantidad",
+      width: "12%",
+    },
+    {
+      key: "clave",
+      dataIndex: "clave",
+      title: "Clave",
+      width: "18%",
+    },
+    {
+      key: "nombre",
+      dataIndex: "nombre",
+      title: "Nombre",
+      width: "38%",
+    },
+    {
+      key: "descripcionWeeClinic",
+      dataIndex: "descripcionWeeClinic",
+      title: "WeeClinic",
+      width: "32%",
+    },
+  ];
+
   useEffect(() => {
     getBranchCityOptions();
   }, [getBranchCityOptions]);
@@ -103,21 +136,34 @@ const RequestWee = () => {
         };
         setLoading(true);
         const coincidences = await coincidencias(values);
+        form.setFieldsValue({
+          correo: folio.correo,
+          telefono: folio.telefono,
+          fechaNacimiento:
+            folio.fechaNacimiento == null
+              ? undefined
+              : moment(folio.fechaNacimiento),
+          sucursal: profile?.sucursal,
+        });
+        setSelectedStudies(folio.estudios.map((x) => x.idServicio));
         setLoading(false);
         setCoincidences(coincidences);
         setService(service);
       } else {
         setService(undefined);
+        setCoincidences([]);
       }
     }
   };
 
   const onFinish = async (values: IProceedingForm) => {
-    if (service) {
+    if (service && !selectedRecord) {
       values.nombre = service.nombre;
       values.apellido = service.paterno + " " + service.materno;
       values.sexo = service.codGenero;
       createNewRecord(values);
+    } else if (service && selectedRecord) {
+      createFromExistingRecord(selectedRecord);
     }
   };
 
@@ -137,10 +183,7 @@ const RequestWee = () => {
         const recordId = await createRecord(data);
         setLoading(false);
         if (recordId) {
-          navigate(
-            `/${views.request}/${recordId}?weeFolio=${service.folioOrden}`
-          );
-          closeModal();
+          navigateToRequest(recordId);
         }
       }
     );
@@ -156,24 +199,56 @@ const RequestWee = () => {
       `Se registrará una solicitud para ${record.nomprePaciente}`,
       async () => {
         if (record) {
-          navigate(
-            `/${views.request}/${record.id}?weeFolio=${service.folioOrden}`
-          );
-          closeModal();
+          navigateToRequest(record.id);
         }
       }
     );
   };
 
+  const navigateToRequest = (recordId: string) => {
+    navigate(`/${views.request}/${recordId}?weeFolio=${service!.folioOrden}`, {
+      state: {
+        services: selectedStudies,
+      },
+    });
+    closeModal();
+  };
+
   return (
     <Spin spinning={loading}>
-      <Search
-        addonBefore="Folio"
-        placeholder="Folio de WeeClinic"
-        allowClear
-        onSearch={onSearch}
-        style={{ width: 304 }}
-      />
+      <Row justify="space-between">
+        <Col>
+          <Search
+            addonBefore="Folio"
+            placeholder="Folio de WeeClinic"
+            allowClear
+            onSearch={onSearch}
+            style={{ width: 304 }}
+          />
+        </Col>
+        {service && (
+          <Col>
+            <Button
+              danger
+              type="default"
+              onClick={() => {
+                form.resetFields();
+                setService(undefined);
+                setCoincidences([]);
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              disabled={selectedStudies.length === 0}
+              type="primary"
+              onClick={() => form.submit()}
+            >
+              Crear solicitud
+            </Button>
+          </Col>
+        )}
+      </Row>
       <Divider className="header-divider" />
       <div>
         <Title style={{ marginTop: 12 }} level={5}>
@@ -181,153 +256,171 @@ const RequestWee = () => {
             ? service.folioOrden
             : "No se encontró ningun servicio"}
         </Title>
-        {service && (
-          <Form<IProceedingForm> form={form} onFinish={onFinish}>
-            <Row align="middle">
-              <Col span={10}>
-                <DescriptionItem title="TPA" content={service.tpa} />
-              </Col>
-              <Col span={12}>
-                <DescriptionItem
-                  title="Producto"
-                  content={service.productoNombre}
-                  contentWidth="80%"
-                />
-              </Col>
-              <Col span={10}>
-                <DescriptionItem
-                  title="Nombre"
-                  content={service.nombreCompleto}
-                />
-              </Col>
-              <Col span={6}>
-                <DescriptionItem
-                  title="Nacimiento"
-                  content={
-                    <DateInput
-                      formProps={{
-                        name: "fechaNacimiento",
-                      }}
-                      width="90%"
-                      required
-                    />
-                  }
-                  contentWidth="60%"
-                />
-              </Col>
-              <Col span={4}>
-                <DescriptionItem
-                  title="Edad"
-                  content={service.edad}
-                  contentWidth="60%"
-                />
-              </Col>
-              <Col span={4}>
-                <DescriptionItem
-                  title="Genero"
-                  content={service.codGenero}
-                  contentWidth="50%"
-                />
-              </Col>
-              <Col span={10}>
-                <DescriptionItem
-                  title="Correo"
-                  content={
-                    <TextInput
-                      formProps={{
-                        name: "correo",
-                      }}
-                      placeholder="Correo"
-                      type="email"
-                      width="85%"
-                      max={500}
-                    />
-                  }
-                />
-              </Col>
-              <Col span={6}>
-                <DescriptionItem
-                  title="Teléfono"
-                  content={
-                    <MaskInput
-                      formProps={{
-                        name: "telefono",
-                      }}
-                      placeholder="Teléfono"
-                      width="90%"
-                      mask={[
-                        /[0-9]/,
-                        /[0-9]/,
-                        /[0-9]/,
-                        "-",
-                        /[0-9]/,
-                        /[0-9]/,
-                        /[0-9]/,
-                        "-",
-                        /[0-9]/,
-                        /[0-9]/,
-                        "-",
-                        /[0-9]/,
-                        /[0-9]/,
-                      ]}
-                      validator={(_, value: any) => {
-                        if (!value || value.indexOf("_") === -1) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(
-                          "El campo debe contener 10 dígitos"
-                        );
-                      }}
-                    />
-                  }
-                  contentWidth="60%"
-                />
-              </Col>
-              <Col span={8}>
-                <DescriptionItem
-                  title="Sucursal"
-                  content={
-                    <SelectInput
-                      formProps={{
-                        name: "sucursal",
-                      }}
-                      placeholder="Sucursal"
-                      width="100%"
-                      options={branchCityOptions}
-                      required
-                    />
-                  }
-                  contentWidth="70%"
-                />
-              </Col>
-              <Col span={24} style={{ textAlign: "right" }}>
-                <Button
-                  danger
-                  type="default"
-                  onClick={() => {
-                    form.resetFields();
-                    setService(undefined);
-                    setCoincidences([]);
-                  }}
-                >
-                  Cancelar
-                </Button>
-                {coincidences.length === 0 && (
-                  <Button type="primary" onClick={() => form.submit()}>
-                    Aceptar
-                  </Button>
-                )}
-              </Col>
-            </Row>
-          </Form>
-        )}
+        <Form<IProceedingForm>
+          style={{ display: !service ? "none" : "block" }}
+          form={form}
+          onFinish={onFinish}
+        >
+          <Row align="middle">
+            <Col span={10}>
+              <DescriptionItem title="TPA" content={service?.tpa} />
+            </Col>
+            <Col span={12}>
+              <DescriptionItem
+                title="Producto"
+                content={service?.productoNombre}
+                contentWidth="80%"
+              />
+            </Col>
+            <Col span={10}>
+              <DescriptionItem
+                title="Nombre"
+                content={service?.nombreCompleto}
+              />
+            </Col>
+            <Col span={6}>
+              <DescriptionItem
+                title="Nacimiento"
+                content={
+                  <DateInput
+                    formProps={{
+                      name: "fechaNacimiento",
+                    }}
+                    width="90%"
+                    required
+                  />
+                }
+                contentWidth="60%"
+              />
+            </Col>
+            <Col span={4}>
+              <DescriptionItem
+                title="Edad"
+                content={service?.edad}
+                contentWidth="60%"
+              />
+            </Col>
+            <Col span={4}>
+              <DescriptionItem
+                title="Genero"
+                content={service?.codGenero}
+                contentWidth="50%"
+              />
+            </Col>
+            <Col span={10}>
+              <DescriptionItem
+                title="Correo"
+                content={
+                  <TextInput
+                    formProps={{
+                      name: "correo",
+                    }}
+                    placeholder="Correo"
+                    type="email"
+                    width="85%"
+                    max={500}
+                  />
+                }
+              />
+            </Col>
+            <Col span={6}>
+              <DescriptionItem
+                title="Teléfono"
+                content={
+                  <MaskInput
+                    formProps={{
+                      name: "telefono",
+                    }}
+                    placeholder="Teléfono"
+                    width="90%"
+                    mask={[
+                      /[0-9]/,
+                      /[0-9]/,
+                      /[0-9]/,
+                      "-",
+                      /[0-9]/,
+                      /[0-9]/,
+                      /[0-9]/,
+                      "-",
+                      /[0-9]/,
+                      /[0-9]/,
+                      "-",
+                      /[0-9]/,
+                      /[0-9]/,
+                    ]}
+                    validator={(_, value: any) => {
+                      if (!value || value.indexOf("_") === -1) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        "El campo debe contener 10 dígitos"
+                      );
+                    }}
+                  />
+                }
+                contentWidth="60%"
+              />
+            </Col>
+            <Col span={8}>
+              <DescriptionItem
+                title="Sucursal"
+                content={
+                  <SelectInput
+                    formProps={{
+                      name: "sucursal",
+                    }}
+                    placeholder="Sucursal"
+                    width="100%"
+                    options={branchCityOptions}
+                    required
+                  />
+                }
+                contentWidth="70%"
+              />
+            </Col>
+          </Row>
+        </Form>
       </div>
+      {service && (
+        <>
+          <Title level={5}>Selecciona los estudios a realizar</Title>
+          <Table<IWeePatientInfoStudy>
+            rowKey={(record) => record.idServicio}
+            columns={servicesColumns}
+            dataSource={[...service.estudios]}
+            pagination={false}
+            sticky
+            rowSelection={{
+              type: "checkbox",
+              selectedRowKeys: selectedStudies,
+              onSelect: (_record, _selected, selectedRows) => {
+                setSelectedStudies(selectedRows.map((x) => x.idServicio));
+              },
+              onSelectAll: (_selected, selectedRows) => {
+                setSelectedStudies(selectedRows.map((x) => x.idServicio));
+              },
+            }}
+            scroll={{ x: "auto", y: 500 }}
+          />
+        </>
+      )}
       {coincidences.length > 0 && (
         <>
-          <Divider className="header-divider" />
-          <Title level={5}>
-            Se encuentran coincidencias con los siguientes expedientes
-          </Title>
+          <Row justify="space-between" align="bottom">
+            <Col>
+              <Title level={5} style={{ marginTop: 20 }}>
+                Se encuentran coincidencias con los siguientes expedientes
+              </Title>
+            </Col>
+            <Col>
+              <Link
+                style={{ marginBottom: 8, display: "inline-block" }}
+                onClick={() => setSelectedRecord(undefined)}
+              >
+                Nuevo expediente
+              </Link>
+            </Col>
+          </Row>
           <Table<IProceedingList>
             rowKey={(record) => record.id}
             columns={existingRecordsColumns}
@@ -336,19 +429,13 @@ const RequestWee = () => {
             sticky
             rowSelection={{
               type: "radio",
+              selectedRowKeys: selectedRecord?.id ? [selectedRecord.id] : [],
               onSelect: (record) => {
-                createFromExistingRecord(record);
+                setSelectedRecord(record);
               },
             }}
             scroll={{ x: "auto", y: 500 }}
           />
-          <Row style={{ marginTop: 12 }}>
-            <Col span={24} style={{ textAlign: "right" }}>
-              <Button type="primary" onClick={() => form.submit()}>
-                Continuar con expediente nuevo
-              </Button>
-            </Col>
-          </Row>
         </>
       )}
     </Spin>

@@ -72,6 +72,7 @@ import ShipmentTracking from "../../views/ShipmentTracking";
 import ReciveTracking from "../../views/ReciveTracking";
 import WorkList from "../../views/WorkList";
 import MassResultSearch from "../../views/MassResultSearch";
+import RequestWee from "../../components/request/list/RequestWee";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -110,6 +111,20 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route element={<PrivateRoute />}>
           <Route element={<LayoutComponent />}>
+            <Route
+              path="weetest"
+              element={
+                <div
+                  style={{
+                    width: "70%",
+                    padding: 15,
+                    border: "1px solid black",
+                  }}
+                >
+                  <RequestWee />
+                </div>
+              }
+            />
             <Route path="" element={<Home />} />
             <Route path="users" element={<User />} />
             <Route path="users/:id" element={<UserDetail />} />
@@ -221,9 +236,9 @@ function App() {
               path={`${views.shipmenttracking}/:id`}
               element={<ShipmentTracking />}
             />
-                        <Route
+            <Route
               path={`${views.recivetracking}/:id`}
-              element={<ReciveTracking/>}
+              element={<ReciveTracking />}
             />
             <Route
               path="forbidden"
