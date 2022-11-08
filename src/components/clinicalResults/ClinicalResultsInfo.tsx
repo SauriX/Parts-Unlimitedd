@@ -59,6 +59,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
     studiesSelectedToPrint,
     printSelectedStudies,
     getStudies: getStudiesParams,
+    clearSelectedStudies,
   } = clinicResultsStore;
 
   const [loading, setLoading] = useState(false);
