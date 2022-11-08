@@ -37,7 +37,9 @@ export interface IAppointmentList{
     sexo: string,
     tipo:number,
     expediente:string
-
+    color?:string,
+    estudios?:string,
+    contacto?:string
 }
 
 export interface IAppointmentForm{

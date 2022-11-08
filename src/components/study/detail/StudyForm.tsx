@@ -216,7 +216,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       const all = await getAll("all");
       console.log(all);
       const user = await getById(id);
-
+      await getareaOptions(user?.departamento!);
       if(user?.workLists!=""&& user?.workLists!=null){
         var tags = user.workLists.split("-");
         setTags(tags);
@@ -690,17 +690,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                 />
               </Col>
               <Col md={8} sm={24} xs={8}>
-                <NumberInput
-                  formProps={{
-                    name: "dias",
-                    label: "Días",
-                  }}
-                  min={0}
-                  max={9999999999999999}
-                  readonly={!visible || disabled}
-                />
-              </Col>
-              <Col md={8} sm={24} xs={8}>
                 <TextInput
                   formProps={{
                     name: "titulo",
@@ -753,6 +742,29 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   required
                 />
               </Col>
+              <Col md={4  } sm={24} xs={6}>
+                <SwitchInput
+                  name="visible"
+                  label="Visible"
+                  onChange={(values) => {
+                    setVisible(values);
+                    console.log(values);
+                  }}
+                  readonly={disabled}
+                />
+              </Col>
+              <Col md={4} sm={24} xs={8}>
+                <NumberInput
+                  formProps={{
+                    name: "dias",
+                    label: "Días",
+                  }}
+                  min={0}
+                  max={9999999999999999}
+                  readonly={!visible || disabled}
+
+                />
+              </Col>
               <Col md={6} sm={24} xs={6}>
                 <SwitchInput
                   name="prioridad"
@@ -764,17 +776,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
               <SwitchInput
                   name="urgencia"
                   label="Urgencia"
-                  readonly={disabled}
-                />
-              </Col>
-              <Col md={6} sm={24} xs={6}>
-                <SwitchInput
-                  name="visible"
-                  label="Visible"
-                  onChange={(values) => {
-                    setVisible(values);
-                    console.log(values);
-                  }}
                   readonly={disabled}
                 />
               </Col>
@@ -792,6 +793,8 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
+
+
             </Row>
           </Form>
           <div></div>
@@ -880,10 +883,10 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
               <div>
                 <Row>
                   <Col md={16}></Col>
-                  <Col md={4}>
+                  <Col md={2}>
 
                   </Col>
-                  <Col md={4}>
+                  <Col md={6}>
                     <div style={{display:"inline-block",marginLeft:"43%"}}>
                     {
                       parameterSelected.length > 0 && selectedRowKeysp.length > 0 && 
@@ -934,10 +937,10 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
               <div>
                 <Row>
                   <Col md={16}></Col>
-                  <Col md={4}>
+                  <Col md={2}>
 
                   </Col>
-                  <Col md={4}>
+                  <Col md={6}>
                   <div style={{display:"inline-block",marginLeft:"43%"}}>
                   {
                             indicationSelected.length > 0 && selectedRowKeysi.length > 0 && 

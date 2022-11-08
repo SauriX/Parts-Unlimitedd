@@ -217,6 +217,7 @@ export default class RequestStore {
       this.loadingRequests = true;
       const requests = await Request.getRequests(filter);
       this.requests = requests;
+      return requests
     } catch (error) {
       alerts.warning(getErrors(error));
     } finally {

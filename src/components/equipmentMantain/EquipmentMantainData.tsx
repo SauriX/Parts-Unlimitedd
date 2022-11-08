@@ -177,7 +177,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value, item) => (
         <IconButton
-          title="Editar equipo"
+          title=" Imprimir reporte"
           icon={<PrinterOutlined />}
           onClick={() => {
             console.log("value", value)
@@ -195,7 +195,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (
         <IconButton
-          title="Editar equipo"
+          title="Visualizar registro"
           icon={<EyeOutlined />}
           onClick={() => {
             printTicket(value);

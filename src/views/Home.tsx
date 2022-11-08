@@ -1,41 +1,242 @@
-import { Col, Row, Select,Image } from "antd";
-import React, { Fragment } from "react";
+import { Col, Row, Select,Image, Calendar } from "antd";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import {
   CalendarOutlined,
   AuditOutlined
 } from '@ant-design/icons';
 import DashboardChart from "../components/dashboard/dashboardChart";
 import { IDashBoard } from "../app/models/dashboard";
-const data:IDashBoard[] = [{
-  pendiente: 2,
-  toma: 2,
-  ruta: 0,
-  solicitud: 4,
-  capturado: 20,
-  validado: 6,
-  liberado: 0,
-  enviado: 6,
-  entregado:6,   
-}]
+import { useStore } from "../app/stores/store";
+import { IRequestFilter } from "../app/models/request";
+import moment from "moment";
+import { SearchTracking, TrackingFormValues } from "../app/models/routeTracking";
+import AppointmentCalendar from "../components/dashboard/dashCalendar";
+import { useReactToPrint } from "react-to-print";
 const Home = () => {
+  const [printing, setPrinting] = useState(false);
+  const componentRef = useRef<any>();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    onBeforeGetContent: () => {
+      setPrinting(true);
+    },
+    onAfterPrint: () => {
+      setPrinting(false);
+    },
+  });
+  const { appointmentStore,requestStore,routeTrackingStore,profileStore} = useStore();
+  const {profile}=profileStore;
+  const { getAllDom,getAllLab,search }=appointmentStore;
+  const {getRequests}=requestStore;
+  const {getAll,getAllRecive,searchPending,setSearchi}=routeTrackingStore;
+  const [calendar,setCalendar]= useState<boolean>(false);
+  const [vista,setVista]=useState<number>(1);
+  const [citas,setCitas]=useState<number>(0);
+  const [enviar,setEnviar]=useState<number>(0);
+  const [recibir,setRecibir]=useState<number>(0);
+  const [solicitudes,setSolicitudes] = useState<number>(0);
+  const [proxCierre,setProxCierre] = useState<number>(0);
+  const [calendarType, setCalendarType] = useState<"week" | "date">( "date");
+  const [data,setData]=useState<IDashBoard[]>([]);
+
+  useEffect(()=>{
+    const readcitas = async()=>{
+
+      var lab = await getAllLab(search);
+      var citasTotales =  lab?.length!;
+      setCitas(citasTotales);
+    }
+    readcitas()
+  },[getAllLab]);
+  useEffect(()=>{
+    const readRequest = async ()=>{
+      var temp:IDashBoard[] =[{
+        pendiente: undefined,
+        toma: undefined,
+        ruta: undefined,
+        solicitud: undefined,
+        capturado: undefined,
+        validado: undefined,
+        liberado: undefined,
+        enviado: undefined,
+        entregado:undefined,   
+      }]
+      
+      var filter:IRequestFilter={ fechaInicial:moment(moment.now()),fechaFinal: moment(moment.now()),tipoFecha:1};
+      if(vista==2){
+
+        var weeknumber = moment(moment.now()).week();
+        var primer=moment().isoWeek(weeknumber).startOf("W");
+        var final = moment().isoWeek(weeknumber).endOf("W").subtract(1,"d");
+        filter={ fechaInicial:primer,fechaFinal:final,tipoFecha:1};
+        
+      }
+      var requests =await getRequests(filter);
+      
+      console.log(requests,"solis");
+      setSolicitudes(requests!.length);
+      
+      var cierre = 0;
+      requests?.forEach(solicitud=> solicitud.estudios.forEach(x=>{if(x.estatusId ==6||x.estatusId ==7||x.estatusId ==10){cierre++} }));
+      requests?.forEach(solicitud=> solicitud.estudios.forEach(x=>{
+                    switch(x.estatusId) { 
+                      case 1: { 
+                        var datos = temp;
+                        if(datos[0].pendiente==undefined){
+                          datos[0].pendiente=0;
+                        }
+                       
+                        datos[0].pendiente++
+                       setData(datos)
+                        break; 
+                      } 
+                      case 2: { 
+                        var datos = temp;
+                        if(datos[0].toma==undefined){
+                          datos[0].toma=0;
+                        }
+                       
+                        datos[0].toma++
+                        setData(datos)
+                        break; 
+                      }
+                      case 3: { 
+                        var datos = temp;
+                        if(datos[0].solicitud==undefined){
+                          datos[0].solicitud=0;
+                        }
+                       
+                        datos[0].solicitud++
+                        setData(datos)
+                        break; 
+                      } 
+                      case 4: { 
+                        var datos = temp;
+                        if(datos[0].capturado==undefined){
+                          datos[0].capturado=0;
+                        }
+                        datos[0].capturado++
+                       setData(datos)
+                        break; 
+                      } 
+                      case 5: { 
+                        var datos = temp;
+                        if(datos[0].validado==undefined){
+                          datos[0].validado=0;
+                        }
+                        datos[0].validado++
+                       setData(datos)
+                        break; 
+                      } 
+                      case 6: { 
+                        var datos = temp;
+                        if(datos[0].liberado==undefined){
+                          datos[0].liberado=0;
+                        }
+                        datos[0].liberado++
+                       setData(datos)
+                        break; 
+                      } 
+                      case 7: { 
+                        var datos = temp;
+                        if(datos[0].enviado==undefined){
+                          datos[0].enviado=0;
+                        }
+                        datos[0].enviado++
+                       setData(datos)
+                        break; 
+                      } 
+                      case 8: { 
+                        var datos = temp;
+                        if(datos[0].ruta==undefined){
+                          datos[0].ruta=0;
+                        }
+                        datos[0].ruta++
+                       setData(datos)
+                        break; 
+                      } 
+                      case 10: { 
+                        var datos = temp; 
+                        if(datos[0].entregado==undefined){
+                          datos[0].entregado=0;
+                        }
+                        datos[0].entregado++
+                       setData(datos)
+                        break; 
+                      } 
+                      default: { 
+                        //statementss; 
+                        break; 
+                      } 
+                  }
+              }));
+
+      setProxCierre(cierre);
+    }
+    readRequest()
+    
+  },[getRequests,vista]);
+
+
+  useEffect(()=>{
+    const readsend = async () =>{
+    var search: SearchTracking = new TrackingFormValues()
+    var envia = await getAll( search);
+
+    const weeknumber = moment(moment.now()).week();
+    const primer=moment().isoWeek(weeknumber).startOf("W");
+    const final = moment().isoWeek(weeknumber).endOf("W").subtract(1,"d");
+    if(vista==2){
+
+      envia=envia?.filter(x=> Date.parse(moment(x.fecha).format('YYYY MM DD'))  >Date.parse(moment(primer).format('YYYY MM DD'))&&Date.parse(moment(x.fecha).format('YYYY MM DD'))<Date.parse(moment(final).format('YYYY MM DD')));
+      
+    }else{
+      envia=envia?.filter(x=> moment(x.fecha).format('YYYY MM DD')==moment(moment.now()).format('YYYY MM DD'));
+    }
+    
+    
+
+
+    
+    setEnviar(envia?.length!);
+    if(vista==1){
+      var recibe = await getAllRecive({...searchPending!,sucursaldest:profile?.sucursal!});
+      setRecibir(recibe?.length!);
+    }
+
+    if(vista==2){
+      var contador = 0;
+      for(var i=0;i<=5;i++){   
+        var dia = moment().isoWeek(weeknumber).startOf("W");
+         dia = dia.add(i,"d");
+        var recibe = await getAllRecive({...searchPending!,fecha:dia,sucursaldest:profile?.sucursal!});
+        contador+=recibe?.length!;
+        console.log(contador);
+      }
+      console.log(contador);
+      setRecibir(contador);
+    }
+  }
+    readsend()
+  },[getAllRecive,getAll,vista]);
   return(
     <Fragment>
       <Row>
         <Col md={6}>
           <label style={{marginLeft:"20%"}} htmlFor="">Ver por: </label>
-          <Select defaultValue={1} style={{width:"40%"}} options={[{value:1,label:"Diario"},{value:2,label:"Semanal"}]}></Select>
+          <Select onChange={(values)=>{setVista(values); if(values==2){setCalendarType("week");}else{setCalendarType("date");}}} defaultValue={1} style={{width:"40%"}} options={[{value:1,label:"Diario"},{value:2,label:"Semanal"}]}></Select>
         </Col>
         <Col md={18}></Col>
         <Col md={6}>
-          <div style={{
-                  background:"linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(5,150,180,1) 100%)",
+          <div onClick={()=>{setCalendar(!calendar)}} style={{
+                  background:"#253B65",
                   height: "auto",
                   borderStyle: "solid",
                   borderColor: "#CBC9C9",
                   borderWidth: "1px",
                   borderRadius: "10px",
                   padding: "10px",
-                  marginTop:"20%",
+                  marginTop:"10%",
                   width:"70%",
                   marginLeft:"20%",
                   color:"#F0F0F0"
@@ -43,11 +244,11 @@ const Home = () => {
         >
          <b style={{fontSize:"20px"}}>
           Citas
-          <Image width={40} style={{marginLeft:"370%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/citas.png`} preview={false}/>
+          <Image width={40} style={{marginLeft:"320%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/citas.png`} preview={false}/>
   
          </b>
         </div>
-        <div style={{marginLeft:"20%",textAlign:"center",
+        <div onClick={()=>{setCalendar(!calendar)}} style={{marginLeft:"20%",textAlign:"center",
                   height: "auto",
                   borderColor: "#CBC9C9",
                   borderWidth: "1px",
@@ -56,30 +257,31 @@ const Home = () => {
                   width:"57%",
                 }}>
           <b style={{fontSize:"25px"}}>
-           {2} 
+           {citas} 
           </b>
         </div>
         </Col>
         <Col md={6}>
         <div style={{
-                  background:"linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(5,150,180,1) 100%)",
+                  background:"#253B65",
                   height: "auto",
                   borderStyle: "solid",
                   borderColor: "#CBC9C9",
                   borderWidth: "1px",
                   borderRadius: "10px",
                   padding: "10px",
-                  marginTop:"20%",
+                  marginTop:"10%",
                   width:"70%",
                   marginLeft:"20%",
                   color:"#F0F0F0"
                 }}
         >
          <b style={{fontSize:"20px"}}>
-         Solicitudes
+         Solicitudes 
+         <Image width={40} style={{marginLeft:"170%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/solicitud.png`} preview={false}/>
          
-         <Image width={40} style={{marginLeft:"220%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/solicitud.png`} preview={false}/>
          </b>
+       
         </div>
         <div style={{marginLeft:"20%",textAlign:"center",
                   height: "auto",
@@ -90,20 +292,20 @@ const Home = () => {
                   width:"70%",
                 }}>
           <b style={{fontSize:"25px"}}>
-           {34} 
+           {solicitudes} 
           </b>
         </div>
         </Col>
         <Col md={6}>
         <div style={{
-                  background:"linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(5,150,180,1) 100%)",
+                  background:"#253B65",
                   height: "auto",
                   borderStyle: "solid",
                   borderColor: "#CBC9C9",
                   borderWidth: "1px",
                   borderRadius: "10px",
                   padding: "10px",
-                  marginTop:"20%",
+                  marginTop:"10%",
                   width:"70%",
                   marginLeft:"20%",
                   color:"#F0F0F0"
@@ -112,7 +314,7 @@ const Home = () => {
          <b style={{fontSize:"20px"}}>
          Próximas a cierre
          
-         <Image width={40} style={{marginLeft:"65%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/cierre.png`} preview={false}/>
+         <Image width={40} style={{marginLeft:"55%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/cierre.png`} preview={false}/>
          </b>
         </div>
         <div style={{marginLeft:"20%",textAlign:"center",
@@ -124,33 +326,33 @@ const Home = () => {
                   width:"70%",
                 }}>
           <b style={{fontSize:"25px"}}>
-           {12} 
+           {proxCierre} 
           </b>
         </div>
         </Col>
         <Col md={6}>
         <div style={{
-                  background:"linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(5,150,180,1) 100%)",
+                  background:"#253B65",
                   height: "auto",
                   borderStyle: "solid",
                   borderColor: "#CBC9C9",
                   borderWidth: "1px",
                   borderRadius: "10px",
                   padding: "10px",
-                  marginTop:"20%",
+                  marginTop:"10%",
                   width:"80%",
                   marginLeft:"20%",
                   color:"#F0F0F0"
                 }}
         >
          <b style={{fontSize:"20px"}}>
-         Muestras a enviar: {4}
+         Muestras a enviar: {enviar}
          
-         <Image width={40} style={{marginLeft:"90%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/enviar.png`} preview={false}/>
+         <Image width={40} style={{marginLeft:"70%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/enviar.png`} preview={false}/>
          </b>
         </div>
         <div style={{
-                  background:"linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(5,150,180,1) 100%)",
+                  background:"#253B65",
                   height: "auto",
                   borderStyle: "solid",
                   borderColor: "#CBC9C9",
@@ -164,16 +366,18 @@ const Home = () => {
                 }}
         >
          <b style={{fontSize:"20px"}}>
-         Muestras a recibir: {0}
+         Muestras a recibir: {recibir}
          
-         <Image width={40} style={{marginLeft:"90%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/recibir.png`} preview={false}/>
+         <Image width={40} style={{marginLeft:"70%"}} src={`/${process.env.REACT_APP_NAME}/admin/assets/recibir.png`} preview={false}/>
          </b>
         </div>
         </Col>
       </Row>
+      <br />
       <Row>
-        <Col md={18}>
-          <DashboardChart<IDashBoard>
+        <Col md={vista==2&&!calendar?18:24}>
+       { calendar &&<AppointmentCalendar type={calendarType} componentRef={componentRef} printing={printing}></AppointmentCalendar>}
+{         !calendar&& <DashboardChart<IDashBoard>
                     data={data as IDashBoard[]}
                     
                     series={[
@@ -187,12 +391,12 @@ const Home = () => {
                       { title: "Enviado", dataIndex: "enviado" },
                       { title: "Entregado", dataIndex: "entregado" },
                     ]}
-                    axisLabel={{ interval: 0, rotate: 30 }}
-          ></DashboardChart>
+                    axisLabel={{ interval: 0, rotate: 0 }}
+          ></DashboardChart>}
         </Col>
-        <Col md={6}>
+        {vista==2&&!calendar&&<Col md={6}>
         <div style={{
-                  background:"linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(5,150,180,1) 100%)",
+                  background:"#253B65",
                   height: "auto",
                   borderStyle: "solid",
                   borderColor: "#CBC9C9",
@@ -220,11 +424,11 @@ const Home = () => {
                   width:"57%",
                 }}>
           <b style={{fontSize:"25px"}}>
-           {6} 
+           {data[0].enviado} 
           </b>
         </div>
         <div style={{
-                  background:"linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(5,150,180,1) 100%)",
+                  background:"#253B65",
                   height: "auto",
                   borderStyle: "solid",
                   borderColor: "#CBC9C9",
@@ -252,10 +456,10 @@ const Home = () => {
                   width:"57%",
                 }}>
           <b style={{fontSize:"25px"}}>
-           {6} 
+           {data[0].entregado} 
           </b>
         </div>
-        </Col>
+        </Col>}
       </Row>
     </Fragment>
   );
