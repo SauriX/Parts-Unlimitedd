@@ -72,6 +72,7 @@ import ShipmentTracking from "../../views/ShipmentTracking";
 import ReciveTracking from "../../views/ReciveTracking";
 import WorkList from "../../views/WorkList";
 import MassResultSearch from "../../views/MassResultSearch";
+import RequestWee from "../../components/request/list/RequestWee";
 import DeliveryResults from "../../views/DeliveryResults";
 
 function App() {
@@ -111,6 +112,20 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route element={<PrivateRoute />}>
           <Route element={<LayoutComponent />}>
+            <Route
+              path="weetest"
+              element={
+                <div
+                  style={{
+                    width: "70%",
+                    padding: 15,
+                    border: "1px solid black",
+                  }}
+                >
+                  <RequestWee />
+                </div>
+              }
+            />
             <Route path="" element={<Home />} />
             <Route path="users" element={<User />} />
             <Route path="users/:id" element={<UserDetail />} />

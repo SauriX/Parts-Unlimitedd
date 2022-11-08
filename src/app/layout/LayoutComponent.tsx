@@ -13,7 +13,7 @@ import {
   Button,
 } from "antd";
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import IconSelector from "../common/icons/IconSelector";
 import { IMenu } from "../models/shared";
 import {
@@ -147,13 +147,13 @@ const LayoutComponent = () => {
       theme: theme,
     });
   };
-
+  const navigate = useNavigate();
   return (
     <Layout id="app-layout">
       <Header className="header">
         <Row>
-          <Col span={12}>
-            <div className="header-logo-container">
+          <Col span={12}> 
+            <div className="header-logo-container" onClick={()=>{navigate(`/`);}}>
               <Image
                 src={
                   logoImg ??

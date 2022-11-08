@@ -115,6 +115,8 @@ const RangoEdad: FC<Props> = ({
       let data: ItipoValorForm = {
         valorInicialNumerico: x.valorInicialNumerico,
         valorFinalNumerico: x.valorFinalNumerico,
+        criticoMinimo: x.criticoMinimo,
+        criticoMaximo: x.criticoMaximo,
         rangoEdadInicial: x.rangoEdadInicial,
         rangoEdadFinal: x.rangoEdadFinal,
         medidaTiempoId: x.medidaTiempoId,
@@ -151,7 +153,6 @@ const RangoEdad: FC<Props> = ({
       alerts.warning(`En ${description} inicial no puede ser igual al final`);
       return;
     }
-    if (parameter.formula != "") {
       var succes = await addvalues(val, id!);
       if (succes) {
         succes = await update(parameter);
@@ -159,9 +160,6 @@ const RangoEdad: FC<Props> = ({
           navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
         }
       }
-    } else {
-      alerts.warning("Necesita ingresar una formula");
-    }
   };
   const onValuesChange = async (changeValues: any, values: any) => {
     const fields = Object.keys(changeValues)[0];
@@ -170,7 +168,7 @@ const RangoEdad: FC<Props> = ({
       console.log("on change");
       if (value < formValue.getFieldValue("rangoEdadFinal")) {
         console.log("dentro del if");
-        alerts.warning("El rango final no puede ser meno al inicial");
+        alerts.warning("El rango final no puede ser menor al inicial");
       }
     }
   };
@@ -216,7 +214,7 @@ const RangoEdad: FC<Props> = ({
                   <Row>
                     <Col span={24}>
                       <Row justify="space-between" gutter={[12, 4]}>
-                        <Col span={4}>
+                        <Col span={3}>
                           <Form.Item
                             {...valuesValor}
                             label="Rango edad inicial: "
@@ -237,7 +235,7 @@ const RangoEdad: FC<Props> = ({
                             />
                           </Form.Item>
                         </Col>
-                        <Col span={4}>
+                        <Col span={3}>
                           <Form.Item
                             {...valuesValor}
                             label="Rango edad final: "
@@ -245,7 +243,7 @@ const RangoEdad: FC<Props> = ({
                             rules={[
                               {
                                 required: true,
-                                message: "Missing Rango de edad",
+                                message: "Rango de edad faltante",
                               },
                             ]}
                           >
@@ -258,7 +256,7 @@ const RangoEdad: FC<Props> = ({
                             />
                           </Form.Item>
                         </Col>
-                        <Col span={4}>
+                        <Col span={3}>
                           <Form.Item
                             {...valuesValor}
                             label="Unidad de tiempo: "
@@ -266,7 +264,7 @@ const RangoEdad: FC<Props> = ({
                             rules={[
                               {
                                 required: true,
-                                message: "Missing Unidad de medida",
+                                message: "Unidad de medida faltante",
                               },
                             ]}
                           >
@@ -282,13 +280,13 @@ const RangoEdad: FC<Props> = ({
                             />
                           </Form.Item>
                         </Col>
-                        <Col span={4}>
+                        <Col span={3}>
                           <Form.Item
                             {...valuesValor}
                             label="Valor númerico inicial: "
                             name={[name, "valorInicialNumerico"]}
                             rules={[
-                              { required: true, message: "valor inicial" },
+                              { required: true, message: "Valor inicial faltante" },
                             ]}
                           >
                             <Input
@@ -300,7 +298,7 @@ const RangoEdad: FC<Props> = ({
                             />
                           </Form.Item>
                         </Col>
-                        <Col span={4}>
+                        <Col span={3}>
                           <Form.Item
                             {...valuesValor}
                             label="Valor númerico final: "
@@ -308,7 +306,7 @@ const RangoEdad: FC<Props> = ({
                             rules={[
                               {
                                 required: true,
-                                message: "Missing Valor final",
+                                message: "Valor final faltante",
                               },
                             ]}
                           >
@@ -321,7 +319,46 @@ const RangoEdad: FC<Props> = ({
                             />
                           </Form.Item>
                         </Col>
-                        <Col span={4}>
+                        <Col span={3}>
+                          <Form.Item
+                            {...valuesValor}
+                            label="Valor crítrico mínimo: "
+                            name={[name, "criticoMaximo"]}
+                            rules={[
+                              { required: true, message: "Valor crítico mínimo faltante" },
+                            ]}
+                          >
+                            <Input
+                              type={"number"}
+                              min={0}
+                              max={120}
+                              disabled={disable}
+                              placeholder={"Valor crítico mínimo"}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col span={3}>
+                          <Form.Item
+                            {...valuesValor}
+                            label="Valor crítico máximo: "
+                            name={[name, "criticoMaximo"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Valor crítico máximo faltante",
+                              },
+                            ]}
+                          >
+                            <Input
+                              type={"number"}
+                              min={0}
+                              max={120}
+                              disabled={disable}
+                              placeholder="Valor crítico máximo"
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col span={3}>
                           <MinusCircleOutlined onClick={() => remove(name)} />
                         </Col>
                       </Row>

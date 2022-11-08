@@ -37,6 +37,15 @@ const messages = {
     showFormato: "Mostrar Formato ha sido desactivado",
     unshownFormato: "Mostrar Formato ha sido desactivado",
   },
+
+  warnings: {
+    initialValue: "El valor inicial no puede ser mayor a final",
+    finalValue: "El valor inicial no puede ser igual a final",
+    minimumValue: "El valor crítico mínimo no puede ser igual al máximo",
+    maximumValue: "El valor crítico mínimo no puede ser mayor al máximo",
+    initialMinimumValue: "El valor crítico mínimo no puede ser igual o mayor al valor inicial",
+    finalMaximumValue: "El valor crítico máximo no puede ser igual o menor al valor final",
+  }
 };
 
 export default messages;
