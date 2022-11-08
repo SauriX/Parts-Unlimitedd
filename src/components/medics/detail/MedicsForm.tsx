@@ -1,7 +1,18 @@
-import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Select, Segmented, Upload, Modal , Image, UploadProps, message,} from "antd";
-import React, { FC, Fragment, useCallback, useEffect, useState } from "react";
-import { formItemLayout, imageFallback,  uploadFakeRequest,  beforeUploadValidation,getBase64,objectToFormData,} from "../../../app/util/utils";
-import { InboxOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  Spin,
+  Form,
+  Row,
+  Col,
+  Pagination,
+  Button,
+  PageHeader,
+  Divider,
+  Select,
+  Image,
+} from "antd";
+import React, { FC, useCallback, useEffect, useState } from "react";
+import { formItemLayout, imageFallback } from "../../../app/util/utils";
+import { InboxOutlined } from "@ant-design/icons";
 import TextInput from "../../../app/common/form/TextInput";
 import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
@@ -18,11 +29,6 @@ import { IOptions } from "../../../app/models/shared";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import MaskInput from "../../../app/common/form/MaskInput";
-import Dragger from "antd/lib/upload/Dragger";
-import { RcFile, UploadChangeParam, UploadFile } from "antd/lib/upload";
-import { IRequestImage } from "../../../app/models/request";
-// import { v4 as uuid } from "uuid";
-
 
 type MedicsFormProps = {
   id: string;
@@ -30,9 +36,8 @@ type MedicsFormProps = {
   printing: boolean;
 };
 const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
-  
   const { medicsStore, optionStore, locationStore } = useStore();
-  const { getById, create, update, getAll, medics ,} = medicsStore;
+  const { getById, create, update, getAll, medics } = medicsStore;
   const { clinicOptions, getClinicOptions } = optionStore;
   const { fieldOptions, getfieldsOptions } = optionStore;
   const { getColoniesByZipCode } = locationStore;
@@ -40,19 +45,12 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   const [disabled, setDisabled] = useState(true);
   const [colonies, setColonies] = useState<IOptions[]>([]);
 
-
   const [values, setValues] = useState<IMedicsForm>(new MedicsFormValues());
   const [clinic, setClinic] = useState<{ clave: ""; id: number }>();
-
-
-
-
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
-
   const [form] = Form.useForm<IMedicsForm>();
-
 
   const getContent = (url64: string) => {
     if (!url64) {
@@ -83,8 +81,6 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
     );
   };
 
-
-  
   const clearLocation = useCallback(() => {
     form.setFieldsValue({
       estadoId: undefined,
@@ -114,7 +110,9 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
     },
     [clearLocation, form, getColoniesByZipCode]
   );
-  const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
+  const [readonly, setReadonly] = useState(
+    searchParams.get("mode") === "readonly"
+  );
   useEffect(() => {
     const readMedics = async (id: string) => {
       setLoading(true);
@@ -164,12 +162,11 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
     //   ? parseInt(
     //       medics.celular.toString()?.replaceAll("_", "0")?.replaceAll("-", "")
     //     )
-    //   : undefined;   
-      
+    //   : undefined;
+
     let success = false;
 
-   //console.log(medics);
-
+    //console.log(medics);
 
     const clinics = [...medics.clinicas];
     clinics.forEach((v, i, a) => {
@@ -178,7 +175,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
     medics.clinicas = clinics;
 
     if (!medics.idMedico) {
-      medics.idMedico = "00000000-0000-0000-0000-000000000000"
+      medics.idMedico = "00000000-0000-0000-0000-000000000000";
       success = await create(medics);
     } else {
       success = await update(medics);
@@ -199,7 +196,9 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   const prevnextMedics = (index: number) => {
     const medic = medics[index];
     navigate(
-      `/medics/${medic?.idMedico}?mode=${searchParams.get("mode")}&search=${searchParams.get("search")}`
+      `/medics/${medic?.idMedico}?mode=${searchParams.get(
+        "mode"
+      )}&search=${searchParams.get("search")}`
     );
   };
 
@@ -275,15 +274,23 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
           <Col md={id ? 12 : 24} sm={24} style={{ textAlign: "right" }}>
             <Button
               onClick={() => {
-                navigate("/medics");}}
-            >Cancelar</Button>
+                navigate("/medics");
+              }}
+            >
+              Cancelar
+            </Button>
             <Button
               type="primary"
               htmlType="submit"
               disabled={disabled}
               onClick={() => {
                 form.submit();
-                return;}}>Guardar </Button></Col>
+                return;
+              }}
+            >
+              Guardar{" "}
+            </Button>
+          </Col>
         )}
         {readonly && (
           <Col md={12} sm={24} style={{ textAlign: "right" }}>
@@ -321,12 +328,18 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
             onFieldsChange={() => {
               setDisabled(
                 !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+                  form.getFieldsError().filter(({ errors }) => errors.length)
+                    .length > 0
               );
             }}
           >
+            {/* <Row>
+              <Col span={24}>
+                <Row justify="center" gutter={[12, 12]}></Row>
+              </Col>
+            </Row> */}
             <Row>
-              <Col md={12} sm={24}>
+              <Col md={6} sm={24}>
                 <TextInput
                   formProps={{
                     name: "clave",
@@ -371,7 +384,6 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                     label: "Contraseña",
                   }}
                   max={100}
-
                   readonly={readonly}
                 />
                 <SelectInput
@@ -383,16 +395,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   readonly={readonly}
                   options={fieldOptions}
                 />
-
-                {/* <NumberInput
-                  formProps={{
-                    name: "Clinicas",
-                    label: "Clinicas",
-                  }}
-                  max={9999999999}
-                  min={9}
-                  readonly={true}
-                /> */}
+              </Col>
+              <Col md={6} sm={24}>
                 <TextAreaInput
                   formProps={{
                     name: "observaciones",
@@ -402,22 +406,15 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   rows={12}
                   readonly={readonly}
                 />
-
               </Col>
 
               <Col md={12} sm={24}>
-              <MaskInput
+                <MaskInput
                   formProps={{
                     name: "codigoPostal",
                     label: "Código P",
                   }}
-                  mask={[
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                  ]}
+                  mask={[/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/]}
                   validator={(_, value: any) => {
                     if (!value || value.indexOf("_") === -1) {
                       return Promise.resolve();
@@ -478,6 +475,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   readonly={readonly}
                   options={colonies}
                 />
+              </Col>
+              <Col md={6} sm={24}>
                 <TextInput
                   formProps={{
                     name: "correo",
@@ -515,15 +514,6 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   readonly={readonly}
                 />
-                {/* <NumberInput
-                  formProps={{
-                    name: "celular",
-                    label: "Celular",
-                  }}
-                  max={10000000000}
-                  min={10}
-                  readonly={readonly}
-                /> */}
                 <MaskInput
                   formProps={{
                     name: "telefono",
@@ -552,16 +542,6 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   readonly={readonly}
                 />
-                {/* <NumberInput
-                  formProps={{
-                    name: "telefono",
-                    label: "Teléfono",
-                  }}
-                  max={10000000000}
-                  min={10}
-                  readonly={readonly}
-                /> */}
-
                 <SwitchInput
                   name="activo"
                   onChange={(value) => {
@@ -578,58 +558,58 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
             </Row>
           </Form>
 
-          <Divider orientation="left">Clínica/Empresa</Divider>
-      <List<IClinicList>
-        header={
-          <div>
-            <Col md={12} sm={24} style={{ marginRight: 20 }}>
-              Nombre Clínica/Empresa .
-              <Select
-                options={clinicOptions}
-                onChange={(value, option: any) => {
-                  if (value) {
-                    setClinic({ id: value, clave: option.label });
-                  } else {
-                    setClinic(undefined);
-                  }
-                }}
-                style={{ width: 240, marginRight: 20 }}
-              />
-              {!readonly && (
-                <ImageButton
-                  key="agregar"
-                  title="Agregar Clinica"
-                  image="agregar-archivo"
-                  onClick={addClinic}
-                />
-              )}
-            </Col>
-          </div>
-        }
-        footer={<div></div>}
-        bordered
-        dataSource={values.clinicas}
-        renderItem={(item) => (
-          <List.Item>
-            <Col md={12} sm={24} style={{ textAlign: "left" }}>
-              <Typography.Text mark></Typography.Text>
-              {item.nombre}
-            </Col>
-            <Col md={12} sm={24} style={{ textAlign: "left" }}>
-              <ImageButton
-                key="Eliminar"
-                title="Eliminar Clinica"
-                image="Eliminar_Clinica"
-                onClick={() => {
-                  deleteClinic(item.id);
-                }}
-              />
-            </Col>
-          </List.Item>
-        )}
-      />
+          <Divider orientation="left">Clínica / Empresa</Divider>
+          <List<IClinicList>
+            header={
+              <div>
+                <Col md={12} sm={24} style={{ marginRight: 20 }}>
+                  Nombre Clínica/Empresa{" "}
+                  <Select
+                    options={clinicOptions}
+                    onChange={(value, option: any) => {
+                      if (value) {
+                        setClinic({ id: value, clave: option.label });
+                      } else {
+                        setClinic(undefined);
+                      }
+                    }}
+                    style={{ width: 240, marginRight: 20 }}
+                  />
+                  {!readonly && (
+                    <ImageButton
+                      key="agregar"
+                      title="Agregar Clinica"
+                      image="agregar-archivo"
+                      onClick={addClinic}
+                    />
+                  )}
+                </Col>
+              </div>
+            }
+            footer={<div></div>}
+            bordered
+            dataSource={values.clinicas}
+            renderItem={(item) => (
+              <List.Item>
+                <Col md={12} sm={24} style={{ textAlign: "left" }}>
+                  <Typography.Text mark></Typography.Text>
+                  {item.nombre}
+                </Col>
+                <Col md={12} sm={24} style={{ textAlign: "left" }}>
+                  <ImageButton
+                    key="Eliminar"
+                    title="Eliminar Clinica"
+                    image="Eliminar_Clinica"
+                    onClick={() => {
+                      deleteClinic(item.id);
+                    }}
+                  />
+                </Col>
+              </List.Item>
+            )}
+          />
         </div>
-      </div>  
+      </div>
     </Spin>
   );
 };

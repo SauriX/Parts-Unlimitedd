@@ -4,8 +4,8 @@ import { formItemLayout } from "../app/util/utils";
 import { ILoginForm, IChangePasswordForm } from "../app/models/user";
 import { useStore } from "../app/stores/store";
 import { useLocation, useNavigate } from "react-router-dom";
-import TextInput from "../app/common/form/TextInput";
-import PasswordInput from "../app/common/form/PasswordInput";
+import TextInput from "../app/common/form/proposal/TextInput";
+import PasswordInput from "../app/common/form/proposal/PasswordInput";
 import alerts from "../app/util/alerts";
 import messages from "../app/util/messages";
 
@@ -59,45 +59,54 @@ const Login = () => {
       </div>
       <div className={"contenedor"} style={{ textAlign: "center" }}>
         <img
-          src={logoImg ?? `${process.env.REACT_APP_CATALOG_URL}/images/logo.png`}
+          src={
+            logoImg ?? `${process.env.REACT_APP_CATALOG_URL}/images/logo.png`
+          }
           alt="Logo"
           style={{ height: 150 }}
         />
-      </div>
-      <div className={"contenedor"}>
         <h2 style={{ textAlign: "center" }}>Sistema Administrativo</h2>
       </div>
       <div className={"contenedor-formularios"}>
-        {/* <Spin spinning={logging}> */}
-        <Form<ILoginForm> {...formItemLayout} form={form} name="login" onFinish={onFinish} scrollToFirstError>
-          <div>
-            <Row>
-              <Col md={24} sm={24} xs={24}>
-                <TextInput
-                  formProps={{
-                    name: "usuario",
-                  }}
-                  placeholder={"Usuario"}
-                  max={100}
-                  required
-                />
-              </Col>
-              <Col md={24} sm={24} xs={24}>
-                <PasswordInput
-                  formProps={{
-                    name: "contraseña",
-                  }}
-                  placeholder={"Contraseña"}
-                  max={8}
-                  min={8}
-                  required
-                />
-              </Col>
-            </Row>
-          </div>
+        <Form<ILoginForm>
+          {...formItemLayout}
+          form={form}
+          name="login"
+          onFinish={onFinish}
+          scrollToFirstError
+        >
+          <Row justify="center" gutter={[12, 24]}>
+            <Col md={24} sm={24} xs={24}>
+              <TextInput
+                formProps={{
+                  name: "usuario",
+                  label: "",
+                }}
+                placeholder={"Usuario"}
+                max={100}
+                required
+              />
+            </Col>
+            <Col md={24} sm={24} xs={24}>
+              <PasswordInput
+                formProps={{
+                  name: "contraseña",
+                  label: "",
+                }}
+                placeholder={"Contraseña"}
+                max={8}
+                min={8}
+                required
+              />
+            </Col>
+          </Row>
         </Form>
-        <Row style={{ marginBottom: 24, marginLeft: 50 }}>
-          <Col md={12} sm={24} style={{ textAlign: "center" }}>
+        <Row gutter={[12, 24]}>
+          <Col
+            md={16}
+            sm={24}
+            style={{ textAlign: "center", marginTop: "20px" }}
+          >
             <Button
               type="primary"
               htmlType="submit"
@@ -111,7 +120,6 @@ const Login = () => {
             </Button>
           </Col>
         </Row>
-        {/* </Spin> */}
       </div>
     </Fragment>
   );

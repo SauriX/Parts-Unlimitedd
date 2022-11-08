@@ -55,7 +55,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
   const { getById: procedingById} = procedingStore;
   const { printOrder } = requestedStudyStore;
   const { departmentOptions, getDepartmentOptions } = optionStore;
-  const { studiesSelectedToPrint, printSelectedStudies, getStudies: getStudiesParams } = clinicResultsStore;
+  const { studiesSelectedToPrint, printSelectedStudies, getStudies: getStudiesParams, clearSelectedStudies } = clinicResultsStore;
 
   const [loading, setLoading] = useState(false);
   const [markAll, setMarkAll] = useState(false);
@@ -211,7 +211,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
         </Panel>
       </Collapse>
 
-      <Row>
+      <Row style={{ marginBottom: "1%" }}>
         <Col span={12}>
           <Row>
             <Col span={8}>
@@ -236,6 +236,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
                 console.log("checked", value.target.value);
                 if (value.target.value === "unmarked") {
                   setMarkAll(false);
+                  clearSelectedStudies();
                 }
                 if (value.target.value === "marked") {
                   setMarkAll(true);
@@ -243,19 +244,16 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
               }}
             >
               <Row>
-                <Col span={12}>
+                <Col span={24}>
                   <Radio value="unmarked">Desmarcar todos</Radio>
-                </Col>
-                <Col span={12}>
                   <Radio value="marked">Marcar todos</Radio>
                 </Col>
               </Row>
             </Radio.Group>
           </Row>
         </Col>
-        <Col span={6}>
+        <Col span={12} style={{ textAlign: "right" }}>
           <Button
-            style={{ marginLeft: "45%", marginBottom: "5%" }}
             type="primary"
             onClick={() => {
               printOrder(expedienteId!, requestId!);
@@ -263,12 +261,8 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
           >
             Orden
           </Button>
-        </Col>
-        <Col span={6}>
           <Button
             style={{
-              marginLeft: "45%",
-              marginBottom: "5%",
               backgroundColor: "#B4C7E7",
               // color: "white",
             }}
@@ -320,7 +314,6 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
               );
             }
           })}
-          {/* <ClinicalResultsForm /> */}
         </Col>
       </Row>
     </Spin>

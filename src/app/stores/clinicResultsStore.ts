@@ -122,6 +122,13 @@ export default class ClinicResultsStores {
     try {
       await ClinicResults.updateResults(results);
       alerts.success(messages.updated);
+      const index = this.studies.findIndex((x) => x.id === results[0].estudioId);
+      if (index !== -1) {
+        this.studies[index] = {
+          ...this.studies[index],
+          parametros: results
+        };
+      }
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -132,7 +139,7 @@ export default class ClinicResultsStores {
   cancelResults = async (id: number) => {
     try {
       this.studies = this.studies.map((x) => {
-        if (x.id === id) return x;
+        if (x.id !== id) return x;
         else {
           return {
             ...x,
@@ -232,7 +239,7 @@ export default class ClinicResultsStores {
         id: x.estudioId,
         clave: x.clave,
         nombre: x.nombre,
-        status: x.estatusId,
+        status: x.estatusId, 
         parametros: x.parametros.map((y) => ({
           id: y.resultadoId,
           estudioId: x.estudioId,
@@ -248,6 +255,12 @@ export default class ClinicResultsStores {
           unidadNombre: y.unidadNombre,
           tipoValorId: y.tipoValor,
           solicitudEstudioId: x.id!,
+          tipoValores: y.tipoValores!,
+          criticoMinimo: y.criticoMinimo,
+          criticoMaximo: y.criticoMaximo,
+          ultimoResultado: y.ultimoResultado,
+          deltaCheck: y.deltaCheck,
+          rango: y.criticoMinimo >= parseFloat(y.resultado) || parseFloat(y.resultado) >= y.criticoMaximo
         })),
       }));
       return params;
@@ -256,6 +269,14 @@ export default class ClinicResultsStores {
       return [];
     }
   };
+
+  changeParameterRange = (id: string, estudioId: number) => {
+    console.log(id, estudioId)
+    let studyIndex = this.studies.findIndex(x => x.id === 1612)
+    let study = this.studies[studyIndex]
+    let parameterIndex = study.parametros.findIndex(x => x.id === "44d55b73-5396-4240-b2b5-2c0ba35dfe58")
+    this.studies[studyIndex].parametros[parameterIndex].rango =!this.studies[studyIndex].parametros[parameterIndex].rango
+  }
 
   printResults = async (recordId: string, requestId: string) => {
     try {
