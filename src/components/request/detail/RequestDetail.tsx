@@ -134,31 +134,31 @@ const RequestDetail = () => {
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recordId, requestId]);
 
-  useEffect(() => {
-    if (request && request.esWeeClinic && !request.tokenValidado) {
-      openModal({
-        title: (
-          <Row justify="space-between">
-            <Col>Token de verificación</Col>
-            <Col>
-              <Link
-                onClick={() => {
-                  closeModal();
-                  navigate(`/${views.request}`);
-                }}
-                style={{ fontSize: 14, fontWeight: 400 }}
-              >
-                Regresar al listado
-              </Link>
-            </Col>
-          </Row>
-        ),
-        body: <RequestTokenValidation />,
-        closable: false,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [request]);
+  // useEffect(() => {
+  //   if (request && request.esWeeClinic && !request.tokenValidado) {
+  //     openModal({
+  //       title: (
+  //         <Row justify="space-between">
+  //           <Col>Token de verificación</Col>
+  //           <Col>
+  //             <Link
+  //               onClick={() => {
+  //                 closeModal();
+  //                 navigate(`/${views.request}`);
+  //               }}
+  //               style={{ fontSize: 14, fontWeight: 400 }}
+  //             >
+  //               Regresar al listado
+  //             </Link>
+  //           </Col>
+  //         </Row>
+  //       ),
+  //       body: <RequestTokenValidation />,
+  //       closable: false,
+  //     });
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [request]);
 
   if (!recordId) return null;
 
