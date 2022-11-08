@@ -52,10 +52,14 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
     clinicResultsStore,
   } = useStore();
   const { request, getById, studies, getStudies } = requestStore;
-  const { getById: procedingById} = procedingStore;
+  const { getById: procedingById } = procedingStore;
   const { printOrder } = requestedStudyStore;
   const { departmentOptions, getDepartmentOptions } = optionStore;
-  const { studiesSelectedToPrint, printSelectedStudies, getStudies: getStudiesParams } = clinicResultsStore;
+  const {
+    studiesSelectedToPrint,
+    printSelectedStudies,
+    getStudies: getStudiesParams,
+  } = clinicResultsStore;
 
   const [loading, setLoading] = useState(false);
   const [markAll, setMarkAll] = useState(false);
@@ -287,6 +291,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
             const idPatologia = departmentOptions.find(
               (dep) => dep.label === "PATOLOGÍA"
             )?.value;
+
             if (idPatologia === req.departamentoId) {
               return (
                 <div key={req.id}>

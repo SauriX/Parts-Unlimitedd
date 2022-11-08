@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, toJS } from "mobx";
 import ClinicResults from "../api/clinicResults";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -47,6 +47,7 @@ export default class ClinicResultsStores {
   addSelectedStudy = (estudio: IPrintTypes) => {
     this.studiesSelectedToPrint.push(estudio);
     console.log("estudies", this.studiesSelectedToPrint.length);
+    console.log("estudies", toJS(this.studiesSelectedToPrint));
   };
   clearSelectedStudies = () => {
     this.studiesSelectedToPrint = [];
