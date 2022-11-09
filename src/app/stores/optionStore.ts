@@ -416,6 +416,7 @@ export default class OptionStore {
   };
 
   BranchOptions: IOptions[] = [];
+  cityOptions:IOptions[]=[];
   getBranchOptions = async () => {
     try {
       const branch = Branch.getAll("");
@@ -423,8 +424,13 @@ export default class OptionStore {
         value: x.idSucursal,
         label: x.nombre,
       }));
+      this.cityOptions=  (await branch).map((x)=>({
+        value:x.ciudad, 
+        label:x.ciudad
+      }));
     } catch (error) {
       this.BranchOptions = [];
+      this.cityOptions = [];
     }
   };
 

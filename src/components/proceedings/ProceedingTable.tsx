@@ -1,4 +1,4 @@
-import { Button, Col, Collapse, DatePicker, Divider, Form, Input, InputNumber, PageHeader, Row, Select, Table } from "antd";
+import { Button, Col, Collapse, DatePicker, Divider, Form, Input, InputNumber, PageHeader, Row, Table } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
@@ -52,8 +52,8 @@ type ProceedingTableProps = {
 const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) => {
   const { procedingStore, optionStore, locationStore } = useStore();
   const { expedientes, getAll, getnow, setSearch, search } = procedingStore;
-  const { BranchOptions, getBranchOptions } = optionStore;
-  const { getCity, cityOptions } = locationStore;
+  const { BranchOptions, getBranchOptions,cityOptions } = optionStore;
+  const { getCity,  } = locationStore;
   const [searchParams] = useSearchParams();
   const [errors, setErrors] = useState<IFormError[]>([]);
   let navigate = useNavigate();
@@ -224,12 +224,21 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
                 <Select allowClear options={BranchOptions} onChange={(value)=>{setSearch({ ...search,sucursal:value  })}} style={{marginLeft:"10px",width:"300px"}} />
             </Col>
         </Row> */}
-      <Collapse ghost className="request-filter-collapse">
-        <Panel
-          header="Filtros"
-          key="filter"
-          extra={[
-            <Button
+
+
+          <Form<ISearchMedical> {...formItemLayout} form={form}
+            onFinish={onfinish}
+            size="small"
+            onFinishFailed={({ errorFields }) => {
+              const errors = errorFields.map((x) => ({ name: x.name[0].toString(), errors: x.errors }));
+              setErrors(errors);
+            }}
+          >
+            <Row gutter={[0, 10]}>
+              <Col md={21}></Col>
+              <Col md={3}>
+
+              <Button
               key="clean"
               onClick={(e) => {
                 e.stopPropagation();
@@ -238,7 +247,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
               }}
             >
               Limpiar
-            </Button>,
+            </Button>
             <Button
               key="filter"
               type="primary"
@@ -248,34 +257,24 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
               }}
             >
               Filtrar
-            </Button>,
-          ]}
-        >
-          <Form<ISearchMedical> {...formItemLayout} form={form}
-            onFinish={onfinish}
-            size="small"
-            onFinishFailed={({ errorFields }) => {
-              const errors = errorFields.map((x) => ({ name: x.name[0].toString(), errors: x.errors }));
-              setErrors(errors);
-            }}
-          >
-            <Row gutter={[0, 12]}>
-
+            </Button>
+              </Col>
               <Col span={8}>
                 <DateRangeInput formProps={{ name: "fechaAlta", label: "Fecha de alta" }} errors={errors.find((x) => x.name === "fechaAlta")?.errors}/>
               </Col>
               <Col span={16}>
                 <TextInput formProps={{ name: "expediente", label: "Expediente/Nombre/Codigo de barras/Huella digital", labelCol: { span: 12 } }}errors={errors.find((x) => x.name === "expediente")?.errors} />
               </Col>
-              <Col span={8}>
+              
+              <Col  style={{marginLeft:"7%"}} span={8}>
                 <DescriptionItem
                   title="Teléfono"
+                
                   content={
                     <MaskInput
                       formProps={{
                         name: "telefono",
                       }}
-                      width="90%"
                       mask={[
                         /[0-9]/,
                         /[0-9]/,
@@ -301,11 +300,12 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
                       }}
                     />
                   }
-                  contentWidth="60%"
+                  contentWidth="87%"
+                 
                 />
               </Col>
-              <Col span={5}></Col>
-              <Col span={9}>
+
+              <Col style={{marginLeft:"14%"}} span={9}>
                 <DateInput formProps={{ name: "fechaNacimiento", label: "Fecha nacimiento" }} errors={errors.find((x) => x.name === "fechaNacimiento")?.errors}/>
               </Col>
 
@@ -319,8 +319,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
 
             </Row>
           </Form>
-        </Panel>
-      </Collapse>.
+                    <br />
       <Table<IProceedingList>
         loading={loading || printing}
         size="small"

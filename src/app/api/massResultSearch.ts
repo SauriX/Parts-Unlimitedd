@@ -1,4 +1,5 @@
 import {
+  IDeliverResultsForm,
   IMassSearch,
   IParameter,
   IResult,
@@ -12,6 +13,8 @@ const MassResultSearch = {
     requests.post("MassSearch/results", search),
   getRequestResults: (search: IMassSearch): Promise<IResultList> =>
     requests.post("MassSearch/GetByFilter", search),
+  getAllCaptureResults: (search: IDeliverResultsForm): Promise<any[]> =>
+    requests.post("MassSearch/GetAllCaptureResults", search),
 };
 
 export default MassResultSearch;

@@ -5,7 +5,10 @@ import {
   ISearch,
   getDefaultColumnProps,
 } from "../../../app/common/table/utils";
-import { IClinicResultList, IClinicStudy } from "../../../app/models/clinicResults";
+import {
+  IClinicResultList,
+  IClinicStudy,
+} from "../../../app/models/clinicResults";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 
@@ -112,20 +115,16 @@ export const NestedClinicResults = () => {
       ...getDefaultColumnProps("clave", "Estudio", {
         width: "50%",
       }),
-      render: (_value, record) => (
-        record.clave + " - " + record.nombre
-      )
+      render: (_value, record) => record.clave + " - " + record.nombre,
     },
     {
       ...getDefaultColumnProps("nombreEstatus", "Estatus", {
         width: "50%",
       }),
-      render: (_value, record) => (
-        record.nombreEstatus!
-      )
+      render: (_value, record) => record.nombreEstatus!,
     },
-  ]
-}
+  ];
+};
 
 export const ClinicResultsExpandable = () => {
   const nestedColumns: IColumns<IClinicStudy> = [
@@ -133,23 +132,24 @@ export const ClinicResultsExpandable = () => {
       ...getDefaultColumnProps("clave", "Estudio", {
         width: "50%",
       }),
-      render: (_value, record) => (
-        record.clave + " - " + record.nombre
-      )
+      render: (_value, record) => record.clave + " - " + record.nombre,
     },
     {
       ...getDefaultColumnProps("nombreEstatus", "Estatus", {
         width: "50%",
       }),
-      render: (_value, record) => (
-        record.nombreEstatus!
-      )
+      render: (_value, record) => record.nombreEstatus!,
     },
-  ]
+  ];
 
   return {
     expandedRowRender: (item: IClinicResultList) => (
-      <Table columns={nestedColumns} dataSource={item.estudios} pagination={false}/>
+      <Table
+        columns={nestedColumns}
+        dataSource={item.estudios}
+        pagination={false}
+        className="header-expandable-table"
+      />
     ),
     rowExpandable: () => true,
     defaultExpandAllRows: true,

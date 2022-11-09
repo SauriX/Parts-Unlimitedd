@@ -4,6 +4,7 @@ import {
   Card,
   Checkbox,
   Col,
+  Descriptions,
   Divider,
   Form,
   Input,
@@ -110,14 +111,12 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     form.setFieldValue("dr", claveMedico);
   }, [claveMedico]);
 
-  useEffect(() => {
-    
-  }, [resultValue]);
+  useEffect(() => {}, [resultValue]);
 
   const loadInit = async () => {
     const cStudy = await getRequestStudyById(estudio.id!);
     setCurrentStudy(cStudy!);
-    console.log(cStudy)
+    console.log(cStudy);
 
     let captureResult = studies.find((x) => x.id == estudioId);
 
@@ -180,78 +179,12 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       },
     },
     {
-      key: "estatusId2",
-      dataIndex: "estatusId",
-      title: "Usuario Modificó",
-      align: "left",
-      width: "15%",
-      render: (value: any, fullRow: any) => {
-        let ultimaActualizacion;
-        if (value === status.requestStudy.solicitado) {
-          ultimaActualizacion = fullRow.usuarioSolicitado;
-        }
-        if (value === status.requestStudy.capturado) {
-          ultimaActualizacion = fullRow.usuarioCaptura;
-        }
-        if (value === status.requestStudy.validado) {
-          ultimaActualizacion = fullRow.usuarioValidacion;
-        }
-        if (value === status.requestStudy.liberado) {
-          ultimaActualizacion = fullRow.usuarioLiberado;
-        }
-        if (value === status.requestStudy.enviado) {
-          ultimaActualizacion = fullRow.usuarioEnviado;
-        }
-        return <strong>{ultimaActualizacion}</strong>;
-      },
-    },
-    {
-      key: "estatus",
-      dataIndex: "estatus",
-      title: "Estatus",
-      align: "left",
-      width: "10%",
-      render: () => {
-        return <strong>{estudio.nombreEstatus!}</strong>;
-      },
-    },
-    {
-      key: "estatusId",
-      dataIndex: "estatusId",
-      title: "Fecha Actualización",
-      align: "left",
-      width: "15%",
-      render: (value: any, fullRow: any) => {
-        let ultimaActualizacion;
-        if (value === status.requestStudy.solicitado) {
-          ultimaActualizacion = fullRow.fechaSolicitud;
-        }
-        if (value === status.requestStudy.capturado) {
-          ultimaActualizacion = fullRow.fechaCaptura;
-        }
-        if (value === status.requestStudy.validado) {
-          ultimaActualizacion = fullRow.fechaValidacion;
-        }
-        if (value === status.requestStudy.liberado) {
-          ultimaActualizacion = fullRow.fechaLiberacion;
-        }
-        if (value === status.requestStudy.enviado) {
-          ultimaActualizacion = fullRow.fechaEnvio;
-        }
-        return (
-          <strong>
-            {moment(ultimaActualizacion).format("DD/MM/YYYY HH:mm")}
-          </strong>
-        );
-      },
-    },
-    {
       key: "Orden",
       dataIndex: "orden",
       title: "Acciones",
       align: "left",
       width: "20%",
-      render: () => renderUpdateStatus()
+      render: () => renderUpdateStatus(),
     },
     {
       key: "Seleccionar",
@@ -292,59 +225,61 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
         {currentStudy.estatusId >= status.requestStudy.solicitado ? (
           <Row>
             <Col span={24}>
-            <Row justify="space-between" gutter={[12, 24]}>
-            {currentStudy.estatusId <= 3 ? (
-              ""
-            ) : (
-              <Col span={12}>
-                <Button
-                  type="default"
-                  htmlType="submit"
-                  disabled={
-                    currentStudy.estatusId ===
-                      status.requestStudy.tomaDeMuestra ||
-                    currentStudy.estatusId === status.requestStudy.pendiente
-                  }
-                  onClick={async () => {
-                    setLoading(true);
-                    await updateStatus(true);
-                    setLoading(false);
-                  }}
-                  danger
-                >
-                  Cancelar{" "}
-                  {currentStudy.estatusId === status.requestStudy.capturado
-                    ? "Captura"
-                    : currentStudy.estatusId === status.requestStudy.validado
-                    ? "Validación"
-                    : ""}
-                </Button>
-              </Col>
-            )}
-            <Col span={12}>
-              <Button
-                type="primary"
-                htmlType="submit"
-                // disabled={disabled}
-                onClick={() => {
-                  form.submit();
-                }}
-                style={{
-                  backgroundColor: "#6EAA46",
-                  color: "white",
-                  borderColor: "#6EAA46",
-                }}
-              >
-                {currentStudy.estatusId === status.requestStudy.capturado
-                  ? "Validar estudio"
-                  : currentStudy.estatusId === status.requestStudy.validado
-                  ? "Liberar estudio"
-                  : currentStudy.estatusId === status.requestStudy.solicitado
-                  ? "Guardar captura"
-                  : ""}
-              </Button>
-            </Col>
-            </Row>
+              <Row justify="space-between" gutter={[12, 24]}>
+                {currentStudy.estatusId <= 3 ? (
+                  ""
+                ) : (
+                  <Col span={12}>
+                    <Button
+                      type="default"
+                      htmlType="submit"
+                      disabled={
+                        currentStudy.estatusId ===
+                          status.requestStudy.tomaDeMuestra ||
+                        currentStudy.estatusId === status.requestStudy.pendiente
+                      }
+                      onClick={async () => {
+                        setLoading(true);
+                        await updateStatus(true);
+                        setLoading(false);
+                      }}
+                      danger
+                    >
+                      Cancelar{" "}
+                      {currentStudy.estatusId === status.requestStudy.capturado
+                        ? "Captura"
+                        : currentStudy.estatusId ===
+                          status.requestStudy.validado
+                        ? "Validación"
+                        : ""}
+                    </Button>
+                  </Col>
+                )}
+                <Col span={12}>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    // disabled={disabled}
+                    onClick={() => {
+                      form.submit();
+                    }}
+                    style={{
+                      backgroundColor: "#6EAA46",
+                      color: "white",
+                      borderColor: "#6EAA46",
+                    }}
+                  >
+                    {currentStudy.estatusId === status.requestStudy.capturado
+                      ? "Validar estudio"
+                      : currentStudy.estatusId === status.requestStudy.validado
+                      ? "Liberar estudio"
+                      : currentStudy.estatusId ===
+                        status.requestStudy.solicitado
+                      ? "Guardar captura"
+                      : ""}
+                  </Button>
+                </Col>
+              </Row>
             </Col>
           </Row>
         ) : (
@@ -448,20 +383,82 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   return (
     <Fragment>
       {currentStudy.estatusId >= 3 && currentStudy.estatusId != 9 ? (
-      <Spin spinning={loading}>
-        
-        <Row style={{ marginBottom: "20px" }}>
-          <Col span={24}>
-            <Table<any>
-              size="small"
-              rowKey={(record) => record.id}
-              columns={columns}
-              pagination={false}
-              dataSource={[currentStudy]}
-              showHeader={showHeaderTable}
-            />
-          </Col>
-        </Row>
+        <Spin spinning={loading}>
+          <Row style={{ marginBottom: "20px" }}>
+            <Col span={8}>
+              <p>
+                CAP -{" "}
+                {currentStudy.estatusId >= 4 && (
+                  <strong>{`${moment(currentStudy.fechaCaptura).format(
+                    "DD/MM/YYYY HH:mm"
+                  )}, ${currentStudy.usuarioCaptura}`}</strong>
+                )}
+              </p>
+            </Col>
+            <Col span={8}>
+              <p>
+                LIB -{" "}
+                {currentStudy.estatusId >= 6 && (
+                  <strong>{`${moment(currentStudy.fechaLiberado).format(
+                    "DD/MM/YYYY HH:mm"
+                  )}, ${currentStudy.usuarioLiberado}`}</strong>
+                )}
+              </p>
+            </Col>
+            <Col span={8}>
+              <p>
+                IMP -
+                {currentStudy.estatusId >= 8 && (
+                  <strong>{`${moment(currentStudy.fechaValidacion).format(
+                    "DD/MM/YYYY HH:mm"
+                  )}, ${currentStudy.usuarioValidacion
+                    ?.split(" ")
+                    .map((word: string) => word[0])
+                    .join("")}`}</strong>
+                )}
+              </p>
+            </Col>
+            <Col span={8}>
+              <p>
+                VAL -{" "}
+                {currentStudy.estatusId >= 5 && (
+                  <strong>{`${moment(currentStudy.fechaValidacion).format(
+                    "DD/MM/YYYY HH:mm"
+                  )}, ${currentStudy.usuarioValidacion}`}</strong>
+                )}
+              </p>
+            </Col>
+            <Col span={8}>
+              <p>
+                ENV -{" "}
+                {currentStudy.estatusId >= 7 && (
+                  <strong>{`${moment(currentStudy.fechaValidacion).format(
+                    "DD/MM/YYYY HH:mm"
+                  )}, ${currentStudy.usuarioValidacion}`}</strong>
+                )}
+              </p>
+            </Col>
+            <Col span={8}>
+              <p>
+                ENT -{" "}
+                {currentStudy.estatusId >= 8 && (
+                  <strong>{`${moment(currentStudy.fechaValidacion).format(
+                    "DD/MM/YYYY HH:mm"
+                  )}, ${currentStudy.usuarioValidacion}`}</strong>
+                )}
+              </p>
+            </Col>
+            <Col span={24}>
+              <Table<any>
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columns}
+                pagination={false}
+                dataSource={[currentStudy]}
+                showHeader={showHeaderTable}
+              />
+            </Col>
+          </Row>
           <Card className="capture-details">
             <Form<IClinicResultCaptureForm>
               form={form}
@@ -483,55 +480,65 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                     gutter={[0, 12]}
                     style={{ textAlign: "center" }}
                   >
-                    <Col span={6}>
+                    <Col span={4}>
                       <h3>EXAMEN</h3>
                     </Col>
-                    <Col span={6}>
+                    <Col span={4}>
                       <h3>RESULTADO</h3>
                     </Col>
-                    <Col span={6}>
+                    <Col span={4}>
+                      <h3>PREVIO</h3>
+                    </Col>
+                    <Col span={4}>
                       <h3>UNIDADES</h3>
                     </Col>
-                    <Col span={6}>
+                    <Col span={4}>
                       <h3>REFERENCIA</h3>
                     </Col>
                   </Row>
-                  <Row
-                    justify="space-between"
-                    gutter={[0, 12]}
-                    style={{ textAlign: "center" }}
-                    align="middle"
-                  >
-                    <Form.List name="parametros">
-                      {(fields) => (
-                        <>
-                          {fields.map((field) => {
-                            let fieldValue = form.getFieldValue([
-                              "parametros",
-                              field.name,
-                            ]) as IClinicResultCaptureForm;
-                            let fieldResult = resultValue?.find(
-                              (x) => x.id === fieldValue.id
-                            )?.resultado as string;
-                            let fieldRange =
-                              parseFloat(fieldValue.valorInicial) >
-                                parseFloat(fieldResult ?? 0) ||
-                              parseFloat(fieldResult ?? 0) >
-                                parseFloat(fieldValue.valorFinal);
-                            return (
-                              <Fragment key={field.key}>
-                                {fieldValue.tipoValorId == "9" ? (
-                                  <Col span={24}>
-                                    <br />
+                  <Form.List name="parametros">
+                    {(fields) => (
+                      <>
+                        {fields.map((field) => {
+                          let fieldValue = form.getFieldValue([
+                            "parametros",
+                            field.name,
+                          ]) as IClinicResultCaptureForm;
+                          let fieldResult = resultValue?.find(
+                            (x) => x.id === fieldValue.id
+                          )?.resultado as string;
+                          let fieldRange =
+                            parseFloat(fieldValue.valorInicial) >
+                              parseFloat(fieldResult ?? 0) ||
+                            parseFloat(fieldResult ?? 0) >
+                              parseFloat(fieldValue.valorFinal);
+                          return (
+                            <Row
+                              key={field.key}
+                              justify="space-between"
+                              gutter={[0, 24]}
+                              style={{ textAlign: "center" }}
+                              align="middle"
+                            >
+                              {fieldValue.tipoValorId == "9" ? (
+                                <Col span={24}>
+                                  <br />
+                                </Col>
+                              ) : (
+                                <>
+                                  <Col span={4}>
+                                    <h4>{fieldValue.nombre}</h4>
+                                    {"\n"}
+                                    <h5 style={{ color: "red" }}>
+                                      {fieldValue.rango
+                                        ? fieldValue.resultado
+                                        : null}
+                                    </h5>
                                   </Col>
-                                ) : (
-                                  <>
-                                    <Col span={6}>
-                                      <h4>{fieldValue.nombre}</h4>
-                                    </Col>
-
-                                    {fieldValue.tipoValorId == "10" || fieldValue.tipoValorId == "7" ? (
-                                      <Col span={6}>
+                                  <Col span={4}>
+                                    {fieldValue.tipoValorId == "10" ||
+                                    fieldValue.tipoValorId == "7" ? (
+                                      <>
                                         <Form.Item
                                           {...field}
                                           name={[field.name, "resultado"]}
@@ -544,7 +551,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                         >
                                           <TextArea
                                             placeholder="Resultado"
-                                            style={{ width: "75%" }}
+                                            style={{
+                                              width: "72%",
+                                              marginBottom: "7px",
+                                            }}
                                             rows={4}
                                             allowClear
                                             autoSize
@@ -555,7 +565,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                           onClick={async () => {
                                             const modal =
                                               await ObservationModal(
-                                                fieldValue.parametroId, fieldValue.tipoValorId
+                                                fieldValue.parametroId,
+                                                fieldValue.tipoValorId
                                               );
                                             form.setFieldValue(
                                               [
@@ -569,159 +580,173 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                         >
                                           ...
                                         </Button>
-                                      </Col>
+                                      </>
                                     ) : (
-                                      <Col span={6}>
-                                        <Form.Item
-                                          {...field}
-                                          name={[field.name, "resultado"]}
-                                          fieldKey={[field.key, "resultado"]}
-                                          validateTrigger={[
-                                            "onChange",
-                                            "onBlur",
-                                          ]}
-                                          noStyle
-                                        >
-                                          {fieldValue.tipoValorId == "5" ? (
-                                            <Select
-                                              mode="multiple"
-                                              options={fieldValue.tipoValores!.map(
-                                                (x) => ({
-                                                  key: x.id,
-                                                  value: x.opcion!,
-                                                  label: x.opcion!,
-                                                })
-                                              )}
-                                              style={{ width: "80%" }}
-                                            />
-                                          ) : (
-                                            <Input
-                                              placeholder="Resultado"
-                                              style={
-                                                fieldRange && fieldResult
-                                                  ? {
-                                                      width: "80%",
-                                                      borderColor: "red",
-                                                    }
-                                                  : { width: "80%" }
-                                              }
-                                              allowClear
-                                            />
-                                          )}
-                                        </Form.Item>
-                                      </Col>
+                                      <Form.Item
+                                        {...field}
+                                        name={[field.name, "resultado"]}
+                                        fieldKey={[field.key, "resultado"]}
+                                        validateTrigger={["onChange", "onBlur"]}
+                                        noStyle
+                                      >
+                                        {fieldValue.tipoValorId == "5" ? (
+                                          <Select
+                                            mode="multiple"
+                                            options={fieldValue.tipoValores!.map(
+                                              (x) => ({
+                                                key: x.id,
+                                                value: x.opcion!,
+                                                label: x.opcion!,
+                                              })
+                                            )}
+                                            style={{
+                                              width: "80%",
+                                              marginBottom: "7px",
+                                            }}
+                                          />
+                                        ) : (
+                                          <Input
+                                            placeholder="Resultado"
+                                            style={
+                                              fieldRange && fieldResult
+                                                ? {
+                                                    width: "80%",
+                                                    borderColor: "red",
+                                                    marginBottom: "7px",
+                                                  }
+                                                : {
+                                                    width: "80%",
+                                                    marginBottom: "7px",
+                                                  }
+                                            }
+                                            allowClear
+                                          />
+                                        )}
+                                      </Form.Item>
                                     )}
-                                    <Col span={6}>
-                                      {fieldValue.unidadNombre == null
-                                        ? "No cuenta con unidades"
-                                        : fieldValue.unidadNombre}
-                                    </Col>
-                                    <Col span={6}>
-                                      {fieldValue.valorInicial == null
-                                        ? "No cuenta con valores de referencia"
-                                        : referenceValues(
-                                            fieldValue.tipoValorId,
-                                            fieldValue.valorInicial,
-                                            fieldValue.valorFinal
-                                          )}
-                                    </Col>
-                                  </>
-                                )}
-                              </Fragment>
-                            );
-                          })}
-                        </>
-                      )}
-                    </Form.List>
-                  </Row>
+                                  </Col>
+                                  <Col span={4}>
+                                    {fieldValue.ultimoResultado == null
+                                      ? "-"
+                                      : fieldValue.ultimoResultado}
+                                  </Col>
+                                  <Col span={4}>
+                                    {fieldValue.unidadNombre == null
+                                      ? "No cuenta con unidades"
+                                      : fieldValue.unidadNombre}
+                                  </Col>
+                                  <Col span={4}>
+                                    {fieldValue.valorInicial == null
+                                      ? "No cuenta con valores de referencia"
+                                      : referenceValues(
+                                          fieldValue.tipoValorId,
+                                          fieldValue.valorInicial,
+                                          fieldValue.valorFinal
+                                        )}
+                                  </Col>
+                                </>
+                              )}
+                            </Row>
+                          );
+                        })}
+                      </>
+                    )}
+                  </Form.List>
                 </Col>
               </Row>
             </Form>
           </Card>
-        {resultParam.some((x) => x.rango) && !hideWhenCancel && (
-          <Card className="capture-details">
-            <Title level={4}>Valores Críticos</Title>
-            <Row justify="space-between" style={{ textAlign: "center" }}>
-              <Col span={8}>
-                <h3>EXAMEN</h3>
-              </Col>
-              <Col span={8}>
-                <h3>RESULTADO CRÍTICO</h3>
-              </Col>
-              <Col span={8}>
-                <h3>REFERENCIAS CRÍTICAS</h3>
-              </Col>
-            </Row>
-            {resultParam?.map((x) =>
-              x.rango ? (
-                <Row justify="space-between" style={{ textAlign: "center" }}>
-                  <Col span={8}>
-                    <h4>{x.nombre}</h4>
-                  </Col>
-                  <Col span={8}>
-                    <h4 style={{ color: "red" }}>
-                      {x.resultado} {x.unidadNombre}
-                    </h4>
-                  </Col>
-                  <Col span={8}>
-                    <h4>
-                      {"<"} {x.criticoMinimo} - {x.criticoMaximo} {">"}
-                    </h4>
-                  </Col>
-                </Row>
-              ) : null
-            )}
-          </Card>
-        )}
-        {resultParam.some((x) => x.deltaCheck && !!x.ultimoResultado && x.resultado) &&
-          !hideWhenCancel && (
+          {/* {resultParam.some((x) => x.rango) && !hideWhenCancel && (
             <Card className="capture-details">
-              <Title level={4}>Análisis previo</Title>
-              <Row>
-                <Col span={24}>
-                  <Row justify="space-between" style={{ textAlign: "center" }}>
-                    <Col span={6}>
-                      <h3>EXAMEN</h3>
-                    </Col>
-                    <Col span={6}>
-                      <h4>RESULTADO ACTUAL</h4>
-                    </Col>
-                    <Col span={6}>
-                      <h4>RESULTADO PREVIO</h4>
-                    </Col>
-                    <Col span={6}>
-                      <h4>DIFERENCIA</h4>
-                    </Col>
-                    {resultParam?.map((x) =>
-                      x.deltaCheck ? (
-                        <>
-                          <Col span={6}>
-                            <h4>{x.nombre}</h4>
-                          </Col>
-                          <Col span={6}>
-                            <h4>
-                              {x.resultado} {x.unidadNombre}
-                            </h4>
-                          </Col>
-                          <Col span={6}>
-                            <h4>
-                              {x.ultimoResultado} {x.unidadNombre}
-                            </h4>
-                          </Col>
-                          <Col span={6}>
-                            <h4>
-                              {parseFloat(x.resultado) - parseFloat(x.ultimoResultado)} {x.unidadNombre}
-                            </h4>
-                          </Col>
-                        </>
-                      ) : null
-                    )}
-                  </Row>
+              <Title level={4}>Valores Críticos</Title>
+              <Row justify="space-between" style={{ textAlign: "center" }}>
+                <Col span={8}>
+                  <h3>EXAMEN</h3>
+                </Col>
+                <Col span={8}>
+                  <h3>RESULTADO CRÍTICO</h3>
+                </Col>
+                <Col span={8}>
+                  <h3>REFERENCIAS CRÍTICAS</h3>
                 </Col>
               </Row>
+              {resultParam?.map((x) =>
+                x.rango ? (
+                  <Row justify="space-between" style={{ textAlign: "center" }}>
+                    <Col span={8}>
+                      <h4>{x.nombre}</h4>
+                    </Col>
+                    <Col span={8}>
+                      <h4 style={{ color: "red" }}>
+                        {x.resultado} {x.unidadNombre}
+                      </h4>
+                    </Col>
+                    <Col span={8}>
+                      <h4>
+                        {"<"} {x.criticoMinimo} - {x.criticoMaximo} {">"}
+                      </h4>
+                    </Col>
+                  </Row>
+                ) : null
+              )}
             </Card>
-          )}
-      </Spin>
+          )} */}
+          {/* {resultParam.some(
+            (x) => x.deltaCheck && !!x.ultimoResultado && x.resultado
+          ) &&
+            !hideWhenCancel && (
+              <Card className="capture-details">
+                <Title level={4}>Análisis previo</Title>
+                <Row>
+                  <Col span={24}>
+                    <Row
+                      justify="space-between"
+                      style={{ textAlign: "center" }}
+                    >
+                      <Col span={6}>
+                        <h3>EXAMEN</h3>
+                      </Col>
+                      <Col span={6}>
+                        <h4>RESULTADO ACTUAL</h4>
+                      </Col>
+                      <Col span={6}>
+                        <h4>RESULTADO PREVIO</h4>
+                      </Col>
+                      <Col span={6}>
+                        <h4>DIFERENCIA</h4>
+                      </Col>
+                      {resultParam?.map((x) =>
+                        x.deltaCheck ? (
+                          <>
+                            <Col span={6}>
+                              <h4>{x.nombre}</h4>
+                            </Col>
+                            <Col span={6}>
+                              <h4>
+                                {x.resultado} {x.unidadNombre}
+                              </h4>
+                            </Col>
+                            <Col span={6}>
+                              <h4>
+                                {x.ultimoResultado} {x.unidadNombre}
+                              </h4>
+                            </Col>
+                            <Col span={6}>
+                              <h4>
+                                {parseFloat(x.resultado) -
+                                  parseFloat(x.ultimoResultado)}{" "}
+                                {x.unidadNombre}
+                              </h4>
+                            </Col>
+                          </>
+                        ) : null
+                      )}
+                    </Row>
+                  </Col>
+                </Row>
+              </Card>
+            )} */}
+        </Spin>
       ) : null}
     </Fragment>
   );

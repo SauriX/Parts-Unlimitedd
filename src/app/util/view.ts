@@ -17,6 +17,7 @@ const views = {
   shipmenttracking:"ShipmentTracking",
   recivetracking:"ReciveTracking",
   workLists: "workLists",
+  resultValidation:"ResultValidation",
 };
 
 export default views;

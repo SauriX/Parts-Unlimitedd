@@ -1,4 +1,4 @@
-import { Form, FormItemProps } from "antd";
+import { Form, FormItemProps, Input } from "antd";
 import { Rule, RuleObject } from "antd/lib/form";
 import React from "react";
 import MaskedInput, { Mask } from "react-text-mask";
@@ -59,6 +59,7 @@ const MaskInput = ({
             disabled={readonly}
             autoComplete="off"
             // prefix={prefix}
+
             placeholder={placeholder ?? itemProps.label?.toString()}
             style={{ width: width ?? "100%" }}
           />
