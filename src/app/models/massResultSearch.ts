@@ -28,3 +28,17 @@ export interface IResultList {
   results: IResult[];
   parameters: IParameter[];
 }
+
+export interface IDeliverResultsForm {
+  companias: string[];
+  departamentos: number[];
+  fechaInicial: moment.Moment;
+  fechaFinal: moment.Moment;
+  medicos: string[];
+  mediosEntrega: number[];
+  procedencias: number[];
+  estatus: number[];
+  sucursales: string[];
+  tipoFecha: number;
+  tipoSolicitud: number[];
+}

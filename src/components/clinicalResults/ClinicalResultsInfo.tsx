@@ -49,10 +49,15 @@ const ClinicalResultsInfo = () => {
     clinicResultsStore,
   } = useStore();
   const { request, getById, studies, getStudies } = requestStore;
-  const { getById: procedingById} = procedingStore;
+  const { getById: procedingById } = procedingStore;
   const { printOrder } = requestedStudyStore;
   const { departmentOptions, getDepartmentOptions } = optionStore;
-  const { studiesSelectedToPrint, printSelectedStudies, getStudies: getStudiesParams, clearSelectedStudies } = clinicResultsStore;
+  const {
+    studiesSelectedToPrint,
+    printSelectedStudies,
+    getStudies: getStudiesParams,
+    clearSelectedStudies,
+  } = clinicResultsStore;
 
   const [printing, setPrinting] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -315,6 +320,7 @@ const ClinicalResultsInfo = () => {
             const idPatologia = departmentOptions.find(
               (dep) => dep.label === "PATOLOGÍA"
             )?.value;
+
             if (idPatologia === req.departamentoId) {
               return (
                 <div key={req.id}>

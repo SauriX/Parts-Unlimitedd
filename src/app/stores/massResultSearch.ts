@@ -1,6 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import MassResultSearch from "../api/massResultSearch";
 import {
+  IDeliverResultsForm,
   IMassSearch,
   IParameter,
   IResult,
@@ -35,6 +36,17 @@ export default class MassResultSearchStore {
         }
       }
       this.results = result.results;
+      console.log("RESULT", result);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  requests: any[] = [];
+  getAllCaptureResults = async (search: IDeliverResultsForm) => {
+    try {
+      const result = await MassResultSearch.getAllCaptureResults(search);
+      this.requests = result;
       console.log("RESULT", result);
     } catch (error: any) {
       alerts.warning(getErrors(error));
