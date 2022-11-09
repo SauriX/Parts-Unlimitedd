@@ -86,6 +86,7 @@ const {openModal,closeModal}=modalStore
   const [radioValue, setRadioValue] = useState<any>();
   const [searchParams, setSearchParams] = useSearchParams();
   const [lista, setLista] = useState<IPriceListEstudioList[]>(studies);
+  const [lista2, setLista2] = useState<IPriceListEstudioList[]>(studies);
   const [listSMC, setListSCM] = useState(sucMedCom);
   const [listSucursal, setListSucursal] = useState<any>();
   const [listMedicos, setListMedicos] = useState<any>();
@@ -100,6 +101,7 @@ const {openModal,closeModal}=modalStore
   const [values, setValues] = useState<IPriceListForm>(
     new PriceListFormValues()
   );
+  
 
   useEffect(()=>{
     const readtabla = async() =>{
@@ -109,6 +111,7 @@ const {openModal,closeModal}=modalStore
        console.log(tabla);
        setValues((prev) => ({ ...prev, table: tabla }));
        setLista(tabla);
+       setLista2(tabla);
     }
     if(!id){
       readtabla();
@@ -298,6 +301,7 @@ const {openModal,closeModal}=modalStore
       form.setFieldsValue(user!);
       
       setLista(tabla);
+      setLista2(tabla);
       console.log(user);
       setListSucursal(branches);
       setListCompañia(Companies);
@@ -485,13 +489,13 @@ const {openModal,closeModal}=modalStore
     console.log(lista);
     if(search!=null){   
       console.log("if");
-      var estudios = lista.filter(
+      var estudios = lista2.filter(
       (x) => x.clave.includes(search) || x.nombre.includes(search) );
       console.log(lista);
     setValues((prev) => ({ ...prev, table: estudios }));
     return
   }
-  setValues((prev) => ({ ...prev, table: lista }));
+  setValues((prev) => ({ ...prev, table: lista2 }));
   }
 
   const onFinish = async (newValues: IPriceListForm) => {

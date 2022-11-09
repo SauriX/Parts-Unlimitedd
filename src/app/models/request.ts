@@ -23,7 +23,8 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   esNuevo: boolean;
   folioWeeClinic?: string;
   esWeeClinic: boolean;
-
+  tokenValidado: boolean;
+  servicios?: string[];
   estudios?: IRequestStudyInfo[];
 }
 
@@ -73,6 +74,12 @@ export interface IRequestStudyInfo {
   fechaCaptura: string;
   fechaLiberado: string;
   fechaEnviado: string;
+  usuarioTomaMuestra: string;
+  usuarioValidacion: string;
+  usuarioSolicitado: string;
+  usuarioCaptura: string;
+  usuarioLiberado: string;
+  usuarioEnviado: string;
 }
 
 export class RequestStudyInfoForm implements IRequestStudyInfo {
@@ -89,6 +96,12 @@ export class RequestStudyInfoForm implements IRequestStudyInfo {
   fechaCaptura = "";
   fechaLiberado = "";
   fechaEnviado = "";
+  usuarioTomaMuestra = "";
+  usuarioValidacion = "";
+  usuarioSolicitado = "";
+  usuarioCaptura = "";
+  usuarioLiberado = "";
+  usuarioEnviado = "";
 
   constructor(init?: IRequestTotal) {
     Object.assign(this, init);
@@ -189,7 +202,21 @@ export interface IRequestStudy {
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
   fechaActualizacion?: string;
+  usuarioActualizacion?: string;
   solicitudEstudioId?: number;
+  nombreEstatus?: string;
+  fechaTomaMuestra?: string;
+  fechaValidacion?: string;
+  fechaSolicitado?: string;
+  fechaCaptura?: string;
+  fechaLiberado?: string;
+  fechaEnviado?: string;
+  usuarioTomaMuestra?: string;
+  usuarioValidacion?: string;
+  usuarioSolicitado?: string;
+  usuarioCaptura?: string;
+  usuarioLiberado?: string;
+  usuarioEnviado?: string;
 }
 export class RequestStudyValues implements IRequestStudy {
   type: "study" | "pack" = "study";
@@ -226,6 +253,7 @@ export class RequestStudyValues implements IRequestStudy {
   indicaciones: IIndicationList[] = [];
   promociones = [];
   fechaActualizacion = "";
+  usuarioActualizacion = "";
   constructor(init?: IRequestStudy) {
     Object.assign(this, init);
   }

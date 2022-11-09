@@ -1,10 +1,15 @@
-import { Divider, Spin } from "antd";
+import { Col, Divider, Row, Spin, Typography } from "antd";
 import { Fragment, useEffect, useState } from "react";
 import RequestHeader from "./RequestHeader";
 import RequestRecord from "./RequestRecord";
 import RequestTab from "./RequestTab";
 import "./css/index.less";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
 import { IRequest } from "../../../app/models/request";
@@ -13,10 +18,18 @@ import { toJS } from "mobx";
 import moment from "moment";
 import views from "../../../app/util/view";
 import Center from "../../../app/layout/Center";
+import RequestTokenValidation from "./RequestTokenValidation";
+
+const { Link } = Typography;
 
 const RequestDetail = () => {
-  const { profileStore, requestStore, loyaltyStore, procedingStore } =
-    useStore();
+  const {
+    profileStore,
+    requestStore,
+    loyaltyStore,
+    procedingStore,
+    modalStore,
+  } = useStore();
   const { profile } = profileStore;
   const {
     getById,
@@ -29,10 +42,10 @@ const RequestDetail = () => {
   } = requestStore;
   const { getById: getByIdProceding, activateWallet } = procedingStore;
   const { loyaltys, getByDate } = loyaltyStore;
-
-  useEffect(() => {}, []);
+  const { openModal, closeModal } = modalStore;
 
   const navigate = useNavigate();
+  const { state } = useLocation();
   const { recordId, requestId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -81,6 +94,7 @@ const RequestDetail = () => {
         esNuevo: true,
         estatusId: status.request.vigente,
         esWeeClinic: false,
+        tokenValidado: false,
       };
 
       if (searchParams.has("weeFolio")) {
@@ -88,6 +102,10 @@ const RequestDetail = () => {
         req.esWeeClinic = true;
         searchParams.delete("weeFolio");
         setSearchParams(searchParams);
+
+        if (state && (state as any).services) {
+          req.servicios = (state as any).services;
+        }
       }
 
       setCreating(true);
@@ -115,6 +133,32 @@ const RequestDetail = () => {
     }
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recordId, requestId]);
+
+  // useEffect(() => {
+  //   if (request && request.esWeeClinic && !request.tokenValidado) {
+  //     openModal({
+  //       title: (
+  //         <Row justify="space-between">
+  //           <Col>Token de verificación</Col>
+  //           <Col>
+  //             <Link
+  //               onClick={() => {
+  //                 closeModal();
+  //                 navigate(`/${views.request}`);
+  //               }}
+  //               style={{ fontSize: 14, fontWeight: 400 }}
+  //             >
+  //               Regresar al listado
+  //             </Link>
+  //           </Col>
+  //         </Row>
+  //       ),
+  //       body: <RequestTokenValidation />,
+  //       closable: false,
+  //     });
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [request]);
 
   if (!recordId) return null;
 

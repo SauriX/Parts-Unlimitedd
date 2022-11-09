@@ -73,6 +73,8 @@ import ReciveTracking from "../../views/ReciveTracking";
 import WorkList from "../../views/WorkList";
 import MassResultSearch from "../../views/MassResultSearch";
 import ResultValidation from "../../views/ResultValidation";
+import RequestWee from "../../components/request/list/RequestWee";
+import DeliveryResults from "../../views/DeliveryResults";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -111,6 +113,20 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route element={<PrivateRoute />}>
           <Route element={<LayoutComponent />}>
+            <Route
+              path="weetest"
+              element={
+                <div
+                  style={{
+                    width: "70%",
+                    padding: 15,
+                    border: "1px solid black",
+                  }}
+                >
+                  <RequestWee />
+                </div>
+              }
+            />
             <Route path="" element={<Home />} />
             <Route path="users" element={<User />} />
             <Route path="users/:id" element={<UserDetail />} />
@@ -125,7 +141,7 @@ function App() {
             />
             <Route
               path="clinicResultsDetails/:expedienteId/:requestId"
-              element={<ClinicalResults printing={loading} />}
+              element={<ClinicalResults />}
             />
             <Route path="equipment" element={<Equipment />} />
             <Route path="equipmentMantain/:id" element={<EquipmentMantain />} />
@@ -198,6 +214,7 @@ function App() {
             <Route path="requestedstudy/new" element={<RequestedStudy />} />
             <Route path="reports" element={<Report />} />
             <Route path="massResultSearch" element={<MassResultSearch />} />
+            <Route path="deliveryResults" element={<DeliveryResults />} />
             <Route path={views.appointment} element={<Appointment />} />
             <Route path={views.routeTraking} element={<RouteTracking />} />
             <Route path={views.workLists} element={<WorkList />} />
@@ -222,9 +239,9 @@ function App() {
               path={`${views.shipmenttracking}/:id`}
               element={<ShipmentTracking />}
             />
-                        <Route
+            <Route
               path={`${views.recivetracking}/:id`}
-              element={<ReciveTracking/>}
+              element={<ReciveTracking />}
             />
                         <Route
               path={`${views.resultValidation}`}

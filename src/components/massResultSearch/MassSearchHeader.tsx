@@ -4,11 +4,11 @@ import { FC } from "react";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import DownloadIcon from "../../app/common/icons/DownloadIcon";
 
-type UserHeaderProps = {
+type MassSearchHeaderProps = {
   handleDownload: () => void;
 };
 
-const MassSearchHeader: FC<UserHeaderProps> = ({ handleDownload }) => {
+const MassSearchHeader: FC<MassSearchHeaderProps> = ({ handleDownload }) => {
   return (
     <>
       <PageHeader

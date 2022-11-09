@@ -60,16 +60,12 @@ const RangoObservacion: FC<Props> = ({ idTipeVAlue, parameter }) => {
       return data;
     });
 
-    if (parameter.formula != "") {
-      var succes = await addvalues(val, id!);
+    var succes = await addvalues(val, id!);
+    if (succes) {
+      succes = await update(parameter);
       if (succes) {
-        succes = await update(parameter);
-        if (succes) {
-          navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
-        }
+        navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
       }
-    } else {
-      alerts.warning("Necesita ingresar una formula");
     }
   };
   return (
