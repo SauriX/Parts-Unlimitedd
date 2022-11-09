@@ -388,44 +388,65 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
             <Col span={8}>
               <p>
                 CAP -{" "}
-                {currentStudy.estatusId >= 4 && <strong>{`${moment(currentStudy.fechaCaptura).format(
-                  "DD/MM/YYYY HH:mm"
-                )}, ${currentStudy.usuarioCaptura}`}</strong>}
+                {currentStudy.estatusId >= 4 && (
+                  <strong>{`${moment(currentStudy.fechaCaptura).format(
+                    "DD/MM/YYYY HH:mm"
+                  )}, ${currentStudy.usuarioCaptura}`}</strong>
+                )}
               </p>
             </Col>
             <Col span={8}>
-              <p>LIB - {currentStudy.estatusId >= 6 && <strong>{`${moment(currentStudy.fechaLiberado).format(
-                  "DD/MM/YYYY HH:mm"
-                )}, ${currentStudy.usuarioLiberado}`}</strong>}</p>
+              <p>
+                LIB -{" "}
+                {currentStudy.estatusId >= 6 && (
+                  <strong>{`${moment(currentStudy.fechaLiberado).format(
+                    "DD/MM/YYYY HH:mm"
+                  )}, ${currentStudy.usuarioLiberado}`}</strong>
+                )}
+              </p>
             </Col>
             <Col span={8}>
               <p>
-                IMP -{" "}
-                <strong>{`${moment(currentStudy.fechaValidacion).format(
-                  "DD/MM/YYYY HH:mm"
-                )}, ${currentStudy
-                  .usuarioValidacion?.split(" ")
-                  .map((word: string) => word[0])
-                  .join("")}`}</strong>
+                IMP -
+                {currentStudy.estatusId >= 8 && (
+                  <strong>{`${moment(currentStudy.fechaValidacion).format(
+                    "DD/MM/YYYY HH:mm"
+                  )}, ${currentStudy.usuarioValidacion
+                    ?.split(" ")
+                    .map((word: string) => word[0])
+                    .join("")}`}</strong>
+                )}
               </p>
             </Col>
             <Col span={8}>
               <p>
                 VAL -{" "}
-                {currentStudy.estatusId >= 5 && <strong>{`${moment(currentStudy.fechaValidacion).format(
-                  "DD/MM/YYYY HH:mm"
-                )}, ${currentStudy.usuarioValidacion}`}</strong>}
+                {currentStudy.estatusId >= 5 && (
+                  <strong>{`${moment(currentStudy.fechaValidacion).format(
+                    "DD/MM/YYYY HH:mm"
+                  )}, ${currentStudy.usuarioValidacion}`}</strong>
+                )}
               </p>
             </Col>
             <Col span={8}>
-              <p>ENV - {currentStudy.estatusId >= 7 && <strong>{`${moment(currentStudy.fechaValidacion).format(
-                  "DD/MM/YYYY HH:mm"
-                )}, ${currentStudy.usuarioValidacion}`}</strong>}</p>
+              <p>
+                ENV -{" "}
+                {currentStudy.estatusId >= 7 && (
+                  <strong>{`${moment(currentStudy.fechaValidacion).format(
+                    "DD/MM/YYYY HH:mm"
+                  )}, ${currentStudy.usuarioValidacion}`}</strong>
+                )}
+              </p>
             </Col>
             <Col span={8}>
-              <p>ENT - {currentStudy.estatusId >= 8 && <strong>{`${moment(currentStudy.fechaValidacion).format(
-                  "DD/MM/YYYY HH:mm"
-                )}, ${currentStudy.usuarioValidacion}`}</strong>}</p>
+              <p>
+                ENT -{" "}
+                {currentStudy.estatusId >= 8 && (
+                  <strong>{`${moment(currentStudy.fechaValidacion).format(
+                    "DD/MM/YYYY HH:mm"
+                  )}, ${currentStudy.usuarioValidacion}`}</strong>
+                )}
+              </p>
             </Col>
             <Col span={24}>
               <Table<any>
