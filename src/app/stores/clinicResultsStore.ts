@@ -177,16 +177,7 @@ export default class ClinicResultsStores {
       alerts.warning(getErrors(error));
     }
   };
-  // getLaboratoryResults = async (result: number[]) => {
-  //   try {
-  //     const labResult = await ClinicResults.getLaboratoryResults(
-  //       result.map(x => x.)
-  //     );
-  //     return labResult;
-  //   } catch (error: any) {
-  //     alerts.warning(getErrors(error));
-  //   }
-  // };
+
   updateResultPathological = async (result: FormData) => {
     // updateResultPathological = async (result: IResultPathological) => {
     try {
@@ -196,18 +187,12 @@ export default class ClinicResultsStores {
       alerts.warning(getErrors(error));
     }
   };
+  
   updateStatusStudy = async (requestStudyId: number, status: number) => {
     // updateResultPathological = async (result: IResultPathological) => {
     try {
       await ClinicResults.updateStatusStudy(requestStudyId, status);
       console.log("update", { requestStudyId, status });
-      // this.studies = this.studies.map((x) => {
-      //   if (x.id !== requestStudyId) return x;
-      //   else {
-      //     x.status = status;
-      //     return x;
-      //   }
-      // });
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));

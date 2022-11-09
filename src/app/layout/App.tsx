@@ -140,7 +140,7 @@ function App() {
             />
             <Route
               path="clinicResultsDetails/:expedienteId/:requestId"
-              element={<ClinicalResults printing={loading} />}
+              element={<ClinicalResults />}
             />
             <Route path="equipment" element={<Equipment />} />
             <Route path="equipmentMantain/:id" element={<EquipmentMantain />} />
