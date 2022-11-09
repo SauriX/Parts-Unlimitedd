@@ -152,21 +152,7 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
 
   const onFinish = async (newValues: IMedicsForm) => {
     const medics = { ...values, ...newValues };
-
-    // medics.telefono = medics.telefono
-    //   ? parseInt(
-    //       medics.telefono.toString()?.replaceAll("_", "0")?.replaceAll("-", "")
-    //     )
-    //   : undefined;
-    //   medics.celular = medics.celular
-    //   ? parseInt(
-    //       medics.celular.toString()?.replaceAll("_", "0")?.replaceAll("-", "")
-    //     )
-    //   : undefined;
-
     let success = false;
-
-    //console.log(medics);
 
     const clinics = [...medics.clinicas];
     clinics.forEach((v, i, a) => {
@@ -257,21 +243,8 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
-        {!!id && (
-          <Col md={12} sm={24} style={{ textAlign: "left" }}>
-            <Pagination
-              size="small"
-              total={medics.length}
-              pageSize={1}
-              current={actualmedic()}
-              onChange={(value) => {
-                prevnextMedics(value - 1);
-              }}
-            />
-          </Col>
-        )}
         {!readonly && (
-          <Col md={id ? 12 : 24} sm={24} style={{ textAlign: "right" }}>
+          <Col md={24} sm={24} style={{ textAlign: "right" }}>
             <Button
               onClick={() => {
                 navigate("/medics");
