@@ -149,7 +149,7 @@ export const ClinicResultsExpandable = () => {
 
   return {
     expandedRowRender: (item: IClinicResultList) => (
-      <Table columns={nestedColumns} dataSource={item.estudios} pagination={false}/>
+      <Table columns={nestedColumns} dataSource={item.estudios} pagination={false} rowKey={(record) => record.id}/>
     ),
     rowExpandable: () => true,
     defaultExpandAllRows: true,
