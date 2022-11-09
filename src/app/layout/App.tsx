@@ -72,6 +72,7 @@ import ShipmentTracking from "../../views/ShipmentTracking";
 import ReciveTracking from "../../views/ReciveTracking";
 import WorkList from "../../views/WorkList";
 import MassResultSearch from "../../views/MassResultSearch";
+import ResultValidation from "../../views/ResultValidation";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -224,6 +225,10 @@ function App() {
                         <Route
               path={`${views.recivetracking}/:id`}
               element={<ReciveTracking/>}
+            />
+                        <Route
+              path={`${views.resultValidation}`}
+              element={<ResultValidation />}
             />
             <Route
               path="forbidden"

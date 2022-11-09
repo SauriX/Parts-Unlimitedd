@@ -54,4 +54,4 @@ export class searchValues implements ISearchPending {
     constructor(init?: ISearchPending) {
       Object.assign(this, init);
     }
-  }
+}
