@@ -44,7 +44,7 @@ const ProceedingHeader: FC<ProceedingProps> = ({
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Consulta de EXPEDIENTE" />}
+      title={<HeaderTitle title="Consulta de Expediente" image="expediente"/>}
       className="header-container"
       extra={[
         /* scopes?.imprimir && */ <PrintIcon

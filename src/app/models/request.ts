@@ -202,8 +202,21 @@ export interface IRequestStudy {
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
   fechaActualizacion?: string;
+  usuarioActualizacion?: string;
   solicitudEstudioId?: number;
   nombreEstatus?: string;
+  fechaTomaMuestra?: string;
+  fechaValidacion?: string;
+  fechaSolicitado?: string;
+  fechaCaptura?: string;
+  fechaLiberado?: string;
+  fechaEnviado?: string;
+  usuarioTomaMuestra?: string;
+  usuarioValidacion?: string;
+  usuarioSolicitado?: string;
+  usuarioCaptura?: string;
+  usuarioLiberado?: string;
+  usuarioEnviado?: string;
 }
 export class RequestStudyValues implements IRequestStudy {
   type: "study" | "pack" = "study";
@@ -240,7 +253,8 @@ export class RequestStudyValues implements IRequestStudy {
   indicaciones: IIndicationList[] = [];
   promociones = [];
   fechaActualizacion = "";
-
+  usuarioActualizacion = "";
+  
   constructor(init?: IRequestStudy) {
     Object.assign(this, init);
   }

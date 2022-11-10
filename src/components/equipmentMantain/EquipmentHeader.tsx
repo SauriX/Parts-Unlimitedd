@@ -37,10 +37,10 @@ const EquipmentMantainHeader: FC<EquipmentHeaderProps> = ({ handlePrint }) => {
       title={<HeaderTitle title="Mantenimiento de Equipo" image="equipo" />}
       className="header-container"
       extra={[
-        <PrintIcon key="print" onClick={handlePrint} />,
+/*         <PrintIcon key="print" onClick={handlePrint} />,
 
         <DownloadIcon key="doc" onClick={download} />,
-
+ */
         <Button
           key="new"
           type="primary"

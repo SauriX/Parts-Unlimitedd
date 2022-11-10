@@ -33,6 +33,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       ubicacion: "ubicacion",
       clinico: "string",
       activo: true,
+      ciudad:""
     },
   ];
   const { branchStore } = useStore();

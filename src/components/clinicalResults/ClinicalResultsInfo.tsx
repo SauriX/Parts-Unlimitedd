@@ -34,16 +34,13 @@ import React from "react";
 
 const { Text } = Typography;
 const { Panel } = Collapse;
-type ClinicalFormProps = {
-  printing: boolean;
-};
 
 type UrlParams = {
   expedienteId: string;
   requestId: string;
 };
 
-const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
+const ClinicalResultsInfo = () => {
   const {
     requestStore,
     procedingStore,
@@ -52,16 +49,24 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
     clinicResultsStore,
   } = useStore();
   const { request, getById, studies, getStudies } = requestStore;
-  const { getById: procedingById} = procedingStore;
+  const { getById: procedingById } = procedingStore;
   const { printOrder } = requestedStudyStore;
   const { departmentOptions, getDepartmentOptions } = optionStore;
-  const { studiesSelectedToPrint, printSelectedStudies, getStudies: getStudiesParams, clearSelectedStudies } = clinicResultsStore;
+  const {
+    studiesSelectedToPrint,
+    printSelectedStudies,
+    getStudies: getStudiesParams,
+    clearSelectedStudies,
+  } = clinicResultsStore;
 
+  const [printing, setPrinting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [markAll, setMarkAll] = useState(false);
   const [dataClinicalResult, setDataClinicalResult] = useState<any>();
-  const [currentStudies, setCurrentStudies] = useState<any>();
+
   const [printLogos, setPrintLogos] = useState(false);
+  const [printCritics, setPrintCritics] = useState(false);
+  const [printPrevious, setPrintPrevious] = useState(false);
 
   const [procedingCurrent, setProcedingCurrent] = useState<any>(
     new ProceedingFormValues()
@@ -96,18 +101,21 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
       ...request,
     });
   }, [request]);
-  const navigate = useNavigate();
 
   const [form] = Form.useForm<any>();
 
   const sendToPrintSelectedStudies = async () => {
+    setPrinting(true);
     const studiesToPrint = {
       solicidtudId: request?.solicitudId,
       estudios: studiesSelectedToPrint,
       imprimirLogos: printLogos,
+      imprimirCriticos: printCritics,
+      imprimirPrevios: printPrevious,
     };
     console.log("sendToPrintSelectedStudies", toJS(studiesSelectedToPrint));
     await printSelectedStudies(studiesToPrint);
+    setPrinting(false);
   };
 
   const isAnyStudySelected = () => {
@@ -212,13 +220,12 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
       </Collapse>
 
       <Row style={{ marginBottom: "1%" }}>
-        <Col span={12}>
+        <Col span={15}>
           <Row>
-            <Col span={8}>
+            <Col span={5}>
               <Checkbox
                 value="logos"
                 onChange={(value) => {
-                  console.log("value logos", value.target.checked);
                   if (value.target.checked) {
                     setLoading(true);
                     setPrintLogos(true);
@@ -229,6 +236,38 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
                 }}
               >
                 Imprimir logos
+              </Checkbox>
+            </Col>
+            <Col span={5}>
+              <Checkbox
+                value="logos"
+                onChange={(value) => {
+                  if (value.target.checked) {
+                    setLoading(true);
+                    setPrintPrevious(true);
+                    setLoading(false);
+                  } else {
+                    setPrintPrevious(false);
+                  }
+                }}
+              >
+                Mostrar resultados previos
+              </Checkbox>
+            </Col>
+            <Col span={5}>
+              <Checkbox
+                value="logos"
+                onChange={(value) => {
+                  if (value.target.checked) {
+                    setLoading(true);
+                    setPrintCritics(true);
+                    setLoading(false);
+                  } else {
+                    setPrintCritics(false);
+                  }
+                }}
+              >
+                Mostrar críticos
               </Checkbox>
             </Col>
             <Radio.Group
@@ -252,7 +291,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
             </Radio.Group>
           </Row>
         </Col>
-        <Col span={12} style={{ textAlign: "right" }}>
+        <Col span={24} style={{ textAlign: "right" }}>
           <Button
             type="primary"
             onClick={() => {
@@ -281,6 +320,7 @@ const ClinicalResultsInfo: FC<ClinicalFormProps> = ({ printing }) => {
             const idPatologia = departmentOptions.find(
               (dep) => dep.label === "PATOLOGÍA"
             )?.value;
+
             if (idPatologia === req.departamentoId) {
               return (
                 <div key={req.id}>
