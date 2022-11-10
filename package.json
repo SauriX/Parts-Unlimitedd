@@ -1,7 +1,7 @@
 {
   "name": "client-admin",
   "version": "0.1.0",
-  "homepage": "http://localhost:3000/LabRamos-uat/admin",
+  "homepage": "http://localhost:3000/LabRamos/admin",
   "private": true,
   "dependencies": {
     "@craco/craco": "^6.4.3",

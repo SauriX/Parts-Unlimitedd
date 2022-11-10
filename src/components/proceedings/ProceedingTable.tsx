@@ -208,12 +208,11 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
 
   return (
     <Fragment>
-      <Collapse ghost className="request-filter-collapse">
-        <Panel
-          key="filter"
-          header="Búsqueda"
-          extra={[
-            <Button
+
+
+          <div className="status-container">
+          <div style={{marginLeft:"91%"}}>
+          <Button
               key="clean"
               onClick={(e) => {
                 e.stopPropagation();
@@ -221,7 +220,8 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
               }}
             >
               Limpiar
-            </Button>,
+            </Button>
+
             <Button
               key="filter"
               type="primary"
@@ -229,12 +229,12 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
                 e.stopPropagation();
                 form.submit();
               }}
+              style={{marginLeft:"5%"}}
             >
               Filtrar
-            </Button>,
-          ]}
-        >
-          <div className="status-container">
+            </Button>
+          </div>
+          <br />
             <Form<ISearchMedical>
               {...formItemLayout}
               form={form}
@@ -316,8 +316,8 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
               </Row>
             </Form>
           </div>
-        </Panel>
-      </Collapse>
+<br />
+
       <Table<IProceedingList>
         loading={loading || printing}
         size="small"

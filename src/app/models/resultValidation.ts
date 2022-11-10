@@ -3,14 +3,14 @@ import moment, { Moment } from "moment";
 export interface ISearchValidation{
     fecha: moment.Moment[],
     search:string,
-    departament:number,
-    area:number,
-    estudio:number,
-    medico:string,
-    tipoSoli:number,
-    compañia:string,
-    sucursal:string,
-    estatus:number,
+    departament:number[],
+    area:number[],
+    estudio:number[],
+    medico:string[],
+    tipoSoli:number[],
+    compañia:string[],
+    sucursal:string[],
+    estatus:number[],
     
 }
 export interface IvalidationStudyList {
@@ -36,14 +36,14 @@ export interface Ivalidationlist{
 export class searchValues implements ISearchValidation {
     fecha = [moment(moment.now()),moment(moment.now())]
     search="";
-    departament=0;
-    area=0;
-    estudio=0;
-    medico="";
-    tipoSoli=0;
-    compañia="";
-    sucursal="";
-    estatus=0;
+    departament=[];
+    area=[];
+    estudio=[];
+    medico=[];
+    tipoSoli=[];
+    compañia=[];
+    sucursal=[];
+    estatus=[];
 
     constructor(init?: ISearchValidation) {
       Object.assign(this, init);

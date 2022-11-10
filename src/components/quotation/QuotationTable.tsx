@@ -266,13 +266,10 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
                 <Select options={BranchOptions} onChange={(value)=>{setSearch({ ...search,sucursal:value  })}} style={{width:"300px"}} />
             </Col>
         </Row> */}
+ <Row gutter={[0, 12]}>
 
-<Collapse ghost className="request-filter-collapse">
-      <Panel
-        header="Filtros"
-        key="filter"
-        extra={[
-          <Button
+  <Col md={4} style={{marginLeft:"92%"}}>
+  <Button
             key="clean"
             onClick={(e) => {
               e.preventDefault();
@@ -281,17 +278,24 @@ const QuotationTable: FC<QuotationTableProps> = ({ componentRef, printing }) => 
             }}
           >
             Limpiar
-          </Button>,
+          </Button>
           <Button
             key="filter"
             type="primary"
             onClick={(e) => {
-              e.preventDefault();
               form.submit();  
             }}
           >
             Filtrar
-          </Button>,
+          </Button>
+  </Col>
+ </Row>
+<Collapse ghost className="request-filter-collapse">
+      <Panel
+        header="Filtros"
+        key="filter"
+        extra={[
+
         ]}
       >
         <Form<ISearchQuotation> {...formItemLayout} form={form}
