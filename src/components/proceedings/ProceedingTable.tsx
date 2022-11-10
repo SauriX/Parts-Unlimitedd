@@ -23,7 +23,7 @@ import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import views from "../../app/util/view";
-import { IProceedingList, ISearchMedical } from "../../app/models/Proceeding";
+import { IProceedingList, ISearchMedical, SearchMedicalFormValues } from "../../app/models/Proceeding";
 
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
@@ -54,7 +54,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
   const { width: windowWidth } = useWindowDimensions();
   const [form] = useForm();
   const [loading, setLoading] = useState(false);
-  //const [search,SetSearch] = useState<ISearchMedical>(new SearchMedicalFormValues())
+  //const [searchFilter,SetSearchFilter] = useState<ISearchMedical>(new SearchMedicalFormValues())
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -65,6 +65,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
     const readData = async (search: ISearchMedical) => {
       await getBranchOptions();
       await getnow(search!);
+      form.setFieldsValue(search);
     };
 
     readData(search);
@@ -211,30 +212,6 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
 
 
           <div className="status-container">
-          <div style={{marginLeft:"91%"}}>
-          <Button
-              key="clean"
-              onClick={(e) => {
-                e.stopPropagation();
-                form.resetFields();
-              }}
-            >
-              Limpiar
-            </Button>
-
-            <Button
-              key="filter"
-              type="primary"
-              onClick={(e) => {
-                e.stopPropagation();
-                form.submit();
-              }}
-              style={{marginLeft:"5%"}}
-            >
-              Filtrar
-            </Button>
-          </div>
-          <br />
             <Form<ISearchMedical>
               {...formItemLayout}
               form={form}
@@ -315,6 +292,30 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
                 </Col>
               </Row>
             </Form>
+            <br />
+            <div style={{marginLeft:"91%"}}>
+          <Button
+              key="clean"
+              onClick={(e) => {
+                e.stopPropagation();
+                form.resetFields();
+              }}
+            >
+              Limpiar
+            </Button>
+
+            <Button
+              key="filter"
+              type="primary"
+              onClick={(e) => {
+                e.stopPropagation();
+                form.submit();
+              }}
+              style={{marginLeft:"5%"}}
+            >
+              Filtrar
+            </Button>
+          </div>
           </div>
 <br />
 

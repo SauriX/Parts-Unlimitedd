@@ -255,26 +255,39 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     setLoading(true);
     var coincidencia = await coincidencias(newValues);
     const reagent = { ...values, ...newValues };
+
+
+    if(reagent.nombre =="" ||reagent.apellido == "" || reagent.sexo == ""){
+      alerts.warning("El nombre y sexo no pueden estar vacios")
+    }
     if (coincidencia.length > 0 && !reagent.id!) {
       openModal({
+        
         title: "Se encuentran coincidencias con los siguientes expedientes",
         body: (
           <Concidencias
             handle={async () => {
+              setLoading(true);
               let success = false;
-              tax.forEach((x) => {
-                if (x.id?.includes("tempId")) {
-                  x.id = "";
+              console.log(tax,"tax");
+              var taxdata:ITaxData[]=[];
+
+              for(let element of  tax ) {
+                if (!element.id || element.id.startsWith("tempId")) {
+                  delete element.id;
+                  taxdata.push(element);
+                } else {
+                  taxdata.push(element);
                 }
-                return x;
-              });
-              console.log(tax);
-              reagent.taxData = tax;
+              }
+              reagent.taxData = taxdata;
 
               if (!reagent.id) {
                 success = (await create(reagent)) != null;
+
               } else {
                 success = await update(reagent);
+           
               }
               setLoading(false);
               if (success) {
@@ -283,17 +296,35 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
             }}
             expedientes={coincidencia}
             handleclose={async () => {
+
+              setReadonly(true);
+              
+
               setLoading(false);
             }}
             printing={false}
           ></Concidencias>
         ),
+        
         closable: true,
         width: "55%",
+        onClose(){
+          setLoading(false);
+        }
       });
     } else {
       let success = false;
-      reagent.taxData = tax;
+      var taxdata:ITaxData[]=[];
+
+      for(let element of  tax ) {
+        if (!element.id || element.id.startsWith("tempId")) {
+          delete element.id;
+          taxdata.push(element);
+        } else {
+          taxdata.push(element);
+        }
+      }
+      reagent.taxData = taxdata;
       if (!reagent.id) {
         success = (await create(reagent)) != null;
       } else {
@@ -501,14 +532,15 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
         windowSize: windowWidth,
       }),
       render: (value, item) => (
-        <Link
-        /*           draggable
+        <div></div>
+/*         <Link
+                  draggable
           onDragStart={() => {
             SetCita(item);
-          }} */
+          }} 
         >
           {value}
-        </Link>
+        </Link> */
       ),
     },
     {
@@ -649,6 +681,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           max={500}
                           showLabel
+                          readonly={readonly}
                         />
                       </Col>
                       <Col span={12}>
@@ -660,6 +693,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           max={500}
                           showLabel
+                          readonly={readonly}
                         />
                       </Col>
                     </Row>
@@ -676,6 +710,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   }}
                   max={500}
                   type="email"
+                  readonly={readonly}
                 />
               </Col>
               <Col span={4}>
@@ -685,7 +720,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     label: "Exp",
                   }}
                   max={500}
-                
+                  readonly={readonly}
                 />
               </Col>
               <Col span={4}>
@@ -700,6 +735,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     { label: "F", value: "F" },
                     { label: "M", value: "M" },
                   ]}
+                  readonly={readonly}
                 />
               </Col>
               <Col span={8}>
@@ -709,7 +745,9 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     label: "Fecha Nacimiento",
                     labelCol: { span: 12 },
                     wrapperCol: { span: 12 },
+                    
                   }}
+                  readonly={readonly}
                 />
               </Col>
               <Col span={4}>
@@ -723,6 +761,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   max={500}
                   min={0}
                   suffix={"años"}
+                  readonly={readonly}
                 />
               </Col>
               <Col span={8}>
@@ -762,7 +801,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     }
                     return Promise.reject("El campo debe contener 10 dígitos");
                   }}
-                 
+                  readonly={readonly}
                 />
                       </Col>
                       <Col span={12}>
@@ -792,7 +831,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     }
                     return Promise.reject("El campo debe contener 10 dígitos");
                   }}
-     
+                  readonly={readonly}
                 />
                       </Col>
                     </Row>
@@ -818,6 +857,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           max={5}
                           showLabel
+                          readonly={readonly}
                         />
                       </Col>
                       <Col span={4}>
@@ -829,6 +869,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           max={500}
                           showLabel
+                          readonly={readonly}
                         />
                       </Col>
                       <Col span={5}>
@@ -840,6 +881,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           max={500}
                           showLabel
+                          readonly={readonly}
                         />
                       </Col>
                       <Col span={6}>
@@ -851,6 +893,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           showLabel
                           options={colonies}
+                          readonly={readonly}
                         />
                       </Col>
                       <Col span={7}>
@@ -862,6 +905,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           max={500}
                           showLabel
+                          readonly={readonly}
                         />
                       </Col>
                     </Row>
@@ -896,6 +940,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   }}
                   options={BranchOptions}
                   required
+                  readonly={readonly}
                 />
               </Col>
             </Row>
