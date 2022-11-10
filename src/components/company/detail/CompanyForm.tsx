@@ -462,12 +462,51 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
               <Col md={8} sm={24}>
                 <TextInput
                   formProps={{
+                    name: "rfc",
+                    label: "RFC ",
+                  }}
+                  max={100}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <SelectInput
+                  formProps={{
+                    name: "metodoDePagoId",
+                    label: "Método de pago: ",
+                  }}
+                  readonly={readonly}
+                  options={paymentMethodOptions}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <TextInput
+                  formProps={{
                     name: "contrasena",
                     label: "Contraseña ",
                   }}
                   max={100}
-                  required
                   readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "codigoPostal",
+                    label: "Código P: ",
+                  }}
+                  max={1000000}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <SelectInput
+                  formProps={{
+                    name: "formaDePagoId",
+                    label: "Forma de pago: ",
+                  }}
+                  readonly={readonly}
+                  options={paymentOptions}
                 />
               </Col>
               <Col md={8} sm={24}>
@@ -484,11 +523,52 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
               <Col md={8} sm={24}>
                 <TextInput
                   formProps={{
+                    name: "estado",
+                    label: "Estado ",
+                  }}
+                  max={100}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "limiteDeCredito",
+                    label: "Límite de crédito: ",
+                  }}
+                  max={100}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <TextInput
+                  formProps={{
                     name: "nombreComercial",
                     label: "Nombre comercial ",
                   }}
                   max={100}
                   required
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "ciudad",
+                    label: "Municipio ",
+                  }}
+                  max={100}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <NumberInput
+                  formProps={{
+                    name: "diasCredito",
+                    label: "Días de crédito: ",
+                  }}
+                  max={99}
+                  min={1}
                   readonly={readonly}
                 />
               </Col>
@@ -506,149 +586,13 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
               <Col md={8} sm={24}>
                 <SelectInput
                   formProps={{
-                    name: "precioListaId",
-                    label: "Lista de precio ",
-                  }}
-                  readonly={readonly}
-                  required
-                  options={priceListOptions}
-                />
-              </Col>
-              <Col md={8} sm={24}>
-                <SelectInput
-                  formProps={{
-                    name: "promocionesId",
-                    label: "Lista de promoción ",
-                  }}
-                  readonly={readonly}
-                  required
-                  options={PromotionOptions}
-                />
-              </Col>
-              <Col md={8} sm={24}>
-                <SwitchInput
-                  name="activo"
-                  onChange={(value) => {
-                    if (value) {
-                      alerts.info(messages.confirmations.enable);
-                    } else {
-                      alerts.info(messages.confirmations.disable);
-                    }
-                  }}
-                  label="Activo"
-                  readonly={readonly}
-                />
-              </Col>
-
-              <Col md={8} sm={24}>
-                <TextInput
-                  formProps={{
-                    name: "rfc",
-                    label: "RFC ",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={8} sm={24}>
-                <TextInput
-                  formProps={{
-                    name: "codigoPostal",
-                    label: "Código P: ",
-                  }}
-                  max={1000000}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={8} sm={24}>
-                <TextInput
-                  formProps={{
-                    name: "estado",
-                    label: "Estado ",
-                  }}
-                  max={100}
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={8} sm={24}>
-                <TextInput
-                  formProps={{
-                    name: "ciudad",
-                    label: "Municipio ",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={8} sm={24}>
-                <SelectInput
-                  formProps={{
                     name: "coloniaId",
                     label: "Colonia",
                   }}
-                  required
                   readonly={readonly}
                   options={colonies}
                 />
               </Col>
-              <Col md={8} sm={24}>
-                <TextInput
-                  formProps={{
-                    name: "razonSocial",
-                    label: "Razón social: ",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-
-              <Col md={8} sm={24}>
-                <SelectInput
-                  formProps={{
-                    name: "metodoDePagoId",
-                    label: "Método de pago: ",
-                  }}
-                  readonly={readonly}
-                  required
-                  options={paymentMethodOptions}
-                />
-              </Col>
-              <Col md={8} sm={24}>
-                <SelectInput
-                  formProps={{
-                    name: "formaDePagoId",
-                    label: "Forma de pago: ",
-                  }}
-                  readonly={readonly}
-                  options={paymentOptions}
-                />
-              </Col>
-              <Col md={8} sm={24}>
-                <TextInput
-                  formProps={{
-                    name: "limiteDeCredito",
-                    label: "Límite de crédito: ",
-                  }}
-                  max={100}
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={8} sm={24}>
-                <NumberInput
-                  formProps={{
-                    name: "diasCredito",
-                    label: "Días de crédito: ",
-                  }}
-                  max={99}
-                  min={1}
-                  readonly={readonly}
-                />
-              </Col>
-
               <Col md={8} sm={24}>
                 <SelectInput
                   formProps={{
@@ -657,6 +601,27 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   readonly={readonly}
                   options={cfdiOptions}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <SelectInput
+                  formProps={{
+                    name: "precioListaId",
+                    label: "Lista de precio ",
+                  }}
+                  readonly={readonly}
+                  options={priceListOptions}
+                />
+              </Col>
+
+              <Col md={8} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "razonSocial",
+                    label: "Razón social: ",
+                  }}
+                  max={100}
+                  readonly={readonly}
                 />
               </Col>
               <Col md={8} sm={24}>
@@ -672,11 +637,45 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
               <Col md={8} sm={24}>
                 <SelectInput
                   formProps={{
+                    name: "promocionesId",
+                    label: "Lista de promoción ",
+                  }}
+                  readonly={readonly}
+                  options={PromotionOptions}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "regimenFiscal",
+                    label: "Regimen fiscal: ",
+                  }}
+                  max={100}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <SelectInput
+                  formProps={{
                     name: "bancoId",
                     label: "Banco: ",
                   }}
                   readonly={readonly}
                   options={bankOptions}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <SwitchInput
+                  name="activo"
+                  onChange={(value) => {
+                    if (value) {
+                      alerts.info(messages.confirmations.enable);
+                    } else {
+                      alerts.info(messages.confirmations.disable);
+                    }
+                  }}
+                  label="Activo"
+                  readonly={readonly}
                 />
               </Col>
             </Row>

@@ -72,6 +72,7 @@ import ShipmentTracking from "../../views/ShipmentTracking";
 import ReciveTracking from "../../views/ReciveTracking";
 import WorkList from "../../views/WorkList";
 import MassResultSearch from "../../views/MassResultSearch";
+import ResultValidation from "../../views/ResultValidation";
 import RequestWee from "../../components/request/list/RequestWee";
 import DeliveryResults from "../../views/DeliveryResults";
 
@@ -150,7 +151,7 @@ function App() {
             />
             <Route path="equipment/:id" element={<EquipmentDetails />} />
             <Route
-              path="equipmentMantain/edit/:id"
+              path="equipmentMantain/edit/:ide/:id"
               element={<EquipmentMantainDetails />}
             />
             <Route path="roles" element={<Role />} />
@@ -241,6 +242,10 @@ function App() {
             <Route
               path={`${views.recivetracking}/:id`}
               element={<ReciveTracking />}
+            />
+                        <Route
+              path={`${views.resultValidation}`}
+              element={<ResultValidation />}
             />
             <Route
               path="forbidden"

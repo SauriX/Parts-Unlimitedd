@@ -4,7 +4,7 @@ export interface ISearchMedical {
   expediente: string;
   telefono: string;
   fechaNacimiento?: Date;
-  fechaAlta?: Date;
+  fechaAlta?: Date[];
   ciudad: string;
   sucursal: string;
 }
@@ -50,7 +50,7 @@ export class SearchMedicalFormValues implements ISearchMedical {
   expediente = "";
   telefono = "";
   fechaNacimiento = new Date(moment.now());
-  fechaAlta = new Date(moment.now());
+  fechaAlta = [new Date(moment.now()),new Date(moment.now())];
   ciudad = "";
   sucursal = "";
 

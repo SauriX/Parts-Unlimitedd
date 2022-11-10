@@ -2,14 +2,10 @@ import {
   Button,
   Col,
   Collapse,
-  DatePicker,
   Divider,
   Form,
-  Input,
-  InputNumber,
   PageHeader,
   Row,
-  Select,
   Table,
 } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
@@ -27,14 +23,7 @@ import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import views from "../../app/util/view";
-import {
-  IProceedingForm,
-  IProceedingList,
-  ISearchMedical,
-  ProceedingFormValues,
-  SearchMedicalFormValues,
-} from "../../app/models/Proceeding";
-import moment from "moment";
+import { IProceedingList, ISearchMedical } from "../../app/models/Proceeding";
 
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
@@ -56,8 +45,8 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
 }) => {
   const { procedingStore, optionStore, locationStore } = useStore();
   const { expedientes, getAll, getnow, setSearch, search } = procedingStore;
-  const { BranchOptions, getBranchOptions } = optionStore;
-  const { getCity, cityOptions } = locationStore;
+  const { BranchOptions, getBranchOptions, cityOptions } = optionStore;
+  const { getCity } = locationStore;
   const [searchParams] = useSearchParams();
   const [errors, setErrors] = useState<IFormError[]>([]);
   let navigate = useNavigate();
@@ -221,14 +210,13 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
     <Fragment>
       <Collapse ghost className="request-filter-collapse">
         <Panel
-          header="Filtros"
           key="filter"
+          header="Búsqueda"
           extra={[
             <Button
               key="clean"
               onClick={(e) => {
                 e.stopPropagation();
-
                 form.resetFields();
               }}
             >

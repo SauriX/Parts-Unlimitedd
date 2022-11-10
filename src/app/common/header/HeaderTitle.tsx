@@ -74,4 +74,5 @@ export type imagesType =
   | "usuario"
   | "segruta"
   | "worklist"
+  | "validacion"
   | "massSearch";
