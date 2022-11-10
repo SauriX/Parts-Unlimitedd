@@ -585,8 +585,8 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                     value={cargo}
 
                     onChange={(value) => {
-                      SetCargo(value);
-                      calculateTotalFinal(value, typo);
+                      SetCargo(value ?? 0);
+                      calculateTotalFinal(value ?? 0, typo);
                     }}
                     disabled={descuento!=0}
                   ></InputNumber>
@@ -624,8 +624,8 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                     min={0}
                     value={descuento}
                     onChange={(value) => {
-                      SetDescuento(value);
-                      calculateTotalFinalD(value, typo);
+                      SetDescuento(value ?? 0);
+                      calculateTotalFinalD(value ?? 0, typo);
                     }}
                     disabled={cargo!=0}
                   ></InputNumber>

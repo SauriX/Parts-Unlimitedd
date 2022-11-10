@@ -173,7 +173,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     } else if (tabName === "indications") {
       component = <RequestIndication />;
     } else if (tabName === "register") {
-      component = <RequestRegister  />;
+      component = <RequestRegister />;
     } else if (tabName === "request") {
       component = <RequestRequest formGeneral={formGeneral} />;
     } else if (tabName === "print") {
@@ -198,38 +198,57 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     return <p>Por favor selecciona una sucursal.</p>;
   }
 
+  const tabs = [
+    {
+      key: "general",
+      label: "Generales",
+      children: tabRender("general"),
+    },
+    {
+      key: "studies",
+      label: "Estudios",
+      children: tabRender("studies"),
+    },
+    {
+      key: "indications",
+      label: "Indicaciones",
+      children: tabRender("indications"),
+    },
+    {
+      key: "register",
+      label: "Caja",
+      children: tabRender("register"),
+    },
+    {
+      key: "request",
+      label: "Solicitar Estudio",
+      children: tabRender("request"),
+    },
+    {
+      key: "print",
+      label: "Imprimir",
+      children: tabRender("print"),
+    },
+    {
+      key: "sampler",
+      label: "Tomador de muestra",
+      children: tabRender("sampler"),
+    },
+    {
+      key: "images",
+      label: "Imágenes",
+      children: tabRender("images"),
+    },
+  ];
+
   return (
     <Spin spinning={loadingTabContent}>
       <Tabs
         activeKey={currentKey}
         tabBarExtraContent={operations}
         onChange={onChangeTab}
-      >
-        <TabPane tab="Generales" key="general">
-          {tabRender("general")}
-        </TabPane>
-        <TabPane tab="Estudios" key="studies">
-          {tabRender("studies")}
-        </TabPane>
-        <TabPane tab="Indicaciones" key="indications">
-          {tabRender("indications")}
-        </TabPane>
-        <TabPane tab="Caja" key="register">
-          {tabRender("register")}
-        </TabPane>
-        <TabPane tab="Solicitar Estudio" key="request">
-          {tabRender("request")}
-        </TabPane>
-        <TabPane tab="Imprimir" key="print">
-          {tabRender("print")}
-        </TabPane>
-        <TabPane tab="Tomador de muestra" key="sampler">
-          {tabRender("sampler")}
-        </TabPane>
-        <TabPane tab="Imágenes" key="images">
-          {tabRender("images")}
-        </TabPane>
-      </Tabs>
+        items={tabs}
+      />
     </Spin>
   );
 };

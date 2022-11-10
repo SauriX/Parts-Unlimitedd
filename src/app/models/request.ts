@@ -240,10 +240,12 @@ export class RequestStudyValues implements IRequestStudy {
   indicaciones: IIndicationList[] = [];
   promociones = [];
   fechaActualizacion = "";
+
   constructor(init?: IRequestStudy) {
     Object.assign(this, init);
   }
 }
+
 export interface IRequestPack {
   type: "study" | "pack";
   id?: number;
@@ -308,4 +310,9 @@ export class RequestTotal implements IRequestTotal {
   constructor(init?: IRequestTotal) {
     Object.assign(this, init);
   }
+}
+
+export interface IRequestToken extends IRequestBase {
+  token?: string;
+  reenviar: boolean;
 }

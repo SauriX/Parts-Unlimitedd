@@ -11,7 +11,7 @@ const DrawerComponent = () => {
 
   return (
     <Drawer
-      visible={visible}
+      open={visible}
       title={title}
       width={width}
       placement="right"

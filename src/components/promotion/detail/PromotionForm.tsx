@@ -445,7 +445,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
       align: "center",
       width:  100,
       render: (value,item) => (
-        <InputNumber type={"number"} min={0}  value={item.descuentoPorcentaje}  onChange={(value)=>setStudydiscunt(value,item,item.paquete!)}></InputNumber>
+        <InputNumber type={"number"} min={0}  value={item.descuentoPorcentaje}  onChange={(value)=>setStudydiscunt(value??0,item,item.paquete!)}></InputNumber>
       ),
     },
     {
@@ -455,7 +455,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
       align: "center",
       width:  100 ,
       render: (value,item) => (
-        <InputNumber type={"number"} min={0}  value={item.descuentoCantidad}  onChange={(value)=>setStudydiscuntc(value,item,item.paquete!)}></InputNumber>
+        <InputNumber type={"number"} min={0}  value={item.descuentoCantidad}  onChange={(value)=>setStudydiscuntc(value??0,item,item.paquete!)}></InputNumber>
       ),
     },
     {
@@ -465,7 +465,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
       align: "center",
       width:  100 ,
       render: (value,item) => (
-        <InputNumber type={"number"} min={0} value={item.precioFinal}  onChange={(value)=>setStudyPricefinal(value,item,item.paquete)}></InputNumber>
+        <InputNumber type={"number"} min={0} value={item.precioFinal}  onChange={(value)=>setStudyPricefinal(value??0,item,item.paquete)}></InputNumber>
       ),
     },
     {

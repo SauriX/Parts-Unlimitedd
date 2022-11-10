@@ -556,7 +556,7 @@ const {openModal,closeModal}=modalStore
       render: (value,item) => (
         <InputNumber type={"number"}  
         value={item.precio}  
-        onChange={(value)=>setStudyPrice(value,item,item.paqute!)}
+        onChange={(value)=>setStudyPrice(value??0,item,item.paqute!)}
         
         >
 
@@ -666,7 +666,7 @@ const {openModal,closeModal}=modalStore
       align: "center",
       width:  0,
       render: (value,item) => (
-        <InputNumber type={"number"} readOnly={item.precio==0} min={0}  value={item.descuento}   onChange={(value)=>setStudydiscunt(value,item,item.paqute!)} ></InputNumber>
+        <InputNumber type={"number"} readOnly={item.precio==0} min={0}  value={item.descuento}   onChange={(value)=>setStudydiscunt(value??0,item,item.paqute!)} ></InputNumber>
       ),
     },
     {
@@ -676,7 +676,7 @@ const {openModal,closeModal}=modalStore
       align: "center",
       width:  0 ,
       render: (value,item) => (
-        <InputNumber type={"number"} min={0} readOnly={item.precio==0} value={item.descuenNum}   onChange={(value)=>setStudydiscuntc(value,item,item.paqute!)} ></InputNumber>
+        <InputNumber type={"number"} min={0} readOnly={item.precio==0} value={item.descuenNum}   onChange={(value)=>setStudydiscuntc(value??0,item,item.paqute!)} ></InputNumber>
       ),
     },
     {
@@ -686,7 +686,7 @@ const {openModal,closeModal}=modalStore
       align: "center",
       width:  0 ,
       render: (value,item) => (
-        <InputNumber type={"number"} min={0} readOnly={item.precio==0} value={item.precioFinal}   onChange={(value)=>setStudyPricefinal(value,item,item.paqute!)} ></InputNumber>
+        <InputNumber type={"number"} min={0} readOnly={item.precio==0} value={item.precioFinal}   onChange={(value)=>setStudyPricefinal(value??0,item,item.paqute!)} ></InputNumber>
       ),
     },
     {
@@ -699,7 +699,7 @@ const {openModal,closeModal}=modalStore
       render: (value,item) => (
         <InputNumber type={"number"}  
         value={item.precio}  
-        onChange={(value)=>setStudyPrice(value,item,item.paqute!)}
+        onChange={(value)=>setStudyPrice(value??0,item,item.paqute!)}
         readOnly={true}
         >
 

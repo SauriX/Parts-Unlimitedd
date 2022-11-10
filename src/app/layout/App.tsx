@@ -73,6 +73,7 @@ import ReciveTracking from "../../views/ReciveTracking";
 import WorkList from "../../views/WorkList";
 import MassResultSearch from "../../views/MassResultSearch";
 import RequestWee from "../../components/request/list/RequestWee";
+import RequestTokenValidation from "../../components/request/detail/RequestTokenValidation";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -121,7 +122,7 @@ function App() {
                     border: "1px solid black",
                   }}
                 >
-                  <RequestWee />
+                  <RequestTokenValidation />
                 </div>
               }
             />

@@ -39,3 +39,16 @@ export interface IWeePatientInfoStudy {
   descripcionWeeClinic: string;
   cantidad: number;
 }
+
+export interface IWeeTokenValidation {
+  dato: string;
+  mensaje: string;
+  enviado: boolean;
+  validado: boolean;
+}
+
+export interface IWeeTokenVerification {
+  mensaje: string;
+  ok: number;
+  verificado: boolean;
+}

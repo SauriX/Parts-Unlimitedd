@@ -83,7 +83,7 @@ const RequestPrintTag = () => {
           min={1}
           style={{ width: "100%" }}
           onChange={(qty) => {
-            changeQty(qty, record);
+            changeQty(qty ?? 0, record);
           }}
         />
       ),
