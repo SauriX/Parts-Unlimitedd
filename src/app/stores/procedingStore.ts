@@ -12,6 +12,7 @@ import {
 } from "../models/Proceeding";
 import Proceding from "../api/proceding";
 import { ITaxData } from "../models/taxdata";
+import { IQuotationList, ISearchQuotation, SearchQuotationValues } from "../models/quotation";
 
 export default class ProcedingStore {
   constructor() {
@@ -22,7 +23,18 @@ export default class ProcedingStore {
   // expediente?: IProceedingForm;
   search: ISearchMedical = new SearchMedicalFormValues();
   tax: ITaxData[] = [];
-
+  searchQ: ISearchQuotation = new SearchQuotationValues();
+  quotatios: IQuotationList[] = [];
+  getAllQ = async (searchQ: ISearchQuotation) => {
+    try {
+      const reagents = await Proceding.getNowQ(searchQ);
+      this.quotatios = reagents;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      this.quotatios = [];
+    }
+  };
+  
   setTax = (value: ITaxData[]) => {
     this.tax = value;
   };

@@ -49,7 +49,7 @@ export interface IProceedingForm {
 export class SearchMedicalFormValues implements ISearchMedical {
   expediente = "";
   telefono = "";
-  fechaNacimiento = moment();
+ 
   fechaAlta = [moment(),moment()];
   ciudad = "";
   sucursal = "";

@@ -21,7 +21,7 @@ import {
   Card,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
-import { formItemLayout } from "../../../app/util/utils";
+import { formItemLayout, moneyFormatter } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import { useStore } from "../../../app/stores/store";
 import { IReagentForm, ReagentFormValues } from "../../../app/models/reagent";
@@ -54,9 +54,15 @@ import { ITaxData } from "../../../app/models/taxdata";
 import DateInput from "../../../app/common/form/proposal/DateInput";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import IconButton from "../../../app/common/button/IconButton";
-import { IQuotationList } from "../../../app/models/quotation";
+import {
+  IQuotationList,
+  ISearchQuotation,
+  SearchQuotationValues,
+} from "../../../app/models/quotation";
 import Link from "antd/lib/typography/Link";
 import MaskInput from "../../../app/common/form/proposal/MaskInput";
+import { IRequestInfo } from "../../../app/models/request";
+import { IAppointmentList, ISearchAppointment, SearchAppointmentValues } from "../../../app/models/appointmen";
 
 type ProceedingFormProps = {
   id: string;
@@ -76,7 +82,21 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     locationStore,
     optionStore,
     profileStore,
+    requestStore,
+    appointmentStore
   } = useStore();
+  const {
+    getAllDom,
+    getAllLab,
+    sucursales,
+    getByIdDom,
+    getByIdLab,
+    sucursal,
+    updateDom,
+    updateLab,
+
+  } = appointmentStore;
+  const { loadingRequests, requests, getRequests: getByFilter } = requestStore;
   const {
     getById,
     update,
@@ -89,6 +109,8 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     search,
     tax,
     activateWallet,
+    getAllQ,
+    quotatios,
   } = procedingStore;
   const { profile } = profileStore;
   const { BranchOptions, getBranchOptions } = optionStore;
@@ -98,6 +120,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
+  const [citas, SetCitas] = useState<IAppointmentList[]>([]);
   const [form] = Form.useForm<IProceedingForm>();
   const [values, setValues] = useState<IProceedingForm>(
     new ProceedingFormValues()
@@ -128,7 +151,22 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     const readExpedinte = async (id: string) => {
       setLoading(true);
       var expediente = await getById(id);
-
+      var searchQ: ISearchQuotation = new SearchQuotationValues();
+      var searchC:ISearchAppointment = {
+        expediente:expediente?.expediente!,
+        nombre:"",
+        fecha:[],
+        tipo:"laboratorio"
+      }
+      var citaslab = await getAllLab(searchC); 
+      var citasdom = await getAllDom(searchC); 
+        var citasall = citaslab?.concat(citasdom!);
+        SetCitas(citasall!);
+      searchQ.presupuesto = expediente?.expediente!;
+      await getAllQ(searchQ);
+      await getByFilter({
+        expediente:expediente?.expediente
+      });
       const location = await getColoniesByZipCode(expediente?.cp!);
       if (location) {
         setColonies(
@@ -157,7 +195,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   }, [id, getById]);
 
   useEffect(() => {
-    console.log(searchParams.get("mode"))
+    console.log(searchParams.get("mode"));
     if (!profile?.admin) {
       form.setFieldsValue({ sucursal: profile?.sucursal });
     }
@@ -256,23 +294,21 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     var coincidencia = await coincidencias(newValues);
     const reagent = { ...values, ...newValues };
 
-
-    if(reagent.nombre =="" ||reagent.apellido == "" || reagent.sexo == ""){
-      alerts.warning("El nombre y sexo no pueden estar vacios")
+    if (reagent.nombre == "" || reagent.apellido == "" || reagent.sexo == "") {
+      alerts.warning("El nombre y sexo no pueden estar vacios");
     }
     if (coincidencia.length > 0 && !reagent.id!) {
       openModal({
-        
         title: "Se encuentran coincidencias con los siguientes expedientes",
         body: (
           <Concidencias
             handle={async () => {
               setLoading(true);
               let success = false;
-              console.log(tax,"tax");
-              var taxdata:ITaxData[]=[];
+              console.log(tax, "tax");
+              var taxdata: ITaxData[] = [];
 
-              for(let element of  tax ) {
+              for (let element of tax) {
                 if (!element.id || element.id.startsWith("tempId")) {
                   delete element.id;
                   taxdata.push(element);
@@ -284,10 +320,8 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
 
               if (!reagent.id) {
                 success = (await create(reagent)) != null;
-
               } else {
                 success = await update(reagent);
-           
               }
               setLoading(false);
               if (success) {
@@ -296,27 +330,25 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
             }}
             expedientes={coincidencia}
             handleclose={async () => {
-
               setReadonly(true);
-              
 
               setLoading(false);
             }}
             printing={false}
           ></Concidencias>
         ),
-        
+
         closable: true,
         width: "55%",
-        onClose(){
+        onClose() {
           setLoading(false);
-        }
+        },
       });
     } else {
       let success = false;
-      var taxdata:ITaxData[]=[];
+      var taxdata: ITaxData[] = [];
 
-      for(let element of  tax ) {
+      for (let element of tax) {
         if (!element.id || element.id.startsWith("tempId")) {
           delete element.id;
           taxdata.push(element);
@@ -429,99 +461,94 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     },
   ];
 
-  const columns: IColumns<any> = [
+  const columns: IColumns<IRequestInfo> = [
     {
-      ...getDefaultColumnProps("clave", "Solicitud", {
-        width: "10%",
-        minWidth: 150,
-        windowSize: windowWidth,
+      ...getDefaultColumnProps("clave", "Clave", {
+        width: 150,
       }),
-      render: (value, maquilador) => (
-        <Button
+      render: (value, item) => (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+                  <Button
           type="link"
           onClick={() => {
             navigate(
-              `/maquila/${maquilador.id}?${searchParams}&mode=readonly&search=${
-                searchParams.get("search") ?? "all"
-              }`
+              `/${views.request}/${item.expedienteId}/${item.solicitudId}`
             );
           }}
         >
           {value}
         </Button>
+
+          <small>
+           {item.clavePatologica}
+          </small>
+        </div>
       ),
     },
     {
-      ...getDefaultColumnProps("nombre", "Unidad", {
-        width: "20%",
-        minWidth: 150,
-        windowSize: windowWidth,
+      ...getDefaultColumnProps("afiliacion", "Afiliación", {
+
+        width: 180,
       }),
     },
     {
-      ...getDefaultColumnProps("direccion", "Compañia", {
-        width: "20%",
-        minWidth: 150,
-        windowSize: windowWidth,
+      ...getDefaultColumnProps("paciente", "Paciente", {
+
+        width: 240,
       }),
+      ellipsis: {
+        showTitle: false,
+      },
     },
     {
-      ...getDefaultColumnProps("telefono", "Fact", {
-        width: "8%",
-        minWidth: 150,
-        windowSize: windowWidth,
+      ...getDefaultColumnProps("compañia", "Compañia", {
+
+        width: 180,
       }),
+      ellipsis: {
+        showTitle: false,
+      },
     },
     {
-      ...getDefaultColumnProps("correo", "Total", {
-        width: "14%",
-        minWidth: 150,
-        windowSize: windowWidth,
+      ...getDefaultColumnProps("procedencia", "Procedencia", {
+
+        width: 180,
       }),
+      ellipsis: {
+        showTitle: false,
+      },
     },
     {
-      key: "activo",
-      dataIndex: "activo",
-      title: "Saldo",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => (value ? "Sí" : "No"),
+      ...getDefaultColumnProps("importe", "Importe", {
+
+        width: 120,
+      }),
+      align: "right",
+      render: (value) => moneyFormatter.format(value),
     },
     {
-      key: "activo",
-      dataIndex: "activo",
-      title: "Tipo solicitud",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => (value ? "Sí" : "No"),
+      ...getDefaultColumnProps("descuento", "Descuento", {
+
+        width: 120,
+      }),
+      align: "right",
+      render: (value) => moneyFormatter.format(value),
     },
     {
-      key: "activo",
-      dataIndex: "activo",
-      title: "Estudios",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => (value ? "Sí" : "No"),
+      ...getDefaultColumnProps("total", "Total", {
+
+        width: 120,
+      }),
+      align: "right",
+      render: (value) => moneyFormatter.format(value),
     },
     {
-      key: "editar",
-      dataIndex: "id",
-      title: "Editar",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "6%",
-      render: (value) => (
-        <IconButton
-          title="Editar Maquilador"
-          icon={<EditOutlined />}
-          onClick={() => {
-            navigate(
-              `/maquila/${value}?${searchParams}&mode=edit&search=${
-                searchParams.get("search") ?? "all"
-              }`
-            );
-          }}
-        />
-      ),
+      ...getDefaultColumnProps("saldo", "Saldo", {
+
+        width: 120,
+      }),
+      align: "right",
+      render: (value) => moneyFormatter.format(value),
     },
   ];
   const columnsC: IColumns<any> = [
@@ -533,7 +560,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       }),
       render: (value, item) => (
         <div></div>
-/*         <Link
+        /*         <Link
                   draggable
           onDragStart={() => {
             SetCita(item);
@@ -745,7 +772,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     label: "Fecha Nacimiento",
                     labelCol: { span: 12 },
                     wrapperCol: { span: 12 },
-                    
                   }}
                   readonly={readonly}
                 />
@@ -775,64 +801,68 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   <Input.Group>
                     <Row gutter={8}>
                       <Col span={12}>
-                      <MaskInput
-                  formProps={{
-                    name: "telefono",
-                    label: "Teléfono",
-                  }}
-                  mask={[
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                  ]}
-                  validator={(_, value: any) => {
-                    if (!value || value.indexOf("_") === -1) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject("El campo debe contener 10 dígitos");
-                  }}
-                  readonly={readonly}
-                />
+                        <MaskInput
+                          formProps={{
+                            name: "telefono",
+                            label: "Teléfono",
+                          }}
+                          mask={[
+                            /[0-9]/,
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                          ]}
+                          validator={(_, value: any) => {
+                            if (!value || value.indexOf("_") === -1) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              "El campo debe contener 10 dígitos"
+                            );
+                          }}
+                          readonly={readonly}
+                        />
                       </Col>
                       <Col span={12}>
-                      <MaskInput
-                  formProps={{
-                    name: "celular",
-                    label: "Celular",
-                  }}
-                  mask={[
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                  ]}
-                  validator={(_, value: any) => {
-                    if (!value || value.indexOf("_") === -1) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject("El campo debe contener 10 dígitos");
-                  }}
-                  readonly={readonly}
-                />
+                        <MaskInput
+                          formProps={{
+                            name: "celular",
+                            label: "Celular",
+                          }}
+                          mask={[
+                            /[0-9]/,
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                          ]}
+                          validator={(_, value: any) => {
+                            if (!value || value.indexOf("_") === -1) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              "El campo debe contener 10 dígitos"
+                            );
+                          }}
+                          readonly={readonly}
+                        />
                       </Col>
                     </Row>
                   </Input.Group>
@@ -945,124 +975,135 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               </Col>
             </Row>
           </Form>
-          {searchParams.get("mode") === "edit" || searchParams.get("mode") === "readonly"? (<div>
-            <Row>
-              <Col span={6}>
-                <Button
-                  style={{
-                    marginTop: "20px",
-                    marginLeft: "70%",
-                    marginBottom: "20px",
-                  }}
-                  onClick={() => {
-                    navigate(`/requests/${id}`);
-                  }}
-                  type="primary"
-                >
-                  {" "}
-                  Agregar solicitud
-                </Button>
-              </Col>
-              <Col span={6}>
-                <Button
-                  style={{
-                    marginTop: "20px",
-                    marginLeft: "70%",
-                    marginBottom: "20px",
-                  }}
-                  onClick={() => {
-                    navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
-                  }}
-                  type="primary"
-                >
-                  {" "}
-                  Agregar cotización
-                </Button>
-              </Col>
-              <Col span={6}>
-                <Button
-                  style={{
-                    marginTop: "20px",
-                    marginLeft: "70%",
-                    marginBottom: "20px",
-                  }}
-                  onClick={() => {
-                    navigate(`/appointments`);
-                  }}
-                  type="primary"
-                >
-                  {" "}
-                  Agregar cita
-                </Button>
-              </Col>
-              <Col span={6}>
-                {values.hasWallet ? (
-                  <Card
+          {searchParams.get("mode") === "edit" ||
+          searchParams.get("mode") === "readonly" ? (
+            <div>
+              <Row>
+                <Col span={6}>
+                  <Button
                     style={{
                       marginTop: "20px",
-                      marginLeft: "10%",
+                      marginLeft: "70%",
                       marginBottom: "20px",
                     }}
-                    bodyStyle={{
-                      backgroundColor: "rgba(255, 255, 0, 1)",
-                      border: 0,
+                    onClick={() => {
+                      navigate(`/requests/${id}`);
                     }}
+                    type="primary"
                   >
-                    <p>Monedero Electronico: {values.wallet}</p>
-                  </Card>
-                ) : (
-                  ""
-                )}
-                <Button
-                  style={{
-                    marginTop: "20px",
-                    marginLeft: "30%",
-                    marginBottom: "20px",
-                  }}
-                  onClick={() => {
-                    activarMonedero();
-                  }}
-                  type="primary"
-                  disabled={values.hasWallet}
-                >
-                  Activar monedero
-                </Button>
-              </Col>
-            </Row>
-            <Divider orientation="left">Solicitud</Divider>
-            <Table<any>
-              loading={loading || printing}
-              size="small"
-              rowKey={(record) => record.id}
-              columns={columns}
-              dataSource={[]}
-              /*    pagination={defaultPaginationProperties} */
-              sticky
-              scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-            />
-            <Divider orientation="left">Presupuestos</Divider>
-            <Table<any>
-              loading={loading || printing}
-              size="small"
-              rowKey={(record) => record.id}
-              columns={columnsP}
-              dataSource={[]}
-              /*    pagination={defaultPaginationProperties} */
-              sticky
-              scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-            />
-            <Divider orientation="left">Cita</Divider>
-            <Table<any>
-              loading={loading || printing}
-              size="small"
-              rowKey={(record) => record.id}
-              columns={columnsC}
-              dataSource={[]}
-              /*    pagination={defaultPaginationProperties} */
-              sticky
-              scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-            />
-          </div>) : ("")}
+                    {" "}
+                    Agregar solicitud
+                  </Button>
+                </Col>
+                <Col span={6}>
+                  <Button
+                    style={{
+                      marginTop: "20px",
+                      marginLeft: "70%",
+                      marginBottom: "20px",
+                    }}
+                    onClick={() => {
+                      navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
+                    }}
+                    type="primary"
+                  >
+                    {" "}
+                    Agregar cotización
+                  </Button>
+                </Col>
+                <Col span={6}>
+                  <Button
+                    style={{
+                      marginTop: "20px",
+                      marginLeft: "70%",
+                      marginBottom: "20px",
+                    }}
+                    onClick={() => {
+                      navigate(`/appointments`);
+                    }}
+                    type="primary"
+                  >
+                    {" "}
+                    Agregar cita
+                  </Button>
+                </Col>
+                <Col span={6}>
+                  {values.hasWallet ? (
+                    <Card
+                      style={{
+                        marginTop: "20px",
+                        marginLeft: "10%",
+                        marginBottom: "20px",
+                      }}
+                      bodyStyle={{
+                        backgroundColor: "rgba(255, 255, 0, 1)",
+                        border: 0,
+                      }}
+                    >
+                      <p>Monedero Electronico: {values.wallet}</p>
+                    </Card>
+                  ) : (
+                    ""
+                  )}
+                  <Button
+                    style={{
+                      marginTop: "20px",
+                      marginLeft: "30%",
+                      marginBottom: "20px",
+                    }}
+                    onClick={() => {
+                      activarMonedero();
+                    }}
+                    type="primary"
+                    disabled={values.hasWallet}
+                  >
+                    Activar monedero
+                  </Button>
+                </Col>
+              </Row>
+              <Divider orientation="left">Solicitud</Divider>
+              <Table<any>
+                loading={loading || printing}
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columns}
+                dataSource={[...requests]}
+                /*    pagination={defaultPaginationProperties} */
+                sticky
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
+              />
+              <Divider orientation="left">Presupuestos</Divider>
+              <Table<IQuotationList>
+                loading={loading || printing}
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columnsP}
+                dataSource={quotatios}
+                /*    pagination={defaultPaginationProperties} */
+                sticky
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
+              />
+              <Divider orientation="left">Cita</Divider>
+              <Table<any>
+                loading={loading || printing}
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columnsC}
+                dataSource={citas}
+                /*    pagination={defaultPaginationProperties} */
+                sticky
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
+              />
+            </div>
+          ) : (
+            ""
+          )}
         </div>
       </div>
     </Spin>
