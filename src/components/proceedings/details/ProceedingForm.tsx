@@ -306,13 +306,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     }
   };
 
-  const handleChangeTax = (tax: ITaxData[]) => {
-    setTax(tax);
-  };
-
-  const addRequest = () => {
-    navigate(`/${views.request}/${id}`);
-  };
   const columnsP: IColumns<IQuotationList> = [
     {
       ...getDefaultColumnProps("presupuesto", "Presupuesto", {

@@ -1,4 +1,17 @@
-import { Button, Col, Collapse, DatePicker, Divider, Form, Input, InputNumber, PageHeader, Row, Select, Table } from "antd";
+import {
+  Button,
+  Col,
+  Collapse,
+  DatePicker,
+  Divider,
+  Form,
+  Input,
+  InputNumber,
+  PageHeader,
+  Row,
+  Select,
+  Table,
+} from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
@@ -14,7 +27,13 @@ import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import views from "../../app/util/view";
-import { IProceedingForm, IProceedingList, ISearchMedical, ProceedingFormValues, SearchMedicalFormValues } from "../../app/models/Proceeding";
+import {
+  IProceedingForm,
+  IProceedingList,
+  ISearchMedical,
+  ProceedingFormValues,
+  SearchMedicalFormValues,
+} from "../../app/models/Proceeding";
 import moment from "moment";
 
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
@@ -25,31 +44,16 @@ import { useForm } from "antd/lib/form/Form";
 import DateInput from "../../app/common/form/proposal/DateInput";
 import { IFormError } from "../../app/models/shared";
 import MaskInput from "../../app/common/form/proposal/MaskInput";
-const { Panel } = Collapse
+const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
-/* const expedientes:IProceedingList[] = [{
-    id:"1",
-    expediente:"445666765",
-    nomprePaciente:"Alfredo Gonzalez Juarez",
-    genero:"M",
-    edad:23,
-    fechaNacimiento: new Date("24/6/1999"),
-    monederoElectronico: 54.50,
-    telefono:"8167889100",
-},{
-    id:"1",
-    expediente:"445666765",
-    nomprePaciente:"Luisa Jaramillo Perez",
-    genero:"F",
-    edad:23,
-    fechaNacimiento: new Date("24/6/1999"),
-    monederoElectronico: 120.00,
-    telefono:"8167889100",
-}] */
-const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) => {
+
+const ProceedingTable: FC<ProceedingTableProps> = ({
+  componentRef,
+  printing,
+}) => {
   const { procedingStore, optionStore, locationStore } = useStore();
   const { expedientes, getAll, getnow, setSearch, search } = procedingStore;
   const { BranchOptions, getBranchOptions } = optionStore;
@@ -72,16 +76,16 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
     const readData = async (search: ISearchMedical) => {
       await getBranchOptions();
       await getnow(search!);
-    }
+    };
 
     readData(search);
   }, [getBranchOptions]);
   useEffect(() => {
     const readData = async () => {
       await getCity();
-    }
+    };
     readData();
-  }, [getCity])
+  }, [getCity]);
   useEffect(() => {
     const readPriceList = async () => {
       setLoading(true);
@@ -98,7 +102,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
     console.log(values);
     setSearch(values);
     await getnow(values!);
-  }
+  };
   const columns: IColumns<IProceedingList> = [
     {
       ...getDefaultColumnProps("expediente", "Expediente", {
@@ -112,7 +116,9 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
         <Button
           type="link"
           onClick={() => {
-            navigate(`/${views.proceeding}/${Proceeding.id}?${searchParams}&mode=readonly`);
+            navigate(
+              `/${views.proceeding}/${Proceeding.id}?${searchParams}&mode=readonly`
+            );
           }}
         >
           {value}
@@ -213,17 +219,6 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
 
   return (
     <Fragment>
-      {/*        <Row>
-
-
-
-
-
-            <Col xs={8} md={8} sm={12}>
-                <label>Sucursal: </label>
-                <Select allowClear options={BranchOptions} onChange={(value)=>{setSearch({ ...search,sucursal:value  })}} style={{marginLeft:"10px",width:"300px"}} />
-            </Col>
-        </Row> */}
       <Collapse ghost className="request-filter-collapse">
         <Panel
           header="Filtros"
@@ -251,76 +246,90 @@ const ProceedingTable: FC<ProceedingTableProps> = ({ componentRef, printing }) =
             </Button>,
           ]}
         >
-          <Form<ISearchMedical> {...formItemLayout} form={form}
-            onFinish={onfinish}
-            size="small"
-            onFinishFailed={({ errorFields }) => {
-              const errors = errorFields.map((x) => ({ name: x.name[0].toString(), errors: x.errors }));
-              setErrors(errors);
-            }}
-          >
-            <Row gutter={[0, 12]}>
-
-              <Col span={8}>
-                <DateRangeInput formProps={{ name: "fechaAlta", label: "Fecha de alta" }} errors={errors.find((x) => x.name === "fechaAlta")?.errors}/>
-              </Col>
-              <Col span={16}>
-                <TextInput formProps={{ name: "expediente", label: "Expediente/Nombre/Codigo de barras/Huella digital", labelCol: { span: 12 } }}errors={errors.find((x) => x.name === "expediente")?.errors} />
-              </Col>
-              <Col span={8}>
-                <DescriptionItem
-                  title="Teléfono"
-                  content={
-                    <MaskInput
-                      formProps={{
-                        name: "telefono",
-                      }}
-                      width="90%"
-                      mask={[
-                        /[0-9]/,
-                        /[0-9]/,
-                        /[0-9]/,
-                        "-",
-                        /[0-9]/,
-                        /[0-9]/,
-                        /[0-9]/,
-                        "-",
-                        /[0-9]/,
-                        /[0-9]/,
-                        "-",
-                        /[0-9]/,
-                        /[0-9]/,
-                      ]}
-                      validator={(_, value: any) => {
-                        if (!value || value.indexOf("_") === -1) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(
-                          "El campo debe contener 10 dígitos"
-                        );
-                      }}
-                    />
-                  }
-                  contentWidth="60%"
-                />
-              </Col>
-              <Col span={5}></Col>
-              <Col span={9}>
-                <DateInput formProps={{ name: "fechaNacimiento", label: "Fecha nacimiento" }} errors={errors.find((x) => x.name === "fechaNacimiento")?.errors}/>
-              </Col>
-
-              <Col span={8}>
-                <SelectInput formProps={{ name: "ciudad", label: "Ciudad" }} options={cityOptions} errors={errors.find((x) => x.name === "ciudad")?.errors}/>
-              </Col>
-              <Col span={5}></Col>
-              <Col span={9}>
-                <SelectInput formProps={{ name: "sucursal", label: "Sucursal" }} options={BranchOptions} errors={errors.find((x) => x.name === "sucursal")?.errors}/>
-              </Col>
-
-            </Row>
-          </Form>
+          <div className="status-container">
+            <Form<ISearchMedical>
+              {...formItemLayout}
+              form={form}
+              onFinish={onfinish}
+              size="small"
+              onFinishFailed={({ errorFields }) => {
+                const errors = errorFields.map((x) => ({
+                  name: x.name[0].toString(),
+                  errors: x.errors,
+                }));
+                setErrors(errors);
+              }}
+            >
+              <Row justify="space-between" gutter={[0, 12]}>
+                <Col span={8}>
+                  <TextInput
+                    formProps={{
+                      name: "expediente",
+                      label: "Expediente/Nombre",
+                    }}
+                  />
+                </Col>
+                <Col span={8}>
+                  <DateRangeInput
+                    formProps={{ label: "Fecha de alta", name: "fechaAlta" }}
+                  />
+                </Col>
+                <Col span={8}>
+                  <MaskInput
+                    formProps={{
+                      name: "telefono",
+                      label: "Teléfono",
+                    }}
+                    mask={[
+                      /[0-9]/,
+                      /[0-9]/,
+                      /[0-9]/,
+                      "-",
+                      /[0-9]/,
+                      /[0-9]/,
+                      /[0-9]/,
+                      "-",
+                      /[0-9]/,
+                      /[0-9]/,
+                      "-",
+                      /[0-9]/,
+                      /[0-9]/,
+                    ]}
+                    validator={(_, value: any) => {
+                      if (!value || value.indexOf("_") === -1) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        "El campo debe contener 10 dígitos"
+                      );
+                    }}
+                  />
+                </Col>
+                <Col span={8}>
+                  <DateInput
+                    formProps={{
+                      label: "Fecha nacimiento",
+                      name: "fechaNacimiento",
+                    }}
+                  />
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{ name: "ciudad", label: "Ciudad" }}
+                    options={cityOptions}
+                  />
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{ name: "sucursal", label: "Sucursal" }}
+                    options={BranchOptions}
+                  />
+                </Col>
+              </Row>
+            </Form>
+          </div>
         </Panel>
-      </Collapse>.
+      </Collapse>
       <Table<IProceedingList>
         loading={loading || printing}
         size="small"

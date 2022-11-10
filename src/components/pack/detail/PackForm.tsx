@@ -13,13 +13,13 @@ import {
   Checkbox,
 } from "antd";
 import { formItemLayout } from "../../../app/util/utils";
-import TextInput from "../../../app/common/form/TextInput";
 import { useStore } from "../../../app/stores/store";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
 import { IOptions } from "../../../app/models/shared";
+import TextInput from "../../../app/common/form/proposal/TextInput";
 import SwitchInput from "../../../app/common/form/proposal/SwitchInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import alerts from "../../../app/util/alerts";
@@ -140,25 +140,6 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
       form.setFieldsValue({ idDepartamento: 1, idArea: 1 });
     }
   }, [form, getById, id]);
-  /* useEffect(() => {
-    const readStudy = async () =>{
-      console.log("inicio");
-      await getAllStudy();
-      console.log("fin");
-      console.log(studies);
-      setLista(studies);
-      console.log("useeffect");
-      values.estudio.forEach(x=>{
-        if(x.activo){
-          console.log("entro");
-          console.log(x);
-          setStudy(x.activo,x);
-        }
-      });
-      console.log(lista);
-    }
-    readStudy();
-  }, []); */
 
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
@@ -255,7 +236,9 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
   };
   const filterBySearch = (search: string) => {
     var estudios = lista.filter(
-      (x) => x.clave.toLowerCase().includes(search.toLowerCase()) || x.nombre.toLowerCase().includes(search.toLowerCase())
+      (x) =>
+        x.clave.toLowerCase().includes(search.toLowerCase()) ||
+        x.nombre.toLowerCase().includes(search.toLowerCase())
     );
     setValues((prev) => ({ ...prev, estudio: estudios }));
   };
@@ -360,8 +343,8 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
             onValuesChange={onValuesChange}
             style={{ marginLeft: "10px" }}
           >
-            <Row gutter={[12, 12]}>
-              <Col md={12} sm={24}>
+            <Row gutter={[12, 24]} wrap>
+              <Col md={8} sm={24}>
                 <TextInput
                   formProps={{
                     name: "clave",
@@ -372,7 +355,17 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
                   readonly={CheckReadOnly()}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col span={8}>
+                <SelectInput
+                  formProps={{ name: "idArea", label: "Área" }}
+                  options={areaForm}
+                  readonly={true}
+                  required
+                  defaultValue={1}
+                  value={1}
+                />
+              </Col>
+              <Col md={8} sm={24} xs={12}>
                 <SwitchInput
                   name="visible"
                   label="Visible"
@@ -386,7 +379,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
                   readonly={CheckReadOnly()}
                 />
               </Col>
-              <Col span={12}>
+              <Col span={8}>
                 <TextInput
                   formProps={{
                     name: "nombre",
@@ -397,7 +390,17 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
                   readonly={CheckReadOnly()}
                 />
               </Col>
-              <Col span={12}>
+              <Col span={8}>
+                <SelectInput
+                  formProps={{ name: "idDepartamento", label: "Departamento" }}
+                  options={departmentOptions}
+                  readonly={true}
+                  required
+                  defaultValue={1}
+                  value={1}
+                />
+              </Col>
+              <Col md={8} sm={24} xs={12}>
                 <SwitchInput
                   name="activo"
                   label="Activo"
@@ -411,7 +414,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
                   readonly={CheckReadOnly()}
                 />
               </Col>
-              <Col span={12}>
+              <Col span={8}>
                 <TextInput
                   formProps={{
                     name: "nombreLargo",
@@ -422,31 +425,12 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
                   readonly={CheckReadOnly()}
                 />
               </Col>
-              <Col span={12}>
-                <SelectInput
-                  formProps={{ name: "idArea", label: "Área" }}
-                  options={areaForm}
-                  readonly={true}
-                  required
-                  defaultValue={1}
-                  value={1}
-                />
-              </Col>
-              <Col span={12}>
-                <SelectInput
-                  formProps={{ name: "idDepartamento", label: "Departamento" }}
-                  options={departmentOptions}
-                  readonly={true}
-                  required
-                  defaultValue={1}
-                  value={1}
-                />
-              </Col>
             </Row>
           </Form>
+          <br />
           <Divider orientation="left">Estudios</Divider>
           <Row justify="space-between" gutter={[24, 12]} align="middle">
-            <Col span={6} >
+            <Col span={6}>
               <Search
                 key="search"
                 placeholder="Buscar"
@@ -463,7 +447,6 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
             <Col span={6} offset={2}>
               <SelectInput
                 options={departmentOptions}
-                // disabled={CheckReadOnly()}
                 onChange={(value) => {
                   setAreaId(undefined);
                   setDepId(value);
