@@ -55,14 +55,17 @@ import DateInput from "../../../app/common/form/proposal/DateInput";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import IconButton from "../../../app/common/button/IconButton";
 import {
+  IQuotationForm,
   IQuotationList,
   ISearchQuotation,
+  ISolicitud,
+  QuotationFormValues,
   SearchQuotationValues,
 } from "../../../app/models/quotation";
 import Link from "antd/lib/typography/Link";
 import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import { IRequestInfo } from "../../../app/models/request";
-import { IAppointmentList, ISearchAppointment, SearchAppointmentValues } from "../../../app/models/appointmen";
+import { IAppointmentForm, IAppointmentList, ISearchAppointment, SearchAppointmentValues } from "../../../app/models/appointmen";
 
 type ProceedingFormProps = {
   id: string;
@@ -83,7 +86,8 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     optionStore,
     profileStore,
     requestStore,
-    appointmentStore
+    appointmentStore,
+    quotationStore
   } = useStore();
   const {
     getAllDom,
@@ -94,8 +98,9 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     sucursal,
     updateDom,
     updateLab,
-
+    
   } = appointmentStore;
+  const {createsolictud}=quotationStore
   const { loadingRequests, requests, getRequests: getByFilter } = requestStore;
   const {
     getById,
@@ -111,6 +116,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     activateWallet,
     getAllQ,
     quotatios,
+    getByIdQ
   } = procedingStore;
   const { profile } = profileStore;
   const { BranchOptions, getBranchOptions } = optionStore;
@@ -137,7 +143,31 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     clearTax();
     closeModal();
   };
-
+  const convertSolicitud = (data:IAppointmentForm|IQuotationForm) => {
+    var request: ISolicitud = {
+      Id: data.id,
+      ExpedienteId: data.expedienteid!,
+      SucursalId: profile?.sucursal!,
+      Clave: data.nomprePaciente,
+      ClavePatologica: "",
+      UsuarioId: "00000000-0000-0000-0000-000000000000",
+      General: {
+        solicitudId: "00000000-0000-0000-0000-000000000000",
+        expedienteId: data.expedienteid!,
+        procedencia: 0,
+        compañiaId: data.generales?.compañia!,
+        medicoId: data.generales?.medico!,
+        afiliacion: "",
+        urgencia: 0,
+        metodoEnvio: [],
+        correo: data.generales?.email!,
+        whatsapp: data.generales?.whatssap!,
+        observaciones: data.generales?.observaciones!,
+      },
+      Estudios: data.estudy!,
+    };
+    var redirect = createsolictud(request);
+  }
   const clearLocation = () => {
     form.setFieldsValue({
       estado: undefined,
@@ -458,6 +488,25 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           }}
         />
       ),
+    },    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Editar",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value,item) => (
+        <Button
+          type="primary"
+          title=""
+          onClick={async () => {
+            var cotizacion = await getByIdQ(item.id);
+            convertSolicitud(cotizacion!);
+          }}
+        >
+
+          Convertir a solicitud
+        </Button>
+      ),
     },
   ];
 
@@ -554,7 +603,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   const columnsC: IColumns<any> = [
     {
       ...getDefaultColumnProps("noSolicitud", "Solicitud de cita", {
-        width: "20%",
+        width: "15%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -572,7 +621,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     },
     {
       ...getDefaultColumnProps("expediente", "Expediente", {
-        width: "20%",
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -616,14 +665,39 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       title: "Editar",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => (
+      render: (value,item) => (
         <IconButton
-          title="Editar reactivo"
+          title="Editar cita"
           icon={<EditOutlined />}
           onClick={() => {
-            // navigate(`/${views.appointment}/${value}?type=${tipo}&mode=edit`);
+             navigate(`/${views.appointment}/${value}?type=${item.type}&mode=edit`);
           }}
         />
+      ),
+    },
+    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Editar",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value,item) => (
+        <Button
+          type="primary"
+          title=""
+          onClick={async () => {
+              if(item.type=="laboratorio"){
+                var citas = await getByIdLab(item.id);
+                convertSolicitud(citas!);
+              }else{
+                var citas = await getByIdDom(item.id);
+                convertSolicitud(citas!);
+              }
+          }}
+        >
+
+          Convertir a solicitud
+        </Button>
       ),
     },
   ];

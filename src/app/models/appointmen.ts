@@ -41,7 +41,7 @@ export interface IAppointmentList{
     color?:string,
     estudios?:string,
     contacto?:string,
-    
+    type?:string
 }
 
 export interface IAppointmentForm{

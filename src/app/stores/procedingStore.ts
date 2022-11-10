@@ -13,6 +13,9 @@ import {
 import Proceding from "../api/proceding";
 import { ITaxData } from "../models/taxdata";
 import { IQuotationList, ISearchQuotation, SearchQuotationValues } from "../models/quotation";
+import quotation from "../api/quotation";
+import moment from "moment";
+import Study from "../api/study";
 
 export default class ProcedingStore {
   constructor() {
@@ -34,7 +37,44 @@ export default class ProcedingStore {
       this.quotatios = [];
     }
   };
-  
+  getParameter = async (id: number) => {
+    try {
+      const reagent = await Study.getById(id);
+      return reagent;
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+    }
+  };
+  getByIdQ = async (id: string) => {
+    console.log("getbyid");
+    try {
+      const reagent = await quotation.getById(id);
+      reagent.fechaNacimiento = moment(reagent.fechaNacimiento);
+      reagent.estudy?.map(async (x) => {
+        var parametros = await this.getParameter(x.estudioId!);
+        x.parametros = parametros!.parameters;
+        x.nombre = parametros!.nombre;
+        x.indicaciones = parametros?.indicaciones!;
+        x.clave = parametros?.clave!;
+        x.areaId=parametros?.area!
+        x.departamentoId=parametros?.departamento!
+        x.taponId=Number(parametros?.tapon!)
+      });
+      console.log(reagent, "cotizacion");
+      return reagent;
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+    }
+  };
+
   setTax = (value: ITaxData[]) => {
     this.tax = value;
   };
