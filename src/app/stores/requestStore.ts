@@ -677,6 +677,15 @@ export default class RequestStore {
     }
   };
 
+  assignWeeServices = async (recordId: string, requestId: string) => {
+    try {
+      const data = await Request.assignWeeServices(recordId, requestId);
+      return data;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
   private updateStudiesStatus = (
     ids: number[],
     statusId: number,

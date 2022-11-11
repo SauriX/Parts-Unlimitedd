@@ -17,8 +17,13 @@ const { Link } = Typography;
 
 const RequestTokenValidation = () => {
   const { requestStore } = useStore();
-  const { request, sendWeeToken, compareWeeToken, verifyWeeToken } =
-    requestStore;
+  const {
+    request,
+    sendWeeToken,
+    compareWeeToken,
+    verifyWeeToken,
+    assignWeeServices,
+  } = requestStore;
 
   const [currentStep, setCurrentStep] = useState(0);
   const [currentStatus, setCurrentStatus] = useState<{
@@ -125,11 +130,20 @@ const RequestTokenValidation = () => {
 
     if (response && response.verificado) {
       setCurrentStep(3);
+      assignServices(compareInfo);
     } else {
       setCurrentStep(1);
     }
 
     setVerifying(false);
+  };
+
+  const assignServices = async (compareInfo: IRequestToken) => {
+    const response = await assignWeeServices(
+      compareInfo.expedienteId,
+      compareInfo.solicitudId
+    );
+    console.log(response);
   };
 
   useEffect(() => {
