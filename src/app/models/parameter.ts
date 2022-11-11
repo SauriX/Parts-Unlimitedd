@@ -15,11 +15,16 @@ export interface IParameterList {
   unidades: number;
   unidadNombre: string;
   tipoValor: string;
-  valorInicial: number;
-  valorFinal: number;
+  valorInicial: string;
+  valorFinal: string;
   criticoMinimo: number;
   criticoMaximo: number;
   solicitudEstudioId: number;
+  resultadoId: string;
+  resultado: string;
+  ultimoResultado?: string;
+  formula?: string;
+  tipoValores?: ItipoValorForm[];
 }
 
 export interface IParameterValueListDto {
@@ -38,10 +43,8 @@ export interface IParameterValueListDto {
   tipoValor: string;
   valorInicial: number;
   valorFinal: number;
-  criticoMinimo: number;
-  criticoMaximo: number;
   solicitudEstudioId: number;
-  parametroValores: ItipoValorForm[];
+  tipoValores: ItipoValorForm[];
 }
 
 export interface IParameterForm {
@@ -83,6 +86,12 @@ export interface ItipoValorForm {
   hombreValorFinal?: number;
   mujerValorInicial?: number;
   mujerValorFinal?: number;
+  criticoMinimo?: number;
+  criticoMaximo?: number;
+  hombreCriticoMinimo?: number;
+  hombreCriticoMaximo?: number;
+  mujerCriticoMinimo?: number;
+  mujerCriticoMaximo?: number;
   medidaTiempoId?: number;
   opcion?: string | "";
   descripcionTexto?: string | "";
@@ -141,6 +150,12 @@ export class tipoValorFormValues implements ItipoValorForm {
   hombreValorFinal = 0;
   mujerValorInicial = 0;
   mujerValorFinal = 0;
+  criticoMinimo = 0;
+  criticoMaximo = 0;
+  hombreCriticoMinimo = 0;
+  hombreCriticoMaximo = 0;
+  mujerCriticoMinimo = 0;
+  mujerCriticoMaximo = 0;
   medidaTiempo = 0;
   opcion = "";
   descripcionTexto = "";
@@ -148,4 +163,9 @@ export class tipoValorFormValues implements ItipoValorForm {
   constructor(init?: ItipoValorForm) {
     Object.assign(this, init);
   }
+}
+
+export interface IObservations {
+  id: number;
+  observacion: string;
 }

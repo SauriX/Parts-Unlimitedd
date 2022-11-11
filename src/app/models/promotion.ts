@@ -58,7 +58,8 @@ export interface IPromotionForm{
     estudio: IPromotionEstudioList[],
     branchs: ISucMedComList[],
     dias:IDias[],
-    medics:Imedic[]
+    medics:Imedic[],
+    mediccheck:boolean
 }
 
 export interface Imedic{
@@ -84,7 +85,7 @@ export class PromotionFormValues implements IPromotionForm{
     branchs: ISucMedComList[]=[];
     dias: IDias[]=[];
     medics=[]
-
+    mediccheck=false;
     constructor(init?:IPromotionForm) {
         Object.assign(this, init);
       }

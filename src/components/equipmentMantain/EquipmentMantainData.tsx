@@ -98,10 +98,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
     }
     return 0;
   };
-  const prevnextMaquilador = (index: number) => {
-    const maquila = equipment[index];
-    navigate(`/equipmentMantain/edit/${maquila.id}?mode=readonly?mode=${searchParams.get("mode")}`);
-  };
+
   const EquipmentTablePrint = () => {
     return (
       <div ref={componentRef}>
@@ -134,7 +131,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
           type="link"
           onClick={() => {
             navigate(
-              `/equipmentMantain/edit/${user.id}?mode=readonly`
+              `/equipmentMantain/edit/${id}/${user.id}?mode=readonly`
             );
           }}
         >
@@ -163,7 +160,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
           icon={<EditOutlined />}
           onClick={() => {
             navigate(
-              `/equipmentMantain/edit/${value}`
+              `/equipmentMantain/edit/${id}/${value}`
             );
           }}
         />
@@ -177,7 +174,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value, item) => (
         <IconButton
-          title="Editar equipo"
+          title=" Imprimir reporte"
           icon={<PrinterOutlined />}
           onClick={() => {
             console.log("value", value)
@@ -195,7 +192,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (
         <IconButton
-          title="Editar equipo"
+          title="Visualizar registro"
           icon={<EyeOutlined />}
           onClick={() => {
             printTicket(value);
@@ -218,32 +215,20 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
   ];
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
-      <Row style={{ marginBottom: 24 }}>
-        {!!id && (
-          <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
-            <Pagination
-              size="small"
-              total={equipment.length}
-              pageSize={1}
-              current={actualMaquilador()}
-              onChange={(value) => {
-                prevnextMaquilador(value - 1);
-              }}
-            />
-          </Col>
-        )}
-      </Row>
+
       <Row style={{ marginBottom: 24 }} gutter={[12, 12]}>
-        <Col md={10} sm={24} xs={12} style={{ textAlign: "center" }}>
-          <div style={{ backgroundColor: "#B4C7E7", textAlign: "justify", width: "30%", marginLeft: "50%" }}>
+        <Col md={12} sm={24} xs={12} style={{ textAlign: "center" }}>
+          <div style={{ backgroundColor: "#B4C7E7", textAlign: "justify", width: "40%", marginLeft: "40%" }}>
+            <p style={{marginLeft: "1%"}}>
             Clave: {equip?.clave}
             <br />
             Nombre: {equip?.nombre}
             <br />
             Serie: <Link to={""}>{equip?.serie}</Link>
+            </p>
           </div>
         </Col>
-        <Col md={14} sm={24} xs={12} style={{ textAlign: "center" }}>
+        <Col md={12} sm={24} xs={12} style={{ textAlign: "center" }}>
           <Form<ISearchMantain>
 
             form={form}
@@ -280,7 +265,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
 
                 />
               </Col>
-              <Col md={4} sm={24}>
+              <Col md={2} sm={24}>
                 <Button onClick={() => {
                   form.submit();
                 }}>Buscar</Button>

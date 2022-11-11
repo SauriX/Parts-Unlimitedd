@@ -67,9 +67,10 @@ type EquipmentFormProps = {
 };
 
 const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idmantain }) => {
-  const { equipmentMantainStore ,optionStore} = useStore();
+  const { equipmentMantainStore ,optionStore,equipmentStore } = useStore();
   const { getSucursalesOptions, sucursales } = optionStore;
-  const { getById, create, update, getAlls, equipments,saveImage,setSearch,search,mantain,equip,idEq,deleteImage } = equipmentMantainStore;
+  const { equipment, getAll, } = equipmentStore;
+  const { getById, create, update, getAlls, equipments,saveImage,setSearch,search,mantain,equip,idEq,deleteImage, getequip,  } = equipmentMantainStore;
   const [type, setType] = useState<"orden" | "ine" | "ineReverso" | "formato">(
     "formato"
   );
@@ -106,7 +107,23 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idma
     
     getSucursalesOptions();
   }, [getSucursalesOptions]);
+  useEffect(() => {
+    const readEquipment = async (id: string) => {
+      setLoading(true);
+      
+      const equipments = await getById(id);
+      var equipo = await getequip(equipments?.ide!);
 
+      search!.idEquipo = equipo?.id!
+      await getAlls(search!);
+
+      setLoading(false);
+    };
+    if (idmantain) {
+      readEquipment(idmantain!);
+    }
+    
+  }, [getAlls, searchParams]);
   useEffect(() => {
     const readEquipment = async (id: string) => {
       
@@ -255,7 +272,17 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idma
         }
       }
     };
-    
+    const actualMaquilador = () => {
+      if (id) {
+        const index = equipments.findIndex((x) => x.id === idmantain);
+        return index + 1;
+      }
+      return 0;
+    };
+    const prevnextMaquilador = (index: number) => {
+      const maquila = equipments[index];
+      navigate(`/equipmentMantain/edit/${id}/${maquila.id}?mode=${searchParams.get("mode")}`);
+    };
   const onRemoveImageFormat = async (file: UploadFile<any>) => {
     if (mantain) {
       setLoading(true);
@@ -360,8 +387,23 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idma
       return (
         <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
           <Row style={{ marginBottom: 24 }}>
+
+              
+                {idmantain&&<Col md={12} sm={24} xs={24} style={{ textAlign: "left" }}>
+                  <Pagination
+                    size="small"
+                    total={ equipments.length}
+                    pageSize={1}
+                    current={ actualMaquilador() }
+                    onChange={(value) => {
+                       prevnextMaquilador(value - 1); 
+                    }}
+                  />
+                </Col>}
+             
+
             {!readonly && (
-              <Col md={id ? 24 : 48} sm={48} style={{ textAlign: "right" }}>
+              <Col md={idmantain ? 12 : 24} sm={48} style={{ textAlign: "right" }}>
                 <Button
                   onClick={() => {
                     navigate(`/equipmentMantain/${idEq}`);
@@ -428,7 +470,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idma
                 }}
               >
                 <Row>
-                  <Col md={12} sm={24}>
+                  <Col md={11} sm={24}>
                     <DateInput
 
                       formProps={{
@@ -447,10 +489,10 @@ const EquipmentForm: FC<EquipmentFormProps> = ({ id, componentRef, printing,idma
                     ></TextAreaInput>
 
                   </Col>
-                  <Col md={12} sm={24}>
+                  <Col style={{marginLeft:"2%"}} md={12} sm={24}>
                     <Row gutter={[0, 12]}>
 
-                      {mantain?.id&&<Col span={24}>
+                      {idmantain&&<Col span={24}>
                         <label htmlFor="">Imagen</label>
                         {getFormatContent()}
                       </Col>}

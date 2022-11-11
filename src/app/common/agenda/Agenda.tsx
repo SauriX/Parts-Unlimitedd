@@ -17,12 +17,16 @@ type AgendaProps<T extends IAgenda> = {
   calendarHeight?: number | string;
   defaultType?: "date" | "week";
   timeFormat?: "HH:mm" | "hh:mm a";
+  showDatePicker?:boolean;
+  type?:"date" | "week";
   render: (event?: T) => React.ReactNode;
   renderDate?: (date: moment.Moment, column?: IAgendaColumn) => React.ReactNode;
   renderHeader?: (date: moment.Moment, column?: IAgendaColumn) => React.ReactNode;
   onTypeChange?: (type: "date" | "week") => void;
   onClick?: (date: moment.Moment, event?: T, column?: IAgendaColumn) => void;
   onDropEvent?: (date: moment.Moment, event?: T, column?: IAgendaColumn) => void;
+  
+  
 };
 
 const Agenda = <T extends IAgenda>({
@@ -36,6 +40,8 @@ const Agenda = <T extends IAgenda>({
   calendarHeight,
   defaultType,
   timeFormat,
+  showDatePicker=true,
+  type="date",
   render,
   renderDate,
   renderHeader,
@@ -58,13 +64,16 @@ const Agenda = <T extends IAgenda>({
     setSelectedDates(dates);
   }, [calendarType, excludeDays, selectedDate]);
 
+  useEffect(()=>{
+    setCalendarType(type);
+  },[type]);
   if (selectedDates.length === 0) {
     return null;
   }
 
   return (
     <div style={{ display: "flex", flexDirection: "row", alignItems: "start" }}>
-      <AgendaDatePicker
+{  showDatePicker&&    <AgendaDatePicker
         calendarType={calendarType}
         excludeDays={excludeDays ?? []}
         selectedDate={selectedDate}
@@ -72,7 +81,7 @@ const Agenda = <T extends IAgenda>({
         setCalendarType={setCalendarType}
         setSelectedDate={setSelectedDate}
         onTypeChange={onTypeChange}
-      />
+      />}
       <div className="agenda-table" style={{ height: calendarHeight, overflow: "auto" }}>
         <table>
           <AgendaHeader

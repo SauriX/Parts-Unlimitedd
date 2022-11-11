@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, toJS } from "mobx";
 import ClinicResults from "../api/clinicResults";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -47,6 +47,7 @@ export default class ClinicResultsStores {
   addSelectedStudy = (estudio: IPrintTypes) => {
     this.studiesSelectedToPrint.push(estudio);
     console.log("estudies", this.studiesSelectedToPrint.length);
+    console.log("estudies", toJS(this.studiesSelectedToPrint));
   };
   clearSelectedStudies = () => {
     this.studiesSelectedToPrint = [];
@@ -122,6 +123,34 @@ export default class ClinicResultsStores {
     try {
       await ClinicResults.updateResults(results);
       alerts.success(messages.updated);
+      const index = this.studies.findIndex((x) => x.id === results[0].estudioId);
+      if (index !== -1) {
+        this.studies[index] = {
+          ...this.studies[index],
+          parametros: results
+        };
+      }
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
+  cancelResults = async (id: number) => {
+    try {
+      this.studies = this.studies.map((x) => {
+        if (x.id !== id) return x;
+        else {
+          return {
+            ...x,
+            parametros: x.parametros.map((p) => ({
+              ...p,
+              resultado: undefined,
+            })),
+          };
+        }
+      });
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -148,16 +177,7 @@ export default class ClinicResultsStores {
       alerts.warning(getErrors(error));
     }
   };
-  // getLaboratoryResults = async (result: number[]) => {
-  //   try {
-  //     const labResult = await ClinicResults.getLaboratoryResults(
-  //       result.map(x => x.)
-  //     );
-  //     return labResult;
-  //   } catch (error: any) {
-  //     alerts.warning(getErrors(error));
-  //   }
-  // };
+
   updateResultPathological = async (result: FormData) => {
     // updateResultPathological = async (result: IResultPathological) => {
     try {
@@ -167,12 +187,13 @@ export default class ClinicResultsStores {
       alerts.warning(getErrors(error));
     }
   };
+  
   updateStatusStudy = async (requestStudyId: number, status: number) => {
     // updateResultPathological = async (result: IResultPathological) => {
     try {
       await ClinicResults.updateStatusStudy(requestStudyId, status);
       console.log("update", { requestStudyId, status });
-      return true; 
+      return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
@@ -204,10 +225,14 @@ export default class ClinicResultsStores {
         id: x.estudioId,
         clave: x.clave,
         nombre: x.nombre,
-        status: x.estatusId,
+        status: x.estatusId, 
         parametros: x.parametros.map((y) => ({
+          id: y.resultadoId,
           estudioId: x.estudioId,
           solicitudId: requestId,
+          estatus: x.estatusId,
+          resultado: y.resultado,
+          formula: y.formula!,
           parametroId: y.id,
           nombre: y.nombre,
           valorInicial: y.valorInicial,
@@ -216,8 +241,13 @@ export default class ClinicResultsStores {
           unidadNombre: y.unidadNombre,
           tipoValorId: y.tipoValor,
           solicitudEstudioId: x.id!,
+          tipoValores: y.tipoValores!,
+          criticoMinimo: y.criticoMinimo,
+          criticoMaximo: y.criticoMaximo,
+          ultimoResultado: y.ultimoResultado,
+          deltaCheck: y.deltaCheck,
+          rango: y.criticoMinimo >= parseFloat(y.resultado) || parseFloat(y.resultado) >= y.criticoMaximo
         })),
-        
       }));
       return params;
     } catch (error) {
@@ -225,6 +255,14 @@ export default class ClinicResultsStores {
       return [];
     }
   };
+
+  changeParameterRange = (id: string, estudioId: number) => {
+    console.log(id, estudioId)
+    let studyIndex = this.studies.findIndex(x => x.id === 1612)
+    let study = this.studies[studyIndex]
+    let parameterIndex = study.parametros.findIndex(x => x.id === "44d55b73-5396-4240-b2b5-2c0ba35dfe58")
+    this.studies[studyIndex].parametros[parameterIndex].rango =!this.studies[studyIndex].parametros[parameterIndex].rango
+  }
 
   printResults = async (recordId: string, requestId: string) => {
     try {

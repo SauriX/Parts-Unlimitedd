@@ -1,20 +1,35 @@
-import { Divider } from "antd";
+import { Col, Divider, Row, Spin, Typography } from "antd";
 import { Fragment, useEffect, useState } from "react";
 import RequestHeader from "./RequestHeader";
 import RequestRecord from "./RequestRecord";
 import RequestTab from "./RequestTab";
 import "./css/index.less";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
 import { IRequest } from "../../../app/models/request";
 import { status } from "../../../app/util/catalogs";
 import { toJS } from "mobx";
 import moment from "moment";
+import views from "../../../app/util/view";
+import Center from "../../../app/layout/Center";
+import RequestTokenValidation from "./RequestTokenValidation";
+
+const { Link } = Typography;
 
 const RequestDetail = () => {
-  const { profileStore, requestStore, loyaltyStore, procedingStore } =
-    useStore();
+  const {
+    profileStore,
+    requestStore,
+    loyaltyStore,
+    procedingStore,
+    modalStore,
+  } = useStore();
   const { profile } = profileStore;
   const {
     getById,
@@ -27,13 +42,15 @@ const RequestDetail = () => {
   } = requestStore;
   const { getById: getByIdProceding, activateWallet } = procedingStore;
   const { loyaltys, getByDate } = loyaltyStore;
-
-  useEffect(() => {}, []);
+  const { openModal, closeModal } = modalStore;
 
   const navigate = useNavigate();
+  const { state } = useLocation();
   const { recordId, requestId } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [branchId, setBranchId] = useState<string | undefined>(
     profile!.sucursal
   );
@@ -76,21 +93,37 @@ const RequestDetail = () => {
         parcialidad: false,
         esNuevo: true,
         estatusId: status.request.vigente,
+        esWeeClinic: false,
+        tokenValidado: false,
       };
 
+      if (searchParams.has("weeFolio")) {
+        req.folioWeeClinic = searchParams.get("weeFolio")!;
+        req.esWeeClinic = true;
+        searchParams.delete("weeFolio");
+        setSearchParams(searchParams);
+
+        if (state && (state as any).services) {
+          req.servicios = (state as any).services;
+        }
+      }
+
+      setCreating(true);
       const id = await create(req);
       await modificarSaldo();
+      setCreating(false);
 
       if (id) {
         navigate(`${id}`, { replace: true });
       } else {
-        navigate("/error", { replace: true });
+        navigate(`/${views.request}`, { replace: true });
       }
     };
 
     const getRequestById = async () => {
       setLoading(true);
       await getById(recordId!, requestId!);
+      setLoading(false);
     };
 
     if (recordId && !requestId) {
@@ -98,10 +131,54 @@ const RequestDetail = () => {
     } else if (recordId && requestId) {
       getRequestById();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recordId, requestId]);
 
+  useEffect(() => {
+    if (request && request.esWeeClinic && !request.tokenValidado) {
+      openModal({
+        title: (
+          <Row justify="space-between">
+            <Col>Token de verificación</Col>
+            <Col>
+              <Link
+                onClick={() => {
+                  closeModal();
+                  navigate(`/${views.request}`);
+                }}
+                style={{ fontSize: 14, fontWeight: 400 }}
+              >
+                Regresar al listado
+              </Link>
+            </Col>
+          </Row>
+        ),
+        body: <RequestTokenValidation />,
+        closable: false,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [request]);
+
+  useEffect(() => {
+    return () => {
+      closeModal();
+    };
+  }, [closeModal]);
+
   if (!recordId) return null;
+
+  if (creating) {
+    return (
+      <Center>
+        <Spin
+          spinning={creating}
+          tip="Creando Solicitud..."
+          size="large"
+        ></Spin>
+      </Center>
+    );
+  }
 
   return (
     <Fragment>

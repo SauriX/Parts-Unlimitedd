@@ -25,10 +25,10 @@ type RequestStudyProps = {
 };
 
 const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total }) => {
-  const { priceListStore, optionStore,quotationStore } = useStore();
+  const { priceListStore, optionStore,quotationStore ,profileStore} = useStore();
   const {  getPriceStudys, getPricePacks,studyFilter,studies,packs,isPack,isStudy} = quotationStore;
   const { studyOptions, packOptions, getStudyOptions, getPackOptions, } = optionStore;
-
+  const {profile}=profileStore;
   const [selectedRows, setSelectedRows] = useState<IRequestStudy[]>([]);
 
   const [options, setOptions] = useState<IOptions[]>([]);
@@ -141,8 +141,12 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
     if (isNaN(value)) return;
 
     if (option.group === "study") {
+      var filter = studyFilter;
 
-      const studys = await getPriceStudys(studyFilter,value);
+      
+      filter.sucursalId=profile!.sucursal;
+      console.log(filter);
+      const studys = await getPriceStudys(filter,value);
       if (studys == null) {
         return;
       }

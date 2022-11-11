@@ -7,6 +7,7 @@ import { getErrors } from "../util/utils";
 import shipmentTracking from "../api/shipmentTracking";
 import { shipmenttracking } from "../models/shipmentTracking";
 import moment from "moment";
+import { reciveTracking } from "../models/ReciveTracking";
 
 export default class shipmentTackingStore {
   constructor() {
@@ -15,7 +16,7 @@ export default class shipmentTackingStore {
 
   scopes?: IScopes;
  shipment?:shipmenttracking;
-
+  recive?:reciveTracking
   clearScopes = () => {
     this.scopes = undefined;
   };
@@ -52,7 +53,34 @@ export default class shipmentTackingStore {
         //history.push("/forbidden");
       }
   };
+  getaRecive = async (id:string)=>{
+    try {
+      console.log("getshipment");
+        const scopes = await shipmentTracking.getReciveById(id);
 
+        scopes.fechaEnvio = moment(scopes.fechaEnvio);
+        scopes.horaEnvio = moment(scopes.horaEnvio);
+        scopes.fechaEnestimada = moment(scopes.fechaEnestimada);
+        scopes.horaEnestimada = moment(scopes.horaEnestimada);
+        scopes.fechaEnreal=moment(scopes.fechaEnreal);
+        scopes.horaEnreal=moment(scopes.horaEnreal);
+        console.log(scopes," shipment");
+        this.recive = scopes;
+        return scopes
+      } catch (error) {
+        alerts.warning(getErrors(error));
+        //history.push("/forbidden");
+      }
+  };
+  updateRecive = async (Recive:reciveTracking)=>{
+    try{
+        const data = await shipmentTracking.updaterecive(Recive);
+        return data;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      //history.push("/forbidden");
+    }
+  }
   printTicket = async (id:string) => {
     try {
       var response=  await shipmentTracking.getById(id);

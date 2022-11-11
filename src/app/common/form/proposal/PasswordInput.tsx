@@ -8,6 +8,7 @@ import "./index.less";
 interface IProps {
   formProps: FormItemProps<any>;
   max?: number;
+  min?: number;
   required?: boolean;
   prefix?: React.ReactNode;
   type?: RuleType;
@@ -25,6 +26,7 @@ interface IProps {
 const PasswordInput = ({
   formProps: itemProps,
   max,
+  min,
   required,
   prefix,
   type,
@@ -69,6 +71,17 @@ const PasswordInput = ({
       },
     });
   }
+
+  if (min) {
+    rules.push({
+      validator: (_, value: string) => {
+        if (!value || value.length >= min) {
+          return Promise.resolve();
+        }
+        return Promise.reject(`La longitud mínima es de ${min}`);
+      },
+    });
+  } 
 
   if (required) {
     rules.push({

@@ -53,6 +53,7 @@ const { width: windowWidth } = useWindowDimensions();
   const [aeraSearch, setAreaSearch] = useState(areas);
   const [selectedTags, setSelectedTags] = useState<IDias[]>([]);
   const [loading, setLoading] = useState(false);
+  const [flag, setFlag] = useState(false);
   const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
   const [values, setValues] = useState<IPromotionForm>(new PromotionFormValues());
   const [depId, setDepId] = useState<number>();
@@ -75,6 +76,8 @@ const { width: windowWidth } = useWindowDimensions();
   },[getMedicOptions]);
   const setFechaInicial=(fecha:moment.Moment)=>{
 
+
+console.log(fecha.toDate(),"fecha");
     console.log("fecha1");
     let estudio = estudios.map(x=> {
       let data:IPromotionEstudioList = {
@@ -95,7 +98,7 @@ const { width: windowWidth } = useWindowDimensions();
       }
     return data;
      });
-
+      console.log(estudio,"estudio");
      setEstudios(estudio!);
      setValues((prev) => ({ ...prev, estudio: estudio!,fechaInicial:fecha.toDate() }));
   };
@@ -147,8 +150,8 @@ const { width: windowWidth } = useWindowDimensions();
           descuentoPorcentaje:(values.tipoDescuento=="porcent"? values.cantidad:0),
           descuentoCantidad:(values.tipoDescuento!="porcent"? values.cantidad:0),
           precioFinal: 0,
-          fechaInicial: moment().toDate(),
-          fechaFinal:moment().toDate(),
+          fechaInicial: values.fechaInicial,
+          fechaFinal:values.fechaFinal,
           activo:false,
           precio: x.precio! ,
           paquete:false,
@@ -157,7 +160,8 @@ const { width: windowWidth } = useWindowDimensions();
         }
       return data;
        });
-       let paquetes = priceList?.paquete.map(x=> {
+       /* cambiar aqui*/
+        let paquetes = priceList?.paquete.map(x=> {
         let data:IPromotionEstudioList = {
           id:x.id,
           area:x.area,
@@ -166,23 +170,25 @@ const { width: windowWidth } = useWindowDimensions();
           descuentoPorcentaje:(values.tipoDescuento=="porcent"? values.cantidad:0),
           descuentoCantidad:(values.tipoDescuento!="porcent"? values.cantidad:0),
           precioFinal: 0,
-          fechaInicial: moment().toDate(),
-          fechaFinal:moment().toDate(),
+          fechaInicial: values.fechaInicial,
+          fechaFinal:values.fechaFinal,
           activo:false,
           precio: x.precioFinal!  ,
           paquete:true,
           selectedTags:[],
           departamento:x.departamento
         }
+
         console.log(x);
       return data;
        });
 
        estudio= estudio?.concat(paquetes!);
+       
        setEstudios(estudio!);
 
        setValues((prev) => ({ ...prev, estudio: estudio! }));
-       
+       setFlag(!flag);
     }
 
     if (field === "cantidad") {
@@ -439,7 +445,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
       align: "center",
       width:  100,
       render: (value,item) => (
-        <InputNumber type={"number"} min={0}  value={item.descuentoPorcentaje}  onChange={(value)=>setStudydiscunt(value,item,item.paquete!)}></InputNumber>
+        <InputNumber type={"number"} min={0}  value={item.descuentoPorcentaje}  onChange={(value)=>setStudydiscunt(value??0,item,item.paquete!)}></InputNumber>
       ),
     },
     {
@@ -449,7 +455,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
       align: "center",
       width:  100 ,
       render: (value,item) => (
-        <InputNumber type={"number"} min={0}  value={item.descuentoCantidad}  onChange={(value)=>setStudydiscuntc(value,item,item.paquete!)}></InputNumber>
+        <InputNumber type={"number"} min={0}  value={item.descuentoCantidad}  onChange={(value)=>setStudydiscuntc(value??0,item,item.paquete!)}></InputNumber>
       ),
     },
     {
@@ -459,7 +465,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
       align: "center",
       width:  100 ,
       render: (value,item) => (
-        <InputNumber type={"number"} min={0} value={item.precioFinal}  onChange={(value)=>setStudyPricefinal(value,item,item.paquete)}></InputNumber>
+        <InputNumber type={"number"} min={0} value={item.precioFinal} readOnly={true}  onChange={(value)=>setStudyPricefinal(value??0,item,item.paquete)}></InputNumber>
       ),
     },
     {
@@ -582,6 +588,9 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
        value: x.id,
        label: x.nombre,
       })); 
+      if(reagent!.medics?.length>0 ){
+        reagent!.mediccheck=true;
+      }
       setBranch(sucursalesOptions);
       form.setFieldsValue(reagent!);
       setValues(reagent!);
@@ -665,6 +674,37 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     setLoading(true);
 
     const reagent = { ...values, ...newValues };
+    var c =moment(reagent.fechaInicial).format("YYYY-MM-DD");
+
+    var d = moment(reagent.fechaFinal).format("YYYY-MM-DD");
+
+  if(d < c){
+    setLoading(false);
+      alerts.warning("La fecha inicial debe ser menor a la final");
+      return;
+  }
+    var counter =0;
+    var counterF = 0;
+    values.estudio.forEach(x=>{if(x.precioFinal==0){ counter++;};
+    var c =moment(x.fechaInicial).format("YYYY-MM-DD");
+
+    var d = moment(x.fechaFinal).format("YYYY-MM-DD");
+  if(d < c){
+
+    counterF++
+  }
+  
+  })
+    if(counter>0){
+      alerts.warning("El precio final debe ser mayor a 0");
+      setLoading(false);
+      return
+    }
+    if(counterF>0){
+      alerts.warning("La fecha inicial debe ser menor a la final en los estudios");
+      setLoading(false);
+      return
+    }
     reagent.dias= selectedTags; 
     console.log(reagent,"en el onfish")
     console.log(reagent);
@@ -693,7 +733,14 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     navigate(`/${views.promo}/${id}?${searchParams}&mode=edit`);
     setReadonly(false);
   };
-
+useEffect(()=>{
+  if(values.tipoDescuento=="porcent"){
+    values.estudio.forEach(x=>{setStudydiscunt(x.descuentoPorcentaje,x,x.paquete!);})
+  }else{
+    values.estudio.forEach(x=>{setStudydiscuntc(x.descuentoCantidad,x,x.paquete!);});
+  }
+    selectedTags.forEach(x=>{handleChange(x, true)});
+},[flag]);
   const getPage = (id: string) => {
     return promotionLists.findIndex((x) => x.id === Number(id)) + 1;
   };
@@ -804,6 +851,14 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
                     }
                   }}
                   label="Activo"
+                  readonly={readonly}
+                />
+                  <SwitchInput
+                  name="mediccheck"
+                  label="Medicos"
+                  onChange={(val)=>{
+                    setValues((prev)=>({...prev,mediccheck:val}))
+                  }}
                   readonly={readonly}
                 />
               </Col>
@@ -918,7 +973,10 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
           </List.Item>
         )}
       />
-      <Divider orientation="left">Médicos</Divider>
+     { values.mediccheck && 
+     <div>
+     <Divider orientation="left">Médicos</Divider>
+     
       <List<ISucMedComList>
         header={
           <div>
@@ -984,47 +1042,52 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
           </List.Item>
         )}
       />
-      <Divider orientation="left">Estudios</Divider>
-          <Row>
-          <Col md={4} sm={24} xs={12}>
-          Búsqueda por :   
-          </Col>
-          <Col md={9} sm={24} xs={12}>
-          <SelectInput 
-                formProps={{ name: "departamentoSearch", label: "Departamento" }}
-                options={departmentOptions}
-                readonly={readonly}
-                value={depId} 
-                onChange={(value)=>{setAreaId(undefined); setDepId(value); filterByDepartament(value)}}
-              />
-
-              </Col> 
-              <Col md={2} sm={24} xs={12}></Col>
-              <Col md={9} sm={24} xs={12}>
-                <label htmlFor="">Área: </label>
-                <Select
-                /* formProps={{ name: "areaSearch", label: "Área" }} */
-                options={aeraSearch}
-                disabled={readonly}
-                onChange={(value)=>{ setAreaId(value); filterByArea(value)}}
-                value={areaId}
-                allowClear
-                onClear={() => {
-                  setAreaId(undefined);
-                  filterByArea();
-                }}
-                style={{width:"400px"}}
-              />
-              </Col>
-              <Col md={15} sm={24} xs={12}></Col>
-              <Col md={9} sm={24} xs={12}>
+      </div>
+     } <Divider orientation="left">Estudios</Divider>
+      <Row justify="space-between" align="middle">
+            <Col span={6}>
               <Search
-          key="search"
-          placeholder="Buscar"
-          onSearch={(value: string) => {
-           filterBySearch(value)
-          }}
-        />,</Col>
+                key="search"
+                placeholder="Buscar"
+                onSearch={(value) => {
+                  filterBySearch(value);
+                }}
+                allowClear
+              />
+            </Col>
+            <Col span={6} offset={2}>
+              <SelectInput
+                options={departmentOptions}
+                onChange={(value) => {
+                  setAreaId(undefined);
+                  setDepId(value);
+                  filterByDepartament(value);
+                }}
+                value={depId}
+                placeholder={"Departamentos"}
+                formProps={{
+                  name: "departamentos",
+                  label: "Departamento",
+                }}
+              />
+            </Col>
+            <Col span={6} offset={2}>
+              <SelectInput
+                options={aeraSearch}
+                onChange={(value) => {
+                  setAreaId(value);
+                  filterByArea(value);
+                }}
+                value={areaId}
+                placeholder={"Área"}
+                formProps={{
+                  name: "area",
+                  label: "Área",
+                }}
+              />
+            </Col>
+          </Row>
+          <Row>   
             <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
                 <Table<IPromotionEstudioList>
                 size="small"

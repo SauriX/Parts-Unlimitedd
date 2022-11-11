@@ -605,8 +605,8 @@ useEffect(()=>{
                     max={typo == 1 ? 100 : total}
                     value={cargo}
                     onChange={(value) => {
-                      SetCargo(value);
-                      calculateTotalFinal(value, typo);
+                      SetCargo(value ?? 0);
+                      calculateTotalFinal(value ?? 0, typo);
                     }}
                   ></InputNumber>
                 </Descriptions.Item>

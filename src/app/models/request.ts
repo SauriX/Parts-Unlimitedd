@@ -21,7 +21,10 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   parcialidad: boolean;
   registro?: string;
   esNuevo: boolean;
-
+  folioWeeClinic?: string;
+  esWeeClinic: boolean;
+  tokenValidado: boolean;
+  servicios?: string[];
   estudios?: IRequestStudyInfo[];
 }
 
@@ -38,6 +41,7 @@ export interface IRequestFilter {
   sucursales?: string[];
   compañias?: string[];
   medicos?: string[];
+  expediente?:string
 }
 
 export interface IRequestInfo extends IRequestBase {
@@ -52,6 +56,8 @@ export interface IRequestInfo extends IRequestBase {
   descuento: number;
   total: number;
   saldo: number;
+  folioWeeClinic?: string;
+  esWeeClinic: boolean;
   estudios: IRequestStudyInfo[];
 }
 
@@ -69,6 +75,12 @@ export interface IRequestStudyInfo {
   fechaCaptura: string;
   fechaLiberado: string;
   fechaEnviado: string;
+  usuarioTomaMuestra: string;
+  usuarioValidacion: string;
+  usuarioSolicitado: string;
+  usuarioCaptura: string;
+  usuarioLiberado: string;
+  usuarioEnviado: string;
 }
 
 export class RequestStudyInfoForm implements IRequestStudyInfo {
@@ -85,6 +97,12 @@ export class RequestStudyInfoForm implements IRequestStudyInfo {
   fechaCaptura = "";
   fechaLiberado = "";
   fechaEnviado = "";
+  usuarioTomaMuestra = "";
+  usuarioValidacion = "";
+  usuarioSolicitado = "";
+  usuarioCaptura = "";
+  usuarioLiberado = "";
+  usuarioEnviado = "";
 
   constructor(init?: IRequestTotal) {
     Object.assign(this, init);
@@ -101,6 +119,19 @@ export interface IRequestGeneral extends IRequestBase {
   correo: string;
   whatsapp: string;
   observaciones: string;
+}
+
+export interface IRequestPayment extends IRequestBase {
+  id: string;
+  formaPagoId: number;
+  formaPago: string;
+  numeroCuenta: string;
+  cantidad: number;
+  serie: string;
+  numero: string;
+  estatusId: number;
+  usuarioRegistra: string;
+  fechaPago: moment.Moment;
 }
 
 export interface IRequestImage extends IRequestBase {
@@ -139,6 +170,7 @@ export class RequestStudyUpdate implements IRequestStudyUpdate {
 export interface IRequestStudy {
   type: "study" | "pack";
   id?: number;
+  identificador?: string;
   estudioId: number;
   clave: string;
   nombre: string;
@@ -171,7 +203,21 @@ export interface IRequestStudy {
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
   fechaActualizacion?: string;
+  usuarioActualizacion?: string;
   solicitudEstudioId?: number;
+  nombreEstatus?: string;
+  fechaTomaMuestra?: string;
+  fechaValidacion?: string;
+  fechaSolicitado?: string;
+  fechaCaptura?: string;
+  fechaLiberado?: string;
+  fechaEnviado?: string;
+  usuarioTomaMuestra?: string;
+  usuarioValidacion?: string;
+  usuarioSolicitado?: string;
+  usuarioCaptura?: string;
+  usuarioLiberado?: string;
+  usuarioEnviado?: string;
 }
 export class RequestStudyValues implements IRequestStudy {
   type: "study" | "pack" = "study";
@@ -208,12 +254,17 @@ export class RequestStudyValues implements IRequestStudy {
   indicaciones: IIndicationList[] = [];
   promociones = [];
   fechaActualizacion = "";
+  usuarioActualizacion = "";
+  
   constructor(init?: IRequestStudy) {
     Object.assign(this, init);
   }
 }
+
 export interface IRequestPack {
   type: "study" | "pack";
+  id?: number;
+  identificador?: string;
   paqueteId: number;
   clave: string;
   nombre: string;
@@ -274,4 +325,9 @@ export class RequestTotal implements IRequestTotal {
   constructor(init?: IRequestTotal) {
     Object.assign(this, init);
   }
+}
+
+export interface IRequestToken extends IRequestBase {
+  token?: string;
+  reenviar: boolean;
 }

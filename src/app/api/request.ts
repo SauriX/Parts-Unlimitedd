@@ -7,7 +7,13 @@ import {
   IRequestStudyUpdate,
   IRequestTag,
   IRequestTotal,
+  IRequestPayment,
+  IRequestToken,
 } from "../models/request";
+import {
+  IWeeTokenValidation,
+  IWeeTokenVerification,
+} from "../models/weeClinic";
 import requests from "./agent";
 
 const Request = {
@@ -22,6 +28,11 @@ const Request = {
     requestId: string
   ): Promise<IRequestStudyUpdate> =>
     requests.get(`request/studies/${recordId}/${requestId}`),
+  getPayments: (
+    recordId: string,
+    requestId: string
+  ): Promise<IRequestPayment[]> =>
+    requests.get(`request/payments/${recordId}/${requestId}`),
   getImages: (recordId: string, requestId: string): Promise<string[]> =>
     requests.get(`request/images/${recordId}/${requestId}`),
   sendTestEmail: (
@@ -38,6 +49,10 @@ const Request = {
     requests.get(`request/whatsapp/${recordId}/${requestId}/${phone}`),
   create: (request: IRequest): Promise<string> =>
     requests.post("request", request),
+  createWeeClinic: (request: IRequest): Promise<string> =>
+    requests.post("request/weeClinic", request),
+  createPayment: (request: IRequestPayment): Promise<IRequestPayment> =>
+    requests.post("request/payment", request),
   updateGeneral: (request: IRequestGeneral): Promise<void> =>
     requests.put("request/general", request),
   updateTotals: (request: IRequestTotal): Promise<void> =>
@@ -48,6 +63,12 @@ const Request = {
     requests.put(`request/cancel/${recordId}/${requestId}`, {}),
   cancelStudies: (request: IRequestStudyUpdate): Promise<void> =>
     requests.put("request/studies/cancel", request),
+  cancelPayments: (
+    recordId: string,
+    requestId: string,
+    payments: IRequestPayment[]
+  ): Promise<IRequestPayment[]> =>
+    requests.put(`request/payment/cancel/${recordId}/${requestId}`, payments),
   sendStudiesToSampling: (request: IRequestStudyUpdate): Promise<void> =>
     requests.put("request/studies/sampling", request),
   sendStudiesToRequest: (request: IRequestStudyUpdate): Promise<void> =>
@@ -75,6 +96,12 @@ const Request = {
     code: string
   ): Promise<void> =>
     requests.delete(`request/image/${recordId}/${requestId}/${code}`),
+  sendWeeToken: (request: IRequestToken): Promise<IWeeTokenValidation> =>
+    requests.post("request/wee/sendToken", request),
+  compareWeeToken: (request: IRequestToken): Promise<IWeeTokenValidation> =>
+    requests.post("request/wee/compareToken", request),
+  verifyWeeToken: (request: IRequestToken): Promise<IWeeTokenVerification> =>
+    requests.post("request/wee/verifyToken", request),
 };
 
 export default Request;

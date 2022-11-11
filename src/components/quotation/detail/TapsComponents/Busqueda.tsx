@@ -44,7 +44,7 @@ import {
   IColumns,
   ISearch,
 } from "../../../../app/common/table/utils";
-import { IOptions } from "../../../../app/models/shared";
+import { IFormError, IOptions } from "../../../../app/models/shared";
 import moment from "moment";
 import type { CheckboxValueType } from "antd/es/checkbox/Group";
 import TextArea from "antd/lib/input/TextArea";
@@ -83,6 +83,7 @@ const BusquedaForm: FC<GeneralesFormProps> = ({
   const [values, setValues] = useState<IQuotationExpedienteSearch>(
     new QuotationExpedienteSearchValues()
   );
+  const [errors, setErrors] = useState<IFormError[]>([]);
   let navigate = useNavigate();
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
@@ -221,6 +222,10 @@ const BusquedaForm: FC<GeneralesFormProps> = ({
         onFinish={onFinish}
         scrollToFirstError
         onValuesChange={onValuesChange}
+        onFinishFailed={({ errorFields }) => {
+          const errors = errorFields.map((x) => ({ name: x.name[0].toString(), errors: x.errors }));
+          setErrors(errors);
+        }}
       >
         <Row justify="space-between" style={{marginBottom: "15px"}}>
           <Col span={8}>
@@ -262,6 +267,7 @@ const BusquedaForm: FC<GeneralesFormProps> = ({
                 label: "Email",
               }}
               max={100}
+              type="email"
               //errors={errors.find((x) => x.name === "exp")?.errors}
             />
           </Col>
@@ -270,9 +276,12 @@ const BusquedaForm: FC<GeneralesFormProps> = ({
               formProps={{
                 name: "telfono",
                 label: "Teléfono",
+                
               }}
-              max={100}
-              //errors={errors.find((x) => x.name === "exp")?.errors}
+
+              
+              max={10}
+              errors={errors.find((x) => x.name === "telfono")?.errors}
             />
           </Col>
           <Col span={2}></Col>

@@ -52,18 +52,17 @@ const ClinicResultsTable = ({
 
   return (
     <Fragment>
-      {data.length > 0 &&
-        (
-          <div style={{ textAlign: "right", marginBottom: 10 }}>
-            <Button
-              type="primary"
-              onClick={toggleRow}
-              style={{ marginRight: 10 }}
-            >
-              {!openRows ? "Abrir tabla" : "Cerrar tabla"}
-            </Button>
-          </div>
-        )}
+      {data.length > 0 && (
+        <div style={{ textAlign: "right", marginBottom: 10 }}>
+          <Button
+            type="primary"
+            onClick={toggleRow}
+            style={{ marginRight: 10 }}
+          >
+            {!openRows ? "Abrir tabla" : "Cerrar tabla"}
+          </Button>
+        </div>
+      )}
       <Table<IClinicResultList>
         loading={loadingStudies}
         size="small"
@@ -77,6 +76,7 @@ const ClinicResultsTable = ({
           onExpand: onExpand,
           expandedRowKeys: expandedRowKeys,
         }}
+        bordered
       />
     </Fragment>
   );

@@ -31,7 +31,7 @@ const PasswordInput = ({
 
   if (min) {
     rules.push({ min, message: `La longitud mínima es de ${min}` });
-  }
+  } 
 
   if (required) {
     rules.push({

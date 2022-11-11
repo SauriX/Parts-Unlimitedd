@@ -13,6 +13,7 @@ const RequestPrintTag = () => {
   const { request, allStudies, printTags } = requestStore;
 
   const [labels, setLabels] = useState<IRequestTag[]>([]);
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -45,7 +46,8 @@ const RequestPrintTag = () => {
   const print = async () => {
     if (request) {
       setLoading(true);
-      await printTags(request.expedienteId, request.solicitudId!, labels);
+      const toPrint = labels.filter((x) => selectedKeys.includes(x.taponClave));
+      await printTags(request.expedienteId, request.solicitudId!, toPrint);
       setLoading(false);
     }
   };
@@ -81,7 +83,7 @@ const RequestPrintTag = () => {
           min={1}
           style={{ width: "100%" }}
           onChange={(qty) => {
-            changeQty(qty, record);
+            changeQty(qty ?? 0, record);
           }}
         />
       ),
@@ -101,13 +103,21 @@ const RequestPrintTag = () => {
             pagination={false}
             rowSelection={{
               fixed: "right",
+              selectedRowKeys: selectedKeys,
+              onSelect: (r, s, selected) => {
+                setSelectedKeys(selected.map((x) => x.taponClave));
+              },
             }}
             sticky
             scroll={{ x: "fit-content" }}
           />
         </Col>
         <Col span={24} style={{ textAlign: "right" }}>
-          <Button type="default" onClick={print}>
+          <Button
+            disabled={selectedKeys.length === 0}
+            type="default"
+            onClick={print}
+          >
             Imprimir
           </Button>
         </Col>

@@ -1,7 +1,11 @@
 import { makeAutoObservable } from "mobx";
 import Catalog from "../api/catalog";
 import Role from "../api/role";
-import { ICatalogAreaList, ICatalogNormalList } from "../models/catalog";
+import {
+  ICatalogAreaList,
+  ICatalogDescriptionList,
+  ICatalogNormalList,
+} from "../models/catalog";
 import { IOptions } from "../models/shared";
 import Parameter from "../api/parameter";
 import Reagent from "../api/reagent";
@@ -17,10 +21,11 @@ import Promotion from "../api/promotion";
 import Study from "../api/study";
 import Pack from "../api/pack";
 import Location from "../api/location";
+import { IWorkList } from "../models/workList";
 
 export const originOptions = [
-  { label: "Compañía", value: 1 },
-  { label: "Particular", value: 2 },
+  { label: "COMPAÑIÍA", value: 1 },
+  { label: "PARTICULAR", value: 2 },
 ];
 
 export const urgencyOptions = [
@@ -105,9 +110,9 @@ export default class OptionStore {
   reagents: IOptions[] = [];
   getReagentOptions = async () => {
     try {
-      const payment = await Reagent.getAll("all");
-      console.log(payment);
-      this.reagents = payment.map((x) => ({
+      const reagent = await Reagent.getAll("all");
+      console.log(reagent);
+      this.reagents = reagent.map((x) => ({
         value: x.id,
         label: x.nombre,
       }));
@@ -210,13 +215,15 @@ export default class OptionStore {
 
   paymentOptions: IOptions[] = [];
 
-  getpaymentOptions = async () => {
+  getPaymentOptions = async () => {
     try {
-      const payment = await Catalog.getActive<ICatalogNormalList>("payment");
+      const payment = await Catalog.getActive<ICatalogDescriptionList>(
+        "payment"
+      );
       console.log(payment);
       this.paymentOptions = payment.map((x) => ({
         value: x.id,
-        label: x.nombre,
+        label: x.clave + " " + x.descripcion,
       }));
     } catch (error) {
       this.paymentOptions = [];
@@ -340,7 +347,22 @@ export default class OptionStore {
       this.workListOptions = [];
     }
   };
+  workListOptions2: IWorkList[] = [];
 
+  getworkListOptions2 = async () => {
+    try {
+      const workList = await Catalog.getActive<ICatalogNormalList>("workList");
+      console.log(workList);
+      this.workListOptions2 = workList.map((x) => ({
+        id: x.id,
+        nombre: x.nombre,
+        clave:x.clave,
+        activo:x.activo
+      }));
+    } catch (error) {
+      this.workListOptions2 = [];
+    }
+  };
   sampleTypeOptions: IOptions[] = [];
 
   getsampleTypeOptions = async () => {
@@ -394,6 +416,7 @@ export default class OptionStore {
   };
 
   BranchOptions: IOptions[] = [];
+  cityOptions:IOptions[]=[];
   getBranchOptions = async () => {
     try {
       const branch = Branch.getAll("");
@@ -401,8 +424,13 @@ export default class OptionStore {
         value: x.idSucursal,
         label: x.nombre,
       }));
+      this.cityOptions=  (await branch).map((x)=>({
+        value:x.ciudad, 
+        label:x.ciudad
+      }));
     } catch (error) {
       this.BranchOptions = [];
+      this.cityOptions = [];
     }
   };
 
@@ -524,7 +552,6 @@ export default class OptionStore {
   getMedicOptions = async () => {
     try {
       const MedicOptions = await Medics.getActive();
-      console.log(MedicOptions);
       this.medicOptions = MedicOptions.map((x) => ({
         value: x.idMedico,
         label: x.nombreCompleto,
@@ -604,4 +631,17 @@ export default class OptionStore {
       this.CityOptions = [];
     }
   };
+
+  typeValue: IOptions[] = [];
+  getTypeValues = async (id: string, tipo: string) => {
+    try{
+      const type = Parameter.getAllValues(id, tipo);
+      this.typeValue = (await type).map((x) => ({
+        value: x.id!,
+        label: x.descripcionTexto as string,
+      }))
+    } catch(error) {
+      this.typeValue = [];
+    }
+  }
 }

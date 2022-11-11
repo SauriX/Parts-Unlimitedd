@@ -21,6 +21,7 @@ export interface ISearchAppointment{
     fecha: moment.Moment[];
     nombre:string,
     tipo:string,
+    expediente?:string
 }
 
 export interface IExportForm{
@@ -37,7 +38,10 @@ export interface IAppointmentList{
     sexo: string,
     tipo:number,
     expediente:string
-
+    color?:string,
+    estudios?:string,
+    contacto?:string,
+    type?:string
 }
 
 export interface IAppointmentForm{

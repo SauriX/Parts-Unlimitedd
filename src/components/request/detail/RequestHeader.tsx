@@ -21,10 +21,21 @@ const ReagentHeader = () => {
   return (
     <PageHeader
       ghost={false}
-      title={<HeaderTitle title="Solicitud" />}
+      title={
+        <HeaderTitle
+          image={request?.esWeeClinic ? "weeclinic" : undefined}
+          folder="logos"
+          title="Solicitud"
+        />
+      }
+      onBack={getBack}
       className="header-container"
       extra={[
-        <GoBackIcon key="back" onClick={getBack} />,
+        request?.esWeeClinic && (
+          <Text key="weeclinic">
+            Folio Wee: <Text strong>{request?.folioWeeClinic}</Text>
+          </Text>
+        ),
         <Text key="request">
           Solicitud: <Text strong>{request?.clave}</Text>
         </Text>,

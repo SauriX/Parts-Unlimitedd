@@ -18,7 +18,7 @@ const ClinicResults = {
     getLabResultsById: (id: string): Promise<IClinicResultCaptureForm[]> => requests.get(`parameter/${id}`),
   createResults: (results: IClinicResultCaptureForm[]): Promise<string[]> =>
     requests.post(`clinicResults/saveResults`, results),
-  updateResults: (results: IClinicResultCaptureForm[]): Promise<string[]> =>
+  updateResults: (results: IClinicResultCaptureForm[]): Promise<void> =>
     requests.put(`clinicResults/updateResults`, results),
   createResultPathological: (search: FormData): Promise<void> =>
     // createResultPathological: (search: IResultPathological): Promise<void> =>

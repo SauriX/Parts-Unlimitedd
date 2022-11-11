@@ -8,9 +8,9 @@ export default class WeeClinicStore {
     makeAutoObservable(this);
   }
 
-  Laboratorio_BusquedaFolios = async (folio: string) => {
+  searchPatientByFolio = async (folio: string) => {
     try {
-      const folios = await WeeClinic.Laboratorio_BusquedaFolios(folio);
+      const folios = await WeeClinic.searchPatientByFolio(folio);
       return folios;
     } catch (error) {
       alerts.warning(getErrors(error));

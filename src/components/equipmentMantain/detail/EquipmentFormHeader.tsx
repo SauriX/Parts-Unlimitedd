@@ -38,8 +38,7 @@ const EquipmentFormHeader: FC<EquipmentFormHeaderProps> = ({
       title={<HeaderTitle title="Mantenimiento de Equipo" image="equipo" />}
       className="header-container"
       extra={[
-        id != 0 ? <PrintIcon key="print" onClick={handlePrint} /> : "",
-        id != 0 ? <DownloadIcon key="doc" onClick={download} /> : "",
+
         <GoBackIcon
           key="back"
           onClick={() => {

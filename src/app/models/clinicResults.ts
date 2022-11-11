@@ -1,4 +1,5 @@
 import moment from "moment";
+import { ItipoValorForm } from "./parameter";
 
 export interface IClinicResultList {
   id: string;
@@ -17,6 +18,7 @@ export interface IClinicResultList {
   seleccion: boolean;
   estudios: IClinicStudy[];
   procedencia: number;
+  clavePatologica: string;
 }
 export interface IResultPathological {
   id?: string;
@@ -53,13 +55,22 @@ export interface IClinicResultCaptureForm {
   solicitudId: string;
   estudioId: number;
   tipoValorId: string;
-  valorInicial: number;
-  valorFinal: number;
+  valorInicial: string;
+  valorFinal: string;
+  criticoMinimo?: number;
+  criticoMaximo?: number;
   parametroId: string;
-  resultado?: string;
+  resultado?: string | string[];
+  ultimoResultado?: string;
+  deltaCheck: boolean;
   unidades?: number;
   unidadNombre: string;
   solicitudEstudioId?: number;
+  estatus: number;
+  formula?: string;
+  nombreCorto?: string;
+  rango?: boolean;
+  tipoValores?: ItipoValorForm[];
 }
 
 export interface IClinicResultForm {
@@ -136,15 +147,21 @@ export class ClinicResultsCaptureForm implements IClinicResultCaptureForm {
   id = "";
   solicitudId = "";
   estudioId = 0;
-  tipoValorId = "0";
+  tipoValorId = "";
+  estatus = 0;
   nombre = "";
-  valorInicial = 0;
-  valorFinal = 0;
+  valorInicial = "";
+  valorFinal = "";
+  criticoMinimo = 0;
+  criticoMaximo = 0;
   parametroId = "";
   resultado = "";
+  ultimoResultado = "";
+  formula = "";
   unidades = 0;
   solicitudEstudioId = 0;
   unidadNombre = "";
+  deltaCheck = false;
 
   constructor(init?: IClinicResultForm) {
     Object.assign(this, init);

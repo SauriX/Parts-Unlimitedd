@@ -13,6 +13,7 @@ import { IFormError, IOptions } from "../../../app/models/shared";
 import { ITaxData } from "../../../app/models/taxdata";
 import IconButton from "../../../app/common/button/IconButton";
 import { EditOutlined } from "@ant-design/icons";
+import alerts from "../../../app/util/alerts";
 
 const formItemLayout = {
   labelCol: { span: 8 },
@@ -94,14 +95,37 @@ const DatosFiscalesForm = ({
 
     if (field === "cp") {
       const zipCode = changedValues[field] as string;
-
+      if (zipCode.length < 5) {
+        setErrors([{ name: "cp", errors: ["La longitud minima es de 5"] }]);
+      } else {
+        setErrors([]);
+      }
       getColonies(zipCode);
     }
+
   };
 
   const onFinish = async (newValues: ITaxData) => {
     setLoading(true);
     setErrors([]);
+    if (!newValues.cp || newValues.cp.length < 5) {
+      alerts.warning("Favor de ingresar un Codigo Postal válido");
+      setLoading(false);
+      return;
+    }
+    const zipCode = newValues.rfc;
+    if (zipCode.length === 10 || zipCode.length === 13) {
+      var rfc = rfcValido(zipCode);
+      if (!rfc) {
+        alerts.warning(`El RFC ${zipCode} es invalido`);
+        setLoading(false);
+        return
+      }
+    } else {
+      alerts.warning(`El RFC ${zipCode} es invalido`);
+      setLoading(false);
+      return
+    }
     var taxes: ITaxData[] = local ? [...localTaxData] : [...(tax ?? [])];
 
     newValues.expedienteId = recordId;
@@ -184,7 +208,28 @@ const DatosFiscalesForm = ({
       ),
     },
   ];
-
+  function rfcValido(rfc: string, aceptarGenerico = true) {
+    // patron del RFC, persona moral
+    const _rfc_pattern_pm =
+      "^(([A-ZÑ&]{3})([0-9]{2})([0][13578]|[1][02])(([0][1-9]|[12][\\d])|[3][01])([A-Z0-9]{3}))|" +
+      "(([A-ZÑ&]{3})([0-9]{2})([0][13456789]|[1][012])(([0][1-9]|[12][\\d])|[3][0])([A-Z0-9]{3}))|" +
+      "(([A-ZÑ&]{3})([02468][048]|[13579][26])[0][2]([0][1-9]|[12][\\d])([A-Z0-9]{3}))|" +
+      "(([A-ZÑ&]{3})([0-9]{2})[0][2]([0][1-9]|[1][0-9]|[2][0-8])([A-Z0-9]{3}))$";
+    // patron del RFC, persona fisica
+    const _rfc_pattern_pf =
+      "^(([A-ZÑ&]{4})([0-9]{2})([0][13578]|[1][02])(([0][1-9]|[12][\\d])|[3][01])([A-Z0-9]{3}))|" +
+      "(([A-ZÑ&]{4})([0-9]{2})([0][13456789]|[1][012])(([0][1-9]|[12][\\d])|[3][0])([A-Z0-9]{3}))|" +
+      "(([A-ZÑ&]{4})([02468][048]|[13579][26])[0][2]([0][1-9]|[12][\\d])([A-Z0-9]{3}))|" +
+      "(([A-ZÑ&]{4})([0-9]{2})[0][2]([0][1-9]|[1][0-9]|[2][0-8])([A-Z0-9]{3}))$";
+      
+      if (rfc.toUpperCase().match(_rfc_pattern_pm) || rfc.toUpperCase().match(_rfc_pattern_pf)){
+              
+              return true;
+          }else {
+             
+              return false;
+          }
+  }
   return (
     <Spin spinning={loading}>
       <Row gutter={[0, 12]}>
@@ -244,6 +289,7 @@ const DatosFiscalesForm = ({
                   wrapperCol={{ span: 21 }}
                   help=""
                   className="no-error-text"
+                  required
                 >
                   <Input.Group>
                     <Row gutter={8}>

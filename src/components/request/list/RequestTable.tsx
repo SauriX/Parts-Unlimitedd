@@ -1,4 +1,4 @@
-import { Button, Col, Row, Table, Typography } from "antd";
+import { Button, Col, Image, Row, Table, Typography } from "antd";
 import { useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
@@ -16,8 +16,11 @@ import {
 } from "../../../app/models/request";
 import { moneyFormatter } from "../../../app/util/utils";
 import views from "../../../app/util/view";
+import moment from "moment";
 
 const { Link, Text } = Typography;
+
+const logoWee = `/${process.env.REACT_APP_NAME}/admin/assets/logos/weeclinic.png`;
 
 const RequestTable = () => {
   const { requestStore } = useStore();
@@ -32,7 +35,11 @@ const RequestTable = () => {
 
   useEffect(() => {
     const readRequests = async () => {
-      await getByFilter({});
+      await getByFilter({
+        tipoFecha: 1,
+        fechaInicial: moment().utcOffset(0, true),
+        fechaFinal: moment().utcOffset(0, true),
+      });
     };
 
     readRequests();
@@ -76,6 +83,9 @@ const RequestTable = () => {
         setSearchState,
         width: 240,
       }),
+      ellipsis: {
+        showTitle: false,
+      },
     },
     {
       ...getDefaultColumnProps("compañia", "Compañia", {
@@ -83,6 +93,9 @@ const RequestTable = () => {
         setSearchState,
         width: 180,
       }),
+      ellipsis: {
+        showTitle: false,
+      },
     },
     {
       ...getDefaultColumnProps("procedencia", "Procedencia", {
@@ -90,6 +103,9 @@ const RequestTable = () => {
         setSearchState,
         width: 180,
       }),
+      ellipsis: {
+        showTitle: false,
+      },
     },
     {
       ...getDefaultColumnProps("importe", "Importe", {
@@ -145,6 +161,13 @@ const RequestTable = () => {
           ))}
         </Row>
       ),
+    },
+    {
+      key: "esWeeClinic",
+      dataIndex: "esWeeClinic",
+      width: 40,
+      fixed: "right",
+      render: (value) => (value ? <Image src={logoWee} /> : ""),
     },
   ];
 

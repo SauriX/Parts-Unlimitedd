@@ -71,6 +71,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
   const [editorMicroscopica, setEditorMicroscopica] = useState<any>(
     EditorState.createEmpty()
   );
+  const [loading, setLoading] = useState(false);
   const [editorDiagnostico, setEditorDiagnostico] = useState<any>(
     EditorState.createEmpty()
   );
@@ -181,7 +182,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       dataIndex: "clave",
       title: "Clave",
       align: "left",
-      width: 100,
+      width: "20%",
       render: () => {
         return <strong>{estudio.areaId === 30 ? "HP" : "CITO"}</strong>;
       },
@@ -191,7 +192,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       dataIndex: "nombre",
       title: "Estudio",
       align: "left",
-      width: 200,
+      width: "30%",
       render: () => {
         return (
           <strong>
@@ -201,54 +202,19 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       },
     },
     {
-      key: "estatus",
-      dataIndex: "estatus",
-      title: "Estatus",
-      align: "left",
-      width: 50,
-      render: (value: any) => {
-        return <strong>{value.nombre}</strong>;
-      },
+      key: "id",
+      dataIndex: "acciones",
+      title: "Acciones",
+      align: "center",
+      width: "20%",
+      render: () => renderUpdateStatus(),
     },
-    {
-      key: "estatusId",
-      dataIndex: "estatusId",
-      title: "Fecha de Actualización",
-      align: "left",
-      width: 50,
-      render: (value: any, fullRow: any) => {
-        let ultimaActualizacion;
-        if (value === status.requestStudy.solicitado) {
-          ultimaActualizacion = fullRow.fechaSolicitud;
-          // return moment(fullRow.fechaSolicitud).format("DD/MM/YYYY");
-        }
-        if (value === status.requestStudy.capturado) {
-          ultimaActualizacion = fullRow.fechaCaptura;
-          // return moment(fullRow.fechaCaptura).format("DD/MM/YYYY");
-        }
-        if (value === status.requestStudy.validado) {
-          ultimaActualizacion = fullRow.fechaValidacion;
-          // return moment(fullRow.fechaValidacion).format("DD/MM/YYYY");
-        }
-        if (value === status.requestStudy.liberado) {
-          ultimaActualizacion = fullRow.fechaLiberacion;
-          // return moment(fullRow.fechaLiberacion).format("DD/MM/YYYY");
-        }
-        if (value === status.requestStudy.enviado) {
-          ultimaActualizacion = fullRow.fechaEnvio;
-        }
-        return (
-          <strong>{moment(ultimaActualizacion).format("DD/MM/YYYY")}</strong>
-        );
-      },
-    },
-
     {
       key: "Orden",
       dataIndex: "orden",
       title: "Orden",
       align: "left",
-      width: 50,
+      width: "15%",
       render: (value) => {
         return <strong>{value}</strong>;
       },
@@ -258,7 +224,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       dataIndex: "imprimir",
       title: "Seleccionar",
       align: "center",
-      width: 50,
+      width: "20%",
       render: () => {
         return (
           <Checkbox
@@ -292,59 +258,68 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
   const renderUpdateStatus = () => {
     return (
       <>
-        {currentStudy.estatusId >= status.requestStudy.solicitado && (
-          <>
-            {currentStudy.estatusId > status.requestStudy.solicitado &&
-              currentStudy.estatusId !== status.requestStudy.enviado && (
-                <Col span={4}>
+        {currentStudy.estatusId >= status.requestStudy.solicitado ? (
+          <Row>
+            <Col span={24}>
+              <Row justify="space-between" gutter={[12, 24]}>
+                {currentStudy.estatusId <= 3 ? (
+                  ""
+                ) : (
+                  <Col span={12}>
+                    <Button
+                      type="default"
+                      htmlType="submit"
+                      disabled={
+                        currentStudy.estatusId ===
+                          status.requestStudy.tomaDeMuestra ||
+                        currentStudy.estatusId === status.requestStudy.pendiente
+                      }
+                      onClick={async () => {
+                        setLoading(true);
+                        await updateStatus(true);
+                        setLoading(false);
+                      }}
+                      danger
+                    >
+                      Cancelar{" "}
+                      {currentStudy.estatusId === status.requestStudy.capturado
+                        ? "Captura"
+                        : currentStudy.estatusId ===
+                          status.requestStudy.validado
+                        ? "Validación"
+                        : ""}
+                    </Button>
+                  </Col>
+                )}
+                <Col span={12}>
                   <Button
-                    type="default"
+                    type="primary"
                     htmlType="submit"
-                    disabled={
-                      currentStudy.estatusId ===
-                        status.requestStudy.tomaDeMuestra ||
-                      currentStudy.estatusId === status.requestStudy.pendiente
-                    }
-                    onClick={async () => {
-                      await updateStatus(true);
-                      await loadInit();
+                    // disabled={disabled}
+                    onClick={() => {
+                      form.submit();
                     }}
-                    danger
+                    style={{
+                      backgroundColor: "#6EAA46",
+                      color: "white",
+                      borderColor: "#6EAA46",
+                    }}
                   >
-                    Cancelar
                     {currentStudy.estatusId === status.requestStudy.capturado
-                      ? " Captura"
+                      ? "Validar estudio"
                       : currentStudy.estatusId === status.requestStudy.validado
-                      ? " Validación"
+                      ? "Liberar estudio"
+                      : currentStudy.estatusId ===
+                        status.requestStudy.solicitado
+                      ? "Guardar captura"
                       : ""}
                   </Button>
                 </Col>
-              )}
-
-            <Col span={4}>
-              <Button
-                type="primary"
-                htmlType="submit"
-                // disabled={disabled}
-                onClick={() => {
-                  form.submit();
-                }}
-                style={{
-                  backgroundColor: "#6EAA46",
-                  color: "white",
-                  borderColor: "#6EAA46",
-                }}
-              >
-                {currentStudy.estatusId === status.requestStudy.capturado
-                  ? "Validar"
-                  : currentStudy.estatusId === status.requestStudy.validado
-                  ? "Liberar"
-                  : currentStudy.estatusId === status.requestStudy.solicitado
-                  ? "Guardar Captura"
-                  : ""}
-              </Button>
+              </Row>
             </Col>
-          </>
+          </Row>
+        ) : (
+          ""
         )}
       </>
     );
@@ -431,8 +406,68 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
 
   return (
     <>
-      <Row style={{ marginBottom: "20px" }}>{renderUpdateStatus()}</Row>
       <Row style={{ marginBottom: "20px" }}>
+        <Col span={8}>
+          <p>
+            CAP -{" "}
+            {currentStudy.estatusId >= 4 && (
+              <strong>{`${moment(currentStudy.fechaCaptura).format(
+                "DD/MM/YYYY HH:mm"
+              )}, ${currentStudy.usuarioCaptura}`}</strong>
+            )}
+          </p>
+        </Col>
+        <Col span={8}>
+          <p>
+            LIB -{" "}
+            {currentStudy.estatusId >= 6 && (
+              <strong>{`${moment(currentStudy.fechaLiberado).format(
+                "DD/MM/YYYY HH:mm"
+              )}, ${currentStudy.usuarioLiberado}`}</strong>
+            )}
+          </p>
+        </Col>
+        <Col span={8}>
+          <p>
+            IMP -{" "}
+            <strong>{`${moment(currentStudy.fechaValidacion).format(
+              "DD/MM/YYYY HH:mm"
+            )}, ${currentStudy.usuarioValidacion
+              ?.split(" ")
+              .map((word: string) => word[0])
+              .join("")}`}</strong>
+          </p>
+        </Col>
+        <Col span={8}>
+          <p>
+            VAL -{" "}
+            {currentStudy.estatusId >= 5 && (
+              <strong>{`${moment(currentStudy.fechaValidacion).format(
+                "DD/MM/YYYY HH:mm"
+              )}, ${currentStudy.usuarioValidacion}`}</strong>
+            )}
+          </p>
+        </Col>
+        <Col span={8}>
+          <p>
+            ENV -{" "}
+            {currentStudy.estatusId >= 7 && (
+              <strong>{`${moment(currentStudy.fechaValidacion).format(
+                "DD/MM/YYYY HH:mm"
+              )}, ${currentStudy.usuarioValidacion}`}</strong>
+            )}
+          </p>
+        </Col>
+        <Col span={8}>
+          <p>
+            ENT -{" "}
+            {currentStudy.estatusId >= 8 && (
+              <strong>{`${moment(currentStudy.fechaValidacion).format(
+                "DD/MM/YYYY HH:mm"
+              )}, ${currentStudy.usuarioValidacion}`}</strong>
+            )}
+          </p>
+        </Col>
         <Col span={24}>
           <Table<any>
             size="small"

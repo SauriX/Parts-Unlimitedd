@@ -35,7 +35,7 @@ const CompanyDetail = () => {
   });
 
   const { id } = useParams<UrlParams>();
-  const companyId = !id ? undefined : (id);
+  const companyId = !id ? undefined : id;
 
   useEffect(() => {
     console.log(companyId);
@@ -46,7 +46,6 @@ const CompanyDetail = () => {
 
   //if (companyId === undefined) return null;
 
-  
   return (
     <Fragment>
       <CompanyFormHeader id={companyId!} handlePrint={handlePrint} />
@@ -56,7 +55,7 @@ const CompanyDetail = () => {
         componentRef={componentRef}
         printing={printing}
       />
-      <Divider className="header-divider" />
+      {/* <Divider className="header-divider" /> */}
       {/* <Table<IContactForm>
             size="large"
             rowKey={(record) => record.tempId ?? record.id}

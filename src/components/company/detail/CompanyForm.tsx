@@ -1,23 +1,37 @@
-import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Table } from "antd";
+import {
+  Spin,
+  Form,
+  Row,
+  Col,
+  Pagination,
+  Button,
+  PageHeader,
+  Divider,
+  Table,
+} from "antd";
 import React, { FC, Fragment, useCallback, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
-import TextInput from "../../../app/common/form/TextInput";
-import SwitchInput from "../../../app/common/form/SwitchInput";
-import SelectInput from "../../../app/common/form/SelectInput";
+import TextInput from "../../../app/common/form/proposal/TextInput";
+import SwitchInput from "../../../app/common/form/proposal/SwitchInput";
+import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import { useStore } from "../../../app/stores/store";
-import {useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ICompanyForm, CompanyFormValues } from "../../../app/models/company";
-import { IContactForm} from "../../../app/models/contact";
+import { IContactForm } from "../../../app/models/contact";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
-import NumberInput from "../../../app/common/form/NumberInput";
+import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import { observer } from "mobx-react-lite";
 import { IOptions } from "../../../app/models/shared";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
-import MaskInput from "../../../app/common/form/MaskInput";
+import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
-import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
+import {
+  getDefaultColumnProps,
+  IColumns,
+  ISearch,
+} from "../../../app/common/table/utils";
 import IconButton from "../../../app/common/button/IconButton";
 import CompanyFormTableHeader from "./CompanyFormTableHeader";
 import { useReactToPrint } from "react-to-print";
@@ -32,12 +46,13 @@ type CompanyFormProps = {
 };
 const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   const { companyStore, optionStore, locationStore } = useStore();
-  const { getById, generatePass, create, update, getAll, company } = companyStore;
+  const { getById, generatePass, create, update, getAll, company } =
+    companyStore;
   const {
     provenanceOptions,
     getprovenanceOptions,
     paymentOptions,
-    getpaymentOptions,
+    getPaymentOptions: getpaymentOptions,
     bankOptions,
     getbankOptions,
     cfdiOptions,
@@ -61,7 +76,9 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [colonies, setColonies] = useState<IOptions[]>([]);
-  const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
+  const [readonly, setReadonly] = useState(
+    searchParams.get("mode") === "readonly"
+  );
   const [values, setValues] = useState<ICompanyForm>(new CompanyFormValues());
 
   const [contacts, setContacts] = useState<IContactForm[]>([]);
@@ -76,7 +93,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     setColonies([]);
   }, [form]);
 
-  const setContactos = (item:IContactForm ) => {
+  const setContactos = (item: IContactForm) => {
     var contacto = filteredContacts;
     contacto.push(item);
     setFilteredContacts(contacto);
@@ -159,9 +176,8 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
 
     let success = false;
 
-
     if (!company.id) {
-      company.id= "00000000-0000-0000-0000-000000000000"
+      company.id = "00000000-0000-0000-0000-000000000000";
       success = await create(company);
     } else {
       success = await update(company);
@@ -182,7 +198,9 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   const prevnextCompany = (index: number) => {
     const companys = company[index];
     navigate(
-      `/companies/${companys?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search")}`
+      `/companies/${companys?.id}?mode=${searchParams.get(
+        "mode"
+      )}&search=${searchParams.get("search")}`
     );
   };
   console.log("Aqui esta el console");
@@ -194,7 +212,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
       form.setFieldsValue({ contrasena: pass });
     };
     console.log(values);
-    if (!id ) {
+    if (!id) {
       console.log(id);
       console.log(id);
       newpass();
@@ -219,9 +237,10 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
 
   const botonEdit = () => {
     setReadonly(false);
-    navigate(`/companies/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`);
+    navigate(
+      `/companies/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`
+    );
   };
-
 
   const [, setPrinting] = useState(false);
   const handleCompanyPrint = useReactToPrint({
@@ -295,14 +314,15 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
             setEditContact(contact);
           }}
         />
-        
       ),
     },
   ];
 
   const onFinishContact = (contact: IContactForm) => {
     contact.telefono = contact.telefono
-      ? parseInt(contact.telefono.toString()?.replaceAll("_", "0")?.replaceAll("-", ""))
+      ? parseInt(
+          contact.telefono.toString()?.replaceAll("_", "0")?.replaceAll("-", "")
+        )
       : undefined;
 
     if (!editContact) {
@@ -310,14 +330,15 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
       contact.tempId = uuid();
       setContacts((prev) => [...prev, contact]);
     } else {
-      const index = contacts.findIndex((x) => x.id === editContact.id && x.tempId === editContact.tempId);
+      const index = contacts.findIndex(
+        (x) => x.id === editContact.id && x.tempId === editContact.tempId
+      );
       if (index > -1) {
         const all = [...contacts];
         all[index] = { ...editContact, ...contact };
         setContacts(all);
       }
     }
-   
 
     formContact.resetFields();
     setEditContact(undefined);
@@ -326,7 +347,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <Row style={{ marginBottom: 24 }}>
-        {!!id  && (
+        {!!id && (
           <Col md={12} sm={24} style={{ textAlign: "left" }}>
             <Pagination
               size="small"
@@ -343,7 +364,8 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
           <Col md={id ? 12 : 24} sm={24} style={{ textAlign: "right" }}>
             <Button
               onClick={() => {
-                navigate("/companies");}}
+                navigate("/companies");
+              }}
             >
               {" "}
               Cancelar{" "}
@@ -387,7 +409,8 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
             onFieldsChange={() => {
               setDisabled(
                 !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+                  form.getFieldsError().filter(({ errors }) => errors.length)
+                    .length > 0
               );
             }}
           ></Form>
@@ -399,11 +422,14 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo de Compañias" image="compañia" />}
+              title={
+                <HeaderTitle title="Catálogo de Compañias" image="compañia" />
+              }
               className="header-container"
             ></PageHeader>
           )}
           {printing && <Divider className="header-divider" />}
+
           <Form<ICompanyForm>
             {...formItemLayout}
             form={form}
@@ -415,12 +441,13 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
             onFieldsChange={() => {
               setDisabled(
                 !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+                  form.getFieldsError().filter(({ errors }) => errors.length)
+                    .length > 0
               );
             }}
           >
-            <Row>
-              <Col md={12} sm={24}>
+            <Row gutter={[0, 12]}>
+              <Col md={8} sm={24}>
                 <TextInput
                   formProps={{
                     name: "clave",
@@ -431,15 +458,58 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   readonly={readonly}
                   type="string"
                 />
+              </Col>
+              <Col md={8} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "rfc",
+                    label: "RFC ",
+                  }}
+                  max={100}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <SelectInput
+                  formProps={{
+                    name: "metodoDePagoId",
+                    label: "Método de pago: ",
+                  }}
+                  readonly={readonly}
+                  options={paymentMethodOptions}
+                />
+              </Col>
+              <Col md={8} sm={24}>
                 <TextInput
                   formProps={{
                     name: "contrasena",
                     label: "Contraseña ",
                   }}
                   max={100}
-                  required
                   readonly={readonly}
                 />
+              </Col>
+              <Col md={8} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "codigoPostal",
+                    label: "Código P: ",
+                  }}
+                  max={1000000}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <SelectInput
+                  formProps={{
+                    name: "formaDePagoId",
+                    label: "Forma de pago: ",
+                  }}
+                  readonly={readonly}
+                  options={paymentOptions}
+                />
+              </Col>
+              <Col md={8} sm={24}>
                 <TextInput
                   formProps={{
                     name: "emailEmpresarial",
@@ -449,6 +519,28 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   readonly={readonly}
                   type="email"
                 />
+              </Col>
+              <Col md={8} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "estado",
+                    label: "Estado ",
+                  }}
+                  max={100}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "limiteDeCredito",
+                    label: "Límite de crédito: ",
+                  }}
+                  max={100}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
                 <TextInput
                   formProps={{
                     name: "nombreComercial",
@@ -458,7 +550,29 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   required
                   readonly={readonly}
                 />
-                
+              </Col>
+              <Col md={8} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "ciudad",
+                    label: "Municipio ",
+                  }}
+                  max={100}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <NumberInput
+                  formProps={{
+                    name: "diasCredito",
+                    label: "Días de crédito: ",
+                  }}
+                  max={99}
+                  min={1}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
                 <SelectInput
                   formProps={{
                     name: "procedenciaId",
@@ -468,24 +582,89 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   required
                   options={originOptions}
                 />
+              </Col>
+              <Col md={8} sm={24}>
+                <SelectInput
+                  formProps={{
+                    name: "coloniaId",
+                    label: "Colonia",
+                  }}
+                  readonly={readonly}
+                  options={colonies}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <SelectInput
+                  formProps={{
+                    name: "cfdiId",
+                    label: "CFDI: ",
+                  }}
+                  readonly={readonly}
+                  options={cfdiOptions}
+                />
+              </Col>
+              <Col md={8} sm={24}>
                 <SelectInput
                   formProps={{
                     name: "precioListaId",
                     label: "Lista de precio ",
                   }}
                   readonly={readonly}
-                  required
                   options={priceListOptions}
                 />
+              </Col>
+
+              <Col md={8} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "razonSocial",
+                    label: "Razón social: ",
+                  }}
+                  max={100}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "numeroDeCuenta",
+                    label: "Número de cuenta: ",
+                  }}
+                  max={100}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
                 <SelectInput
                   formProps={{
                     name: "promocionesId",
                     label: "Lista de promoción ",
                   }}
                   readonly={readonly}
-                  required
                   options={PromotionOptions}
-                  />
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "regimenFiscal",
+                    label: "Regimen fiscal: ",
+                  }}
+                  max={100}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <SelectInput
+                  formProps={{
+                    name: "bancoId",
+                    label: "Banco: ",
+                  }}
+                  readonly={readonly}
+                  options={bankOptions}
+                />
+              </Col>
+              <Col md={8} sm={24}>
                 <SwitchInput
                   name="activo"
                   onChange={(value) => {
@@ -497,113 +676,6 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   }}
                   label="Activo"
                   readonly={readonly}
-                />
-              </Col>
-              <Col md={12} sm={24}>
-                <TextInput
-                  formProps={{
-                    name: "rfc",
-                    label: "RFC ",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                />
-
-                <TextInput
-                  formProps={{
-                    name: "codigoPostal",
-                    label: "Código P: ",
-                  }}
-                  max={1000000}
-                  required
-                  readonly={readonly}
-                />
-
-                <TextInput
-                  formProps={{
-                    name: "estado",
-                    label: "Estado ",
-                  }}
-                  max={100}
-                  readonly={readonly}
-                />
-
-                <TextInput
-                  formProps={{
-                    name: "ciudad",
-                    label: "Municipio ",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                />
-                <TextInput
-                  formProps={{
-                    name: "razonSocial",
-                    label: "Razón social: ",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                />
-                <SelectInput
-                  formProps={{
-                    name: "metodoDePagoId",
-                    label: "Método de pago: ",
-                  }}
-                  readonly={readonly}
-                  required
-                  options={paymentMethodOptions}
-                />
-                <SelectInput
-                  formProps={{
-                    name: "formaDePagoId",
-                    label: "Forma de pago: ",
-                  }}
-                  readonly={readonly}
-                  options={paymentOptions}
-                />
-                <TextInput
-                  formProps={{
-                    name: "limiteDeCredito",
-                    label: "Límite de crédito: ",
-                  }}
-                  max={100}
-                  readonly={readonly}
-                />
-                <NumberInput
-                  formProps={{
-                    name: "diasCredito",
-                    label: "Días de crédito: ",
-                  }}
-                  max={99}
-                  min={1}
-                  readonly={readonly}
-                />
-                <SelectInput
-                  formProps={{
-                    name: "cfdiId",
-                    label: "CFDI: ",
-                  }}
-                  readonly={readonly}
-                  options={cfdiOptions}
-                />
-                <TextInput
-                  formProps={{
-                    name: "numeroDeCuenta",
-                    label: "Número de cuenta: ",
-                  }}
-                  max={100}
-                  readonly={readonly}
-                />
-                <SelectInput
-                  formProps={{
-                    name: "bancoId",
-                    label: "Banco: ",
-                  }}
-                  readonly={readonly}
-                  options={bankOptions}
                 />
               </Col>
             </Row>
@@ -632,7 +704,9 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 onFieldsChange={() => {
                   setDisabled(
                     !formContact.isFieldsTouched() ||
-                      formContact.getFieldsError().filter(({ errors }) => errors.length).length > 0
+                      formContact
+                        .getFieldsError()
+                        .filter(({ errors }) => errors.length).length > 0
                   );
                 }}
               >
@@ -711,7 +785,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
           </Row>
         </div>
       </div>
-      <Divider />
+      {/* <Divider /> */}
     </Spin>
   );
 };
