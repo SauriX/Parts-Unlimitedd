@@ -21,7 +21,7 @@ import {
   Card,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
-import { formItemLayout } from "../../../app/util/utils";
+import { formItemLayout, moneyFormatter } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import { useStore } from "../../../app/stores/store";
 import { IReagentForm, ReagentFormValues } from "../../../app/models/reagent";
@@ -54,9 +54,18 @@ import { ITaxData } from "../../../app/models/taxdata";
 import DateInput from "../../../app/common/form/proposal/DateInput";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import IconButton from "../../../app/common/button/IconButton";
-import { IQuotationList } from "../../../app/models/quotation";
+import {
+  IQuotationForm,
+  IQuotationList,
+  ISearchQuotation,
+  ISolicitud,
+  QuotationFormValues,
+  SearchQuotationValues,
+} from "../../../app/models/quotation";
 import Link from "antd/lib/typography/Link";
 import MaskInput from "../../../app/common/form/proposal/MaskInput";
+import { IRequestInfo } from "../../../app/models/request";
+import { IAppointmentForm, IAppointmentList, ISearchAppointment, SearchAppointmentValues } from "../../../app/models/appointmen";
 
 type ProceedingFormProps = {
   id: string;
@@ -76,7 +85,23 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     locationStore,
     optionStore,
     profileStore,
+    requestStore,
+    appointmentStore,
+    quotationStore
   } = useStore();
+  const {
+    getAllDom,
+    getAllLab,
+    sucursales,
+    getByIdDom,
+    getByIdLab,
+    sucursal,
+    updateDom,
+    updateLab,
+    
+  } = appointmentStore;
+  const {createsolictud}=quotationStore
+  const { loadingRequests, requests, getRequests: getByFilter } = requestStore;
   const {
     getById,
     update,
@@ -89,6 +114,9 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     search,
     tax,
     activateWallet,
+    getAllQ,
+    quotatios,
+    getByIdQ
   } = procedingStore;
   const { profile } = profileStore;
   const { BranchOptions, getBranchOptions } = optionStore;
@@ -98,6 +126,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
+  const [citas, SetCitas] = useState<IAppointmentList[]>([]);
   const [form] = Form.useForm<IProceedingForm>();
   const [values, setValues] = useState<IProceedingForm>(
     new ProceedingFormValues()
@@ -114,7 +143,31 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     clearTax();
     closeModal();
   };
-
+  const convertSolicitud = (data:IAppointmentForm|IQuotationForm) => {
+    var request: ISolicitud = {
+      Id: data.id,
+      ExpedienteId: data.expedienteid!,
+      SucursalId: profile?.sucursal!,
+      Clave: data.nomprePaciente,
+      ClavePatologica: "",
+      UsuarioId: "00000000-0000-0000-0000-000000000000",
+      General: {
+        solicitudId: "00000000-0000-0000-0000-000000000000",
+        expedienteId: data.expedienteid!,
+        procedencia: 0,
+        compañiaId: data.generales?.compañia!,
+        medicoId: data.generales?.medico!,
+        afiliacion: "",
+        urgencia: 0,
+        metodoEnvio: [],
+        correo: data.generales?.email!,
+        whatsapp: data.generales?.whatssap!,
+        observaciones: data.generales?.observaciones!,
+      },
+      Estudios: data.estudy!,
+    };
+    var redirect = createsolictud(request);
+  }
   const clearLocation = () => {
     form.setFieldsValue({
       estado: undefined,
@@ -128,7 +181,22 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     const readExpedinte = async (id: string) => {
       setLoading(true);
       var expediente = await getById(id);
-
+      var searchQ: ISearchQuotation = new SearchQuotationValues();
+      var searchC:ISearchAppointment = {
+        expediente:expediente?.expediente!,
+        nombre:"",
+        fecha:[],
+        tipo:"laboratorio"
+      }
+      var citaslab = await getAllLab(searchC); 
+      var citasdom = await getAllDom(searchC); 
+        var citasall = citaslab?.concat(citasdom!);
+        SetCitas(citasall!);
+      searchQ.presupuesto = expediente?.expediente!;
+      await getAllQ(searchQ);
+      await getByFilter({
+        expediente:expediente?.expediente
+      });
       const location = await getColoniesByZipCode(expediente?.cp!);
       if (location) {
         setColonies(
@@ -255,21 +323,30 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     setLoading(true);
     var coincidencia = await coincidencias(newValues);
     const reagent = { ...values, ...newValues };
+
+    if (reagent.nombre == "" || reagent.apellido == "" || reagent.sexo == "") {
+      alerts.warning("El nombre y sexo no pueden estar vacios");
+    }
     if (coincidencia.length > 0 && !reagent.id!) {
       openModal({
         title: "Se encuentran coincidencias con los siguientes expedientes",
         body: (
           <Concidencias
             handle={async () => {
+              setLoading(true);
               let success = false;
-              tax.forEach((x) => {
-                if (x.id?.includes("tempId")) {
-                  x.id = "";
+              console.log(tax, "tax");
+              var taxdata: ITaxData[] = [];
+
+              for (let element of tax) {
+                if (!element.id || element.id.startsWith("tempId")) {
+                  delete element.id;
+                  taxdata.push(element);
+                } else {
+                  taxdata.push(element);
                 }
-                return x;
-              });
-              console.log(tax);
-              reagent.taxData = tax;
+              }
+              reagent.taxData = taxdata;
 
               if (!reagent.id) {
                 success = (await create(reagent)) != null;
@@ -283,17 +360,33 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
             }}
             expedientes={coincidencia}
             handleclose={async () => {
+              setReadonly(true);
+
               setLoading(false);
             }}
             printing={false}
           ></Concidencias>
         ),
+
         closable: true,
         width: "55%",
+        onClose() {
+          setLoading(false);
+        },
       });
     } else {
       let success = false;
-      reagent.taxData = tax;
+      var taxdata: ITaxData[] = [];
+
+      for (let element of tax) {
+        if (!element.id || element.id.startsWith("tempId")) {
+          delete element.id;
+          taxdata.push(element);
+        } else {
+          taxdata.push(element);
+        }
+      }
+      reagent.taxData = taxdata;
       if (!reagent.id) {
         success = (await create(reagent)) != null;
       } else {
@@ -395,125 +488,140 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           }}
         />
       ),
+    },    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Editar",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value,item) => (
+        <Button
+          type="primary"
+          title=""
+          onClick={async () => {
+            var cotizacion = await getByIdQ(item.id);
+            convertSolicitud(cotizacion!);
+          }}
+        >
+
+          Convertir a solicitud
+        </Button>
+      ),
     },
   ];
 
-  const columns: IColumns<any> = [
+  const columns: IColumns<IRequestInfo> = [
     {
-      ...getDefaultColumnProps("clave", "Solicitud", {
-        width: "10%",
-        minWidth: 150,
-        windowSize: windowWidth,
+      ...getDefaultColumnProps("clave", "Clave", {
+        width: 150,
       }),
-      render: (value, maquilador) => (
-        <Button
+      render: (value, item) => (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+                  <Button
           type="link"
           onClick={() => {
             navigate(
-              `/maquila/${maquilador.id}?${searchParams}&mode=readonly&search=${
-                searchParams.get("search") ?? "all"
-              }`
+              `/${views.request}/${item.expedienteId}/${item.solicitudId}`
             );
           }}
         >
           {value}
         </Button>
+
+          <small>
+           {item.clavePatologica}
+          </small>
+        </div>
       ),
     },
     {
-      ...getDefaultColumnProps("nombre", "Unidad", {
-        width: "20%",
-        minWidth: 150,
-        windowSize: windowWidth,
+      ...getDefaultColumnProps("afiliacion", "Afiliación", {
+
+        width: 180,
       }),
     },
     {
-      ...getDefaultColumnProps("direccion", "Compañia", {
-        width: "20%",
-        minWidth: 150,
-        windowSize: windowWidth,
+      ...getDefaultColumnProps("paciente", "Paciente", {
+
+        width: 240,
       }),
+      ellipsis: {
+        showTitle: false,
+      },
     },
     {
-      ...getDefaultColumnProps("telefono", "Fact", {
-        width: "8%",
-        minWidth: 150,
-        windowSize: windowWidth,
+      ...getDefaultColumnProps("compañia", "Compañia", {
+
+        width: 180,
       }),
+      ellipsis: {
+        showTitle: false,
+      },
     },
     {
-      ...getDefaultColumnProps("correo", "Total", {
-        width: "14%",
-        minWidth: 150,
-        windowSize: windowWidth,
+      ...getDefaultColumnProps("procedencia", "Procedencia", {
+
+        width: 180,
       }),
+      ellipsis: {
+        showTitle: false,
+      },
     },
     {
-      key: "activo",
-      dataIndex: "activo",
-      title: "Saldo",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => (value ? "Sí" : "No"),
+      ...getDefaultColumnProps("importe", "Importe", {
+
+        width: 120,
+      }),
+      align: "right",
+      render: (value) => moneyFormatter.format(value),
     },
     {
-      key: "activo",
-      dataIndex: "activo",
-      title: "Tipo solicitud",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => (value ? "Sí" : "No"),
+      ...getDefaultColumnProps("descuento", "Descuento", {
+
+        width: 120,
+      }),
+      align: "right",
+      render: (value) => moneyFormatter.format(value),
     },
     {
-      key: "activo",
-      dataIndex: "activo",
-      title: "Estudios",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => (value ? "Sí" : "No"),
+      ...getDefaultColumnProps("total", "Total", {
+
+        width: 120,
+      }),
+      align: "right",
+      render: (value) => moneyFormatter.format(value),
     },
     {
-      key: "editar",
-      dataIndex: "id",
-      title: "Editar",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "6%",
-      render: (value) => (
-        <IconButton
-          title="Editar Maquilador"
-          icon={<EditOutlined />}
-          onClick={() => {
-            navigate(
-              `/maquila/${value}?${searchParams}&mode=edit&search=${
-                searchParams.get("search") ?? "all"
-              }`
-            );
-          }}
-        />
-      ),
+      ...getDefaultColumnProps("saldo", "Saldo", {
+
+        width: 120,
+      }),
+      align: "right",
+      render: (value) => moneyFormatter.format(value),
     },
   ];
   const columnsC: IColumns<any> = [
     {
       ...getDefaultColumnProps("noSolicitud", "Solicitud de cita", {
-        width: "20%",
+        width: "15%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
       render: (value, item) => (
-        <Link
-        /*           draggable
+        <div></div>
+        /*         <Link
+                  draggable
           onDragStart={() => {
             SetCita(item);
-          }} */
+          }} 
         >
           {value}
-        </Link>
+        </Link> */
       ),
     },
     {
       ...getDefaultColumnProps("expediente", "Expediente", {
-        width: "20%",
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -557,14 +665,39 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       title: "Editar",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => (
+      render: (value,item) => (
         <IconButton
-          title="Editar reactivo"
+          title="Editar cita"
           icon={<EditOutlined />}
           onClick={() => {
-            // navigate(`/${views.appointment}/${value}?type=${tipo}&mode=edit`);
+             navigate(`/${views.appointment}/${value}?type=${item.type}&mode=edit`);
           }}
         />
+      ),
+    },
+    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Editar",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value,item) => (
+        <Button
+          type="primary"
+          title=""
+          onClick={async () => {
+              if(item.type=="laboratorio"){
+                var citas = await getByIdLab(item.id);
+                convertSolicitud(citas!);
+              }else{
+                var citas = await getByIdDom(item.id);
+                convertSolicitud(citas!);
+              }
+          }}
+        >
+
+          Convertir a solicitud
+        </Button>
       ),
     },
   ];
@@ -649,6 +782,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           max={500}
                           showLabel
+                          readonly={readonly}
                         />
                       </Col>
                       <Col span={12}>
@@ -660,6 +794,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           max={500}
                           showLabel
+                          readonly={readonly}
                         />
                       </Col>
                     </Row>
@@ -676,6 +811,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   }}
                   max={500}
                   type="email"
+                  readonly={readonly}
                 />
               </Col>
               <Col span={4}>
@@ -685,6 +821,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     label: "Exp",
                   }}
                   max={500}
+                  readonly={readonly}
                 />
               </Col>
               <Col span={4}>
@@ -699,6 +836,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     { label: "F", value: "F" },
                     { label: "M", value: "M" },
                   ]}
+                  readonly={readonly}
                 />
               </Col>
               <Col span={8}>
@@ -709,6 +847,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     labelCol: { span: 12 },
                     wrapperCol: { span: 12 },
                   }}
+                  readonly={readonly}
                 />
               </Col>
               <Col span={4}>
@@ -722,6 +861,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   max={500}
                   min={0}
                   suffix={"años"}
+                  readonly={readonly}
                 />
               </Col>
               <Col span={8}>
@@ -762,6 +902,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                               "El campo debe contener 10 dígitos"
                             );
                           }}
+                          readonly={readonly}
                         />
                       </Col>
                       <Col span={12}>
@@ -793,6 +934,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                               "El campo debe contener 10 dígitos"
                             );
                           }}
+                          readonly={readonly}
                         />
                       </Col>
                     </Row>
@@ -818,6 +960,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           max={5}
                           showLabel
+                          readonly={readonly}
                         />
                       </Col>
                       <Col span={4}>
@@ -829,6 +972,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           max={500}
                           showLabel
+                          readonly={readonly}
                         />
                       </Col>
                       <Col span={5}>
@@ -840,6 +984,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           max={500}
                           showLabel
+                          readonly={readonly}
                         />
                       </Col>
                       <Col span={6}>
@@ -851,6 +996,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           showLabel
                           options={colonies}
+                          readonly={readonly}
                         />
                       </Col>
                       <Col span={7}>
@@ -862,6 +1008,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           max={500}
                           showLabel
+                          readonly={readonly}
                         />
                       </Col>
                     </Row>
@@ -896,6 +1043,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   }}
                   options={BranchOptions}
                   required
+                  readonly={readonly}
                 />
               </Col>
             </Row>
@@ -992,7 +1140,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 size="small"
                 rowKey={(record) => record.id}
                 columns={columns}
-                dataSource={[]}
+                dataSource={[...requests]}
                 /*    pagination={defaultPaginationProperties} */
                 sticky
                 scroll={{
@@ -1000,12 +1148,12 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 }}
               />
               <Divider orientation="left">Presupuestos</Divider>
-              <Table<any>
+              <Table<IQuotationList>
                 loading={loading || printing}
                 size="small"
                 rowKey={(record) => record.id}
                 columns={columnsP}
-                dataSource={[]}
+                dataSource={quotatios}
                 /*    pagination={defaultPaginationProperties} */
                 sticky
                 scroll={{
@@ -1018,7 +1166,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 size="small"
                 rowKey={(record) => record.id}
                 columns={columnsC}
-                dataSource={[]}
+                dataSource={citas}
                 /*    pagination={defaultPaginationProperties} */
                 sticky
                 scroll={{

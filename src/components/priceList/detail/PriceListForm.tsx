@@ -41,6 +41,8 @@ import {
 } from "../../../app/common/table/utils";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import StudyTable from "./StudyTable";
+import { IPackEstudioList } from "../../../app/models/packet";
+import PackTable from "./PackTable";
 
 const { Search } = Input;
 
@@ -203,6 +205,9 @@ const PriceListForm: FC<PriceListFormProps> = ({
               precio += estudiosValidar[i]!.precio!;
             }
             item.precio = precio;
+            if (item.descuento == 0 || item.precioFinal == undefined) {
+              item.precioFinal = precio;
+            }
           }
         }
       }
@@ -489,15 +494,15 @@ const PriceListForm: FC<PriceListFormProps> = ({
       var areaSearch = await getareaOptions(departament);
 
       console.log("Filtro");
-      var estudios = lista.filter((x) => x.departamento === departamento);
+      var estudios = lista2.filter((x) => x.departamento === departamento);
       console.log(lista, "lista");
       console.log(estudios, "el estudio");
       setValues((prev) => ({ ...prev, table: estudios }));
       setAreaSearch(areaSearch!);
     } else {
-      estudios = lista;
+      estudios = lista2;
       if (estudios.length <= 0) {
-        estudios = lista;
+        estudios = lista2;
       }
       setValues((prev) => ({ ...prev, table: estudios }));
     }
@@ -507,11 +512,11 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const filterByArea = (area?: number) => {
     if (area) {
       var areaActive = areas.filter((x) => x.value === area)[0].label;
-      var estudios = lista.filter((x) => x.area === areaActive);
+      var estudios = lista2.filter((x) => x.area === areaActive);
       setValues((prev) => ({ ...prev, table: estudios }));
     } else {
       const dep = departmentOptions.find((x) => x.value === depId)?.label;
-      estudios = lista.filter((x) => x.departamento === dep);
+      estudios = lista2.filter((x) => x.departamento === dep);
       setValues((prev) => ({ ...prev, table: estudios }));
     }
   };
@@ -521,7 +526,9 @@ const PriceListForm: FC<PriceListFormProps> = ({
     if (search != null) {
       console.log("if");
       var estudios = lista2.filter(
-        (x) => x.clave.includes(search) || x.nombre.includes(search)
+        (x) =>
+          x.clave.toUpperCase().includes(search.toUpperCase()) ||
+          x.nombre.toUpperCase().includes(search.toUpperCase())
       );
       console.log(lista);
       setValues((prev) => ({ ...prev, table: estudios }));
@@ -553,18 +560,105 @@ const PriceListForm: FC<PriceListFormProps> = ({
     priceList.paquete = priceList.table!.filter(
       (x) => x.activo && x.paqute === true
     );
-    console.log(priceList, "LISTA");
-    let success = false;
-    if (!priceList.id) {
-      success = await create(priceList);
-    } else {
-      success = await update(priceList);
+    var countFailPricesE = 0;
+    console.log(values.table);
+    values.estudios!.forEach((x) => {
+      if (x.precio == 0) {
+        countFailPricesE++;
+      }
+    });
+    if (countFailPricesE > 0) {
+      alerts.warning("El precio  debe ser mayor a 0");
+      setLoading(false);
+      return;
     }
+    var countFailPricesP = 0;
+    values.paquete!.forEach((x) => {
+      if (x.precioFinal == 0) {
+        countFailPricesP++;
+      }
+    });
+    if (countFailPricesP > 0) {
+      alerts.warning("El precio  debe ser mayor a 0");
+      setLoading(false);
+      return;
+    }
+    let estudiosSinPrecio: IPriceListEstudioList[] = [];
+    values.paquete.forEach((x) => {
+      let estudiosPaquete = x.pack;
 
-    setLoading(false);
+      let estudiosValidar: IPriceListEstudioList[] = [];
+      console.log(estudiosPaquete);
+      estudiosPaquete?.forEach((x) => {
+        var estudy = values.estudios!.find((y) => y.id === x.id && !y.paqute);
+        console.log(estudy);
+        estudiosValidar.push(estudy!);
+      });
 
-    if (success) {
-      goBack();
+      estudiosValidar?.forEach((x) => {
+        if (x.precio === 0 || x.activo === false) {
+          estudiosSinPrecio.push(x);
+        }
+      });
+    });
+    if (estudiosSinPrecio.length > 0) {
+      openModal({
+        title: "Estudios sin precio asignado",
+        body: <StudyTable data={estudiosSinPrecio} closeModal={closeModal} />,
+      });
+      setLoading(false);
+      return;
+    }
+    var paquetesSindescuento: IPriceListEstudioList[] = [];
+    values.paquete.forEach((element) => {
+      if (element.descuento == 0 || element.departamento == undefined) {
+        paquetesSindescuento.push(element);
+      }
+    });
+
+    if (estudiosSinPrecio.length > 0) {
+      openModal({
+        title: "Estudios sin precio asignado",
+
+        body: (
+          <PackTable
+            data={estudiosSinPrecio}
+            closeModal={closeModal}
+            handle={async () => {
+              console.log(priceList, "LISTA");
+              let success = false;
+              if (!priceList.id) {
+                success = await create(priceList);
+              } else {
+                success = await update(priceList);
+              }
+
+              setLoading(false);
+
+              if (success) {
+                goBack();
+              }
+            }}
+          />
+        ),
+        onClose() {
+          setLoading(false);
+        },
+      });
+    } else {
+      console.log(priceList, "LISTA");
+      let success = false;
+      if (!priceList.id) {
+        success = await create(priceList);
+      } else {
+        success = await update(priceList);
+      }
+
+      setLoading(false);
+
+      if (success) {
+        goBack();
+      }
     }
   };
 
@@ -594,14 +688,12 @@ const PriceListForm: FC<PriceListFormProps> = ({
         width: 0,
         windowSize: windowWidth,
       }),
-      render: (value,item) => (
-        <InputNumber type={"number"}  
-        value={item.precio}  
-        onChange={(value)=>setStudyPrice(value??0,item,item.paqute!)}
-        
-        >
-
-        </InputNumber>
+      render: (value, item) => (
+        <InputNumber
+          type={"number"}
+          value={item.precio}
+          onChange={(value) => setStudyPrice(value ?? 0, item, item.paqute!)}
+        ></InputNumber>
       ),
     },
     {
@@ -726,9 +818,15 @@ const PriceListForm: FC<PriceListFormProps> = ({
       dataIndex: "id",
       title: "Desc %",
       align: "center",
-      width:  0,
-      render: (value,item) => (
-        <InputNumber type={"number"} readOnly={item.precio==0} min={0}  value={item.descuento}   onChange={(value)=>setStudydiscunt(value??0,item,item.paqute!)} ></InputNumber>
+      width: 0,
+      render: (value, item) => (
+        <InputNumber
+          type={"number"}
+          readOnly={item.precio == 0}
+          min={0}
+          value={item.descuento}
+          onChange={(value) => setStudydiscunt(value ?? 0, item, item.paqute!)}
+        ></InputNumber>
       ),
     },
     {
@@ -736,9 +834,15 @@ const PriceListForm: FC<PriceListFormProps> = ({
       dataIndex: "id",
       title: "Desc cantidad",
       align: "center",
-      width:  0 ,
-      render: (value,item) => (
-        <InputNumber type={"number"} min={0} readOnly={item.precio==0} value={item.descuenNum}   onChange={(value)=>setStudydiscuntc(value??0,item,item.paqute!)} ></InputNumber>
+      width: 0,
+      render: (value, item) => (
+        <InputNumber
+          type={"number"}
+          min={0}
+          readOnly={item.precio == 0}
+          value={item.descuenNum}
+          onChange={(value) => setStudydiscuntc(value ?? 0, item, item.paqute!)}
+        ></InputNumber>
       ),
     },
     {
@@ -746,9 +850,17 @@ const PriceListForm: FC<PriceListFormProps> = ({
       dataIndex: "id",
       title: "Precio final",
       align: "center",
-      width:  0 ,
-      render: (value,item) => (
-        <InputNumber type={"number"} min={0} readOnly={item.precio==0} value={item.precioFinal}   onChange={(value)=>setStudyPricefinal(value??0,item,item.paqute!)} ></InputNumber>
+      width: 0,
+      render: (value, item) => (
+        <InputNumber
+          type={"number"}
+          min={0}
+          readOnly={true}
+          value={item.precioFinal}
+          onChange={(value) =>
+            setStudyPricefinal(value ?? 0, item, item.paqute!)
+          }
+        ></InputNumber>
       ),
     },
     {
@@ -758,14 +870,13 @@ const PriceListForm: FC<PriceListFormProps> = ({
         width: 0,
         windowSize: windowWidth,
       }),
-      render: (value,item) => (
-        <InputNumber type={"number"}  
-        value={item.precio}  
-        onChange={(value)=>setStudyPrice(value??0,item,item.paqute!)}
-        readOnly={true}
-        >
-
-        </InputNumber>
+      render: (value, item) => (
+        <InputNumber
+          type={"number"}
+          value={item.precio}
+          onChange={(value) => setStudyPrice(value ?? 0, item, item.paqute!)}
+          readOnly={true}
+        ></InputNumber>
       ),
     },
     {
@@ -819,7 +930,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
           </Col>
         )}
         {readonly && (
-          <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
+          <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
             <ImageButton
               key="edit"
               title="Editar"

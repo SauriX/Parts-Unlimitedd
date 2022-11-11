@@ -41,6 +41,7 @@ export interface IRequestFilter {
   sucursales?: string[];
   compañias?: string[];
   medicos?: string[];
+  expediente?:string
 }
 
 export interface IRequestInfo extends IRequestBase {

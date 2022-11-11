@@ -7,6 +7,7 @@ import ImageButton from "../../app/common/button/ImageButton";
 import { useStore } from "../../app/stores/store";
 import DownloadIcon from "../../app/common/icons/DownloadIcon";
 import PrintIcon from "../../app/common/icons/PrintIcon";
+import GoBackIcon from "../../app/common/icons/GoBackIcon";
 
 const { Search } = Input;
 
@@ -40,7 +41,12 @@ const EquipmentMantainHeader: FC<EquipmentHeaderProps> = ({ handlePrint }) => {
 /*         <PrintIcon key="print" onClick={handlePrint} />,
 
         <DownloadIcon key="doc" onClick={download} />,
- */
+ */        <GoBackIcon
+ key="back"
+ onClick={() => {
+   navigate(`/equipment`);
+ }}
+/>,
         <Button
           key="new"
           type="primary"

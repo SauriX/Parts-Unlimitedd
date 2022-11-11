@@ -465,7 +465,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
       align: "center",
       width:  100 ,
       render: (value,item) => (
-        <InputNumber type={"number"} min={0} value={item.precioFinal}  onChange={(value)=>setStudyPricefinal(value??0,item,item.paquete)}></InputNumber>
+        <InputNumber type={"number"} min={0} value={item.precioFinal} readOnly={true}  onChange={(value)=>setStudyPricefinal(value??0,item,item.paquete)}></InputNumber>
       ),
     },
     {
@@ -588,6 +588,9 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
        value: x.id,
        label: x.nombre,
       })); 
+      if(reagent!.medics?.length>0 ){
+        reagent!.mediccheck=true;
+      }
       setBranch(sucursalesOptions);
       form.setFieldsValue(reagent!);
       setValues(reagent!);
@@ -625,7 +628,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
   const addClinic = () => {
      if (sucursal) {
       if (values.branchs.findIndex((x) => x.id === sucursal.id) > -1) {
-        alerts.warning("Ya esta agregada este departamento");
+        alerts.warning("Ya esta agregado este medico");
         return;
       }
 
@@ -850,6 +853,14 @@ useEffect(()=>{
                   label="Activo"
                   readonly={readonly}
                 />
+                  <SwitchInput
+                  name="mediccheck"
+                  label="Medicos"
+                  onChange={(val)=>{
+                    setValues((prev)=>({...prev,mediccheck:val}))
+                  }}
+                  readonly={readonly}
+                />
               </Col>
               <Col md={12} sm={24} xs={12}>
                 <div style={{marginLeft:"85px",marginBottom:"20px"}}>
@@ -962,7 +973,10 @@ useEffect(()=>{
           </List.Item>
         )}
       />
-      <Divider orientation="left">Médicos</Divider>
+     { values.mediccheck && 
+     <div>
+     <Divider orientation="left">Médicos</Divider>
+     
       <List<ISucMedComList>
         header={
           <div>
@@ -1028,47 +1042,52 @@ useEffect(()=>{
           </List.Item>
         )}
       />
-      <Divider orientation="left">Estudios</Divider>
-          <Row>
-          <Col md={4} sm={24} xs={12}>
-          Búsqueda por :   
-          </Col>
-          <Col md={9} sm={24} xs={12}>
-          <SelectInput 
-                formProps={{ name: "departamentoSearch", label: "Departamento" }}
-                options={departmentOptions}
-                readonly={readonly}
-                value={depId} 
-                onChange={(value)=>{setAreaId(undefined); setDepId(value); filterByDepartament(value)}}
-              />
-
-              </Col> 
-              <Col md={2} sm={24} xs={12}></Col>
-              <Col md={9} sm={24} xs={12}>
-                <label htmlFor="">Área: </label>
-                <Select
-                /* formProps={{ name: "areaSearch", label: "Área" }} */
-                options={aeraSearch}
-                disabled={readonly}
-                onChange={(value)=>{ setAreaId(value); filterByArea(value)}}
-                value={areaId}
-                allowClear
-                onClear={() => {
-                  setAreaId(undefined);
-                  filterByArea();
-                }}
-                style={{width:"400px"}}
-              />
-              </Col>
-              <Col md={15} sm={24} xs={12}></Col>
-              <Col md={9} sm={24} xs={12}>
+      </div>
+     } <Divider orientation="left">Estudios</Divider>
+      <Row justify="space-between" align="middle">
+            <Col span={6}>
               <Search
-          key="search"
-          placeholder="Buscar"
-          onSearch={(value: string) => {
-           filterBySearch(value)
-          }}
-        />,</Col>
+                key="search"
+                placeholder="Buscar"
+                onSearch={(value) => {
+                  filterBySearch(value);
+                }}
+                allowClear
+              />
+            </Col>
+            <Col span={6} offset={2}>
+              <SelectInput
+                options={departmentOptions}
+                onChange={(value) => {
+                  setAreaId(undefined);
+                  setDepId(value);
+                  filterByDepartament(value);
+                }}
+                value={depId}
+                placeholder={"Departamentos"}
+                formProps={{
+                  name: "departamentos",
+                  label: "Departamento",
+                }}
+              />
+            </Col>
+            <Col span={6} offset={2}>
+              <SelectInput
+                options={aeraSearch}
+                onChange={(value) => {
+                  setAreaId(value);
+                  filterByArea(value);
+                }}
+                value={areaId}
+                placeholder={"Área"}
+                formProps={{
+                  name: "area",
+                  label: "Área",
+                }}
+              />
+            </Col>
+          </Row>
+          <Row>   
             <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
                 <Table<IPromotionEstudioList>
                 size="small"
