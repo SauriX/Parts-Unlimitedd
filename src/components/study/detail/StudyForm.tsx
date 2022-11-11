@@ -32,7 +32,7 @@ import { observer } from "mobx-react-lite";
 import TextAreaInput from "../../../app/common/form/TextAreaInput";
 import { IOptions } from "../../../app/models/shared";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from "@ant-design/icons";
 import {
   getDefaultColumnProps,
   IColumns,
@@ -49,9 +49,6 @@ import { IPacketList } from "../../../app/models/packet";
 import views from "../../../app/util/view";
 import { ParameterModal } from "./modals/ParameterModal";
 import { IndicationModal } from "./modals/IndicationModal";
-import CheckableTag from "antd/lib/tag/CheckableTag";
-import userEvent from "@testing-library/user-event";
-import WorkList from "../../../views/WorkList";
 
 type StudyFormProps = {
   componentRef: React.MutableRefObject<any>;
@@ -89,8 +86,20 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   const [selectedRowKeysp, setSelectedRowKeysp] = useState<React.Key[]>([]);
   const [selectedRowKeysi, setSelectedRowKeysi] = useState<React.Key[]>([]);
   const [selectedRowKeysw, setSelectedRowKeysw] = useState<React.Key[]>([]);
- 
-  const { getById, getAll, study, update, create,parameterSelected,setParameterSelected,indicationSelected,setIndicationSelected,workListSelected,setWorkListSelected } = studyStore;
+
+  const {
+    getById,
+    getAll,
+    study,
+    update,
+    create,
+    parameterSelected,
+    setParameterSelected,
+    indicationSelected,
+    setIndicationSelected,
+    workListSelected,
+    setWorkListSelected,
+  } = studyStore;
   const [form] = Form.useForm<IStudyForm>();
   const { width: windowWidth } = useWindowDimensions();
   const [flag, setFlag] = useState(0);
@@ -106,9 +115,9 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   let { id } = useParams<UrlParams>();
   const [tags, setTags] = useState<string[]>([]);
   const [inputVisible, setInputVisible] = useState(false);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [editInputIndex, setEditInputIndex] = useState(-1);
-  const [editInputValue, setEditInputValue] = useState('');
+  const [editInputValue, setEditInputValue] = useState("");
   const inputRef = useRef<InputRef>(null);
   const editInputRef = useRef<InputRef>(null);
 
@@ -123,7 +132,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   }, [inputValue]);
 
   const handleClose = (removedTag: string) => {
-    const newTags = tags.filter(tag => tag !== removedTag);
+    const newTags = tags.filter((tag) => tag !== removedTag);
     console.log(newTags);
     setTags(newTags);
   };
@@ -141,7 +150,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       setTags([...tags, inputValue]);
     }
     setInputVisible(false);
-    setInputValue('');
+    setInputValue("");
   };
 
   const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -153,9 +162,9 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     newTags[editInputIndex] = editInputValue;
     setTags(newTags);
     setEditInputIndex(-1);
-    setInputValue('');
+    setInputValue("");
   };
-/*   const handleChange = (tag: IWorkList, checked: boolean) => {
+  /*   const handleChange = (tag: IWorkList, checked: boolean) => {
     const nextSelectedTags = checked ? [...selectedTags!, tag] : selectedTags!.filter(t => t.id !== tag.id);
     console.log('You are interested in: ', nextSelectedTags);
     setSelectedTags(nextSelectedTags);
@@ -178,7 +187,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       ...getDefaultColumnProps("nombre", "Parametro", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "45%",
         windowSize: windowWidth,
       }),
     },
@@ -186,7 +195,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "45%",
         windowSize: windowWidth,
       }),
     },
@@ -196,7 +205,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       ...getDefaultColumnProps("nombre", "Indicación", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "45%",
         windowSize: windowWidth,
       }),
     },
@@ -204,7 +213,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "45%",
         windowSize: windowWidth,
       }),
     },
@@ -217,7 +226,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       console.log(all);
       const user = await getById(id);
       await getareaOptions(user?.departamento!);
-      if(user?.workLists!=""&& user?.workLists!=null){
+      if (user?.workLists != "" && user?.workLists != null) {
         var tags = user.workLists.split("-");
         setTags(tags);
         console.log(tags);
@@ -225,7 +234,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       setParameterSelected(user?.parameters!);
       setIndicationSelected(user?.indicaciones!);
       form.setFieldsValue(user!);
-
       setValues(user!);
 
       setLoading(false);
@@ -320,11 +328,11 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     const User = { ...values, ...newValues };
     let success = false;
     var worklist = "";
-    for(var i=0;i<tags.length;i++){
-      if(i==0){
-        worklist +=tags[i];
-      }else{
-        worklist +=`-${tags[i]}`;
+    for (var i = 0; i < tags.length; i++) {
+      if (i == 0) {
+        worklist += tags[i];
+      } else {
+        worklist += `-${tags[i]}`;
       }
     }
     User.workLists = worklist;
@@ -364,130 +372,23 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       form.setFieldsValue({ diasrespuesta: dias });
     }
   };
-  const addWorkList = () => {
-    if (workList) {
-      if (values.workList.findIndex((x) => x.id === workList.id) > -1) {
-        alerts.warning("Ya esta agregada esta lista");
-        return;
-      }
-      const workLists: IWorkList[] = [
-        ...values.workList,
-        {
-          id: workList.id,
-          clave: workList.clave,
-          nombre: workList.clave,
-          activo: true,
-        },
-      ];
 
-      setValues((prev) => ({ ...prev, workList: workLists }));
-      console.log(values);
-    }
-  };
-  const deleteWorkList = (id: number) => {
-    const workLists = values.workList.filter((x) => x.id !== id);
-
-    setValues((prev) => ({ ...prev, workList: workLists }));
-  };
-  const addParameter = () => {
-    if (parameter) {
-      if (values.parameters.findIndex((x) => x.id === parameter.id) > -1) {
-        alerts.warning("Ya esta agregada esta lista");
-        return;
-      }
-      const parameterList: IParameterList[] = [
-        ...values.parameters,
-        {
-          id: parameter.id,
-          clave: parameter.clave,
-          nombre: "",
-          area: "",
-          nombreCorto: "",
-          resultadoId: "",
-          departamento: "",
-          resultado: "",
-          activo: true,
-          unidades: 0,
-          unidadNombre: "",
-          criticoMaximo: 0,
-          criticoMinimo: 0,
-          deltaCheck: false,
-          mostrarFormato: false,
-          requerido: false,
-          tipoValor: "",
-          valorFinal: "",
-          valorInicial: "",
-          solicitudEstudioId: 0,
-        },
-      ];
-
-      setValues((prev) => ({ ...prev, parameters: parameterList }));
-      console.log(values);
-    }
-  };
   const deleteParameter = () => {
     const filterList = parameterSelected.filter(
       (x) => !selectedRowKeysp.includes(x.id)
     );
     setParameterSelected(filterList);
+    setSelectedRowKeysp([]);
   };
-  const addIndication = () => {
-    if (indication) {
-      if (values.indicaciones.findIndex((x) => x.id === indication.id) > -1) {
-        alerts.warning("Ya esta agregada esta lista");
-        return;
-      }
-      const List: IIndicationList[] = [
-        ...values.indicaciones,
-        {
-          id: indication.id,
-          clave: "",
-          nombre: indication.clave,
-          descripcion: "",
-          activo: true,
-          estudios: [],
-        },
-      ];
-      console.log("indicaciones");
-      console.log(values);
-      setValues((prev) => ({ ...prev, indicaciones: List }));
-      console.log(values);
-    }
-  };
+
   const deleteIndicacion = () => {
     const filterList = indicationSelected.filter(
       (x) => !selectedRowKeysi.includes(x.id)
     );
     setIndicationSelected(filterList);
+    setSelectedRowKeysi([]);
   };
 
-  const addReagent = () => {
-    if (Reagent) {
-      if (values.reactivos.findIndex((x) => x.id === Reagent!.id) > -1) {
-        alerts.warning("Ya esta agregada esta lista");
-        return;
-      }
-      const List: IReagentList[] = [
-        ...values.reactivos,
-        {
-          id: Reagent.id,
-          clave: Reagent.clave,
-          nombre: "",
-          claveSistema: "",
-          nombreSistema: "",
-          activo: false,
-        },
-      ];
-
-      setValues((prev) => ({ ...prev, reactivos: List }));
-      console.log(values);
-    }
-  };
-  const deleteReagent = (id: string) => {
-    const List = values.reactivos.filter((x) => x.id !== id);
-
-    setValues((prev) => ({ ...prev, reactivos: List }));
-  };
   const onSelectChangep = (newSelectedRowKeys: React.Key[]) => {
     setSelectedRowKeysp(newSelectedRowKeys);
   };
@@ -519,15 +420,8 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
         windowSize: windowWidth,
       }),
     },
-    /*         {
-                  ...getDefaultColumnProps("areaId", "Área", {
-                    searchState,
-                    setSearchState,
-                    width: "30%",
-                    windowSize: windowWidth,
-                  }),
-                }, */
   ];
+
   return (
     <Spin spinning={loading || load}>
       <Row style={{ marginBottom: 24 }}>
@@ -623,11 +517,11 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
               </Col>
               <Col md={8} xs={8}>
                 <SelectInput
-                    formProps={{ name: "tapon", label: "Etiqueta" }}
-                    options={taponOption}
-                    readonly={disabled}
-                    required
-                  />
+                  formProps={{ name: "tapon", label: "Etiqueta" }}
+                  options={taponOption}
+                  readonly={disabled}
+                  required
+                />
               </Col>
 
               <Col md={8} sm={24} xs={8}>
@@ -709,14 +603,14 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
               </Col>
               <Col md={8} xs={8}>
                 <NumberInput
-                    formProps={{
-                      name: "diasrespuesta",
-                      label: "Días de respuesta",
-                    }}
-                    min={0}
-                    max={9999999999999999}
-                    readonly={disabled}
-                  />
+                  formProps={{
+                    name: "diasrespuesta",
+                    label: "Días de respuesta",
+                  }}
+                  min={0}
+                  max={9999999999999999}
+                  readonly={disabled}
+                />
               </Col>
 
               <Col md={8} sm={24} xs={8}>
@@ -731,7 +625,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                 />
               </Col>
               <Col md={8} sm={24} xs={8}>
-              <NumberInput
+                <NumberInput
                   formProps={{
                     name: "tiemporespuesta",
                     label: "Tiempo de respuesta",
@@ -742,7 +636,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   required
                 />
               </Col>
-              <Col md={4  } sm={24} xs={6}>
+              <Col md={4} sm={24} xs={6}>
                 <SwitchInput
                   name="visible"
                   label="Visible"
@@ -762,7 +656,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   min={0}
                   max={9999999999999999}
                   readonly={!visible || disabled}
-
                 />
               </Col>
               <Col md={6} sm={24} xs={6}>
@@ -773,7 +666,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                 />
               </Col>
               <Col md={6} xs={6}>
-              <SwitchInput
+                <SwitchInput
                   name="urgencia"
                   label="Urgencia"
                   readonly={disabled}
@@ -793,272 +686,177 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
-
-
             </Row>
           </Form>
           <div></div>
           <PageHeader
-                ghost={false}
-                title={
-                  <HeaderTitle title="Listas de trabajo" />
-                }
-                className="header-container"
-
-              ></PageHeader>
+            ghost={false}
+            title={<HeaderTitle title="Listas de trabajo" />}
+            className="header-container"
+          ></PageHeader>
           {tags.map((tag, index) => {
-        if (editInputIndex === index) {
-          return (
+            if (editInputIndex === index) {
+              return (
+                <Input
+                  ref={editInputRef}
+                  key={tag}
+                  size="small"
+                  className="tag-input"
+                  value={editInputValue}
+                  onChange={handleEditInputChange}
+                  onBlur={handleEditInputConfirm}
+                  onPressEnter={handleEditInputConfirm}
+                />
+              );
+            }
+
+            const isLongTag: boolean = tag.length > 20;
+
+            const tagElem = (
+              <Tag
+                className="edit-tag"
+                key={tag}
+                closable={true}
+                onClose={() => handleClose(tag)}
+              >
+                <span
+                  onDoubleClick={(e) => {
+                    if (index !== 0) {
+                      setEditInputIndex(index);
+                      setEditInputValue(tag);
+                      e.preventDefault();
+                    }
+                  }}
+                >
+                  {isLongTag ? `${tag.slice(0, 20)}...` : tag}
+                </span>
+              </Tag>
+            );
+            return isLongTag ? (
+              <Tooltip title={tag} key={tag}>
+                {tagElem}
+              </Tooltip>
+            ) : (
+              tagElem
+            );
+          })}
+          {inputVisible && (
             <Input
-              ref={editInputRef}
-              key={tag}
+              ref={inputRef}
+              type="text"
               size="small"
               className="tag-input"
-              value={editInputValue}
-              onChange={handleEditInputChange}
-              onBlur={handleEditInputConfirm}
-              onPressEnter={handleEditInputConfirm}
+              value={inputValue}
+              onChange={handleInputChange}
+              onBlur={handleInputConfirm}
+              onPressEnter={handleInputConfirm}
             />
-          );
-        }
+          )}
+          {!inputVisible && (
+            <Tag className="site-tag-plus" onClick={showInput}>
+              <PlusOutlined /> Nueva
+            </Tag>
+          )}
+          <Divider className="header-divider" />
+          <PageHeader
+            ghost={false}
+            title={<HeaderTitle title="Parámetros del estudio" />}
+            className="header-container"
+            extra={[
+              selectedRowKeysp.length > 0 ? (
+                <Button
+                  type="primary"
+                  danger
+                  onClick={() => {
+                    deleteParameter();
+                  }}
+                >
+                  Eliminar
+                </Button>
+              ) : (
+                ""
+              ),
+              <Button
+                type="primary"
+                onClick={async () => {
+                  await ParameterModal(parameterSelected);
+                }}
+              >
+                Buscar
+              </Button>,
+            ]}
+          ></PageHeader>
+          <Divider className="header-divider" />
+        </div>
+        <Table<IParameterList>
+          size="small"
+          rowKey={(record) => record.id}
+          columns={columnsParameter}
+          pagination={false}
+          dataSource={[...parameterSelected]}
+          scroll={{
+            x: windowWidth < resizeWidth ? "max-content" : "auto",
+          }}
+          rowSelection={rowSelectionp}
+        />
+        <br />
 
-        const isLongTag:boolean = tag.length > 20;
-
-        const tagElem = (
-          <Tag
-            className="edit-tag"
-            key={tag}
-            closable={true}
-            onClose={() => handleClose(tag)}
-          >
-            <span
-              onDoubleClick={e => {
-                if (index !== 0) {
-                  setEditInputIndex(index);
-                  setEditInputValue(tag);
-                  e.preventDefault();
-                }
+        <PageHeader
+          ghost={false}
+          title={<HeaderTitle title="Indicaciones del estudio" />}
+          className="header-container"
+          extra={[
+            selectedRowKeysi.length > 0 ? (
+              <Button type="primary" danger onClick={deleteIndicacion}>
+                Eliminar
+              </Button>
+            ) : (
+              ""
+            ),
+            <Button
+              type="primary"
+              onClick={async () => {
+                await IndicationModal(indicationSelected);
               }}
             >
-              {isLongTag ? `${tag.slice(0, 20)}...` : tag}
-            </span>
-          </Tag>
-        );
-        return isLongTag ? (
-          <Tooltip title={tag} key={tag}>
-            {tagElem}
-          </Tooltip>
-        ) : (
-          tagElem
-        );
-      })}
-      {inputVisible && (
-        <Input
-          ref={inputRef}
-          type="text"
-          size="small"
-          className="tag-input"
-          value={inputValue}
-          onChange={handleInputChange}
-          onBlur={handleInputConfirm}
-          onPressEnter={handleInputConfirm}
-        />
-      )}
-      {!inputVisible && (
-        <Tag className="site-tag-plus" onClick={showInput}>
-          <PlusOutlined /> Nueva 
-        </Tag>
-      )}
-        
-          <div></div>
-          <PageHeader
-                ghost={false}
-                title={
-                  <HeaderTitle title="Parámetros del estudio" />
-                }
-                className="header-container"
-
-              ></PageHeader>
-              <Divider className="header-divider" />
-              <div>
-                <Row>
-                  <Col md={16}></Col>
-                  <Col md={2}>
-
-                  </Col>
-                  <Col md={6}>
-                    <div style={{display:"inline-block",marginLeft:"43%"}}>
-                    {
-                      parameterSelected.length > 0 && selectedRowKeysp.length > 0 && 
-                        <Button  type="primary" danger onClick={()=>{deleteParameter()}}>
-                          Eliminar
-                        </Button>
-                            
-                    }
-                    <Button
-                    
-                      type="primary"
-                      onClick={async () => {
-                        await ParameterModal(
-                          
-                          parameterSelected.map((x) => x.id)
-                        );
-                      }}
-                    >
-                      Buscar
-                    </Button>
-                    </div>
-
-                  </Col>
-                </Row>
-                <br />
-              </div>
-              <Table<IParameterList>
-                size="small"
-                rowKey={(record) => record.id}
-                columns={columnsParameter}
-                pagination={false}
-                dataSource={[...parameterSelected]}
-                scroll={{
-                  x: windowWidth < resizeWidth ? "max-content" : "auto",
-                }}
-                rowSelection={rowSelectionp}
-              />
-          <div></div>
-          <PageHeader
-                ghost={false}
-                title={
-                  <HeaderTitle title="Indicaciones del estudio" />
-                }
-                className="header-container"
-
-              ></PageHeader>
-              <Divider className="header-divider" />
-              <div>
-                <Row>
-                  <Col md={16}></Col>
-                  <Col md={2}>
-
-                  </Col>
-                  <Col md={6}>
-                  <div style={{display:"inline-block",marginLeft:"43%"}}>
-                  {
-                            indicationSelected.length > 0 && selectedRowKeysi.length > 0 && 
-                              <Button  type="primary" danger onClick={deleteIndicacion}>
-                                Eliminar
-                              </Button>
-                          
-
-                          }
-                  <Button
-                  
-                    type="primary"
-                    onClick={async () => {
-                      await IndicationModal(
-                        
-                       indicationSelected.map((x) => x.id)
-                      );
-                    }}
-                  >
-                    Buscar
-                  </Button>
-                  </div>
-                  </Col>
-                </Row>
-                <br />
-              </div>
-              <Table<IIndicationList>
-                size="small"
-                rowKey={(record) => record.id}
-                columns={columnsIndication}
-                pagination={false}
-                dataSource={[...indicationSelected]}
-                scroll={{
-                  x: windowWidth < resizeWidth ? "max-content" : "auto",
-                }}
-                rowSelection={rowSelectioni}
-              />
-          <div></div>
-          {/* <Divider orientation="left">Reactivos</Divider>
-          <List<IReagentList>
-            header={
-              <div>
-                <Col md={12} sm={24} style={{ marginRight: 20 }}>
-                  Nombre Reactivo
-                  <Select
-                    options={reagents}
-                    onChange={(value, option: any) => {
-                      if (value) {
-                        setReagent({ id: value, clave: option.label });
-                      } else {
-                        setReagent(undefined);
-                      }
-                    }}
-                    style={{ width: 240, marginRight: 20, marginLeft: 10 }}
-                  />
-                  {disabled ||
-                    (!load && (
-                      <ImageButton
-                        key="agregar"
-                        title="Agregar Reactivo"
-                        image="agregar-archivo"
-                        onClick={addReagent}
-                      />
-                    ))}
-                </Col>
-              </div>
-            }
-            footer={<div></div>}
-            bordered
-            dataSource={values.reactivos}
-            renderItem={(item) => (
-              <List.Item>
-                <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                  <Typography.Text mark></Typography.Text>
-                  {item.clave}
-                </Col>
-                <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                  {!disabled && !load && (
-                    <ImageButton
-                      key="Eliminar"
-                      title="Eliminar Reactivo"
-                      image="Eliminar_Clinica"
-                      onClick={() => {
-                        deleteReagent(item.id);
-                      }}
-                    />
-                  )}
-                </Col>
-              </List.Item>
-            )}
-          /> */}
-          <Row>
-            <Col
-              md={24}
-              sm={12}
-              style={{ marginRight: 20, textAlign: "center" }}
-            >
-              <PageHeader
-                ghost={false}
-                title={
-                  <HeaderTitle title="Paquete donde se encuentra el estudio" />
-                }
-                className="header-container"
-              ></PageHeader>
-              <Divider className="header-divider" />
-              <Table<IPacketList>
-                size="small"
-                columns={columns.slice(0, 3)}
-                pagination={false}
-                dataSource={[...(values.paquete ?? [])]}
-                scroll={{
-                  x: windowWidth < resizeWidth ? "max-content" : "auto",
-                }}
-              />
-            </Col>
-          </Row>
-        </div>
+              Buscar
+            </Button>,
+          ]}
+        ></PageHeader>
+        <Divider className="header-divider" />
       </div>
+      <Table<IIndicationList>
+        size="small"
+        rowKey={(record) => record.id}
+        columns={columnsIndication}
+        pagination={false}
+        dataSource={[...indicationSelected]}
+        scroll={{
+          x: windowWidth < resizeWidth ? "max-content" : "auto",
+        }}
+        rowSelection={rowSelectioni}
+      />
+      <Row>
+        <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
+          <PageHeader
+            ghost={false}
+            title={
+              <HeaderTitle title="Paquete donde se encuentra el estudio" />
+            }
+            className="header-container"
+          ></PageHeader>
+          <Divider className="header-divider" />
+          <Table<IPacketList>
+            size="small"
+            columns={columns.slice(0, 3)}
+            pagination={false}
+            dataSource={[...(values.paquete ?? [])]}
+            scroll={{
+              x: windowWidth < resizeWidth ? "max-content" : "auto",
+            }}
+          />
+        </Col>
+      </Row>
     </Spin>
   );
 };

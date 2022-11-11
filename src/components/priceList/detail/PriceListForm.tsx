@@ -946,6 +946,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
                 onSearch={(value) => {
                   filterBySearch(value);
                 }}
+                allowClear 
               />
             </Col>
             <Col span={6} offset={2}>

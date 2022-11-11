@@ -157,7 +157,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   }, [id, getById]);
 
   useEffect(() => {
-    console.log(searchParams.get("mode"))
+    console.log(searchParams.get("mode"));
     if (!profile?.admin) {
       form.setFieldsValue({ sucursal: profile?.sucursal });
     }
@@ -629,7 +629,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               console.log(error);
             }}
           >
-            <Row gutter={[0, 12]}>
+            <Row gutter={[12, 12]}>
               <Col span={12}>
                 <Form.Item
                   label="Nombre"
@@ -685,7 +685,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     label: "Exp",
                   }}
                   max={500}
-                
                 />
               </Col>
               <Col span={4}>
@@ -717,8 +716,8 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   formProps={{
                     name: "edad",
                     label: "Edad",
-                    labelCol: { span: 12 },
-                    wrapperCol: { span: 12 },
+                    labelCol: { span: 6 },
+                    wrapperCol: { span: 18 },
                   }}
                   max={500}
                   min={0}
@@ -727,7 +726,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               </Col>
               <Col span={8}>
                 <Form.Item
-                  label="Contacto"
                   labelCol={{ span: 6 }}
                   wrapperCol={{ span: 18 }}
                   help=""
@@ -736,64 +734,66 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   <Input.Group>
                     <Row gutter={8}>
                       <Col span={12}>
-                      <MaskInput
-                  formProps={{
-                    name: "telefono",
-                    label: "Teléfono",
-                  }}
-                  mask={[
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                  ]}
-                  validator={(_, value: any) => {
-                    if (!value || value.indexOf("_") === -1) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject("El campo debe contener 10 dígitos");
-                  }}
-                 
-                />
+                        <MaskInput
+                          formProps={{
+                            name: "telefono",
+                            label: "Contacto/Teléfono",
+                          }}
+                          mask={[
+                            /[0-9]/,
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                          ]}
+                          validator={(_, value: any) => {
+                            if (!value || value.indexOf("_") === -1) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              "El campo debe contener 10 dígitos"
+                            );
+                          }}
+                        />
                       </Col>
                       <Col span={12}>
-                      <MaskInput
-                  formProps={{
-                    name: "celular",
-                    label: "Celular",
-                  }}
-                  mask={[
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                    "-",
-                    /[0-9]/,
-                    /[0-9]/,
-                  ]}
-                  validator={(_, value: any) => {
-                    if (!value || value.indexOf("_") === -1) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject("El campo debe contener 10 dígitos");
-                  }}
-     
-                />
+                        <MaskInput
+                          formProps={{
+                            name: "celular",
+                            label: "Celular",
+                          }}
+                          mask={[
+                            /[0-9]/,
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                          ]}
+                          validator={(_, value: any) => {
+                            if (!value || value.indexOf("_") === -1) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              "El campo debe contener 10 dígitos"
+                            );
+                          }}
+                        />
                       </Col>
                     </Row>
                   </Input.Group>
@@ -900,124 +900,135 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               </Col>
             </Row>
           </Form>
-          {searchParams.get("mode") === "edit" || searchParams.get("mode") === "readonly"? (<div>
-            <Row>
-              <Col span={6}>
-                <Button
-                  style={{
-                    marginTop: "20px",
-                    marginLeft: "70%",
-                    marginBottom: "20px",
-                  }}
-                  onClick={() => {
-                    navigate(`/requests/${id}`);
-                  }}
-                  type="primary"
-                >
-                  {" "}
-                  Agregar solicitud
-                </Button>
-              </Col>
-              <Col span={6}>
-                <Button
-                  style={{
-                    marginTop: "20px",
-                    marginLeft: "70%",
-                    marginBottom: "20px",
-                  }}
-                  onClick={() => {
-                    navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
-                  }}
-                  type="primary"
-                >
-                  {" "}
-                  Agregar cotización
-                </Button>
-              </Col>
-              <Col span={6}>
-                <Button
-                  style={{
-                    marginTop: "20px",
-                    marginLeft: "70%",
-                    marginBottom: "20px",
-                  }}
-                  onClick={() => {
-                    navigate(`/appointments`);
-                  }}
-                  type="primary"
-                >
-                  {" "}
-                  Agregar cita
-                </Button>
-              </Col>
-              <Col span={6}>
-                {values.hasWallet ? (
-                  <Card
+          {searchParams.get("mode") === "edit" ||
+          searchParams.get("mode") === "readonly" ? (
+            <div>
+              <Row>
+                <Col span={6}>
+                  <Button
                     style={{
                       marginTop: "20px",
-                      marginLeft: "10%",
+                      marginLeft: "70%",
                       marginBottom: "20px",
                     }}
-                    bodyStyle={{
-                      backgroundColor: "rgba(255, 255, 0, 1)",
-                      border: 0,
+                    onClick={() => {
+                      navigate(`/requests/${id}`);
                     }}
+                    type="primary"
                   >
-                    <p>Monedero Electronico: {values.wallet}</p>
-                  </Card>
-                ) : (
-                  ""
-                )}
-                <Button
-                  style={{
-                    marginTop: "20px",
-                    marginLeft: "30%",
-                    marginBottom: "20px",
-                  }}
-                  onClick={() => {
-                    activarMonedero();
-                  }}
-                  type="primary"
-                  disabled={values.hasWallet}
-                >
-                  Activar monedero
-                </Button>
-              </Col>
-            </Row>
-            <Divider orientation="left">Solicitud</Divider>
-            <Table<any>
-              loading={loading || printing}
-              size="small"
-              rowKey={(record) => record.id}
-              columns={columns}
-              dataSource={[]}
-              /*    pagination={defaultPaginationProperties} */
-              sticky
-              scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-            />
-            <Divider orientation="left">Presupuestos</Divider>
-            <Table<any>
-              loading={loading || printing}
-              size="small"
-              rowKey={(record) => record.id}
-              columns={columnsP}
-              dataSource={[]}
-              /*    pagination={defaultPaginationProperties} */
-              sticky
-              scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-            />
-            <Divider orientation="left">Cita</Divider>
-            <Table<any>
-              loading={loading || printing}
-              size="small"
-              rowKey={(record) => record.id}
-              columns={columnsC}
-              dataSource={[]}
-              /*    pagination={defaultPaginationProperties} */
-              sticky
-              scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-            />
-          </div>) : ("")}
+                    {" "}
+                    Agregar solicitud
+                  </Button>
+                </Col>
+                <Col span={6}>
+                  <Button
+                    style={{
+                      marginTop: "20px",
+                      marginLeft: "70%",
+                      marginBottom: "20px",
+                    }}
+                    onClick={() => {
+                      navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
+                    }}
+                    type="primary"
+                  >
+                    {" "}
+                    Agregar cotización
+                  </Button>
+                </Col>
+                <Col span={6}>
+                  <Button
+                    style={{
+                      marginTop: "20px",
+                      marginLeft: "70%",
+                      marginBottom: "20px",
+                    }}
+                    onClick={() => {
+                      navigate(`/appointments`);
+                    }}
+                    type="primary"
+                  >
+                    {" "}
+                    Agregar cita
+                  </Button>
+                </Col>
+                <Col span={6}>
+                  {values.hasWallet ? (
+                    <Card
+                      style={{
+                        marginTop: "20px",
+                        marginLeft: "10%",
+                        marginBottom: "20px",
+                      }}
+                      bodyStyle={{
+                        backgroundColor: "rgba(255, 255, 0, 1)",
+                        border: 0,
+                      }}
+                    >
+                      <p>Monedero Electronico: {values.wallet}</p>
+                    </Card>
+                  ) : (
+                    ""
+                  )}
+                  <Button
+                    style={{
+                      marginTop: "20px",
+                      marginLeft: "30%",
+                      marginBottom: "20px",
+                    }}
+                    onClick={() => {
+                      activarMonedero();
+                    }}
+                    type="primary"
+                    disabled={values.hasWallet}
+                  >
+                    Activar monedero
+                  </Button>
+                </Col>
+              </Row>
+              <Divider orientation="left">Solicitud</Divider>
+              <Table<any>
+                loading={loading || printing}
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columns}
+                dataSource={[]}
+                /*    pagination={defaultPaginationProperties} */
+                sticky
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
+              />
+              <Divider orientation="left">Presupuestos</Divider>
+              <Table<any>
+                loading={loading || printing}
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columnsP}
+                dataSource={[]}
+                /*    pagination={defaultPaginationProperties} */
+                sticky
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
+              />
+              <Divider orientation="left">Cita</Divider>
+              <Table<any>
+                loading={loading || printing}
+                size="small"
+                rowKey={(record) => record.id}
+                columns={columnsC}
+                dataSource={[]}
+                /*    pagination={defaultPaginationProperties} */
+                sticky
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
+              />
+            </div>
+          ) : (
+            ""
+          )}
         </div>
       </div>
     </Spin>
