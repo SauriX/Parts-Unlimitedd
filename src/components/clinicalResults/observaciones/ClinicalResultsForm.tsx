@@ -429,13 +429,15 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
         </Col>
         <Col span={8}>
           <p>
-            IMP -{" "}
-            <strong>{`${moment(currentStudy.fechaValidacion).format(
-              "DD/MM/YYYY HH:mm"
-            )}, ${currentStudy.usuarioValidacion
-              ?.split(" ")
-              .map((word: string) => word[0])
-              .join("")}`}</strong>
+            IMP -
+            {currentStudy.estatusId >= 8 && (
+              <strong>{`${moment(currentStudy.fechaValidacion).format(
+                "DD/MM/YYYY HH:mm"
+              )}, ${currentStudy.usuarioValidacion
+                ?.split(" ")
+                .map((word: string) => word[0])
+                .join("")}`}</strong>
+            )}
           </p>
         </Col>
         <Col span={8}>
@@ -542,8 +544,10 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                 <Col span={6}>
                   <Title level={5}>
                     REPORTE DE ESTUDIO
-                    {estudio.areaId === 30 ? " HISTOPATOLÓGICO" : " CITOLÓGICO"}
-                    {/* {currentStudy.id} */}
+                    {estudio.areaId === 30
+                      ? " HISTOPATOLÓGICO "
+                      : " CITOLÓGICO "}
+                    {currentStudy.id}
                   </Title>
                 </Col>
               </Row>
