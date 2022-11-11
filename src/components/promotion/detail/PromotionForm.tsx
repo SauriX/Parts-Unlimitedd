@@ -628,7 +628,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
   const addClinic = () => {
      if (sucursal) {
       if (values.branchs.findIndex((x) => x.id === sucursal.id) > -1) {
-        alerts.warning("Ya esta agregada este departamento");
+        alerts.warning("Ya esta agregado este medico");
         return;
       }
 
