@@ -79,20 +79,20 @@ const QuotationForm: FC<QuotationFormProps> = ({
     profileStore,
     quotationStore,
     priceListStore,
-    procedingStore
+    procedingStore,
   } = useStore();
   const {
     getById,
     update,
     create,
-    search,
+    // search,
     createsolictud,
-    getAll,
-    quotatios,
+    getQuotations: getAll,
+    quotations: quotatios,
     printTicket,
   } = quotationStore;
 
-  const  {getByIdQuote}=procedingStore;
+  const { getByIdQuote } = procedingStore;
   const [data, setData] = useState<IRequestStudy[]>([]);
   const { profile } = profileStore;
   const [loading, setLoading] = useState(false);
@@ -132,7 +132,7 @@ const QuotationForm: FC<QuotationFormProps> = ({
 
   useEffect(() => {
     const read = async () => {
-      await getAll(search);
+      // await getAll(search);
     };
     if (id) {
       read();
@@ -198,7 +198,7 @@ const QuotationForm: FC<QuotationFormProps> = ({
     SetTotal(suma);
   }, [data]);
   useEffect(() => {
-    form.setFieldsValue({sucursalId:profile?.sucursal});
+    form.setFieldsValue({ sucursalId: profile?.sucursal });
     const readExpedinte = async (id: string) => {
       setLoading(true);
       var expediente = await getById(id);
@@ -235,24 +235,23 @@ const QuotationForm: FC<QuotationFormProps> = ({
     }
     
   }); */
-useEffect(()=>{
-  const getexp=async ()=>{
+  useEffect(() => {
+    const getexp = async () => {
       var expediente = await getByIdQuote(searchParams.get("exp")!);
 
-      setValues((prev)=>
-              ({...prev,
-                nomprePaciente:`${expediente?.nombre!} ${expediente?.apellido}`,
-                fechaNacimiento:moment(expediente?.fechaNacimiento),
-                expediente:expediente?.expediente!,
-                genero:expediente?.sexo!,
-                edad:expediente?.edad!
-              }));
-
-  }
-  if(searchParams.get("exp")){
-      getexp()
-  }
-},[searchParams.get("exp")]);
+      setValues((prev) => ({
+        ...prev,
+        nomprePaciente: `${expediente?.nombre!} ${expediente?.apellido}`,
+        fechaNacimiento: moment(expediente?.fechaNacimiento),
+        expediente: expediente?.expediente!,
+        genero: expediente?.sexo!,
+        edad: expediente?.edad!,
+      }));
+    };
+    if (searchParams.get("exp")) {
+      getexp();
+    }
+  }, [searchParams.get("exp")]);
   const setEditMode = () => {
     navigate(`/${views.proceeding}/${id}?${searchParams}&mode=edit`);
     setReadonly(false);
@@ -277,8 +276,7 @@ useEffect(()=>{
       var hoy = new Date();
       var cumpleaños = hoy.getFullYear() - edad;
       hoy.setFullYear(cumpleaños);
-      form.setFieldsValue({ edad: edad, fechaNacimiento:moment(hoy) });
-     
+      form.setFieldsValue({ edad: edad, fechaNacimiento: moment(hoy) });
     }
     if (field == "fechaNacimiento") {
       const edad = changedValues[field];
@@ -323,10 +321,10 @@ useEffect(()=>{
   };
   const setPage = (page: number) => {
     const priceList = quotatios[page - 1];
-    navigate(`/${views.quotatiion}/${priceList.id}?${searchParams}`);
+    navigate(`/${views.quotatiion}/${priceList.cotizacionId}?${searchParams}`);
   };
   const getPage = (id: string) => {
-    return quotatios.findIndex((x) => x.id === id) + 1;
+    return quotatios.findIndex((x) => x.cotizacionId === id) + 1;
   };
   const continues = async (cont: boolean) => {
     SetContinuar(cont);

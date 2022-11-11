@@ -1,4 +1,4 @@
-import { Button, Col, Collapse, Form, Row } from "antd";
+import { Button, Col, Form, Row } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
@@ -15,8 +15,6 @@ import {
 import { useStore } from "../../../app/stores/store";
 import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
-
-const { Panel } = Collapse;
 
 const RequestFilter = () => {
   const { requestStore, optionStore } = useStore();
@@ -48,40 +46,16 @@ const RequestFilter = () => {
 
   const onFinish = (values: IRequestFilter) => {
     const filter = { ...values };
+
     if (filter.fechas && filter.fechas.length > 1) {
       filter.fechaInicial = filter.fechas[0].utcOffset(0, true);
       filter.fechaFinal = filter.fechas[1].utcOffset(0, true);
     }
+
     getRequests(filter);
   };
 
   return (
-    // <Collapse ghost className="request-filter-collapse">
-    //   <Panel
-    //     header="Filtros"
-    //     key="filter"
-    //     extra={[
-    //       <Button
-    //         key="clean"
-    //         onClick={(e) => {
-    //           e.stopPropagation();
-    //           form.resetFields();
-    //         }}
-    //       >
-    //         Limpiar
-    //       </Button>,
-    //       <Button
-    //         key="filter"
-    //         type="primary"
-    //         onClick={(e) => {
-    //           e.stopPropagation();
-    //           form.submit();
-    //         }}
-    //       >
-    //         Filtrar
-    //       </Button>,
-    //     ]}
-    //   >
     <div className="status-container" style={{ marginBottom: 12 }}>
       <Form<IRequestFilter>
         {...formItemLayout}
@@ -180,8 +154,6 @@ const RequestFilter = () => {
         </Row>
       </Form>
     </div>
-    //   </Panel>
-    // </Collapse>
   );
 };
 

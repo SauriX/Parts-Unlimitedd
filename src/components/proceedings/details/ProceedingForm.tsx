@@ -54,7 +54,7 @@ import { ITaxData } from "../../../app/models/taxdata";
 import DateInput from "../../../app/common/form/proposal/DateInput";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import IconButton from "../../../app/common/button/IconButton";
-import { IQuotationList } from "../../../app/models/quotation";
+import { IQuotationInfo } from "../../../app/models/quotation";
 import Link from "antd/lib/typography/Link";
 import MaskInput from "../../../app/common/form/proposal/MaskInput";
 
@@ -306,7 +306,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     }
   };
 
-  const columnsP: IColumns<IQuotationList> = [
+  const columnsP: IColumns<IQuotationInfo> = [
     {
       ...getDefaultColumnProps("presupuesto", "Presupuesto", {
         width: 200,
@@ -318,7 +318,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           type="link"
           onClick={() => {
             navigate(
-              `/${views.quotatiion}/${cotizacion.id}?${searchParams}&mode=readonly`
+              `/${views.quotatiion}/${cotizacion.cotizacionId}?${searchParams}&mode=readonly`
             );
           }}
         >
@@ -390,7 +390,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           icon={<EditOutlined />}
           onClick={() => {
             navigate(
-              `/${views.quotatiion}/${cotizacion.id}?${searchParams}&mode=edit`
+              `/${views.quotatiion}/${cotizacion.cotizacionId}?${searchParams}&mode=edit`
             );
           }}
         />

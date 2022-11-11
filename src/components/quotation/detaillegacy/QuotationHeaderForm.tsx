@@ -25,7 +25,7 @@ const QuotationHeaderForm: FC<QuotationHeaderFormProps> = ({
   id,
 }) => {
   const { quotationStore } = useStore();
-  const { /* scopes, */ getAll, exportList } = quotationStore;
+  const { /* scopes, */ getQuotations: getAll, exportList } = quotationStore;
 
   const navigate = useNavigate();
 

@@ -1,86 +1,122 @@
-import { Divider } from "antd";
+import { Col, Divider, Row, Spin, Typography } from "antd";
+import { Fragment, useEffect, useState } from "react";
+import QuotationHeader from "./QuotationHeader";
+import QuotationRecord from "./QuotationRecord";
+import QuotationTab from "./QuotationTab";
+import "./css/index.less";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import { resolve } from "path";
-import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { useReactToPrint } from "react-to-print";
 import { useStore } from "../../../app/stores/store";
-import { guidPattern } from "../../../app/util/utils";
-import QuotationForm from "./QuotationForm";
-import QuotationHeaderForm from "./QuotationHeaderForm";
+// import { IQuotation } from "../../../app/models/quotation";
+import { status } from "../../../app/util/catalogs";
+import { toJS } from "mobx";
+import moment from "moment";
+import views from "../../../app/util/view";
+import Center from "../../../app/layout/Center";
 
-type UrlParams = {
-  id: string;
-};
+const { Link } = Typography;
 
 const QuotationDetail = () => {
-  const { quotationStore } = useStore();
-  const { scopes, /* access, clearScopes, */  exportForm  } =quotationStore ;
+  const {
+    profileStore,
+    quotationStore,
+    loyaltyStore,
+    procedingStore,
+    modalStore,
+  } = useStore();
+  const { profile } = profileStore;
+  const {
+    getById,
+    create,
+    // totals,
+    // setOriginalTotal,
+    studyFilter,
+    // quotation,
+    // totalsOriginal,
+  } = quotationStore;
+  const { getById: getByIdProceding, activateWallet } = procedingStore;
+  const { loyaltys, getByDate } = loyaltyStore;
+  const { openModal, closeModal } = modalStore;
 
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const { recordId, quotationId } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [printing, setPrinting] = useState(false);
-
-  const { id } = useParams<UrlParams>();
-  const reagentId = !id ? "" : !guidPattern.test(id) ? undefined : id;
-
-  const componentRef = useRef<any>();
-
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-    onBeforeGetContent: () => {
-      setPrinting(true);
-      return new Promise((resolve: any) => {
-        setTimeout(() => {
-          resolve();
-        }, 200);
-      });
-    },
-    onAfterPrint: () => {
-      setPrinting(false);
-    },
-  });
-
-  const handleDownload = async () => {
-    if (reagentId) {
-      setPrinting(true);
-      await exportForm(reagentId);
-      setPrinting(false);
-    }
-  };
+  const [loading, setLoading] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [branchId, setBranchId] = useState<string | undefined>(
+    profile!.sucursal
+  );
 
   useEffect(() => {
-    const checkAccess = async () => {
-     /*  const permissions = await access(); */
+    // const createQuotation = async () => {
+    //   const req: IQuotation = {
+    //     expedienteId: recordId!,
+    //     sucursalId: profile!.sucursal,
+    //     parcialidad: false,
+    //     esNuevo: true,
+    //     estatusId: status.quotation.vigente,
+    //     esWeeClinic: false,
+    //     tokenValidado: false,
+    //   };
+    //   if (searchParams.has("weeFolio")) {
+    //     req.folioWeeClinic = searchParams.get("weeFolio")!;
+    //     req.esWeeClinic = true;
+    //     searchParams.delete("weeFolio");
+    //     setSearchParams(searchParams);
+    //     if (state && (state as any).services) {
+    //       req.servicios = (state as any).services;
+    //     }
+    //   }
+    //   setCreating(true);
+    //   const id = await create(req);
+    //   await modificarSaldo();
+    //   setCreating(false);
+    //   if (id) {
+    //     navigate(`${id}`, { replace: true });
+    //   } else {
+    //     navigate(`/${views.quotation}`, { replace: true });
+    //   }
+    // };
+    // const getQuotationById = async () => {
+    //   setLoading(true);
+    //   await getById(recordId!, quotationId!);
+    //   setLoading(false);
+    // };
+    // if (recordId && !quotationId) {
+    //   createQuotation();
+    // } else if (recordId && quotationId) {
+    //   getQuotationById();
+    // }
+    // //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recordId, quotationId]);
 
-/*       if (reagentId === undefined) {
-        console.log("undefined");
-        navigate("/notFound");
-      } else if (!permissions?.crear && reagentId === "") {
-        navigate(`/forbidden`);
-      } else if (!permissions?.modificar && reagentId !== "") {
-        navigate(`/forbidden`);
-      } */
-    };
+  //   if (!recordId) return null;
 
-    checkAccess();
-  }, [/* access */, navigate, reagentId]);
-
-  useEffect(() => {
-    return () => {
-     /*  clearScopes(); */
-    };
-  }, [/* clearScopes */]);
-
-/*   if (reagentId == null) return null;
-
-  if (!scopes?.acceder) return null; */
+  //   if (creating) {
+  //     return (
+  //       <Center>
+  //         <Spin
+  //           spinning={creating}
+  //           tip="Creando Solicitud..."
+  //           size="large"
+  //         ></Spin>
+  //       </Center>
+  //     );
+  //   }
 
   return (
     <Fragment>
-      <QuotationHeaderForm id={reagentId!} handlePrint={handlePrint} handleDownload={handleDownload} />
+      <QuotationHeader />
       <Divider className="header-divider" />
-      <QuotationForm id={reagentId!} componentRef={componentRef} printing={printing} />
+      <QuotationRecord branchId={profile!.sucursal} setBranchId={setBranchId} />
+      <QuotationTab branchId={branchId} />
     </Fragment>
   );
 };

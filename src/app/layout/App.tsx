@@ -244,7 +244,7 @@ function App() {
               path={`${views.recivetracking}/:id`}
               element={<ReciveTracking />}
             />
-                        <Route
+            <Route
               path={`${views.resultValidation}`}
               element={<ResultValidation />}
             />

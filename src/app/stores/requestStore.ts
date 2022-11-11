@@ -1,4 +1,4 @@
-import { makeAutoObservable, intercept, reaction } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import PriceList from "../api/priceList";
 import Request from "../api/request";
 import { IPriceListInfoFilter } from "../models/priceList";
