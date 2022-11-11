@@ -97,6 +97,8 @@ const MaquiladorForm: FC<MaquiladorFormProps> = ({
       if (maquilador) {
         form.setFieldsValue(maquilador);
         getLocation(maquilador.codigoPostal!.toString());
+        maquilador.codigoPostal?.trim();
+        // console.log(maquilador.codigoPostal);
         setValues(maquilador);
       }
 

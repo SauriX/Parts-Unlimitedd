@@ -6,48 +6,14 @@ import PrintIcon from "../../app/common/icons/PrintIcon";
 import { IColumns } from "../../app/common/table/utils";
 import { useStore } from "../../app/stores/store";
 
-const dummyData = [
-  {
-    id: "1",
-    solicitud: "123456",
-    nombre: "Juan Perez",
-    registro: "123456",
-    sucursal: "Sucursal 1",
-    edad: "30",
-    sexo: "Masculino",
-    compania: "Compañia 1",
-    orden: "Orden 1",
-  },
-  {
-    id: "2",
-    solicitud: "123456",
-    nombre: "Juan Perez",
-    registro: "123456",
-    sucursal: "Sucursal 1",
-    edad: "30",
-    sexo: "Masculino",
-    compania: "Compañia 1",
-    orden: "Orden 1",
-  },
-  {
-    id: "3",
-    solicitud: "123456",
-    nombre: "Juan Perez",
-    registro: "123456",
-    sucursal: "Sucursal 1",
-    edad: "30",
-    sexo: "Masculino",
-    compania: "Compañia 1",
-    orden: "Orden 1",
-  },
-];
-
 const DeliveryResultsTable = () => {
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
   const { massResultSearchStore, requestedStudyStore } = useStore();
   const { requests } = massResultSearchStore;
   const { printOrder } = requestedStudyStore;
-  const [selectedStudies, setSelectedStudies] = useState<any[]>([]);
+  const [selectedStudies, setSelectedStudies] = useState<any[]>([
+    { solicitudId: "", estudiosId: [{ estudioId: "", tipo: 3 }] },
+  ]);
   const columns: IColumns = [
     {
       key: "solicitudId",
@@ -205,24 +171,42 @@ const DeliveryResultsTable = () => {
                     rowSelection={{
                       type: "checkbox",
                       onSelect: (selectedRow, isSelected, a: any) => {
-                        // console.log(
-                        //   "selectedssssss row keys",
-                        //   toJS(selectedRow)
-                        // );
+                        console.log(
+                          "selectedssssss row keys",
+                          toJS(selectedRow)
+                        );
                         console.log("selectedtsss rows", toJS(isSelected));
                         // console.log("a", toJS(a));
                         if (isSelected) {
-                          const existStudy = selectedStudies.find(
-                            (study) => study.id === selectedRow.estudioId
+                          // const existStudy = selectedStudies.find(
+                          //   (study) => study.id === selectedRow.estudioId
+                          // );
+                          const existingStudy = selectedStudies.find(
+                            (study) => study.solicitudId === data.solicitudId
                           );
-                          if (!existStudy) {
+                          if (!existingStudy) {
                             const newStudy = {
-                              id: selectedRow.estudioId,
-                              tipo: selectedRow.isPathological
-                                ? "PATHOLOGICAL"
-                                : "LABORATORY",
+                              estudioId: selectedRow.estudioId,
+                              tipo: selectedRow.isPathological ? 30 : -1,
                             };
-                            setSelectedStudies([...selectedStudies, newStudy]);
+                            const newResquestStudies = {
+                              solicitudId: data.solicitudId,
+                              estudiosId: [newStudy],
+                            };
+                            existingStudy.estudiosId.push(newStudy);
+                            setSelectedStudies([
+                              ...selectedStudies,
+                              existingStudy,
+                            ]);
+                            // setSelectedStudies([...selectedStudies, newStudy]);
+                          } else {
+                            const newStudy = {
+                              estudioId: selectedRow.estudioId,
+                              tipo: selectedRow.isPathological ? 30 : -1,
+                            };
+                            existingStudy.estudiosId.push(newStudy);
+                            // const newResquestsStudies = setSelectedStudies.map((request) => )
+                            // setSelectedStudies(
                           }
                         } else {
                           const newStudies = selectedStudies.filter(
@@ -238,9 +222,9 @@ const DeliveryResultsTable = () => {
                         selectedRows: any,
                         rowSelectedMethod: any
                       ) => {
-                        console.log("selected row keys", toJS(selectedRowKeys));
-                        console.log("selectedt rows", toJS(selectedRows));
-                        console.log("a", toJS(rowSelectedMethod));
+                        // console.log("selected row keys", toJS(selectedRowKeys));
+                        // console.log("selectedt rows", toJS(selectedRows));
+                        // console.log("a", toJS(rowSelectedMethod));
                         let newStudies: any[] = [];
                         if (rowSelectedMethod.type === "all") {
                           if (selectedRowKeys.length > 0) {
