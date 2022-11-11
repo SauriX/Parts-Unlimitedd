@@ -284,6 +284,7 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
                   multiple
                   readonly={readonly}
                   options={priceListOptions}
+                  required
                 />
               </Col>
             </Row>

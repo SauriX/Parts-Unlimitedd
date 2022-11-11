@@ -16,6 +16,7 @@ import {
   RequestStudyUpdate,
   RequestTotal,
   IRequestPayment,
+  IRequestToken,
 } from "../models/request";
 import alerts from "../util/alerts";
 import { status, statusName } from "../util/catalogs";
@@ -217,7 +218,7 @@ export default class RequestStore {
       this.loadingRequests = true;
       const requests = await Request.getRequests(filter);
       this.requests = requests;
-      return requests
+      return requests;
     } catch (error) {
       alerts.warning(getErrors(error));
     } finally {
@@ -646,6 +647,33 @@ export default class RequestStore {
     } catch (error) {
       alerts.warning(getErrors(error));
       return false;
+    }
+  };
+
+  sendWeeToken = async (request: IRequestToken) => {
+    try {
+      const data = await Request.sendWeeToken(request);
+      return data;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  compareWeeToken = async (request: IRequestToken) => {
+    try {
+      const data = await Request.compareWeeToken(request);
+      return data;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  verifyWeeToken = async (request: IRequestToken) => {
+    try {
+      const data = await Request.verifyWeeToken(request);
+      return data;
+    } catch (error) {
+      alerts.warning(getErrors(error));
     }
   };
 

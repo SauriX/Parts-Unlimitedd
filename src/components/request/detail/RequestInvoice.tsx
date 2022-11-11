@@ -46,7 +46,7 @@ const RequestInvoice = () => {
             parser={(value) => Number(value!.replace("%", ""))}
             value={totals.descuento}
             onChange={(value) => {
-              setTotals({ ...totals, descuento: value });
+              setTotals({ ...totals, descuento: value ?? 0 });
             }}
             bordered={false}
             min={0}
@@ -61,7 +61,7 @@ const RequestInvoice = () => {
             parser={(value) => Number(value!.replace(/\$ \s?|(,*)/g, ""))}
             value={totals.descuento}
             onChange={(value) => {
-              setTotals({ ...totals, descuento: value });
+              setTotals({ ...totals, descuento: value ?? 0 });
             }}
             bordered={false}
             min={0}
@@ -93,7 +93,7 @@ const RequestInvoice = () => {
             parser={(value) => Number(value!.replace("%", ""))}
             value={totals.cargo}
             onChange={(value) => {
-              setTotals({ ...totals, cargo: value });
+              setTotals({ ...totals, cargo: value ?? 0 });
             }}
             bordered={false}
             min={0}
@@ -108,7 +108,7 @@ const RequestInvoice = () => {
             parser={(value) => Number(value!.replace(/\$\s?|(,*)/g, ""))}
             value={totals.cargo}
             onChange={(value) => {
-              setTotals({ ...totals, cargo: value });
+              setTotals({ ...totals, cargo: value ?? 0 });
             }}
             bordered={false}
             min={0}
@@ -139,7 +139,7 @@ const RequestInvoice = () => {
             parser={(value) => Number(value!.replace("%", ""))}
             value={totals.copago}
             onChange={(value) => {
-              setTotals({ ...totals, copago: value });
+              setTotals({ ...totals, copago: value ?? 0 });
             }}
             bordered={false}
             min={0}
@@ -154,7 +154,7 @@ const RequestInvoice = () => {
             parser={(value) => Number(value!.replace(/\$\s?|(,*)/g, ""))}
             value={totals.copago}
             onChange={(value) => {
-              setTotals({ ...totals, copago: value });
+              setTotals({ ...totals, copago: value ?? 0 });
             }}
             bordered={false}
             min={0}

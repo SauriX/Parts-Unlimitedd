@@ -8,7 +8,12 @@ import {
   IRequestTag,
   IRequestTotal,
   IRequestPayment,
+  IRequestToken,
 } from "../models/request";
+import {
+  IWeeTokenValidation,
+  IWeeTokenVerification,
+} from "../models/weeClinic";
 import requests from "./agent";
 
 const Request = {
@@ -91,6 +96,12 @@ const Request = {
     code: string
   ): Promise<void> =>
     requests.delete(`request/image/${recordId}/${requestId}/${code}`),
+  sendWeeToken: (request: IRequestToken): Promise<IWeeTokenValidation> =>
+    requests.post("request/wee/sendToken", request),
+  compareWeeToken: (request: IRequestToken): Promise<IWeeTokenValidation> =>
+    requests.post("request/wee/compareToken", request),
+  verifyWeeToken: (request: IRequestToken): Promise<IWeeTokenVerification> =>
+    requests.post("request/wee/verifyToken", request),
 };
 
 export default Request;
