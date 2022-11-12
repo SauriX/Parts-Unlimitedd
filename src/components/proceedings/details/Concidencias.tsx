@@ -1,4 +1,15 @@
-import { Button, Col, DatePicker, Divider, Input, InputNumber, PageHeader, Row, Select, Table } from "antd";
+import {
+  Button,
+  Col,
+  DatePicker,
+  Divider,
+  Input,
+  InputNumber,
+  PageHeader,
+  Row,
+  Select,
+  Table,
+} from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
@@ -18,12 +29,17 @@ import { IProceedingList } from "../../../app/models/Proceeding";
 
 type ProceedingTableProps = {
   printing: boolean;
-  expedientes:IProceedingList[];
-  handle:() => Promise<void>;
-  handleclose:() => Promise<void>;
+  expedientes: IProceedingList[];
+  handle: () => Promise<void>;
+  handleclose: () => Promise<void>;
 };
-const Coincidencias: FC<ProceedingTableProps> = ({  printing,expedientes,handle,handleclose }) => {
-  const { priceListStore,modalStore} = useStore();
+const Coincidencias: FC<ProceedingTableProps> = ({
+  printing,
+  expedientes,
+  handle,
+  handleclose,
+}) => {
+  const { priceListStore, modalStore } = useStore();
   const { priceLists, getAll } = priceListStore;
   const { closeModal } = modalStore;
   const [searchParams] = useSearchParams();
@@ -49,7 +65,7 @@ const Coincidencias: FC<ProceedingTableProps> = ({  printing,expedientes,handle,
     };
 
     if (priceLists.length === 0) {
-        readPriceList();
+      readPriceList();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -67,7 +83,9 @@ const Coincidencias: FC<ProceedingTableProps> = ({  printing,expedientes,handle,
         <Button
           type="link"
           onClick={() => {
-            navigate(`/${views.proceeding}/${Proceeding.id}?${searchParams}&mode=readonly`);
+            navigate(`/${views.proceeding}/${Proceeding.id}?mode=readonly`);
+            closeModal();
+            handleclose();
           }}
         >
           {value}
@@ -84,36 +102,38 @@ const Coincidencias: FC<ProceedingTableProps> = ({  printing,expedientes,handle,
       }),
     },
 
-      {
-        ...getDefaultColumnProps("fechaNacimiento", "Fecha de nacimiento", {
-          searchState,
-          setSearchState,
-          width: "20%",
-          minWidth: 150,
-          windowSize: windowWidth,
-        }),
-      },
-      {
-        ...getDefaultColumnProps("fechaAlta", "Fecha alta expediente", {
-          searchState,
-          setSearchState,
-          width: "20%",
-          minWidth: 150,
-          windowSize: windowWidth,
-        }),
-      },
+    {
+      ...getDefaultColumnProps("fechaNacimiento", "Fecha de nacimiento", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("fechaAlta", "Fecha alta expediente", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
   ];
 
   const PriceListTablePrint = () => {
     return (
-      <div >
+      <div>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Lista de Precios" image="precio" />}
+          title={
+            <HeaderTitle title="Catálogo de Lista de Precios" image="precio" />
+          }
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
-{/*         <Table<IPriceListList>
+        {/*         <Table<IPriceListList>
           size="small"
           rowKey={(record) => record.id}
           columns={columns.slice(0, 3)}
@@ -138,13 +158,30 @@ const Coincidencias: FC<ProceedingTableProps> = ({  printing,expedientes,handle,
       />
       <div style={{ display: "none" }}>{<PriceListTablePrint />}</div>
       <Row>
-        
         <Col md={24} style={{ textAlign: "center" }}>
-          <h1>¿Desea continuar con el alta?</h1>            
+          <h1>¿Desea continuar con el alta?</h1>
         </Col>
-        <Col md={8} style={{ textAlign: "center"  }}></Col>
-        <Col md={4} style={{ textAlign: "center"  }}><Button style={{backgroundColor:"#002060",color:"white"}} onClick={()=>{handle()}}>Aceptar</Button></Col>
-        <Col md={4} style={{ textAlign: "center"  }}><Button style={{backgroundColor:"#9A0000",color:"white"}} onClick={()=>{closeModal();handleclose()}}>Cancelar</Button></Col>
+        <Col md={8} style={{ textAlign: "center" }}></Col>
+        <Col md={4} style={{ textAlign: "center" }}>
+          <Button
+            style={{ backgroundColor: "#002060", color: "white" }}
+            onClick={() => {
+              handle();
+            }}
+          >
+            Aceptar
+          </Button>
+        </Col>
+        <Col md={4} style={{ textAlign: "center" }}>
+          <Button
+            style={{ backgroundColor: "#9A0000", color: "white" }}
+            onClick={() => {
+              closeModal();
+            }}
+          >
+            Cancelar
+          </Button>
+        </Col>
       </Row>
     </Fragment>
   );
