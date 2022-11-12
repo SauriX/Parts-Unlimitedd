@@ -106,7 +106,7 @@ const Request = {
   assignWeeServices: (
     recordId: string,
     requestId: string
-  ): Promise<IWeeAssignment> =>
+  ): Promise<IWeeAssignment[]> =>
     requests.put(`request/wee/assignServices/${recordId}/${requestId}`, {}),
 };
 

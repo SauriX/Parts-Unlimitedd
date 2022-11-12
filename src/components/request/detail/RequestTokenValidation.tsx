@@ -6,24 +6,29 @@ import {
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Alert, Button, Col, Input, Row, Steps, Typography } from "antd";
+import { Alert, Button, Col, Input, Row, Steps, Table, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect, useState } from "react";
+import { IColumns } from "../../../app/common/table/utils";
 import { IRequestToken } from "../../../app/models/request";
+import { IWeeAssignment } from "../../../app/models/weeClinic";
 import { useStore } from "../../../app/stores/store";
 import alerts from "../../../app/util/alerts";
 
-const { Link } = Typography;
+const { Link, Text } = Typography;
 
-const RequestTokenValidation = () => {
+type RequestTokenValidationProps = {
+  recordId: string;
+  requestId: string;
+};
+
+const RequestTokenValidation = ({
+  recordId,
+  requestId,
+}: RequestTokenValidationProps) => {
   const { requestStore } = useStore();
-  const {
-    request,
-    sendWeeToken,
-    compareWeeToken,
-    verifyWeeToken,
-    assignWeeServices,
-  } = requestStore;
+  const { sendWeeToken, compareWeeToken, verifyWeeToken, assignWeeServices } =
+    requestStore;
 
   const [currentStep, setCurrentStep] = useState(0);
   const [currentStatus, setCurrentStatus] = useState<{
@@ -36,11 +41,35 @@ const RequestTokenValidation = () => {
   const [sending, setSending] = useState(false);
   const [comparing, setComparing] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [assigning, setAssigning] = useState(false);
   const [code, setCode] = useState<string>();
+
+  const columns: IColumns<IWeeAssignment> = [
+    {
+      dataIndex: "nombre",
+      key: "nombre",
+      title: "Nombre",
+      render: (value, item) => (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Link>{value}</Link>
+          <small>
+            <Text type="secondary">{item.clave}</Text>
+          </small>
+        </div>
+      ),
+    },
+    {
+      dataIndex: "mensaje",
+      key: "mensaje",
+      title: "Resultado",
+    },
+  ];
+
+  const [services, setServices] = useState<IWeeAssignment[]>([]);
 
   const sendToken = useCallback(
     async (resend: boolean = false) => {
-      if (request && !request.tokenValidado) {
+      if (recordId && requestId) {
         setCurrentStep(0);
         setCurrentStatus({
           message: "Enviando código a paciente...",
@@ -48,8 +77,8 @@ const RequestTokenValidation = () => {
         });
 
         const sendInfo: IRequestToken = {
-          expedienteId: "38FD7A18-5905-45EE-CD28-08DAB3B90891", //request!.expedienteId,
-          solicitudId: "13D5C902-19F6-443D-A5B2-EB9940B91608", //request!.solicitudId!,
+          expedienteId: recordId,
+          solicitudId: requestId,
           reenviar: resend,
         };
 
@@ -70,7 +99,7 @@ const RequestTokenValidation = () => {
         setSending(false);
       }
     },
-    [request, sendWeeToken]
+    [recordId, requestId, sendWeeToken]
   );
 
   const compareToken = async () => {
@@ -84,8 +113,8 @@ const RequestTokenValidation = () => {
     });
 
     const compareInfo: IRequestToken = {
-      expedienteId: "38FD7A18-5905-45EE-CD28-08DAB3B90891", //request!.expedienteId,
-      solicitudId: "13D5C902-19F6-443D-A5B2-EB9940B91608", //request!.solicitudId!,
+      expedienteId: recordId,
+      solicitudId: requestId,
       token: code,
       reenviar: false,
     };
@@ -139,16 +168,30 @@ const RequestTokenValidation = () => {
   };
 
   const assignServices = async (compareInfo: IRequestToken) => {
+    setCurrentStatus({
+      message: "Asignando estudios a laboratorio...",
+      status: "info",
+    });
+
+    setAssigning(true);
+
     const response = await assignWeeServices(
       compareInfo.expedienteId,
       compareInfo.solicitudId
     );
-    console.log(response);
+
+    setServices(response);
+    setCurrentStatus({
+      message: "Resultados de asignación",
+      status: "info",
+    });
+
+    setAssigning(false);
   };
 
   useEffect(() => {
     sendToken();
-  }, [request, sendToken]);
+  }, [sendToken]);
 
   const steps = [
     {
@@ -223,7 +266,34 @@ const RequestTokenValidation = () => {
     },
     {
       title: "Asignación",
-      icon: <FontAwesomeIcon icon={sending ? faSpinner : faListCheck} />,
+      icon: (
+        <FontAwesomeIcon
+          spin={assigning}
+          icon={assigning ? faSpinner : faListCheck}
+        />
+      ),
+      content: (
+        <Row gutter={[16, 16]}>
+          <Col span={24}>
+            <Alert
+              message={currentStatus.message}
+              type={currentStatus.status}
+            />
+          </Col>
+          {services && services.length > 0 && (
+            <Col span={24}>
+              <Table<IWeeAssignment>
+                rowKey={(record) => record.idServicio}
+                columns={columns}
+                dataSource={services}
+                pagination={false}
+                sticky
+                scroll={{ x: "auto", y: 500 }}
+              />
+            </Col>
+          )}
+        </Row>
+      ),
     },
   ];
 

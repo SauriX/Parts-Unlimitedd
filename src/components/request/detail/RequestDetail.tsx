@@ -153,7 +153,12 @@ const RequestDetail = () => {
             </Col>
           </Row>
         ),
-        body: <RequestTokenValidation />,
+        body: (
+          <RequestTokenValidation
+            recordId={request.expedienteId}
+            requestId={request.solicitudId!}
+          />
+        ),
         closable: false,
       });
     }

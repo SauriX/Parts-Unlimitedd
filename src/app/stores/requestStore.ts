@@ -683,6 +683,7 @@ export default class RequestStore {
       return data;
     } catch (error) {
       alerts.warning(getErrors(error));
+      return [];
     }
   };
 

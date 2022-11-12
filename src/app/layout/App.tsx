@@ -114,20 +114,6 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route element={<PrivateRoute />}>
           <Route element={<LayoutComponent />}>
-            <Route
-              path="weetest"
-              element={
-                <div
-                  style={{
-                    width: "70%",
-                    padding: 15,
-                    border: "1px solid black",
-                  }}
-                >
-                  <RequestTokenValidation />
-                </div>
-              }
-            />
             <Route path="" element={<Home />} />
             <Route path="users" element={<User />} />
             <Route path="users/:id" element={<UserDetail />} />
