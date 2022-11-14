@@ -32,6 +32,7 @@ const RequestDetail = () => {
   } = useStore();
   const { profile } = profileStore;
   const {
+    clearDetailData,
     getById,
     create,
     totals,
@@ -168,8 +169,9 @@ const RequestDetail = () => {
   useEffect(() => {
     return () => {
       closeModal();
+      clearDetailData();
     };
-  }, [closeModal]);
+  }, [closeModal, clearDetailData]);
 
   if (!recordId) return null;
 

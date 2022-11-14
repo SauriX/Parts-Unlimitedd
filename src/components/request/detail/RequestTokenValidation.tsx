@@ -26,9 +26,10 @@ const RequestTokenValidation = ({
   recordId,
   requestId,
 }: RequestTokenValidationProps) => {
-  const { requestStore } = useStore();
+  const { requestStore, modalStore } = useStore();
   const { sendWeeToken, compareWeeToken, verifyWeeToken, assignWeeServices } =
     requestStore;
+  const { closeModal } = modalStore;
 
   const [currentStep, setCurrentStep] = useState(0);
   const [currentStatus, setCurrentStatus] = useState<{
@@ -290,6 +291,13 @@ const RequestTokenValidation = ({
                 sticky
                 scroll={{ x: "auto", y: 500 }}
               />
+            </Col>
+          )}
+          {services && services.length > 0 && (
+            <Col span={24} style={{ textAlign: "right" }}>
+              <Button type="primary" onClick={closeModal}>
+                Aceptar
+              </Button>
             </Col>
           )}
         </Row>

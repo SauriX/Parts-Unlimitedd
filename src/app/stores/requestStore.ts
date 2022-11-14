@@ -92,6 +92,10 @@ export default class RequestStore {
     return [...studies, ...packStudies];
   }
 
+  clearDetailData = () => {
+    this.request = undefined;
+  };
+
   setOriginalTotal = (totals: IRequestTotal) => {
     this.totalsOriginal = totals;
   };
