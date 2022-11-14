@@ -60,6 +60,7 @@ const studys:Ivalidationlist[]=[{
     status:"string",
     registro:moment(moment.now()),
     entrega:moment(moment.now()),
+    estatus:1
   }],
   order: "string",
 }];
@@ -190,10 +191,10 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                   {x.status == "1" ? "Pendiente" : "Toma de muestra"}
                 </Descriptions.Item>
                 <Descriptions.Item label="Registro" style={{ maxWidth: 30 }}>
-                  {x.registro.format("DD:MM:YYYY-h:mmA")}
+                  {x.registro.format("DD/MM/YYYY-h:mmA")}
                 </Descriptions.Item>
                 <Descriptions.Item label="Entrega" style={{ maxWidth: 30 }}>
-                  {x.entrega.format("DD:MM:YYYY-h:mmA")}
+                  {x.entrega.format("DD/MM/YYYY-h:mmA")}
                 </Descriptions.Item>
                 <Descriptions.Item label="" style={{ maxWidth: 30 }}>
                   {x.status == "1" && activiti == "register" && (
@@ -380,6 +381,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
           padding: "10px",
         }}
       >
+        
          <Collapse ghost className="request-filter-collapse">
          <Panel
         header="Filtros"
@@ -572,8 +574,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
       ) : (
         ""
       )}
-      <br />
-      Solicitudes: {soliCont}&nbsp;&nbsp;&nbsp; Estudios: {studyCont}
+
       <br />
       <br />
       <Fragment>
