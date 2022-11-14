@@ -1,17 +1,15 @@
 import { Form, Row, Col, Button, Typography, Table } from "antd";
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import TextInput from "../../../../app/common/form/TextInput";
-import { ExclamationCircleOutlined, SearchOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import { IReagentList } from "../../../../app/models/reagent";
+import { SearchOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { store, useStore } from "../../../../app/stores/store";
-import { useSearchParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import {
   ISearch,
   IColumns,
   getDefaultColumnProps,
 } from "../../../../app/common/table/utils";
-import useWindowDimensions, { resizeWidth } from "../../../../app/util/window";
+import useWindowDimensions from "../../../../app/util/window";
 import { IParameterList } from "../../../../app/models/parameter";
 import { VList } from "virtual-table-ant-design";
 
@@ -19,27 +17,23 @@ const { Paragraph } = Typography;
 
 type Props = {
   getResult: (isAdmin: boolean) => any;
-  selectedReagent: React.Key[];
+  selectedParameters: IParameterList[];
 };
 
-const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
-  const { reagentStore, parameterStore,studyStore } = useStore();
+const ParameterReagent = ({ getResult, selectedParameters }: Props) => {
+  const { parameterStore, studyStore } = useStore();
   const { getAll, parameters } = parameterStore;
-  const { setParameterSelected,getParameterSelected } = studyStore;
+  const { setParameterSelected } = studyStore;
   const { openModal, closeModal } = store.modalStore;
   const [form] = Form.useForm<any>();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const { width: windowWidth } = useWindowDimensions();
   const [loading, setLoading] = useState(false);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  useEffect(() => {
-    setSelectedRowKeys(selectedReagent);
-  }, []);
+  const [selectedParameterKeys, setSelectedParameterKeys] =
+    useState<IParameterList[]>(selectedParameters);
 
   useEffect(() => {
     const readReagents = async () => {
@@ -47,16 +41,12 @@ const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
       await getAll("all");
       setLoading(false);
     };
-
-    if (parameters.length === 0) {
-      readReagents();
-    }
+    readReagents();
   }, []);
 
   const search = async (search: string | undefined) => {
     search = search === "" ? undefined : search;
     await getAll(form.getFieldValue("search") ?? "all");
-    setSearchParams(searchParams);
   };
 
   const columns: IColumns<IParameterList> = [
@@ -78,36 +68,39 @@ const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
         windowSize: windowWidth,
       }),
     },
-
   ];
 
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    setSelectedRowKeys(newSelectedRowKeys);
+  const onSelectKeys = (item: IParameterList, checked: boolean) => {
+    const index = selectedParameterKeys.findIndex((x) => x.id === item.id);
+    if (checked && index === -1) {
+      setSelectedParameterKeys((prev) => [...prev, item]);
+    } else if (!checked && index > -1) {
+      setSelectedParameterKeys((prev) => prev.splice(index, 1));
+    }
   };
 
   const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
+    selectedRowKeys: selectedParameterKeys.map((x) => x.id),
+    onSelect: onSelectKeys,
   };
+  
+  useEffect(() => {
+    console.log(selectedParameterKeys);
+  }, [selectedParameterKeys]);
 
   const acceptChanges = () => {
-    const filterList = parameters.filter((x) =>
-      selectedRowKeys.includes(x.id)
-    );
-    setParameterSelected(filterList);
+    setParameterSelected(selectedParameterKeys);
     closeModal();
-  }
+  };
 
   return (
     <Fragment>
       <Row gutter={[12, 12]}>
         <Col span={24} style={{ textAlign: "center" }}>
-          <PlusCircleOutlined
-            style={{ color: "green", fontSize: 48 }}
-          />
+          <PlusCircleOutlined style={{ color: "green", fontSize: 48 }} />
         </Col>
         <Col span={24}>
-          <Paragraph style={{textAlign: "center"}}>
+          <Paragraph style={{ textAlign: "center" }}>
             Favor de ingresar el nombre o clave del parámetro.
           </Paragraph>
         </Col>
@@ -143,7 +136,7 @@ const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
         columns={columns}
         dataSource={[...parameters]}
         sticky
-        scroll={{ y: '30vh', x: true }}
+        scroll={{ y: "30vh", x: true }}
         components={VList({
           height: 500,
         })}
@@ -151,8 +144,8 @@ const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
       />
       <Button
         type="primary"
-        onClick={acceptChanges}
-        style={{marginLeft:"90%"}}
+        onClick={() => acceptChanges()}
+        style={{ marginLeft: "90%" }}
       >
         Aceptar
       </Button>

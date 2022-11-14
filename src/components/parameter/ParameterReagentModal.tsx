@@ -2,7 +2,7 @@ import { IReagentList } from "../../app/models/reagent";
 import { store } from "../../app/stores/store";
 import ParameterReagent from "./detail/ParameterReagent";
 
-export const ParameterReagentModal = (selectedRowKeys: React.Key[]) => {
+export const ParameterReagentModal = (selectedRowKeys: IReagentList[]) => {
   const { openModal, closeModal } = store.modalStore;
 
   return new Promise((resolve) => {
@@ -12,7 +12,6 @@ export const ParameterReagentModal = (selectedRowKeys: React.Key[]) => {
         <ParameterReagent
           getResult={(data) => {
             resolve(true);
-            closeModal();
           }}
           selectedReagent={selectedRowKeys}
         />
