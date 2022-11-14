@@ -1,7 +1,11 @@
 import { Form, Row, Col, Button, Typography, Table } from "antd";
 import React, { Fragment, useEffect, useState } from "react";
 import TextInput from "../../../app/common/form/TextInput";
-import { ExclamationCircleOutlined, SearchOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import {
+  ExclamationCircleOutlined,
+  SearchOutlined,
+  PlusCircleOutlined,
+} from "@ant-design/icons";
 import { IReagentList } from "../../../app/models/reagent";
 import { store, useStore } from "../../../app/stores/store";
 import { useSearchParams } from "react-router-dom";
@@ -17,27 +21,23 @@ const { Paragraph } = Typography;
 
 type Props = {
   getResult: (isAdmin: boolean) => any;
-  selectedReagent: React.Key[];
+  selectedReagent: IReagentList[];
 };
 
 const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
   const { reagentStore, parameterStore } = useStore();
   const { getAll, reagents } = reagentStore;
-  const { setReagentSelected, getReagentSelected } = parameterStore;
+  const { setReagentSelected } = parameterStore;
   const { openModal, closeModal } = store.modalStore;
   const [form] = Form.useForm<any>();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const { width: windowWidth } = useWindowDimensions();
   const [loading, setLoading] = useState(false);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  useEffect(() => {
-    setSelectedRowKeys(selectedReagent);
-  }, []);
+  const [selectedReagentKeys, setSelectedReagentKeys] =
+  useState<IReagentList[]>(selectedReagent);
 
   useEffect(() => {
     const readReagents = async () => {
@@ -46,15 +46,12 @@ const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
       setLoading(false);
     };
 
-    if (reagents.length === 0) {
-      readReagents();
-    }
+    readReagents();
   }, []);
 
   const search = async (search: string | undefined) => {
     search = search === "" ? undefined : search;
     await getAll(form.getFieldValue("search") ?? "all");
-    setSearchParams(searchParams);
   };
 
   const columns: IColumns<IReagentList> = [
@@ -87,33 +84,36 @@ const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
     },
   ];
 
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    setSelectedRowKeys(newSelectedRowKeys);
+  const onSelectKeys = (item: IReagentList, checked: boolean) => {
+    const index = selectedReagentKeys.findIndex((x) => x.id === item.id);
+    if (checked && index === -1) {
+      setSelectedReagentKeys((prev) => [...prev, item]);
+    } else if (!checked && index > -1) {
+      setSelectedReagentKeys((prev) => prev.splice(index, 1));
+    }
   };
 
   const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
+    selectedRowKeys: selectedReagentKeys.map((x) => x.id),
+    onSelect: onSelectKeys,
   };
+  
+  useEffect(() => {
+  }, [selectedReagentKeys]);
 
   const acceptChanges = () => {
-    const filterList = reagents.filter((x) =>
-      selectedRowKeys.includes(x.id)
-    );
-    setReagentSelected(filterList);
+    setReagentSelected(selectedReagentKeys);
     closeModal();
-  }
+  };
 
   return (
     <Fragment>
       <Row gutter={[12, 12]}>
         <Col span={24} style={{ textAlign: "center" }}>
-          <PlusCircleOutlined
-            style={{ color: "green", fontSize: 48 }}
-          />
+          <PlusCircleOutlined style={{ color: "green", fontSize: 48 }} />
         </Col>
         <Col span={24}>
-          <Paragraph style={{textAlign: "center"}}>
+          <Paragraph style={{ textAlign: "center" }}>
             Favor de ingresar el nombre o clave del reactivo.
           </Paragraph>
         </Col>
@@ -152,10 +152,7 @@ const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
         rowSelection={rowSelection}
       />
-      <Button
-        type="primary"
-        onClick={acceptChanges}
-      >
+      <Button type="primary" onClick={acceptChanges}>
         Aceptar
       </Button>
     </Fragment>

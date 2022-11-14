@@ -762,7 +762,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               console.log(error);
             }}
           >
-            <Row gutter={[0, 12]}>
+            <Row gutter={[12, 12]}>
               <Col span={12}>
                 <Form.Item
                   label="Nombre"
@@ -855,8 +855,8 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   formProps={{
                     name: "edad",
                     label: "Edad",
-                    labelCol: { span: 12 },
-                    wrapperCol: { span: 12 },
+                    labelCol: { span: 6 },
+                    wrapperCol: { span: 18 },
                   }}
                   max={500}
                   min={0}
@@ -866,7 +866,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               </Col>
               <Col span={8}>
                 <Form.Item
-                  label="Contacto"
                   labelCol={{ span: 6 }}
                   wrapperCol={{ span: 18 }}
                   help=""
@@ -878,7 +877,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                         <MaskInput
                           formProps={{
                             name: "telefono",
-                            label: "Teléfono",
+                            label: "Contacto/Teléfono",
                           }}
                           mask={[
                             /[0-9]/,
@@ -1168,7 +1167,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 rowKey={(record) => record.id}
                 columns={columnsC}
                 dataSource={citas}
-                /*    pagination={defaultPaginationProperties} */
                 sticky
                 scroll={{
                   x: windowWidth < resizeWidth ? "max-content" : "auto",

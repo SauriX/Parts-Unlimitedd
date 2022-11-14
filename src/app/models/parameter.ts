@@ -24,6 +24,7 @@ export interface IParameterList {
   resultado: string;
   ultimoResultado?: string;
   formula?: string;
+  index?: number;
   tipoValores?: ItipoValorForm[];
 }
 

@@ -113,14 +113,14 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
       let val = parameter!.tipoValor | 0;
       setValueType(val);
       form.setFieldsValue(parameter!);
-      setDeltaCheck(parameter?.deltaCheck!)
+      setDeltaCheck(parameter?.deltaCheck!);
       setValues(parameter!);
       setLoading(false);
     };
     if (id) {
       readuser(id);
     } else {
-      setReagentSelected([])
+      setReagentSelected([]);
     }
   }, [form, getById, id]);
 
@@ -316,6 +316,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
       (x) => !selectedRowKeys.includes(x.id)
     );
     setReagentSelected(filterList);
+    setSelectedRowKeys([]);
   };
 
   return (
@@ -452,7 +453,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                         label: "FCSI",
                       }}
                       max={100}
-
                       readonly={CheckReadOnly()}
                     />
                   </Col>
@@ -603,11 +603,11 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
               <PageHeader
                 ghost={false}
                 title={
-                  <HeaderTitle title="Reactivos donde se encuentra el parámetro" />
+                  <HeaderTitle title="Reactivos del parámetro" />
                 }
                 className="header-container"
                 extra={[
-                  reagentsSelected.length > 0 && selectedRowKeys.length > 0 ? (
+                  selectedRowKeys.length > 0 ? (
                     <Button type="primary" danger onClick={deleteReagent}>
                       Eliminar
                     </Button>
@@ -617,9 +617,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                   <Button
                     type="primary"
                     onClick={async () => {
-                      await ParameterReagentModal(
-                        reagentsSelected.map((x) => x.id)
-                      );
+                      await ParameterReagentModal(reagentsSelected);
                     }}
                   >
                     Buscar
