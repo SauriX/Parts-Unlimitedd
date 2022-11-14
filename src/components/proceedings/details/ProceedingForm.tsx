@@ -1167,7 +1167,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 rowKey={(record) => record.id}
                 columns={columnsC}
                 dataSource={citas}
-                /*    pagination={defaultPaginationProperties} */
                 sticky
                 scroll={{
                   x: windowWidth < resizeWidth ? "max-content" : "auto",
