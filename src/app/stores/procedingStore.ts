@@ -12,7 +12,7 @@ import {
 } from "../models/Proceeding";
 import Proceding from "../api/proceding";
 import { ITaxData } from "../models/taxdata";
-import { IQuotationList, ISearchQuotation, SearchQuotationValues } from "../models/quotation";
+// import { IQuotationList, ISearchQuotation, SearchQuotationValues } from "../models/quotation";
 import quotation from "../api/quotation";
 import moment from "moment";
 import Study from "../api/study";
@@ -26,16 +26,16 @@ export default class ProcedingStore {
   // expediente?: IProceedingForm;
   search: ISearchMedical = new SearchMedicalFormValues();
   tax: ITaxData[] = [];
-  searchQ: ISearchQuotation = new SearchQuotationValues();
-  quotatios: IQuotationList[] = [];
-  getAllQ = async (searchQ: ISearchQuotation) => {
-    try {
-      const reagents = await Proceding.getNowQ(searchQ);
-      this.quotatios = reagents;
-    } catch (error: any) {
-      alerts.warning(getErrors(error));
-      this.quotatios = [];
-    }
+  searchQ: any;
+  quotatios: any[] = [];
+  getAllQ = async (searchQ: any) => {
+    // try {
+    //   const reagents = await Proceding.getNowQ(searchQ);
+    //   this.quotatios = reagents;
+    // } catch (error: any) {
+    //   alerts.warning(getErrors(error));
+    //   this.quotatios = [];
+    // }
   };
   getParameter = async (id: number) => {
     try {
@@ -60,9 +60,9 @@ export default class ProcedingStore {
         x.nombre = parametros!.nombre;
         x.indicaciones = parametros?.indicaciones!;
         x.clave = parametros?.clave!;
-        x.areaId=parametros?.area!
-        x.departamentoId=parametros?.departamento!
-        x.taponId=Number(parametros?.tapon!)
+        x.areaId = parametros?.area!;
+        x.departamentoId = parametros?.departamento!;
+        x.taponId = Number(parametros?.tapon!);
       });
       console.log(reagent, "cotizacion");
       return reagent;

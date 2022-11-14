@@ -174,90 +174,83 @@ const QuotationAssignment: FC<GeneralesFormProps> = (
 
   return (
     <Spin spinning={loading}>
-      <Form<IQuotationExpedienteSearch>
-        {...formItemLayout}
-        form={form}
-        name="generales"
-        initialValues={values}
-        onFinish={onFinish}
-        scrollToFirstError
-        onValuesChange={onValuesChange}
-        onFinishFailed={({ errorFields }) => {
-          const errors = errorFields.map((x) => ({
-            name: x.name[0].toString(),
-            errors: x.errors,
-          }));
-          setErrors(errors);
-        }}
-      >
-        <Row justify="space-between" style={{ marginBottom: "15px" }}>
-          <Col span={8}>
-            <TextInput
-              formProps={{
-                name: "buscar",
-                label: "Buscar",
-              }}
-              showLabel
-              max={100}
-              //errors={errors.find((x) => x.name === "exp")?.errors}
-            />
-          </Col>
-          <Col span={8}>
-            <DateRangeInput
-              formProps={{
-                label: "Fecha",
-                name: "fecha",
-              }}
-            />
-          </Col>
-          <Col span={2}>
-            <Button
-              type="primary"
-              htmlType="submit"
-              onClick={() => {
-                form.submit();
-              }}
-            >
-              Buscar
-            </Button>
-          </Col>
-        </Row>
-        <Row justify="space-between">
-          <Col span={8}>
-            <TextInput
-              formProps={{
-                name: "email",
-                label: "Email",
-              }}
-              max={100}
-              type="email"
-              //errors={errors.find((x) => x.name === "exp")?.errors}
-            />
-          </Col>
-          <Col span={8}>
-            <TextInput
-              formProps={{
-                name: "telfono",
-                label: "Teléfono",
-              }}
-              max={10}
-              errors={errors.find((x) => x.name === "telfono")?.errors}
-            />
-          </Col>
-          <Col span={2}></Col>
-        </Row>
-      </Form>
-      <br />
-      <Table<IProceedingList>
-        loading={loading}
-        size="small"
-        rowKey={(record) => record.id}
-        columns={columns}
-        dataSource={records}
-        pagination={defaultPaginationProperties}
-        sticky
-        scroll={{ x: "max-content" }}
-      />
+      <Row gutter={[8, 12]}>
+        <Col span={24}>
+          <Form<IQuotationExpedienteSearch>
+            layout="vertical"
+            form={form}
+            onFinish={onFinish}
+            onFinishFailed={({ errorFields }) => {
+              const errors = errorFields.map((x) => ({
+                name: x.name[0].toString(),
+                errors: x.errors,
+              }));
+              setErrors(errors);
+            }}
+            initialValues={{ cantidad: 0 }}
+            size="small"
+          >
+            <Row gutter={[8, 12]} align="bottom">
+              <Col span={5}>
+                <TextInput
+                  formProps={{
+                    name: "buscar",
+                    label: "Buscar",
+                  }}
+                  max={100}
+                  //errors={errors.find((x) => x.name === "exp")?.errors}
+                />
+              </Col>
+              <Col span={5}>
+                <DateRangeInput
+                  formProps={{
+                    label: "Fecha",
+                    name: "fecha",
+                  }}
+                />
+              </Col>
+              <Col span={5}>
+                <TextInput
+                  formProps={{
+                    name: "email",
+                    label: "Email",
+                  }}
+                  max={100}
+                  type="email"
+                  //errors={errors.find((x) => x.name === "exp")?.errors}
+                />
+              </Col>
+              <Col span={5}>
+                <TextInput
+                  formProps={{
+                    name: "telfono",
+                    label: "Teléfono",
+                  }}
+                  max={10}
+                  errors={errors.find((x) => x.name === "telfono")?.errors}
+                />
+              </Col>
+              <Col span={4} style={{ textAlign: "right" }}>
+                <Button htmlType="submit" type="primary">
+                  Buscar
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        </Col>
+        <Col span={24}>
+          <Table<IProceedingList>
+            loading={loading}
+            size="small"
+            rowKey={(record) => record.id}
+            columns={columns}
+            dataSource={records}
+            pagination={defaultPaginationProperties}
+            sticky
+            scroll={{ x: "max-content" }}
+          />
+        </Col>
+      </Row>
     </Spin>
   );
 };
