@@ -18,7 +18,7 @@ const { Panel } = Collapse;
 
 const RequestedStudyFilter = () => {
   const { optionStore, requestedStudyStore } = useStore();
-  const { formValues, getAll, setFormValues } =
+  const { formValues, getAll, setFormValues, clearFilter } =
     requestedStudyStore;
   const {
     branchCityOptions,
@@ -55,20 +55,18 @@ const RequestedStudyFilter = () => {
   };
 
   return (
-    <Collapse ghost className="request-filter-collapse">
-      <Panel
-        key="filter"
-        header="Búsqueda"
-        extra={[
+    <>
+    <Row justify="end" gutter={[24, 12]} className="filter-buttons">
+        <Col span={24}>
           <Button
             key="clean"
             onClick={(e) => {
-              e.stopPropagation();
               form.resetFields();
+              clearFilter();
             }}
           >
             Limpiar
-          </Button>,
+          </Button>
           <Button
             key="filter"
             type="primary"
@@ -78,9 +76,9 @@ const RequestedStudyFilter = () => {
             }}
           >
             Buscar
-          </Button>,
-        ]}
-      >
+          </Button>
+        </Col>
+      </Row>
         <div className="status-container">
           <Form<IRequestedStudyForm>
             {...formItemLayout}
@@ -178,8 +176,7 @@ const RequestedStudyFilter = () => {
             </Row>
           </Form>
         </div>
-      </Panel>
-    </Collapse>
+        </>
   );
 };
 

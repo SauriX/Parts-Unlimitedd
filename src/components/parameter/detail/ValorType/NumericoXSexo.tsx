@@ -51,77 +51,6 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue, parameter }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const onFinish = async (newValues: ItipoValorForm) => {
     const value = { ...valuesValor, ...newValues };
-
-    // const val: ItipoValorForm[] = values.value.map((x: ItipoValorForm) => {
-    //   let data: ItipoValorForm = {
-    //     hombreValorInicial: x.hombreValorInicial,
-    //     hombreValorFinal: x.hombreValorFinal,
-    //     hombreCriticoMinimo: x.hombreCriticoMinimo,
-    //     hombreCriticoMaximo: x.hombreCriticoMaximo,
-    //     mujerValorInicial: x.mujerValorInicial,
-    //     mujerValorFinal: x.mujerValorFinal,
-    //     mujerCriticoMinimo: x.mujerCriticoMinimo,
-    //     mujerCriticoMaximo: x.mujerCriticoMaximo,
-    //     nombre: idTipeVAlue,
-    //     opcion: "",
-    //     descripcionTexto: "",
-    //     descripcionParrafo: "",
-    //     parametroId: id,
-    //     id: x.id,
-    //   };
-    //   return data;
-    // });
-
-    // var validatehombre = val.map((x) => {
-    //   console.log(x, "x");
-    //   if (x.hombreValorInicial! > x.hombreValorFinal!) {
-    //     console.log("if");
-    //     return true;
-    //   }
-    //   return false;
-    // });
-    // if (validatehombre.includes(true)) {
-    //   alerts.warning("El valor hombre inicial no puede ser mayor al final");
-    //   return;
-    // }
-    // var validatehombreIgual = val.map((x) => {
-    //   console.log(x, "x");
-    //   if (x.hombreValorInicial! === x.hombreValorFinal!) {
-    //     console.log("if");
-    //     return true;
-    //   }
-    //   return false;
-    // });
-    // if (validatehombreIgual.includes(true)) {
-    //   alerts.warning("El valor hombre inicial no puede ser igual al final");
-    //   return;
-    // }
-
-    // var validatehombre = val.map((x) => {
-    //   console.log(x, "x");
-    //   if (x.mujerValorInicial! > x.mujerValorFinal!) {
-    //     console.log("if");
-    //     return true;
-    //   }
-    //   return false;
-    // });
-    // if (validatehombre.includes(true)) {
-    //   alerts.warning("El valor mujer inicial no puede ser mayor al final");
-    //   return;
-    // }
-    // var validatehombreIgual = val.map((x) => {
-    //   console.log(x, "x");
-    //   if (x.mujerValorInicial! === x.mujerValorFinal!) {
-    //     console.log("if");
-    //     return true;
-    //   }
-    //   return false;
-    // });
-    // if (validatehombreIgual.includes(true)) {
-    //   alerts.warning("El valor mujer inicial no puede ser igual al final");
-    //   return;
-    // }
-
     let success = false;
     if (!value.id) {
       value.nombre = idTipeVAlue;
@@ -135,11 +64,6 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue, parameter }) => {
     if (success) {
       navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
     }
-      // var succes = await addvalues(val, id!);
-      // if (succes) {
-      //   succes = await update(parameter);
-        
-      // }
   };
 
   return (
@@ -236,7 +160,6 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue, parameter }) => {
                   max={9999999999}
                   min={0}
                   readonly={disabled}
-                  required
                 />
               </Col>
               <Col span={6}>
@@ -248,7 +171,6 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue, parameter }) => {
                   max={9999999999}
                   min={0}
                   readonly={disabled}
-                  required
                 />
               </Col>
               <Col span={6}>
@@ -260,7 +182,6 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue, parameter }) => {
                   max={9999999999}
                   min={0}
                   readonly={disabled}
-                  required
                 />
               </Col>
               <Col span={6}>
@@ -272,7 +193,6 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue, parameter }) => {
                   max={9999999999}
                   min={0}
                   readonly={disabled}
-                  required
                 />
               </Col>
             </Row>

@@ -109,23 +109,6 @@ const ClinicResultsColumns = () => {
   return columns;
 };
 
-export const NestedClinicResults = () => {
-  const nestedColumns: IColumns<IClinicStudy> = [
-    {
-      ...getDefaultColumnProps("clave", "Estudio", {
-        width: "50%",
-      }),
-      render: (_value, record) => record.clave + " - " + record.nombre,
-    },
-    {
-      ...getDefaultColumnProps("nombreEstatus", "Estatus", {
-        width: "50%",
-      }),
-      render: (_value, record) => record.nombreEstatus!,
-    },
-  ];
-};
-
 export const ClinicResultsExpandable = () => {
   const nestedColumns: IColumns<IClinicStudy> = [
     {
@@ -143,12 +126,13 @@ export const ClinicResultsExpandable = () => {
   ];
 
   return {
-    expandedRowRender: (item: IClinicResultList) => (
+    expandedRowRender: (item: IClinicResultList, index: any) => (
       <Table
         columns={nestedColumns}
         dataSource={item.estudios}
         pagination={false}
         className="header-expandable-table"
+        showHeader={index === 0}
       />
     ),
     rowExpandable: () => true,

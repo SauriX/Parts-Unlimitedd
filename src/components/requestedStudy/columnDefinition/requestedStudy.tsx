@@ -1,5 +1,6 @@
-import { Descriptions, Checkbox } from "antd";
+import { Descriptions, Checkbox, Table } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import moment from "moment";
 import { useState } from "react";
 import PrintIcon from "../../../app/common/icons/PrintIcon";
 import {
@@ -7,16 +8,23 @@ import {
   ISearch,
   getDefaultColumnProps,
 } from "../../../app/common/table/utils";
-import { IRequestedStudyList } from "../../../app/models/requestedStudy";
+import { IRequestStudy } from "../../../app/models/request";
+import {
+  IRequestedStudy,
+  IRequestedStudyList,
+} from "../../../app/models/requestedStudy";
 import { status } from "../../../app/util/catalogs";
 
 type expandableProps = {
   activity: string;
   onChange: (e: CheckboxChangeEvent, id: number, solicitud: string) => void;
+};
+
+type tableProps = {
   printOrder: (recordId: string, requestId: string) => Promise<void>;
 };
 
-const RequestedStudyColumns = () => {
+const RequestedStudyColumns = ({ printOrder }: tableProps) => {
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -33,14 +41,14 @@ const RequestedStudyColumns = () => {
       ...getDefaultColumnProps("nombre", "Nombre del Paciente", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "25%",
       }),
     },
     {
       ...getDefaultColumnProps("registro", "Registro", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "10%",
       }),
     },
     {
@@ -54,14 +62,14 @@ const RequestedStudyColumns = () => {
       ...getDefaultColumnProps("edad", "Edad", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "5%",
       }),
     },
     {
       ...getDefaultColumnProps("sexo", "Sexo", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "5%",
       }),
     },
 
@@ -69,8 +77,23 @@ const RequestedStudyColumns = () => {
       ...getDefaultColumnProps("compañia", "Compañía", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "15%",
       }),
+    },
+    {
+      key: "imprimir",
+      dataIndex: "imprimir",
+      title: "Imprimir orden",
+      align: "center",
+      width: "10%",
+      render: (_value, record) => (
+        <PrintIcon
+          key="imprimir"
+          onClick={() => {
+            printOrder(record.order, record.id);
+          }}
+        />
+      ),
     },
   ];
   return columns;
@@ -79,89 +102,77 @@ const RequestedStudyColumns = () => {
 export const RequestedStudyExpandable = ({
   activity,
   onChange,
-  printOrder,
 }: expandableProps) => {
+  const nestedColumns: IColumns<IRequestedStudy> = [
+    {
+      ...getDefaultColumnProps("clave", "Estudio", {
+        width: "20%",
+      }),
+      render: (_value, record) => record.clave + " - " + record.nombre,
+    },
+    {
+      ...getDefaultColumnProps("nombreEstatus", "Estatus", {
+        width: "20%",
+      }),
+      render: (_value, record) => record.nombreEstatus,
+    },
+    {
+      ...getDefaultColumnProps("registro", "Registro", {
+        width: "20%",
+      }),
+      render: (_value, record) => record.registro,
+    },
+    {
+      ...getDefaultColumnProps("entrega", "Entrega", {
+        width: "20%",
+      }),
+      render: (_value, record) =>
+        record.entrega,
+    },
+    {
+      key: "Seleccionar",
+      dataIndex: "seleccionar",
+      title: "Seleccionar",
+      align: "center",
+      width: "20%",
+      render: (_value, record) => (
+        <>
+          {record.status === status.requestStudy.tomaDeMuestra &&
+            activity == "register" && (
+              <Checkbox
+                onChange={(e) => onChange(e, record.id, record.solicitudId)}
+              >
+                Selecciona
+              </Checkbox>
+            )}
+          {record.status === status.requestStudy.solicitado &&
+            activity == "cancel" && (
+              <Descriptions.Item
+                label="Selecciona"
+                style={{ maxWidth: 30 }}
+                className="description-content"
+              >
+                <Checkbox
+                  onChange={(e) => onChange(e, record.id, record.solicitudId)}
+                >
+                  Selecciona
+                </Checkbox>
+              </Descriptions.Item>
+            )}
+        </>
+      ),
+    },
+  ];
+
   return {
-    expandedRowRender: (item: IRequestedStudyList) => (
-      <div>
-        <h4>Estudios</h4>
-        {item.estudios.map((x) => {
-          return (
-            <Descriptions
-              key={x.id}
-              size="small"
-              bordered
-              style={{ marginBottom: 5 }}
-              layout="vertical"
-            >
-              <Descriptions.Item
-                label="Estudio"
-                style={{ maxWidth: 30 }}
-                className="description-content"
-              >
-                {x.clave} - {x.nombre}
-              </Descriptions.Item>
-              <Descriptions.Item
-                label="Estatus"
-                style={{ maxWidth: 30 }}
-                className="description-content"
-              >
-                {x.status == 2 ? "Toma de Muestra" : "Solicitado"}
-              </Descriptions.Item>
-              <Descriptions.Item
-                label="Registro"
-                style={{ maxWidth: 30 }}
-                className="description-content"
-              >
-                {x.registro}
-              </Descriptions.Item>
-              <Descriptions.Item
-                label="Entrega"
-                style={{ maxWidth: 30 }}
-                className="description-content"
-              >
-                {x.entrega}
-              </Descriptions.Item>
-              {x.status === status.requestStudy.tomaDeMuestra &&
-                activity == "register" && (
-                  <Descriptions.Item
-                    label="Selecciona"
-                    style={{ maxWidth: 30 }}
-                    className="description-content"
-                  >
-                    <Checkbox onChange={(e) => onChange(e, x.id, item.id)}>
-                      Selecciona
-                    </Checkbox>
-                  </Descriptions.Item>
-                )}
-              {x.status === status.requestStudy.solicitado &&
-                activity == "cancel" && (
-                  <Descriptions.Item
-                    label="Selecciona"
-                    style={{ maxWidth: 30 }}
-                    className="description-content"
-                  >
-                    <Checkbox onChange={(e) => onChange(e, x.id, item.id)}>
-                      Selecciona
-                    </Checkbox>
-                  </Descriptions.Item>
-                )}
-              <Descriptions.Item
-                label="Imprimir Orden"
-                style={{ maxWidth: 20 }}
-                className="description-content"
-              >
-                <PrintIcon
-                  key="imprimir"
-                  onClick={() => {
-                    printOrder(item.order, item.id);
-                  }}
-                />
-              </Descriptions.Item>
-            </Descriptions>
-          );
-        })}
-      </div>
+    expandedRowRender: (item: IRequestedStudyList, index: any) => (
+      <Table
+        columns={nestedColumns}
+        dataSource={item.estudios}
+        pagination={false}
+        className="header-expandable-table"
+        showHeader={index === 0}
+      />
     ),
     rowExpandable: () => true,
     defaultExpandAllRows: true,
