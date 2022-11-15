@@ -20,7 +20,7 @@
     "@types/react-dom": "^18.0.3",
     "@types/react-draft-wysiwyg": "^1.13.4",
     "@types/uuid": "^8.3.4",
-    "antd": "^4.24.1",
+    "antd": "4.24.1",
     "antd-img-crop": "^4.2.3",
     "array-move": "^4.0.0",
     "axios": "^0.26.1",
