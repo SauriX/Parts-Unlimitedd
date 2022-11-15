@@ -147,14 +147,14 @@ const SamplingTable: FC<ProceedingTableProps> = ({
         setIds(temp);
         //SetSolicitudesData();
       }
-      var solicitudtoupdate = dataupdate?.filter(x=>x.solicitudId==solicitud);
+      //var solicitudtoupdate = dataupdate?.filter(x=>x.solicitudId==solicitud);
       /* if(solicitudtoupdate) */
     }
     setUpdateDate(dataupdate);
   };
   const updatedata = async () => {
     setLoading(true);
-    var succes = await update(updateData!);
+    var succes =true// await update(updateData!);
     console.log("succes");
     if (succes) {
       setLoading(false);
