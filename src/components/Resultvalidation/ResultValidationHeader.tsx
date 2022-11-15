@@ -4,6 +4,7 @@ import HeaderTitle from "../../app/common/header/HeaderTitle";
 import ImageButton from "../../app/common/button/ImageButton";
 import { observer } from "mobx-react-lite";
 import DownloadIcon from "../../app/common/icons/DownloadIcon";
+import { useStore } from "../../app/stores/store";
 
 type ResultValidationHeaderProps = {
   handleList: () => void;
@@ -12,6 +13,9 @@ const { Text } = Typography;
 const ResultValidationHeader: FC<ResultValidationHeaderProps> = ({
   handleList,
 }) => {
+  const { procedingStore, optionStore, locationStore, resultValidationStore } = useStore();
+
+  const { getAll, studys, printTicket, update,soliCont,studyCont } = resultValidationStore;
   return (
     <PageHeader
       ghost={false}
@@ -24,11 +28,13 @@ const ResultValidationHeader: FC<ResultValidationHeaderProps> = ({
       className="header-container"
       extra={[
         <Text key="request">
-          Solicitudes: <Text strong>{/* requests.length */4}</Text>
+          Solicitudes: <Text strong>{soliCont}</Text>
         </Text>,
         <Text key="number">
           Estudios:{" "}
-          <Text strong>{/* requests.flatMap((x) => x.estudios).length */4}</Text>
+          <Text strong>
+            {studyCont}
+          </Text>
         </Text>,
         ,
         <DownloadIcon key="doc" onClick={handleList} />,

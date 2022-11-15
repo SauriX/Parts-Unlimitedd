@@ -4,12 +4,16 @@ import HeaderTitle from "../../app/common/header/HeaderTitle";
 import ImageButton from "../../app/common/button/ImageButton";
 import { observer } from "mobx-react-lite";
 import DownloadIcon from "../../app/common/icons/DownloadIcon";
+import { useStore } from "../../app/stores/store";
 
 type UserHeaderProps = {
   handleList: () => void;
 };
 const { Text } = Typography;
 const SampleHeader: FC<UserHeaderProps> = ({ handleList }) => {
+  const { procedingStore, optionStore, locationStore, samplig } = useStore();
+
+  const { getAll, studys, printTicket, update,soliCont,studyCont } = samplig;
   return (
     <PageHeader
       ghost={false}
@@ -19,12 +23,12 @@ const SampleHeader: FC<UserHeaderProps> = ({ handleList }) => {
       className="header-container"
       extra={[
         <Text key="request">
-          Solicitudes: <Text strong>{/* requests.length */ 4}</Text>
+          Solicitudes: <Text strong>{soliCont}</Text>
         </Text>,
         <Text key="number">
           Estudios:{" "}
           <Text strong>
-            {/* requests.flatMap((x) => x.estudios).length */ 4}
+            {studyCont}
           </Text>
         </Text>,
         ,
