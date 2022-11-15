@@ -3,22 +3,17 @@ import {
   Form,
   Row,
   Col,
-  Transfer,
   Tooltip,
-  Tree,
   Tag,
   Pagination,
   Button,
   Divider,
   PageHeader,
   Table,
-  List,
-  Select,
-  Typography,
   InputRef,
   Input,
 } from "antd";
-import React, { FC, useEffect, useMemo, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
@@ -29,8 +24,6 @@ import ImageButton from "../../../app/common/button/ImageButton";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import { observer } from "mobx-react-lite";
-import TextAreaInput from "../../../app/common/form/TextAreaInput";
-import { IOptions } from "../../../app/models/shared";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { PlusOutlined } from "@ant-design/icons";
 import {
@@ -41,14 +34,20 @@ import {
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import { IStudyForm, StudyFormValues } from "../../../app/models/study";
 import NumberInput from "../../../app/common/form/NumberInput";
-import { IWorkList } from "../../../app/models/workList";
 import { IParameterList } from "../../../app/models/parameter";
 import { IIndicationList } from "../../../app/models/indication";
-import { IReagentList } from "../../../app/models/reagent";
 import { IPacketList } from "../../../app/models/packet";
 import views from "../../../app/util/view";
 import { ParameterModal } from "./modals/ParameterModal";
 import { IndicationModal } from "./modals/IndicationModal";
+import { MenuOutlined } from "@ant-design/icons";
+import type { SortableContainerProps, SortEnd } from "react-sortable-hoc";
+import {
+  SortableHandle,
+  SortableElement,
+  SortableContainer,
+} from "react-sortable-hoc";
+import { arrayMoveImmutable } from "array-move";
 
 type StudyFormProps = {
   componentRef: React.MutableRefObject<any>;
@@ -57,6 +56,18 @@ type StudyFormProps = {
 type UrlParams = {
   id: string;
 };
+
+const DragHandle = SortableHandle(() => (
+  <MenuOutlined style={{ cursor: "grab", color: "#999" }} />
+));
+
+const SortableItem = SortableElement((props: React.HTMLAttributes<HTMLTableRowElement>) => (
+  <tr {...props} />
+));
+const SortableBody = SortableContainer((props: React.HTMLAttributes<HTMLTableSectionElement>) => (
+  <tbody {...props} />
+));
+
 const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   const { optionStore, studyStore } = useStore();
   const {
@@ -65,7 +76,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     getareaOptions,
     areas,
     getPrintFormatsOptions,
-    printFormat,
     getMaquiladorOptions,
     MaquiladorOptions,
     getMethodOptions,
@@ -73,19 +83,14 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     getsampleTypeOptions,
     sampleTypeOptions,
     getworkListOptions2,
-    workListOptions2,
     getParameterOptions,
-    parameterOptions,
     getIndication,
-    indicationOptions,
     getReagentOptions,
-    reagents,
     getTaponOption,
     taponOption,
   } = optionStore;
   const [selectedRowKeysp, setSelectedRowKeysp] = useState<React.Key[]>([]);
   const [selectedRowKeysi, setSelectedRowKeysi] = useState<React.Key[]>([]);
-  const [selectedRowKeysw, setSelectedRowKeysw] = useState<React.Key[]>([]);
 
   const {
     getById,
@@ -97,20 +102,13 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     setParameterSelected,
     indicationSelected,
     setIndicationSelected,
-    workListSelected,
-    setWorkListSelected,
   } = studyStore;
   const [form] = Form.useForm<IStudyForm>();
   const { width: windowWidth } = useWindowDimensions();
-  const [flag, setFlag] = useState(0);
   const [loading, setLoading] = useState(false);
   let navigate = useNavigate();
   const [values, setValues] = useState<IStudyForm>(new StudyFormValues());
   const [searchParams, setSearchParams] = useSearchParams();
-  const [workList, setWorkList] = useState<{ clave: ""; id: number }>();
-  const [parameter, setParameter] = useState<{ clave: ""; id: string }>();
-  const [indication, setIndication] = useState<{ clave: ""; id: number }>();
-  const [Reagent, setReagent] = useState<{ clave: ""; id: string }>();
   const [visible, setVisible] = useState<boolean>(false);
   let { id } = useParams<UrlParams>();
   const [tags, setTags] = useState<string[]>([]);
@@ -120,6 +118,12 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   const [editInputValue, setEditInputValue] = useState("");
   const inputRef = useRef<InputRef>(null);
   const editInputRef = useRef<InputRef>(null);
+
+  const [dataSource, setDataSource] = useState(parameterSelected);
+
+  useEffect(() => {
+    setDataSource(parameterSelected);
+  }, [parameterSelected]);
 
   useEffect(() => {
     if (inputVisible) {
@@ -164,12 +168,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     setEditInputIndex(-1);
     setInputValue("");
   };
-  /*   const handleChange = (tag: IWorkList, checked: boolean) => {
-    const nextSelectedTags = checked ? [...selectedTags!, tag] : selectedTags!.filter(t => t.id !== tag.id);
-    console.log('You are interested in: ', nextSelectedTags);
-    setSelectedTags(nextSelectedTags);
-  };
- */
+
   const [disabled, setDisabled] = useState(() => {
     let result = false;
     const mode = searchParams.get("mode");
@@ -178,16 +177,25 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     }
     return result;
   });
+
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
+
   const columnsParameter: IColumns<IParameterList> = [
+    {
+      title: "Sort",
+      dataIndex: "sort",
+      width: "10%",
+      className: "drag-visible",
+      render: () => <DragHandle />,
+    },
     {
       ...getDefaultColumnProps("nombre", "Parametro", {
         searchState,
         setSearchState,
-        width: "45%",
+        width: "40%",
         windowSize: windowWidth,
       }),
     },
@@ -195,11 +203,12 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "45%",
+        width: "40%",
         windowSize: windowWidth,
       }),
     },
   ];
+
   const columnsIndication: IColumns<IIndicationList> = [
     {
       ...getDefaultColumnProps("nombre", "Indicación", {
@@ -218,12 +227,11 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       }),
     },
   ];
+
   useEffect(() => {
     const readuser = async (id: number) => {
       setLoading(true);
-      console.log("here");
       const all = await getAll("all");
-      console.log(all);
       const user = await getById(id);
       await getareaOptions(user?.departamento!);
       if (user?.workLists != "" && user?.workLists != null) {
@@ -245,7 +253,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   useEffect(() => {
     const readDepartments = async () => {
       await getDepartmentOptions();
-      console.log("departamentos");
     };
     readDepartments();
   }, [getDepartmentOptions]);
@@ -347,7 +354,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     }
     setLoading(false);
   };
-  const onValuesChange = async (changeValues: any, values: any) => {
+  const onValuesChange = async (changeValues: any) => {
     const fields = Object.keys(changeValues)[0];
     if (fields === "departamento") {
       const value = changeValues[fields];
@@ -421,6 +428,34 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       }),
     },
   ];
+
+  const onSortEnd = ({ oldIndex, newIndex }: SortEnd) => {
+    if (oldIndex !== newIndex) {
+      const newData = arrayMoveImmutable(
+        dataSource.slice(),
+        oldIndex,
+        newIndex
+      ).filter((el: IParameterList) => !!el);
+      console.log("Sorted items: ", newData);
+      setDataSource(newData);
+    }
+  };
+
+  const DraggableContainer = (props: SortableContainerProps) => (
+    <SortableBody
+      useDragHandle
+      disableAutoscroll
+      helperClass="row-dragging"
+      onSortEnd={onSortEnd}
+      {...props}
+    />
+  );
+
+  const DraggableBodyRow: React.FC<any> = ({ className, style, ...restProps }) => {
+    // function findIndex base on Table rowKey props and should always be a right array index
+    const index = dataSource.findIndex(x => x.index === restProps['data-row-key']);
+    return <SortableItem index={index} {...restProps} />;
+  };
 
   return (
     <Spin spinning={loading || load}>
@@ -793,11 +828,17 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
           rowKey={(record) => record.id}
           columns={columnsParameter}
           pagination={false}
-          dataSource={[...parameterSelected]}
+          dataSource={[...dataSource]}
           scroll={{
             x: windowWidth < resizeWidth ? "max-content" : "auto",
           }}
           rowSelection={rowSelectionp}
+          components={{
+            body: {
+              wrapper: DraggableContainer,
+              row: DraggableBodyRow,
+            },
+          }}
         />
         <br />
 
@@ -861,3 +902,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   );
 };
 export default observer(StudyForm);
+// function SortableHandle(arg0: () => JSX.Element) {
+//   throw new Error("Function not implemented.");
+// }
