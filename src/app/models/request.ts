@@ -41,7 +41,7 @@ export interface IRequestFilter {
   sucursales?: string[];
   compañias?: string[];
   medicos?: string[];
-  expediente?:string
+  expediente?: string;
 }
 
 export interface IRequestInfo extends IRequestBase {
@@ -104,7 +104,7 @@ export class RequestStudyInfoForm implements IRequestStudyInfo {
   usuarioLiberado = "";
   usuarioEnviado = "";
 
-  constructor(init?: IRequestTotal) {
+  constructor(init?: IRequestStudyInfo) {
     Object.assign(this, init);
   }
 }
@@ -255,7 +255,7 @@ export class RequestStudyValues implements IRequestStudy {
   promociones = [];
   fechaActualizacion = "";
   usuarioActualizacion = "";
-  
+
   constructor(init?: IRequestStudy) {
     Object.assign(this, init);
   }

@@ -54,11 +54,6 @@ import { ITaxData } from "../../../app/models/taxdata";
 import DateInput from "../../../app/common/form/proposal/DateInput";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import IconButton from "../../../app/common/button/IconButton";
-import {
-  IQuotationForm,
-  IQuotationInfo,
-  ISolicitud,
-} from "../../../app/models/quotation";
 import Link from "antd/lib/typography/Link";
 import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import { IRequestInfo } from "../../../app/models/request";
@@ -101,7 +96,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     updateDom,
     updateLab,
   } = appointmentStore;
-  const { createsolictud } = quotationStore;
+  // const { createsolictud } = quotationStore;
   const { loadingRequests, requests, getRequests: getByFilter } = requestStore;
   const {
     getById,
@@ -144,30 +139,30 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     clearTax();
     closeModal();
   };
-  const convertSolicitud = (data: IAppointmentForm | IQuotationForm) => {
-    var request: ISolicitud = {
-      Id: data.id,
-      ExpedienteId: data.expedienteid!,
-      SucursalId: profile?.sucursal!,
-      Clave: data.nomprePaciente,
-      ClavePatologica: "",
-      UsuarioId: "00000000-0000-0000-0000-000000000000",
-      General: {
-        solicitudId: "00000000-0000-0000-0000-000000000000",
-        expedienteId: data.expedienteid!,
-        procedencia: 0,
-        compañiaId: data.generales?.compañia!,
-        medicoId: data.generales?.medico!,
-        afiliacion: "",
-        urgencia: 0,
-        metodoEnvio: [],
-        correo: data.generales?.email!,
-        whatsapp: data.generales?.whatssap!,
-        observaciones: data.generales?.observaciones!,
-      },
-      Estudios: data.estudy!,
-    };
-    var redirect = createsolictud(request);
+  const convertSolicitud = (data: any) => {
+    // var request = {
+    //   Id: data.id,
+    //   ExpedienteId: data.expedienteid!,
+    //   SucursalId: profile?.sucursal!,
+    //   Clave: data.nomprePaciente,
+    //   ClavePatologica: "",
+    //   UsuarioId: "00000000-0000-0000-0000-000000000000",
+    //   General: {
+    //     solicitudId: "00000000-0000-0000-0000-000000000000",
+    //     expedienteId: data.expedienteid!,
+    //     procedencia: 0,
+    //     compañiaId: data.generales?.compañia!,
+    //     medicoId: data.generales?.medico!,
+    //     afiliacion: "",
+    //     urgencia: 0,
+    //     metodoEnvio: [],
+    //     correo: data.generales?.email!,
+    //     whatsapp: data.generales?.whatssap!,
+    //     observaciones: data.generales?.observaciones!,
+    //   },
+    //   Estudios: data.estudy!,
+    // };
+    // var redirect = createsolictud(request as any);
   };
   const clearLocation = () => {
     form.setFieldsValue({
@@ -400,7 +395,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     }
   };
 
-  const columnsP: IColumns<IQuotationInfo> = [
+  const columnsP: IColumns<any> = [
     {
       ...getDefaultColumnProps("presupuesto", "Presupuesto", {
         width: 200,
@@ -502,7 +497,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           title=""
           onClick={async () => {
             var cotizacion = await getByIdQ(item.id);
-            convertSolicitud(cotizacion!);
+            // convertSolicitud(cotizacion!);
           }}
         >
           Convertir a solicitud

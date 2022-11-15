@@ -71,6 +71,11 @@ export const status = {
     cancelado: 3,
     facturaCancelada: 4,
   },
+  quotation: {
+    vigente: 1,
+    vencido: 2,
+    cancelado: 3,
+  },
 };
 
 export const statusName = {

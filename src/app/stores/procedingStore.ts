@@ -53,17 +53,17 @@ export default class ProcedingStore {
     console.log("getbyid");
     try {
       const reagent = await quotation.getById(id);
-      reagent.fechaNacimiento = moment(reagent.fechaNacimiento);
-      reagent.estudy?.map(async (x) => {
-        var parametros = await this.getParameter(x.estudioId!);
-        x.parametros = parametros!.parameters;
-        x.nombre = parametros!.nombre;
-        x.indicaciones = parametros?.indicaciones!;
-        x.clave = parametros?.clave!;
-        x.areaId = parametros?.area!;
-        x.departamentoId = parametros?.departamento!;
-        x.taponId = Number(parametros?.tapon!);
-      });
+      // reagent.fechaNacimiento = moment(reagent.fechaNacimiento);
+      // reagent.estudy?.map(async (x) => {
+      //   var parametros = await this.getParameter(x.estudioId!);
+      //   x.parametros = parametros!.parameters;
+      //   x.nombre = parametros!.nombre;
+      //   x.indicaciones = parametros?.indicaciones!;
+      //   x.clave = parametros?.clave!;
+      //   x.areaId = parametros?.area!;
+      //   x.departamentoId = parametros?.departamento!;
+      //   x.taponId = Number(parametros?.tapon!);
+      // });
       console.log(reagent, "cotizacion");
       return reagent;
     } catch (error: any) {

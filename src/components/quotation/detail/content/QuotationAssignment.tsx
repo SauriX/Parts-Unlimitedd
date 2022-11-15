@@ -13,10 +13,6 @@ import {
   ISearch,
 } from "../../../../app/common/table/utils";
 import { IFormError } from "../../../../app/models/shared";
-import {
-  IQuotationExpedienteSearch,
-  QuotationExpedienteSearchValues,
-} from "../../../../app/models/quotation";
 import { IProceedingList } from "../../../../app/models/Proceeding";
 import IconButton from "../../../../app/common/button/IconButton";
 import useWindowDimensions from "../../../../app/util/window";
@@ -39,48 +35,48 @@ const QuotationAssignment: FC<GeneralesFormProps> = (
   }
 ) => {
   const { quotationStore } = useStore();
-  const { getExpediente, records } = quotationStore;
+  // const { getExpediente, records } = quotationStore;
   const [loading, setLoading] = useState(false);
-  const [form] = Form.useForm<IQuotationExpedienteSearch>();
-  const [values, setValues] = useState<IQuotationExpedienteSearch>(
-    new QuotationExpedienteSearchValues()
-  );
+  const [form] = Form.useForm<any>();
+  // const [values, setValues] = useState<IQuotationExpedienteSearch>(
+  //   new QuotationExpedienteSearchValues()
+  // );
   const [errors, setErrors] = useState<IFormError[]>([]);
   let navigate = useNavigate();
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-  useEffect(() => {
-    const readexp = async () => {
-      await getExpediente(values);
-    };
-    readexp();
-  }, [getExpediente]);
-  const { width: windowWidth } = useWindowDimensions();
+  // useEffect(() => {
+  //   const readexp = async () => {
+  //     await getExpediente(values);
+  //   };
+  //   readexp();
+  // }, [getExpediente]);
+  // const { width: windowWidth } = useWindowDimensions();
 
-  const onFinish = async (newValues: IQuotationExpedienteSearch) => {
-    setLoading(true);
+  // const onFinish = async (newValues: IQuotationExpedienteSearch) => {
+  //   setLoading(true);
 
-    const reagent = { ...values, ...newValues };
-    await getExpediente(reagent);
-    setLoading(false);
-  };
-  const onValuesChange = async (changedValues: IQuotationExpedienteSearch) => {
-    const field = Object.keys(changedValues)[0];
-    if (field == "edad") {
-      /*  const edad = changedValues[field] as number; */
-      var hoy = new Date();
-      /*     var cumpleaños =  hoy.getFullYear()-edad; */
-      /* hoy.setFullYear(cumpleaños); */
-      /* setValues((prev) => ({ ...prev, fechaNacimiento: hoy })) */
-    }
-    if (field === "cp") {
-      /* const zipCode = changedValues[field] as string */
-      /*         if (zipCode && zipCode.trim().length === 5) {
-            } */
-    }
-  };
+  //   const reagent = { ...values, ...newValues };
+  //   await getExpediente(reagent);
+  //   setLoading(false);
+  // };
+  // const onValuesChange = async (changedValues: IQuotationExpedienteSearch) => {
+  //   const field = Object.keys(changedValues)[0];
+  //   if (field == "edad") {
+  //     /*  const edad = changedValues[field] as number; */
+  //     var hoy = new Date();
+  //     /*     var cumpleaños =  hoy.getFullYear()-edad; */
+  //     /* hoy.setFullYear(cumpleaños); */
+  //     /* setValues((prev) => ({ ...prev, fechaNacimiento: hoy })) */
+  //   }
+  //   if (field === "cp") {
+  //     /* const zipCode = changedValues[field] as string */
+  //     /*         if (zipCode && zipCode.trim().length === 5) {
+  //           } */
+  //   }
+  // };
   const columns: IColumns<IProceedingList> = [
     {
       ...getDefaultColumnProps("expediente", "Expediente", {
@@ -176,10 +172,10 @@ const QuotationAssignment: FC<GeneralesFormProps> = (
     <Spin spinning={loading}>
       <Row gutter={[8, 12]}>
         <Col span={24}>
-          <Form<IQuotationExpedienteSearch>
+          <Form<any>
             layout="vertical"
             form={form}
-            onFinish={onFinish}
+            onFinish={() => {}}
             onFinishFailed={({ errorFields }) => {
               const errors = errorFields.map((x) => ({
                 name: x.name[0].toString(),
@@ -244,7 +240,7 @@ const QuotationAssignment: FC<GeneralesFormProps> = (
             size="small"
             rowKey={(record) => record.id}
             columns={columns}
-            dataSource={records}
+            dataSource={[]}
             pagination={defaultPaginationProperties}
             sticky
             scroll={{ x: "max-content" }}
