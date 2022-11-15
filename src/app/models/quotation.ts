@@ -28,8 +28,8 @@ export interface IQuotation extends Omit<IQuotationBase, "cotizacionId"> {
   claveMedico?: string;
   observaciones?: string;
   sucursalId: string;
-  clave: string;
-  registro: string;
+  clave?: string;
+  registro?: string;
   estatusId: number;
 }
 

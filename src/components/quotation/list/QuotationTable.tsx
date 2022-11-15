@@ -1,4 +1,4 @@
-import { Table, Typography } from "antd";
+import { Table, Tag, Tooltip, Typography } from "antd";
 import { useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
@@ -12,8 +12,9 @@ import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
 import { IQuotationInfo } from "../../../app/models/quotation";
 import moment from "moment";
+import { IRequestStudyInfo } from "../../../app/models/request";
 
-const { Link } = Typography;
+const { Link, Text } = Typography;
 
 const QuotationTable = () => {
   const { quotationStore } = useStore();
@@ -40,7 +41,7 @@ const QuotationTable = () => {
 
   const columns: IColumns<IQuotationInfo> = [
     {
-      ...getDefaultColumnProps("presupuesto", "Presupuesto", {
+      ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
         width: "10%",
@@ -48,7 +49,7 @@ const QuotationTable = () => {
       render: (value, cotizacion) => (
         <Link
           onClick={() => {
-            navigate(`/${views.quotatiion}/${cotizacion.cotizacionId}`);
+            navigate(`/${views.quotation}/${cotizacion.cotizacionId}`);
           }}
         >
           {value}
@@ -75,20 +76,28 @@ const QuotationTable = () => {
         setSearchState,
         width: "30%",
       }),
+      render: (value: IRequestStudyInfo[]) =>
+        value.map((x) => (
+          <Tooltip title={x.nombre}>
+            <Tag>{x.clave}</Tag>
+          </Tooltip>
+        )),
     },
     {
-      ...getDefaultColumnProps("email", "Email", {
+      ...getDefaultColumnProps("contacto", "Contacto", {
         searchState,
         setSearchState,
         width: "10%",
       }),
-    },
-    {
-      ...getDefaultColumnProps("whatsapp", "Whatsapp", {
-        searchState,
-        setSearchState,
-        width: "10%",
-      }),
+      className: "no-padding-cell",
+      render: (_, item) => (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Text>{item.correo}</Text>
+          <small>
+            <Text type="secondary">{item.whatsapp}</Text>
+          </small>
+        </div>
+      ),
     },
     {
       ...getDefaultColumnProps("fecha", "Fecha", {
@@ -96,6 +105,7 @@ const QuotationTable = () => {
         setSearchState,
         width: "10%",
       }),
+      render: (value) => moment(value).format("DD/MM/YYYY HH:mm"),
     },
     {
       key: "activo",

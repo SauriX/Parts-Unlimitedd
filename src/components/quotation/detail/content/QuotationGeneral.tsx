@@ -6,6 +6,7 @@ import MaskInput from "../../../../app/common/form/proposal/MaskInput";
 import SelectInput from "../../../../app/common/form/proposal/SelectInput";
 import TextAreaInput from "../../../../app/common/form/proposal/TextAreaInput";
 import TextInput from "../../../../app/common/form/proposal/TextInput";
+import { IQuotationGeneral } from "../../../../app/models/quotation";
 import { IFormError, IOptions } from "../../../../app/models/shared";
 import {
   originOptions,
@@ -29,15 +30,15 @@ const sendOptions = [
 
 type QuotationGeneralProps = {
   branchId: string | undefined;
-  //   form: FormInstance<IQuotationGeneral>;
-  //   onSubmit: (general: IQuotationGeneral) => void;
+  form: FormInstance<IQuotationGeneral>;
+  onSubmit: (general: IQuotationGeneral) => void;
 };
 
 const QuotationGeneral = ({
   branchId,
-}: //   form,
-//   onSubmit,
-QuotationGeneralProps) => {
+  form,
+  onSubmit,
+}: QuotationGeneralProps) => {
   const { optionStore, quotationStore } = useStore();
   const {
     companyOptions: CompanyOptions,
@@ -46,120 +47,109 @@ QuotationGeneralProps) => {
     getMedicOptions,
   } = optionStore;
   const {
-    // loadingTabContent,
-    // quotation,
+    loadingTabContent,
+    quotation,
     setStudyFilter,
-    // getGeneral,
+    getGeneral,
     sendTestEmail,
     sendTestWhatsapp,
   } = quotationStore;
 
-  //   const sendings = Form.useWatch("metodoEnvio", form);
-  //   const doctorId = Form.useWatch("medicoId", form);
-  //   const companyId = Form.useWatch("compañiaId", form);
+  const sendings = Form.useWatch("metodoEnvio", form);
+  const doctorId = Form.useWatch("medicoId", form);
+  const companyId = Form.useWatch("compañiaId", form);
 
-  //   const email = Form.useWatch("correo", form);
-  //   const whatsapp = Form.useWatch("whatsapp", form);
+  const email = Form.useWatch("correo", form);
+  const whatsapp = Form.useWatch("whatsapp", form);
 
   const [errors, setErrors] = useState<IFormError[]>([]);
   const [previousSendings, setPreviousSendings] = useState<string[]>([]);
-  //   const [quotationGeneral, setQuotationGeneral] = useState<IQuotationGeneral>();
+  const [quotationGeneral, setQuotationGeneral] = useState<IQuotationGeneral>();
 
   useEffect(() => {
     getCompanyOptions();
     getMedicOptions();
   }, [getCompanyOptions, getMedicOptions]);
 
-  //   useEffect(() => {
-  //     setStudyFilter(branchId, doctorId, companyId);
-  //   }, [branchId, companyId, doctorId, setStudyFilter]);
+  useEffect(() => {
+    setStudyFilter(branchId, doctorId, companyId);
+  }, [branchId, companyId, doctorId, setStudyFilter]);
 
-  //   useEffect(() => {
-  //     const getQuotationGeneral = async () => {
-  //       const quotationGeneral = await getGeneral(
-  //         quotation!.expedienteId,
-  //         quotation!.solicitudId!
-  //       );
-  //       if (quotationGeneral) {
-  //         setQuotationGeneral(quotationGeneral);
-  //         form.setFieldsValue(quotationGeneral);
-  //       }
-  //     };
+  useEffect(() => {
+    const getQuotationGeneral = async () => {
+      const quotationGeneral = await getGeneral(quotation!.cotizacionId);
+      if (quotationGeneral) {
+        setQuotationGeneral(quotationGeneral);
+        form.setFieldsValue(quotationGeneral);
+      }
+    };
 
-  //     if (quotation && quotation.solicitudId && quotation.expedienteId) {
-  //       getQuotationGeneral();
-  //     }
-  //     // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   }, [quotation]);
+    if (quotation && quotation.cotizacionId) {
+      getQuotationGeneral();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quotation]);
 
-  //   const onValuesChange = (changedValues: any) => {
-  //     const path = Object.keys(changedValues)[0];
+  const onValuesChange = (changedValues: any) => {
+    const path = Object.keys(changedValues)[0];
 
-  //     if (path === "metodoEnvio") {
-  //       const sendings: string[] = changedValues[path];
-  //       let metodoEnvio: string[] = [];
+    if (path === "metodoEnvio") {
+      const sendings: string[] = changedValues[path];
+      let metodoEnvio: string[] = [];
 
-  //       if (previousSendings.includes("ambos") && !sendings.includes("ambos")) {
-  //         metodoEnvio = [];
-  //         form.setFieldsValue({ correo: undefined, whatsapp: undefined });
-  //       } else if (
-  //         !previousSendings.includes("ambos") &&
-  //         sendings.includes("ambos")
-  //       ) {
-  //         metodoEnvio = ["correo", "whatsapp", "ambos"];
-  //       } else if (sendings.length === 2 && !sendings.includes("ambos")) {
-  //         metodoEnvio = ["correo", "whatsapp", "ambos"];
-  //       } else {
-  //         metodoEnvio = sendings.filter((x) => x !== "ambos");
-  //       }
+      if (previousSendings.includes("ambos") && !sendings.includes("ambos")) {
+        metodoEnvio = [];
+        form.setFieldsValue({ correo: undefined, whatsapp: undefined });
+      } else if (
+        !previousSendings.includes("ambos") &&
+        sendings.includes("ambos")
+      ) {
+        metodoEnvio = ["correo", "whatsapp", "ambos"];
+      } else if (sendings.length === 2 && !sendings.includes("ambos")) {
+        metodoEnvio = ["correo", "whatsapp", "ambos"];
+      } else {
+        metodoEnvio = sendings.filter((x) => x !== "ambos");
+      }
 
-  //       if (!sendings.includes("correo")) {
-  //         form.setFieldsValue({ correo: undefined });
-  //       }
-  //       if (!sendings.includes("whatsapp")) {
-  //         form.setFieldsValue({ whatsapp: undefined });
-  //       }
+      if (!sendings.includes("correo")) {
+        form.setFieldsValue({ correo: undefined });
+      }
+      if (!sendings.includes("whatsapp")) {
+        form.setFieldsValue({ whatsapp: undefined });
+      }
 
-  //       form.setFieldsValue({ metodoEnvio });
-  //       setPreviousSendings(metodoEnvio);
-  //     }
-  //   };
+      form.setFieldsValue({ metodoEnvio });
+      setPreviousSendings(metodoEnvio);
+    }
+  };
 
-  //   const onFinish = (values: IQuotationGeneral) => {
-  //     const quotation = { ...quotationGeneral, ...values };
+  const onFinish = (values: IQuotationGeneral) => {
+    const quotation = { ...quotationGeneral, ...values };
 
-  //     onSubmit(quotation);
-  //   };
+    onSubmit(quotation);
+  };
 
-  //   const sendEmail = async () => {
-  //     if (quotation) {
-  //       await sendTestEmail(
-  //         quotation.expedienteId,
-  //         quotation.solicitudId!,
-  //         email
-  //       );
-  //     }
-  //   };
+  const sendEmail = async () => {
+    if (quotation) {
+      await sendTestEmail(quotation.cotizacionId, email);
+    }
+  };
 
-  //   const sendWhatsapp = async () => {
-  //     if (quotation) {
-  //       await sendTestWhatsapp(
-  //         quotation.expedienteId,
-  //         quotation.solicitudId!,
-  //         whatsapp
-  //       );
-  //     }
-  //   };
+  const sendWhatsapp = async () => {
+    if (quotation) {
+      await sendTestWhatsapp(quotation.cotizacionId, whatsapp);
+    }
+  };
 
-  //   const onCompanyChange = (_value: string, option: IOptions | IOptions[]) => {
-  //     form.setFieldValue("procedencia", (option as IOptions).group);
-  //   };
+  const onCompanyChange = (_value: string, option: IOptions | IOptions[]) => {
+    form.setFieldValue("procedencia", (option as IOptions).group);
+  };
 
   return (
-    <Form<any>
+    <Form<IQuotationGeneral>
       {...formItemLayout}
-      //   form={form}
-      onFinish={() => {}}
+      form={form}
+      onFinish={onFinish}
       onFinishFailed={({ errorFields }) => {
         const errors = errorFields.map((x) => ({
           name: x.name[0].toString(),
@@ -172,7 +162,7 @@ QuotationGeneralProps) => {
         companyId: catalog.company.particulares,
         procedencia: PARTICULAR,
       }}
-      //   onValuesChange={onValuesChange}
+      onValuesChange={onValuesChange}
       size="small"
     >
       <Row gutter={[0, 12]}>
@@ -185,7 +175,7 @@ QuotationGeneralProps) => {
             options={CompanyOptions}
             required
             errors={errors.find((x) => x.name === "compañiaId")?.errors}
-            // onChange={onCompanyChange}
+            onChange={onCompanyChange}
           />
         </Col>
         <Col span={24}>
@@ -226,7 +216,7 @@ QuotationGeneralProps) => {
             wrapperCol={{ span: 20 }}
             className="no-error-text"
             help=""
-            // required={sendings?.includes("correo")}
+            required={sendings?.includes("correo")}
           >
             <Input.Group>
               <Row>
@@ -237,16 +227,16 @@ QuotationGeneralProps) => {
                       label: "E-Mail",
                       noStyle: true,
                     }}
-                    // readonly={!sendings?.includes("correo")}
-                    // required={sendings?.includes("correo")}
+                    readonly={!sendings?.includes("correo")}
+                    required={sendings?.includes("correo")}
                     errors={errors.find((x) => x.name === "correo")?.errors}
                   />
                 </Col>
                 <Col span={12}>
                   <Button
                     type="primary"
-                    // disabled={!sendings?.includes("correo")}
-                    // onClick={sendEmail}
+                    disabled={!sendings?.includes("correo")}
+                    onClick={sendEmail}
                   >
                     Prueba
                   </Button>
@@ -262,7 +252,7 @@ QuotationGeneralProps) => {
             wrapperCol={{ span: 20 }}
             className="no-error-text"
             help=""
-            // required={sendings?.includes("whatsapp")}
+            required={sendings?.includes("whatsapp")}
           >
             <Input.Group>
               <MaskInput
@@ -293,14 +283,14 @@ QuotationGeneralProps) => {
                   }
                   return Promise.reject("El campo debe contener 10 dígitos");
                 }}
-                // readonly={!sendings?.includes("whatsapp")}
-                // required={sendings?.includes("whatsapp")}
+                readonly={!sendings?.includes("whatsapp")}
+                required={sendings?.includes("whatsapp")}
                 errors={errors.find((x) => x.name === "whatsapp")?.errors}
               />
               <Button
                 type="primary"
-                // disabled={!sendings?.includes("whatsapp")}
-                // onClick={sendWhatsapp}
+                disabled={!sendings?.includes("whatsapp")}
+                onClick={sendWhatsapp}
               >
                 Prueba
               </Button>

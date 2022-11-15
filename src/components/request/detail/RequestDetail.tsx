@@ -14,7 +14,6 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
 import { IRequest } from "../../../app/models/request";
 import { status } from "../../../app/util/catalogs";
-import { toJS } from "mobx";
 import moment from "moment";
 import views from "../../../app/util/view";
 import Center from "../../../app/layout/Center";
@@ -39,10 +38,9 @@ const RequestDetail = () => {
     setOriginalTotal,
     studyFilter,
     request,
-    totalsOriginal,
   } = requestStore;
   const { getById: getByIdProceding, activateWallet } = procedingStore;
-  const { loyaltys, getByDate } = loyaltyStore;
+  const { getByDate } = loyaltyStore;
   const { openModal, closeModal } = modalStore;
 
   const navigate = useNavigate();

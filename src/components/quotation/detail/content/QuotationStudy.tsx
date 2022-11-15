@@ -1,4 +1,3 @@
-import { isFocusable } from "@testing-library/user-event/dist/utils";
 import {
   Button,
   Checkbox,
@@ -9,12 +8,9 @@ import {
   Tooltip,
   Typography,
 } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
-import { FC, useEffect, useState } from "react";
-import IconButton from "../../../../app/common/button/IconButton";
+import { useEffect, useState } from "react";
 import {
-  defaultPaginationProperties,
   getDefaultColumnProps,
   IColumns,
   ISearch,
@@ -23,8 +19,11 @@ import { IOptions } from "../../../../app/models/shared";
 import { useStore } from "../../../../app/stores/store";
 import alerts from "../../../../app/util/alerts";
 import { moneyFormatter } from "../../../../app/util/utils";
-import { status } from "../../../../app/util/catalogs";
-import { toJS } from "mobx";
+import {
+  IQuotationPack,
+  IQuotationStudy,
+  IQuotationStudyUpdate,
+} from "../../../../app/models/quotation";
 
 const { Link } = Typography;
 
@@ -32,27 +31,26 @@ const QuotationStudy = () => {
   const { quotationStore, priceListStore, optionStore } = useStore();
   const { studyOptions, packOptions, getStudyOptions, getPackOptions } =
     optionStore;
-  //   const {
-  //     isStudy,
-  //     quotation,
-  //     studies,
-  //     packs,
-  //     studyFilter,
-  //     calculateTotals,
-  //     setStudy,
-  //     setPack,
-  //     getPriceStudy,
-  //     getPricePack,
-  //     deleteStudy,
-  //     deletePack,
-  //     cancelStudies,
-  //     setOriginalTotal,
-  //     changeStudyPromotion,
-  //     changePackPromotion,
-  //     totals,
-  //   } = quotationStore;
+  const {
+    isStudy,
+    quotation,
+    studies,
+    packs,
+    studyFilter,
+    calculateTotals,
+    setStudy,
+    setPack,
+    getPriceStudy,
+    getPricePack,
+    deleteStudy,
+    deletePack,
+    deleteStudies,
+    changeStudyPromotion,
+    changePackPromotion,
+    totals,
+  } = quotationStore;
 
-  //   const [selectedStudies, setSelectedStudies] = useState<IQuotationStudy[]>([]);
+  const [selectedStudies, setSelectedStudies] = useState<IQuotationStudy[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [options, setOptions] = useState<IOptions[]>([]);
   const [searchState, setSearchState] = useState<ISearch>({
@@ -64,11 +62,6 @@ const QuotationStudy = () => {
     getStudyOptions();
     getPackOptions();
   }, [getPackOptions, getStudyOptions]);
-
-  //   useEffect(() => {
-  //     setOriginalTotal(totals);
-  //     // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   }, []);
 
   useEffect(() => {
     const options: IOptions[] = [
@@ -88,7 +81,7 @@ const QuotationStudy = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [packOptions, studyOptions]);
 
-  const columns: IColumns<any> = [
+  const columns: IColumns<IQuotationStudy | IQuotationPack> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
@@ -98,7 +91,7 @@ const QuotationStudy = () => {
       render: (value) => <Link>{value}</Link>,
     },
     {
-      ...getDefaultColumnProps("nombre", "Estudio", {
+      ...getDefaultColumnProps("estudios", "Estudios", {
         searchState,
         setSearchState,
         width: 200,
@@ -108,16 +101,16 @@ const QuotationStudy = () => {
       },
       render: (value, item) => {
         let content = "";
-        // if (isStudy(item)) {
-        //   content = `${value} (${item.parametros
-        //     .map((x) => x.clave)
-        //     .join(", ")})`;
-        // } else {
-        //   content = `${value} (${item.estudios
-        //     .flatMap((x) => x.parametros)
-        //     .map((x) => x.clave)
-        //     .join(", ")})`;
-        // }
+        if (isStudy(item)) {
+          content = `${value} (${item.parametros
+            .map((x) => x.clave)
+            .join(", ")})`;
+        } else {
+          content = `${value} (${item.estudios
+            .flatMap((x) => x.parametros)
+            .map((x) => x.clave)
+            .join(", ")})`;
+        }
         return (
           <Tooltip placement="topLeft" title={content}>
             {content}
@@ -151,11 +144,11 @@ const QuotationStudy = () => {
         <Checkbox
           checked={value}
           onChange={(e) => {
-            // if (isStudy(item)) {
-            //   setStudy({ ...item, aplicaCargo: e.target.checked });
-            // } else {
-            //   setPack({ ...item, aplicaCargo: e.target.checked });
-            // }
+            if (isStudy(item)) {
+              setStudy({ ...item, aplicaCargo: e.target.checked });
+            } else {
+              setPack({ ...item, aplicaCargo: e.target.checked });
+            }
           }}
         />
       ),
@@ -182,51 +175,34 @@ const QuotationStudy = () => {
 
     if (isNaN(value)) return;
 
-    // if (option.group === "study") {
-    //   await getPriceStudy(value, studyFilter);
-    // }
+    if (option.group === "study") {
+      await getPriceStudy(value, studyFilter);
+    }
 
-    // if (option.group === "pack") {
-    //   await getPricePack(value, studyFilter);
-    // }
+    if (option.group === "pack") {
+      await getPricePack(value, studyFilter);
+    }
   };
 
-  const deleteStudyOrPack = (item: any) => {
-    // alerts.confirm(
-    //   "Eliminar estudio",
-    //   `¿Desea eliminar el ${isStudy(item) ? "estudio" : "paquete"} ${
-    //     item.nombre
-    //   }?`,
-    //   async () => {
-    //     if (isStudy(item)) {
-    //       deleteStudy(item.identificador!);
-    //     } else {
-    //       deletePack(item.identificador!);
-    //     }
-    //   }
-    // );
+  const cancel = () => {
+    if (quotation) {
+      alerts.confirm(
+        "Canelar estudio",
+        `¿Desea cancelar los registros seleccionados?`,
+        async () => {
+          const data: IQuotationStudyUpdate = {
+            cotizacionId: quotation.cotizacionId,
+            estudios: selectedStudies,
+          };
+          const ok = await deleteStudies(data);
+          if (ok) {
+            setSelectedStudies([]);
+            setSelectedRowKeys([]);
+          }
+        }
+      );
+    }
   };
-
-  //   const cancel = () => {
-  //     if (quotation) {
-  //       alerts.confirm(
-  //         "Canelar estudio",
-  //         `¿Desea cancelar los registros seleccionados?`,
-  //         async () => {
-  //           const data: IQuotationStudyUpdate = {
-  //             expedienteId: quotation.expedienteId,
-  //             solicitudId: quotation.solicitudId!,
-  //             estudios: selectedStudies,
-  //           };
-  //           const ok = await cancelStudies(data);
-  //           if (ok) {
-  //             setSelectedStudies([]);
-  //             setSelectedRowKeys([]);
-  //           }
-  //         }
-  //       );
-  //     }
-  //   };
 
   return (
     <Row gutter={[8, 8]}>
@@ -248,7 +224,7 @@ const QuotationStudy = () => {
         />
       </Col>
       <Col span={6} style={{ textAlign: "end" }}>
-        <Button danger onClick={() => {}}>
+        <Button danger onClick={cancel}>
           Remover estudios
         </Button>
       </Col>
@@ -259,31 +235,25 @@ const QuotationStudy = () => {
             record.type + "-" + (record.id ?? record.identificador!)
           }
           columns={columns}
-          dataSource={[]}
+          dataSource={[...studies, ...packs]}
           pagination={false}
           rowSelection={{
             onSelect: (_item, selected, c) => {
-              //   const studies = [
-              //     ...c
-              //       .filter((x) => x.type === "study")
-              //       .map((x) => x as IQuotationStudy),
-              //     ...c
-              //       .filter((x) => x.type === "pack")
-              //       .flatMap((x) => (x as IQuotationPack).estudios),
-              //   ];
-              //   setSelectedStudies(studies);
-              //   setSelectedRowKeys(
-              //     c.map((x) => x.type + "-" + (x.id ?? x.identificador!))
-              //   );
+              const studies = [
+                ...c
+                  .filter((x) => x.type === "study")
+                  .map((x) => x as IQuotationStudy),
+                ...c
+                  .filter((x) => x.type === "pack")
+                  .flatMap((x) => (x as IQuotationPack).estudios),
+              ];
+              setSelectedStudies(studies);
+              setSelectedRowKeys(
+                c.map((x) => x.type + "-" + (x.id ?? x.identificador!))
+              );
             },
             getCheckboxProps: (item) => ({
-              //   disabled:
-              //     item.nuevo ||
-              //     (isStudy(item)
-              //       ? item.estatusId !== status.quotationStudy.pendiente
-              //       : item.estudios.some(
-              //           (x) => x.estatusId !== status.quotationStudy.pendiente
-              //         )),
+              disabled: false,
             }),
             selectedRowKeys: selectedRowKeys,
           }}
@@ -292,12 +262,6 @@ const QuotationStudy = () => {
         />
       </Col>
     </Row>
-  );
-};
-
-const ContainerBadge = ({ color }: { color: string }) => {
-  return (
-    <div className="badge-container" style={{ backgroundColor: color }}></div>
   );
 };
 

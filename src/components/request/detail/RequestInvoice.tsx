@@ -8,7 +8,7 @@ const { Text } = Typography;
 
 const RequestInvoice = () => {
   const { requestStore } = useStore();
-  const { totals, studies, packs, calculateTotals, setTotals } = requestStore;
+  const { totals, setTotals } = requestStore;
 
   return (
     <Descriptions

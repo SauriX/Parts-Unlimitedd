@@ -1,12 +1,13 @@
-import { Button, Col, Form, Row } from "antd";
+import { Button, Col, Form, Input, Row } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import { IRequestFilter } from "../../../app/models/request";
+import { IOptions } from "../../../app/models/shared";
 import {
   originOptions,
   studyStatusOptions,
@@ -30,7 +31,12 @@ const RequestFilter = () => {
   } = optionStore;
   const { getRequests } = requestStore;
 
-  const [form] = useForm();
+  const [form] = useForm<IRequestFilter>();
+
+  const selectedCity = Form.useWatch("ciudad", form);
+
+  const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
+  const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
     getBranchCityOptions();
@@ -43,6 +49,19 @@ const RequestFilter = () => {
     getCompanyOptions,
     getDepartmentOptions,
   ]);
+
+  useEffect(() => {
+    setCityOptions(
+      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [branchCityOptions]);
+
+  useEffect(() => {
+    setBranchOptions(
+      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+    );
+    form.setFieldValue("sucursales", []);
+  }, [branchCityOptions, form, selectedCity]);
 
   const onFinish = (values: IRequestFilter) => {
     const filter = { ...values };
@@ -112,11 +131,33 @@ const RequestFilter = () => {
             />
           </Col>
           <Col span={8}>
-            <SelectInput
-              formProps={{ name: "sucursales", label: "Sucursal" }}
-              multiple
-              options={branchCityOptions}
-            />
+            <Form.Item label="Sucursal" className="no-error-text" help="">
+              <Input.Group>
+                <Row gutter={8}>
+                  <Col span={12}>
+                    <SelectInput
+                      formProps={{
+                        name: "ciudad",
+                        label: "Ciudad",
+                        noStyle: true,
+                      }}
+                      options={cityOptions}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <SelectInput
+                      formProps={{
+                        name: "sucursales",
+                        label: "Sucursales",
+                        noStyle: true,
+                      }}
+                      multiple
+                      options={branchOptions}
+                    />
+                  </Col>
+                </Row>
+              </Input.Group>
+            </Form.Item>
           </Col>
           <Col span={8}>
             <SelectInput

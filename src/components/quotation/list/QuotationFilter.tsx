@@ -95,7 +95,7 @@ const QuotationFilter = () => {
             />
           </Col>
           <Col span={8}>
-            <Form.Item label="Sucursal" className="no-error-text" help="">
+            <Form.Item label="Sucursales" className="no-error-text" help="">
               <Input.Group>
                 <Row gutter={8}>
                   <Col span={12}>
@@ -111,8 +111,8 @@ const QuotationFilter = () => {
                   <Col span={12}>
                     <SelectInput
                       formProps={{
-                        name: "sucursal",
-                        label: "Sucursal",
+                        name: "sucursales",
+                        label: "Sucursales",
                         noStyle: true,
                       }}
                       multiple

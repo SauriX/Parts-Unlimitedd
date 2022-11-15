@@ -190,7 +190,10 @@ function App() {
             <Route path="routes/:id" element={<RouteDetail />} />
             <Route path="routes/new" element={<RouteDetail />} />
             <Route path="cotizacion" element={<Quotation />} />
-            <Route path="cotizacion/:id" element={<QuotationDetail />} />
+            <Route
+              path="cotizacion/:quotationId"
+              element={<QuotationDetail />}
+            />
             <Route path="cotizacion/new" element={<QuotationDetail />} />
             <Route path="samplings" element={<Sampling />} />
             <Route path="samplings/:id" element={<Sampling />} />

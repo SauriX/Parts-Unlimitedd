@@ -20,7 +20,7 @@ const QuotationHeader = () => {
           key="new"
           type="primary"
           onClick={() => {
-            navigate(`/${views.quotatiion}/new`);
+            navigate(`/${views.quotation}/new`);
           }}
           icon={<PlusOutlined />}
         >

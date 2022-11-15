@@ -20,7 +20,9 @@ const RequestIndication = () => {
     totalIndications = totalIndications.map((x) => {
       const st = totalStudies
         .filter((s) => s.indicaciones.map((s) => s.id).includes(x.id))
-        .filter((v, i, a) => a.map((o) => o.estudioId).indexOf(v.estudioId) === i);
+        .filter(
+          (v, i, a) => a.map((o) => o.estudioId).indexOf(v.estudioId) === i
+        );
 
       return {
         ...x,
@@ -47,7 +49,12 @@ const RequestIndication = () => {
       renderItem={(item) => (
         <li>
           <Comment
-            author={item.clave + " (" + item.estudios.map((x) => x.clave).join(", ") + ")"}
+            author={
+              item.clave +
+              " (" +
+              item.estudios.map((x) => x.clave).join(", ") +
+              ")"
+            }
             content={item.descripcion}
             datetime={item.dias === 1 ? "1 día" : `${item.dias} días`}
           />

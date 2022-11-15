@@ -407,7 +407,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           type="link"
           onClick={() => {
             navigate(
-              `/${views.quotatiion}/${cotizacion.cotizacionId}?${searchParams}&mode=readonly`
+              `/${views.quotation}/${cotizacion.cotizacionId}?${searchParams}&mode=readonly`
             );
           }}
         >
@@ -479,7 +479,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           icon={<EditOutlined />}
           onClick={() => {
             navigate(
-              `/${views.quotatiion}/${cotizacion.cotizacionId}?${searchParams}&mode=edit`
+              `/${views.quotation}/${cotizacion.cotizacionId}?${searchParams}&mode=edit`
             );
           }}
         />

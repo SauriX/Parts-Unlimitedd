@@ -1,4 +1,4 @@
-import { Form, Row, Col, Input, Button, Spin, TreeSelect } from "antd";
+import { Form, Row, Col, Input, Spin } from "antd";
 import DateInput from "../../../app/common/form/proposal/DateInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
@@ -6,11 +6,10 @@ import { IProceedingForm } from "../../../app/models/Proceeding";
 import { useStore } from "../../../app/stores/store";
 import { useEffect, useState } from "react";
 import moment from "moment";
-import DatosFiscalesForm from "../../proceedings/details/DatosFiscalesForm";
 import { observer } from "mobx-react-lite";
 
 type QuotationRecordProps = {
-  //   recordId: string;
+  recordId?: string;
   branchId: string;
   setBranchId: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
@@ -21,21 +20,15 @@ const formItemLayout = {
 };
 
 const QuotationRecord = ({
-  //   recordId,
+  recordId,
   branchId,
   setBranchId,
 }: QuotationRecordProps) => {
-  const {
-    quotationStore,
-    procedingStore,
-    locationStore,
-    modalStore,
-    optionStore,
-  } = useStore();
-  //   const { quotation } = quotationStore;
+  const { quotationStore, procedingStore, locationStore, optionStore } =
+    useStore();
+  const { quotation } = quotationStore;
   const { getById } = procedingStore;
   const { getColoniesByZipCode } = locationStore;
-  const { openModal } = modalStore;
   const { BranchOptions, getBranchOptions } = optionStore;
 
   const [form] = Form.useForm<IProceedingForm>();
@@ -52,38 +45,40 @@ const QuotationRecord = ({
     setBranchId(branch);
   }, [branch, setBranchId]);
 
-  //   useEffect(() => {
-  //     if (quotation) {
-  //       form.setFieldsValue({ sucursal: quotation.sucursalId });
-  //     }
-  //   }, [form, quotation]);
+  useEffect(() => {
+    if (quotation) {
+      form.setFieldsValue({ sucursal: quotation.sucursalId });
+    }
+  }, [form, quotation]);
 
-  //   useEffect(() => {
-  //     const readRecord = async () => {
-  //       setLoading(true);
-  //       const record = await getById(recordId);
+  useEffect(() => {
+    const readRecord = async () => {
+      setLoading(true);
+      const record = await getById(recordId!);
 
-  //       if (record) {
-  //         if (record.fechaNacimiento) {
-  //           record.fechaNacimiento = moment(record.fechaNacimiento);
-  //         }
+      if (record) {
+        if (record.fechaNacimiento) {
+          record.fechaNacimiento = moment(record.fechaNacimiento);
+        }
 
-  //         if (record.cp) {
-  //           const location = await getColoniesByZipCode(record.cp);
-  //           const colony = location?.colonias?.find(
-  //             (x) => x.id === record.colonia
-  //           )?.nombre;
-  //           record.colonia = colony;
-  //         }
+        if (record.cp) {
+          const location = await getColoniesByZipCode(record.cp);
+          const colony = location?.colonias?.find(
+            (x) => x.id === record.colonia
+          )?.nombre;
+          record.colonia = colony;
+        }
 
-  //         const copy = (({ sucursal, ...others }) => ({ ...others }))(record);
-  //         form.setFieldsValue({ ...copy });
-  //       }
-  //       setLoading(false);
-  //     };
+        const copy = (({ sucursal, ...others }) => ({ ...others }))(record);
+        form.setFieldsValue({ ...copy });
+      }
+      setLoading(false);
+    };
 
-  //     readRecord();
-  //   }, [form, getById, getColoniesByZipCode, recordId]);
+    if (recordId) {
+      readRecord();
+    }
+  }, [form, getById, getColoniesByZipCode, recordId]);
 
   return (
     <Spin spinning={loading}>

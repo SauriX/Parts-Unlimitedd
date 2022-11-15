@@ -8,7 +8,7 @@ const { Text } = Typography;
 
 const QuotationInvoice = () => {
   const { quotationStore } = useStore();
-  // const { totals, studies, packs, calculateTotals, setTotals } = quotationStore;
+  const { totals, setTotals } = quotationStore;
 
   return (
     <Descriptions
@@ -20,7 +20,7 @@ const QuotationInvoice = () => {
     >
       <Descriptions.Item label="Concepto">Total</Descriptions.Item>
       <Descriptions.Item label="Estudio" className="number-desc">
-        {/* {moneyFormatter.format(totals.totalEstudios)} */}
+        {moneyFormatter.format(totals.totalEstudios)}
       </Descriptions.Item>
       <Descriptions.Item
         label={
@@ -28,10 +28,10 @@ const QuotationInvoice = () => {
             <Text>Cargo</Text>
             <Radio.Group
               className="quotation-radio"
-              // value={totals.cargoTipo}
-              // onChange={(e) => {
-              //   setTotals({ ...totals, cargoTipo: e.target.value });
-              // }}
+              value={totals.cargoTipo}
+              onChange={(e) => {
+                setTotals({ ...totals, cargoTipo: e.target.value });
+              }}
             >
               <Radio value={1}>%</Radio>
               <Radio value={2}>$</Radio>
@@ -39,7 +39,7 @@ const QuotationInvoice = () => {
           </div>
         }
       >
-        {/* {totals.cargoTipo === 1 ? (
+        {totals.cargoTipo === 1 ? (
           <InputNumber<number>
             key={"char-per"}
             formatter={(value) => `${value}%`}
@@ -66,10 +66,10 @@ const QuotationInvoice = () => {
             bordered={false}
             min={0}
           />
-        )} */}
+        )}
       </Descriptions.Item>
       <Descriptions.Item label="Total" className="number-desc">
-        {/* {moneyFormatter.format(totals.total)} */}
+        {moneyFormatter.format(totals.total)}
       </Descriptions.Item>
     </Descriptions>
   );
