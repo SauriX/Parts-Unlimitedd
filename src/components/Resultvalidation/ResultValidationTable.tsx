@@ -258,13 +258,14 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     if (expedientes.length === 0) {
       readPriceList();
     }
-    console.log(getExpandableConfig("estudios"), "config");
+    console.log(expandableStudyConfig, "config");
     setExpandable(expandableStudyConfig);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
   const onExpand = (isExpanded:boolean,record:Ivalidationlist)=>{
     let expandRows:string[]= expandedRowKeys;
     if(isExpanded){
+     
       expandRows.push(record.id);
     }
     else{
@@ -594,11 +595,11 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
 
 </Button>
 
-</div>
+</div> 
         <Table<Ivalidationlist>
           loading={loading}
           size="small"
-          rowKey={(record) => record.solicitud}
+          rowKey={(record) => record.id}
           columns={columns}
           pagination={false}
           dataSource={[...studys]}

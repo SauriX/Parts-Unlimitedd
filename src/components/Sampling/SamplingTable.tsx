@@ -88,6 +88,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     searchedColumn: "",
   });
   const togleRows =()=>{
+    console.log("togle");
     if(openRows){
       setOpenRows(false);
       setexpandedRowKeys([]);
@@ -98,6 +99,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     }
   }
   useEffect(()=>{
+    console.log(studys!.map((x)=>x.id),"maps");
     setexpandedRowKeys(studys!.map((x)=>x.id));
     setOpenRows(true);
   },[studys]);
@@ -144,6 +146,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
 
   const expandableStudyConfig = {
     expandedRowRender: (item: IsamplingList) => (
+      
       <div>
         <h4>Estudios</h4>
 
@@ -243,7 +246,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     if (expedientes.length === 0) {
       readPriceList();
     }
-    console.log(getExpandableConfig("estudios"), "config");
+    console.log(expandableStudyConfig, "config");
     setExpandable(expandableStudyConfig);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
@@ -577,12 +580,12 @@ const SamplingTable: FC<ProceedingTableProps> = ({
   {!openRows ? "Abrir tabla" : "Cerrar tabla"}
 
 </Button>
-
+ 
 </div>
         <Table<IsamplingList>
           loading={loading}
           size="small"
-          rowKey={(record) => record.solicitud}
+          rowKey={(record) => record.id}
           columns={columns}
           pagination={false}
           dataSource={[...studys]}
