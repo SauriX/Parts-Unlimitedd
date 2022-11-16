@@ -37,7 +37,7 @@ import { originOptions, urgencyOptions } from "../../app/stores/optionStore";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../app/util/alerts";
 import PrintIcon from "../../app/common/icons/PrintIcon";
-const {Panel}=Collapse;
+const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
@@ -63,52 +63,84 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     companyOptions,
     getCompanyOptions,
   } = optionStore;
-  const { getAll, studys, printTicket, update } = samplig;
+  const {
+    getAll,
+    studys,
+    printTicket,
+    update,
+    setSoliCont,
+    setStudyCont,
+    soliCont,
+    studyCont,
+  } = samplig;
   const { getCity, cityOptions } = locationStore;
   const [searchParams] = useSearchParams();
   const [form] = Form.useForm<IsamplingForm>();
   let navigate = useNavigate();
   const [values, setValues] = useState<IsamplingForm>(new samplingFormValues());
-  const [updateData, setUpdateDate] = useState<IUpdate>();
+  const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
   const [ids, setIds] = useState<number[]>([]);
   const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
   const { width: windowWidth } = useWindowDimensions();
   const [expandable, setExpandable] =
     useState<ExpandableConfig<IsamplingList>>();
-    const [expandedRowKeys,setexpandedRowKeys]= useState<string[]>([]);
+  const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
   const hasFooterRow = true;
-  const [studyCont, setStudyCont] = useState(0);
-  const [soliCont, setSoliCont] = useState(0);
+  const [activar,setActivar]=useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [activiti, setActiviti] = useState<string>("");
-  const [openRows,setOpenRows]=useState<boolean>(false);
+  const [openRows, setOpenRows] = useState<boolean>(false);
   //const [search,SetSearch] = useState<ISearchMedical>(new SearchMedicalFormValues())
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-  const togleRows =()=>{
-    if(openRows){
+  const togleRows = () => {
+    console.log("togle");
+    if (openRows) {
       setOpenRows(false);
       setexpandedRowKeys([]);
-    }else{
-      
+    } else {
       setOpenRows(true);
-      setexpandedRowKeys(studys!.map((x)=>x.id));
+      setexpandedRowKeys(studys!.map((x) => x.id));
     }
-  }
-  useEffect(()=>{
-    setexpandedRowKeys(studys!.map((x)=>x.id));
+  };
+  useEffect(() => {
+    console.log(
+      studys!.map((x) => x.id),
+      "maps"
+    );
+    setexpandedRowKeys(studys!.map((x) => x.id));
     setOpenRows(true);
-  },[studys]);
+  }, [studys]);
 
   const onChange = (e: CheckboxChangeEvent, id: number, solicitud: string) => {
+    console.log("onchange");
     var data = ids;
     var solis = solicitudesData;
+    var dataid:number[] = [];
+    var dataupdate = updateData;
     if (e.target.checked) {
       data.push(id);
+      dataid.push(id);
       setIds(data);
       let temp = solicitudesData.filter((x) => x == solicitud);
+      let temp2 = dataupdate!.filter((x) => x.solicitudId == solicitud);
+      if (temp2.length <= 0) {
+        let datatoupdate:IUpdate={
+          solicitudId:solicitud,
+          estudioId:dataid
+        }
+        dataupdate?.push(datatoupdate);
+      }else{
+        let solicitudtoupdate = dataupdate?.filter(x=>x.solicitudId==solicitud)[0];
+        let count = solicitudtoupdate?.estudioId!.filter(x=>x==id);
+        if(count!.length <=0){
+          solicitudtoupdate?.estudioId.push(id);
+          let indexsoli = dataupdate?.findIndex(x=>x.solicitudId==solicitud);
+          dataupdate[indexsoli!] = solicitudtoupdate;
+        }
+      }
       if (temp.length <= 0) {
         solis.push(solicitud);
         SetSolicitudesData(solis);
@@ -120,12 +152,34 @@ const SamplingTable: FC<ProceedingTableProps> = ({
         setIds(temp);
         //SetSolicitudesData();
       }
+      let solicitudtoupdate = dataupdate?.filter(x=>x.solicitudId==solicitud)[0];
+      if(solicitudtoupdate.estudioId.length==1){
+        dataupdate = dataupdate.filter(x=>x.solicitudId!=solicitud);
+      }else{
+        let count = solicitudtoupdate?.estudioId!.filter(x=>x==id);
+        if(count!.length >0){
+          let estudios = solicitudtoupdate?.estudioId.filter(x=>x!=id);
+          solicitudtoupdate.estudioId= estudios;
+          let indexsoli = dataupdate?.findIndex(x=>x.solicitudId==solicitud);
+          dataupdate[indexsoli!] = solicitudtoupdate;
+        }
+      }
     }
-    setUpdateDate((prev) => ({ ...prev, estudioId: ids ,solicitudId:solicitud}));
+    console.log(dataupdate.length,"onchange");
+    if(dataupdate.length<=0){
+      console.log("if")
+      setActivar(false);
+    }else{
+      console.log("else")
+      setActivar(true);
+    }
+    
+    setUpdateDate(dataupdate);
   };
   const updatedata = async () => {
     setLoading(true);
     var succes = await update(updateData!);
+    console.log("succes");
     if (succes) {
       setLoading(false);
       alerts.confirm(
@@ -137,6 +191,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       );
       setIds([]);
       SetSolicitudesData([]);
+      setActivar(false);
     } else {
       setLoading(false);
     }
@@ -235,7 +290,11 @@ const SamplingTable: FC<ProceedingTableProps> = ({
 
       console.log(datas, "daata");
       setSoliCont(datas?.length!);
-      datas?.forEach((x: any) => studios.push(x.studys));
+      datas?.forEach((x) =>
+        x.estudios.forEach((x: any) => {
+          studios.push(x);
+        })
+      );
       setStudyCont(studios.length);
       setLoading(false);
     };
@@ -243,32 +302,39 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     if (expedientes.length === 0) {
       readPriceList();
     }
-    console.log(getExpandableConfig("estudios"), "config");
+    console.log(expandableStudyConfig, "config");
     setExpandable(expandableStudyConfig);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
-  const onExpand = (isExpanded:boolean,record:IsamplingList)=>{
-    let expandRows:string[]= expandedRowKeys;
-    if(isExpanded){
+  const onExpand = (isExpanded: boolean, record: IsamplingList) => {
+    let expandRows: string[] = expandedRowKeys;
+    if (isExpanded) {
       expandRows.push(record.id);
-    }
-    else{
-      const index = expandRows.findIndex(x=>x===record.id);
-      if(index> -1){
-        expandRows.splice(index,1);
+    } else {
+      const index = expandRows.findIndex((x) => x === record.id);
+      if (index > -1) {
+        expandRows.splice(index, 1);
       }
     }
     setexpandedRowKeys(expandRows);
-}
+  };
   useEffect(() => {
     console.log(activiti, "useffect");
     setExpandable(expandableStudyConfig);
   }, [activiti]);
   const onFinish = async (newValues: IsamplingForm) => {
     setLoading(true);
-
+    let studios = [];
     const reagent = { ...values, ...newValues };
     var data = await getAll(reagent);
+    console.log(data, "daata");
+    setSoliCont(data?.length!);
+    data?.forEach((x) =>
+      x.estudios.forEach((x: any) => {
+        studios.push(x);
+      })
+    );
+    setStudyCont(studios.length);
     console.log(data, "datas");
     setLoading(false);
   };
@@ -354,6 +420,30 @@ const SamplingTable: FC<ProceedingTableProps> = ({
 
   return (
     <Fragment>
+      <div style={{ marginBottom: "5px", marginLeft: "90%" }}>
+        <Button
+          key="clean"
+          onClick={(e) => {
+            e.stopPropagation();
+
+            form.resetFields();
+          }}
+          style={{ marginLeft: "10%" }}
+        >
+          Limpiar
+        </Button>
+        <Button
+          key="filter"
+          type="primary"
+          onClick={(e) => {
+            e.stopPropagation();
+            form.submit();
+          }}
+          style={{ marginLeft: "10%" }}
+        >
+          Filtrar
+        </Button>
+      </div>
       <div
         className="status-container"
         style={{
@@ -365,33 +455,6 @@ const SamplingTable: FC<ProceedingTableProps> = ({
           borderRadius: "10px",
           padding: "10px",
         }}
-      >
-         <Collapse ghost className="request-filter-collapse">
-         <Panel
-        header="Filtros"
-        key="filter"
-        extra={[
-          <Button
-            key="clean"
-            onClick={(e) => {
-              e.stopPropagation();
-              
-              form.resetFields();
-            }}
-          >
-            Limpiar
-          </Button>,
-          <Button
-            key="filter"
-            type="primary"
-            onClick={(e) => {
-              e.stopPropagation();
-              form.submit();  
-            }}
-          >
-            Filtrar
-          </Button>,
-        ]}
       >
         <Form<IsamplingForm>
           {...formItemLayout}
@@ -418,7 +481,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                   />
                 </Col>
                 <Col span={8} style={{ textAlign: "right" }}>
-{/*                   <Button
+                  {/*                   <Button
                     type="primary"
                     onClick={() => {
                       form.submit();
@@ -512,83 +575,97 @@ const SamplingTable: FC<ProceedingTableProps> = ({
             </Col>
           </Row>
         </Form>
-        </Panel>
-        </Collapse>
       </div>
-      <Button
-        style={{ marginTop: "10px", marginBottom: "10px" }}
-        type={activiti == "register" ? "primary" : "ghost"}
-        onClick={register}
-      >
-        Registrar Toma
-      </Button>
-      <Button
-        style={{ marginTop: "10px", marginBottom: "10px", marginLeft: "10px" }}
-        type={activiti == "cancel" ? "primary" : "ghost"}
-        onClick={cancel}
-      >
-        Cancelar Registro
-      </Button>
-      {activiti == "register" ? (
-        <Button
-          style={{ marginTop: "10px", marginBottom: "10px", marginLeft: "70%" }}
-          type="primary"
-          disabled={ids.length <= 0}
-          onClick={() => {
-            updatedata();
-          }}
-        >
-          Aceptar Registro
-        </Button>
-      ) : (
-        ""
-      )}
-      {activiti == "cancel" ? (
-        <Button
-          style={{ marginTop: "10px", marginBottom: "10px", marginLeft: "70%" }}
-          type="primary"
-          disabled={ids.length <= 0}
-          onClick={() => {
-            updatedata();
-          }}
-        >
-          Cancelar Registro
-        </Button>
-      ) : (
-        ""
-      )}
-      <br />
-      Solicitudes: {soliCont}&nbsp;&nbsp;&nbsp; Estudios: {studyCont}
-      <br />
-      <br />
+      <Row>
+        <Col md={8}>
+          <Button
+            style={{ marginTop: "10px", marginBottom: "10px" }}
+            type={activiti == "register" ? "primary" : "ghost"}
+            onClick={register}
+          >
+            Registrar Toma
+          </Button>
+          <Button
+            style={{
+              marginTop: "10px",
+              marginBottom: "10px",
+              marginLeft: "10px",
+            }}
+            type={activiti == "cancel" ? "primary" : "ghost"}
+            onClick={cancel}
+          >
+            Cancelar Registro
+          </Button>
+        </Col>
+        <Col md={13}></Col>
+        <Col md={3}>
+          {activiti == "register" ? (
+            <Button
+              style={{
+                marginTop: "10px",
+                marginBottom: "10px",
+                marginLeft: "34%",
+              }}
+              type="primary"
+              disabled={!activar}
+              onClick={() => {
+                updatedata();
+              }}
+            >
+              {activar?"":" "}
+              Aceptar Registro
+            </Button>
+          ) : (
+            ""
+          )}
+          {activiti == "cancel" ? (
+            <Button
+              style={
+                {
+                  marginTop: "10px",
+                  marginBottom: "10px",
+                  marginLeft: "30%",
+                }
+              }
+              type="primary"
+              disabled={!activar}
+              onClick={() => {
+                updatedata();
+              }}
+            >
+              {activar?"":" "}
+              Cancelar Registro
+            </Button>
+          ) : (
+            ""
+          )}
+        </Col>
+      </Row>
+
       <Fragment>
-      <div style={{ textAlign: "right", marginBottom: 10 }}>
-
-<Button
-
-  type="primary"
-
-  onClick={togleRows}
-
-  style={{ marginRight: 10 }}
-
->
-
-  {!openRows ? "Abrir tabla" : "Cerrar tabla"}
-
-</Button>
-
-</div>
+        <div style={{ textAlign: "right", marginBottom: 10 }}>
+          <Button
+            type="primary"
+            onClick={togleRows}
+            style={{ marginRight: 1 }}
+          >
+            {!openRows ? "Abrir tabla" : "Cerrar tabla"}
+          </Button>
+        </div>
         <Table<IsamplingList>
           loading={loading}
           size="small"
-          rowKey={(record) => record.solicitud}
+          rowKey={(record) => record.id}
           columns={columns}
           pagination={false}
           dataSource={[...studys]}
           scroll={{ y: 500 }}
           //(rowClassName={(item) => (item.claveMedico == "Total" || item.paciente === "Total" ? "Resumen Total" : "")}
-          expandable={{...expandable,onExpand:onExpand,expandedRowKeys:expandedRowKeys}}
+          expandable={{
+            ...expandable,
+            onExpand: onExpand,
+            expandedRowKeys: expandedRowKeys,
+          }}
         />
       </Fragment>
     </Fragment>
