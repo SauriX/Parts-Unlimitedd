@@ -111,14 +111,16 @@ export default class RequestStore {
   calculateTotals = () => {
     const total =
       this.studies
-        .filter((x) => x.estatusId !== status.requestStudy.cancelado)
+        .filter(
+          (x) => x.estatusId !== status.requestStudy.cancelado && x.asignado
+        )
         .reduce((acc, obj) => acc + obj.precioFinal, 0) +
       this.packs.reduce((acc, obj) => acc + obj.precioFinal, 0);
 
     const desc =
       this.totals.descuentoTipo === 1
         ? ((this.studies
-            .filter((x) => x.aplicaDescuento)
+            .filter((x) => x.asignado && x.aplicaDescuento)
             .reduce((acc, obj) => acc + obj.precio, 0) +
             this.packs
               .filter((x) => x.aplicaDescuento)
@@ -130,7 +132,7 @@ export default class RequestStore {
     const char =
       this.totals.cargoTipo === 1
         ? ((this.studies
-            .filter((x) => x.aplicaCargo)
+            .filter((x) => x.asignado && x.aplicaCargo)
             .reduce((acc, obj) => acc + obj.precio, 0) +
             this.packs
               .filter((x) => x.aplicaCargo)
@@ -142,7 +144,7 @@ export default class RequestStore {
     const cop =
       this.totals.copagoTipo === 1
         ? ((this.studies
-            .filter((x) => x.aplicaCopago)
+            .filter((x) => x.asignado && x.aplicaCopago)
             .reduce((acc, obj) => acc + obj.precio, 0) +
             this.packs
               .filter((x) => x.aplicaCopago)
@@ -299,6 +301,7 @@ export default class RequestStore {
         aplicaCopago: false,
         aplicaDescuento: false,
         nuevo: true,
+        asignado: true,
       };
 
       console.log(study);
@@ -341,6 +344,7 @@ export default class RequestStore {
         aplicaCopago: false,
         aplicaDescuento: false,
         nuevo: true,
+        asignado: true,
         estudios: price.estudios.map((x) => ({
           ...x,
           type: "study",
@@ -350,6 +354,7 @@ export default class RequestStore {
           aplicaCopago: false,
           aplicaDescuento: false,
           nuevo: true,
+          asignado: true,
         })),
       };
 

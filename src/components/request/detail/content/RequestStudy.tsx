@@ -375,6 +375,7 @@ const RequestStudy = () => {
             getCheckboxProps: (item) => ({
               disabled:
                 item.nuevo ||
+                !item.asignado ||
                 (isStudy(item)
                   ? item.estatusId !== status.requestStudy.pendiente
                   : item.estudios.some(
