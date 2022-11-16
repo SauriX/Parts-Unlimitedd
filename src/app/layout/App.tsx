@@ -114,20 +114,6 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route element={<PrivateRoute />}>
           <Route element={<LayoutComponent />}>
-            <Route
-              path="weetest"
-              element={
-                <div
-                  style={{
-                    width: "70%",
-                    padding: 15,
-                    border: "1px solid black",
-                  }}
-                >
-                  <RequestTokenValidation />
-                </div>
-              }
-            />
             <Route path="" element={<Home />} />
             <Route path="users" element={<User />} />
             <Route path="users/:id" element={<UserDetail />} />
@@ -204,7 +190,10 @@ function App() {
             <Route path="routes/:id" element={<RouteDetail />} />
             <Route path="routes/new" element={<RouteDetail />} />
             <Route path="cotizacion" element={<Quotation />} />
-            <Route path="cotizacion/:id" element={<QuotationDetail />} />
+            <Route
+              path="cotizacion/:quotationId"
+              element={<QuotationDetail />}
+            />
             <Route path="cotizacion/new" element={<QuotationDetail />} />
             <Route path="samplings" element={<Sampling />} />
             <Route path="samplings/:id" element={<Sampling />} />
@@ -244,7 +233,7 @@ function App() {
               path={`${views.recivetracking}/:id`}
               element={<ReciveTracking />}
             />
-                        <Route
+            <Route
               path={`${views.resultValidation}`}
               element={<ResultValidation />}
             />

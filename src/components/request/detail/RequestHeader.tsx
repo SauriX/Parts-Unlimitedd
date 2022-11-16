@@ -2,13 +2,12 @@ import { PageHeader, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
-import GoBackIcon from "../../../app/common/icons/GoBackIcon";
 import { useStore } from "../../../app/stores/store";
 import views from "../../../app/util/view";
 
 const { Text } = Typography;
 
-const ReagentHeader = () => {
+const RequestHeader = () => {
   const { requestStore } = useStore();
   const { request } = requestStore;
 
@@ -47,4 +46,4 @@ const ReagentHeader = () => {
   );
 };
 
-export default observer(ReagentHeader);
+export default observer(RequestHeader);

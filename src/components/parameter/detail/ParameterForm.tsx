@@ -569,24 +569,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
                       readonly={CheckReadOnly()}
                     />
                   </Col>
-                  {deltaCheck ? (
-                    <Col offset={16} span={8}>
-                      <SwitchInput
-                        name="mostrarFormato"
-                        label="Mostrar Formato"
-                        onChange={(value) => {
-                          if (value) {
-                            alerts.info(messages.confirmations.showFormato);
-                          } else {
-                            alerts.info(messages.confirmations.unshownFormato);
-                          }
-                        }}
-                        readonly={CheckReadOnly()}
-                      />
-                    </Col>
-                  ) : (
-                    ""
-                  )}
                 </Row>
               </Col>
             </Row>

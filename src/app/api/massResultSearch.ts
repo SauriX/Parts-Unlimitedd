@@ -15,6 +15,8 @@ const MassResultSearch = {
     requests.post("MassSearch/GetByFilter", search),
   getAllCaptureResults: (search: IDeliverResultsForm): Promise<any[]> =>
     requests.post("MassSearch/GetAllCaptureResults", search),
+  exportListDeliverResult: (search: any): Promise<void> =>
+    requests.download("MassSearch/list", search),
 };
 
 export default MassResultSearch;

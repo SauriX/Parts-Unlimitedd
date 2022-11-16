@@ -52,3 +52,12 @@ export interface IWeeTokenVerification {
   ok: number;
   verificado: boolean;
 }
+
+export interface IWeeAssignment {
+  idServicio: string;
+  estatus: string;
+  mensaje: string;
+  clave: string;
+  nombre: string;
+  asignado: boolean;
+}

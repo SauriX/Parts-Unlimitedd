@@ -106,7 +106,7 @@ export const RequestedStudyExpandable = ({
   const nestedColumns: IColumns<IRequestedStudy> = [
     {
       ...getDefaultColumnProps("clave", "Estudio", {
-        width: "20%",
+        width: "30%",
       }),
       render: (_value, record) => record.clave + " - " + record.nombre,
     },
@@ -126,39 +126,30 @@ export const RequestedStudyExpandable = ({
       ...getDefaultColumnProps("entrega", "Entrega", {
         width: "20%",
       }),
-      render: (_value, record) =>
-        record.entrega,
+      render: (_value, record) => record.entrega,
     },
     {
       key: "Seleccionar",
       dataIndex: "seleccionar",
       title: "Seleccionar",
       align: "center",
-      width: "20%",
+      width: "10%",
       render: (_value, record) => (
         <>
-          {record.status === status.requestStudy.tomaDeMuestra &&
-            activity == "register" && (
-              <Checkbox
-                onChange={(e) => onChange(e, record.id, record.solicitudId)}
-              >
-                Selecciona
-              </Checkbox>
-            )}
-          {record.status === status.requestStudy.solicitado &&
-            activity == "cancel" && (
-              <Descriptions.Item
-                label="Selecciona"
-                style={{ maxWidth: 30 }}
-                className="description-content"
-              >
-                <Checkbox
-                  onChange={(e) => onChange(e, record.id, record.solicitudId)}
-                >
-                  Selecciona
-                </Checkbox>
-              </Descriptions.Item>
-            )}
+          {record.status === status.requestStudy.tomaDeMuestra && (
+            <Checkbox
+              onChange={(e) => onChange(e, record.id, record.solicitudId)}
+              disabled={!(activity == "register")}
+            >
+            </Checkbox>
+          )}
+          {record.status === status.requestStudy.solicitado && (
+            <Checkbox
+              onChange={(e) => onChange(e, record.id, record.solicitudId)}
+              disabled={!(activity == "cancel")}
+            >
+            </Checkbox>
+          )}
         </>
       ),
     },

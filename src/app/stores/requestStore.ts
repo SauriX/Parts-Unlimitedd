@@ -1,4 +1,4 @@
-import { makeAutoObservable, intercept, reaction } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import PriceList from "../api/priceList";
 import Request from "../api/request";
 import { IPriceListInfoFilter } from "../models/priceList";
@@ -91,6 +91,10 @@ export default class RequestStore {
 
     return [...studies, ...packStudies];
   }
+
+  clearDetailData = () => {
+    this.request = undefined;
+  };
 
   setOriginalTotal = (totals: IRequestTotal) => {
     this.totalsOriginal = totals;
@@ -674,6 +678,16 @@ export default class RequestStore {
       return data;
     } catch (error) {
       alerts.warning(getErrors(error));
+    }
+  };
+
+  assignWeeServices = async (recordId: string, requestId: string) => {
+    try {
+      const data = await Request.assignWeeServices(recordId, requestId);
+      return data;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return [];
     }
   };
 

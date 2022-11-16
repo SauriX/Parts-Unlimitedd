@@ -5,9 +5,9 @@ import { IIndicationList } from "../../../../app/models/indication";
 import { IStudyList } from "../../../../app/models/study";
 import { useStore } from "../../../../app/stores/store";
 
-const RequestIndication = () => {
-  const { requestStore } = useStore();
-  const { studies, packs } = requestStore;
+const QuotationIndication = () => {
+  const { quotationStore } = useStore();
+  const { studies, packs } = quotationStore;
 
   const [indications, setIndications] = useState<IIndicationList[]>([]);
 
@@ -43,7 +43,7 @@ const RequestIndication = () => {
 
   return (
     <List
-      className="request-indication-list"
+      className="quotation-indication-list"
       itemLayout="horizontal"
       dataSource={indications}
       renderItem={(item) => (
@@ -64,4 +64,4 @@ const RequestIndication = () => {
   );
 };
 
-export default observer(RequestIndication);
+export default observer(QuotationIndication);

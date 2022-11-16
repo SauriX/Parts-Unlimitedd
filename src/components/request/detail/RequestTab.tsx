@@ -3,10 +3,7 @@ import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import {
-  IRequestGeneral,
-  IRequestStudyUpdate,
-} from "../../../app/models/request";
+import { IRequestGeneral } from "../../../app/models/request";
 import { useStore } from "../../../app/stores/store";
 import alerts from "../../../app/util/alerts";
 import RequestGeneral from "./content/RequestGeneral";
@@ -19,8 +16,6 @@ import RequestSampler from "./content/RequestSampler";
 import RequestStudy from "./content/RequestStudy";
 import RequestInvoice from "./RequestInvoice";
 import { onSubmitGeneral, submitGeneral } from "./utils";
-
-const { TabPane } = Tabs;
 
 type RequestTabProps = {
   recordId: string;
@@ -53,7 +48,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     setOriginalTotal,
   } = requestStore;
   const { activateWallet, getById } = procedingStore;
-  const { getActive, loyaltys, getByDate } = loyaltyStore;
+  const { getActive, getByDate } = loyaltyStore;
 
   const [formGeneral] = Form.useForm<IRequestGeneral>();
 

@@ -1,9 +1,9 @@
 import { FormInstance } from "antd";
-import { IRequestGeneral } from "../../../app/models/request";
+import { IQuotationGeneral } from "../../../app/models/quotation";
 import alerts from "../../../app/util/alerts";
 
 export const submitGeneral = async (
-  formGeneral: FormInstance<IRequestGeneral>
+  formGeneral: FormInstance<IQuotationGeneral>
 ) => {
   try {
     await formGeneral.validateFields();
@@ -20,8 +20,8 @@ export const submitGeneral = async (
 };
 
 export const onSubmitGeneral = (
-  general: IRequestGeneral,
-  updateGeneral: (request: IRequestGeneral) => Promise<boolean>
+  general: IQuotationGeneral,
+  updateGeneral: (quotation: IQuotationGeneral) => Promise<boolean>
 ) => {
   return updateGeneral(general);
 };

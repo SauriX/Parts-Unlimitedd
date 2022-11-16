@@ -4,58 +4,49 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
-import QuotationHeader from "../components/quotation/QuotationHeader";
-import QuotationTable from "../components/quotation/QuotationTable";
+import QuotationFilter from "../components/quotation/list/QuotationFilter";
+import QuotationHeader from "../components/quotation/list/QuotationHeader";
+import QuotationTable from "../components/quotation/list/QuotationTable";
 
-const Quotation= () => {
-  const { quotationStore } = useStore();
-  const { scopes, /* access, */ clearScopes, exportList,search } = quotationStore; 
-
-  const [searchParams] = useSearchParams();
+const Quotation = () => {
+  const {} = useStore();
 
   const [loading, setLoading] = useState(false);
 
-  const componentRef = useRef<any>();
-
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-    onBeforeGetContent: () => {
-      setLoading(true);
-    },
-    onAfterPrint: () => {
-      setLoading(false);
-    },
-  });
-
-  const handleDownload = async () => {
-     setLoading(true);
-    await exportList(search); 
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    const checkAccess = async () => {
-      /* await access(); */
-    };
-
-    checkAccess();
-  }, [/* access */]);
-
-  useEffect(() => {
-    return () => {
-     /*  clearScopes(); */
-    };
-  }, [/* clearScopes */]);
-
-/*   if (!scopes?.acceder) return null; */
-
   return (
     <Fragment>
-      <QuotationHeader handlePrint={handlePrint} handleDownload={handleDownload} />
+      <QuotationHeader />
       <Divider className="header-divider" />
-      <QuotationTable componentRef={componentRef} printing={loading} />
+      <QuotationFilter />
+      <QuotationTable />
     </Fragment>
   );
 };
 
 export default observer(Quotation);
+
+// import { Divider } from "antd";
+// import React, { Fragment, useEffect, useRef, useState } from "react";
+// import { useSearchParams } from "react-router-dom";
+// import { useReactToPrint } from "react-to-print";
+// import { useStore } from "../app/stores/store";
+// import RequestHeader from "../components/request/list/RequestHeader";
+// import RequestFilter from "../components/request/list/RequestFilter";
+// import RequestTable from "../components/request/list/RequestTable";
+
+// const Request = () => {
+//   const {} = useStore();
+
+//   const [loading, setLoading] = useState(false);
+
+//   return (
+//     <Fragment>
+//       <RequestHeader />
+//       <Divider className="header-divider" />
+//       <RequestFilter />
+//       <RequestTable />
+//     </Fragment>
+//   );
+// };
+
+// export default Request;

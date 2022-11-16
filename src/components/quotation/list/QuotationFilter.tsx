@@ -6,32 +6,18 @@ import { useEffect, useState } from "react";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
-import { IRequestFilter } from "../../../app/models/request";
+import { IQuotationFilter } from "../../../app/models/quotation";
 import { IOptions } from "../../../app/models/shared";
-import {
-  originOptions,
-  studyStatusOptions,
-  urgencyOptions,
-} from "../../../app/stores/optionStore";
 import { useStore } from "../../../app/stores/store";
 import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
-const RequestFilter = () => {
-  const { requestStore, optionStore } = useStore();
-  const {
-    branchCityOptions,
-    medicOptions,
-    companyOptions,
-    departmentOptions,
-    getBranchCityOptions,
-    getMedicOptions,
-    getCompanyOptions,
-    getDepartmentOptions,
-  } = optionStore;
-  const { getRequests } = requestStore;
+const QuotationFilter = () => {
+  const { quotationStore, optionStore } = useStore();
+  const { branchCityOptions, getBranchCityOptions } = optionStore;
+  const { getQuotations } = quotationStore;
 
-  const [form] = useForm<IRequestFilter>();
+  const [form] = useForm<IQuotationFilter>();
 
   const selectedCity = Form.useWatch("ciudad", form);
 
@@ -40,15 +26,7 @@ const RequestFilter = () => {
 
   useEffect(() => {
     getBranchCityOptions();
-    getMedicOptions();
-    getCompanyOptions();
-    getDepartmentOptions();
-  }, [
-    getBranchCityOptions,
-    getMedicOptions,
-    getCompanyOptions,
-    getDepartmentOptions,
-  ]);
+  }, [getBranchCityOptions]);
 
   useEffect(() => {
     setCityOptions(
@@ -63,75 +41,61 @@ const RequestFilter = () => {
     form.setFieldValue("sucursales", []);
   }, [branchCityOptions, form, selectedCity]);
 
-  const onFinish = (values: IRequestFilter) => {
+  const onFinish = (values: IQuotationFilter) => {
     const filter = { ...values };
 
-    if (filter.fechas && filter.fechas.length > 1) {
-      filter.fechaInicial = filter.fechas[0].utcOffset(0, true);
-      filter.fechaFinal = filter.fechas[1].utcOffset(0, true);
+    if (filter.fechaAlta && filter.fechaAlta.length > 1) {
+      filter.fechaAInicial = filter.fechaAlta[0].utcOffset(0, true);
+      filter.fechaAFinal = filter.fechaAlta[1].utcOffset(0, true);
     }
 
-    getRequests(filter);
+    if (filter.fechaNacimiento && filter.fechaNacimiento.length > 1) {
+      filter.fechaNInicial = filter.fechaNacimiento[0].utcOffset(0, true);
+      filter.fechaNFinal = filter.fechaNacimiento[1].utcOffset(0, true);
+    }
+
+    getQuotations(filter);
   };
 
   return (
     <div className="status-container" style={{ marginBottom: 12 }}>
-      <Form<IRequestFilter>
+      <Form<IQuotationFilter>
         {...formItemLayout}
         form={form}
         onFinish={onFinish}
         size="small"
-        initialValues={{ tipoFecha: 1, fechas: [moment(), moment()] }}
+        initialValues={{ fechaAlta: [moment(), moment()] }}
       >
         <Row gutter={[0, 12]}>
           <Col span={8}>
-            <SelectInput
+            <DateRangeInput
+              formProps={{ name: "fechaAlta", label: "Fecha de alta" }}
+            />
+          </Col>
+          <Col span={8}>
+            <TextInput
               formProps={{
-                name: "tipoFecha",
-                label: "Fechas por",
+                name: "expediente",
+                label: "Paciente",
               }}
-              options={[
-                { value: 1, label: "Solicitudes hechas" },
-                { value: 2, label: "Solicitudes a entregar" },
-              ]}
+              placeholder="Expediente / Nombre / Código de barras / Huella digital"
             />
           </Col>
           <Col span={8}>
-            <DateRangeInput formProps={{ name: "fechas", label: "Fechas" }} />
-          </Col>
-          <Col span={8}>
-            <TextInput formProps={{ name: "clave", label: "Clave/Paciente" }} />
-          </Col>
-          <Col span={8}>
-            <SelectInput
-              formProps={{ name: "procedencias", label: "Procedencia" }}
-              multiple
-              options={originOptions}
+            <DateRangeInput
+              formProps={{
+                name: "fechaNacimiento",
+                label: "Fecha nacimiento",
+              }}
             />
           </Col>
           <Col span={8}>
-            <SelectInput
-              formProps={{ name: "urgencias", label: "Tipo solicitud" }}
-              multiple
-              options={urgencyOptions}
+            <TextInput
+              formProps={{ name: "correoTelefono", label: "Teleéfono/Correo" }}
             />
           </Col>
           <Col span={8}>
-            <SelectInput
-              formProps={{ name: "estatus", label: "Estatus" }}
-              multiple
-              options={studyStatusOptions}
-            />
-          </Col>
-          <Col span={8}>
-            <SelectInput
-              formProps={{ name: "departamentos", label: "Departamento" }}
-              multiple
-              options={departmentOptions}
-            />
-          </Col>
-          <Col span={8}>
-            <Form.Item label="Sucursal" className="no-error-text" help="">
+            <Form.Item label="Sucursales" className="no-error-text" help="">
               <Input.Group>
                 <Row gutter={8}>
                   <Col span={12}>
@@ -159,21 +123,7 @@ const RequestFilter = () => {
               </Input.Group>
             </Form.Item>
           </Col>
-          <Col span={8}>
-            <SelectInput
-              formProps={{ name: "compañias", label: "Compañia" }}
-              multiple
-              options={companyOptions}
-            />
-          </Col>
-          <Col span={8}>
-            <SelectInput
-              formProps={{ name: "medicos", label: "Médico" }}
-              multiple
-              options={medicOptions}
-            />
-          </Col>
-          <Col span={16} style={{ textAlign: "right" }}>
+          <Col span={8} style={{ textAlign: "right" }}>
             <Button
               key="clean"
               onClick={() => {
@@ -198,4 +148,4 @@ const RequestFilter = () => {
   );
 };
 
-export default observer(RequestFilter);
+export default observer(QuotationFilter);
