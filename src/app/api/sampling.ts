@@ -6,7 +6,7 @@ const Sampling = {
   access: (): Promise<IScopes> => requests.get("scopes/report"),
   getAll: (search: IsamplingForm): Promise<IsamplingList[]> =>
     requests.post(`sampling/getList`, search),
-  update: (update: IUpdate): Promise<void> => requests.put("sampling", update),
+  update: (update: IUpdate[]): Promise<void> => requests.put("sampling", update),
   getOrderPdf: (recordId: string, requestId: string): Promise<void> =>
     requests.print(`sampling/order/${recordId}/${requestId}`),
 };

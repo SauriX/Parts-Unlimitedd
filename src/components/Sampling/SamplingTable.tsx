@@ -78,7 +78,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
   const [form] = Form.useForm<IsamplingForm>();
   let navigate = useNavigate();
   const [values, setValues] = useState<IsamplingForm>(new samplingFormValues());
-  const [updateData, setUpdateDate] = useState<IUpdate[]>();
+  const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
   const [ids, setIds] = useState<number[]>([]);
   const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
   const { width: windowWidth } = useWindowDimensions();
@@ -86,7 +86,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     useState<ExpandableConfig<IsamplingList>>();
   const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
   const hasFooterRow = true;
-
+  const [activar,setActivar]=useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [activiti, setActiviti] = useState<string>("");
   const [openRows, setOpenRows] = useState<boolean>(false);
@@ -115,6 +115,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
   }, [studys]);
 
   const onChange = (e: CheckboxChangeEvent, id: number, solicitud: string) => {
+    console.log("onchange");
     var data = ids;
     var solis = solicitudesData;
     var dataid:number[] = [];
@@ -126,15 +127,19 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       let temp = solicitudesData.filter((x) => x == solicitud);
       let temp2 = dataupdate!.filter((x) => x.solicitudId == solicitud);
       if (temp2.length <= 0) {
-        var datatoupdate:IUpdate={
+        let datatoupdate:IUpdate={
           solicitudId:solicitud,
           estudioId:dataid
         }
         dataupdate?.push(datatoupdate);
       }else{
-        var solicitudtoupdate = dataupdate?.filter(x=>x.solicitudId==solicitud)[0];
-        var coun = solicitudtoupdate?.estudioId.filter(x=>x==id);
-        //if()
+        let solicitudtoupdate = dataupdate?.filter(x=>x.solicitudId==solicitud)[0];
+        let count = solicitudtoupdate?.estudioId!.filter(x=>x==id);
+        if(count!.length <=0){
+          solicitudtoupdate?.estudioId.push(id);
+          let indexsoli = dataupdate?.findIndex(x=>x.solicitudId==solicitud);
+          dataupdate[indexsoli!] = solicitudtoupdate;
+        }
       }
       if (temp.length <= 0) {
         solis.push(solicitud);
@@ -147,14 +152,33 @@ const SamplingTable: FC<ProceedingTableProps> = ({
         setIds(temp);
         //SetSolicitudesData();
       }
-      //var solicitudtoupdate = dataupdate?.filter(x=>x.solicitudId==solicitud);
-      /* if(solicitudtoupdate) */
+      let solicitudtoupdate = dataupdate?.filter(x=>x.solicitudId==solicitud)[0];
+      if(solicitudtoupdate.estudioId.length==1){
+        dataupdate = dataupdate.filter(x=>x.solicitudId!=solicitud);
+      }else{
+        let count = solicitudtoupdate?.estudioId!.filter(x=>x==id);
+        if(count!.length >0){
+          let estudios = solicitudtoupdate?.estudioId.filter(x=>x!=id);
+          solicitudtoupdate.estudioId= estudios;
+          let indexsoli = dataupdate?.findIndex(x=>x.solicitudId==solicitud);
+          dataupdate[indexsoli!] = solicitudtoupdate;
+        }
+      }
     }
+    console.log(dataupdate.length,"onchange");
+    if(dataupdate.length<=0){
+      console.log("if")
+      setActivar(false);
+    }else{
+      console.log("else")
+      setActivar(true);
+    }
+    
     setUpdateDate(dataupdate);
   };
   const updatedata = async () => {
     setLoading(true);
-    var succes =true// await update(updateData!);
+    var succes = await update(updateData!);
     console.log("succes");
     if (succes) {
       setLoading(false);
@@ -167,6 +191,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       );
       setIds([]);
       SetSolicitudesData([]);
+      setActivar(false);
     } else {
       setLoading(false);
     }
@@ -582,11 +607,12 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                 marginLeft: "34%",
               }}
               type="primary"
-              disabled={ids.length <= 0}
+              disabled={!activar}
               onClick={() => {
                 updatedata();
               }}
             >
+              {activar?"":" "}
               Aceptar Registro
             </Button>
           ) : (
@@ -602,11 +628,12 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                 }
               }
               type="primary"
-              disabled={ids.length <= 0}
+              disabled={!activar}
               onClick={() => {
                 updatedata();
               }}
             >
+              {activar?"":" "}
               Cancelar Registro
             </Button>
           ) : (

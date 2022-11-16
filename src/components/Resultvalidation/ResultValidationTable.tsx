@@ -107,7 +107,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   const [form] = Form.useForm<ISearchValidation>();
   let navigate = useNavigate();
   const [values, setValues] = useState<ISearchValidation>(new searchValues());
-  const [updateData, setUpdateDate] = useState<IUpdate>();
+  const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
   const [ids, setIds] = useState<number[]>([]);
   const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
   const { width: windowWidth } = useWindowDimensions();
@@ -115,7 +115,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     useState<ExpandableConfig<Ivalidationlist>>();
   const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
   const hasFooterRow = true;
-
+  const [activar,setActivar]=useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [activiti, setActiviti] = useState<string>("");
   const [openRows, setOpenRows] = useState<boolean>(false);
@@ -139,12 +139,32 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   }, [studys]);
 
   const onChange = (e: CheckboxChangeEvent, id: number, solicitud: string) => {
+    console.log("onchange");
     var data = ids;
     var solis = solicitudesData;
+    var dataid:number[] = [];
+    var dataupdate = updateData;
     if (e.target.checked) {
       data.push(id);
+      dataid.push(id);
       setIds(data);
       let temp = solicitudesData.filter((x) => x == solicitud);
+      let temp2 = dataupdate!.filter((x) => x.solicitudId == solicitud);
+      if (temp2.length <= 0) {
+        let datatoupdate:IUpdate={
+          solicitudId:solicitud,
+          estudioId:dataid
+        }
+        dataupdate?.push(datatoupdate);
+      }else{
+        let solicitudtoupdate = dataupdate?.filter(x=>x.solicitudId==solicitud)[0];
+        let count = solicitudtoupdate?.estudioId!.filter(x=>x==id);
+        if(count!.length <=0){
+          solicitudtoupdate?.estudioId.push(id);
+          let indexsoli = dataupdate?.findIndex(x=>x.solicitudId==solicitud);
+          dataupdate[indexsoli!] = solicitudtoupdate;
+        }
+      }
       if (temp.length <= 0) {
         solis.push(solicitud);
         SetSolicitudesData(solis);
@@ -156,12 +176,29 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
         setIds(temp);
         //SetSolicitudesData();
       }
+      let solicitudtoupdate = dataupdate?.filter(x=>x.solicitudId==solicitud)[0];
+      if(solicitudtoupdate.estudioId.length==1){
+        dataupdate = dataupdate.filter(x=>x.solicitudId!=solicitud);
+      }else{
+        let count = solicitudtoupdate?.estudioId!.filter(x=>x==id);
+        if(count!.length >0){
+          let estudios = solicitudtoupdate?.estudioId.filter(x=>x!=id);
+          solicitudtoupdate.estudioId= estudios;
+          let indexsoli = dataupdate?.findIndex(x=>x.solicitudId==solicitud);
+          dataupdate[indexsoli!] = solicitudtoupdate;
+        }
+      }
     }
-    setUpdateDate((prev) => ({
-      ...prev,
-      estudioId: ids,
-      solicitudId: solicitud,
-    }));
+    console.log(dataupdate.length,"onchange");
+    if(dataupdate.length<=0){
+      console.log("if")
+      setActivar(false);
+    }else{
+      console.log("else")
+      setActivar(true);
+    }
+    
+    setUpdateDate(dataupdate);
   };
   const updatedata = async () => {
     setLoading(true);
@@ -589,11 +626,12 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                 marginLeft: "34%",
               }}
               type="primary"
-              disabled={ids.length <= 0}
+              disabled={!activar}
               onClick={() => {
                 updatedata();
               }}
             >
+              {activar?"":" "}
               Aceptar Registro
             </Button>
           ) : (
@@ -609,11 +647,12 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                 }
               }
               type="primary"
-              disabled={ids.length <= 0}
+              disabled={!activar}
               onClick={() => {
                 updatedata();
               }}
             >
+              {activar?"":" "}
               Cancelar Registro
             </Button>
           ) : (

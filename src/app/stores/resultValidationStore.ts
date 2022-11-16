@@ -55,7 +55,7 @@ export default class ResultValidationStore {
     }
   };
 
-  update = async (study: IUpdate) => {
+  update = async (study: IUpdate[]) => {
     try {
       console.log(study);
       await ResultValidation.update(study);

@@ -53,7 +53,7 @@ export default class SamplingStore {
     }
   };
 
-  update = async (study: IUpdate) => {
+  update = async (study: IUpdate[]) => {
     try {
       console.log(study);
       await Sampling.update(study);

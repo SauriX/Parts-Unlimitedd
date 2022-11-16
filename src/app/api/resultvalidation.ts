@@ -7,7 +7,7 @@ const ResultValidation = {
   access: (): Promise<IScopes> => requests.get("scopes/report"),
   getAll: (search: ISearchValidation): Promise<Ivalidationlist[]> =>
     requests.post(`ResultValidation/getList`, search),
-  update: (update: IUpdate): Promise<void> => requests.put("ResultValidation", update),
+  update: (update: IUpdate[]): Promise<void> => requests.put("ResultValidation", update),
   getOrderPdf: (recordId: string, requestId: string): Promise<void> =>
     requests.print(`ResultValidation/order/${recordId}/${requestId}`),
     DownloadOrderPdf: (recordId: string, requestId: string): Promise<void> =>
