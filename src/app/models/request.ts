@@ -199,6 +199,7 @@ export interface IRequestStudy {
   descuentoPorcentaje?: number;
   precioFinal: number;
   nuevo: boolean;
+  asignado: boolean;
   promociones: IPriceListInfoPromo[];
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
@@ -219,6 +220,7 @@ export interface IRequestStudy {
   usuarioLiberado?: string;
   usuarioEnviado?: string;
 }
+
 export class RequestStudyValues implements IRequestStudy {
   type: "study" | "pack" = "study";
   id = 0;
@@ -250,6 +252,7 @@ export class RequestStudyValues implements IRequestStudy {
   descuentoPorcentaje = 0;
   precioFinal = 0;
   nuevo = false;
+  asignado = true;
   parametros: IParameterList[] = [];
   indicaciones: IIndicationList[] = [];
   promociones = [];
@@ -286,6 +289,7 @@ export interface IRequestPack {
   promocionDescuentoPorcentaje?: number;
   precioFinal: number;
   nuevo: boolean;
+  asignado: boolean;
   promociones: IPriceListInfoPromo[];
   estudios: IRequestStudy[];
 }

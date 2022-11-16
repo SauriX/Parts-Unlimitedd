@@ -27,8 +27,13 @@ const RequestTokenValidation = ({
   requestId,
 }: RequestTokenValidationProps) => {
   const { requestStore, modalStore } = useStore();
-  const { sendWeeToken, compareWeeToken, verifyWeeToken, assignWeeServices } =
-    requestStore;
+  const {
+    getStudies,
+    sendWeeToken,
+    compareWeeToken,
+    verifyWeeToken,
+    assignWeeServices,
+  } = requestStore;
   const { closeModal } = modalStore;
 
   const [currentStep, setCurrentStep] = useState(0);
@@ -186,6 +191,8 @@ const RequestTokenValidation = ({
       message: "Resultados de asignación",
       status: "info",
     });
+
+    getStudies(compareInfo.expedienteId, compareInfo.solicitudId);
 
     setAssigning(false);
   };
