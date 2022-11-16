@@ -118,6 +118,7 @@ const ReferenciaParrafo: FC<Props> = ({ idTipeVAlue, parameter }) => {
                       rows={5}
                       autoSize
                       placeholder={"Párrafo"}
+                      style={{width: 500}}
                     />
                   </Form.Item>
                   <MinusCircleOutlined onClick={() => remove(name)} />
