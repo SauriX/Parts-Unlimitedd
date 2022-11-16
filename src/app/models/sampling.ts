@@ -25,6 +25,7 @@ export interface IsamplingList {
   compañia: string;
   seleccion: boolean;
   estudios: IstudySampling[];
+  
 }
 export interface IstudySampling {
   id: number;
@@ -35,6 +36,7 @@ export interface IstudySampling {
   entrega: string;
   seleccion: boolean;
   clave: string;
+  solicitudId:string;
 }
 export interface IUpdate {
   solicitudId:string;
