@@ -115,12 +115,14 @@ const RangoObservacion: FC<Props> = ({ idTipeVAlue, parameter }) => {
                     label={"Observación " + (name + 1)}
                     name={[name, "descripcionTexto"]}
                     rules={[{ required: true, message: "Missing valor" }]}
-                  >
+                    >
                     <TextArea
                       disabled={disabled}
                       rows={5}
                       autoSize
+                      allowClear
                       placeholder={"Observación"}
+                      style={{width: 500}}
                     />
                   </Form.Item>
                   <MinusCircleOutlined onClick={() => remove(name)} />

@@ -7,39 +7,29 @@ import {
   Button,
   PageHeader,
   Divider,
-  Radio,
-  DatePicker,
-  List,
-  Typography,
-  Select,
   Table,
-  Checkbox,
   Input,
-  Tag,
-  InputNumber,
   Tooltip,
   Card,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout, moneyFormatter } from "../../../app/util/utils";
-import TextInput from "../../../app/common/form/proposal/TextInput";
 import { useStore } from "../../../app/stores/store";
-import { IReagentForm, ReagentFormValues } from "../../../app/models/reagent";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
 import { EditOutlined } from "@ant-design/icons";
+import TextInput from "../../../app/common/form/proposal/TextInput";
 import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
-import SwitchInput from "../../../app/common/form/SwitchInput";
+import DateInput from "../../../app/common/form/proposal/DateInput";
+import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import alerts from "../../../app/util/alerts";
-import messages from "../../../app/util/messages";
 import {
   getDefaultColumnProps,
   IColumns,
-  ISearch,
 } from "../../../app/common/table/utils";
 import { IOptions } from "../../../app/models/shared";
 import DatosFiscalesForm from "./DatosFiscalesForm";
@@ -51,11 +41,9 @@ import {
 } from "../../../app/models/Proceeding";
 import moment, { Moment } from "moment";
 import { ITaxData } from "../../../app/models/taxdata";
-import DateInput from "../../../app/common/form/proposal/DateInput";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import IconButton from "../../../app/common/button/IconButton";
 import Link from "antd/lib/typography/Link";
-import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import { IRequestInfo } from "../../../app/models/request";
 import {
   IAppointmentForm,
@@ -117,7 +105,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   const { profile } = profileStore;
   const { BranchOptions, getBranchOptions } = optionStore;
   const [loading, setLoading] = useState(false);
-  const [monedero, setMonedero] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
@@ -130,7 +117,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   const { getColoniesByZipCode } = locationStore;
   const { openModal, closeModal } = modalStore;
   const [colonies, setColonies] = useState<IOptions[]>([]);
-  const [date, setDate] = useState(moment(new Date(moment.now())));
   const [continuar, SetContinuar] = useState<boolean>(true);
   const goBack = () => {
     searchParams.delete("mode");
@@ -216,8 +202,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     if (id) {
       readExpedinte(id);
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, getById]);
 
   useEffect(() => {
@@ -265,7 +249,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       var hoy = new Date();
       var cumpleaños = hoy.getFullYear() - edad;
       hoy.setFullYear(cumpleaños);
-      //setValues((prev) => ({ ...prev, fechaNacimiento: hoy }));
       form.setFieldsValue({ fechaNacimiento: moment(hoy) });
     }
     if (field == "fechaNacimiento") {
@@ -749,7 +732,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               console.log(error);
             }}
           >
-            <Row gutter={[12, 12]}>
+            <Row gutter={[0, 12]}>
               <Col span={12}>
                 <Form.Item
                   label="Nombre"
@@ -838,21 +821,21 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 />
               </Col>
               <Col span={4}>
-                <NumberInput
+                <TextInput
                   formProps={{
                     name: "edad",
                     label: "Edad",
-                    labelCol: { span: 6 },
-                    wrapperCol: { span: 18 },
+                    labelCol: { span: 12 },
+                    wrapperCol: { span: 12 },
                   }}
-                  max={500}
-                  min={0}
-                  suffix={"años"}
+                  max={130}
+                  suffix="años"
                   readonly={readonly}
                 />
               </Col>
               <Col span={8}>
                 <Form.Item
+                  label="Contacto"
                   labelCol={{ span: 6 }}
                   wrapperCol={{ span: 18 }}
                   help=""
@@ -861,66 +844,26 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   <Input.Group>
                     <Row gutter={8}>
                       <Col span={12}>
-                        <MaskInput
+                        <TextInput
                           formProps={{
                             name: "telefono",
-                            label: "Contacto/Teléfono",
+                            label: "Teléfono",
+                            noStyle: true,
                           }}
-                          mask={[
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                          ]}
-                          validator={(_, value: any) => {
-                            if (!value || value.indexOf("_") === -1) {
-                              return Promise.resolve();
-                            }
-                            return Promise.reject(
-                              "El campo debe contener 10 dígitos"
-                            );
-                          }}
+                          max={500}
+                          showLabel
                           readonly={readonly}
                         />
                       </Col>
                       <Col span={12}>
-                        <MaskInput
+                        <TextInput
                           formProps={{
                             name: "celular",
                             label: "Celular",
+                            noStyle: true,
                           }}
-                          mask={[
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                          ]}
-                          validator={(_, value: any) => {
-                            if (!value || value.indexOf("_") === -1) {
-                              return Promise.resolve();
-                            }
-                            return Promise.reject(
-                              "El campo debe contener 10 dígitos"
-                            );
-                          }}
+                          max={500}
+                          showLabel
                           readonly={readonly}
                         />
                       </Col>
@@ -939,7 +882,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   <Input.Group>
                     <Row gutter={8}>
                       <Col span={2}>
-                        <TextInput
+                      <TextInput
                           formProps={{
                             name: "cp",
                             label: "CP",
@@ -951,7 +894,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                         />
                       </Col>
                       <Col span={4}>
-                        <TextInput
+                      <TextInput
                           formProps={{
                             name: "estado",
                             label: "Estado",
@@ -963,7 +906,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                         />
                       </Col>
                       <Col span={5}>
-                        <TextInput
+                      <TextInput
                           formProps={{
                             name: "municipio",
                             label: "Municipio",
@@ -975,7 +918,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                         />
                       </Col>
                       <Col span={6}>
-                        <SelectInput
+                      <SelectInput
                           formProps={{
                             name: "colonia",
                             label: "Colonia",
@@ -987,7 +930,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                         />
                       </Col>
                       <Col span={7}>
-                        <TextInput
+                      <TextInput
                           formProps={{
                             name: "calle",
                             label: "Calle",

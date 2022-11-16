@@ -66,21 +66,18 @@ const ClinicResultsFilter = () => {
   };
 
   return (
-    <Collapse ghost className="request-filter-collapse">
-      <Panel
-        key="filter"
-        header="Búsqueda"
-        extra={[
+    <>
+      <Row justify="end" gutter={[24, 12]} className="filter-buttons">
+        <Col span={24}>
           <Button
             key="clean"
             onClick={(e) => {
-              e.stopPropagation();
               form.resetFields();
               clearFilter();
             }}
           >
             Limpiar
-          </Button>,
+          </Button>
           <Button
             key="filter"
             type="primary"
@@ -90,125 +87,124 @@ const ClinicResultsFilter = () => {
             }}
           >
             Buscar
-          </Button>,
-        ]}
-      >
-        <div className="status-container">
-          <Form<IClinicResultForm>
-            {...formItemLayout}
-            form={form}
-            name="clinicResults"
-            onFinish={onFinish}
-            initialValues={formValues}
-            scrollToFirstError
-          >
-            <Row>
-              <Col span={24}>
-                <Row justify="space-between" gutter={[0, 12]}>
-                  <Col span={8}>
-                    <DateRangeInput
-                      formProps={{ label: "Fecha", name: "fecha" }}
-                      required={true}
-                    />
-                  </Col>
-                  <Col span={8}>
-                    <TextInput
-                      formProps={{
-                        name: "buscar",
-                        label: "Buscar",
-                      }}
-                    />
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
-                      formProps={{
-                        name: "procedencia",
-                        label: "Procedencia",
-                      }}
-                      multiple
-                      options={originOptions}
-                    ></SelectInput>
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
-                      formProps={{
-                        name: "tipoSolicitud",
-                        label: "Tipo solicitud",
-                      }}
-                      multiple
-                      options={urgencyOptions}
-                    ></SelectInput>
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
-                      formProps={{
-                        name: "estatus",
-                        label: "Estatus",
-                      }}
-                      multiple
-                      options={studyStatusOptions}
-                    ></SelectInput>
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
-                      formProps={{
-                        name: "area",
-                        label: "Departamento",
-                      }}
-                      multiple
-                      options={departmentAreaOptions}
-                      onChange={(value) => {
-                        let filtradoEstudios = studiesOptions.filter(
-                          (estudio) => value.includes(+estudio.area)
-                        );
-                        setStudyFilter(filtradoEstudios);
-                      }}
-                    ></SelectInput>
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
-                      formProps={{
-                        name: "estudio",
-                        label: "Estudio",
-                      }}
-                      multiple
-                      options={studyFilter}
-                    ></SelectInput>
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
-                      formProps={{
-                        name: "medicoId",
-                        label: "Médico",
-                      }}
-                      multiple
-                      options={medicOptions}
-                    ></SelectInput>
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
-                      formProps={{ name: "sucursalId", label: "Sucursales" }}
-                      multiple
-                      options={branchCityOptions}
-                    />
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
-                      formProps={{
-                        name: "compañiaId",
-                        label: "Compañía",
-                      }}
-                      multiple
-                      options={companyOptions}
-                    ></SelectInput>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Form>
-        </div>
-      </Panel>
-    </Collapse>
+          </Button>
+        </Col>
+      </Row>
+      <div className="status-container">
+        <Form<IClinicResultForm>
+          {...formItemLayout}
+          form={form}
+          name="clinicResults"
+          onFinish={onFinish}
+          initialValues={formValues}
+          scrollToFirstError
+        >
+          <Row>
+            <Col span={24}>
+              <Row justify="space-between" gutter={[0, 12]}>
+                <Col span={8}>
+                  <DateRangeInput
+                    formProps={{ label: "Fecha", name: "fecha" }}
+                    required={true}
+                  />
+                </Col>
+                <Col span={8}>
+                  <TextInput
+                    formProps={{
+                      name: "buscar",
+                      label: "Buscar",
+                    }}
+                  />
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "procedencia",
+                      label: "Procedencia",
+                    }}
+                    multiple
+                    options={originOptions}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "tipoSolicitud",
+                      label: "Tipo solicitud",
+                    }}
+                    multiple
+                    options={urgencyOptions}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "estatus",
+                      label: "Estatus",
+                    }}
+                    multiple
+                    options={studyStatusOptions}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "area",
+                      label: "Departamento",
+                    }}
+                    multiple
+                    options={departmentAreaOptions}
+                    onChange={(value) => {
+                      let filtradoEstudios = studiesOptions.filter((estudio) =>
+                        value.includes(+estudio.area)
+                      );
+                      setStudyFilter(filtradoEstudios);
+                    }}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "estudio",
+                      label: "Estudio",
+                    }}
+                    multiple
+                    options={studyFilter}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "medicoId",
+                      label: "Médico",
+                    }}
+                    multiple
+                    options={medicOptions}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{ name: "sucursalId", label: "Sucursales" }}
+                    multiple
+                    options={branchCityOptions}
+                  />
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "compañiaId",
+                      label: "Compañía",
+                    }}
+                    multiple
+                    options={companyOptions}
+                  ></SelectInput>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Form>
+      </div>
+    </>
   );
 };
 
