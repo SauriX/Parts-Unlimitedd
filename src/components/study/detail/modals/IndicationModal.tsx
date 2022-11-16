@@ -1,7 +1,8 @@
 import IndicationTable from "./IndicationTable";
 import { store, useStore } from "../../../../app/stores/store";
+import { IIndicationList } from "../../../../app/models/indication";
 
-export const IndicationModal = (selectedRowKeys: React.Key[]) => {
+export const IndicationModal = (selectedRowKeys: IIndicationList[]) => {
   const { openModal, closeModal } = store.modalStore;
 
   return new Promise((resolve) => {
@@ -11,9 +12,8 @@ export const IndicationModal = (selectedRowKeys: React.Key[]) => {
         <IndicationTable
           getResult={(data) => {
             resolve(true);
-            closeModal();
           }}
-          selectedReagent={selectedRowKeys}
+          selectedIndication={selectedRowKeys}
         />
       ),
       onClose: () => {

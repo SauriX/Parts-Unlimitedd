@@ -1,4 +1,5 @@
 import { makeAutoObservable } from "mobx";
+import moment from "moment";
 import MassResultSearch from "../api/massResultSearch";
 import {
   IDeliverResultsForm,
@@ -48,6 +49,19 @@ export default class MassResultSearchStore {
       const result = await MassResultSearch.getAllCaptureResults(search);
       this.requests = result;
       console.log("RESULT", result);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  formDeliverResult: any = { fechaInicial: moment(), fechaFinal: moment() };
+  setFormDeliverResult = (form: any) => {
+    this.formDeliverResult = form;
+  };
+  exportListDeliverResult = async (search: any) => {
+    try {
+      await MassResultSearch.exportListDeliverResult(search);
+      return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }

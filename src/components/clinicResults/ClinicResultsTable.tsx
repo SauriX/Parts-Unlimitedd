@@ -70,7 +70,7 @@ const ClinicResultsTable = ({
         columns={columns}
         pagination={false}
         dataSource={[...data]}
-        scroll={{ y: 450 }}
+        scroll={{ y: 500 }}
         expandable={{
           ...expandable,
           onExpand: onExpand,

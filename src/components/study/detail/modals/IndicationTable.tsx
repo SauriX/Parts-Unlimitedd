@@ -1,7 +1,11 @@
 import { Form, Row, Col, Button, Typography, Table } from "antd";
 import React, { Fragment, useEffect, useState } from "react";
 import TextInput from "../../../../app/common/form/TextInput";
-import { ExclamationCircleOutlined, SearchOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import {
+  ExclamationCircleOutlined,
+  SearchOutlined,
+  PlusCircleOutlined,
+} from "@ant-design/icons";
 import { IReagentList } from "../../../../app/models/reagent";
 import { store, useStore } from "../../../../app/stores/store";
 import { useSearchParams } from "react-router-dom";
@@ -13,20 +17,23 @@ import {
 } from "../../../../app/common/table/utils";
 import useWindowDimensions, { resizeWidth } from "../../../../app/util/window";
 import { IParameterList } from "../../../../app/models/parameter";
-import { IIndicationForm, IIndicationList } from "../../../../app/models/indication";
+import {
+  IIndicationForm,
+  IIndicationList,
+} from "../../../../app/models/indication";
 import { VList } from "virtual-table-ant-design";
 
 const { Paragraph } = Typography;
 
 type Props = {
   getResult: (isAdmin: boolean) => any;
-  selectedReagent: React.Key[];
+  selectedIndication: IIndicationList[];
 };
 
-const IndicationTable = ({ getResult, selectedReagent }: Props) => {
-  const { reagentStore, parameterStore,studyStore,indicationStore } = useStore();
+const IndicationTable = ({ getResult, selectedIndication }: Props) => {
+  const { studyStore, indicationStore } = useStore();
   const { getAll, indication } = indicationStore;
-  const { setIndicationSelected,getIndicationSelected } = studyStore;
+  const { setIndicationSelected } = studyStore;
   const { openModal, closeModal } = store.modalStore;
   const [form] = Form.useForm<any>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -37,10 +44,8 @@ const IndicationTable = ({ getResult, selectedReagent }: Props) => {
     searchedColumn: "",
   });
   const [searchParams, setSearchParams] = useSearchParams();
-
-  useEffect(() => {
-    setSelectedRowKeys(selectedReagent);
-  }, []);
+  const [selectedIndicationKeys, setSelectedIndicationKeys] =
+    useState<IIndicationList[]>(selectedIndication);
 
   useEffect(() => {
     const readReagents = async () => {
@@ -49,9 +54,7 @@ const IndicationTable = ({ getResult, selectedReagent }: Props) => {
       setLoading(false);
     };
 
-    if (indication.length === 0) {
-      readReagents();
-    }
+    readReagents();
   }, []);
 
   const search = async (search: string | undefined) => {
@@ -60,7 +63,7 @@ const IndicationTable = ({ getResult, selectedReagent }: Props) => {
     setSearchParams(searchParams);
   };
 
-  const columns: IColumns<IIndicationForm> = [
+  const columns: IColumns<IIndicationList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
@@ -74,41 +77,43 @@ const IndicationTable = ({ getResult, selectedReagent }: Props) => {
       ...getDefaultColumnProps("descripcion", "Descripción", {
         searchState,
         setSearchState,
-        width: "60%",
+        width: "70%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
     },
-
   ];
 
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    setSelectedRowKeys(newSelectedRowKeys);
+  const onSelectKeys = (item: IIndicationList, checked: boolean) => {
+    const index = selectedIndicationKeys.findIndex((x) => x.id === item.id);
+    if (checked && index === -1) {
+      setSelectedIndicationKeys((prev) => [...prev, item]);
+    } else if (!checked && index > -1) {
+      setSelectedIndicationKeys((prev) => prev.splice(index, 1));
+    }
   };
 
   const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
+    selectedRowKeys: selectedIndicationKeys.map((x) => x.id),
+    onSelect: onSelectKeys,
   };
+  
+  useEffect(() => {
+  }, [selectedIndicationKeys]);
 
   const acceptChanges = () => {
-    const filterList = indication.filter((x) =>
-      selectedRowKeys.includes(x.id)
-    );
-    setIndicationSelected(filterList);
+    setIndicationSelected(selectedIndicationKeys);
     closeModal();
-  }
+  };
 
   return (
     <Fragment>
       <Row gutter={[12, 12]}>
         <Col span={24} style={{ textAlign: "center" }}>
-          <PlusCircleOutlined
-            style={{ color: "green", fontSize: 48 }}
-          />
+          <PlusCircleOutlined style={{ color: "green", fontSize: 48 }} />
         </Col>
         <Col span={24}>
-          <Paragraph style={{textAlign: "center"}}>
+          <Paragraph style={{ textAlign: "center" }}>
             Favor de ingresar el nombre o clave dela indicación.
           </Paragraph>
         </Col>
@@ -145,7 +150,7 @@ const IndicationTable = ({ getResult, selectedReagent }: Props) => {
         dataSource={[...indication]}
         sticky
         rowSelection={rowSelection}
-        scroll={{ y: '30vh', x: true }}
+        scroll={{ y: "30vh", x: true }}
         components={VList({
           height: 500,
         })}
@@ -153,7 +158,7 @@ const IndicationTable = ({ getResult, selectedReagent }: Props) => {
       <Button
         type="primary"
         onClick={acceptChanges}
-        style={{marginLeft:"90%"}}
+        style={{ marginLeft: "90%" }}
       >
         Aceptar
       </Button>

@@ -21,7 +21,10 @@ type PriceListTableProps = {
   printing: boolean;
 };
 
-const PriceListTable: FC<PriceListTableProps> = ({ componentRef, printing }) => {
+const PriceListTable: FC<PriceListTableProps> = ({
+  componentRef,
+  printing,
+}) => {
   const { priceListStore } = useStore();
   const { priceLists, getAll } = priceListStore;
 
@@ -48,7 +51,7 @@ const PriceListTable: FC<PriceListTableProps> = ({ componentRef, printing }) => 
     };
 
     if (priceLists.length === 0) {
-        readPriceList();
+      readPriceList();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -66,7 +69,9 @@ const PriceListTable: FC<PriceListTableProps> = ({ componentRef, printing }) => 
         <Button
           type="link"
           onClick={() => {
-            navigate(`/${views.price}/${priceList.id}?${searchParams}&mode=readonly`);
+            navigate(
+              `/${views.price}/${priceList.id}?${searchParams}&mode=readonly`
+            );
           }}
         >
           {value}
@@ -113,7 +118,9 @@ const PriceListTable: FC<PriceListTableProps> = ({ componentRef, printing }) => 
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Lista de Precios" image="precio" />}
+          title={
+            <HeaderTitle title="Catálogo de Lista de Precios" image="precio" />
+          }
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />

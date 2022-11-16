@@ -442,6 +442,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
                   setSearchvalue(value.target.value);
                 }}
                 value={searchvalue}
+                allowClear 
               />
             </Col>
             <Col span={6} offset={2}>

@@ -23,6 +23,8 @@ export interface IRequestedStudy {
   entrega: string;
   seleccion: boolean;
   clave: string;
+  nombreEstatus: string;
+  solicitudId: string;
 }
 
 export interface IUpdate {

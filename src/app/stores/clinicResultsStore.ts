@@ -123,11 +123,13 @@ export default class ClinicResultsStores {
     try {
       await ClinicResults.updateResults(results);
       alerts.success(messages.updated);
-      const index = this.studies.findIndex((x) => x.id === results[0].estudioId);
+      const index = this.studies.findIndex(
+        (x) => x.id === results[0].estudioId
+      );
       if (index !== -1) {
         this.studies[index] = {
           ...this.studies[index],
-          parametros: results
+          parametros: results,
         };
       }
       return true;
@@ -187,7 +189,16 @@ export default class ClinicResultsStores {
       alerts.warning(getErrors(error));
     }
   };
-  
+  sendResultFile = async (listResult: any) => {
+    // updateResultPathological = async (result: IResultPathological) => {
+    try {
+      ClinicResults.sendResultFile(listResult);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
   updateStatusStudy = async (requestStudyId: number, status: number) => {
     // updateResultPathological = async (result: IResultPathological) => {
     try {
@@ -225,7 +236,7 @@ export default class ClinicResultsStores {
         id: x.estudioId,
         clave: x.clave,
         nombre: x.nombre,
-        status: x.estatusId, 
+        status: x.estatusId,
         parametros: x.parametros.map((y) => ({
           id: y.resultadoId,
           estudioId: x.estudioId,
@@ -246,7 +257,9 @@ export default class ClinicResultsStores {
           criticoMaximo: y.criticoMaximo,
           ultimoResultado: y.ultimoResultado,
           deltaCheck: y.deltaCheck,
-          rango: y.criticoMinimo >= parseFloat(y.resultado) || parseFloat(y.resultado) >= y.criticoMaximo
+          rango:
+            y.criticoMinimo >= parseFloat(y.resultado) ||
+            parseFloat(y.resultado) >= y.criticoMaximo,
         })),
       }));
       return params;
@@ -257,12 +270,15 @@ export default class ClinicResultsStores {
   };
 
   changeParameterRange = (id: string, estudioId: number) => {
-    console.log(id, estudioId)
-    let studyIndex = this.studies.findIndex(x => x.id === 1612)
-    let study = this.studies[studyIndex]
-    let parameterIndex = study.parametros.findIndex(x => x.id === "44d55b73-5396-4240-b2b5-2c0ba35dfe58")
-    this.studies[studyIndex].parametros[parameterIndex].rango =!this.studies[studyIndex].parametros[parameterIndex].rango
-  }
+    console.log(id, estudioId);
+    let studyIndex = this.studies.findIndex((x) => x.id === 1612);
+    let study = this.studies[studyIndex];
+    let parameterIndex = study.parametros.findIndex(
+      (x) => x.id === "44d55b73-5396-4240-b2b5-2c0ba35dfe58"
+    );
+    this.studies[studyIndex].parametros[parameterIndex].rango =
+      !this.studies[studyIndex].parametros[parameterIndex].rango;
+  };
 
   printResults = async (recordId: string, requestId: string) => {
     try {

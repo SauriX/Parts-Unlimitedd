@@ -1,25 +1,76 @@
-import { Button, Checkbox, Col, Descriptions, Divider, Row, Table } from "antd";
+import {
+  Button,
+  Checkbox,
+  Col,
+  Descriptions,
+  Divider,
+  PageHeader,
+  Row,
+  Spin,
+  Table,
+  Typography,
+} from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import React from "react";
+import { useState, FC } from "react";
 import PrintIcon from "../../app/common/icons/PrintIcon";
 import { IColumns } from "../../app/common/table/utils";
 import { useStore } from "../../app/stores/store";
-
-const DeliveryResultsTable = () => {
+import type { CheckboxValueType } from "antd/es/checkbox/Group";
+import HeaderTitle from "../../app/common/header/HeaderTitle";
+import { useNavigate } from "react-router-dom";
+const { Link, Text } = Typography;
+type DeliveryResultsTableProps = {
+  componentRef: React.MutableRefObject<any>;
+  printing: boolean;
+};
+const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
+  componentRef,
+}) => {
+  const navigate = useNavigate();
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
-  const { massResultSearchStore, requestedStudyStore } = useStore();
-  const { requests } = massResultSearchStore;
+  const { massResultSearchStore, requestedStudyStore, clinicResultsStore } =
+    useStore();
+  const { sendResultFile } = clinicResultsStore;
+  const { requests, formDeliverResult, getAllCaptureResults } =
+    massResultSearchStore;
   const { printOrder } = requestedStudyStore;
+  const [loading, setLoading] = useState(false);
   const [selectedStudies, setSelectedStudies] = useState<any[]>([
-    { solicitudId: "", estudiosId: [{ estudioId: "", tipo: 3 }] },
+    // { solicitudId: "", estudiosId: [{ estudioId: "", tipo: 3 }] },
   ]);
+  const [selectSendMethods, setSelectSendMethods] = useState<
+    CheckboxValueType[]
+  >([]);
+  const [openRows, setOpenRows] = useState<boolean>(false);
   const columns: IColumns = [
     {
       key: "solicitudId",
       dataIndex: "solicitud",
       title: "Solicitud",
       align: "center",
+      render(value, record: any, index) {
+        // console.log("record", record);
+        return (
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <Link
+              onClick={() => {
+                navigate(
+                  `/clinicResultsDetails/${record?.expedienteId}/${record?.solicitudId}`
+                );
+              }}
+            >
+              {record.solicitud}
+            </Link>
+            <small>
+              <Text type="secondary">
+                <Text strong>{record?.clavePatologica}</Text>
+              </Text>
+            </small>
+          </div>
+        );
+      },
     },
     {
       key: "solicitudId",
@@ -54,7 +105,7 @@ const DeliveryResultsTable = () => {
     {
       key: "solicitudId",
       dataIndex: "compania",
-      title: "Compañia",
+      title: "Compañía",
       align: "center",
     },
     {
@@ -107,6 +158,24 @@ const DeliveryResultsTable = () => {
       align: "center",
     },
   ];
+  const options = [
+    { label: "Correo", value: "Correo" },
+    { label: "Whatsapp", value: "Whatsapp" },
+    { label: "Fisico", value: "Fisico" },
+  ];
+  const onChange = (checkedValues: CheckboxValueType[]) => {
+    console.log("checked = ", checkedValues);
+    setSelectSendMethods(checkedValues);
+  };
+  const toggleRow = () => {
+    if (openRows) {
+      setOpenRows(false);
+      setExpandedRowKeys([]);
+    } else {
+      setOpenRows(true);
+      setExpandedRowKeys(requests.map((x) => x.solicitudId));
+    }
+  };
   const onExpand = (isExpanded: boolean, record: any) => {
     let expandRows: string[] = expandedRowKeys;
     if (isExpanded) {
@@ -119,158 +188,216 @@ const DeliveryResultsTable = () => {
     }
     setExpandedRowKeys(expandRows);
   };
+  const DeliveryResultsTablePrint = () => {
+    return (
+      <div ref={componentRef}>
+        <PageHeader
+          ghost={false}
+          title={<HeaderTitle title="Busqueda de captura de resultados" />}
+          className="header-container"
+        ></PageHeader>
+        <Divider className="header-divider" />
+        <Table<any>
+          size="small"
+          rowKey={(record) => record.id}
+          columns={columns.slice(0, 7)}
+          pagination={false}
+          dataSource={[...requests]}
+        />
+      </div>
+    );
+  };
   return (
     <>
       <Divider orientation="right">
-        Solicitudes: {requests.length} - Estudios:{" "}
-        {requests.reduce((acc, element) => acc + element?.estudios.length, 0)}
+        {`${formDeliverResult.fechaInicial?.format(
+          "DD-MMM-YYYY"
+        )} - ${formDeliverResult.fechaFinal?.format("DD-MMM-YYYY")}`}
       </Divider>
       <Row justify="center">
         <Col>
-          <Checkbox>Correo</Checkbox>
+          <Checkbox.Group options={options} onChange={onChange} />
+          {/* <Checkbox>Correo</Checkbox>
           <Checkbox>Whatsapp</Checkbox>
-          <Checkbox>Fisico</Checkbox>
+          <Checkbox>Fisico</Checkbox> */}
         </Col>
       </Row>
-      <Row justify="end">
+      <Row justify="end" style={{ marginBottom: 10 }}>
         <Col>
           <Button
-            onClick={() => {
+            onClick={async () => {
+              const sendFiles = {
+                mediosEnvio: selectSendMethods,
+                estudios: selectedStudies,
+              };
+              // console.log("selectedStudies", sendFiles);
               console.log("selectedStudies", selectedStudies);
+
+              sendResultFile(sendFiles);
+              setLoading(true);
+              await getAllCaptureResults(formDeliverResult);
+              setLoading(false);
             }}
+            disabled={!selectedStudies.length && !selectSendMethods.length}
             type="primary"
           >
             Registrar
           </Button>
         </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <Table<any>
-            size="small"
-            rowKey={(record) => record.solicitudId}
-            columns={columns}
-            dataSource={[...requests]}
-            pagination={false}
-            scroll={{ x: 450 }}
-            expandable={{
-              onExpand: onExpand,
-              expandedRowKeys: expandedRowKeys,
-              expandedRowRender: (data: any) => (
-                <>
-                  {/* {console.log("no se que data", toJS(data.estudios))} */}
-                  <Table
-                    size="small"
-                    rowKey={(record) => record.estudioId}
-                    columns={columnsStudy}
-                    dataSource={[...data.estudios]}
-                    bordered
-                    style={{}}
-                    className="header-expandable-table"
-                    pagination={false}
-                    rowSelection={{
-                      type: "checkbox",
-                      onSelect: (selectedRow, isSelected, a: any) => {
-                        console.log(
-                          "selectedssssss row keys",
-                          toJS(selectedRow)
-                        );
-                        console.log("selectedtsss rows", toJS(isSelected));
-                        // console.log("a", toJS(a));
-                        if (isSelected) {
-                          // const existStudy = selectedStudies.find(
-                          //   (study) => study.id === selectedRow.estudioId
-                          // );
-                          const existingStudy = selectedStudies.find(
-                            (study) => study.solicitudId === data.solicitudId
-                          );
-                          if (!existingStudy) {
-                            const newStudy = {
-                              estudioId: selectedRow.estudioId,
-                              tipo: selectedRow.isPathological ? 30 : -1,
-                            };
-                            const newResquestStudies = {
-                              solicitudId: data.solicitudId,
-                              estudiosId: [newStudy],
-                            };
-                            existingStudy.estudiosId.push(newStudy);
-                            setSelectedStudies([
-                              ...selectedStudies,
-                              existingStudy,
-                            ]);
-                            // setSelectedStudies([...selectedStudies, newStudy]);
-                          } else {
-                            const newStudy = {
-                              estudioId: selectedRow.estudioId,
-                              tipo: selectedRow.isPathological ? 30 : -1,
-                            };
-                            existingStudy.estudiosId.push(newStudy);
-                            // const newResquestsStudies = setSelectedStudies.map((request) => )
-                            // setSelectedStudies(
-                          }
-                        } else {
-                          const newStudies = selectedStudies.filter(
-                            (study) => study.id !== selectedRow.estudioId
-                          );
-                          setSelectedStudies(newStudies);
-                        }
-                        // setSelectedStudies(selectedRowKeys);
-                        // console.log("selected studies", selectedStudies);
-                      },
-                      onChange: (
-                        selectedRowKeys: React.Key[],
-                        selectedRows: any,
-                        rowSelectedMethod: any
-                      ) => {
-                        // console.log("selected row keys", toJS(selectedRowKeys));
-                        // console.log("selectedt rows", toJS(selectedRows));
-                        // console.log("a", toJS(rowSelectedMethod));
-                        let newStudies: any[] = [];
-                        if (rowSelectedMethod.type === "all") {
-                          if (selectedRowKeys.length > 0) {
-                            selectedRowKeys.forEach((key) => {
-                              const existStudy = selectedStudies.find(
-                                (study) => study.id === key
-                              );
-                              if (!existStudy) {
-                                newStudies.push({
-                                  id: key,
-                                  tipo: selectedRows.find(
-                                    (row: any) => row.estudioId === key
-                                  ).isPathological
-                                    ? "PATHOLOGICAL"
-                                    : "LABORATORY",
-                                });
-                              }
-                            });
-                            setSelectedStudies([
-                              ...selectedStudies,
-                              ...newStudies,
-                            ]);
-                          } else {
-                            const idStudies = data.estudios.map(
-                              (estudio: any) => estudio.estudioId
-                            );
-                            newStudies = selectedStudies.filter(
-                              (study) => !idStudies.includes(study.id)
-                            );
-
-                            setSelectedStudies(newStudies);
-                          }
-                        }
-                      },
-                      // selectedRowKeys: selectedStudies,
-                    }}
-                  ></Table>
-                </>
-              ),
-              rowExpandable: () => true,
-              defaultExpandAllRows: true,
-            }}
-            bordered
-          ></Table>
+        <Col>
+          <Button type="primary" onClick={toggleRow} style={{ marginLeft: 10 }}>
+            {!openRows ? "Expandir tabla" : "Contraer tabla"}
+          </Button>
         </Col>
       </Row>
+
+      <Spin spinning={loading}>
+        <Row>
+          <Col span={24}>
+            <Table<any>
+              size="small"
+              rowKey={(record) => record.solicitudId}
+              columns={columns}
+              dataSource={[...requests]}
+              rowClassName="row-search"
+              // pagination={false}
+              // scroll={{ x: 450 }}
+              expandable={{
+                onExpand: onExpand,
+                expandedRowKeys: expandedRowKeys,
+                expandedRowRender: (data: any, index: number) => (
+                  <>
+                    {/* {console.log("no se que data", toJS(data.estudios))} */}
+                    <Table
+                      size="small"
+                      rowKey={(record) => record.estudioId}
+                      columns={columnsStudy}
+                      dataSource={[...data.estudios]}
+                      bordered
+                      style={{}}
+                      className="header-expandable-table"
+                      pagination={false}
+                      showHeader={index === 0}
+                      rowSelection={{
+                        type: "checkbox",
+                        onSelect: (selectedRow, isSelected, a: any) => {
+                          // console.log(
+                          //   "selectedssssss row keys",
+                          //   toJS(selectedRow)
+                          // );
+                          // console.log("selectedtsss rows", toJS(isSelected));
+                          // console.log("a", toJS(a));
+                          let existingStudy = null;
+                          if (!!selectedStudies.length) {
+                            existingStudy = selectedStudies.find(
+                              (study) => study.solicitudId === data.solicitudId
+                            );
+                          }
+                          if (isSelected) {
+                            if (!existingStudy) {
+                              const newStudy = {
+                                estudioId: selectedRow.estudioId,
+                                tipo: selectedRow.isPathological ? 30 : -1,
+                              };
+                              const newResquestStudies = {
+                                solicitudId: data.solicitudId,
+                                estudiosId: [newStudy],
+                              };
+                              setSelectedStudies([
+                                ...selectedStudies,
+                                newResquestStudies,
+                              ]);
+                            } else {
+                              existingStudy.estudiosId.push({
+                                estudioId: selectedRow.estudioId,
+                                tipo: selectedRow.isPathological ? 30 : -1,
+                              });
+                            }
+                          } else {
+                            if (existingStudy) {
+                              const newStudies =
+                                existingStudy.estudiosId.filter(
+                                  (study: any) =>
+                                    study.estudioId !== selectedRow.estudioId
+                                );
+                              if (!!newStudies.length) {
+                                existingStudy.estudiosId = newStudies;
+                              } else {
+                                const newRequest = selectedStudies.filter(
+                                  (study: any) =>
+                                    study.solicitudId !== data.solicitudId
+                                );
+                                setSelectedStudies(newRequest);
+                              }
+                            }
+                          }
+                        },
+                        onChange: (
+                          selectedRowKeys: React.Key[],
+                          selectedRows: any,
+                          rowSelectedMethod: any
+                        ) => {
+                          console.log(
+                            "selected row keys",
+                            toJS(selectedRowKeys)
+                          );
+                          console.log("selectedt rows", toJS(selectedRows));
+                          console.log("a", toJS(rowSelectedMethod));
+                          let newStudies: any[] = [];
+                          if (rowSelectedMethod.type === "all") {
+                            if (selectedRowKeys.length > 0) {
+                              let existRequest = null;
+
+                              let newResquestStudies = {
+                                solicitudId: data.solicitudId,
+                                estudiosId: [] as any[],
+                              };
+                              selectedRowKeys.forEach((key) => {
+                                existRequest = selectedStudies.find(
+                                  (study) =>
+                                    study.solicitudId === data.solicitudId
+                                );
+                                if (!existRequest) {
+                                  const newStudy: any = {
+                                    estudioId: key,
+                                    tipo: selectedRows[0].isPathological
+                                      ? 30
+                                      : -1,
+                                  };
+                                  newResquestStudies.estudiosId.push(newStudy);
+                                }
+                              });
+                              if (!existRequest) {
+                                newStudies.push(newResquestStudies);
+                              }
+                              setSelectedStudies([
+                                ...selectedStudies,
+                                ...newStudies,
+                              ]);
+                            } else {
+                              const newStudies = selectedStudies.filter(
+                                (study) =>
+                                  study.solicitudId !== data.solicitudId
+                              );
+
+                              setSelectedStudies(newStudies);
+                            }
+                          }
+                        },
+                        // selectedRowKeys: selectedStudies,
+                      }}
+                    ></Table>
+                  </>
+                ),
+                rowExpandable: () => true,
+                defaultExpandAllRows: true,
+              }}
+              bordered
+            ></Table>
+          </Col>
+        </Row>
+      </Spin>
+      <div style={{ display: "none" }}>{<DeliveryResultsTablePrint />}</div>
     </>
   );
 };
