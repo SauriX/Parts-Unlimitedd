@@ -1017,7 +1017,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
               </Col>
             </Row>
           </Form>
-          <Row justify="end" gutter={[12, 24]}>
+          {/* <Row justify="end" gutter={[12, 24]}>
             <Radio.Group
               value={radioValue}
               options={radioOptions}
@@ -1043,10 +1043,41 @@ const PriceListForm: FC<PriceListFormProps> = ({
             columns={printing ? columns.slice(0, 4) : columns}
             pagination={false}
             dataSource={listSMC}
+            // dataSource={listCompañia}
             scroll={{
               x: windowWidth < resizeWidth ? "max-content" : "auto",
             }}
-          />
+          /> */}
+          <Row justify="end" gutter={[12, 24]}>
+            <Col md={12} sm={24} xs={12}>
+              <Divider orientation="left">Compañias</Divider>
+              <Table<ISucMedComList>
+                size="large"
+                rowKey={(record) => record.id}
+                columns={printing ? columns.slice(0, 4) : columns}
+                // pagination={false}
+                // dataSource={listSMC}
+                dataSource={listCompañia}
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
+              />
+            </Col>
+            <Col md={12} sm={24} xs={12}>
+              <Divider orientation="left">Sucursales</Divider>
+              <Table<ISucMedComList>
+                size="large"
+                rowKey={(record) => record.id}
+                columns={printing ? columns.slice(0, 4) : columns}
+                // pagination={false}
+                // dataSource={listSMC}
+                dataSource={listSucursal}
+                scroll={{
+                  x: windowWidth < resizeWidth ? "max-content" : "auto",
+                }}
+              />
+            </Col>
+          </Row>
 
           <Divider orientation="left">Estudios</Divider>
           <Row justify="space-between" align="middle">

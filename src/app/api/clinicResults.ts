@@ -5,7 +5,11 @@ import {
   IClinicStudy,
   IResultPathological,
 } from "../models/clinicResults";
-import { IRequestStudy, IRequestStudyInfo, IRequestStudyUpdate } from "../models/request";
+import {
+  IRequestStudy,
+  IRequestStudyInfo,
+  IRequestStudyUpdate,
+} from "../models/request";
 import { IScopes } from "../models/shared";
 import requests from "./agent";
 
@@ -13,9 +17,13 @@ const ClinicResults = {
   access: (): Promise<IScopes> => requests.get("scopes/report"),
   getAll: (search: IClinicResultForm): Promise<IClinicResultList[]> =>
     requests.post(`clinicResults/getList`, search),
-  getStudies: (recordId: string, requestId: string): Promise<IRequestStudyUpdate> =>
+  getStudies: (
+    recordId: string,
+    requestId: string
+  ): Promise<IRequestStudyUpdate> =>
     requests.get(`clinicResults/studies_params/${recordId}/${requestId}`),
-    getLabResultsById: (id: string): Promise<IClinicResultCaptureForm[]> => requests.get(`parameter/${id}`),
+  getLabResultsById: (id: string): Promise<IClinicResultCaptureForm[]> =>
+    requests.get(`parameter/${id}`),
   createResults: (results: IClinicResultCaptureForm[]): Promise<string[]> =>
     requests.post(`clinicResults/saveResults`, results),
   updateResults: (results: IClinicResultCaptureForm[]): Promise<void> =>
@@ -26,6 +34,8 @@ const ClinicResults = {
   // updateResultPathological: (search: IResultPathological): Promise<void> =>
   updateResultPathological: (search: FormData): Promise<void> =>
     requests.put(`clinicResults/updatePathological`, search),
+  sendResultFile: (listResults: any): Promise<void> =>
+    requests.put(`clinicResults/sendResultFile`, listResults),
   updateStatusStudy: (requestStudyId: number, status: number): Promise<void> =>
     requests.put(`clinicResults/updateStatusStudy`, { requestStudyId, status }),
   getResultPathological: (search: number): Promise<IResultPathological> =>

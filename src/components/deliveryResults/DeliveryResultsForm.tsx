@@ -24,13 +24,19 @@ const DeliveryResultsForm = () => {
     medicOptions,
     companyOptions,
     departmentOptions,
+    // cityOptions,
+    CityOptions,
+    getCityOptions,
+    BranchOptions,
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
     getDepartmentOptions,
+    getBranchOptions,
   } = optionStore;
 
-  const { getAllCaptureResults, requests } = massResultSearchStore;
+  const { getAllCaptureResults, requests, setFormDeliverResult } =
+    massResultSearchStore;
 
   const { getRequests } = requestStore;
   useEffect(() => {
@@ -38,6 +44,8 @@ const DeliveryResultsForm = () => {
     getMedicOptions();
     getCompanyOptions();
     getDepartmentOptions();
+    getBranchOptions();
+    getCityOptions();
   }, [
     getBranchCityOptions,
     getMedicOptions,
@@ -49,11 +57,12 @@ const DeliveryResultsForm = () => {
     console.log("newFormValues", newFormValues);
     const formValues = {
       ...newFormValues,
-      fechaFinal: newFormValues.fechas[0].utcOffset(0, true),
-      fechaInicial: newFormValues.fechas[1].utcOffset(0, true),
+      fechaFinal: newFormValues.fechas[1].utcOffset(0, true),
+      fechaInicial: newFormValues.fechas[0].utcOffset(0, true),
     };
     console.log("formValues", formValues);
     await getAllCaptureResults(formValues);
+    setFormDeliverResult(formValues);
   };
 
   return (
@@ -144,9 +153,9 @@ const DeliveryResultsForm = () => {
                   name: "mediosEntrega",
                 }}
                 options={[
-                  { value: 1, label: "Whatsapp" },
-                  { value: 2, label: "Correo" },
-                  { value: 3, label: "Fisico" },
+                  { value: "Whatsapp", label: "Whatsapp" },
+                  { value: "Correo", label: "Correo" },
+                  // { value: "Fisico", label: "Fisico" },
                 ]}
                 onChange={(value: any, option: any) => {
                   console.log("areas", value, option);
@@ -189,8 +198,26 @@ const DeliveryResultsForm = () => {
             <Col span={8}>
               <SelectInput
                 multiple
+                formProps={{ label: "Ciudades", name: "ciudades" }}
+                options={CityOptions}
+                onChange={(value: any, option: any) => {
+                  console.log("areas", value, option);
+                }}
+              />
+            </Col>
+            <Col span={8}>
+              {/* <SelectInput
+                multiple
                 formProps={{ label: "Sucursales", name: "sucursales" }}
                 options={branchCityOptions}
+                onChange={(value: any, option: any) => {
+                  console.log("areas", value, option);
+                }}
+              /> */}
+              <SelectInput
+                multiple
+                formProps={{ label: "Sucursales", name: "sucursales" }}
+                options={BranchOptions}
                 onChange={(value: any, option: any) => {
                   console.log("areas", value, option);
                 }}

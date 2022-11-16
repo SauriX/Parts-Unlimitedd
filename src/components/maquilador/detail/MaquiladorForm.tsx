@@ -95,9 +95,10 @@ const MaquiladorForm: FC<MaquiladorFormProps> = ({
       const maquilador = await getById(id);
 
       if (maquilador) {
+        maquilador.codigoPostal = maquilador.codigoPostal?.trim();
+        maquilador.ciudad = maquilador.ciudad?.trim();
         form.setFieldsValue(maquilador);
         getLocation(maquilador.codigoPostal!.toString());
-        maquilador.codigoPostal?.trim();
         // console.log(maquilador.codigoPostal);
         setValues(maquilador);
       }
