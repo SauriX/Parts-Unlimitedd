@@ -140,7 +140,9 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
                 setSelectedStudies(toJS(selectedRows));
               },
               getCheckboxProps: (record) => ({
-                disabled: record.estatusId !== status.requestStudy.pendiente,
+                disabled:
+                  record.estatusId !== status.requestStudy.pendiente ||
+                  !record.asignado,
               }),
               selectedRowKeys: selectedStudies.map(
                 (x) => x.id ?? x.identificador!

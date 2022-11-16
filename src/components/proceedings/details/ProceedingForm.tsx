@@ -43,18 +43,13 @@ import moment, { Moment } from "moment";
 import { ITaxData } from "../../../app/models/taxdata";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import IconButton from "../../../app/common/button/IconButton";
-import {
-  IQuotationForm,
-  IQuotationList,
-  ISearchQuotation,
-  ISolicitud,
-  SearchQuotationValues,
-} from "../../../app/models/quotation";
+import Link from "antd/lib/typography/Link";
 import { IRequestInfo } from "../../../app/models/request";
 import {
   IAppointmentForm,
   IAppointmentList,
   ISearchAppointment,
+  SearchAppointmentValues,
 } from "../../../app/models/appointmen";
 
 type ProceedingFormProps = {
@@ -79,10 +74,18 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     appointmentStore,
     quotationStore,
   } = useStore();
-  const { getAllDom, getAllLab, sucursales, getByIdDom, getByIdLab } =
-    appointmentStore;
-  const { createsolictud } = quotationStore;
-  const { requests, getRequests: getByFilter } = requestStore;
+  const {
+    getAllDom,
+    getAllLab,
+    sucursales,
+    getByIdDom,
+    getByIdLab,
+    sucursal,
+    updateDom,
+    updateLab,
+  } = appointmentStore;
+  // const { createsolictud } = quotationStore;
+  const { loadingRequests, requests, getRequests: getByFilter } = requestStore;
   const {
     getById,
     update,
@@ -122,30 +125,30 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     clearTax();
     closeModal();
   };
-  const convertSolicitud = (data: IAppointmentForm | IQuotationForm) => {
-    var request: ISolicitud = {
-      Id: data.id,
-      ExpedienteId: data.expedienteid!,
-      SucursalId: profile?.sucursal!,
-      Clave: data.nomprePaciente,
-      ClavePatologica: "",
-      UsuarioId: "00000000-0000-0000-0000-000000000000",
-      General: {
-        solicitudId: "00000000-0000-0000-0000-000000000000",
-        expedienteId: data.expedienteid!,
-        procedencia: 0,
-        compañiaId: data.generales?.compañia!,
-        medicoId: data.generales?.medico!,
-        afiliacion: "",
-        urgencia: 0,
-        metodoEnvio: [],
-        correo: data.generales?.email!,
-        whatsapp: data.generales?.whatssap!,
-        observaciones: data.generales?.observaciones!,
-      },
-      Estudios: data.estudy!,
-    };
-    var redirect = createsolictud(request);
+  const convertSolicitud = (data: any) => {
+    // var request = {
+    //   Id: data.id,
+    //   ExpedienteId: data.expedienteid!,
+    //   SucursalId: profile?.sucursal!,
+    //   Clave: data.nomprePaciente,
+    //   ClavePatologica: "",
+    //   UsuarioId: "00000000-0000-0000-0000-000000000000",
+    //   General: {
+    //     solicitudId: "00000000-0000-0000-0000-000000000000",
+    //     expedienteId: data.expedienteid!,
+    //     procedencia: 0,
+    //     compañiaId: data.generales?.compañia!,
+    //     medicoId: data.generales?.medico!,
+    //     afiliacion: "",
+    //     urgencia: 0,
+    //     metodoEnvio: [],
+    //     correo: data.generales?.email!,
+    //     whatsapp: data.generales?.whatssap!,
+    //     observaciones: data.generales?.observaciones!,
+    //   },
+    //   Estudios: data.estudy!,
+    // };
+    // var redirect = createsolictud(request as any);
   };
   const clearLocation = () => {
     form.setFieldsValue({
@@ -160,7 +163,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     const readExpedinte = async (id: string) => {
       setLoading(true);
       var expediente = await getById(id);
-      var searchQ: ISearchQuotation = new SearchQuotationValues();
+      var searchQ: any;
       var searchC: ISearchAppointment = {
         expediente: expediente?.expediente!,
         nombre: "",
@@ -375,7 +378,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     }
   };
 
-  const columnsP: IColumns<IQuotationList> = [
+  const columnsP: IColumns<any> = [
     {
       ...getDefaultColumnProps("presupuesto", "Presupuesto", {
         width: 200,
@@ -387,7 +390,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           type="link"
           onClick={() => {
             navigate(
-              `/${views.quotatiion}/${cotizacion.id}?${searchParams}&mode=readonly`
+              `/${views.quotation}/${cotizacion.cotizacionId}?${searchParams}&mode=readonly`
             );
           }}
         >
@@ -459,7 +462,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           icon={<EditOutlined />}
           onClick={() => {
             navigate(
-              `/${views.quotatiion}/${cotizacion.id}?${searchParams}&mode=edit`
+              `/${views.quotation}/${cotizacion.cotizacionId}?${searchParams}&mode=edit`
             );
           }}
         />
@@ -471,13 +474,13 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       title: "Editar",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value, item) => (
+      render: (value, item: any) => (
         <Button
           type="primary"
           title=""
           onClick={async () => {
             var cotizacion = await getByIdQ(item.id);
-            convertSolicitud(cotizacion!);
+            // convertSolicitud(cotizacion!);
           }}
         >
           Convertir a solicitud
@@ -1075,7 +1078,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 }}
               />
               <Divider orientation="left">Presupuestos</Divider>
-              <Table<IQuotationList>
+              <Table<any>
                 loading={loading || printing}
                 size="small"
                 rowKey={(record) => record.id}

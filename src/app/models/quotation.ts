@@ -1,148 +1,191 @@
 import moment, { Moment } from "moment";
 import { IIndicationList } from "./indication";
 import { IParameterList } from "./parameter";
-import { IRequestGeneral, IRequestStudy } from "./request";
-export interface ISearchQuotation{
-    presupuesto:string,
-    activo:boolean,
-    telefono:string,
-    fechaAlta:Date,
-    ciudad:string,
-    sucursal:string,
-    email:string,
-}
-export interface IQuotationList{
-    id:string,
-    presupuesto:string,
-    nomprePaciente:string,
-    estudios:string,
-    email:string,
-    whatsapp:string,
-    fecha:Date,
-    expediente:string,
-    activo:boolean,
+import { IPriceListInfoPromo } from "./priceList";
+
+export interface IQuotationBase {
+  cotizacionId: string;
+  expedienteId?: string;
 }
 
-export interface IQuotationForm{
-    id:string,
-    expediente:string,
-    nomprePaciente:string,
-    edad:number,
-    fechaNacimiento:moment.Moment,
-    genero:string,
-    generales?:IQuotationGeneralesForm,
-    expedienteid?:string
-    estudy?:IRequestStudy[]
-    cargo?:number
-    typo?: number
-    sucursalId?:string
-    departamentoId?:number;
-    areaId?:number;
-}
-export interface ISolicitud {
-    Id :string;
-    ExpedienteId :string;
-    SucursalId :string;
-    Clave :string;
-    ClavePatologica :string;
-    UsuarioId :string;
-    General :IRequestGeneral;
-    Estudios :IRequestStudy[];
-}
-export interface IQuotationGeneralesForm{
-    procedencia?:string,
-    compañia:string,
-    medico:string,
-    nomprePaciente:string,
-    observaciones:string,
-    tipoEnvio:string,
-    email:string,
-    whatssap:string,
-    activo:boolean,
-
+export interface IQuotationFilter {
+  fechaAlta?: moment.Moment[];
+  fechaAInicial?: moment.Moment;
+  fechaAFinal?: moment.Moment;
+  ciudad?: number;
+  sucursales?: string[];
+  correoTelefono?: string;
+  fechaNacimiento?: moment.Moment[];
+  fechaNInicial?: moment.Moment;
+  fechaNFinal?: moment.Moment;
+  expediente?: string;
 }
 
-export interface IQuotationEstudiosForm{
-    codigoEstudio:string,
-    nombreEstudio:string
+export interface IQuotation extends Omit<IQuotationBase, "cotizacionId"> {
+  cotizacionId: string;
+  nombreMedico?: string;
+  nombreCompania?: string;
+  claveMedico?: string;
+  observaciones?: string;
+  sucursalId: string;
+  clave?: string;
+  registro?: string;
+  estatusId: number;
 }
 
-export class QuotationEstudiosFormValues implements IQuotationEstudiosForm{
-    codigoEstudio = "";
-    nombreEstudio="";
-    constructor(init?:IQuotationEstudiosForm){
-        Object.assign(this,init);
-    }
-}
-export interface IQuotationPrice {
-    precioListaId: string;
-    type: "study" | "pack";
-    estudioId?: number;
-    paqueteId?: number;
-    clave: string;
-    nombre: string;
-    precio: number;
-    precioFinal: number;
-    descuento: boolean;
-    cargo: boolean;
-    copago: boolean;
-    parametros: IParameterList[];
-    indicaciones: IIndicationList[];
-}
-export interface IQuotationExpedienteSearch{
-    fechaInicial:moment.Moment,
-    fechaFinal:moment.Moment,
-    buscar:string,
-    email:string,
-    telefono:string
-}
-export class QuotationExpedienteSearchValues implements IQuotationExpedienteSearch{
-    fechaFinal=moment( moment.now());
-    fechaInicial=moment( moment.now());
-    buscar = "";
-    email = "";
-    telefono ="";
-    constructor(init?:IQuotationExpedienteSearch) {
-        Object.assign(this, init);
-    }
-}
-export class QuotationGeneralesFormValues implements IQuotationGeneralesForm{
-    procedencia=undefined;
-    compañia="";
-    medico="";
-    nomprePaciente="";
-    
-    observaciones="";
-    tipoEnvio="";
-    email="";
-    whatssap="";
-    activo=false;
-    constructor(init?:IQuotationGeneralesForm) {
-        Object.assign(this, init);
-    }
-}
-export class SearchQuotationValues implements ISearchQuotation{
-    presupuesto = "";
-    telefono = "";
-    fechaAlta=new  Date(moment.now());
-    ciudad= "";
-    sucursal= "";
-    activo = false;
-    email="";
-    constructor(init?:ISearchQuotation) {
-        Object.assign(this, init);
-    }
+export interface IQuotationInfo extends IQuotationBase {
+  clave: string;
+  expediente: string;
+  paciente: string;
+  correo: string;
+  whatsapp: string;
+  fecha: Date;
+  activo: boolean;
+  estudios: IQuotationStudyInfo[];
 }
 
- export class QuotationFormValues implements IQuotationForm{
+export interface IQuotationStudyInfo {
+  id: number;
+  estudioId: number;
+  clave: string;
+  nombre: string;
+}
 
-    id="";
-    expediente="";
-    nomprePaciente="";
-    genero="";
-    edad=0;
-    fechaNacimiento= moment( moment.now());
-    constructor(init?:IQuotationForm) {
-        Object.assign(this, init);
-    }
+export class QuotationStudyInfoForm implements IQuotationStudyInfo {
+  id = 0;
+  estudioId = 0;
+  clave = "";
+  nombre = "";
+
+  constructor(init?: IQuotationTotal) {
+    Object.assign(this, init);
+  }
+}
+
+export interface IQuotationGeneral extends IQuotationBase {
+  procedencia: number;
+  compañiaId?: string;
+  medicoId?: string;
+  metodoEnvio?: string[];
+  correo: string;
+  whatsapp: string;
+  observaciones: string;
+  activo: boolean;
+}
+
+export interface IQuotationSend extends IQuotationBase {
+  correo?: string;
+  telefono?: string;
+}
+
+export interface IQuotationStudyUpdate extends IQuotationBase {
+  estudios: IQuotationStudy[];
+  paquetes?: IQuotationPack[];
+  total?: IQuotationTotal;
+}
+
+export class QuotationStudyUpdate implements IQuotationStudyUpdate {
+  estudios: IQuotationStudy[] = [];
+  paquetes: IQuotationPack[] = [];
+  total: IQuotationTotal = new QuotationTotal();
+  cotizacionId: string = "";
+
+  constructor(init?: IQuotationTotal) {
+    Object.assign(this, init);
+  }
+}
+
+export interface IQuotationStudy {
+  type: "study" | "pack";
+  id?: number;
+  identificador?: string;
+  estudioId: number;
+  clave: string;
+  nombre: string;
+  paqueteId?: number;
+  paquete?: string;
+  listaPrecioId: string;
+  listaPrecio: string;
+  promocionId?: number;
+  promocion?: string;
+  aplicaCargo: boolean;
+  dias: number;
+  horas: number;
+  precio: number;
+  descuento?: number;
+  descuentoPorcentaje?: number;
+  precioFinal: number;
+  promociones: IPriceListInfoPromo[];
+  parametros: IParameterList[];
+  indicaciones: IIndicationList[];
+}
+export class QuotationStudyValues implements IQuotationStudy {
+  type: "study" | "pack" = "study";
+  id = 0;
+  estudioId = 0;
+  clave = "";
+  nombre = "";
+  paqueteId = 0;
+  paquete = "";
+  listaPrecioId = "";
+  listaPrecio = "";
+  promocionId = 0;
+  promocion = "";
+  aplicaCargo = false;
+  dias = 0;
+  horas = 0;
+  precio = 0;
+  descuento = 0;
+  descuentoPorcentaje = 0;
+  precioFinal = 0;
+  parametros: IParameterList[] = [];
+  indicaciones: IIndicationList[] = [];
+  promociones = [];
+
+  constructor(init?: IQuotationStudy) {
+    Object.assign(this, init);
+  }
+}
+
+export interface IQuotationPack {
+  type: "study" | "pack";
+  id?: number;
+  identificador?: string;
+  paqueteId: number;
+  clave: string;
+  nombre: string;
+  listaPrecioId: string;
+  listaPrecio: string;
+  promocionId?: number;
+  promocion?: string;
+  aplicaCargo: boolean;
+  dias: number;
+  horas: number;
+  precio: number;
+  descuento: number;
+  descuentoPorcentaje: number;
+  promocionDescuento?: number;
+  promocionDescuentoPorcentaje?: number;
+  precioFinal: number;
+  promociones: IPriceListInfoPromo[];
+  estudios: IQuotationStudy[];
+}
+
+export interface IQuotationTotal extends IQuotationBase {
+  totalEstudios: number;
+  cargo: number;
+  cargoTipo: number;
+  total: number;
+}
+
+export class QuotationTotal implements IQuotationTotal {
+  totalEstudios: number = 0;
+  cargo: number = 0;
+  cargoTipo: number = 1;
+  total: number = 0;
+  cotizacionId: string = "";
+
+  constructor(init?: IQuotationTotal) {
+    Object.assign(this, init);
+  }
 }

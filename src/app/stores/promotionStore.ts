@@ -234,11 +234,12 @@ export default class PromotionStore {
       });
       priceList.estudio = estudios;
       const updatedPriceList = await Promotion.update(priceList);
-      alerts.success(messages.updated);
+      
       const id = this.promotionLists.findIndex((x) => x.id === priceList.id);
       if (id !== -1) {
         this.promotionLists[id] = updatedPriceList;
       }
+      alerts.success(messages.updated);
       return true;
     } catch (error: any) {
       console.log("fallo",getErrors(error));

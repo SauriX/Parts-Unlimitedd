@@ -1,86 +1,87 @@
-import { Divider } from "antd";
+import { Divider, Spin } from "antd";
+import { Fragment, useEffect, useState } from "react";
+import QuotationHeader from "./QuotationHeader";
+import QuotationRecord from "./QuotationRecord";
+import QuotationTab from "./QuotationTab";
+import "./css/index.less";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import { resolve } from "path";
-import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { useReactToPrint } from "react-to-print";
 import { useStore } from "../../../app/stores/store";
-import { guidPattern } from "../../../app/util/utils";
-import QuotationForm from "./QuotationForm";
-import QuotationHeaderForm from "./QuotationHeaderForm";
-
-type UrlParams = {
-  id: string;
-};
+import { status } from "../../../app/util/catalogs";
+import views from "../../../app/util/view";
+import Center from "../../../app/layout/Center";
+import { IQuotation } from "../../../app/models/quotation";
 
 const QuotationDetail = () => {
-  const { quotationStore } = useStore();
-  const { scopes, /* access, clearScopes, */  exportForm  } =quotationStore ;
+  const { profileStore, quotationStore } = useStore();
+  const { profile } = profileStore;
+  const { getById, create } = quotationStore;
 
   const navigate = useNavigate();
+  const { quotationId } = useParams();
 
-  const [printing, setPrinting] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [branchId, setBranchId] = useState<string | undefined>(
+    profile!.sucursal
+  );
 
-  const { id } = useParams<UrlParams>();
-  const reagentId = !id ? "" : !guidPattern.test(id) ? undefined : id;
+  useEffect(() => {
+    const createQuotation = async () => {
+      const quote: IQuotation = {
+        cotizacionId: "00000000-0000-0000-0000-000000000000",
+        sucursalId: profile!.sucursal,
+        estatusId: status.quotation.vigente,
+      };
 
-  const componentRef = useRef<any>();
+      setCreating(true);
+      const id = await create(quote);
+      setCreating(false);
 
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-    onBeforeGetContent: () => {
-      setPrinting(true);
-      return new Promise((resolve: any) => {
-        setTimeout(() => {
-          resolve();
-        }, 200);
-      });
-    },
-    onAfterPrint: () => {
-      setPrinting(false);
-    },
-  });
+      if (id) {
+        navigate(`/${views.quotation}/${id}`, { replace: true });
+      } else {
+        navigate(`/${views.quotation}`, { replace: true });
+      }
+    };
 
-  const handleDownload = async () => {
-    if (reagentId) {
-      setPrinting(true);
-      await exportForm(reagentId);
-      setPrinting(false);
+    const getQuotationById = async () => {
+      setLoading(true);
+      await getById(quotationId!);
+      setLoading(false);
+    };
+
+    if (!quotationId) {
+      createQuotation();
+    } else if (quotationId) {
+      getQuotationById();
     }
-  };
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quotationId]);
 
-  useEffect(() => {
-    const checkAccess = async () => {
-     /*  const permissions = await access(); */
-
-/*       if (reagentId === undefined) {
-        console.log("undefined");
-        navigate("/notFound");
-      } else if (!permissions?.crear && reagentId === "") {
-        navigate(`/forbidden`);
-      } else if (!permissions?.modificar && reagentId !== "") {
-        navigate(`/forbidden`);
-      } */
-    };
-
-    checkAccess();
-  }, [/* access */, navigate, reagentId]);
-
-  useEffect(() => {
-    return () => {
-     /*  clearScopes(); */
-    };
-  }, [/* clearScopes */]);
-
-/*   if (reagentId == null) return null;
-
-  if (!scopes?.acceder) return null; */
+  if (creating) {
+    return (
+      <Center>
+        <Spin
+          spinning={creating}
+          tip="Creando Cotización..."
+          size="large"
+        ></Spin>
+      </Center>
+    );
+  }
 
   return (
     <Fragment>
-      <QuotationHeaderForm id={reagentId!} handlePrint={handlePrint} handleDownload={handleDownload} />
+      <QuotationHeader />
       <Divider className="header-divider" />
-      <QuotationForm id={reagentId!} componentRef={componentRef} printing={printing} />
+      <QuotationRecord branchId={profile!.sucursal} setBranchId={setBranchId} />
+      <QuotationTab branchId={branchId} />
     </Fragment>
   );
 };

@@ -11,6 +11,7 @@ import {
   IRequestToken,
 } from "../models/request";
 import {
+  IWeeAssignment,
   IWeeTokenValidation,
   IWeeTokenVerification,
 } from "../models/weeClinic";
@@ -102,6 +103,11 @@ const Request = {
     requests.post("request/wee/compareToken", request),
   verifyWeeToken: (request: IRequestToken): Promise<IWeeTokenVerification> =>
     requests.post("request/wee/verifyToken", request),
+  assignWeeServices: (
+    recordId: string,
+    requestId: string
+  ): Promise<IWeeAssignment[]> =>
+    requests.put(`request/wee/assignServices/${recordId}/${requestId}`, {}),
 };
 
 export default Request;

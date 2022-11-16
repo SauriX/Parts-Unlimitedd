@@ -1,19 +1,21 @@
 import { makeAutoObservable } from "mobx";
+import ResultValidation from "../api/resultvalidation";
+import { ISearchValidation, Ivalidationlist } from "../models/resultValidation";
+import { IUpdate } from "../models/sampling";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
-import Sampling from "../api/sampling";
-import { IsamplingForm, IsamplingList, IUpdate } from "../models/sampling";
 
-export default class SamplingStore {
+
+export default class ResultValidationStore {
   constructor() {
     makeAutoObservable(this);
   }
 
   scopes?: IScopes;
-  studys: IsamplingList[] = [];
+  studys: Ivalidationlist[] = [];
   studyCont:number=0;
   soliCont:number=0;
 
@@ -33,7 +35,7 @@ export default class SamplingStore {
 
   access = async () => {
     try {
-      const scopes = await Sampling.access();
+      const scopes = await ResultValidation.access();
       this.scopes = scopes;
       console.log(scopes);
     } catch (error) {
@@ -42,9 +44,9 @@ export default class SamplingStore {
     }
   };
 
-  getAll = async (search: IsamplingForm) => {
+  getAll = async (search: ISearchValidation) => {
     try {
-      const study = await Sampling.getAll(search);
+      const study = await ResultValidation.getAll(search);
       this.studys = study;
       return study;
     } catch (error) {
@@ -56,7 +58,7 @@ export default class SamplingStore {
   update = async (study: IUpdate[]) => {
     try {
       console.log(study);
-      await Sampling.update(study);
+      await ResultValidation.update(study);
       alerts.success(messages.updated);
       return true;
     } catch (error: any) {
@@ -67,7 +69,7 @@ export default class SamplingStore {
 
   printTicket = async (recordId: string, requestId: string) => {
     try {
-      await Sampling.getOrderPdf(recordId, requestId);
+      await ResultValidation.getOrderPdf(recordId, requestId);
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }

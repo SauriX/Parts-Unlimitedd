@@ -1,4 +1,4 @@
-import { makeAutoObservable, intercept, reaction } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import PriceList from "../api/priceList";
 import Request from "../api/request";
 import { IPriceListInfoFilter } from "../models/priceList";
@@ -92,6 +92,10 @@ export default class RequestStore {
     return [...studies, ...packStudies];
   }
 
+  clearDetailData = () => {
+    this.request = undefined;
+  };
+
   setOriginalTotal = (totals: IRequestTotal) => {
     this.totalsOriginal = totals;
   };
@@ -107,14 +111,16 @@ export default class RequestStore {
   calculateTotals = () => {
     const total =
       this.studies
-        .filter((x) => x.estatusId !== status.requestStudy.cancelado)
+        .filter(
+          (x) => x.estatusId !== status.requestStudy.cancelado && x.asignado
+        )
         .reduce((acc, obj) => acc + obj.precioFinal, 0) +
       this.packs.reduce((acc, obj) => acc + obj.precioFinal, 0);
 
     const desc =
       this.totals.descuentoTipo === 1
         ? ((this.studies
-            .filter((x) => x.aplicaDescuento)
+            .filter((x) => x.asignado && x.aplicaDescuento)
             .reduce((acc, obj) => acc + obj.precio, 0) +
             this.packs
               .filter((x) => x.aplicaDescuento)
@@ -126,7 +132,7 @@ export default class RequestStore {
     const char =
       this.totals.cargoTipo === 1
         ? ((this.studies
-            .filter((x) => x.aplicaCargo)
+            .filter((x) => x.asignado && x.aplicaCargo)
             .reduce((acc, obj) => acc + obj.precio, 0) +
             this.packs
               .filter((x) => x.aplicaCargo)
@@ -138,7 +144,7 @@ export default class RequestStore {
     const cop =
       this.totals.copagoTipo === 1
         ? ((this.studies
-            .filter((x) => x.aplicaCopago)
+            .filter((x) => x.asignado && x.aplicaCopago)
             .reduce((acc, obj) => acc + obj.precio, 0) +
             this.packs
               .filter((x) => x.aplicaCopago)
@@ -295,6 +301,7 @@ export default class RequestStore {
         aplicaCopago: false,
         aplicaDescuento: false,
         nuevo: true,
+        asignado: true,
       };
 
       console.log(study);
@@ -337,6 +344,7 @@ export default class RequestStore {
         aplicaCopago: false,
         aplicaDescuento: false,
         nuevo: true,
+        asignado: true,
         estudios: price.estudios.map((x) => ({
           ...x,
           type: "study",
@@ -346,6 +354,7 @@ export default class RequestStore {
           aplicaCopago: false,
           aplicaDescuento: false,
           nuevo: true,
+          asignado: true,
         })),
       };
 
@@ -674,6 +683,16 @@ export default class RequestStore {
       return data;
     } catch (error) {
       alerts.warning(getErrors(error));
+    }
+  };
+
+  assignWeeServices = async (recordId: string, requestId: string) => {
+    try {
+      const data = await Request.assignWeeServices(recordId, requestId);
+      return data;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return [];
     }
   };
 

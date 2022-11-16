@@ -1,4 +1,3 @@
-import { isFocusable } from "@testing-library/user-event/dist/utils";
 import {
   Button,
   Checkbox,
@@ -9,37 +8,32 @@ import {
   Tooltip,
   Typography,
 } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
-import { FC, useEffect, useState } from "react";
-import IconButton from "../../../../app/common/button/IconButton";
+import { useEffect, useState } from "react";
 import {
-  defaultPaginationProperties,
   getDefaultColumnProps,
   IColumns,
   ISearch,
 } from "../../../../app/common/table/utils";
-import {
-  IRequestPack,
-  IRequestStudy,
-  IRequestStudyUpdate,
-} from "../../../../app/models/request";
 import { IOptions } from "../../../../app/models/shared";
 import { useStore } from "../../../../app/stores/store";
 import alerts from "../../../../app/util/alerts";
 import { moneyFormatter } from "../../../../app/util/utils";
-import { status } from "../../../../app/util/catalogs";
-import { toJS } from "mobx";
+import {
+  IQuotationPack,
+  IQuotationStudy,
+  IQuotationStudyUpdate,
+} from "../../../../app/models/quotation";
 
 const { Link } = Typography;
 
-const RequestStudy = () => {
-  const { requestStore, priceListStore, optionStore } = useStore();
+const QuotationStudy = () => {
+  const { quotationStore, priceListStore, optionStore } = useStore();
   const { studyOptions, packOptions, getStudyOptions, getPackOptions } =
     optionStore;
   const {
     isStudy,
-    request,
+    quotation,
     studies,
     packs,
     studyFilter,
@@ -50,14 +44,13 @@ const RequestStudy = () => {
     getPricePack,
     deleteStudy,
     deletePack,
-    cancelStudies,
-    setOriginalTotal,
+    deleteStudies,
     changeStudyPromotion,
     changePackPromotion,
     totals,
-  } = requestStore;
+  } = quotationStore;
 
-  const [selectedStudies, setSelectedStudies] = useState<IRequestStudy[]>([]);
+  const [selectedStudies, setSelectedStudies] = useState<IQuotationStudy[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [options, setOptions] = useState<IOptions[]>([]);
   const [searchState, setSearchState] = useState<ISearch>({
@@ -69,11 +62,6 @@ const RequestStudy = () => {
     getStudyOptions();
     getPackOptions();
   }, [getPackOptions, getStudyOptions]);
-
-  useEffect(() => {
-    setOriginalTotal(totals);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     const options: IOptions[] = [
@@ -93,7 +81,7 @@ const RequestStudy = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [packOptions, studyOptions]);
 
-  const columns: IColumns<IRequestStudy | IRequestPack> = [
+  const columns: IColumns<IQuotationStudy | IQuotationPack> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
@@ -103,7 +91,7 @@ const RequestStudy = () => {
       render: (value) => <Link>{value}</Link>,
     },
     {
-      ...getDefaultColumnProps("nombre", "Estudio", {
+      ...getDefaultColumnProps("estudios", "Estudios", {
         searchState,
         setSearchState,
         width: 200,
@@ -147,25 +135,6 @@ const RequestStudy = () => {
       render: (value) => moneyFormatter.format(value),
     },
     {
-      key: "aplicaDescuento",
-      dataIndex: "aplicaDescuento",
-      title: "D",
-      align: "center",
-      width: 35,
-      render: (value, item) => (
-        <Checkbox
-          checked={value}
-          onChange={(e) => {
-            if (isStudy(item)) {
-              setStudy({ ...item, aplicaDescuento: e.target.checked });
-            } else {
-              setPack({ ...item, aplicaDescuento: e.target.checked });
-            }
-          }}
-        />
-      ),
-    },
-    {
       key: "aplicaCargo",
       dataIndex: "aplicaCargo",
       title: "C",
@@ -185,58 +154,10 @@ const RequestStudy = () => {
       ),
     },
     {
-      key: "aplicaCopago",
-      dataIndex: "aplicaCopago",
-      title: "CP",
-      align: "center",
-      width: 45,
-      render: (value, item) => (
-        <Checkbox
-          checked={value}
-          onChange={(e) => {
-            if (isStudy(item)) {
-              setStudy({ ...item, aplicaCopago: e.target.checked });
-            } else {
-              setPack({ ...item, aplicaCopago: e.target.checked });
-            }
-          }}
-        />
-      ),
-    },
-    {
       ...getDefaultColumnProps("dias", "Días", {
         searchable: false,
         width: 70,
       }),
-    },
-    {
-      ...getDefaultColumnProps("promocionId", "Promoción", {
-        searchable: false,
-        width: 200,
-      }),
-      render: (value, item) =>
-        item.promociones && item.promociones.length > 0 ? (
-          <Select
-            options={item.promociones.map((x) => ({
-              value: x.promocionId,
-              label: `${x.promocion} (${x.descuentoPorcentaje}%)`,
-            }))}
-            value={value}
-            bordered={false}
-            style={{ width: "100%" }}
-            allowClear
-            placeholder="Seleccionar promoción"
-            onChange={(promoId?: number) => {
-              if (isStudy(item)) {
-                changeStudyPromotion(item, promoId);
-              } else {
-                changePackPromotion(item, promoId);
-              }
-            }}
-          />
-        ) : (
-          "Sin promociones disponibles"
-        ),
     },
     {
       ...getDefaultColumnProps("precioFinal", "Precio Final", {
@@ -246,31 +167,7 @@ const RequestStudy = () => {
       align: "right",
       render: (value) => moneyFormatter.format(value),
     },
-    {
-      key: "taponColor",
-      dataIndex: "taponColor",
-      title: "",
-      width: 35,
-      align: "center",
-      render: (value) => <ContainerBadge color={value} />,
-    },
     Table.SELECTION_COLUMN,
-    {
-      key: "nuevo",
-      dataIndex: "nuevo",
-      title: "",
-      width: 40,
-      align: "center",
-      render: (value, item) =>
-        !!value ? (
-          <IconButton
-            danger
-            title="Eliminar"
-            icon={<DeleteOutlined />}
-            onClick={() => deleteStudyOrPack(item)}
-          />
-        ) : null,
-    },
   ];
 
   const addStudy = async (option: IOptions) => {
@@ -287,34 +184,17 @@ const RequestStudy = () => {
     }
   };
 
-  const deleteStudyOrPack = (item: IRequestStudy | IRequestPack) => {
-    alerts.confirm(
-      "Eliminar estudio",
-      `¿Desea eliminar el ${isStudy(item) ? "estudio" : "paquete"} ${
-        item.nombre
-      }?`,
-      async () => {
-        if (isStudy(item)) {
-          deleteStudy(item.identificador!);
-        } else {
-          deletePack(item.identificador!);
-        }
-      }
-    );
-  };
-
   const cancel = () => {
-    if (request) {
+    if (quotation) {
       alerts.confirm(
         "Canelar estudio",
         `¿Desea cancelar los registros seleccionados?`,
         async () => {
-          const data: IRequestStudyUpdate = {
-            expedienteId: request.expedienteId,
-            solicitudId: request.solicitudId!,
+          const data: IQuotationStudyUpdate = {
+            cotizacionId: quotation.cotizacionId,
             estudios: selectedStudies,
           };
-          const ok = await cancelStudies(data);
+          const ok = await deleteStudies(data);
           if (ok) {
             setSelectedStudies([]);
             setSelectedRowKeys([]);
@@ -345,11 +225,11 @@ const RequestStudy = () => {
       </Col>
       <Col span={6} style={{ textAlign: "end" }}>
         <Button danger onClick={cancel}>
-          Cancelar estudios
+          Remover estudios
         </Button>
       </Col>
       <Col span={24}>
-        <Table<IRequestStudy | IRequestPack>
+        <Table<any>
           size="small"
           rowKey={(record) =>
             record.type + "-" + (record.id ?? record.identificador!)
@@ -362,10 +242,10 @@ const RequestStudy = () => {
               const studies = [
                 ...c
                   .filter((x) => x.type === "study")
-                  .map((x) => x as IRequestStudy),
+                  .map((x) => x as IQuotationStudy),
                 ...c
                   .filter((x) => x.type === "pack")
-                  .flatMap((x) => (x as IRequestPack).estudios),
+                  .flatMap((x) => (x as IQuotationPack).estudios),
               ];
               setSelectedStudies(studies);
               setSelectedRowKeys(
@@ -373,14 +253,7 @@ const RequestStudy = () => {
               );
             },
             getCheckboxProps: (item) => ({
-              disabled:
-                item.nuevo ||
-                !item.asignado ||
-                (isStudy(item)
-                  ? item.estatusId !== status.requestStudy.pendiente
-                  : item.estudios.some(
-                      (x) => x.estatusId !== status.requestStudy.pendiente
-                    )),
+              disabled: false,
             }),
             selectedRowKeys: selectedRowKeys,
           }}
@@ -392,10 +265,4 @@ const RequestStudy = () => {
   );
 };
 
-const ContainerBadge = ({ color }: { color: string }) => {
-  return (
-    <div className="badge-container" style={{ backgroundColor: color }}></div>
-  );
-};
-
-export default observer(RequestStudy);
+export default observer(QuotationStudy);

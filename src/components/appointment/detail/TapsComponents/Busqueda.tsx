@@ -74,7 +74,7 @@ const BusquedaForm: FC<GeneralesFormProps> = ({
   handleCotizacion,
 }) => {
   const { quotationStore } = useStore();
-  const { getExpediente, records } = quotationStore;
+  // const { getExpediente, records } = quotationStore;
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm<IAppointmentExpedienteSearch>();
   const [values, setValues] = useState<IAppointmentExpedienteSearch>(
@@ -87,10 +87,10 @@ const BusquedaForm: FC<GeneralesFormProps> = ({
   });
   useEffect(() => {
     const readexp = async () => {
-      await getExpediente(values);
+      // await getExpediente(values);
     };
     readexp();
-  }, [getExpediente]);
+  }, []);
   const { width: windowWidth } = useWindowDimensions();
 
   const onFinish = async (newValues: IAppointmentExpedienteSearch) => {
@@ -137,7 +137,7 @@ const BusquedaForm: FC<GeneralesFormProps> = ({
               expediente: expediente.expediente,
               nomprePaciente: expediente.nomprePaciente,
               edad: expediente.edad,
-              fechaNacimiento: moment(expediente.fechaNacimiento, "DD-MM-YYYY"  ),
+              fechaNacimiento: moment(expediente.fechaNacimiento, "DD-MM-YYYY"),
               genero: expediente.genero,
             }));
           }}
@@ -281,7 +281,7 @@ const BusquedaForm: FC<GeneralesFormProps> = ({
         size="small"
         rowKey={(record) => record.id}
         columns={columns}
-        dataSource={records}
+        dataSource={[]}
         pagination={defaultPaginationProperties}
         sticky
         scroll={{ x: "max-content" }}

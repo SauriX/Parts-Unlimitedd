@@ -1,4 +1,4 @@
-import { Button, Col, Image, Row, Table, Typography } from "antd";
+import { Col, Image, Row, Table, Typography } from "antd";
 import { useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
@@ -11,7 +11,6 @@ import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import {
   IRequestInfo,
-  IRequestStudy,
   IRequestStudyInfo,
 } from "../../../app/models/request";
 import { moneyFormatter } from "../../../app/util/utils";

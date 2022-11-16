@@ -14,7 +14,6 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores/store";
 import { IRequest } from "../../../app/models/request";
 import { status } from "../../../app/util/catalogs";
-import { toJS } from "mobx";
 import moment from "moment";
 import views from "../../../app/util/view";
 import Center from "../../../app/layout/Center";
@@ -32,16 +31,16 @@ const RequestDetail = () => {
   } = useStore();
   const { profile } = profileStore;
   const {
+    clearDetailData,
     getById,
     create,
     totals,
     setOriginalTotal,
     studyFilter,
     request,
-    totalsOriginal,
   } = requestStore;
   const { getById: getByIdProceding, activateWallet } = procedingStore;
-  const { loyaltys, getByDate } = loyaltyStore;
+  const { getByDate } = loyaltyStore;
   const { openModal, closeModal } = modalStore;
 
   const navigate = useNavigate();
@@ -153,7 +152,12 @@ const RequestDetail = () => {
             </Col>
           </Row>
         ),
-        body: <RequestTokenValidation />,
+        body: (
+          <RequestTokenValidation
+            recordId={request.expedienteId}
+            requestId={request.solicitudId!}
+          />
+        ),
         closable: false,
       });
     }
@@ -163,8 +167,9 @@ const RequestDetail = () => {
   useEffect(() => {
     return () => {
       closeModal();
+      clearDetailData();
     };
-  }, [closeModal]);
+  }, [closeModal, clearDetailData]);
 
   if (!recordId) return null;
 

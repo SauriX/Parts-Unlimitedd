@@ -9,7 +9,7 @@ const views = {
   route: "routes",
   appointment: "appointments",
   request: "requests",
-  quotatiion: "cotizacion",
+  quotation: "cotizacion",
   report: "reportes",
   cash: "cash",
   sampling:"samplings",

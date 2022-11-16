@@ -3,10 +3,16 @@ import Appointment from "../api/appointment";
 
 import alerts from "../util/alerts";
 import history from "../util/history";
-import { getErrors,tokenName } from "../util/utils";
+import { getErrors, tokenName } from "../util/utils";
 import responses from "../util/responses";
 import messages from "../util/messages";
-import { IAppointmentForm, IAppointmentList, IExportForm, ISearchAppointment, SearchAppointmentValues } from "../models/appointmen";
+import {
+  IAppointmentForm,
+  IAppointmentList,
+  IExportForm,
+  ISearchAppointment,
+  SearchAppointmentValues,
+} from "../models/appointmen";
 import Study from "../api/study";
 import { IRequestPack, IRequestStudy } from "../models/request";
 import { IPriceListInfoFilter } from "../models/priceList";
@@ -16,16 +22,16 @@ export default class AppoinmentStore {
   constructor() {
     makeAutoObservable(this);
   }
-  sucursales!:IAppointmentList[];
-  sucursal!:IAppointmentForm;
-  search:ISearchAppointment = new SearchAppointmentValues;
+  sucursales!: IAppointmentList[];
+  sucursal!: IAppointmentForm;
+  search: ISearchAppointment = new SearchAppointmentValues();
   records: IProceedingList[] = [];
   studies: IRequestStudy[] = [];
   packs: IRequestPack[] = [];
   studyFilter: IPriceListInfoFilter = {};
-  setSearch= (value:ISearchAppointment)=>{
-    this.search=value;
-};
+  setSearch = (value: ISearchAppointment) => {
+    this.search = value;
+  };
   access = async () => {
     try {
       //  await User.access();
@@ -36,7 +42,11 @@ export default class AppoinmentStore {
       history.push("/forbidden");
     }
   };
-  setStudyFilter = (branchId?: string, doctorId?: string, companyId?: string) => {
+  setStudyFilter = (
+    branchId?: string,
+    doctorId?: string,
+    companyId?: string
+  ) => {
     this.studyFilter = {
       sucursalId: branchId,
       medicoId: doctorId,
@@ -45,7 +55,7 @@ export default class AppoinmentStore {
   };
   createLab = async (reagent: IAppointmentForm) => {
     try {
-        console.log("here");
+      console.log("here");
       await Appointment.createLab(reagent);
       alerts.success(messages.created);
       return true;
@@ -57,7 +67,7 @@ export default class AppoinmentStore {
 
   createDom = async (reagent: IAppointmentForm) => {
     try {
-        console.log("here");
+      console.log("here");
       await Appointment.createLab(reagent);
       alerts.success(messages.created);
       return true;
@@ -90,7 +100,7 @@ export default class AppoinmentStore {
     console.log("use");
     try {
       console.log(search);
-      const roles= await Appointment.getLab(search);
+      const roles = await Appointment.getLab(search);
       console.log(roles);
       this.sucursales = roles;
       return roles;
@@ -100,10 +110,9 @@ export default class AppoinmentStore {
     }
   };
   getAllDom = async (search: ISearchAppointment) => {
-    
     try {
       console.log(search);
-      const roles= await Appointment.getDom(search);
+      const roles = await Appointment.getDom(search);
       console.log(roles);
       this.sucursales = roles;
       return roles;
@@ -112,7 +121,7 @@ export default class AppoinmentStore {
       this.sucursales = [];
     }
   };
-  getParameter=async(id:number)=>{
+  getParameter = async (id: number) => {
     try {
       const reagent = await Study.getById(id);
       return reagent;
@@ -122,18 +131,17 @@ export default class AppoinmentStore {
       } else {
         alerts.warning(getErrors(error));
       }
-    } 
+    }
   };
   getByIdLab = async (id: string) => {
-   
     try {
       const rol = await Appointment.getByIdLab(id);
-      rol.estudy?.map(async (x)=>{ 
-        var parametros = await this.getParameter(x.estudioId!) ;
-        x.parametros= parametros!.parameters;
-        x.nombre= parametros!.nombre
+      rol.estudy?.map(async (x) => {
+        var parametros = await this.getParameter(x.estudioId!);
+        x.parametros = parametros!.parameters;
+        x.nombre = parametros!.nombre;
         x.indicaciones = parametros?.indicaciones!;
-        x.clave= parametros?.clave!;
+        x.clave = parametros?.clave!;
       });
       console.log(rol);
       this.sucursal = rol;
@@ -149,7 +157,6 @@ export default class AppoinmentStore {
   };
 
   getByIdDom = async (id: string) => {
-   
     try {
       const rol = await Appointment.getByIdDom(id);
       console.log(rol);
@@ -167,12 +174,12 @@ export default class AppoinmentStore {
   exportList = async (search: ISearchAppointment) => {
     try {
       await Appointment.exportList(search);
-      return true
+      return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
   };
-  exportForm = async (data:IExportForm) => {
+  exportForm = async (data: IExportForm) => {
     try {
       await Appointment.exportForm(data);
       return true;
@@ -183,9 +190,9 @@ export default class AppoinmentStore {
         alerts.warning(getErrors(error));
       }
     }
-  }; 
-  getPriceStudys = async (filter?: IPriceListInfoFilter,id?:number) => {
-    filter!.estudioId=id;
+  };
+  getPriceStudys = async (filter?: IPriceListInfoFilter, id?: number) => {
+    filter!.estudioId = id;
     try {
       const price = await PriceList.getPriceStudy(filter);
       const study: IRequestStudy = {
@@ -196,8 +203,9 @@ export default class AppoinmentStore {
         aplicaCopago: false,
         aplicaDescuento: false,
         nuevo: true,
+        asignado: true,
       };
-      
+
       const repeated = this.studies.filter(function (itm) {
         return itm.parametros
           .map((x) => x.id)
@@ -238,8 +246,8 @@ export default class AppoinmentStore {
       alerts.warning(getErrors(error));
     }
   };
-  getPricePacks = async (filter?: IPriceListInfoFilter,id?:number) => {
-    filter!.paqueteId=id;
+  getPricePacks = async (filter?: IPriceListInfoFilter, id?: number) => {
+    filter!.paqueteId = id;
     try {
       const price = await PriceList.getPricePack(filter);
       const pack: IRequestPack = {
@@ -249,6 +257,7 @@ export default class AppoinmentStore {
         aplicaCopago: false,
         aplicaDescuento: false,
         nuevo: true,
+        asignado: true,
         estudios: price.estudios.map((x) => ({
           ...x,
           type: "study",
@@ -257,6 +266,7 @@ export default class AppoinmentStore {
           aplicaCopago: false,
           aplicaDescuento: false,
           nuevo: true,
+          asignado: true,
         })),
       };
       console.log(pack);
@@ -272,6 +282,5 @@ export default class AppoinmentStore {
 
   isStudy(obj: IRequestStudy | IRequestPack): obj is IRequestStudy {
     return obj.type === "study";
-  } 
-  
+  }
 }
