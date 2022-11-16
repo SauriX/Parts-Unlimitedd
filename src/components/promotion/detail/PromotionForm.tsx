@@ -628,7 +628,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
   const addClinic = () => {
      if (sucursal) {
       if (values.branchs.findIndex((x) => x.id === sucursal.id) > -1) {
-        alerts.warning("Ya esta agregada este departamento");
+        alerts.warning("Ya esta agregado este medico");
         return;
       }
 
@@ -674,27 +674,29 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     setLoading(true);
 
     const reagent = { ...values, ...newValues };
-    var c =moment(reagent.fechaInicial).format("YYYY-MM-DD");
+    var fechainicial =moment(reagent.fechaInicial).format("YYYY-MM-DD");
 
-    var d = moment(reagent.fechaFinal).format("YYYY-MM-DD");
+    var fechafinal= moment(reagent.fechaFinal).format("YYYY-MM-DD");
 
-  if(d < c){
+  if(fechafinal < fechainicial){
     setLoading(false);
       alerts.warning("La fecha inicial debe ser menor a la final");
       return;
   }
     var counter =0;
     var counterF = 0;
-    values.estudio.forEach(x=>{if(x.precioFinal==0){ counter++;};
-    var c =moment(x.fechaInicial).format("YYYY-MM-DD");
+    values.estudio.forEach(x=>{if(x.precioFinal<=0){ counter++;};
 
-    var d = moment(x.fechaFinal).format("YYYY-MM-DD");
-  if(d < c){
+    var fechainicial=moment(x.fechaInicial).format("YYYY-MM-DD");
+
+    var fechafinal = moment(x.fechaFinal).format("YYYY-MM-DD");
+  if( fechafinal < fechainicial){
 
     counterF++
   }
   
   })
+
     if(counter>0){
       alerts.warning("El precio final debe ser mayor a 0");
       setLoading(false);

@@ -1,13 +1,26 @@
-import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider, Table } from "antd";
+import {
+  Spin,
+  Form,
+  Row,
+  Col,
+  Pagination,
+  Button,
+  PageHeader,
+  Divider,
+  Table,
+} from "antd";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
-import TextInput from "../../../app/common/form/TextInput";
-import TextAreaInput from "../../../app/common/form/TextAreaInput";
-import SwitchInput from "../../../app/common/form/SwitchInput";
+import TextInput from "../../../app/common/form/proposal/TextInput";
+import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
+import SwitchInput from "../../../app/common/form/proposal/SwitchInput";
 import { useStore } from "../../../app/stores/store";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { IIndicationForm, IndicationFormValues } from "../../../app/models/indication";
+import {
+  IIndicationForm,
+  IndicationFormValues,
+} from "../../../app/models/indication";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import alerts from "../../../app/util/alerts";
@@ -28,7 +41,11 @@ type IndicationFormProps = {
   printing: boolean;
 };
 
-const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing }) => {
+const IndicationForm: FC<IndicationFormProps> = ({
+  id,
+  componentRef,
+  printing,
+}) => {
   const { indicationStore } = useStore();
   const { getById, create, update, getAll, indication } = indicationStore;
 
@@ -40,8 +57,12 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing })
 
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
-  const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
-  const [values, setValues] = useState<IIndicationForm>(new IndicationFormValues());
+  const [readonly, setReadonly] = useState(
+    searchParams.get("mode") === "readonly"
+  );
+  const [values, setValues] = useState<IIndicationForm>(
+    new IndicationFormValues()
+  );
 
   useEffect(() => {
     const readIndication = async (id: number) => {
@@ -93,7 +114,9 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing })
   const prevnextIndication = (index: number) => {
     const indi = indication[index];
     navigate(
-      `/indications/${indi?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search")}`
+      `/indications/${indi?.id}?mode=${searchParams.get(
+        "mode"
+      )}&search=${searchParams.get("search")}`
     );
   };
 
@@ -213,12 +236,17 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing })
         )}
       </Row>
 
-      <div style={{ display: printing ? "none" : "" }}>
+      <div style={{ display: printing ? "none" : "", marginBottom: 10 }}>
         <div ref={componentRef}>
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo de Indicaciones" image="indicacion" />}
+              title={
+                <HeaderTitle
+                  title="Catálogo de Indicaciones"
+                  image="indicacion"
+                />
+              }
               className="header-container"
             ></PageHeader>
           )}
@@ -233,11 +261,12 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing })
             onFieldsChange={() => {
               setDisabled(
                 !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+                  form.getFieldsError().filter(({ errors }) => errors.length)
+                    .length > 0
               );
             }}
           >
-            <Row>
+            <Row justify="space-between" gutter={[0, 24]}>
               <Col md={12} sm={24}>
                 <TextInput
                   formProps={{
@@ -248,7 +277,8 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing })
                   required
                   readonly={readonly}
                 />
-
+              </Col>
+              <Col span={12}>
                 <TextInput
                   formProps={{
                     name: "nombre",
@@ -258,6 +288,8 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing })
                   required
                   readonly={readonly}
                 />
+              </Col>
+              <Col span={12}>
                 <TextAreaInput
                   formProps={{
                     name: "descripcion",
@@ -265,10 +297,12 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing })
                   }}
                   max={500}
                   rows={8}
+                  autoSize
                   required
                   readonly={readonly}
                 />
-
+              </Col>
+              <Col span={12}>
                 <SwitchInput
                   name="activo"
                   onChange={(value) => {
@@ -290,7 +324,9 @@ const IndicationForm: FC<IndicationFormProps> = ({ id, componentRef, printing })
         <Col md={24} sm={12} style={{ marginRight: 20, textAlign: "center" }}>
           <PageHeader
             ghost={false}
-            title={<HeaderTitle title="Estudios donde se encuentra la indicación" />}
+            title={
+              <HeaderTitle title="Estudios donde se encuentra la indicación" />
+            }
             className="header-container"
           ></PageHeader>
           <Divider className="header-divider" />

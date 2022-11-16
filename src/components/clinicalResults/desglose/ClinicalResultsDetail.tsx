@@ -72,9 +72,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     addSelectedStudy,
     removeSelectedStudy,
   } = clinicResultsStore;
-  // const {
-  //   observationsSelected,
-  // } = parameterStore;
+
   const { getMedicOptions, getUnitOptions } = optionStore;
   const [form] = Form.useForm();
   const resultValue = Form.useWatch(

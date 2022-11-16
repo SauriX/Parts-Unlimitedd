@@ -4,6 +4,7 @@ import HeaderTitle from "../../app/common/header/HeaderTitle";
 import DownloadIcon from "../../app/common/icons/DownloadIcon";
 import { FC } from "react";
 import PrintIcon from "../../app/common/icons/PrintIcon";
+import React from "react";
 import { useStore } from "../../app/stores/store";
 
 const { Text } = Typography;

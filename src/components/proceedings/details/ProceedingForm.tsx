@@ -7,39 +7,29 @@ import {
   Button,
   PageHeader,
   Divider,
-  Radio,
-  DatePicker,
-  List,
-  Typography,
-  Select,
   Table,
-  Checkbox,
   Input,
-  Tag,
-  InputNumber,
   Tooltip,
   Card,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout, moneyFormatter } from "../../../app/util/utils";
-import TextInput from "../../../app/common/form/proposal/TextInput";
 import { useStore } from "../../../app/stores/store";
-import { IReagentForm, ReagentFormValues } from "../../../app/models/reagent";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
 import { EditOutlined } from "@ant-design/icons";
+import TextInput from "../../../app/common/form/proposal/TextInput";
 import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
-import SwitchInput from "../../../app/common/form/SwitchInput";
+import DateInput from "../../../app/common/form/proposal/DateInput";
+import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import alerts from "../../../app/util/alerts";
-import messages from "../../../app/util/messages";
 import {
   getDefaultColumnProps,
   IColumns,
-  ISearch,
 } from "../../../app/common/table/utils";
 import { IOptions } from "../../../app/models/shared";
 import DatosFiscalesForm from "./DatosFiscalesForm";
@@ -51,7 +41,6 @@ import {
 } from "../../../app/models/Proceeding";
 import moment, { Moment } from "moment";
 import { ITaxData } from "../../../app/models/taxdata";
-import DateInput from "../../../app/common/form/proposal/DateInput";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import IconButton from "../../../app/common/button/IconButton";
 import {
@@ -59,13 +48,14 @@ import {
   IQuotationList,
   ISearchQuotation,
   ISolicitud,
-  QuotationFormValues,
   SearchQuotationValues,
 } from "../../../app/models/quotation";
-import Link from "antd/lib/typography/Link";
-import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import { IRequestInfo } from "../../../app/models/request";
-import { IAppointmentForm, IAppointmentList, ISearchAppointment, SearchAppointmentValues } from "../../../app/models/appointmen";
+import {
+  IAppointmentForm,
+  IAppointmentList,
+  ISearchAppointment,
+} from "../../../app/models/appointmen";
 
 type ProceedingFormProps = {
   id: string;
@@ -87,21 +77,12 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     profileStore,
     requestStore,
     appointmentStore,
-    quotationStore
+    quotationStore,
   } = useStore();
-  const {
-    getAllDom,
-    getAllLab,
-    sucursales,
-    getByIdDom,
-    getByIdLab,
-    sucursal,
-    updateDom,
-    updateLab,
-    
-  } = appointmentStore;
-  const {createsolictud}=quotationStore
-  const { loadingRequests, requests, getRequests: getByFilter } = requestStore;
+  const { getAllDom, getAllLab, sucursales, getByIdDom, getByIdLab } =
+    appointmentStore;
+  const { createsolictud } = quotationStore;
+  const { requests, getRequests: getByFilter } = requestStore;
   const {
     getById,
     update,
@@ -116,12 +97,11 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     activateWallet,
     getAllQ,
     quotatios,
-    getByIdQ
+    getByIdQ,
   } = procedingStore;
   const { profile } = profileStore;
   const { BranchOptions, getBranchOptions } = optionStore;
   const [loading, setLoading] = useState(false);
-  const [monedero, setMonedero] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
@@ -134,7 +114,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   const { getColoniesByZipCode } = locationStore;
   const { openModal, closeModal } = modalStore;
   const [colonies, setColonies] = useState<IOptions[]>([]);
-  const [date, setDate] = useState(moment(new Date(moment.now())));
   const [continuar, SetContinuar] = useState<boolean>(true);
   const goBack = () => {
     searchParams.delete("mode");
@@ -143,7 +122,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     clearTax();
     closeModal();
   };
-  const convertSolicitud = (data:IAppointmentForm|IQuotationForm) => {
+  const convertSolicitud = (data: IAppointmentForm | IQuotationForm) => {
     var request: ISolicitud = {
       Id: data.id,
       ExpedienteId: data.expedienteid!,
@@ -167,7 +146,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       Estudios: data.estudy!,
     };
     var redirect = createsolictud(request);
-  }
+  };
   const clearLocation = () => {
     form.setFieldsValue({
       estado: undefined,
@@ -182,20 +161,20 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       setLoading(true);
       var expediente = await getById(id);
       var searchQ: ISearchQuotation = new SearchQuotationValues();
-      var searchC:ISearchAppointment = {
-        expediente:expediente?.expediente!,
-        nombre:"",
-        fecha:[],
-        tipo:"laboratorio"
-      }
-      var citaslab = await getAllLab(searchC); 
-      var citasdom = await getAllDom(searchC); 
-        var citasall = citaslab?.concat(citasdom!);
-        SetCitas(citasall!);
+      var searchC: ISearchAppointment = {
+        expediente: expediente?.expediente!,
+        nombre: "",
+        fecha: [],
+        tipo: "laboratorio",
+      };
+      var citaslab = await getAllLab(searchC);
+      var citasdom = await getAllDom(searchC);
+      var citasall = citaslab?.concat(citasdom!);
+      SetCitas(citasall!);
       searchQ.presupuesto = expediente?.expediente!;
       await getAllQ(searchQ);
       await getByFilter({
-        expediente:expediente?.expediente
+        expediente: expediente?.expediente,
       });
       const location = await getColoniesByZipCode(expediente?.cp!);
       if (location) {
@@ -220,8 +199,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     if (id) {
       readExpedinte(id);
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, getById]);
 
   useEffect(() => {
@@ -269,7 +246,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       var hoy = new Date();
       var cumpleaños = hoy.getFullYear() - edad;
       hoy.setFullYear(cumpleaños);
-      //setValues((prev) => ({ ...prev, fechaNacimiento: hoy }));
       form.setFieldsValue({ fechaNacimiento: moment(hoy) });
     }
     if (field == "fechaNacimiento") {
@@ -488,13 +464,14 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           }}
         />
       ),
-    },    {
+    },
+    {
       key: "editar",
       dataIndex: "id",
       title: "Editar",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value,item) => (
+      render: (value, item) => (
         <Button
           type="primary"
           title=""
@@ -503,7 +480,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
             convertSolicitud(cotizacion!);
           }}
         >
-
           Convertir a solicitud
         </Button>
       ),
@@ -517,32 +493,28 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       }),
       render: (value, item) => (
         <div style={{ display: "flex", flexDirection: "column" }}>
-                  <Button
-          type="link"
-          onClick={() => {
-            navigate(
-              `/${views.request}/${item.expedienteId}/${item.solicitudId}`
-            );
-          }}
-        >
-          {value}
-        </Button>
+          <Button
+            type="link"
+            onClick={() => {
+              navigate(
+                `/${views.request}/${item.expedienteId}/${item.solicitudId}`
+              );
+            }}
+          >
+            {value}
+          </Button>
 
-          <small>
-           {item.clavePatologica}
-          </small>
+          <small>{item.clavePatologica}</small>
         </div>
       ),
     },
     {
       ...getDefaultColumnProps("afiliacion", "Afiliación", {
-
         width: 180,
       }),
     },
     {
       ...getDefaultColumnProps("paciente", "Paciente", {
-
         width: 240,
       }),
       ellipsis: {
@@ -551,7 +523,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     },
     {
       ...getDefaultColumnProps("compañia", "Compañia", {
-
         width: 180,
       }),
       ellipsis: {
@@ -560,7 +531,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     },
     {
       ...getDefaultColumnProps("procedencia", "Procedencia", {
-
         width: 180,
       }),
       ellipsis: {
@@ -569,7 +539,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     },
     {
       ...getDefaultColumnProps("importe", "Importe", {
-
         width: 120,
       }),
       align: "right",
@@ -577,7 +546,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     },
     {
       ...getDefaultColumnProps("descuento", "Descuento", {
-
         width: 120,
       }),
       align: "right",
@@ -585,7 +553,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     },
     {
       ...getDefaultColumnProps("total", "Total", {
-
         width: 120,
       }),
       align: "right",
@@ -593,7 +560,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     },
     {
       ...getDefaultColumnProps("saldo", "Saldo", {
-
         width: 120,
       }),
       align: "right",
@@ -665,12 +631,14 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       title: "Editar",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value,item) => (
+      render: (value, item) => (
         <IconButton
           title="Editar cita"
           icon={<EditOutlined />}
           onClick={() => {
-             navigate(`/${views.appointment}/${value}?type=${item.type}&mode=edit`);
+            navigate(
+              `/${views.appointment}/${value}?type=${item.type}&mode=edit`
+            );
           }}
         />
       ),
@@ -681,21 +649,20 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       title: "Editar",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value,item) => (
+      render: (value, item) => (
         <Button
           type="primary"
           title=""
           onClick={async () => {
-              if(item.type=="laboratorio"){
-                var citas = await getByIdLab(item.id);
-                convertSolicitud(citas!);
-              }else{
-                var citas = await getByIdDom(item.id);
-                convertSolicitud(citas!);
-              }
+            if (item.type == "laboratorio") {
+              var citas = await getByIdLab(item.id);
+              convertSolicitud(citas!);
+            } else {
+              var citas = await getByIdDom(item.id);
+              convertSolicitud(citas!);
+            }
           }}
         >
-
           Convertir a solicitud
         </Button>
       ),
@@ -851,16 +818,15 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 />
               </Col>
               <Col span={4}>
-                <NumberInput
+                <TextInput
                   formProps={{
                     name: "edad",
                     label: "Edad",
                     labelCol: { span: 12 },
                     wrapperCol: { span: 12 },
                   }}
-                  max={500}
-                  min={0}
-                  suffix={"años"}
+                  max={130}
+                  suffix="años"
                   readonly={readonly}
                 />
               </Col>
@@ -875,66 +841,26 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   <Input.Group>
                     <Row gutter={8}>
                       <Col span={12}>
-                        <MaskInput
+                        <TextInput
                           formProps={{
                             name: "telefono",
                             label: "Teléfono",
+                            noStyle: true,
                           }}
-                          mask={[
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                          ]}
-                          validator={(_, value: any) => {
-                            if (!value || value.indexOf("_") === -1) {
-                              return Promise.resolve();
-                            }
-                            return Promise.reject(
-                              "El campo debe contener 10 dígitos"
-                            );
-                          }}
+                          max={500}
+                          showLabel
                           readonly={readonly}
                         />
                       </Col>
                       <Col span={12}>
-                        <MaskInput
+                        <TextInput
                           formProps={{
                             name: "celular",
                             label: "Celular",
+                            noStyle: true,
                           }}
-                          mask={[
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                          ]}
-                          validator={(_, value: any) => {
-                            if (!value || value.indexOf("_") === -1) {
-                              return Promise.resolve();
-                            }
-                            return Promise.reject(
-                              "El campo debe contener 10 dígitos"
-                            );
-                          }}
+                          max={500}
+                          showLabel
                           readonly={readonly}
                         />
                       </Col>
@@ -953,7 +879,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   <Input.Group>
                     <Row gutter={8}>
                       <Col span={2}>
-                        <TextInput
+                      <TextInput
                           formProps={{
                             name: "cp",
                             label: "CP",
@@ -965,7 +891,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                         />
                       </Col>
                       <Col span={4}>
-                        <TextInput
+                      <TextInput
                           formProps={{
                             name: "estado",
                             label: "Estado",
@@ -977,7 +903,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                         />
                       </Col>
                       <Col span={5}>
-                        <TextInput
+                      <TextInput
                           formProps={{
                             name: "municipio",
                             label: "Municipio",
@@ -989,7 +915,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                         />
                       </Col>
                       <Col span={6}>
-                        <SelectInput
+                      <SelectInput
                           formProps={{
                             name: "colonia",
                             label: "Colonia",
@@ -1001,7 +927,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                         />
                       </Col>
                       <Col span={7}>
-                        <TextInput
+                      <TextInput
                           formProps={{
                             name: "calle",
                             label: "Calle",
@@ -1168,7 +1094,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 rowKey={(record) => record.id}
                 columns={columnsC}
                 dataSource={citas}
-                /*    pagination={defaultPaginationProperties} */
                 sticky
                 scroll={{
                   x: windowWidth < resizeWidth ? "max-content" : "auto",

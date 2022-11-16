@@ -611,18 +611,21 @@ const PriceListForm: FC<PriceListFormProps> = ({
     }
     var paquetesSindescuento: IPriceListEstudioList[] = [];
     values.paquete.forEach((element) => {
-      if (element.descuento == 0 || element.departamento == undefined) {
+      
+      if ((element.descuento == 0 || element.descuento == undefined) && element.paqute) {
+        console.log(element,"element");
         paquetesSindescuento.push(element);
       }
     });
+    console.log(paquetesSindescuento,"lista");
 
-    if (estudiosSinPrecio.length > 0) {
+    if (paquetesSindescuento.length > 0) {
       openModal({
-        title: "Estudios sin precio asignado",
+        title: "Paquetes sin descuento asignado",
 
         body: (
           <PackTable
-            data={estudiosSinPrecio}
+            data={paquetesSindescuento}
             closeModal={closeModal}
             handle={async () => {
               console.log(priceList, "LISTA");
@@ -1088,7 +1091,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
                 onSearch={(value) => {
                   filterBySearch(value);
                 }}
-                allowClear
+                allowClear 
               />
             </Col>
             <Col span={6} offset={2}>

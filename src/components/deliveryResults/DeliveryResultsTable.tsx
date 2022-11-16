@@ -12,6 +12,7 @@ import {
 } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
+import React from "react";
 import { useState, FC } from "react";
 import PrintIcon from "../../app/common/icons/PrintIcon";
 import { IColumns } from "../../app/common/table/utils";
