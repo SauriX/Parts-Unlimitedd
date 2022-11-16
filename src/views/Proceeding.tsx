@@ -9,7 +9,8 @@ import ProceedingTable from "../components/proceedings/ProceedingTable";
 
 const Proceeding = () => {
   const { procedingStore } = useStore();
-   const { /* scopes, access, clearScopes, */ exportList,search } = procedingStore;
+  const { /* scopes, access, clearScopes, */ exportList, search } =
+    procedingStore;
 
   const [searchParams] = useSearchParams();
 
@@ -33,25 +34,38 @@ const Proceeding = () => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    const checkAccess = async () => {
-     // await access();
-    };
+  useEffect(
+    () => {
+      const checkAccess = async () => {
+        // await access();
+      };
 
-    checkAccess();
-  }, [/* access */]);
+      checkAccess();
+    },
+    [
+      /* access */
+    ]
+  );
 
-  useEffect(() => {
-    return () => {
-      //clearScopes();
-    };
-  }, [/* clearScopes */]);
-/* 
+  useEffect(
+    () => {
+      return () => {
+        //clearScopes();
+      };
+    },
+    [
+      /* clearScopes */
+    ]
+  );
+  /* 
   if (!scopes?.acceder) return null;
  */
   return (
     <Fragment>
-      <ProceedingHeader handlePrint={handlePrint} handleDownload={handleDownload} />
+      <ProceedingHeader
+        handlePrint={handlePrint}
+        handleDownload={handleDownload}
+      />
       <Divider className="header-divider" />
       <ProceedingTable componentRef={componentRef} printing={loading} />
     </Fragment>
