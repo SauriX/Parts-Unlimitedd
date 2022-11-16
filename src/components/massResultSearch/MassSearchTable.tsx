@@ -18,6 +18,7 @@ import { useStore } from "../../app/stores/store";
 import useWindowDimensions, { resizeWidth } from "../../app/util/window";
 import { ppid } from "process";
 import { useNavigate } from "react-router-dom";
+import React from "react";
 
 const { Link } = Typography;
 

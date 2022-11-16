@@ -109,7 +109,7 @@ const ReferenciaTexto: FC<Props> = ({ idTipeVAlue, parameter }) => {
                 >
                   <Form.Item
                     {...valuesValor}
-                    label={"Observación " + (name + 1)}
+                    label={"Texto " + (name + 1)}
                     name={[name, "descripcionTexto"]}
                     rules={[{ required: true, message: "Missing valor" }]}
                   >
@@ -117,7 +117,8 @@ const ReferenciaTexto: FC<Props> = ({ idTipeVAlue, parameter }) => {
                       disabled={disabled}
                       rows={5}
                       autoSize
-                      placeholder={"Párrafo"}
+                      placeholder={"Texto"}
+                      style={{width: 500}}
                     />
                   </Form.Item>
                   <MinusCircleOutlined onClick={() => remove(name)} />

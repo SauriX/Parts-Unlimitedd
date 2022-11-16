@@ -23,7 +23,11 @@ import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import views from "../../app/util/view";
-import { IProceedingList, ISearchMedical, SearchMedicalFormValues } from "../../app/models/Proceeding";
+import {
+  IProceedingList,
+  ISearchMedical,
+  SearchMedicalFormValues,
+} from "../../app/models/Proceeding";
 
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
@@ -98,7 +102,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       ...getDefaultColumnProps("expediente", "Expediente", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: "15%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -119,16 +123,16 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       ...getDefaultColumnProps("nomprePaciente", "Nombre del paciente", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "25%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
     },
     {
-      ...getDefaultColumnProps("genero", "Genero", {
+      ...getDefaultColumnProps("genero", "Sexo", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: "5%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -137,7 +141,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       ...getDefaultColumnProps("edad", "Edad", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: "5%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -146,7 +150,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       ...getDefaultColumnProps("fechaNacimiento", "Fecha de nacimiento", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "15%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -155,7 +159,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       ...getDefaultColumnProps("monederoElectronico", "Monedero electrónico", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: "15%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -174,7 +178,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       dataIndex: "id",
       title: "Editar",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "20%",
+      width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (
         <IconButton
           title="Editar Expediente"
@@ -209,115 +213,109 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
 
   return (
     <Fragment>
-
-
-          <div className="status-container">
-            <Form<ISearchMedical>
-              {...formItemLayout}
-              form={form}
-              onFinish={onfinish}
-              size="small"
-              onFinishFailed={({ errorFields }) => {
-                const errors = errorFields.map((x) => ({
-                  name: x.name[0].toString(),
-                  errors: x.errors,
-                }));
-                setErrors(errors);
-              }}
-            >
-              <Row justify="space-between" gutter={[0, 12]}>
-                <Col span={8}>
-                  <TextInput
-                    formProps={{
-                      name: "expediente",
-                      label: "Expediente/Nombre",
-                    }}
-                  />
-                </Col>
-                <Col span={8}>
-                  <DateRangeInput
-                    formProps={{ label: "Fecha de alta", name: "fechaAlta" }}
-                  />
-                </Col>
-                <Col span={8}>
-                  <MaskInput
-                    formProps={{
-                      name: "telefono",
-                      label: "Teléfono",
-                    }}
-                    mask={[
-                      /[0-9]/,
-                      /[0-9]/,
-                      /[0-9]/,
-                      "-",
-                      /[0-9]/,
-                      /[0-9]/,
-                      /[0-9]/,
-                      "-",
-                      /[0-9]/,
-                      /[0-9]/,
-                      "-",
-                      /[0-9]/,
-                      /[0-9]/,
-                    ]}
-                    validator={(_, value: any) => {
-                      if (!value || value.indexOf("_") === -1) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(
-                        "El campo debe contener 10 dígitos"
-                      );
-                    }}
-                  />
-                </Col>
-                <Col span={8}>
-                  <DateInput
-                    formProps={{
-                      label: "Fecha nacimiento",
-                      name: "fechaNacimiento",
-                    }}
-                  />
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{ name: "ciudad", label: "Ciudad" }}
-                    options={cityOptions}
-                  />
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{ name: "sucursal", label: "Sucursal" }}
-                    options={BranchOptions}
-                  />
-                </Col>
-              </Row>
-            </Form>
-            <br />
-            <div style={{marginLeft:"91%"}}>
+      <Row justify="end" gutter={[24, 12]} className="filter-buttons">
+        <Col span={24}>
           <Button
-              key="clean"
-              onClick={(e) => {
-                e.stopPropagation();
-                form.resetFields();
-              }}
-            >
-              Limpiar
-            </Button>
-
-            <Button
-              key="filter"
-              type="primary"
-              onClick={(e) => {
-                e.stopPropagation();
-                form.submit();
-              }}
-              style={{marginLeft:"5%"}}
-            >
-              Filtrar
-            </Button>
-          </div>
-          </div>
-<br />
+            key="clean"
+            onClick={(e) => {
+              form.resetFields();
+            }}
+          >
+            Limpiar
+          </Button>
+          <Button
+            key="filter"
+            type="primary"
+            onClick={(e) => {
+              e.stopPropagation();
+              form.submit();
+            }}
+          >
+            Buscar
+          </Button>
+        </Col>
+      </Row>
+      <div className="status-container">
+        <Form<ISearchMedical>
+          {...formItemLayout}
+          form={form}
+          onFinish={onfinish}
+          size="small"
+          onFinishFailed={({ errorFields }) => {
+            const errors = errorFields.map((x) => ({
+              name: x.name[0].toString(),
+              errors: x.errors,
+            }));
+            setErrors(errors);
+          }}
+        >
+          <Row justify="space-between" gutter={[0, 12]}>
+            <Col span={8}>
+              <TextInput
+                formProps={{
+                  name: "expediente",
+                  label: "Expediente/Nombre",
+                }}
+              />
+            </Col>
+            <Col span={8}>
+              <DateRangeInput
+                formProps={{ label: "Fecha de alta", name: "fechaAlta" }}
+              />
+            </Col>
+            <Col span={8}>
+              <MaskInput
+                formProps={{
+                  name: "telefono",
+                  label: "Teléfono",
+                }}
+                mask={[
+                  /[0-9]/,
+                  /[0-9]/,
+                  /[0-9]/,
+                  "-",
+                  /[0-9]/,
+                  /[0-9]/,
+                  /[0-9]/,
+                  "-",
+                  /[0-9]/,
+                  /[0-9]/,
+                  "-",
+                  /[0-9]/,
+                  /[0-9]/,
+                ]}
+                validator={(_, value: any) => {
+                  if (!value || value.indexOf("_") === -1) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject("El campo debe contener 10 dígitos");
+                }}
+              />
+            </Col>
+            <Col span={8}>
+              <DateInput
+                formProps={{
+                  label: "Fecha nacimiento",
+                  name: "fechaNacimiento",
+                }}
+              />
+            </Col>
+            <Col span={8}>
+              <SelectInput
+                formProps={{ name: "ciudad", label: "Ciudad" }}
+                options={cityOptions}
+              />
+            </Col>
+            <Col span={8}>
+              <SelectInput
+                formProps={{ name: "sucursal", label: "Sucursal" }}
+                options={BranchOptions}
+              />
+            </Col>
+          </Row>
+        </Form>
+      </div>
+      <br />
 
       <Table<IProceedingList>
         loading={loading || printing}

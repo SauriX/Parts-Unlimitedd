@@ -18,7 +18,7 @@ type RSDefaultProps = {
 
 const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
   const { requestedStudyStore } = useStore();
-  const { data, update, printOrder } = requestedStudyStore;
+  const { data, update, printOrder, getAll, formValues } = requestedStudyStore;
   const [updateForm, setUpdateForm] = useState<IUpdate[]>([]);
   const [activity, setActivity] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -88,6 +88,7 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
             );
       }
       setActivity("");
+      getAll(formValues)
     } else {
       setLoading(false);
       setActivity("");
@@ -158,11 +159,10 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
         </Row>
         <RequestedStudyTable
           data={data}
-          columns={RequestedStudyColumns()}
+          columns={RequestedStudyColumns({printOrder})}
           expandable={RequestedStudyExpandable({
             activity,
             onChange,
-            printOrder,
           })}
         />
       </Spin>
