@@ -43,35 +43,14 @@ import {
   searchValues,
 } from "../../app/models/resultValidation";
 import moment from "moment";
+import ValidationTableStudy from "./ValidationTableStudy";
+import ValidationStudyColumns, { ValidationStudyExpandable } from "./ValidationStudyTable";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
-const studys: Ivalidationlist[] = [
-  {
-    id: "string",
-    solicitud: "string",
-    nombre: "string",
-    registro: "string",
-    sucursal: "string",
-    edad: "string",
-    sexo: "string",
-    compañia: "string",
-    estudios: [
-      {
-        id: 1,
-        study: "string",
-        area: "string",
-        status: "string",
-        registro: moment(moment.now()),
-        entrega: moment(moment.now()),
-        estatus: 1,
-      },
-    ],
-    order: "string",
-  },
-];
+
 const ResultValidationTable: FC<ProceedingTableProps> = ({
   componentRef,
   printing,
@@ -101,6 +80,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     setStudyCont,
     soliCont,
     studyCont,
+    viewTicket
   } = resultValidationStore;
   const { getCity, cityOptions } = locationStore;
   const [searchParams] = useSearchParams();
@@ -253,12 +233,12 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                   {moment(x.entrega).format("DD/MM/YYYY-h:mmA")}
                 </Descriptions.Item>
                 <Descriptions.Item label="" style={{ maxWidth: 30 }}>
-                  {x.status == "1" && activiti == "register" && (
+                  {x.status == "4" && activiti == "register" && (
                     <Checkbox onChange={(e) => onChange(e, x.id, item.id)}>
                       Selecciona
                     </Checkbox>
                   )}
-                  {x.status == "2" && activiti == "cancel" && (
+                  {x.status == "5" && activiti == "cancel" && (
                     <Checkbox onChange={(e) => onChange(e, x.id, item.id)}>
                       Selecciona
                     </Checkbox>
@@ -661,30 +641,15 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
         </Col>
       </Row>
       <Fragment>
-        <div style={{ textAlign: "right", marginBottom: 10 }}>
-          <Button
-            type="primary"
-            onClick={togleRows}
-            style={{ marginRight: 10 }}
-          >
-            {!openRows ? "Abrir tabla" : "Cerrar tabla"}
-          </Button>
-        </div>
-        <Table<Ivalidationlist>
-          loading={loading}
-          size="small"
-          rowKey={(record) => record.id}
-          columns={columns}
-          pagination={false}
-          dataSource={[...studys]}
-          scroll={{ y: 500 }}
-          //(rowClassName={(item) => (item.claveMedico == "Total" || item.paciente === "Total" ? "Resumen Total" : "")}
-          expandable={{
-            ...expandable,
-            onExpand: onExpand,
-            expandedRowKeys: expandedRowKeys,
-          }}
+        <ValidationTableStudy
+          data={studys}
+          columns={ValidationStudyColumns ({printTicket,viewTicket})}
+          expandable={ValidationStudyExpandable({
+            activiti,
+            onChange,
+          })}
         />
+
       </Fragment>
     </Fragment>
   );

@@ -55,6 +55,7 @@ import {
   generalDomicilio,
   IAppointmentForm,
   IAppointmentGeneralesForm,
+  ISolicitud,
 } from "../../../app/models/appointmen";
 type apointmentFormProps = {
   id: string;
@@ -64,7 +65,7 @@ type apointmentFormProps = {
 
 const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing }) => {
   const navigate = useNavigate();
-  const { modalStore, locationStore, optionStore, profileStore, priceListStore, appointmentStore } =
+  const { modalStore, locationStore, optionStore, profileStore, priceListStore, appointmentStore,procedingStore } =
     useStore();
   const {
     getAllDom,
@@ -78,8 +79,9 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
     search,
     sucursales,
     sendTestEmail,
-    sendTestWhatsapp
+    sendTestWhatsapp,createsolictud
   } = appointmentStore;
+  
   const [data, setData] = useState<IRequestStudy[]>([]);
   const { profile } = profileStore;
   const [loading, setLoading] = useState(false);
@@ -87,7 +89,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
   const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
   const [type, setType] = useState(searchParams.get("type"));
   const [form] = Form.useForm<IAppointmentForm>();
-  const [values, setValues] = useState<AppointmentFormValues>(new AppointmentFormValues());
+  const [values, setValues] = useState<IAppointmentForm>(new AppointmentFormValues());
   const { getColoniesByZipCode } = locationStore;
   const { openModal, closeModal } = modalStore;
   const [colonies, setColonies] = useState<IOptions[]>([]);
@@ -173,31 +175,33 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
       SetTotalFinal(totalfinal);
     }
   };
-  /* const convertSolicitud=()=>{
+   const convertSolicitud=()=>{
     var request:ISolicitud = {
       Id:values.id,
-      ExpedienteId :values.expedienteid!,
+      ExpedienteId :values.expediente!,
       SucursalId :profile?.sucursal!,
       Clave :values.nomprePaciente,
       ClavePatologica :"",
       UsuarioId :"00000000-0000-0000-0000-000000000000",
-      General :{
+      General: {
+        solicitudId: "00000000-0000-0000-0000-000000000000",
+        expedienteId: values.expediente!,
         procedencia: 0,
-        compañiaId:  values.generales?.compañia!,
-        medicoId:  values.generales?.medico!,
-        afiliacion:  "",
-        urgencia:  0,
+        compañiaId: values.generales?.compañia!,
+        medicoId: values.generales?.medico!,
+        afiliacion: "",
+        urgencia: 0,
         metodoEnvio: [],
-        envioCorreo:  values.generales?.email!,
-        envioWhatsapp:  values.generales?.whatssap!,
-        observaciones:  values.generales?.observaciones!,
-        
+        correo: values.generales?.email!,
+        whatsapp: values.generales?.whatssap!,
+        observaciones: values.generales?.observaciones!,
       },
+
       Estudios :values.estudy!,
     }
     var redirect = createsolictud(request);
-    navigate(`/${views.quotatiion}/${redirect}?${searchParams}`);
-} */
+    navigate(`/${views.quotation}/${redirect}?${searchParams}`);
+} 
   useEffect(() => {
     var suma = 0;
     data.forEach((x) => {

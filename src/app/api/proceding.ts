@@ -3,6 +3,7 @@ import {
   IProceedingList,
   ISearchMedical,
 } from "../models/Proceeding";
+import { IQuotationFilter, IQuotationInfo } from "../models/quotation";
 // import { IQuotationList, ISearchQuotation } from "../models/quotation";
 import { IScopes } from "../models/shared";
 import { ITaxData } from "../models/taxdata";
@@ -14,8 +15,8 @@ const Proceding = {
     requests.get(`MedicalRecord/all`),
   getNow: (search: ISearchMedical): Promise<IProceedingList[]> =>
     requests.post(`medicalRecord/now`, search ?? {}),
-  getNowQ: (search: any): Promise<any[]> =>
-    requests.post(`PriceQuote/now`, search ?? {}),
+  getNowQ: (search: IQuotationFilter): Promise<IQuotationInfo[]> =>
+    requests.post(`quotation/filter`, search ?? {}),
   getcoincidencia: (search: IProceedingForm): Promise<IProceedingList[]> =>
     requests.post(`medicalRecord/coincidencias`, search ?? {}),
   getTaxData: (recordId: string): Promise<ITaxData[]> =>

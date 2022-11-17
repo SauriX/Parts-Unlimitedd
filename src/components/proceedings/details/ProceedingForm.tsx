@@ -46,11 +46,14 @@ import IconButton from "../../../app/common/button/IconButton";
 import Link from "antd/lib/typography/Link";
 import { IRequestInfo } from "../../../app/models/request";
 import {
+  AppointmentFormValues,
   IAppointmentForm,
   IAppointmentList,
   ISearchAppointment,
+  ISolicitud,
   SearchAppointmentValues,
 } from "../../../app/models/appointmen";
+import { IQuotation, IQuotationFilter, IQuotationGeneral, IQuotationInfo } from "../../../app/models/quotation";
 
 type ProceedingFormProps = {
   id: string;
@@ -83,6 +86,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     sucursal,
     updateDom,
     updateLab,
+    createsolictud
   } = appointmentStore;
   // const { createsolictud } = quotationStore;
   const { loadingRequests, requests, getRequests: getByFilter } = requestStore;
@@ -123,33 +127,58 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     setSearchParams(searchParams);
     navigate(`/${views.proceeding}?${searchParams}`);
     clearTax();
-    closeModal();
+    closeModal()
   };
-  const convertSolicitud = (data: any) => {
-    // var request = {
-    //   Id: data.id,
-    //   ExpedienteId: data.expedienteid!,
-    //   SucursalId: profile?.sucursal!,
-    //   Clave: data.nomprePaciente,
-    //   ClavePatologica: "",
-    //   UsuarioId: "00000000-0000-0000-0000-000000000000",
-    //   General: {
-    //     solicitudId: "00000000-0000-0000-0000-000000000000",
-    //     expedienteId: data.expedienteid!,
-    //     procedencia: 0,
-    //     compañiaId: data.generales?.compañia!,
-    //     medicoId: data.generales?.medico!,
-    //     afiliacion: "",
-    //     urgencia: 0,
-    //     metodoEnvio: [],
-    //     correo: data.generales?.email!,
-    //     whatsapp: data.generales?.whatssap!,
-    //     observaciones: data.generales?.observaciones!,
-    //   },
-    //   Estudios: data.estudy!,
-    // };
-    // var redirect = createsolictud(request as any);
+  const convertSolicitud = (dataC:IAppointmentForm ) => {
+     var request:ISolicitud = {
+       Id: dataC.id,
+       ExpedienteId: dataC.expedienteid!,
+      SucursalId: profile?.sucursal!,
+       Clave: dataC.nomprePaciente,
+       ClavePatologica: "",
+       UsuarioId: "00000000-0000-0000-0000-000000000000",
+       General: {
+         solicitudId: "00000000-0000-0000-0000-000000000000",
+         expedienteId: dataC.expedienteid!,
+         procedencia: 0,
+         compañiaId: dataC.generales?.compañia!,
+         medicoId: dataC.generales?.medico!,
+         afiliacion: "",
+         urgencia: 0,
+         metodoEnvio: [],
+         correo: dataC.generales?.email!,
+         whatsapp: dataC.generales?.whatssap!,
+         observaciones: dataC.generales?.observaciones!,
+       },
+       Estudios: dataC.estudy!,
+     };
+     createsolictud(request);
   };
+  const convertSolicitudCot = (dataC:IQuotationInfo,dataG:IQuotationGeneral ) => {
+    var request:ISolicitud = {
+      Id: dataC.cotizacionId,
+      ExpedienteId: values.expediente,
+     SucursalId: profile?.sucursal!,
+      Clave: dataC.paciente,
+      ClavePatologica: "",
+      UsuarioId: "00000000-0000-0000-0000-000000000000",
+      General: {
+        solicitudId: "00000000-0000-0000-0000-000000000000",
+        expedienteId: values.expediente!,
+        procedencia: 0,
+        compañiaId: dataG.compañiaId,
+        medicoId: dataG.medicoId,
+        afiliacion: "",
+        urgencia: 0,
+        metodoEnvio: [],
+        correo: dataG.correo,
+        whatsapp: dataG.whatsapp,
+        observaciones: dataG.observaciones,
+      },
+      Estudios: [],
+    };
+    createsolictud(request);
+ };
   const clearLocation = () => {
     form.setFieldsValue({
       estado: undefined,
@@ -162,8 +191,11 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   useEffect(() => {
     const readExpedinte = async (id: string) => {
       setLoading(true);
+      
       var expediente = await getById(id);
-      var searchQ: any;
+      var searchQ: IQuotationFilter = {
+        expediente : expediente?.expediente
+      }
       var searchC: ISearchAppointment = {
         expediente: expediente?.expediente!,
         nombre: "",
@@ -174,7 +206,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       var citasdom = await getAllDom(searchC);
       var citasall = citaslab?.concat(citasdom!);
       SetCitas(citasall!);
-      searchQ.presupuesto = expediente?.expediente!;
       await getAllQ(searchQ);
       await getByFilter({
         expediente: expediente?.expediente,
@@ -219,7 +250,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     readData(search);
   }, [search, getnow]);
   useEffect(() => {
-    const readData = async (search: ISearchMedical) => {
+    const readData = async (_search: ISearchMedical) => {
       await getBranchOptions();
     };
 
@@ -378,9 +409,9 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     }
   };
 
-  const columnsP: IColumns<any> = [
+  const columnsP: IColumns<IQuotationInfo> = [
     {
-      ...getDefaultColumnProps("presupuesto", "Presupuesto", {
+      ...getDefaultColumnProps("clave", "clave", {
         width: 200,
         minWidth: 150,
         windowSize: windowWidth,
@@ -399,21 +430,21 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       ),
     },
     {
-      ...getDefaultColumnProps("nomprePaciente", "Nombre del paciente", {
+      ...getDefaultColumnProps("paciente", "Nombre del paciente", {
         width: 200,
         minWidth: 150,
         windowSize: windowWidth,
       }),
     },
     {
-      ...getDefaultColumnProps("estudios", "Estudios", {
+      ...getDefaultColumnProps("correo", "Estudios", {
         width: 150,
         minWidth: 150,
         windowSize: windowWidth,
       }),
     },
     {
-      ...getDefaultColumnProps("email", "Email", {
+      ...getDefaultColumnProps("correo", "Email", {
         width: 150,
         minWidth: 150,
         windowSize: windowWidth,
@@ -443,20 +474,12 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     },
 
     {
-      key: "activo",
-      dataIndex: "activo",
-      title: "Activo",
-      align: "center",
-      width: 100,
-      render: (value) => (value ? "Sí" : "No"),
-    },
-    {
       key: "editar",
       dataIndex: "id",
       title: "Editar",
       align: "center",
       width: 200,
-      render: (value, cotizacion) => (
+      render: (_value, cotizacion) => (
         <IconButton
           title="Editar Expediente"
           icon={<EditOutlined />}
@@ -474,13 +497,14 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       title: "Editar",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value, item: any) => (
+      render: (_value, item) => (
         <Button
           type="primary"
           title=""
           onClick={async () => {
-            var cotizacion = await getByIdQ(item.id);
-            // convertSolicitud(cotizacion!);
+            var cotizacion = await getByIdQ(item.cotizacionId);
+            console.log(cotizacion);
+            convertSolicitudCot(item,cotizacion!);
           }}
         >
           Convertir a solicitud
@@ -576,7 +600,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
         minWidth: 150,
         windowSize: windowWidth,
       }),
-      render: (value, item) => (
+      render: (_value, _item) => (
         <div></div>
         /*         <Link
                   draggable
@@ -652,7 +676,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       title: "Editar",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value, item) => (
+      render: (_value, item) => (
         <Button
           type="primary"
           title=""
@@ -1078,10 +1102,10 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 }}
               />
               <Divider orientation="left">Presupuestos</Divider>
-              <Table<any>
+              <Table<IQuotationInfo>
                 loading={loading || printing}
                 size="small"
-                rowKey={(record) => record.id}
+                rowKey={(record) => record.clave}
                 columns={columnsP}
                 dataSource={quotatios}
                 /*    pagination={defaultPaginationProperties} */

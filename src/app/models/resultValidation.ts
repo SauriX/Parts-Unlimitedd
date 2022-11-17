@@ -21,6 +21,7 @@ export interface IvalidationStudyList {
     registro:moment.Moment,
     entrega:moment.Moment,
     estatus :number
+    solicitudId:string,
 }
 export interface Ivalidationlist{
     id:string;

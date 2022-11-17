@@ -1,5 +1,5 @@
 
-import { IAppointmentForm, IAppointmentList, IExportForm, ISearchAppointment } from "../models/appointmen";
+import { IAppointmentForm, IAppointmentList, IExportForm, ISearchAppointment, ISolicitud } from "../models/appointmen";
 import requests from "./agent";
 
 const Appointment = {
@@ -12,6 +12,7 @@ const Appointment = {
   updateLab: (branch:IAppointmentForm): Promise<boolean> => requests.put("/Appointment/Lab", branch),
   createDom: (branch: IAppointmentForm): Promise<boolean> => requests.post("/Appointment/Dom", branch),
   updateDom: (branch:IAppointmentForm): Promise<boolean> => requests.put("/Appointment/Dom", branch),
+  createSolicitud: (promotion: ISolicitud ): Promise<string> => requests.post("/PriceQuote/solicitud", promotion),
   exportList: (search: ISearchAppointment): Promise<void> =>
     requests.download(`Appointment/export/list`,search),
   exportForm: (data:IExportForm): Promise<void> => requests.download(`Appointment/export/form`,data),
