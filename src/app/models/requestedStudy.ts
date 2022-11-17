@@ -4,7 +4,9 @@ export interface IRequestedStudyList {
   id: string;
   solicitud: string;
   nombre: string;
-  order: string;
+  expedienteId: string;
+  solicitudId: string;
+  clavePatologica: string;
   registro: string;
   sucursal: string;
   edad: string;

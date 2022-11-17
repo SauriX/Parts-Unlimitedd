@@ -116,7 +116,7 @@ export class ParameterFormValues implements IParameterForm {
   nombre = "";
   nombreCorto = "";
   unidades = 0;
-  tipoValor = "Sin valor";
+  tipoValor = "0";
   formula = "";
   valorInicial = "";
   departamentoId = 0;
