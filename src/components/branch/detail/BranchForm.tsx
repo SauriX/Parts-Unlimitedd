@@ -36,11 +36,16 @@ import { error } from "console";
 type BranchFormProps = {
   componentRef: React.MutableRefObject<any>;
   load: boolean;
+  isPrinting: boolean;
 };
 type UrlParams = {
   id: string;
 };
-const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
+const BranchForm: FC<BranchFormProps> = ({
+  componentRef,
+  load,
+  isPrinting,
+}) => {
   const { locationStore, branchStore, optionStore } = useStore();
   const { getColoniesByZipCode } = locationStore;
   const { create, update, getAll, sucursales, getById } = branchStore;
@@ -203,8 +208,11 @@ const BranchForm: FC<BranchFormProps> = ({ componentRef, load }) => {
       }`
     );
   };
+  const spinnerText = () => {
+    return isPrinting ? "Imprimiendo..." : "Descargando...";
+  };
   return (
-    <Spin spinning={loading || load} tip={load ? "Imprimiendo" : ""}>
+    <Spin spinning={loading || load} tip={load ? spinnerText() : ""}>
       <Row style={{ marginBottom: 24 }}>
         {!!id && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>

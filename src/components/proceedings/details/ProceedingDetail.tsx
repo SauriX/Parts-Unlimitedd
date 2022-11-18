@@ -19,6 +19,7 @@ const ProceedingDetail = () => {
   const navigate = useNavigate();
 
   const [printing, setPrinting] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
 
   const { id } = useParams<UrlParams>();
   const reagentId = !id ? "" : !guidPattern.test(id) ? undefined : id;
@@ -29,6 +30,7 @@ const ProceedingDetail = () => {
     content: () => componentRef.current,
     onBeforeGetContent: () => {
       setPrinting(true);
+      setIsPrinting(true);
       return new Promise((resolve: any) => {
         setTimeout(() => {
           resolve();
@@ -43,6 +45,7 @@ const ProceedingDetail = () => {
   const handleDownload = async () => {
     if (reagentId) {
       setPrinting(true);
+      setIsPrinting(false);
       await exportForm(reagentId);
       setPrinting(false);
     }
@@ -60,6 +63,7 @@ const ProceedingDetail = () => {
         id={reagentId!}
         componentRef={componentRef}
         printing={printing}
+        isPrinting={isPrinting}
       />
     </Fragment>
   );

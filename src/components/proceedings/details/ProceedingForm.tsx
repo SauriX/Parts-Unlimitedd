@@ -56,11 +56,13 @@ type ProceedingFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
+  isPrinting: boolean;
 };
 const ProceedingForm: FC<ProceedingFormProps> = ({
   id,
   componentRef,
   printing,
+  isPrinting,
 }) => {
   const { width: windowWidth } = useWindowDimensions();
   const navigate = useNavigate();
@@ -671,9 +673,12 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       ),
     },
   ];
+  const spinnerText = () => {
+    return isPrinting ? "Imprimiendo..." : "Cargando...";
+  };
 
   return (
-    <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
+    <Spin spinning={loading || printing} tip={printing ? spinnerText() : ""}>
       <Row style={{ marginBottom: 24 }}>
         {!!id && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
@@ -882,7 +887,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   <Input.Group>
                     <Row gutter={8}>
                       <Col span={2}>
-                      <TextInput
+                        <TextInput
                           formProps={{
                             name: "cp",
                             label: "CP",
@@ -894,7 +899,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                         />
                       </Col>
                       <Col span={4}>
-                      <TextInput
+                        <TextInput
                           formProps={{
                             name: "estado",
                             label: "Estado",
@@ -906,7 +911,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                         />
                       </Col>
                       <Col span={5}>
-                      <TextInput
+                        <TextInput
                           formProps={{
                             name: "municipio",
                             label: "Municipio",
@@ -918,7 +923,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                         />
                       </Col>
                       <Col span={6}>
-                      <SelectInput
+                        <SelectInput
                           formProps={{
                             name: "colonia",
                             label: "Colonia",
@@ -930,7 +935,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                         />
                       </Col>
                       <Col span={7}>
-                      <TextInput
+                        <TextInput
                           formProps={{
                             name: "calle",
                             label: "Calle",
