@@ -61,12 +61,12 @@ const DragHandle = SortableHandle(() => (
   <MenuOutlined style={{ cursor: "grab", color: "#999" }} />
 ));
 
-const SortableItem = SortableElement((props: React.HTMLAttributes<HTMLTableRowElement>) => (
-  <tr {...props} />
-));
-const SortableBody = SortableContainer((props: React.HTMLAttributes<HTMLTableSectionElement>) => (
-  <tbody {...props} />
-));
+const SortableItem = SortableElement(
+  (props: React.HTMLAttributes<HTMLTableRowElement>) => <tr {...props} />
+);
+const SortableBody = SortableContainer(
+  (props: React.HTMLAttributes<HTMLTableSectionElement>) => <tbody {...props} />
+);
 
 const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   const { optionStore, studyStore } = useStore();
@@ -119,10 +119,10 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   const inputRef = useRef<InputRef>(null);
   const editInputRef = useRef<InputRef>(null);
 
-  const [dataSource, setDataSource] = useState(parameterSelected);
+  const [parameterSelectedSource, setParameterSelectedSource] = useState(parameterSelected);
 
   useEffect(() => {
-    setDataSource(parameterSelected);
+    setParameterSelectedSource(parameterSelected.map((x, i) => ({ ...x, index: i })));
   }, [parameterSelected]);
 
   useEffect(() => {
@@ -185,13 +185,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
 
   const columnsParameter: IColumns<IParameterList> = [
     {
-      title: "Sort",
-      dataIndex: "sort",
-      width: "10%",
-      className: "drag-visible",
-      render: () => <DragHandle />,
-    },
-    {
       ...getDefaultColumnProps("nombre", "Parametro", {
         searchState,
         setSearchState,
@@ -206,6 +199,19 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
         width: "40%",
         windowSize: windowWidth,
       }),
+    },
+    {
+      title: "Aparición",
+      dataIndex: "i",
+      width: "10%",
+      render: (_value, _item, i) => i + 1,
+    },
+    {
+      title: "Orden",
+      dataIndex: "sort",
+      width: "10%",
+      className: "drag-visible",
+      render: () => <DragHandle />,
     },
   ];
 
@@ -333,6 +339,8 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   const onFinish = async (newValues: IStudyForm) => {
     setLoading(true);
     const User = { ...values, ...newValues };
+    User.parameters = [...parameterSelectedSource];
+    User.indicaciones = [...indicationSelected];
     let success = false;
     var worklist = "";
     for (var i = 0; i < tags.length; i++) {
@@ -432,12 +440,12 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   const onSortEnd = ({ oldIndex, newIndex }: SortEnd) => {
     if (oldIndex !== newIndex) {
       const newData = arrayMoveImmutable(
-        dataSource.slice(),
+        parameterSelectedSource.slice(),
         oldIndex,
         newIndex
       ).filter((el: IParameterList) => !!el);
       console.log("Sorted items: ", newData);
-      setDataSource(newData);
+      setParameterSelectedSource(newData);
     }
   };
 
@@ -451,9 +459,16 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     />
   );
 
-  const DraggableBodyRow: React.FC<any> = ({ className, style, ...restProps }) => {
+  const DraggableBodyRow: React.FC<any> = ({
+    className,
+    style,
+    ...restProps
+  }) => {
     // function findIndex base on Table rowKey props and should always be a right array index
-    const index = dataSource.findIndex(x => x.index === restProps['data-row-key']);
+    const index = parameterSelectedSource.findIndex(
+      (x) => x.index === restProps["data-row-key"]
+    );
+    console.log(index);
     return <SortableItem index={index} {...restProps} />;
   };
 
@@ -607,7 +622,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   formProps={{ name: "maquilador", label: "Maquilador" }}
                   options={MaquiladorOptions}
                   readonly={disabled}
-                  required
                 />
               </Col>
               <Col md={8} sm={24} xs={8}>
@@ -615,7 +629,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   formProps={{ name: "tipomuestra", label: "Tipo de muestra" }}
                   options={sampleTypeOptions}
                   readonly={disabled}
-                  required
                 />
               </Col>
               <Col md={8} sm={24} xs={8}>
@@ -633,7 +646,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   formProps={{ name: "metodo", label: "Método" }}
                   options={MethodOptions}
                   readonly={disabled}
-                  required
                 />
               </Col>
               <Col md={8} xs={8}>
@@ -655,7 +667,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                     label: "Nombre corto",
                   }}
                   max={100}
-                  required
                   readonly={disabled}
                 />
               </Col>
@@ -668,7 +679,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   min={1}
                   max={9999999999999999}
                   readonly={disabled}
-                  required
                 />
               </Col>
               <Col md={4} sm={24} xs={6}>
@@ -825,10 +835,10 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
         </div>
         <Table<IParameterList>
           size="small"
-          rowKey={(record) => record.id}
+          rowKey={(record) => record.index ?? -1}
           columns={columnsParameter}
           pagination={false}
-          dataSource={[...dataSource]}
+          dataSource={[...parameterSelectedSource]}
           scroll={{
             x: windowWidth < resizeWidth ? "max-content" : "auto",
           }}

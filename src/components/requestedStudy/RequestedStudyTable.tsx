@@ -77,6 +77,8 @@ const RequestedStudyTable = ({
           onExpand: onExpand,
           expandedRowKeys: expandedRowKeys,
         }}
+        rowClassName={"row-search"}
+        bordered
       />
     </Fragment>
   );

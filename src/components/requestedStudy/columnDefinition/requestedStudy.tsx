@@ -1,4 +1,4 @@
-import { Descriptions, Checkbox, Table } from "antd";
+import { Descriptions, Checkbox, Table, Typography } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import moment from "moment";
 import { useState } from "react";
@@ -14,6 +14,8 @@ import {
   IRequestedStudyList,
 } from "../../../app/models/requestedStudy";
 import { status } from "../../../app/util/catalogs";
+import { useNavigate } from "react-router-dom";
+const { Link, Text } = Typography;
 
 type expandableProps = {
   activity: string;
@@ -29,6 +31,7 @@ const RequestedStudyColumns = ({ printOrder }: tableProps) => {
     searchedText: "",
     searchedColumn: "",
   });
+  const navigate = useNavigate();
   const columns: IColumns<IRequestedStudyList> = [
     {
       ...getDefaultColumnProps("solicitud", "Clave", {
@@ -36,6 +39,24 @@ const RequestedStudyColumns = ({ printOrder }: tableProps) => {
         setSearchState,
         width: "15%",
       }),
+      render: (_value, record) => (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Link
+            onClick={() => {
+              navigate(
+                `/requests/${record.expedienteId}/${record.id}`
+              );
+            }}
+          >
+            {record.solicitud}
+          </Link>
+          <small>
+            <Text type="secondary">
+              <Text strong>{record.clavePatologica}</Text>{" "}
+            </Text>
+          </small>
+        </div>
+      ),
     },
     {
       ...getDefaultColumnProps("nombre", "Nombre del Paciente", {
@@ -90,7 +111,7 @@ const RequestedStudyColumns = ({ printOrder }: tableProps) => {
         <PrintIcon
           key="imprimir"
           onClick={() => {
-            printOrder(record.order, record.id);
+            printOrder(record.expedienteId, record.id);
           }}
         />
       ),
