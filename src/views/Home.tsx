@@ -170,7 +170,7 @@ const Home = () => {
                       } 
                   }
               }));
-
+              console.log(temp,"temporal");
       setProxCierre(cierre);
     }
     readRequest()
@@ -424,7 +424,7 @@ const Home = () => {
                   width:"57%",
                 }}>
           <b style={{fontSize:"25px"}}>
-           {data[0].enviado} 
+           {data[0].enviado==undefined?data[0].enviado:0}
           </b>
         </div>
         <div style={{

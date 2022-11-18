@@ -1,62 +1,46 @@
-import { Descriptions, Checkbox, Table, Typography } from "antd";
+import { Descriptions, Checkbox, Table } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import moment from "moment";
 import { useState } from "react";
-import PrintIcon from "../../../app/common/icons/PrintIcon";
+import PrintIcon from "../../app/common/icons/PrintIcon";
+import {EyeOutlined } from "@ant-design/icons";
 import {
   IColumns,
   ISearch,
   getDefaultColumnProps,
-} from "../../../app/common/table/utils";
-import { IRequestStudy } from "../../../app/models/request";
+} from "../../app/common/table/utils";
+import { IRequestStudy } from "../../app/models/request";
 import {
   IRequestedStudy,
   IRequestedStudyList,
-} from "../../../app/models/requestedStudy";
-import { status } from "../../../app/util/catalogs";
-import { useNavigate } from "react-router-dom";
-const { Link, Text } = Typography;
+} from "../../app/models/requestedStudy";
+import { Ivalidationlist, IvalidationStudyList } from "../../app/models/resultValidation";
+
+import { status } from "../../app/util/catalogs";
 
 type expandableProps = {
-  activity: string;
+  activiti: string;
   onChange: (e: CheckboxChangeEvent, id: number, solicitud: string) => void;
+  viewTicket: (recordId: any) => Promise<void>;
 };
 
 type tableProps = {
-  printOrder: (recordId: string, requestId: string) => Promise<void>;
+  printTicket: (recordId: string, requestId: string) => Promise<void>;
+  
 };
 
-const RequestedStudyColumns = ({ printOrder }: tableProps) => {
+const ValidationStudyColumns = ({ printTicket }: tableProps) => {
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-  const navigate = useNavigate();
-  const columns: IColumns<IRequestedStudyList> = [
+  const columns: IColumns<Ivalidationlist> = [
     {
       ...getDefaultColumnProps("solicitud", "Clave", {
         searchState,
         setSearchState,
         width: "15%",
       }),
-      render: (_value, record) => (
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <Link
-            onClick={() => {
-              navigate(
-                `/requests/${record.expedienteId}/${record.id}`
-              );
-            }}
-          >
-            {record.solicitud}
-          </Link>
-          <small>
-            <Text type="secondary">
-              <Text strong>{record.clavePatologica}</Text>{" "}
-            </Text>
-          </small>
-        </div>
-      ),
     },
     {
       ...getDefaultColumnProps("nombre", "Nombre del Paciente", {
@@ -108,46 +92,50 @@ const RequestedStudyColumns = ({ printOrder }: tableProps) => {
       align: "center",
       width: "10%",
       render: (_value, record) => (
+        <>
         <PrintIcon
           key="imprimir"
           onClick={() => {
-            printOrder(record.expedienteId, record.id);
+            printTicket(record.order, record.id);
           }}
         />
+           
+        </>
       ),
     },
   ];
   return columns;
 };
 
-export const RequestedStudyExpandable = ({
-  activity,
+export const ValidationStudyExpandable = ({
+  activiti,
   onChange,
+  viewTicket
 }: expandableProps) => {
-  const nestedColumns: IColumns<IRequestedStudy> = [
+  const nestedColumns: IColumns<IvalidationStudyList> = [
     {
       ...getDefaultColumnProps("clave", "Estudio", {
         width: "30%",
       }),
-      render: (_value, record) => record.clave + " - " + record.nombre,
+      render: (_value, record) => record.study,
     },
     {
       ...getDefaultColumnProps("nombreEstatus", "Estatus", {
         width: "20%",
       }),
-      render: (_value, record) => record.nombreEstatus,
+      render: (_value, record) => record.status ,
     },
     {
       ...getDefaultColumnProps("registro", "Registro", {
         width: "20%",
       }),
-      render: (_value, record) => record.registro,
+      render: (_value, record) => moment(record.registro).format("DD/MM/YYYY-h:mmA"),
     },
     {
       ...getDefaultColumnProps("entrega", "Entrega", {
         width: "20%",
       }),
-      render: (_value, record) => record.entrega,
+      render: (_value, record) =>moment(record.entrega).format("DD/MM/YYYY-h:mmA"),
     },
     {
       key: "Seleccionar",
@@ -157,27 +145,40 @@ export const RequestedStudyExpandable = ({
       width: "10%",
       render: (_value, record) => (
         <>
-          {record.status === status.requestStudy.tomaDeMuestra && (
+          {record.estatus === 4 && (
             <Checkbox
               onChange={(e) => onChange(e, record.id, record.solicitudId)}
-              disabled={!(activity == "register")}
+              disabled={!(activiti == "register")}
             >
             </Checkbox>
           )}
-          {record.status === status.requestStudy.solicitado && (
+          {record.estatus === 5 && (
             <Checkbox
               onChange={(e) => onChange(e, record.id, record.solicitudId)}
-              disabled={!(activity == "cancel")}
+              disabled={!(activiti == "cancel")}
             >
             </Checkbox>
           )}
+          
+         {(record.estatus === 4 || record.estatus === 5) && ( <EyeOutlined
+                style={{marginLeft:"20%"}}
+          key="imprimir"
+          onClick={() => {
+            const sendFiles = {
+              mediosEnvio: ["selectSendMethods"],
+              estudios: [{solicitudId:record.solicitudId,EstudiosId:[{EstudioId:record.id,  }]}],
+            };
+            console.log(sendFiles,"record");
+            viewTicket(sendFiles);
+          }}
+        />)}
         </>
       ),
     },
   ];
 
   return {
-    expandedRowRender: (item: IRequestedStudyList, index: any) => (
+    expandedRowRender: (item: Ivalidationlist, index: any) => (
       <Table
         columns={nestedColumns}
         dataSource={item.estudios}
@@ -191,4 +192,4 @@ export const RequestedStudyExpandable = ({
   };
 };
 
-export default RequestedStudyColumns;
+export default ValidationStudyColumns;

@@ -77,6 +77,7 @@ const ClinicResultsTable = ({
           expandedRowKeys: expandedRowKeys,
         }}
         bordered
+        rowClassName={"row-search"}
       />
     </Fragment>
   );

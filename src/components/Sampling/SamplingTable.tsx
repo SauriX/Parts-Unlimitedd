@@ -37,6 +37,8 @@ import { originOptions, urgencyOptions } from "../../app/stores/optionStore";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../app/util/alerts";
 import PrintIcon from "../../app/common/icons/PrintIcon";
+import SamplinTableStudy from "./SamplinTableStudy";
+import SamplingStudyColumns, { SamplingStudyExpandable } from "./SamplingStudyTable";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -643,30 +645,15 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       </Row>
 
       <Fragment>
-        <div style={{ textAlign: "right", marginBottom: 10 }}>
-          <Button
-            type="primary"
-            onClick={togleRows}
-            style={{ marginRight: 1 }}
-          >
-            {!openRows ? "Abrir tabla" : "Cerrar tabla"}
-          </Button>
-        </div>
-        <Table<IsamplingList>
-          loading={loading}
-          size="small"
-          rowKey={(record) => record.id}
-          columns={columns}
-          pagination={false}
-          dataSource={[...studys]}
-          scroll={{ y: 500 }}
-          //(rowClassName={(item) => (item.claveMedico == "Total" || item.paciente === "Total" ? "Resumen Total" : "")}
-          expandable={{
-            ...expandable,
-            onExpand: onExpand,
-            expandedRowKeys: expandedRowKeys,
-          }}
+        <SamplinTableStudy
+          data={studys}
+          columns={SamplingStudyColumns ({printTicket})}
+          expandable={SamplingStudyExpandable({
+            activiti,
+            onChange,
+          })}
         />
+
       </Fragment>
     </Fragment>
   );

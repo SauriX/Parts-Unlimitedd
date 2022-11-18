@@ -1,62 +1,42 @@
-import { Descriptions, Checkbox, Table, Typography } from "antd";
+import { Descriptions, Checkbox, Table } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import moment from "moment";
 import { useState } from "react";
-import PrintIcon from "../../../app/common/icons/PrintIcon";
+import PrintIcon from "../../app/common/icons/PrintIcon";
 import {
   IColumns,
   ISearch,
   getDefaultColumnProps,
-} from "../../../app/common/table/utils";
-import { IRequestStudy } from "../../../app/models/request";
+} from "../../app/common/table/utils";
+import { IRequestStudy } from "../../app/models/request";
 import {
   IRequestedStudy,
   IRequestedStudyList,
-} from "../../../app/models/requestedStudy";
-import { status } from "../../../app/util/catalogs";
-import { useNavigate } from "react-router-dom";
-const { Link, Text } = Typography;
+} from "../../app/models/requestedStudy";
+import { IsamplingList, IstudySampling } from "../../app/models/sampling";
+import { status } from "../../app/util/catalogs";
 
 type expandableProps = {
-  activity: string;
+  activiti: string;
   onChange: (e: CheckboxChangeEvent, id: number, solicitud: string) => void;
 };
 
 type tableProps = {
-  printOrder: (recordId: string, requestId: string) => Promise<void>;
+  printTicket: (recordId: string, requestId: string) => Promise<void>;
 };
 
-const RequestedStudyColumns = ({ printOrder }: tableProps) => {
+const SamplingStudyColumns = ({ printTicket }: tableProps) => {
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-  const navigate = useNavigate();
-  const columns: IColumns<IRequestedStudyList> = [
+  const columns: IColumns<IsamplingList> = [
     {
       ...getDefaultColumnProps("solicitud", "Clave", {
         searchState,
         setSearchState,
         width: "15%",
       }),
-      render: (_value, record) => (
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <Link
-            onClick={() => {
-              navigate(
-                `/requests/${record.expedienteId}/${record.id}`
-              );
-            }}
-          >
-            {record.solicitud}
-          </Link>
-          <small>
-            <Text type="secondary">
-              <Text strong>{record.clavePatologica}</Text>{" "}
-            </Text>
-          </small>
-        </div>
-      ),
     },
     {
       ...getDefaultColumnProps("nombre", "Nombre del Paciente", {
@@ -111,7 +91,7 @@ const RequestedStudyColumns = ({ printOrder }: tableProps) => {
         <PrintIcon
           key="imprimir"
           onClick={() => {
-            printOrder(record.expedienteId, record.id);
+            printTicket(record.order, record.id);
           }}
         />
       ),
@@ -120,11 +100,11 @@ const RequestedStudyColumns = ({ printOrder }: tableProps) => {
   return columns;
 };
 
-export const RequestedStudyExpandable = ({
-  activity,
+export const SamplingStudyExpandable = ({
+  activiti,
   onChange,
 }: expandableProps) => {
-  const nestedColumns: IColumns<IRequestedStudy> = [
+  const nestedColumns: IColumns<IstudySampling> = [
     {
       ...getDefaultColumnProps("clave", "Estudio", {
         width: "30%",
@@ -135,7 +115,7 @@ export const RequestedStudyExpandable = ({
       ...getDefaultColumnProps("nombreEstatus", "Estatus", {
         width: "20%",
       }),
-      render: (_value, record) => record.nombreEstatus,
+      render: (_value, record) => record.status == 1 ? "Pendiente" : "Toma de muestra",
     },
     {
       ...getDefaultColumnProps("registro", "Registro", {
@@ -157,17 +137,17 @@ export const RequestedStudyExpandable = ({
       width: "10%",
       render: (_value, record) => (
         <>
-          {record.status === status.requestStudy.tomaDeMuestra && (
+          {record.status === 1 && (
             <Checkbox
               onChange={(e) => onChange(e, record.id, record.solicitudId)}
-              disabled={!(activity == "register")}
+              disabled={!(activiti == "register")}
             >
             </Checkbox>
           )}
-          {record.status === status.requestStudy.solicitado && (
+          {record.status === 2 && (
             <Checkbox
               onChange={(e) => onChange(e, record.id, record.solicitudId)}
-              disabled={!(activity == "cancel")}
+              disabled={!(activiti == "cancel")}
             >
             </Checkbox>
           )}
@@ -177,7 +157,7 @@ export const RequestedStudyExpandable = ({
   ];
 
   return {
-    expandedRowRender: (item: IRequestedStudyList, index: any) => (
+    expandedRowRender: (item: IsamplingList, index: any) => (
       <Table
         columns={nestedColumns}
         dataSource={item.estudios}
@@ -191,4 +171,4 @@ export const RequestedStudyExpandable = ({
   };
 };
 
-export default RequestedStudyColumns;
+export default SamplingStudyColumns;

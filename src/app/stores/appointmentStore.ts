@@ -11,6 +11,7 @@ import {
   IAppointmentList,
   IExportForm,
   ISearchAppointment,
+  ISolicitud,
   SearchAppointmentValues,
 } from "../models/appointmen";
 import Study from "../api/study";
@@ -31,6 +32,17 @@ export default class AppoinmentStore {
   studyFilter: IPriceListInfoFilter = {};
   setSearch = (value: ISearchAppointment) => {
     this.search = value;
+  };
+  createsolictud = async (reagent: ISolicitud) => {
+    try {
+      const updatedReagent = await Appointment.createSolicitud(reagent);
+      alerts.success(messages.updated);
+
+      return updatedReagent;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
   };
   access = async () => {
     try {

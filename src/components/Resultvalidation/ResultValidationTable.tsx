@@ -43,35 +43,14 @@ import {
   searchValues,
 } from "../../app/models/resultValidation";
 import moment from "moment";
+import ValidationTableStudy from "./ValidationTableStudy";
+import ValidationStudyColumns, { ValidationStudyExpandable } from "./ValidationStudyTable";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
-const studys: Ivalidationlist[] = [
-  {
-    id: "string",
-    solicitud: "string",
-    nombre: "string",
-    registro: "string",
-    sucursal: "string",
-    edad: "string",
-    sexo: "string",
-    compañia: "string",
-    estudios: [
-      {
-        id: 1,
-        study: "string",
-        area: "string",
-        status: "string",
-        registro: moment(moment.now()),
-        entrega: moment(moment.now()),
-        estatus: 1,
-      },
-    ],
-    order: "string",
-  },
-];
+
 const ResultValidationTable: FC<ProceedingTableProps> = ({
   componentRef,
   printing,
@@ -91,6 +70,8 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     getDepartmentOptions,
     companyOptions,
     getCompanyOptions,
+    studiesOptions,
+    getStudiesOptions,
   } = optionStore;
   const {
     getAll,
@@ -101,6 +82,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     setStudyCont,
     soliCont,
     studyCont,
+    viewTicket
   } = resultValidationStore;
   const { getCity, cityOptions } = locationStore;
   const [searchParams] = useSearchParams();
@@ -124,6 +106,15 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     searchedText: "",
     searchedColumn: "",
   });
+  useEffect(()=>{
+    const readStudy = async ()=>{
+      await getStudiesOptions();
+    } 
+    readStudy();
+  },[getStudiesOptions]);
+  useEffect(()=>{
+    console.log(studiesOptions,"estudios");
+  },[studiesOptions]);
   const togleRows = () => {
     if (openRows) {
       setOpenRows(false);
@@ -207,9 +198,9 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
       setLoading(false);
       alerts.confirm(
         "",
-        `Se han enviado ${ids.length} estudios de ${solicitudesData.length} solicitud a estatus pendiente de manera exitosa `,
+        `Se han enviado ${ids.length} estudios de ${solicitudesData.length} solicitud a estatus validado de manera exitosa `,
         async () => {
-          //await getAll(values);
+          await getAll(values);
         }
       );
       setIds([]);
@@ -253,12 +244,12 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                   {moment(x.entrega).format("DD/MM/YYYY-h:mmA")}
                 </Descriptions.Item>
                 <Descriptions.Item label="" style={{ maxWidth: 30 }}>
-                  {x.status == "1" && activiti == "register" && (
+                  {x.status == "4" && activiti == "register" && (
                     <Checkbox onChange={(e) => onChange(e, x.id, item.id)}>
                       Selecciona
                     </Checkbox>
                   )}
-                  {x.status == "2" && activiti == "cancel" && (
+                  {x.status == "5" && activiti == "cancel" && (
                     <Checkbox onChange={(e) => onChange(e, x.id, item.id)}>
                       Selecciona
                     </Checkbox>
@@ -345,7 +336,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     const reagent = { ...values, ...newValues };
          var data = await getAll(reagent);
          let studios = [];
-         console.log(data, "daata");
+         console.log(reagent, "daata");
          setSoliCont(data?.length!);
          data?.forEach((x) =>
            x.estudios.forEach((x: any) => {
@@ -494,7 +485,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                       <TextInput
                         formProps={{
                           name: "search",
-                          label: "Buscar",
+                          label: "Clave",
                         }}
                       />
                     </Col>
@@ -515,13 +506,13 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                           label: "Estudios",
                         }}
                         multiple
-                        options={originOptions}
+                        options={studiesOptions}
                       ></SelectInput>
                     </Col>
                     <Col span={8}>
                       <SelectInput
                         formProps={{
-                          name: "tipoSolicitud",
+                          name: "tipoSoli",
                           label: "Tipo solicitud",
                         }}
                         multiple
@@ -531,21 +522,21 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                     <Col span={8}>
                       <SelectInput
                         formProps={{
-                          name: "status",
-                          label: "Status",
+                          name: "estatus",
+                          label: "Estatus",
                         }}
                         multiple
                         options={[
                           { value: 0, label: "Todos" },
-                          { value: 1, label: "Pendiente" },
-                          { value: 2, label: "Toma" },
+                          { value: 4, label: "Capturado" },
+                          { value: 5, label: "Validado" },
                         ]}
                       ></SelectInput>
                     </Col>
                     <Col span={8}>
                       <SelectInput
                         formProps={{
-                          name: "departamento",
+                          name: "departament",
                           label: "Departamento",
                         }}
                         multiple
@@ -574,7 +565,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                     </Col>
                     <Col span={8}>
                       <SelectInput
-                        formProps={{ name: "sucursalId", label: "Sucursales" }}
+                        formProps={{ name: "sucursal", label: "Sucursales" }}
                         multiple
                         options={branchCityOptions}
                       />
@@ -661,30 +652,16 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
         </Col>
       </Row>
       <Fragment>
-        <div style={{ textAlign: "right", marginBottom: 10 }}>
-          <Button
-            type="primary"
-            onClick={togleRows}
-            style={{ marginRight: 10 }}
-          >
-            {!openRows ? "Abrir tabla" : "Cerrar tabla"}
-          </Button>
-        </div>
-        <Table<Ivalidationlist>
-          loading={loading}
-          size="small"
-          rowKey={(record) => record.id}
-          columns={columns}
-          pagination={false}
-          dataSource={[...studys]}
-          scroll={{ y: 500 }}
-          //(rowClassName={(item) => (item.claveMedico == "Total" || item.paciente === "Total" ? "Resumen Total" : "")}
-          expandable={{
-            ...expandable,
-            onExpand: onExpand,
-            expandedRowKeys: expandedRowKeys,
-          }}
+        <ValidationTableStudy
+          data={studys}
+          columns={ValidationStudyColumns ({printTicket})}
+          expandable={ValidationStudyExpandable({
+            activiti,
+            onChange
+            ,viewTicket
+          })}
         />
+
       </Fragment>
     </Fragment>
   );

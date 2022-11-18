@@ -4,15 +4,17 @@ import { observer } from "mobx-react-lite";
 import React, { Fragment, useEffect, useState } from "react";
 import { IColumns } from "../../app/common/table/utils";
 import { IRequestedStudyList } from "../../app/models/requestedStudy";
+import { Ivalidationlist } from "../../app/models/resultValidation";
+
 import { useStore } from "../../app/stores/store";
 
 type RequestedStudyTableProps = {
-  data: IRequestedStudyList[];
-  columns: IColumns<IRequestedStudyList>;
-  expandable?: ExpandableConfig<IRequestedStudyList> | undefined;
+  data: Ivalidationlist[];
+  columns: IColumns<Ivalidationlist>;
+  expandable?: ExpandableConfig<Ivalidationlist> | undefined;
 };
 
-const RequestedStudyTable = ({
+const ValidationTableStudy = ({
   data,
   columns,
   expandable,
@@ -37,7 +39,7 @@ const RequestedStudyTable = ({
     }
   };
 
-  const onExpand = (isExpanded: boolean, record: IRequestedStudyList) => {
+  const onExpand = (isExpanded: boolean, record: Ivalidationlist) => {
     let expandRows: string[] = expandedRowKeys;
     if (isExpanded) {
       expandRows.push(record.id);
@@ -64,7 +66,7 @@ const RequestedStudyTable = ({
             </Button>
           </div>
         )}
-      <Table<IRequestedStudyList>
+      <Table<Ivalidationlist>
         loading={loadingStudies}
         size="small"
         rowKey={(record) => record.id}
@@ -77,11 +79,9 @@ const RequestedStudyTable = ({
           onExpand: onExpand,
           expandedRowKeys: expandedRowKeys,
         }}
-        rowClassName={"row-search"}
-        bordered
       />
     </Fragment>
   );
 };
 
-export default observer(RequestedStudyTable);
+export default observer(ValidationTableStudy);
