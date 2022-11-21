@@ -6,37 +6,38 @@ import {
   IQuotationStudyUpdate,
   IQuotationTotal,
 } from "../models/quotation";
-import quotations from "./agent";
+import requests from "./agent";
 
 const Quotation = {
   getQuotations: (filter: IQuotationFilter): Promise<IQuotationInfo[]> =>
-    quotations.post("quotation/filter", filter),
-  getActive: (): Promise<IQuotationInfo[]> =>
-    quotations.get("quotation/active"),
+    requests.post("quotation/filter", filter),
+  getActive: (): Promise<IQuotationInfo[]> => requests.get("quotation/active"),
   getById: (quotationId: string): Promise<IQuotation> =>
-    quotations.get(`quotation/${quotationId}`),
+    requests.get(`quotation/${quotationId}`),
   getGeneral: (quotationId: string): Promise<IQuotationGeneral> =>
-    quotations.get(`quotation/general/${quotationId}`),
+    requests.get(`quotation/general/${quotationId}`),
   getStudies: (quotationId: string): Promise<IQuotationStudyUpdate> =>
-    quotations.get(`quotation/studies/${quotationId}`),
+    requests.get(`quotation/studies/${quotationId}`),
   sendTestEmail: (quotationId: string, email: string): Promise<void> =>
-    quotations.get(`quotation/email/${quotationId}/${email}`),
+    requests.get(`quotation/email/${quotationId}/${email}`),
   sendTestWhatsapp: (quotationId: string, phone: string): Promise<void> =>
-    quotations.get(`quotation/whatsapp/${quotationId}/${phone}`),
+    requests.get(`quotation/whatsapp/${quotationId}/${phone}`),
   create: (quotation: IQuotation): Promise<string> =>
-    quotations.post("quotation", quotation),
+    requests.post("quotation", quotation),
   updateGeneral: (quotation: IQuotationGeneral): Promise<void> =>
-    quotations.put("quotation/general", quotation),
+    requests.put("quotation/general", quotation),
+  assignRecord: (quotationId: string, recordId?: string) =>
+    requests.put(`quotation/assign/${quotationId}/${recordId ?? ""}`, {}),
   updateTotals: (quotation: IQuotationTotal): Promise<void> =>
-    quotations.put("quotation/totals", quotation),
+    requests.put("quotation/totals", quotation),
   updateStudies: (quotation: IQuotationStudyUpdate): Promise<void> =>
-    quotations.post("quotation/studies", quotation),
+    requests.post("quotation/studies", quotation),
   cancelQuotation: (quotationId: string): Promise<void> =>
-    quotations.put(`quotation/cancel/${quotationId}`, {}),
+    requests.put(`quotation/cancel/${quotationId}`, {}),
   deleteStudies: (quotation: IQuotationStudyUpdate): Promise<void> =>
-    quotations.put("quotation/studies/cancel", quotation),
+    requests.put("quotation/studies/cancel", quotation),
   printTicket: (quotationId: string): Promise<void> =>
-    quotations.print(`quotation/ticket/${quotationId}`),
+    requests.print(`quotation/ticket/${quotationId}`),
 };
 
 export default Quotation;

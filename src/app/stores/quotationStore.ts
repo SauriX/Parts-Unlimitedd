@@ -1,7 +1,9 @@
 import { makeAutoObservable, reaction } from "mobx";
 import PriceList from "../api/priceList";
+import Proceding from "../api/proceding";
 import Quotation from "../api/quotation";
 import { IPriceListInfoFilter } from "../models/priceList";
+import { ISearchMedical } from "../models/Proceeding";
 import {
   IQuotation,
   IQuotationFilter,
@@ -289,6 +291,16 @@ export default class QuotationStore {
     }
   };
 
+  getRecords = async (filter: ISearchMedical) => {
+    try {
+      const records = await Proceding.getNow(filter);
+      return records;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return [];
+    }
+  };
+
   sendTestEmail = async (quotationId: string, email: string) => {
     try {
       this.loadingTabContentCount++;
@@ -326,6 +338,20 @@ export default class QuotationStore {
     try {
       this.loadingTabContentCount++;
       await Quotation.updateGeneral(quotation);
+      alerts.success(messages.updated);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    } finally {
+      this.loadingTabContentCount--;
+    }
+  };
+
+  assignRecord = async (quotationId: string, recordId?: string) => {
+    try {
+      this.loadingTabContentCount++;
+      await Quotation.assignRecord(quotationId, recordId);
       alerts.success(messages.updated);
       return true;
     } catch (error: any) {

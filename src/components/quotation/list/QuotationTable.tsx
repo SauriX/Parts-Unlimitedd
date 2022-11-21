@@ -10,9 +10,11 @@ import { useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
-import { IQuotationInfo } from "../../../app/models/quotation";
+import {
+  IQuotationInfo,
+  IQuotationStudyInfo,
+} from "../../../app/models/quotation";
 import moment from "moment";
-import { IRequestStudyInfo } from "../../../app/models/request";
 
 const { Link, Text } = Typography;
 
@@ -64,7 +66,7 @@ const QuotationTable = () => {
       }),
     },
     {
-      ...getDefaultColumnProps("nomprePaciente", "Nombre del paciente", {
+      ...getDefaultColumnProps("paciente", "Paciente", {
         searchState,
         setSearchState,
         width: "15%",
@@ -74,11 +76,11 @@ const QuotationTable = () => {
       ...getDefaultColumnProps("estudios", "Estudios", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "35%",
       }),
-      render: (value: IRequestStudyInfo[]) =>
+      render: (value: IQuotationStudyInfo[]) =>
         value.map((x) => (
-          <Tooltip title={x.nombre}>
+          <Tooltip key={x.id} title={x.nombre}>
             <Tag>{x.clave}</Tag>
           </Tooltip>
         )),
@@ -87,7 +89,7 @@ const QuotationTable = () => {
       ...getDefaultColumnProps("contacto", "Contacto", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: "12%",
       }),
       className: "no-padding-cell",
       render: (_, item) => (
@@ -112,7 +114,7 @@ const QuotationTable = () => {
       dataIndex: "activo",
       title: "Activo",
       align: "center",
-      width: 100,
+      width: "8%",
       render: (value) => (value ? "Sí" : "No"),
     },
   ];

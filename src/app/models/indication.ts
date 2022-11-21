@@ -1,4 +1,5 @@
 import { IStudyList } from "./study";
+
 export interface IIndicationList {
   id: number;
   clave: string;
