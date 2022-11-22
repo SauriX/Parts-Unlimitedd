@@ -334,6 +334,15 @@ export default class QuotationStore {
     }
   };
 
+  convertToRequest = async (quotationId: string) => {
+    try {
+      const id = await Quotation.convertToRequest(quotationId);
+      return id;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
   updateGeneral = async (quotation: IQuotationGeneral) => {
     try {
       this.loadingTabContentCount++;

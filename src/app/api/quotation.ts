@@ -24,6 +24,8 @@ const Quotation = {
     requests.get(`quotation/whatsapp/${quotationId}/${phone}`),
   create: (quotation: IQuotation): Promise<string> =>
     requests.post("quotation", quotation),
+  convertToRequest: (quotationId: string): Promise<string> =>
+    requests.post(`quotation/convert/${quotationId}`, {}),
   updateGeneral: (quotation: IQuotationGeneral): Promise<void> =>
     requests.put("quotation/general", quotation),
   assignRecord: (quotationId: string, recordId?: string) =>
