@@ -237,7 +237,7 @@ export default class ClinicResultsStores {
         clave: x.clave,
         nombre: x.nombre,
         status: x.estatusId,
-        parametros: x.parametros.map((y) => ({
+        parametros: x.parametros.map((y, i) => ({
           id: y.resultadoId,
           estudioId: x.estudioId,
           solicitudId: requestId,
@@ -257,6 +257,7 @@ export default class ClinicResultsStores {
           criticoMaximo: y.criticoMaximo,
           ultimoResultado: y.ultimoResultado,
           deltaCheck: y.deltaCheck,
+          orden: i,
           rango:
             y.criticoMinimo >= parseFloat(y.resultado) ||
             parseFloat(y.resultado) >= y.criticoMaximo,

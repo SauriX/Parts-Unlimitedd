@@ -89,7 +89,9 @@ const IndicationTable = ({ getResult, selectedIndication }: Props) => {
     if (checked && index === -1) {
       setSelectedIndicationKeys((prev) => [...prev, item]);
     } else if (!checked && index > -1) {
-      setSelectedIndicationKeys((prev) => prev.splice(index, 1));
+      const newSelectedIndicationKeys = [...selectedIndicationKeys];
+      newSelectedIndicationKeys.splice(index, 1);
+      setSelectedIndicationKeys(newSelectedIndicationKeys);
     }
   };
 
