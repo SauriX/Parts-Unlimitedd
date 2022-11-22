@@ -20,7 +20,7 @@ interface IProps {
   errors?: any[];
   onClick?: React.MouseEventHandler<HTMLInputElement> | undefined;
   onKeyUp?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
-  onChange?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
+  // onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
 }
 
 const TextInput = ({
@@ -38,8 +38,8 @@ const TextInput = ({
   errors,
   onClick,
   onKeyUp,
-  onChange,
-}: IProps) => {
+}: // onChange,
+IProps) => {
   let ref = useRef<HTMLDivElement>(null);
 
   const [paddingRight, setPaddingRight] = useState(7);
@@ -105,7 +105,7 @@ const TextInput = ({
           placeholder={placeholder ?? itemProps.label?.toString()}
           onClick={onClick}
           onKeyUp={onKeyUp}
-          onChange={onChange}
+          // onChange={onChange}
           maxLength={max ?? undefined}
           style={{
             paddingRight: paddingRight,

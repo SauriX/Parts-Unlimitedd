@@ -14,6 +14,7 @@ import {
 } from "../../app/stores/optionStore";
 import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
+import moment from "moment";
 const { Panel } = Collapse;
 
 const RequestedStudyFilter = () => {
@@ -56,13 +57,13 @@ const RequestedStudyFilter = () => {
 
   return (
     <>
-    <Row justify="end" gutter={[24, 12]} className="filter-buttons">
+      <Row justify="end" gutter={[24, 12]} className="filter-buttons">
         <Col span={24}>
           <Button
             key="clean"
             onClick={(e) => {
-              form.resetFields();
               clearFilter();
+              form.resetFields();
             }}
           >
             Limpiar
@@ -71,7 +72,6 @@ const RequestedStudyFilter = () => {
             key="filter"
             type="primary"
             onClick={(e) => {
-              e.stopPropagation();
               form.submit();
             }}
           >
@@ -79,104 +79,109 @@ const RequestedStudyFilter = () => {
           </Button>
         </Col>
       </Row>
-        <div className="status-container">
-          <Form<IRequestedStudyForm>
-            {...formItemLayout}
-            form={form}
-            name="requestedStudy"
-            onFinish={onFinish}
-            initialValues={formValues}
-            scrollToFirstError
-          >
-            <Row>
-              <Col span={24}>
-                <Row justify="space-between" gutter={[0, 12]}>
-                  <Col span={8}>
-                    <DateRangeInput
-                      formProps={{ label: "Fecha", name: "fecha" }}
-                    />
-                  </Col>
-                  <Col span={8}>
-                    <TextInput
-                      formProps={{
-                        name: "buscar",
-                        label: "Buscar",
-                      }}
-                    />
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
-                      formProps={{
-                        name: "procedencia",
-                        label: "Procedencia",
-                      }}
-                      multiple
-                      options={originOptions}
-                    ></SelectInput>
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
-                      formProps={{
-                        name: "tipoSolicitud",
-                        label: "Tipo solicitud",
-                      }}
-                      multiple
-                      options={urgencyOptions}
-                    ></SelectInput>
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
-                      formProps={{
-                        name: "estatus",
-                        label: "Estatus",
-                      }}
-                      multiple
-                      options={requestedStudyOptions}
-                    ></SelectInput>
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
-                      formProps={{
-                        name: "departamento",
-                        label: "Departamento",
-                      }}
-                      multiple
-                      options={departmentAreaOptions}
-                    ></SelectInput>
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
-                      formProps={{
-                        name: "medicoId",
-                        label: "Médico",
-                      }}
-                      multiple
-                      options={medicOptions}
-                    ></SelectInput>
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
-                      formProps={{ name: "sucursalId", label: "Sucursales" }}
-                      multiple
-                      options={branchCityOptions}
-                    />
-                  </Col>
-                  <Col span={8}>
-                    <SelectInput
-                      formProps={{
-                        name: "compañiaId",
-                        label: "Compañía",
-                      }}
-                      multiple
-                      options={companyOptions}
-                    ></SelectInput>
-                  </Col>
-                </Row>
-              </Col>
-            </Row>
-          </Form>
-        </div>
-        </>
+      <div className="status-container">
+        <Form<IRequestedStudyForm>
+          {...formItemLayout}
+          form={form}
+          name="requestedStudy"
+          onFinish={onFinish}
+          initialValues={{
+            fecha: [
+              moment(Date.now()).utcOffset(0, true),
+              moment(Date.now()).utcOffset(0, true).add(1, "day"),
+            ],
+          }}
+          scrollToFirstError
+        >
+          <Row>
+            <Col span={24}>
+              <Row justify="space-between" gutter={[0, 12]}>
+                <Col span={8}>
+                  <DateRangeInput
+                    formProps={{ label: "Fecha", name: "fecha" }}
+                  />
+                </Col>
+                <Col span={8}>
+                  <TextInput
+                    formProps={{
+                      name: "buscar",
+                      label: "Buscar",
+                    }}
+                  />
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "procedencia",
+                      label: "Procedencia",
+                    }}
+                    multiple
+                    options={originOptions}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "tipoSolicitud",
+                      label: "Tipo solicitud",
+                    }}
+                    multiple
+                    options={urgencyOptions}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "estatus",
+                      label: "Estatus",
+                    }}
+                    multiple
+                    options={requestedStudyOptions}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "departamento",
+                      label: "Departamento",
+                    }}
+                    multiple
+                    options={departmentAreaOptions}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "medicoId",
+                      label: "Médico",
+                    }}
+                    multiple
+                    options={medicOptions}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{ name: "sucursalId", label: "Sucursales" }}
+                    multiple
+                    options={branchCityOptions}
+                  />
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "compañiaId",
+                      label: "Compañía",
+                    }}
+                    multiple
+                    options={companyOptions}
+                  ></SelectInput>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Form>
+      </div>
+    </>
   );
 };
 
