@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import ResultValidation from "../api/resultvalidation";
-import { ISearchValidation, Ivalidationlist } from "../models/resultValidation";
+import { ISearchValidation, Ivalidationlist, searchValues } from "../models/resultValidation";
 import { IUpdate } from "../models/sampling";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -18,7 +18,18 @@ export default class ResultValidationStore {
   studys: Ivalidationlist[] = [];
   studyCont:number=0;
   soliCont:number=0;
-
+  search:ISearchValidation = new searchValues();
+  setSearch=(search:  ISearchValidation)=>{
+    this.search = search;
+  };
+  exportList = async (search:  ISearchValidation) => {
+    try {
+      await ResultValidation.exportList(search);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
   setStudyCont=(cont:number)=>{
     this.studyCont=cont;
   };

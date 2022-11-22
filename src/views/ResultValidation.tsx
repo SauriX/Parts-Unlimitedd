@@ -9,9 +9,9 @@ import SamplingHeader from "../components/Sampling/SamplingHeader";
 import SamplingTable from "../components/Sampling/SamplingTable";
 
 const ResultValidation = () => {
-  const { procedingStore } = useStore();
-   const { /* scopes, access, clearScopes, */ exportList,search } = procedingStore;
-
+  const { resultValidationStore,procedingStore } = useStore();
+   //const { /* scopes, access, clearScopes, */ exportList,search } = procedingStore;
+  const { /* scopes, access, clearScopes, */ exportList,search } = resultValidationStore;
   const [searchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);

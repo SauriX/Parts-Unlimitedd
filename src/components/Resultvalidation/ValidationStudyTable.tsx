@@ -1,4 +1,4 @@
-import { Descriptions, Checkbox, Table } from "antd";
+import { Descriptions, Checkbox, Table, Typography } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import moment from "moment";
 import { useState } from "react";
@@ -17,11 +17,15 @@ import {
 import { Ivalidationlist, IvalidationStudyList } from "../../app/models/resultValidation";
 
 import { status } from "../../app/util/catalogs";
+import { useNavigate } from "react-router";
+const { Link, Text } = Typography;
 
 type expandableProps = {
   activiti: string;
   onChange: (e: CheckboxChangeEvent, id: number, solicitud: string) => void;
   viewTicket: (recordId: any) => Promise<void>;
+  visto: number[],
+  setvisto: React.Dispatch<React.SetStateAction<number[]>>
 };
 
 type tableProps = {
@@ -34,6 +38,7 @@ const ValidationStudyColumns = ({ printTicket }: tableProps) => {
     searchedText: "",
     searchedColumn: "",
   });
+  const navigate = useNavigate();
   const columns: IColumns<Ivalidationlist> = [
     {
       ...getDefaultColumnProps("solicitud", "Clave", {
@@ -41,6 +46,22 @@ const ValidationStudyColumns = ({ printTicket }: tableProps) => {
         setSearchState,
         width: "15%",
       }),
+      render: (_value, record) => (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Link
+            onClick={() => {
+              navigate(
+                `/clinicResultsDetails/${record?.order}/${record?.id}`
+              );
+/*               navigate(
+                `/requests/${record.order}/${record.id}`
+              ); */
+            }}
+          >
+            {record.solicitud}
+          </Link>
+        </div>
+      ),
     },
     {
       ...getDefaultColumnProps("nombre", "Nombre del Paciente", {
@@ -110,8 +131,11 @@ const ValidationStudyColumns = ({ printTicket }: tableProps) => {
 export const ValidationStudyExpandable = ({
   activiti,
   onChange,
-  viewTicket
+  viewTicket,
+  visto,
+  setvisto
 }: expandableProps) => {
+  const [ver, setver]=useState<boolean>(false);
   const nestedColumns: IColumns<IvalidationStudyList> = [
     {
       ...getDefaultColumnProps("clave", "Estudio", {
@@ -145,14 +169,14 @@ export const ValidationStudyExpandable = ({
       width: "10%",
       render: (_value, record) => (
         <>
-          {record.estatus === 4 && (
+          {(record.estatus === 4 && visto.includes(record.id) || (ver && visto.includes(record.id) && record.estatus === 4 )) && (
             <Checkbox
               onChange={(e) => onChange(e, record.id, record.solicitudId)}
               disabled={!(activiti == "register")}
             >
             </Checkbox>
           )}
-          {record.estatus === 5 && (
+          {record.estatus === 5 &&   (
             <Checkbox
               onChange={(e) => onChange(e, record.id, record.solicitudId)}
               disabled={!(activiti == "cancel")}
@@ -160,16 +184,20 @@ export const ValidationStudyExpandable = ({
             </Checkbox>
           )}
           
-         {(record.estatus === 4 || record.estatus === 5) && ( <EyeOutlined
+         {(record.estatus === 4 ) && ( <EyeOutlined
                 style={{marginLeft:"20%"}}
           key="imprimir"
-          onClick={() => {
+          onClick={ async () => {
             const sendFiles = {
               mediosEnvio: ["selectSendMethods"],
               estudios: [{solicitudId:record.solicitudId,EstudiosId:[{EstudioId:record.id,  }]}],
             };
-            console.log(sendFiles,"record");
-            viewTicket(sendFiles);
+            var vistos = visto;
+             vistos.push(record.id)
+            
+           await  viewTicket(sendFiles);
+            setvisto(vistos);
+            setver(!ver)
           }}
         />)}
         </>

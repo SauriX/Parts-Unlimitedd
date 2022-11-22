@@ -12,6 +12,8 @@ const ResultValidation = {
     requests.print  (`ResultValidation/view/list`,listResults),
     getOrderPdf: (recordId: string, requestId: string): Promise<void> =>
     requests.print(`ResultValidation/order/${recordId}/${requestId}`),
+    exportList: (search: ISearchValidation): Promise<void> =>
+    requests.download(`ResultValidation/export/list`, search), //, "Catálogo de Sucursales.xlsx"
 };
 
 export default ResultValidation;
