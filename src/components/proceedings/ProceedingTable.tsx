@@ -94,6 +94,9 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
   }, [getnow]);
   const onfinish = async (values: ISearchMedical) => {
     console.log(values);
+    if (values.fechaNacimiento === null) {
+      delete values.fechaNacimiento;
+    }
     setSearch(values);
     await getnow(values!);
   };
@@ -261,6 +264,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
             <Col span={8}>
               <DateRangeInput
                 formProps={{ label: "Fecha de alta", name: "fechaAlta" }}
+                disableAfterDates={true}
               />
             </Col>
             <Col span={8}>
@@ -298,6 +302,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
                   label: "Fecha nacimiento",
                   name: "fechaNacimiento",
                 }}
+                disableAfterDates={true}
               />
             </Col>
             <Col span={8}>

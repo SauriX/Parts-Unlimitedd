@@ -9,6 +9,7 @@ import messages from "../util/messages";
 import {
   IAppointmentForm,
   IAppointmentList,
+  IConvertToRequest,
   IExportForm,
   ISearchAppointment,
   ISolicitud,
@@ -32,6 +33,17 @@ export default class AppoinmentStore {
   studyFilter: IPriceListInfoFilter = {};
   setSearch = (value: ISearchAppointment) => {
     this.search = value;
+  };
+  convertirASolicitud = async (convert: IConvertToRequest) => {
+    try {
+      const converted = await Appointment.convertirASolicitud(convert);
+      alerts.success(messages.updated);
+
+      return converted;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
   };
   createsolictud = async (reagent: ISolicitud) => {
     try {

@@ -24,7 +24,11 @@ import { DataNode } from "antd/lib/tree";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import ImageButton from "../../../app/common/button/ImageButton";
-import { IRoleForm, RoleFormValues, IRolePermission } from "../../../app/models/role";
+import {
+  IRoleForm,
+  RoleFormValues,
+  IRolePermission,
+} from "../../../app/models/role";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
@@ -50,10 +54,15 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load: printing }) => {
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
   const [permissionsAdded, setPermissionsAdded] = useState<TreeData[]>([]);
-  const [permissionsAvailable, setPermissionsAvailable] = useState<TreeData[]>([]);
+  const [permissionsAvailable, setPermissionsAvailable] = useState<TreeData[]>(
+    []
+  );
 
-  const [permissionsAddedFiltered, setPermissionsAddedFiltered] = useState<TreeData[]>([]);
-  const [permissionsAvailableFiltered, setPermissionsAvailableFiltered] = useState<TreeData[]>([]);
+  const [permissionsAddedFiltered, setPermissionsAddedFiltered] = useState<
+    TreeData[]
+  >([]);
+  const [permissionsAvailableFiltered, setPermissionsAvailableFiltered] =
+    useState<TreeData[]>([]);
   let navigate = useNavigate();
 
   const [values, setValues] = useState<IRoleForm>(new RoleFormValues());
@@ -63,7 +72,10 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load: printing }) => {
   let role: IRoleForm = new RoleFormValues();
 
   useEffect(() => {
-    setTargetKeys(values.permisos?.filter((x) => x.asignado).map((x) => x.id.toString()) ?? []);
+    setTargetKeys(
+      values.permisos?.filter((x) => x.asignado).map((x) => x.id.toString()) ??
+        []
+    );
   }, []);
 
   useEffect(() => {
@@ -104,7 +116,9 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load: printing }) => {
    */
   useEffect(() => {
     if (values.permisos && values.permisos.length > 0) {
-      setTargetKeys(values.permisos.filter((x) => x.asignado).map((x) => x.id.toString()));
+      setTargetKeys(
+        values.permisos.filter((x) => x.asignado).map((x) => x.id.toString())
+      );
     }
   }, [values.permisos]);
 
@@ -167,7 +181,10 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load: printing }) => {
       asignado: targetKeys.includes(x.id.toString()),
     }));
     User.permisos = permissions;
-    if (!User.permisos || User.permisos.filter((x) => x.asignado).length === 0) {
+    if (
+      !User.permisos ||
+      User.permisos.filter((x) => x.asignado).length === 0
+    ) {
       alerts.warning(messages.emptyPermissions);
       setLoading(false);
       return;
@@ -185,10 +202,15 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load: printing }) => {
     }
   };
   const onDeselectParent = (key: string | number, children: DataNode[]) => {
-    setSelectedKeys(selectedKeys.filter((x) => !children.map((y) => y.key).includes(x)));
+    setSelectedKeys(
+      selectedKeys.filter((x) => !children.map((y) => y.key).includes(x))
+    );
   };
   const onSelectParent = (key: string | number, children: DataNode[]) => {
-    setSelectedKeys([...selectedKeys, ...children.map((y) => y.key.toString())]);
+    setSelectedKeys([
+      ...selectedKeys,
+      ...children.map((y) => y.key.toString()),
+    ]);
   };
   const actualUser = () => {
     if (id) {
@@ -201,7 +223,9 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load: printing }) => {
     const user = roles[index];
 
     navigate(
-      `/roles/${user?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search") ?? "all"}`
+      `/roles/${user?.id}?mode=${searchParams.get("mode")}&search=${
+        searchParams.get("search") ?? "all"
+      }`
     );
   };
   return (
@@ -247,7 +271,11 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load: printing }) => {
               title="Editar"
               image="editar"
               onClick={() => {
-                navigate(`/roles/${id}?mode=edit&search=${searchParams.get("search") ?? "all"}`);
+                navigate(
+                  `/roles/${id}?mode=edit&search=${
+                    searchParams.get("search") ?? "all"
+                  }`
+                );
               }}
             />
           </Col>
@@ -270,10 +298,12 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load: printing }) => {
             name="rol"
             onFinish={onFinish}
             scrollToFirstError
+            initialValues={values}
             onFieldsChange={() => {
               setDisabled(
                 !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length).length > 0
+                  form.getFieldsError().filter(({ errors }) => errors.length)
+                    .length > 0
               );
             }}
           >
@@ -324,21 +354,31 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load: printing }) => {
                 }}
                 rowKey={(x) => x.id.toString()}
                 titles={[
-                  <Tooltip title="Permisos que pueden ser asignados">Disponibles</Tooltip>,
-                  <Tooltip title="Permisos asignados al tipo de usuario">Agregados</Tooltip>,
+                  <Tooltip title="Permisos que pueden ser asignados">
+                    Disponibles
+                  </Tooltip>,
+                  <Tooltip title="Permisos asignados al tipo de usuario">
+                    Agregados
+                  </Tooltip>,
                 ]}
                 filterOption={filterOption}
                 targetKeys={targetKeys}
                 selectedKeys={selectedKeys}
                 onChange={onChange}
-                onSelectChange={(sourceSelectedKeys: string[], targetSelectedKeys: string[]) => {
+                onSelectChange={(
+                  sourceSelectedKeys: string[],
+                  targetSelectedKeys: string[]
+                ) => {
                   onSelectChange(sourceSelectedKeys, targetSelectedKeys);
                   setDisabled(false);
                 }}
                 disabled={CheckReadOnly()}
               >
                 {({ direction, onItemSelect, selectedKeys, filteredItems }) => {
-                  const data = direction === "left" ? permissionsAvailableFiltered : permissionsAddedFiltered;
+                  const data =
+                    direction === "left"
+                      ? permissionsAvailableFiltered
+                      : permissionsAddedFiltered;
                   const checkedKeys = [...selectedKeys];
                   return (
                     <Tree

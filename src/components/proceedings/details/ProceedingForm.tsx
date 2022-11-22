@@ -31,7 +31,7 @@ import {
   getDefaultColumnProps,
   IColumns,
 } from "../../../app/common/table/utils";
-import { IOptions } from "../../../app/models/shared";
+import { IFormError, IOptions } from "../../../app/models/shared";
 import DatosFiscalesForm from "./DatosFiscalesForm";
 import Concidencias from "./Concidencias";
 import {
@@ -51,9 +51,15 @@ import {
   IAppointmentList,
   ISearchAppointment,
   ISolicitud,
+  IConvertToRequest,
   SearchAppointmentValues,
 } from "../../../app/models/appointmen";
-import { IQuotation, IQuotationFilter, IQuotationGeneral, IQuotationInfo } from "../../../app/models/quotation";
+import {
+  IQuotation,
+  IQuotationFilter,
+  IQuotationGeneral,
+  IQuotationInfo,
+} from "../../../app/models/quotation";
 
 type ProceedingFormProps = {
   id: string;
@@ -88,7 +94,8 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     sucursal,
     updateDom,
     updateLab,
-    createsolictud
+    createsolictud,
+    convertirASolicitud,
   } = appointmentStore;
   // const { createsolictud } = quotationStore;
   const { loadingRequests, requests, getRequests: getByFilter } = requestStore;
@@ -120,6 +127,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   const [values, setValues] = useState<IProceedingForm>(
     new ProceedingFormValues()
   );
+  const [errors, setErrors] = useState<IFormError[]>([]);
   const { getColoniesByZipCode } = locationStore;
   const { openModal, closeModal } = modalStore;
   const [colonies, setColonies] = useState<IOptions[]>([]);
@@ -129,38 +137,41 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     setSearchParams(searchParams);
     navigate(`/${views.proceeding}?${searchParams}`);
     clearTax();
-    closeModal()
+    closeModal();
   };
-  const convertSolicitud = (dataC:IAppointmentForm ) => {
-     var request:ISolicitud = {
-       Id: dataC.id,
-       ExpedienteId: dataC.expedienteid!,
+  const convertSolicitud = (dataC: IAppointmentForm) => {
+    var request: ISolicitud = {
+      Id: dataC.id,
+      ExpedienteId: dataC.expedienteid!,
       SucursalId: profile?.sucursal!,
-       Clave: dataC.nomprePaciente,
-       ClavePatologica: "",
-       UsuarioId: "00000000-0000-0000-0000-000000000000",
-       General: {
-         solicitudId: "00000000-0000-0000-0000-000000000000",
-         expedienteId: dataC.expedienteid!,
-         procedencia: 0,
-         compañiaId: dataC.generales?.compañia!,
-         medicoId: dataC.generales?.medico!,
-         afiliacion: "",
-         urgencia: 0,
-         metodoEnvio: [],
-         correo: dataC.generales?.email!,
-         whatsapp: dataC.generales?.whatssap!,
-         observaciones: dataC.generales?.observaciones!,
-       },
-       Estudios: dataC.estudy!,
-     };
-     createsolictud(request);
+      Clave: dataC.nomprePaciente,
+      ClavePatologica: "",
+      UsuarioId: "00000000-0000-0000-0000-000000000000",
+      General: {
+        solicitudId: "00000000-0000-0000-0000-000000000000",
+        expedienteId: dataC.expedienteid!,
+        procedencia: 0,
+        compañiaId: dataC.generales?.compañia!,
+        medicoId: dataC.generales?.medico!,
+        afiliacion: "",
+        urgencia: 0,
+        metodoEnvio: [],
+        correo: dataC.generales?.email!,
+        whatsapp: dataC.generales?.whatssap!,
+        observaciones: dataC.generales?.observaciones!,
+      },
+      Estudios: dataC.estudy!,
+    };
+    createsolictud(request);
   };
-  const convertSolicitudCot = (dataC:IQuotationInfo,dataG:IQuotationGeneral ) => {
-    var request:ISolicitud = {
+  const convertSolicitudCot = (
+    dataC: IQuotationInfo,
+    dataG: IQuotationGeneral
+  ) => {
+    var request: ISolicitud = {
       Id: dataC.cotizacionId,
       ExpedienteId: values.expediente,
-     SucursalId: profile?.sucursal!,
+      SucursalId: profile?.sucursal!,
       Clave: dataC.paciente,
       ClavePatologica: "",
       UsuarioId: "00000000-0000-0000-0000-000000000000",
@@ -180,7 +191,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       Estudios: [],
     };
     createsolictud(request);
- };
+  };
   const clearLocation = () => {
     form.setFieldsValue({
       estado: undefined,
@@ -193,11 +204,11 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   useEffect(() => {
     const readExpedinte = async (id: string) => {
       setLoading(true);
-      
+
       var expediente = await getById(id);
       var searchQ: IQuotationFilter = {
-        expediente : expediente?.expediente
-      }
+        expediente: expediente?.expediente,
+      };
       var searchC: ISearchAppointment = {
         expediente: expediente?.expediente!,
         nombre: "",
@@ -271,7 +282,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     if (m < 0 || (m === 0 && hoy.getDate() < cumpleanos.getDate())) {
       edad--;
     }
-    form.setFieldsValue({ edad: edad });
+    // form.setFieldsValue({ edad: edad });
     return edad;
   };
 
@@ -286,7 +297,8 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     }
     if (field == "fechaNacimiento") {
       const edad = changedValues[field];
-      calcularEdad(edad);
+      // calcularEdad(edad);
+      form.setFieldsValue({ edad: calcularEdad(edad) });
     }
     if (field === "cp") {
       const zipCode = changedValues[field] as string;
@@ -337,7 +349,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     const reagent = { ...values, ...newValues };
 
     if (reagent.nombre == "" || reagent.apellido == "" || reagent.sexo == "") {
-      alerts.warning("El nombre y sexo no pueden estar vacios");
+      alerts.warning("El nombre y sexo no pueden estar vacíos");
     }
     if (coincidencia.length > 0 && !reagent.id!) {
       openModal({
@@ -506,7 +518,12 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           onClick={async () => {
             var cotizacion = await getByIdQ(item.cotizacionId);
             console.log(cotizacion);
-            convertSolicitudCot(item,cotizacion!);
+            convertSolicitudCot(item, cotizacion!);
+            // const convert: IConvertToRequest = {
+            //   id: item.cotizacionId,
+            //   type: "Cotizacion",
+            // };
+            // convertirASolicitud(convert);
           }}
         >
           Convertir a solicitud
@@ -684,9 +701,19 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           title=""
           onClick={async () => {
             if (item.type == "laboratorio") {
+              // const convert: IConvertToRequest = {
+              //   id: item.id,
+              //   type: "Laboratorio",
+              // };
+              // convertirASolicitud(convert);
               var citas = await getByIdLab(item.id);
               convertSolicitud(citas!);
             } else {
+              // const convert: IConvertToRequest = {
+              //   id: item.id,
+              //   type: "Dom",
+              // };
+              // convertirASolicitud(convert);
               var citas = await getByIdDom(item.id);
               convertSolicitud(citas!);
             }
@@ -757,8 +784,12 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
             onValuesChange={onValuesChange}
             form={form}
             size="small"
-            onFinishFailed={(error) => {
-              console.log(error);
+            onFinishFailed={({ errorFields }) => {
+              const errors = errorFields.map((x) => ({
+                name: x.name[0].toString(),
+                errors: x.errors,
+              }));
+              setErrors(errors);
             }}
           >
             <Row gutter={[0, 12]}>
@@ -769,6 +800,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   wrapperCol={{ span: 20 }}
                   className="no-error-text"
                   help=""
+                  required
                 >
                   <Input.Group>
                     <Row gutter={8}>
@@ -782,6 +814,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           max={500}
                           showLabel
                           readonly={readonly}
+                          required
                         />
                       </Col>
                       <Col span={12}>
@@ -794,6 +827,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           max={500}
                           showLabel
                           readonly={readonly}
+                          required
                         />
                       </Col>
                     </Row>
@@ -808,9 +842,9 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     labelCol: { span: 6 },
                     wrapperCol: { span: 18 },
                   }}
-                  max={500}
                   type="email"
-                  readonly={readonly}
+                  max={100}
+                  errors={errors.find((x) => x.name === "correo")?.errors}
                 />
               </Col>
               <Col span={4}>
@@ -820,7 +854,11 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     label: "Exp",
                   }}
                   max={500}
-                  readonly={readonly}
+                  // readonly={readonly}
+                  readonly={
+                    searchParams.get("mode") == "edit" ||
+                    searchParams.get("mode") == "readonly"
+                  }
                 />
               </Col>
               <Col span={4}>
@@ -836,6 +874,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     { label: "M", value: "M" },
                   ]}
                   readonly={readonly}
+                  required
                 />
               </Col>
               <Col span={8}>
@@ -846,7 +885,9 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     labelCol: { span: 12 },
                     wrapperCol: { span: 12 },
                   }}
+                  disableAfterDates={true}
                   readonly={readonly}
+                  required
                 />
               </Col>
               <Col span={4}>
@@ -860,6 +901,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   max={130}
                   suffix="años"
                   readonly={readonly}
+                  required
                 />
               </Col>
               <Col span={8}>
@@ -879,8 +921,12 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                             label: "Teléfono",
                             noStyle: true,
                           }}
-                          max={500}
+                          max={10}
+                          // min={10}
                           showLabel
+                          errors={
+                            errors.find((x) => x.name === "telefono")?.errors
+                          }
                           readonly={readonly}
                         />
                       </Col>
@@ -891,8 +937,12 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                             label: "Celular",
                             noStyle: true,
                           }}
-                          max={500}
+                          max={10}
+                          // min={5}
                           showLabel
+                          errors={
+                            errors.find((x) => x.name === "celular")?.errors
+                          }
                           readonly={readonly}
                         />
                       </Col>
