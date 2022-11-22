@@ -1,5 +1,5 @@
 import "./css/changeStatus.less";
-import { Button, Col, Collapse, Form, Row } from "antd";
+import { Button, Col, Collapse, Form, Input, Row } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
@@ -15,6 +15,7 @@ import {
 import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 import moment from "moment";
+import { IOptions } from "../../app/models/shared";
 const { Panel } = Collapse;
 
 const RequestedStudyFilter = () => {
@@ -35,6 +36,10 @@ const RequestedStudyFilter = () => {
   const [form] = useForm();
   const [loading, setLoading] = useState(false);
 
+  const selectedCity = Form.useWatch("ciudad", form);
+  const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
+  const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
+
   useEffect(() => {
     getBranchCityOptions();
     getMedicOptions();
@@ -46,6 +51,19 @@ const RequestedStudyFilter = () => {
     getCompanyOptions,
     getDepartmentAreaOptions,
   ]);
+
+  useEffect(() => {
+    setCityOptions(
+      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [branchCityOptions]);
+
+  useEffect(() => {
+    setBranchOptions(
+      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+    );
+    form.setFieldValue("sucursalId", []);
+  }, [branchCityOptions, form, selectedCity]);
 
   const onFinish = async (newFormValues: IRequestedStudyForm) => {
     setLoading(true);
@@ -88,7 +106,7 @@ const RequestedStudyFilter = () => {
           initialValues={{
             fecha: [
               moment(Date.now()).utcOffset(0, true),
-              moment(Date.now()).utcOffset(0, true).add(1, "day"),
+              moment(Date.now()).utcOffset(0, true),
             ],
           }}
           scrollToFirstError
@@ -160,11 +178,33 @@ const RequestedStudyFilter = () => {
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
-                  <SelectInput
-                    formProps={{ name: "sucursalId", label: "Sucursales" }}
-                    multiple
-                    options={branchCityOptions}
-                  />
+                  <Form.Item label="Sucursal" className="no-error-text" help="">
+                    <Input.Group>
+                      <Row gutter={8}>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "ciudad",
+                              label: "Ciudad",
+                              noStyle: true,
+                            }}
+                            options={cityOptions}
+                          />
+                        </Col>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "sucursalId",
+                              label: "Sucursales",
+                              noStyle: true,
+                            }}
+                            multiple
+                            options={branchOptions}
+                          />
+                        </Col>
+                      </Row>
+                    </Input.Group>
+                  </Form.Item>
                 </Col>
                 <Col span={8}>
                   <SelectInput
