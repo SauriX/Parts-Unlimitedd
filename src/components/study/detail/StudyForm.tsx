@@ -389,11 +389,12 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   };
 
   const deleteParameter = () => {
-    const filterList = parameterSelected.filter(
-      (x) => !selectedRowKeysp.includes(x.id)
+    const filterList = parameterSelectedSource.filter(
+      (x) => !selectedRowKeysp.includes(x.index!)
     );
-    setParameterSelected(filterList);
+    setParameterSelectedSource(filterList);
     setSelectedRowKeysp([]);
+    console.log("Parametros", parameterSelected)
   };
 
   const deleteIndicacion = () => {
@@ -444,7 +445,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
         oldIndex,
         newIndex
       ).filter((el: IParameterList) => !!el);
-      console.log("Sorted items: ", newData);
       setParameterSelectedSource(newData);
     }
   };
@@ -468,7 +468,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     const index = parameterSelectedSource.findIndex(
       (x) => x.index === restProps["data-row-key"]
     );
-    console.log(index);
     return <SortableItem index={index} {...restProps} />;
   };
 
