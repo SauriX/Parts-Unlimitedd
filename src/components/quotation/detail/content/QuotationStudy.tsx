@@ -91,7 +91,7 @@ const QuotationStudy = () => {
       render: (value) => <Link>{value}</Link>,
     },
     {
-      ...getDefaultColumnProps("estudios", "Estudios", {
+      ...getDefaultColumnProps("nombre", "Estudios", {
         searchState,
         setSearchState,
         width: 200,

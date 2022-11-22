@@ -56,7 +56,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   printing,
 }) => {
   const { procedingStore, optionStore, locationStore, samplig,resultValidationStore } = useStore();
-  const { expedientes, getnow, setSearch } = procedingStore;
+  const { expedientes, getnow, } = procedingStore;
   const {
     branchCityOptions,
     getBranchCityOptions,
@@ -72,6 +72,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     getCompanyOptions,
     studiesOptions,
     getStudiesOptions,
+    
   } = optionStore;
   const {
     getAll,
@@ -82,7 +83,8 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     setStudyCont,
     soliCont,
     studyCont,
-    viewTicket
+    viewTicket,
+    setSearch
   } = resultValidationStore;
   const { getCity, cityOptions } = locationStore;
   const [searchParams] = useSearchParams();
@@ -96,6 +98,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   const [expandable, setExpandable] =
     useState<ExpandableConfig<Ivalidationlist>>();
   const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
+  const [visto, setvisto] = useState<number[]>([]);
   const hasFooterRow = true;
   const [activar,setActivar]=useState<boolean>(false);
   const [loading, setLoading] = useState(false);
@@ -332,8 +335,9 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   }, [activiti]);
   const onFinish = async (newValues: ISearchValidation) => {
     setLoading(true);
-
+    
     const reagent = { ...values, ...newValues };
+    setSearch(reagent);
          var data = await getAll(reagent);
          let studios = [];
          console.log(reagent, "daata");
@@ -593,7 +597,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
             type={activiti == "register" ? "primary" : "ghost"}
             onClick={register}
           >
-            Registrar Toma
+            Registrar Validación
           </Button>
           <Button
             style={{
@@ -604,7 +608,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
             type={activiti == "cancel" ? "primary" : "ghost"}
             onClick={cancel}
           >
-            Cancelar Registro
+            Cancelar Validación
           </Button>
         </Col>
         <Col md={13}></Col>
@@ -653,12 +657,15 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
       </Row>
       <Fragment>
         <ValidationTableStudy
+        
           data={studys}
           columns={ValidationStudyColumns ({printTicket})}
           expandable={ValidationStudyExpandable({
             activiti,
             onChange
-            ,viewTicket
+            ,viewTicket,
+            visto,
+            setvisto
           })}
         />
 

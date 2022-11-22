@@ -1,7 +1,5 @@
 import { Button, Col, Form, Row, Space, Spin, Tabs } from "antd";
-import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import { useEffect, useState } from "react";
 import { IQuotationGeneral } from "../../../app/models/quotation";
 import { useStore } from "../../../app/stores/store";
@@ -17,23 +15,27 @@ const { TabPane } = Tabs;
 
 type QuotationTabProps = {
   branchId: string | undefined;
+  recordId: string | undefined;
+  setRecordId: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
 type keys = "general" | "studies" | "indications" | "assignment";
 
-const QuotationTab = ({ branchId }: QuotationTabProps) => {
-  const { quotationStore, procedingStore, loyaltyStore } = useStore();
+const QuotationTab = ({
+  branchId,
+  recordId,
+  setRecordId,
+}: QuotationTabProps) => {
+  const { quotationStore } = useStore();
   const {
     quotation,
-    studyFilter,
     studyUpdate,
     getStudies,
     updateGeneral,
     updateStudies,
+    assignRecord,
     cancelQuotation,
   } = quotationStore;
-  const { activateWallet, getById } = procedingStore;
-  const { getActive, getByDate } = loyaltyStore;
 
   const [formGeneral] = Form.useForm<IQuotationGeneral>();
 
@@ -47,10 +49,6 @@ const QuotationTab = ({ branchId }: QuotationTabProps) => {
     }
   };
 
-  useEffect(() => {
-    getActive();
-  }, [getActive]);
-
   const submit = async () => {
     let ok = true;
 
@@ -58,6 +56,9 @@ const QuotationTab = ({ branchId }: QuotationTabProps) => {
       ok = await submitGeneral(formGeneral);
     } else if (currentKey === "studies") {
       ok = await updateStudies(studyUpdate);
+    } else if (currentKey === "assignment") {
+      console.log(recordId);
+      ok = await assignRecord(quotation!.cotizacionId, recordId);
     }
 
     return ok;
@@ -77,9 +78,10 @@ const QuotationTab = ({ branchId }: QuotationTabProps) => {
 
   useEffect(() => {
     if (quotation) {
+      setRecordId(quotation.expedienteId);
       getStudies(quotation.cotizacionId);
     }
-  }, [getStudies, quotation]);
+  }, [getStudies, quotation, setRecordId]);
 
   const operations = (
     <Space>
@@ -110,7 +112,9 @@ const QuotationTab = ({ branchId }: QuotationTabProps) => {
     } else if (tabName === "indications") {
       component = <QuotationIndication />;
     } else if (tabName === "assignment") {
-      component = <QuotationAssignment />;
+      component = (
+        <QuotationAssignment recordId={recordId} setRecordId={setRecordId} />
+      );
     }
 
     return (
