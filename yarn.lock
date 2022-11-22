@@ -2729,7 +2729,7 @@ antd-img-crop@^4.2.3:
   dependencies:
     react-easy-crop "^4.4.2"
 
-antd@^4.24.1:
+antd@4.24.1:
   version "4.24.1"
   resolved "https://registry.yarnpkg.com/antd/-/antd-4.24.1.tgz#c002a150fc3f828146f8b0df11ccc1210a824c61"
   integrity sha512-YzHOODx3kbgUKQ7FouuukkkWzLGnbAjIxN6VShOnzOiRWe8EHo7wXyM8De0cASjw/8+SmrqyyK0np+ohQ7WntQ==
