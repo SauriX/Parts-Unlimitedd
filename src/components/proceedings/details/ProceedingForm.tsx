@@ -60,6 +60,7 @@ import {
   IQuotationGeneral,
   IQuotationInfo,
 } from "../../../app/models/quotation";
+import { toJS } from "mobx";
 
 type ProceedingFormProps = {
   id: string;
@@ -85,6 +86,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     appointmentStore,
     quotationStore,
   } = useStore();
+  const { getQuotations, quotations, convertToRequest } = quotationStore;
   const {
     getAllDom,
     getAllLab,
@@ -221,6 +223,9 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       SetCitas(citasall!);
       await getAllQ(searchQ);
       await getByFilter({
+        expediente: expediente?.expediente,
+      });
+      await getQuotations({
         expediente: expediente?.expediente,
       });
       const location = await getColoniesByZipCode(expediente?.cp!);
@@ -506,9 +511,9 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       ),
     },
     {
-      key: "editar",
+      key: "convertir",
       dataIndex: "id",
-      title: "Editar",
+      title: "Convertir",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (_value, item) => (
@@ -516,14 +521,15 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           type="primary"
           title=""
           onClick={async () => {
-            var cotizacion = await getByIdQ(item.cotizacionId);
-            console.log(cotizacion);
-            convertSolicitudCot(item, cotizacion!);
-            // const convert: IConvertToRequest = {
-            //   id: item.cotizacionId,
-            //   type: "Cotizacion",
-            // };
-            // convertirASolicitud(convert);
+            console.log("item", toJS(item));
+            convertToRequest(item.cotizacionId);
+            getByFilter({
+              expediente: item?.expediente,
+            });
+
+            // var cotizacion = await getByIdQ(item.cotizacionId);
+            // console.log(cotizacion);
+            // convertSolicitudCot(item, cotizacion!);
           }}
         >
           Convertir a solicitud
@@ -1162,7 +1168,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 size="small"
                 rowKey={(record) => record.clave}
                 columns={columnsP}
-                dataSource={quotatios}
+                dataSource={quotations}
                 /*    pagination={defaultPaginationProperties} */
                 sticky
                 scroll={{
