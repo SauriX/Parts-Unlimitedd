@@ -53,18 +53,17 @@ const SamplinTableStudy = ({
 
   return (
     <Fragment>
-      {data.length > 0 &&
-        (
-          <div style={{ textAlign: "right", marginBottom: 10 }}>
-            <Button
-              type="primary"
-              onClick={toggleRow}
-              style={{ marginRight: 10 }}
-            >
-              {!openRows ? "Abrir tabla" : "Cerrar tabla"}
-            </Button>
-          </div>
-        )}
+      {data.length > 0 && (
+        <div style={{ textAlign: "right", marginBottom: 10 }}>
+          <Button
+            type="primary"
+            onClick={toggleRow}
+            style={{ marginRight: 10 }}
+          >
+            {!openRows ? "Abrir tabla" : "Cerrar tabla"}
+          </Button>
+        </div>
+      )}
       <Table<IsamplingList>
         loading={loadingStudies}
         size="small"
@@ -72,6 +71,7 @@ const SamplinTableStudy = ({
         columns={columns}
         pagination={false}
         dataSource={[...data]}
+        rowClassName={"row-search"}
         scroll={{ y: 450 }}
         expandable={{
           ...expandable,

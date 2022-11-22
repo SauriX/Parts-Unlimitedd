@@ -15,6 +15,8 @@ interface IProps {
   isGroup?: boolean;
   errors?: any[];
   disabledDates?: (current: moment.Moment) => boolean;
+  disableBeforeDates?: boolean;
+  disableAfterDates?: boolean;
 }
 
 const DateInput = ({
@@ -27,6 +29,8 @@ const DateInput = ({
   isGroup,
   errors,
   disabledDates,
+  disableBeforeDates,
+  disableAfterDates,
 }: IProps) => {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -61,7 +65,12 @@ const DateInput = ({
   // function disabledDate(current: moment.Moment) {
   //   return current.isBefore(moment(), "day");
   // }
-
+  function disabledBeforeDate(current: moment.Moment) {
+    return disableBeforeDates ? current.isBefore(moment(), "day") : false;
+  }
+  function disabledAfterDate(current: moment.Moment) {
+    return disableAfterDates ? current.isAfter(moment(), "day") : false;
+  }
   return (
     <div className="custom-input">
       <Form.Item
@@ -74,7 +83,14 @@ const DateInput = ({
         className="no-error-text"
       >
         <DatePicker
-          disabledDate={disabledDates}
+          // disabledDate={disabledDates}
+          disabledDate={
+            disableAfterDates
+              ? disabledAfterDate
+              : disableBeforeDates
+              ? disabledBeforeDate
+              : disabledDates
+          }
           disabled={readonly}
           format="DD/MM/YYYY"
           style={{

@@ -75,4 +75,5 @@ export type imagesType =
   | "segruta"
   | "worklist"
   | "validacion"
-  | "massSearch";
+  | "massSearch"
+  | "enviar-datos";

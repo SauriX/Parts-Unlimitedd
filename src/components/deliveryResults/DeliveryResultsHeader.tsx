@@ -26,7 +26,7 @@ const DeliveryResultsHeader: FC<DeliveryResultsHeaderProps> = ({
         title={
           <HeaderTitle
             title="Búsqueda y envío de captura de resultados"
-            image="massSearch"
+            image="enviar-datos"
           />
         }
         className="header-container"

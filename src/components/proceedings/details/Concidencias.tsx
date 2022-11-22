@@ -9,6 +9,7 @@ import {
   Row,
   Select,
   Table,
+  Typography,
 } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {
@@ -26,6 +27,8 @@ import { observer } from "mobx-react-lite";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import views from "../../../app/util/view";
 import { IProceedingList } from "../../../app/models/Proceeding";
+
+const { Title } = Typography;
 
 type ProceedingTableProps = {
   printing: boolean;
@@ -152,34 +155,36 @@ const Coincidencias: FC<ProceedingTableProps> = ({
         rowKey={(record) => record.id}
         columns={columns}
         dataSource={expedientes}
-        pagination={defaultPaginationProperties}
+        pagination={false}
+        // pagination={defaultPaginationProperties}
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />
       <div style={{ display: "none" }}>{<PriceListTablePrint />}</div>
-      <Row>
+      <Row style={{ marginTop: 10 }}>
         <Col md={24} style={{ textAlign: "center" }}>
-          <h1>¿Desea continuar con el alta?</h1>
+          <Title level={4}>¿Desea continuar con el alta?</Title>
         </Col>
         <Col md={8} style={{ textAlign: "center" }}></Col>
         <Col md={4} style={{ textAlign: "center" }}>
           <Button
-            style={{ backgroundColor: "#002060", color: "white" }}
-            onClick={() => {
-              handle();
-            }}
-          >
-            Aceptar
-          </Button>
-        </Col>
-        <Col md={4} style={{ textAlign: "center" }}>
-          <Button
-            style={{ backgroundColor: "#9A0000", color: "white" }}
+            // style={{ backgroundColor: "#9A0000", color: "white" }}
             onClick={() => {
               closeModal();
             }}
           >
             Cancelar
+          </Button>
+        </Col>
+        <Col md={4} style={{ textAlign: "center" }}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            onClick={() => {
+              handle();
+            }}
+          >
+            Aceptar
           </Button>
         </Col>
       </Row>
