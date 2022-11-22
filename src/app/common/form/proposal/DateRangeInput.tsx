@@ -14,6 +14,9 @@ interface IProps {
   style?: React.CSSProperties;
   isGroup?: boolean;
   errors?: any[];
+  disabledDates?: (current: moment.Moment) => boolean;
+  disableBeforeDates?: boolean;
+  disableAfterDates?: boolean;
 }
 
 const DateRangeInput = ({
@@ -25,6 +28,9 @@ const DateRangeInput = ({
   style,
   isGroup,
   errors,
+  disabledDates,
+  disableBeforeDates,
+  disableAfterDates,
 }: IProps) => {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -56,8 +62,11 @@ const DateRangeInput = ({
     });
   }
 
-  function disabledDate(current: moment.Moment) {
-    return current.isBefore(moment(), "day");
+  function disabledBeforeDate(current: moment.Moment) {
+    return disableBeforeDates ? current.isBefore(moment(), "day") : false;
+  }
+  function disabledAfterDate(current: moment.Moment) {
+    return disableAfterDates ? current.isAfter(moment(), "day") : false;
   }
 
   return (
@@ -72,7 +81,13 @@ const DateRangeInput = ({
         className="no-error-text"
       >
         <DatePicker.RangePicker
-          // disabledDate={disabledDate}
+          disabledDate={
+            disableAfterDates
+              ? disabledAfterDate
+              : disableBeforeDates
+              ? disabledBeforeDate
+              : disabledDates
+          }
           disabled={readonly}
           format="DD/MM/YYYY"
           style={{

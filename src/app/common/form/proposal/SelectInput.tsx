@@ -17,8 +17,9 @@ interface IProps {
   showLabel?: boolean;
   errors?: any[];
   onChange?: (value: any, option: IOptions | IOptions[]) => void;
-  defaultValue?:any;
-  value?:any;
+  defaultValue?: any;
+  value?: any;
+  showArrow?: boolean;
 }
 
 const SelectInput = ({
@@ -34,8 +35,9 @@ const SelectInput = ({
   showLabel,
   errors,
   onChange,
-  defaultValue, 
-  value
+  defaultValue,
+  value,
+  showArrow,
 }: IProps) => {
   let rules: Rule[] = [];
 
@@ -64,12 +66,13 @@ const SelectInput = ({
             option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
           }
           allowClear
+          showArrow={showArrow ?? true}
           options={options}
           disabled={readonly}
           maxTagCount={"responsive"}
           style={{ width: width ?? "100%" }}
           defaultValue={defaultValue}
-        value={value}
+          value={value}
         ></Select>
       </Form.Item>
       {/* {(!!suffix || isGroup || !!errors) && ( */}

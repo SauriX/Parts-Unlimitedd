@@ -14,16 +14,17 @@ type UrlParams = {
 
 const BranchDetail = () => {
   const [loading, setLoading] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
   const componentRef = useRef<any>();
   const { branchStore } = useStore();
-  const { exportForm,getById,sucursal} = branchStore;
+  const { exportForm, getById, sucursal } = branchStore;
   let { id } = useParams<UrlParams>();
-   
- 
+
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     onBeforeGetContent: () => {
       setLoading(true);
+      setIsPrinting(true);
       return new Promise((resolve: any) => {
         setTimeout(() => {
           resolve();
@@ -34,29 +35,37 @@ const BranchDetail = () => {
       setLoading(false);
     },
   });
-  useEffect( () => {
+  useEffect(() => {
     const readuser = async (idUser: string) => {
-       await getById(idUser);
+      await getById(idUser);
     };
     if (id) {
       readuser(id);
     }
-  }, [ getById,id ]);
-  const  handleDownload = async() => {
+  }, [getById, id]);
+  const handleDownload = async () => {
     console.log(sucursal);
     console.log("download");
     setLoading(true);
-    const succes = await exportForm(id!,"sucursal");
-    
-    if(succes){
+    setIsPrinting(false);
+    const succes = await exportForm(id!, "sucursal");
+
+    if (succes) {
       setLoading(false);
     }
   };
   return (
     <Fragment>
-      <BranchFormHeader  handlePrint={handlePrint} handleDownload={handleDownload}/>
+      <BranchFormHeader
+        handlePrint={handlePrint}
+        handleDownload={handleDownload}
+      />
       <Divider className="header-divider" />
-      <BranchForm  componentRef={componentRef} load={loading} />
+      <BranchForm
+        componentRef={componentRef}
+        load={loading}
+        isPrinting={isPrinting}
+      />
     </Fragment>
   );
 };

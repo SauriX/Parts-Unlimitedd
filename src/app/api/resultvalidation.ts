@@ -8,10 +8,10 @@ const ResultValidation = {
   getAll: (search: ISearchValidation): Promise<Ivalidationlist[]> =>
     requests.post(`ResultValidation/getList`, search),
   update: (update: IUpdate[]): Promise<void> => requests.put("ResultValidation", update),
-  getOrderPdf: (recordId: string, requestId: string): Promise<void> =>
+  getresultPdf: (listResults: any): Promise<void> =>
+    requests.print  (`ResultValidation/view/list`,listResults),
+    getOrderPdf: (recordId: string, requestId: string): Promise<void> =>
     requests.print(`ResultValidation/order/${recordId}/${requestId}`),
-    DownloadOrderPdf: (recordId: string, requestId: string): Promise<void> =>
-    requests.download(`ResultValidation/order/${recordId}/${requestId}`),
 };
 
 export default ResultValidation;

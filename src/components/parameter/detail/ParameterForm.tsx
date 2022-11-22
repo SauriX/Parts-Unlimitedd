@@ -377,6 +377,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
             onValuesChange={onValuesChange}
             onFinish={onFinish}
             scrollToFirstError
+            initialValues={values}
             onFieldsChange={() => {
               setDisabled(
                 !form.isFieldsTouched() ||
@@ -584,9 +585,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
             >
               <PageHeader
                 ghost={false}
-                title={
-                  <HeaderTitle title="Reactivos del parámetro" />
-                }
+                title={<HeaderTitle title="Reactivos del parámetro" />}
                 className="header-container"
                 extra={[
                   selectedRowKeys.length > 0 ? (

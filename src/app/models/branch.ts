@@ -17,10 +17,10 @@ export interface IBranchForm {
   coloniaId?: number;
   codigoPostal: string;
   departamentos: IBranchDepartment[];
-  matriz?:boolean;
+  matriz?: boolean;
 }
 
-export interface IBranchCity{
+export interface IBranchCity {
   sucursales: IBranchInfo[];
   ciudad: string;
 }
@@ -34,7 +34,7 @@ export interface IBranchInfo {
   clinico: string;
   activo: boolean;
   codigoPostal: string;
-  ciudad:string;
+  ciudad: string;
 }
 
 export interface IBranchDepartment {
@@ -53,7 +53,7 @@ export class BranchFormValues implements IBranchForm {
   facturaciónId = "";
   clinicosId = "";
   servicioId = "";
-  activo = false;
+  activo = true;
   estado = "";
   ciudad = "";
   coloniaId = undefined;

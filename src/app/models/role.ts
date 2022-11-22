@@ -6,11 +6,11 @@ export interface IRole {
   permisos?: IRolePermission[];
 }
 
-export interface IRoleForm{
-  id:string;
-  nombre:string;
-  activo:boolean;
-  permisos:IRolePermission[];
+export interface IRoleForm {
+  id: string;
+  nombre: string;
+  activo: boolean;
+  permisos: IRolePermission[];
 }
 
 export interface IRolePermission {
@@ -23,10 +23,10 @@ export interface IRolePermission {
 }
 
 export class RoleFormValues implements IRoleForm {
-  id="";
+  id = "";
   nombre = "";
-  activo = false;
-  permisos=[];
+  activo = true;
+  permisos = [];
   constructor(init?: IRoleForm) {
     Object.assign(this, init);
   }
@@ -34,8 +34,8 @@ export class RoleFormValues implements IRoleForm {
 
 export class RoleValues implements IRole {
   id = "";
-  nombre ="";
-  descripcion="";
+  nombre = "";
+  descripcion = "";
   activo = true;
 
   constructor(init?: IRole) {

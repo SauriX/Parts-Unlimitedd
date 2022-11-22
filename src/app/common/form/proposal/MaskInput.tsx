@@ -17,6 +17,8 @@ interface IProps {
   style?: React.CSSProperties;
   isGroup?: boolean;
   errors?: any[];
+  min?: number;
+  max?: number;
   validator?: (_: RuleObject, value: any) => Promise<any>;
 }
 
@@ -33,6 +35,8 @@ const MaskInput = ({
   isGroup,
   errors,
   validator,
+  min,
+  max,
 }: IProps) => {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -63,6 +67,20 @@ const MaskInput = ({
       whitespace: true,
     });
   }
+  if (max) {
+    rules.push({
+      type: "number",
+      max,
+      message: `El máximo es de ${max}`,
+    });
+  }
+  if (min) {
+    rules.push({
+      type: "number",
+      min,
+      message: `El mínimo es de ${min}`,
+    });
+  }
 
   if (validator) {
     rules.push({ validator });
@@ -91,6 +109,8 @@ const MaskInput = ({
               {...props}
               disabled={readonly}
               autoComplete="off"
+              minLength={min}
+              maxLength={max}
               // prefix={prefix}
               placeholder={placeholder ?? itemProps.label?.toString()}
               style={{

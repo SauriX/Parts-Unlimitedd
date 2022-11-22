@@ -36,8 +36,13 @@ const DeliveryResultsForm = () => {
     getBranchOptions,
   } = optionStore;
 
-  const { getAllCaptureResults, requests, setFormDeliverResult } =
-    massResultSearchStore;
+  const {
+    clearFormDeliverResult,
+    clearRequests,
+    getAllCaptureResults,
+    requests,
+    setFormDeliverResult,
+  } = massResultSearchStore;
 
   const { getRequests } = requestStore;
   useEffect(() => {
@@ -65,6 +70,11 @@ const DeliveryResultsForm = () => {
     await getAllCaptureResults(formValues);
     setFormDeliverResult(formValues);
   };
+  const limpiaFormulario = () => {
+    form.resetFields();
+    clearRequests();
+    clearFormDeliverResult();
+  };
 
   return (
     <>
@@ -74,7 +84,7 @@ const DeliveryResultsForm = () => {
             key="clean"
             onClick={(e) => {
               e.stopPropagation();
-              form.resetFields();
+              limpiaFormulario();
             }}
           >
             Limpiar

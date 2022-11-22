@@ -105,9 +105,9 @@ export interface IReagentForm {
   seleccion: boolean;
 }
 
-export interface Itipovalor{
-  values:ItipoValorForm[],
-  idParameter:String,
+export interface Itipovalor {
+  values: ItipoValorForm[];
+  idParameter: String;
 }
 
 export class ParameterFormValues implements IParameterForm {
@@ -121,9 +121,9 @@ export class ParameterFormValues implements IParameterForm {
   valorInicial = "";
   departamentoId = 0;
   areaId = 0;
-  unidadSi =0;
+  unidadSi = 0;
   fcsi = "";
-  activo = false;
+  activo = true;
   requerido = false;
   deltaCheck = false;
   mostrarFormato = false;

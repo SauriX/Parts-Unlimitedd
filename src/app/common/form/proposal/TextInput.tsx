@@ -20,6 +20,7 @@ interface IProps {
   errors?: any[];
   onClick?: React.MouseEventHandler<HTMLInputElement> | undefined;
   onKeyUp?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
+  onChange?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
 }
 
 const TextInput = ({
@@ -37,6 +38,7 @@ const TextInput = ({
   errors,
   onClick,
   onKeyUp,
+  onChange,
 }: IProps) => {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -103,12 +105,14 @@ const TextInput = ({
           placeholder={placeholder ?? itemProps.label?.toString()}
           onClick={onClick}
           onKeyUp={onKeyUp}
+          onChange={onChange}
+          maxLength={max ?? undefined}
           style={{
             paddingRight: paddingRight,
             width: width ?? "100%",
             ...(style ?? {}),
           }}
-          allowClear 
+          allowClear
         />
       </Form.Item>
       {/* {(!!suffix || isGroup || !!errors) && ( */}
