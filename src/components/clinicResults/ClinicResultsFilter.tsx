@@ -2,6 +2,7 @@ import { Button, Col, Collapse, Form, Row } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import React from "react";
 import { useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
@@ -72,8 +73,8 @@ const ClinicResultsFilter = () => {
           <Button
             key="clean"
             onClick={(e) => {
-              form.resetFields();
               clearFilter();
+              form.resetFields();
             }}
           >
             Limpiar
@@ -82,7 +83,6 @@ const ClinicResultsFilter = () => {
             key="filter"
             type="primary"
             onClick={(e) => {
-              e.stopPropagation();
               form.submit();
             }}
           >
@@ -96,7 +96,12 @@ const ClinicResultsFilter = () => {
           form={form}
           name="clinicResults"
           onFinish={onFinish}
-          initialValues={formValues}
+          initialValues={{
+            fecha: [
+              moment(Date.now()).utcOffset(0, true),
+              moment(Date.now()).utcOffset(0, true).add(1, "day"),
+            ],
+          }}
           scrollToFirstError
         >
           <Row>
