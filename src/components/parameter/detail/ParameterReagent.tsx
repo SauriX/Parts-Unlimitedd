@@ -37,7 +37,7 @@ const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
     searchedColumn: "",
   });
   const [selectedReagentKeys, setSelectedReagentKeys] =
-  useState<IReagentList[]>(selectedReagent);
+    useState<IReagentList[]>(selectedReagent);
 
   useEffect(() => {
     const readReagents = async () => {
@@ -89,7 +89,9 @@ const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
     if (checked && index === -1) {
       setSelectedReagentKeys((prev) => [...prev, item]);
     } else if (!checked && index > -1) {
-      setSelectedReagentKeys((prev) => prev.splice(index, 1));
+      const newSelectedReagentKeys = [...selectedReagentKeys];
+      newSelectedReagentKeys.splice(index, 1);
+      setSelectedReagentKeys(newSelectedReagentKeys);
     }
   };
 
@@ -97,8 +99,9 @@ const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
     selectedRowKeys: selectedReagentKeys.map((x) => x.id),
     onSelect: onSelectKeys,
   };
-  
+
   useEffect(() => {
+    console.log(selectedReagentKeys);
   }, [selectedReagentKeys]);
 
   const acceptChanges = () => {

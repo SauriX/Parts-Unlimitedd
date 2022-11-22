@@ -75,7 +75,9 @@ const ParameterReagent = ({ getResult, selectedParameters }: Props) => {
     if (checked && index === -1) {
       setSelectedParameterKeys((prev) => [...prev, item]);
     } else if (!checked && index > -1) {
-      setSelectedParameterKeys((prev) => prev.splice(index, 1));
+      const newSelectedParameterKeys = [...selectedParameterKeys];
+      newSelectedParameterKeys.splice(index, 1);
+      setSelectedParameterKeys(newSelectedParameterKeys);
     }
   };
 
