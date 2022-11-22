@@ -53,10 +53,16 @@ export default class MassResultSearchStore {
       alerts.warning(getErrors(error));
     }
   };
+  clearRequests = () => {
+    this.requests = [];
+  };
 
   formDeliverResult: any = { fechaInicial: moment(), fechaFinal: moment() };
   setFormDeliverResult = (form: any) => {
     this.formDeliverResult = form;
+  };
+  clearFormDeliverResult = () => {
+    this.formDeliverResult = { fechaInicial: moment(), fechaFinal: moment() };
   };
   exportListDeliverResult = async (search: any) => {
     try {

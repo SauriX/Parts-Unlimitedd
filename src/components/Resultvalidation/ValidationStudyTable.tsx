@@ -21,14 +21,15 @@ import { status } from "../../app/util/catalogs";
 type expandableProps = {
   activiti: string;
   onChange: (e: CheckboxChangeEvent, id: number, solicitud: string) => void;
+  viewTicket: (recordId: any) => Promise<void>;
 };
 
 type tableProps = {
   printTicket: (recordId: string, requestId: string) => Promise<void>;
-  viewTicket: (recordId: string, requestId: string) => Promise<void>;
+  
 };
 
-const ValidationStudyColumns = ({ printTicket,viewTicket }: tableProps) => {
+const ValidationStudyColumns = ({ printTicket }: tableProps) => {
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -99,13 +100,6 @@ const ValidationStudyColumns = ({ printTicket,viewTicket }: tableProps) => {
           }}
         />
            
-                <EyeOutlined
-                style={{marginLeft:"20%"}}
-          key="imprimir"
-          onClick={() => {
-            viewTicket(record.order, record.id);
-          }}
-        />
         </>
       ),
     },
@@ -116,6 +110,7 @@ const ValidationStudyColumns = ({ printTicket,viewTicket }: tableProps) => {
 export const ValidationStudyExpandable = ({
   activiti,
   onChange,
+  viewTicket
 }: expandableProps) => {
   const nestedColumns: IColumns<IvalidationStudyList> = [
     {
@@ -150,20 +145,33 @@ export const ValidationStudyExpandable = ({
       width: "10%",
       render: (_value, record) => (
         <>
-          {record.estatus === 1 && (
+          {record.estatus === 4 && (
             <Checkbox
               onChange={(e) => onChange(e, record.id, record.solicitudId)}
               disabled={!(activiti == "register")}
             >
             </Checkbox>
           )}
-          {record.estatus === 2 && (
+          {record.estatus === 5 && (
             <Checkbox
               onChange={(e) => onChange(e, record.id, record.solicitudId)}
               disabled={!(activiti == "cancel")}
             >
             </Checkbox>
           )}
+          
+         {(record.estatus === 4 || record.estatus === 5) && ( <EyeOutlined
+                style={{marginLeft:"20%"}}
+          key="imprimir"
+          onClick={() => {
+            const sendFiles = {
+              mediosEnvio: ["selectSendMethods"],
+              estudios: [{solicitudId:record.solicitudId,EstudiosId:[{EstudioId:record.id,  }]}],
+            };
+            console.log(sendFiles,"record");
+            viewTicket(sendFiles);
+          }}
+        />)}
         </>
       ),
     },

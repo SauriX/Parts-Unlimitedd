@@ -70,6 +70,8 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     getDepartmentOptions,
     companyOptions,
     getCompanyOptions,
+    studiesOptions,
+    getStudiesOptions,
   } = optionStore;
   const {
     getAll,
@@ -104,6 +106,15 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     searchedText: "",
     searchedColumn: "",
   });
+  useEffect(()=>{
+    const readStudy = async ()=>{
+      await getStudiesOptions();
+    } 
+    readStudy();
+  },[getStudiesOptions]);
+  useEffect(()=>{
+    console.log(studiesOptions,"estudios");
+  },[studiesOptions]);
   const togleRows = () => {
     if (openRows) {
       setOpenRows(false);
@@ -187,9 +198,9 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
       setLoading(false);
       alerts.confirm(
         "",
-        `Se han enviado ${ids.length} estudios de ${solicitudesData.length} solicitud a estatus pendiente de manera exitosa `,
+        `Se han enviado ${ids.length} estudios de ${solicitudesData.length} solicitud a estatus validado de manera exitosa `,
         async () => {
-          //await getAll(values);
+          await getAll(values);
         }
       );
       setIds([]);
@@ -325,7 +336,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     const reagent = { ...values, ...newValues };
          var data = await getAll(reagent);
          let studios = [];
-         console.log(data, "daata");
+         console.log(reagent, "daata");
          setSoliCont(data?.length!);
          data?.forEach((x) =>
            x.estudios.forEach((x: any) => {
@@ -474,7 +485,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                       <TextInput
                         formProps={{
                           name: "search",
-                          label: "Buscar",
+                          label: "Clave",
                         }}
                       />
                     </Col>
@@ -495,13 +506,13 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                           label: "Estudios",
                         }}
                         multiple
-                        options={originOptions}
+                        options={studiesOptions}
                       ></SelectInput>
                     </Col>
                     <Col span={8}>
                       <SelectInput
                         formProps={{
-                          name: "tipoSolicitud",
+                          name: "tipoSoli",
                           label: "Tipo solicitud",
                         }}
                         multiple
@@ -511,21 +522,21 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                     <Col span={8}>
                       <SelectInput
                         formProps={{
-                          name: "status",
-                          label: "Status",
+                          name: "estatus",
+                          label: "Estatus",
                         }}
                         multiple
                         options={[
                           { value: 0, label: "Todos" },
-                          { value: 1, label: "Pendiente" },
-                          { value: 2, label: "Toma" },
+                          { value: 4, label: "Capturado" },
+                          { value: 5, label: "Validado" },
                         ]}
                       ></SelectInput>
                     </Col>
                     <Col span={8}>
                       <SelectInput
                         formProps={{
-                          name: "departamento",
+                          name: "departament",
                           label: "Departamento",
                         }}
                         multiple
@@ -554,7 +565,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                     </Col>
                     <Col span={8}>
                       <SelectInput
-                        formProps={{ name: "sucursalId", label: "Sucursales" }}
+                        formProps={{ name: "sucursal", label: "Sucursales" }}
                         multiple
                         options={branchCityOptions}
                       />
@@ -643,10 +654,11 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
       <Fragment>
         <ValidationTableStudy
           data={studys}
-          columns={ValidationStudyColumns ({printTicket,viewTicket})}
+          columns={ValidationStudyColumns ({printTicket})}
           expandable={ValidationStudyExpandable({
             activiti,
-            onChange,
+            onChange
+            ,viewTicket
           })}
         />
 

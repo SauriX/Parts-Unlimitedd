@@ -69,14 +69,15 @@ export default class ResultValidationStore {
 
   printTicket = async (recordId: string, requestId: string) => {
     try {
-      await ResultValidation.DownloadOrderPdf(recordId, requestId);
+      await ResultValidation.getOrderPdf(recordId, requestId);
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
   };
-  viewTicket = async (recordId: string, requestId: string) => {
+  viewTicket = async (recordId: any) => {
     try {
-      await ResultValidation.getOrderPdf(recordId, requestId);
+      console.log(recordId,"record");
+      await ResultValidation.getresultPdf(recordId);
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
