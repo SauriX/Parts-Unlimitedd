@@ -24,9 +24,11 @@ const QuotationDetail = () => {
 
   const navigate = useNavigate();
   const { quotationId } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [recordId, setRecordId] = useState<string>();
   const [branchId, setBranchId] = useState<string | undefined>(
     profile!.sucursal
   );
@@ -37,11 +39,14 @@ const QuotationDetail = () => {
         cotizacionId: "00000000-0000-0000-0000-000000000000",
         sucursalId: profile!.sucursal,
         estatusId: status.quotation.vigente,
+        expedienteId: searchParams.get("exp") ?? undefined,
       };
 
       setCreating(true);
       const id = await create(quote);
       setCreating(false);
+
+      setRecordId(searchParams.get("exp") ?? undefined);
 
       if (id) {
         navigate(`/${views.quotation}/${id}`, { replace: true });
@@ -80,8 +85,16 @@ const QuotationDetail = () => {
     <Fragment>
       <QuotationHeader />
       <Divider className="header-divider" />
-      <QuotationRecord branchId={profile!.sucursal} setBranchId={setBranchId} />
-      <QuotationTab branchId={branchId} />
+      <QuotationRecord
+        branchId={profile!.sucursal}
+        recordId={recordId}
+        setBranchId={setBranchId}
+      />
+      <QuotationTab
+        branchId={branchId}
+        recordId={recordId}
+        setRecordId={setRecordId}
+      />
     </Fragment>
   );
 };

@@ -52,6 +52,8 @@ const QuotationRecord = ({
   }, [form, quotation]);
 
   useEffect(() => {
+    console.log(recordId);
+
     const readRecord = async () => {
       setLoading(true);
       const record = await getById(recordId!);
@@ -59,14 +61,6 @@ const QuotationRecord = ({
       if (record) {
         if (record.fechaNacimiento) {
           record.fechaNacimiento = moment(record.fechaNacimiento);
-        }
-
-        if (record.cp) {
-          const location = await getColoniesByZipCode(record.cp);
-          const colony = location?.colonias?.find(
-            (x) => x.id === record.colonia
-          )?.nombre;
-          record.colonia = colony;
         }
 
         const copy = (({ sucursal, ...others }) => ({ ...others }))(record);
@@ -77,6 +71,8 @@ const QuotationRecord = ({
 
     if (recordId) {
       readRecord();
+    } else {
+      form.resetFields();
     }
   }, [form, getById, getColoniesByZipCode, recordId]);
 
@@ -89,144 +85,149 @@ const QuotationRecord = ({
         size="small"
       >
         <Row gutter={[0, 12]}>
-          <Col span={12}>
-            <Form.Item
-              label="Nombre"
-              labelCol={{ span: 4 }}
-              wrapperCol={{ span: 20 }}
-              className="no-error-text"
-              help=""
-            >
-              <Input.Group>
-                <Row gutter={8}>
-                  <Col span={12}>
-                    <TextInput
-                      formProps={{
-                        name: "nombre",
-                        label: "Nombre(s)",
-                        noStyle: true,
-                      }}
-                      max={500}
-                      showLabel
-                      readonly
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <TextInput
-                      formProps={{
-                        name: "apellido",
-                        label: "Apellido(s)",
-                        noStyle: true,
-                      }}
-                      max={500}
-                      showLabel
-                      readonly
-                    />
-                  </Col>
-                </Row>
-              </Input.Group>
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <TextInput
-              formProps={{
-                name: "correo",
-                label: "E-Mail",
-                labelCol: { span: 6 },
-                wrapperCol: { span: 18 },
-              }}
-              max={500}
-              type="email"
-              readonly
-            />
-          </Col>
-          <Col span={4}>
-            <TextInput
-              formProps={{
-                name: "expediente",
-                label: "Exp",
-              }}
-              max={500}
-              readonly
-            />
-          </Col>
-          <Col span={4}>
-            <SelectInput
-              formProps={{
-                name: "sexo",
-                label: "Sexo",
-                labelCol: { span: 12 },
-                wrapperCol: { span: 12 },
-              }}
-              options={[
-                { label: "F", value: "F" },
-                { label: "M", value: "M" },
-              ]}
-              readonly
-            />
-          </Col>
-          <Col span={8}>
-            <DateInput
-              formProps={{
-                name: "fechaNacimiento",
-                label: "Fecha Nacimiento",
-                labelCol: { span: 12 },
-                wrapperCol: { span: 12 },
-              }}
-              readonly
-            />
-          </Col>
-          <Col span={4}>
-            <TextInput
-              formProps={{
-                name: "edad",
-                label: "Edad",
-                labelCol: { span: 12 },
-                wrapperCol: { span: 12 },
-              }}
-              max={500}
-              suffix={"años"}
-              readonly
-            />
-          </Col>
-          <Col span={8}>
-            <Form.Item
-              label="Contacto"
-              labelCol={{ span: 6 }}
-              wrapperCol={{ span: 18 }}
-              help=""
-              className="no-error-text"
-            >
-              <Input.Group>
-                <Row gutter={8}>
-                  <Col span={12}>
-                    <TextInput
-                      formProps={{
-                        name: "telefono",
-                        label: "Teléfono",
-                        noStyle: true,
-                      }}
-                      max={500}
-                      showLabel
-                      readonly
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <TextInput
-                      formProps={{
-                        name: "celular",
-                        label: "Celular",
-                        noStyle: true,
-                      }}
-                      max={500}
-                      showLabel
-                      readonly
-                    />
-                  </Col>
-                </Row>
-              </Input.Group>
-            </Form.Item>
-          </Col>
+          {recordId && (
+            <>
+              <Col span={12}>
+                <Form.Item
+                  label="Nombre"
+                  labelCol={{ span: 4 }}
+                  wrapperCol={{ span: 20 }}
+                  className="no-error-text"
+                  help=""
+                >
+                  <Input.Group>
+                    <Row gutter={8}>
+                      <Col span={12}>
+                        <TextInput
+                          formProps={{
+                            name: "nombre",
+                            label: "Nombre(s)",
+                            noStyle: true,
+                          }}
+                          max={500}
+                          showLabel
+                          readonly
+                        />
+                      </Col>
+                      <Col span={12}>
+                        <TextInput
+                          formProps={{
+                            name: "apellido",
+                            label: "Apellido(s)",
+                            noStyle: true,
+                          }}
+                          max={500}
+                          showLabel
+                          readonly
+                        />
+                      </Col>
+                    </Row>
+                  </Input.Group>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <TextInput
+                  formProps={{
+                    name: "correo",
+                    label: "E-Mail",
+                    labelCol: { span: 6 },
+                    wrapperCol: { span: 18 },
+                  }}
+                  max={500}
+                  type="email"
+                  readonly
+                />
+              </Col>
+              <Col span={4}>
+                <TextInput
+                  formProps={{
+                    name: "expediente",
+                    label: "Exp",
+                  }}
+                  max={500}
+                  readonly
+                />
+              </Col>
+              <Col span={4}>
+                <SelectInput
+                  formProps={{
+                    name: "sexo",
+                    label: "Sexo",
+                    labelCol: { span: 12 },
+                    wrapperCol: { span: 12 },
+                  }}
+                  options={[
+                    { label: "F", value: "F" },
+                    { label: "M", value: "M" },
+                  ]}
+                  readonly
+                />
+              </Col>
+              <Col span={8}>
+                <DateInput
+                  formProps={{
+                    name: "fechaNacimiento",
+                    label: "Fecha Nacimiento",
+                    labelCol: { span: 12 },
+                    wrapperCol: { span: 12 },
+                  }}
+                  readonly
+                />
+              </Col>
+              <Col span={4}>
+                <TextInput
+                  formProps={{
+                    name: "edad",
+                    label: "Edad",
+                    labelCol: { span: 12 },
+                    wrapperCol: { span: 12 },
+                  }}
+                  max={500}
+                  suffix={"años"}
+                  readonly
+                />
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="Contacto"
+                  labelCol={{ span: 6 }}
+                  wrapperCol={{ span: 18 }}
+                  help=""
+                  className="no-error-text"
+                >
+                  <Input.Group>
+                    <Row gutter={8}>
+                      <Col span={12}>
+                        <TextInput
+                          formProps={{
+                            name: "telefono",
+                            label: "Teléfono",
+                            noStyle: true,
+                          }}
+                          max={500}
+                          showLabel
+                          readonly
+                        />
+                      </Col>
+                      <Col span={12}>
+                        <TextInput
+                          formProps={{
+                            name: "celular",
+                            label: "Celular",
+                            noStyle: true,
+                          }}
+                          max={500}
+                          showLabel
+                          readonly
+                        />
+                      </Col>
+                    </Row>
+                  </Input.Group>
+                </Form.Item>
+              </Col>
+              <Col span={16}></Col>
+            </>
+          )}
           <Col span={16}></Col>
           <Col span={8}>
             <SelectInput

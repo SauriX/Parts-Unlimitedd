@@ -1,6 +1,5 @@
-import { Spin, Form, Row, Col, Button, Table } from "antd";
-import { FC, useEffect, useState } from "react";
-import { formItemLayout } from "../../../../app/util/utils";
+import { Form, Row, Col, Button, Table, Typography } from "antd";
+import { useEffect, useState } from "react";
 import TextInput from "../../../../app/common/form/proposal/TextInput";
 import { useStore } from "../../../../app/stores/store";
 import { useNavigate } from "react-router-dom";
@@ -12,242 +11,213 @@ import {
   IColumns,
   ISearch,
 } from "../../../../app/common/table/utils";
-import { IFormError } from "../../../../app/models/shared";
-import { IProceedingList } from "../../../../app/models/Proceeding";
-import IconButton from "../../../../app/common/button/IconButton";
-import useWindowDimensions from "../../../../app/util/window";
-import { EditOutlined } from "@ant-design/icons";
+import {
+  IProceedingList,
+  ISearchMedical,
+} from "../../../../app/models/Proceeding";
 import DateRangeInput from "../../../../app/common/form/proposal/DateRangeInput";
+import { moneyFormatter } from "../../../../app/util/utils";
 
-type GeneralesFormProps = {
-  // printing: boolean;
-  // handleIdExpediente: React.Dispatch<
-  //   React.SetStateAction<IProceedingList | undefined>
-  // >;
-  // handleCotizacion: React.Dispatch<React.SetStateAction<IQuotationForm>>;
+const { Link, Text } = Typography;
+
+type QuotationAssignmentProps = {
+  recordId: string | undefined;
+  setRecordId: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
-const QuotationAssignment: FC<GeneralesFormProps> = (
-  {
-    // printing,
-    // handleIdExpediente,
-    // handleCotizacion,
-  }
-) => {
+const QuotationAssignment = ({
+  recordId,
+  setRecordId,
+}: QuotationAssignmentProps) => {
   const { quotationStore } = useStore();
-  // const { getExpediente, records } = quotationStore;
-  const [loading, setLoading] = useState(false);
-  const [form] = Form.useForm<any>();
-  // const [values, setValues] = useState<IQuotationExpedienteSearch>(
-  //   new QuotationExpedienteSearchValues()
-  // );
-  const [errors, setErrors] = useState<IFormError[]>([]);
+  const { getRecords } = quotationStore;
+
   let navigate = useNavigate();
+
+  const [form] = Form.useForm<ISearchMedical>();
+
+  const [records, setRecords] = useState<IProceedingList[]>([]);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-  // useEffect(() => {
-  //   const readexp = async () => {
-  //     await getExpediente(values);
-  //   };
-  //   readexp();
-  // }, [getExpediente]);
-  // const { width: windowWidth } = useWindowDimensions();
 
-  // const onFinish = async (newValues: IQuotationExpedienteSearch) => {
-  //   setLoading(true);
+  useEffect(() => {
+    const readRecords = async () => {
+      const records = await getRecords({});
+      setRecords(records);
+    };
 
-  //   const reagent = { ...values, ...newValues };
-  //   await getExpediente(reagent);
-  //   setLoading(false);
-  // };
-  // const onValuesChange = async (changedValues: IQuotationExpedienteSearch) => {
-  //   const field = Object.keys(changedValues)[0];
-  //   if (field == "edad") {
-  //     /*  const edad = changedValues[field] as number; */
-  //     var hoy = new Date();
-  //     /*     var cumpleaños =  hoy.getFullYear()-edad; */
-  //     /* hoy.setFullYear(cumpleaños); */
-  //     /* setValues((prev) => ({ ...prev, fechaNacimiento: hoy })) */
-  //   }
-  //   if (field === "cp") {
-  //     /* const zipCode = changedValues[field] as string */
-  //     /*         if (zipCode && zipCode.trim().length === 5) {
-  //           } */
-  //   }
-  // };
+    readRecords();
+  }, [getRecords]);
+
+  const onFinish = async (values: ISearchMedical) => {
+    const filter = { ...values };
+
+    if (filter.fechaAlta && filter.fechaAlta.length > 1) {
+      filter.fechaAlta[0] = filter.fechaAlta[0].utcOffset(0, true);
+      filter.fechaAlta[1] = filter.fechaAlta[1].utcOffset(0, true);
+    }
+
+    const records = await getRecords(filter);
+    setRecords(records);
+  };
+
+  const sharedOnCell = (_: IProceedingList, index: number | undefined) => {
+    if (index === 0) {
+      return { colSpan: 0 };
+    }
+
+    return {};
+  };
+
   const columns: IColumns<IProceedingList> = [
     {
       ...getDefaultColumnProps("expediente", "Expediente", {
         searchState,
         setSearchState,
-        width: 100,
+        width: "10%",
       }),
-      render: (value, expediente) => (
-        <Button
-          type="link"
-          onClick={() => {
-            // handleIdExpediente(expediente);
-            console.log("here");
-            console.log(expediente);
-            // handleCotizacion((prev) => ({
-            //   ...prev,
-            //   expedienteid: expediente.id,
-            //   expediente: expediente.expediente,
-            //   nomprePaciente: expediente.nomprePaciente,
-            //   edad: expediente.edad,
-            //   fechaNacimiento: moment(expediente.fechaNacimiento, "DD-MM-YYYY"),
-            //   genero: expediente.genero,
-            // }));
-          }}
-        >
-          {value}
-        </Button>
-      ),
-      fixed: "left",
+      render: (value, record, index) =>
+        index === 0 ? (
+          <Text type="secondary">Continuar sin expediente</Text>
+        ) : (
+          <Link
+            onClick={() => {
+              navigate(`/${views.proceeding}/${record.id}?mode=readonly`);
+            }}
+          >
+            {value}
+          </Link>
+        ),
+      onCell: (_, index) => ({
+        colSpan: (index as number) === 0 ? 7 : 1,
+      }),
     },
     {
-      ...getDefaultColumnProps("nomprePaciente", "Nombre del paciente", {
+      ...getDefaultColumnProps("nomprePaciente", "Paciente", {
         searchState,
         setSearchState,
-        width: 200,
+        width: "30%",
       }),
+      onCell: sharedOnCell,
     },
     {
       ...getDefaultColumnProps("genero", "Genero", {
         searchState,
         setSearchState,
-        width: 100,
+        width: "10%",
       }),
+      onCell: sharedOnCell,
     },
     {
       ...getDefaultColumnProps("edad", "Edad", {
-        searchState,
-        setSearchState,
-        width: 100,
+        searchable: false,
+        width: "10%",
       }),
+      onCell: sharedOnCell,
     },
     {
       ...getDefaultColumnProps("fechaNacimiento", "Fecha de nacimiento", {
-        searchState,
-        setSearchState,
-        width: 200,
+        searchable: false,
+        width: "15%",
       }),
+      onCell: sharedOnCell,
     },
     {
-      ...getDefaultColumnProps("monederoElectronico", "Monedero electrónico", {
-        searchState,
-        setSearchState,
-        width: 200,
+      ...getDefaultColumnProps("monederoElectronico", "Monedero", {
+        searchable: false,
+        width: "10%",
       }),
+      align: "right",
+      render: (value) => moneyFormatter.format(value),
+      onCell: sharedOnCell,
     },
     {
       ...getDefaultColumnProps("telefono", "Teléfono", {
-        searchState,
-        setSearchState,
-        width: 100,
+        searchable: false,
+        width: "10%",
       }),
-    },
-    {
-      key: "editar",
-      dataIndex: "id",
-      title: "Editar",
-      align: "center",
-      width: 100,
-      render: (value, expediente) => (
-        <IconButton
-          title="Editar Expediente"
-          icon={<EditOutlined />}
-          onClick={() => {
-            navigate(`/${views.proceeding}/${expediente.id}?mode=edit`);
-          }}
-        />
-      ),
-      fixed: "right",
+      onCell: sharedOnCell,
     },
   ];
 
   return (
-    <Spin spinning={loading}>
-      <Row gutter={[8, 12]}>
-        <Col span={24}>
-          <Form<any>
-            layout="vertical"
-            form={form}
-            onFinish={() => {}}
-            onFinishFailed={({ errorFields }) => {
-              const errors = errorFields.map((x) => ({
-                name: x.name[0].toString(),
-                errors: x.errors,
-              }));
-              setErrors(errors);
-            }}
-            initialValues={{ cantidad: 0 }}
-            size="small"
-          >
-            <Row gutter={[8, 12]} align="bottom">
-              <Col span={5}>
-                <TextInput
-                  formProps={{
-                    name: "buscar",
-                    label: "Buscar",
-                  }}
-                  max={100}
-                  //errors={errors.find((x) => x.name === "exp")?.errors}
-                />
-              </Col>
-              <Col span={5}>
-                <DateRangeInput
-                  formProps={{
-                    label: "Fecha",
-                    name: "fecha",
-                  }}
-                />
-              </Col>
-              <Col span={5}>
-                <TextInput
-                  formProps={{
-                    name: "email",
-                    label: "Email",
-                  }}
-                  max={100}
-                  type="email"
-                  //errors={errors.find((x) => x.name === "exp")?.errors}
-                />
-              </Col>
-              <Col span={5}>
-                <TextInput
-                  formProps={{
-                    name: "telfono",
-                    label: "Teléfono",
-                  }}
-                  max={10}
-                  errors={errors.find((x) => x.name === "telfono")?.errors}
-                />
-              </Col>
-              <Col span={4} style={{ textAlign: "right" }}>
-                <Button htmlType="submit" type="primary">
-                  Buscar
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        </Col>
-        <Col span={24}>
-          <Table<IProceedingList>
-            loading={loading}
-            size="small"
-            rowKey={(record) => record.id}
-            columns={columns}
-            dataSource={[]}
-            pagination={defaultPaginationProperties}
-            sticky
-            scroll={{ x: "max-content" }}
-          />
-        </Col>
-      </Row>
-    </Spin>
+    <Row gutter={[8, 12]}>
+      <Col span={24}>
+        <Form<ISearchMedical> layout="vertical" form={form} onFinish={onFinish}>
+          <Row gutter={[8, 12]} align="bottom">
+            <Col span={5}>
+              <TextInput
+                formProps={{
+                  name: "expediente",
+                  label: "Paciente",
+                }}
+                placeholder="Expediente/Nombre"
+                max={100}
+              />
+            </Col>
+            <Col span={5}>
+              <DateRangeInput
+                formProps={{
+                  label: "Fecha de alta",
+                  name: "fechaAlta",
+                }}
+              />
+            </Col>
+            <Col span={5}>
+              <TextInput
+                formProps={{
+                  name: "correo",
+                  label: "Correo",
+                }}
+                max={100}
+                type="email"
+              />
+            </Col>
+            <Col span={5}>
+              <TextInput
+                formProps={{
+                  name: "telfono",
+                  label: "Teléfono",
+                }}
+                max={10}
+              />
+            </Col>
+            <Col span={4} style={{ textAlign: "right" }}>
+              <Button htmlType="submit" type="primary">
+                Buscar
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </Col>
+      <Col span={24}>
+        <Table<IProceedingList>
+          size="small"
+          rowKey={(record) => record.id}
+          columns={columns}
+          dataSource={[
+            {
+              id: "",
+              expediente: "Sin expediente",
+              monederoElectronico: 0,
+            } as any,
+            ...records,
+          ]}
+          pagination={defaultPaginationProperties}
+          sticky
+          rowSelection={{
+            type: "radio",
+            selectedRowKeys: !recordId ? [""] : [recordId],
+            onSelect: (record) => {
+              setRecordId(record.id === "" ? undefined : record.id);
+            },
+          }}
+          scroll={{ x: "max-content" }}
+        />
+      </Col>
+    </Row>
   );
 };
 export default observer(QuotationAssignment);
