@@ -154,7 +154,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     );
   }, [estudio]);
 
-  const { width: windowWidth } = useWindowDimensions();
   const columns: IColumns<any> = [
     {
       key: "id",
@@ -618,6 +617,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                                   }
                                             }
                                             allowClear
+                                            disabled={!fieldValue.editable || currentStudy.estatusId > 3 }
                                           />
                                         )}
                                       </Form.Item>

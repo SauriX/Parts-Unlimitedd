@@ -71,6 +71,8 @@ export interface IClinicResultCaptureForm {
   nombreCorto?: string;
   rango?: boolean;
   orden: number;
+  editable?: boolean;
+  clave: string;
   tipoValores?: ItipoValorForm[];
 }
 
@@ -164,6 +166,7 @@ export class ClinicResultsCaptureForm implements IClinicResultCaptureForm {
   unidadNombre = "";
   deltaCheck = false;
   orden = 0;
+  clave = "";
 
   constructor(init?: IClinicResultForm) {
     Object.assign(this, init);

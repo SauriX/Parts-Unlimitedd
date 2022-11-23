@@ -257,7 +257,9 @@ export default class ClinicResultsStores {
           criticoMaximo: y.criticoMaximo,
           ultimoResultado: y.ultimoResultado,
           deltaCheck: y.deltaCheck,
+          editable: y.editable,
           orden: i,
+          clave: y.clave,
           rango:
             y.criticoMinimo >= parseFloat(y.resultado) ||
             parseFloat(y.resultado) >= y.criticoMaximo,
