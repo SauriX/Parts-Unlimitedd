@@ -106,6 +106,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
     const readtabla = async () => {
       let estudiostabla = await getAllStudy();
       let paquetestabla = await getAllPack();
+      paquetestabla = paquetestabla?.filter(x=>x.activo);
       let tabla = estudiostabla!.concat(paquetestabla!);
       console.log(tabla);
       setValues((prev) => ({ ...prev, table: tabla }));
@@ -292,6 +293,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       console.log(all);
       var studis = await getAllStudy();
       var pcks = await getAllPack();
+      pcks = pcks?.filter(x=>x.activo);
       console.log(pcks, "paquetes");
       var tabla = studis!.concat(pcks!);
 
@@ -487,6 +489,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
 
   const filterByDepartament = async (departament: number) => {
     console.log(lista, "lalista");
+    setAreaId(undefined);
     if (departament) {
       var departamento = departmentOptions.filter(
         (x) => x.value === departament
@@ -506,6 +509,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       }
       setValues((prev) => ({ ...prev, table: estudios }));
     }
+    
     // console.log("departament");
     // console.log(values);
   };
@@ -1101,6 +1105,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
                   setAreaId(undefined);
                   setDepId(value);
                   filterByDepartament(value);
+                  
                 }}
                 value={depId}
                 placeholder={"Departamentos"}
@@ -1112,18 +1117,19 @@ const PriceListForm: FC<PriceListFormProps> = ({
             </Col>
             <Col span={6} offset={2}>
               <SelectInput
-                options={aeraSearch}
+                options={aeraSearch }
                 onChange={(value) => {
                   setAreaId(value);
                   filterByArea(value);
                 }}
-                value={areaId}
+                value={areaId||undefined}
                 placeholder={"Área"}
                 formProps={{
                   name: "area",
                   label: "Área",
                 }}
               />
+              
             </Col>
           </Row>
           <br />

@@ -86,7 +86,8 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     appointmentStore,
     quotationStore,
   } = useStore();
-  const { getQuotations, quotations, convertToRequest } = quotationStore;
+  const { getQuotations, quotations, convertToRequest, deactivateQuotation } =
+    quotationStore;
   const {
     getAllDom,
     getAllLab,
@@ -243,6 +244,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
         ...expediente!,
         fechaNacimiento: moment(expediente?.fechaNacimiento),
       });
+      console.log("expediente", toJS(expediente));
       setTax(expediente?.taxData!);
       setValues(expediente!);
       setLoading(false);
@@ -292,6 +294,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   };
 
   const onValuesChange = async (changedValues: any) => {
+    setErrors([]);
     const field = Object.keys(changedValues)[0];
     if (field == "edad") {
       const edad = changedValues[field] as number;
@@ -303,7 +306,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     if (field == "fechaNacimiento") {
       const edad = changedValues[field];
       // calcularEdad(edad);
-      form.setFieldsValue({ edad: calcularEdad(edad) });
+      form.setFieldsValue({ edad: "" + calcularEdad(edad) });
     }
     if (field === "cp") {
       const zipCode = changedValues[field] as string;
@@ -376,6 +379,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 }
               }
               reagent.taxData = taxdata;
+              console.log("taxData", taxdata);
 
               if (!reagent.id) {
                 success = (await create(reagent)) != null;
@@ -416,6 +420,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
         }
       }
       reagent.taxData = taxdata;
+      console.log("taxData", taxdata);
       if (!reagent.id) {
         success = (await create(reagent)) != null;
       } else {
@@ -522,15 +527,16 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           title=""
           onClick={async () => {
             console.log("item", toJS(item));
-            convertToRequest(item.cotizacionId);
-            getByFilter({
+            await convertToRequest(item.cotizacionId);
+            await deactivateQuotation(item.cotizacionId);
+            await getByFilter({
               expediente: item?.expediente,
             });
-
-            // var cotizacion = await getByIdQ(item.cotizacionId);
-            // console.log(cotizacion);
-            // convertSolicitudCot(item, cotizacion!);
+            await getQuotations({
+              expediente: item?.expediente,
+            });
           }}
+          disabled={!item?.activo}
         >
           Convertir a solicitud
         </Button>
@@ -861,10 +867,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   }}
                   max={500}
                   // readonly={readonly}
-                  readonly={
-                    searchParams.get("mode") == "edit" ||
-                    searchParams.get("mode") == "readonly"
-                  }
+                  readonly={true}
                 />
               </Col>
               <Col span={4}>
@@ -904,7 +907,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     labelCol: { span: 12 },
                     wrapperCol: { span: 12 },
                   }}
-                  max={130}
+                  max={3}
                   suffix="años"
                   readonly={readonly}
                   required
@@ -928,7 +931,19 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                             noStyle: true,
                           }}
                           max={10}
-                          // min={10}
+                          min={10}
+                          onChange={(e) => {
+                            let valu = e.target.value;
+                            if (!Number(valu)) {
+                              form.setFieldValue(
+                                "telefono",
+                                valu.substring(0, valu.length - 1)
+                              );
+
+                              return;
+                            }
+                            form.setFieldValue("telefono", valu);
+                          }}
                           showLabel
                           errors={
                             errors.find((x) => x.name === "telefono")?.errors
@@ -944,7 +959,19 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                             noStyle: true,
                           }}
                           max={10}
-                          // min={5}
+                          min={10}
+                          onChange={(e) => {
+                            let valu = e.target.value;
+                            if (!Number(valu)) {
+                              form.setFieldValue(
+                                "celular",
+                                valu.substring(0, valu.length - 1)
+                              );
+
+                              return;
+                            }
+                            form.setFieldValue("celular", valu);
+                          }}
                           showLabel
                           errors={
                             errors.find((x) => x.name === "celular")?.errors
@@ -974,6 +1001,19 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                             noStyle: true,
                           }}
                           max={5}
+                          min={5}
+                          onChange={(e) => {
+                            let valu = e.target.value;
+                            if (!Number(valu)) {
+                              form.setFieldValue(
+                                "cp",
+                                valu.substring(0, valu.length - 1)
+                              );
+
+                              return;
+                            }
+                            form.setFieldValue("cp", valu);
+                          }}
                           showLabel
                           readonly={readonly}
                         />

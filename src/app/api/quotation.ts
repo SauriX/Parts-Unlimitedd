@@ -26,6 +26,8 @@ const Quotation = {
     requests.post("quotation", quotation),
   convertToRequest: (quotationId: string): Promise<string> =>
     requests.post(`quotation/convert/${quotationId}`, {}),
+  deactivateQuotation: (quotationId: string): Promise<string> =>
+    requests.post(`quotation/deactivate/${quotationId}`, {}),
   updateGeneral: (quotation: IQuotationGeneral): Promise<void> =>
     requests.put("quotation/general", quotation),
   assignRecord: (quotationId: string, recordId?: string) =>

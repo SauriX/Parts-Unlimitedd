@@ -8,6 +8,7 @@ import "./index.less";
 interface IProps {
   formProps: FormItemProps<any>;
   max?: number;
+  min?: number;
   required?: boolean;
   prefix?: React.ReactNode;
   type?: RuleType;
@@ -20,12 +21,13 @@ interface IProps {
   errors?: any[];
   onClick?: React.MouseEventHandler<HTMLInputElement> | undefined;
   onKeyUp?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
-  // onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
+  onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
 }
 
 const TextInput = ({
   formProps: itemProps,
   max,
+  min,
   required,
   prefix,
   type,
@@ -38,6 +40,7 @@ const TextInput = ({
   errors,
   onClick,
   onKeyUp,
+  onChange,
 }: // onChange,
 IProps) => {
   let ref = useRef<HTMLDivElement>(null);
@@ -68,6 +71,16 @@ IProps) => {
           return Promise.resolve();
         }
         return Promise.reject(`La longitud máxima es de ${max}`);
+      },
+    });
+  }
+  if (min) {
+    rules.push({
+      validator: (_, value: string) => {
+        if (!value || value.length >= min) {
+          return Promise.resolve();
+        }
+        return Promise.reject(`La longitud minima es de ${min}`);
       },
     });
   }
@@ -105,8 +118,9 @@ IProps) => {
           placeholder={placeholder ?? itemProps.label?.toString()}
           onClick={onClick}
           onKeyUp={onKeyUp}
-          // onChange={onChange}
+          onChange={onChange}
           maxLength={max ?? undefined}
+          minLength={min ?? undefined}
           style={{
             paddingRight: paddingRight,
             width: width ?? "100%",
