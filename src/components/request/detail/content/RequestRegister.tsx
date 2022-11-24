@@ -23,8 +23,15 @@ const RequestRegister = () => {
   const { requestStore, optionStore, modalStore, profileStore } = useStore();
   const { profile } = profileStore;
   const { paymentOptions, getPaymentOptions } = optionStore;
-  const { request, getPayments, printTicket, createPayment, cancelPayments } =
-    requestStore;
+  const {
+    request,
+    setGlobalPayments,
+    getPayments,
+    printTicket,
+    createPayment,
+    cancelPayments,
+    calculateTotals,
+  } = requestStore;
   const { openModal } = modalStore;
 
   const [form] = Form.useForm<IRequestPayment>();
@@ -128,6 +135,11 @@ const RequestRegister = () => {
     readPayments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    setGlobalPayments(payments);
+    calculateTotals();
+  }, [payments, setGlobalPayments]);
 
   const cancel = async () => {
     alerts.confirm(

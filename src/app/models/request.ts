@@ -119,6 +119,7 @@ export interface IRequestGeneral extends IRequestBase {
   correo: string;
   whatsapp: string;
   observaciones: string;
+  showResult?: boolean;
 }
 
 export interface IRequestPayment extends IRequestBase {
