@@ -31,7 +31,7 @@ export interface IstudySampling {
   id: number;
   nombre: string;
   area: string;
-  status: number;
+  estatus: number;
   registro: string;
   entrega: string;
   seleccion: boolean;

@@ -230,7 +230,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                   label="Estatus"
                   style={{ maxWidth: 30, color: "#000000" }}
                 >
-                  {x.status == 1 ? "Pendiente" : "Toma de muestra"}
+                  {x.estatus == 1 ? "Pendiente" : "Toma de muestra"}
                 </Descriptions.Item>
                 <Descriptions.Item label="Registro" style={{ maxWidth: 30 }}>
                   {x.registro}
@@ -239,12 +239,12 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                   {x.entrega}
                 </Descriptions.Item>
                 <Descriptions.Item label="" style={{ maxWidth: 30 }}>
-                  {x.status == 1 && activiti == "register" && (
+                  {x.estatus == 1 && activiti == "register" && (
                     <Checkbox onChange={(e) => onChange(e, x.id, item.id)}>
                       Selecciona
                     </Checkbox>
                   )}
-                  {x.status == 2 && activiti == "cancel" && (
+                  {x.estatus == 2 && activiti == "cancel" && (
                     <Checkbox onChange={(e) => onChange(e, x.id, item.id)}>
                       Selecciona
                     </Checkbox>

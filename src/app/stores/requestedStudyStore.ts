@@ -98,8 +98,8 @@ export default class RequestedStudyStore {
             (y) => y.solicitudId === x.id && y.estudioId.includes(z.id)
           );
           if (updated) {
-            z.status =
-              z.status === status.requestStudy.tomaDeMuestra
+            z.estatus =
+              z.estatus === status.requestStudy.tomaDeMuestra
                 ? status.requestStudy.solicitado
                 : status.requestStudy.tomaDeMuestra;
           }

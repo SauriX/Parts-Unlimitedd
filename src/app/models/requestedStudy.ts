@@ -20,13 +20,14 @@ export interface IRequestedStudy {
   id: number;
   nombre: string;
   area: string;
-  status: number;
+  estatus: number;
   registro: string;
   entrega: string;
   seleccion: boolean;
   clave: string;
   nombreEstatus: string;
   solicitudId: string;
+  fechaActualizacion: string;
 }
 
 export interface IUpdate {
@@ -51,7 +52,7 @@ export interface IStudyList {
   id: number;
   nombre: string;
   area: string;
-  status: number;
+  estatus: number;
   registro: string;
   entrega: string;
   seleccion: boolean;

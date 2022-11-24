@@ -115,7 +115,7 @@ export const SamplingStudyExpandable = ({
       ...getDefaultColumnProps("nombreEstatus", "Estatus", {
         width: "20%",
       }),
-      render: (_value, record) => record.status == 1 ? "Pendiente" : "Toma de muestra",
+      render: (_value, record) => record.estatus == 1 ? "Pendiente" : "Toma de muestra",
     },
     {
       ...getDefaultColumnProps("registro", "Registro", {
@@ -137,14 +137,14 @@ export const SamplingStudyExpandable = ({
       width: "10%",
       render: (_value, record) => (
         <>
-          {record.status === 1 && (
+          {record.estatus === 1 && (
             <Checkbox
               onChange={(e) => onChange(e, record.id, record.solicitudId)}
               disabled={!(activiti == "register")}
             >
             </Checkbox>
           )}
-          {record.status === 2 && (
+          {record.estatus === 2 && (
             <Checkbox
               onChange={(e) => onChange(e, record.id, record.solicitudId)}
               disabled={!(activiti == "cancel")}

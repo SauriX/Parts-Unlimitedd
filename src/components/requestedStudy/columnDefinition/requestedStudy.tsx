@@ -1,6 +1,5 @@
-import { Descriptions, Checkbox, Table, Typography } from "antd";
+import { Checkbox, Table, Typography } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import moment from "moment";
 import { useState } from "react";
 import PrintIcon from "../../../app/common/icons/PrintIcon";
 import {
@@ -8,7 +7,6 @@ import {
   ISearch,
   getDefaultColumnProps,
 } from "../../../app/common/table/utils";
-import { IRequestStudy } from "../../../app/models/request";
 import {
   IRequestedStudy,
   IRequestedStudyList,
@@ -93,7 +91,6 @@ const RequestedStudyColumns = ({ printOrder }: tableProps) => {
         width: "5%",
       }),
     },
-
     {
       ...getDefaultColumnProps("compañia", "Compañía", {
         searchState,
@@ -127,27 +124,21 @@ export const RequestedStudyExpandable = ({
   const nestedColumns: IColumns<IRequestedStudy> = [
     {
       ...getDefaultColumnProps("clave", "Estudio", {
-        width: "30%",
+        width: "35%",
       }),
       render: (_value, record) => record.clave + " - " + record.nombre,
     },
     {
       ...getDefaultColumnProps("nombreEstatus", "Estatus", {
-        width: "20%",
+        width: "25%",
       }),
       render: (_value, record) => record.nombreEstatus,
     },
     {
-      ...getDefaultColumnProps("registro", "Registro", {
-        width: "20%",
+      ...getDefaultColumnProps("fechaActualizacion", "Fecha de actualización", {
+        width: "30%",
       }),
-      render: (_value, record) => record.registro,
-    },
-    {
-      ...getDefaultColumnProps("entrega", "Entrega", {
-        width: "20%",
-      }),
-      render: (_value, record) => record.entrega,
+      render: (_value, record) => record.fechaActualizacion,
     },
     {
       key: "Seleccionar",
@@ -157,14 +148,14 @@ export const RequestedStudyExpandable = ({
       width: "10%",
       render: (_value, record) => (
         <>
-          {record.status === status.requestStudy.tomaDeMuestra && (
+          {record.estatus === status.requestStudy.tomaDeMuestra && (
             <Checkbox
               onChange={(e) => onChange(e, record.id, record.solicitudId)}
               disabled={!(activity == "register")}
             >
             </Checkbox>
           )}
-          {record.status === status.requestStudy.solicitado && (
+          {record.estatus === status.requestStudy.solicitado && (
             <Checkbox
               onChange={(e) => onChange(e, record.id, record.solicitudId)}
               disabled={!(activity == "cancel")}
