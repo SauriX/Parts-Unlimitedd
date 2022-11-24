@@ -221,7 +221,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const renderUpdateStatus = () => {
     return (
       <>
-        {currentStudy.estatusId >= status.requestStudy.solicitado ? (
+        {currentStudy.estatusId >= status.requestStudy.solicitado && currentStudy.estatusId < status.requestStudy.liberado ? (
           <Row>
             <Col span={24}>
               <Row justify="space-between" gutter={[12, 24]}>
