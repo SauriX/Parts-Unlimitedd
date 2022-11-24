@@ -16,6 +16,7 @@ import {
   IColumns,
   ISearch,
 } from "../../app/common/table/utils";
+import moment from "moment";
 import useWindowDimensions from "../../app/util/window";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
@@ -373,6 +374,17 @@ const SamplingTable: FC<ProceedingTableProps> = ({
   const cancel = () => {
     setActiviti("cancel");
   };
+
+  useEffect(() => {
+    getAll({
+      fecha: [
+        moment(Date.now()).utcOffset(0, true),
+        moment(Date.now()).utcOffset(0, true),
+      ],
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const columns: IColumns<IsamplingList> = [
     {
       ...getDefaultColumnProps("solicitud", "Clave", {
