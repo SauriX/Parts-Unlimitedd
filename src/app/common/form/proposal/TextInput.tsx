@@ -21,7 +21,7 @@ interface IProps {
   errors?: any[];
   onClick?: React.MouseEventHandler<HTMLInputElement> | undefined;
   onKeyUp?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
-  // onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
+  onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
 }
 
 const TextInput = ({
@@ -40,6 +40,7 @@ const TextInput = ({
   errors,
   onClick,
   onKeyUp,
+  onChange,
 }: // onChange,
 IProps) => {
   let ref = useRef<HTMLDivElement>(null);
@@ -79,7 +80,7 @@ IProps) => {
         if (!value || value.length >= min) {
           return Promise.resolve();
         }
-        return Promise.reject(`La longitud máxima es de ${min}`);
+        return Promise.reject(`La longitud minima es de ${min}`);
       },
     });
   }
@@ -117,7 +118,7 @@ IProps) => {
           placeholder={placeholder ?? itemProps.label?.toString()}
           onClick={onClick}
           onKeyUp={onKeyUp}
-          // onChange={onChange}
+          onChange={onChange}
           maxLength={max ?? undefined}
           minLength={min ?? undefined}
           style={{

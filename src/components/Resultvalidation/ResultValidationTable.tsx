@@ -489,8 +489,10 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
         <Button
           key="clean"
           onClick={(e) => {
+           
+            form.setFieldsValue(new searchValues() );
+            setValues(new searchValues());
             e.stopPropagation();
-
             form.resetFields();
           }}
           style={{ marginLeft: "10%" }}

@@ -66,19 +66,40 @@ const NumberInput = ({
 
   let rules: Rule[] = [];
 
+  // if (max) {
+  //   rules.push({
+  //     type: "number",
+  //     max,
+  //     message: `El máximo es de ${max}`,
+  //   });
+  // }
+  // if (min) {
+  //   rules.push({
+  //     type: "number",
+  //     min,
+  //     message: `El mínimo es de ${min}`,
+  //   });
+  // }
   if (max) {
     rules.push({
-      type: "number",
-      max,
-      message: `El máximo es de ${max}`,
+      validator: (_, value: string) => {
+        if (!value || value.length <= max) {
+          return Promise.resolve();
+        }
+        return Promise.reject(`La longitud máxima es de ${max}`);
+      },
     });
   }
-
-  rules.push({
-    type: "number",
-    min,
-    message: `El mínimo es de ${min}`,
-  });
+  if (min) {
+    rules.push({
+      validator: (_, value: string) => {
+        if (!value || value.length >= min) {
+          return Promise.resolve();
+        }
+        return Promise.reject(`La longitud minima es de ${min}`);
+      },
+    });
+  }
 
   if (required) {
     rules.push({

@@ -116,8 +116,8 @@ const DatosFiscalesForm = ({
     }
     const zipCode = newValues.rfc;
     if (
-      // zipCode.length === 10 ||
-      // zipCode.length === 13 ||
+      zipCode.length === 10 ||
+      zipCode.length === 13 ||
       zipCode.length === 12
     ) {
       var rfc = rfcValido(zipCode);
@@ -133,6 +133,11 @@ const DatosFiscalesForm = ({
     }
     var taxes: ITaxData[] = local ? [...localTaxData] : [...(tax ?? [])];
 
+    if (taxes.find((x) => x.rfc === newValues.rfc)) {
+      alerts.warning(`El RFC ${newValues.rfc} ya existe`);
+      setLoading(false);
+      return;
+    }
     newValues.expedienteId = recordId;
     if (newValues.id) {
       var existing = taxes.findIndex((x) => x.id === newValues.id);
@@ -234,8 +239,8 @@ const DatosFiscalesForm = ({
       "(([A-ZÑ&]{4})([0-9]{2})[0][2]([0][1-9]|[1][0-9]|[2][0-8])([A-Z0-9]{3}))$";
 
     if (
-      rfc.toUpperCase().match(_rfc_pattern_pm)
-      // rfc.toUpperCase().match(_rfc_pattern_pf)
+      rfc.toUpperCase().match(_rfc_pattern_pm) ||
+      rfc.toUpperCase().match(_rfc_pattern_pf)
     ) {
       return true;
     } else {
@@ -285,7 +290,7 @@ const DatosFiscalesForm = ({
                 <TextInput
                   formProps={{
                     name: "razonSocial",
-                    label: "Razon Social",
+                    label: "Razón Social",
                     labelCol: { span: 6 },
                     wrapperCol: { span: 18 },
                   }}
