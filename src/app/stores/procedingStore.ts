@@ -24,20 +24,20 @@ export default class ProcedingStore {
   }
 
   expedientes: IProceedingList[] = [];
-   expediente?: IProceedingForm;
+  expediente?: IProceedingForm;
   search: ISearchMedical = new SearchMedicalFormValues();
   tax: ITaxData[] = [];
   searchQ: any;
   quotatios: IQuotationInfo[] = [];
   getAllQ = async (searchQ: IQuotationFilter) => {
-     try {
-       const reagents = await Proceding.getNowQ(searchQ);
+    try {
+      const reagents = await Proceding.getNowQ(searchQ);
 
-       this.quotatios = reagents;
-     } catch (error: any) {
-       alerts.warning(getErrors(error));
-       this.quotatios = [];
-     }
+      this.quotatios = reagents;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      this.quotatios = [];
+    }
   };
   getParameter = async (id: number) => {
     try {
@@ -55,7 +55,7 @@ export default class ProcedingStore {
     console.log("getbyid");
     try {
       const reagent = await quotation.getGeneral(id);
-/*        reagent.fechaNacimiento = moment(reagent.fechaNacimiento);
+      /*        reagent.fechaNacimiento = moment(reagent.fechaNacimiento);
        reagent.estudy?.map(async (x) => {
          var parametros = await this.getParameter(x.estudioId!);
          x.parametros = parametros!.parameters;
@@ -124,6 +124,7 @@ export default class ProcedingStore {
   getById = async (id: string) => {
     try {
       const rol = await Proceding.getById(id);
+      rol.edad = "" + rol.edad;
       console.log(rol);
       // this.expediente = rol; // Comentado porque no se usa
       return rol;

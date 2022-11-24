@@ -14,6 +14,8 @@ import { ITaxData } from "../../../app/models/taxdata";
 import IconButton from "../../../app/common/button/IconButton";
 import { EditOutlined } from "@ant-design/icons";
 import alerts from "../../../app/util/alerts";
+import { regimenFiscal } from "../../../app/util/catalogs";
+import { toJS } from "mobx";
 
 const formItemLayout = {
   labelCol: { span: 8 },
@@ -125,7 +127,7 @@ const DatosFiscalesForm = ({
         return;
       }
     } else {
-      alerts.warning(`El RFC ${zipCode} es invalido`);
+      alerts.warning(`El RFC ${zipCode} es inválido`);
       setLoading(false);
       return;
     }
@@ -205,6 +207,11 @@ const DatosFiscalesForm = ({
           icon={<EditOutlined />}
           onClick={() => {
             getColonies(item.cp);
+            console.log("item", toJS(item));
+            item.regimenFiscal =
+              "" +
+                regimenFiscal.find((x) => x.value === item.regimenFiscal)
+                  ?.label ?? "";
             form.setFieldsValue(item);
           }}
         />
@@ -218,7 +225,7 @@ const DatosFiscalesForm = ({
       "(([A-ZÑ&]{3})([0-9]{2})([0][13456789]|[1][012])(([0][1-9]|[12][\\d])|[3][0])([A-Z0-9]{3}))|" +
       "(([A-ZÑ&]{3})([02468][048]|[13579][26])[0][2]([0][1-9]|[12][\\d])([A-Z0-9]{3}))|" +
       "(([A-ZÑ&]{3})([0-9]{2})[0][2]([0][1-9]|[1][0-9]|[2][0-8])([A-Z0-9]{3}))$";
-    
+
     // patron del RFC, persona fisica
     const _rfc_pattern_pf =
       "^(([A-ZÑ&]{4})([0-9]{2})([0][13578]|[1][02])(([0][1-9]|[12][\\d])|[3][01])([A-Z0-9]{3}))|" +
@@ -285,6 +292,20 @@ const DatosFiscalesForm = ({
                   max={100}
                   required
                   errors={errors.find((x) => x.name === "razonSocial")?.errors}
+                />
+              </Col>
+              <Col md={18} xs={24}>
+                <SelectInput
+                  formProps={{
+                    name: "regimenFiscal",
+                    label: "Regimen Fiscal",
+                    labelCol: { span: 6 },
+                    wrapperCol: { span: 18 },
+                  }}
+                  options={regimenFiscal}
+                  errors={
+                    errors.find((x) => x.name === "regimenFiscal")?.errors
+                  }
                 />
               </Col>
               <Col md={16} xs={24}>

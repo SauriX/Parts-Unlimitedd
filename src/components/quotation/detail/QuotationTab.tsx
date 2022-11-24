@@ -52,11 +52,11 @@ const QuotationTab = ({
   const submit = async () => {
     let ok = true;
 
-    if (currentKey === "general") {
+    if (currentKey === "general" && quotation?.activo) {
       ok = await submitGeneral(formGeneral);
-    } else if (currentKey === "studies") {
+    } else if (currentKey === "studies" && quotation?.activo) {
       ok = await updateStudies(studyUpdate);
-    } else if (currentKey === "assignment") {
+    } else if (currentKey === "assignment" && quotation?.activo) {
       console.log(recordId);
       ok = await assignRecord(quotation!.cotizacionId, recordId);
     }
@@ -85,10 +85,23 @@ const QuotationTab = ({
 
   const operations = (
     <Space>
-      <Button key="cancel" size="small" ghost danger onClick={cancel}>
+      <Button
+        key="cancel"
+        size="small"
+        ghost
+        danger
+        onClick={cancel}
+        disabled={!quotation?.activo}
+      >
         Cancelar
       </Button>
-      <Button key="save" size="small" type="primary" onClick={submit}>
+      <Button
+        key="save"
+        size="small"
+        type="primary"
+        onClick={submit}
+        disabled={!quotation?.activo}
+      >
         Guardar
       </Button>
     </Space>

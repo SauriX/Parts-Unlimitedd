@@ -17,6 +17,33 @@ export const catalogs: IOptionsCatalog[] = [
   { value: "useOfCFDI", label: "Uso de CFDI", type: "description" },
 ];
 
+export const regimenFiscal: IOptionsCatalog[] = [
+  { value: "601", label: "General de Ley Personas Morales", type: "description" },
+  { value: "603", label: "Personas Morales con Fines no Lucrativos", type: "description" },
+  { value: "605", label: "Sueldos y Salarios e Ingresos Asimilados a Salarios", type: "description" },
+  { value: "606", label: "Arrendamiento", type: "description" },
+  { value: "608", label: "Demás ingresos", type: "description" },
+  { value: "609", label: "Consolidación", type: "description" },
+  { value: "610", label: "Residentes en el Extranjero sin Establecimiento Permanente en México", type: "description" },
+  { value: "611", label: "Ingresos por Dividendos (socios y accionistas)", type: "description" },
+  { value: "612", label: "Personas Físicas con Actividades Empresariales y Profesionales", type: "description" },
+  { value: "614", label: "Ingresos por intereses", type: "description" },
+  { value: "616", label: "Sin obligaciones fiscales", type: "description" },
+  { value: "620", label: "Sociedades Cooperativas de Producción que optan por diferir sus ingresos", type: "description" },
+  { value: "621", label: "Incorporación Fiscal", type: "description" },
+  { value: "622", label: "Actividades Agrícolas, Ganaderas, Silvícolas y Pesqueras", type: "description" },
+  { value: "623", label: "Opcional para Grupos de Sociedades", type: "description" },
+  { value: "624", label: "Coordinados", type: "description" },
+  { value: "628", label: "Hidrocarburos", type: "description" },
+  { value: "607", label: "Régimen de Enajenación o Adquisición de Bienes", type: "description" },
+  { value: "629", label: "De los Regímenes Fiscales Preferentes y de las Empresas Multinacionales", type: "description" },
+  { value: "630", label: "Enajenación de acciones en bolsa de valores", type: "description" },
+  { value: "630", label: "Enajenación de acciones en bolsa de valores", type: "description" },
+  { value: "615", label: "Régimen de los ingresos por obtención de premios", type: "description" },
+  { value: "625", label: "Régimen de las Actividades Empresariales con ingresos a través de Plataformas Tecnológicas", type: "description" },
+  
+];
+
 export const reports: IOptionsReport[] = [
   { value: "corte_caja", label: "Corte de caja", type: "corte_caja" },
   { value: "expediente", label: "Expediente", type: "expediente" },

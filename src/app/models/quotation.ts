@@ -31,6 +31,7 @@ export interface IQuotation extends Omit<IQuotationBase, "cotizacionId"> {
   clave?: string;
   registro?: string;
   estatusId: number;
+  activo?: boolean;
 }
 
 export interface IQuotationInfo extends IQuotationBase {
