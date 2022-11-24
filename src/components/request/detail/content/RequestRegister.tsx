@@ -153,8 +153,8 @@ const RequestRegister = () => {
       );
       if (cancelled.length > 0) {
         setSelectedPayments([]);
-        setPayments(
-          payments.map((x) => {
+        setPayments((prev) =>
+          prev.map((x) => {
             const payment = cancelled.find((p) => p.id === x.id);
             if (payment) {
               return {
@@ -168,6 +168,20 @@ const RequestRegister = () => {
         );
       }
     }
+  };
+
+  const startInvoice = () => {
+    openModal({
+      title: "Datos Fiscales",
+      body: (
+        <RequestInvoiceTab
+          recordId={request!.expedienteId}
+          requestId={request!.solicitudId!}
+          payments={selectedPayments}
+        />
+      ),
+      width: 900,
+    });
   };
 
   return (
@@ -311,13 +325,7 @@ const RequestRegister = () => {
                 (x) => x.estatusId === status.requestPayment.pagado
               ).length === 0
             }
-            onClick={() => {
-              openModal({
-                title: "Datos Fiscales",
-                body: <RequestInvoiceTab recordId={request!.expedienteId} />,
-                width: 900,
-              });
-            }}
+            onClick={startInvoice}
           >
             Facturar
           </Button>
