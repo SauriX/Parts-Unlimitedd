@@ -38,7 +38,9 @@ import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../app/util/alerts";
 import PrintIcon from "../../app/common/icons/PrintIcon";
 import SamplinTableStudy from "./SamplinTableStudy";
-import SamplingStudyColumns, { SamplingStudyExpandable } from "./SamplingStudyTable";
+import SamplingStudyColumns, {
+  SamplingStudyExpandable,
+} from "./SamplingStudyTable";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -80,7 +82,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
   const [form] = Form.useForm<IsamplingForm>();
   let navigate = useNavigate();
   const [values, setValues] = useState<IsamplingForm>(new samplingFormValues());
-  const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
+  const [updateData, setUpdateData] = useState<IUpdate[]>([]);
   const [ids, setIds] = useState<number[]>([]);
   const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
   const { width: windowWidth } = useWindowDimensions();
@@ -88,7 +90,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     useState<ExpandableConfig<IsamplingList>>();
   const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
   const hasFooterRow = true;
-  const [activar,setActivar]=useState<boolean>(false);
+  const [activar, setActivar] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [activiti, setActiviti] = useState<string>("");
   const [openRows, setOpenRows] = useState<boolean>(false);
@@ -120,7 +122,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     console.log("onchange");
     var data = ids;
     var solis = solicitudesData;
-    var dataid:number[] = [];
+    var dataid: number[] = [];
     var dataupdate = updateData;
     if (e.target.checked) {
       data.push(id);
@@ -129,17 +131,21 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       let temp = solicitudesData.filter((x) => x == solicitud);
       let temp2 = dataupdate!.filter((x) => x.solicitudId == solicitud);
       if (temp2.length <= 0) {
-        let datatoupdate:IUpdate={
-          solicitudId:solicitud,
-          estudioId:dataid
-        }
+        let datatoupdate: IUpdate = {
+          solicitudId: solicitud,
+          estudioId: dataid,
+        };
         dataupdate?.push(datatoupdate);
-      }else{
-        let solicitudtoupdate = dataupdate?.filter(x=>x.solicitudId==solicitud)[0];
-        let count = solicitudtoupdate?.estudioId!.filter(x=>x==id);
-        if(count!.length <=0){
+      } else {
+        let solicitudtoupdate = dataupdate?.filter(
+          (x) => x.solicitudId == solicitud
+        )[0];
+        let count = solicitudtoupdate?.estudioId!.filter((x) => x == id);
+        if (count!.length <= 0) {
           solicitudtoupdate?.estudioId.push(id);
-          let indexsoli = dataupdate?.findIndex(x=>x.solicitudId==solicitud);
+          let indexsoli = dataupdate?.findIndex(
+            (x) => x.solicitudId == solicitud
+          );
           dataupdate[indexsoli!] = solicitudtoupdate;
         }
       }
@@ -154,29 +160,48 @@ const SamplingTable: FC<ProceedingTableProps> = ({
         setIds(temp);
         //SetSolicitudesData();
       }
-      let solicitudtoupdate = dataupdate?.filter(x=>x.solicitudId==solicitud)[0];
-      if(solicitudtoupdate.estudioId.length==1){
-        dataupdate = dataupdate.filter(x=>x.solicitudId!=solicitud);
-      }else{
-        let count = solicitudtoupdate?.estudioId!.filter(x=>x==id);
-        if(count!.length >0){
-          let estudios = solicitudtoupdate?.estudioId.filter(x=>x!=id);
-          solicitudtoupdate.estudioId= estudios;
-          let indexsoli = dataupdate?.findIndex(x=>x.solicitudId==solicitud);
-          dataupdate[indexsoli!] = solicitudtoupdate;
-        }
+      let soliAux = dataupdate?.find((x) => x.solicitudId == solicitud);
+
+      if (!!soliAux) {
+        let tempAux = soliAux.estudioId.filter((x) => x != id);
+        soliAux.estudioId = tempAux;
+        let index = dataupdate?.findIndex((x) => x.solicitudId == solicitud);
+        dataupdate[index!] = soliAux;
       }
+
+      if (dataupdate.some((x) => x.estudioId.length === 0)) {
+        dataupdate = dataupdate.filter((x) => x.estudioId.length !== 0);
+        // setUpdateDate(temp);
+      }
+      // let solicitudtoupdate = dataupdate?.filter(
+      //   (x) => x.solicitudId == solicitud
+      // )[0];
+      // if (!!solicitudtoupdate) {
+      //   if (solicitudtoupdate.estudioId.length == 1) {
+      //     dataupdate = dataupdate.filter((x) => x.solicitudId != solicitud);
+      //   } else {
+      //     let count = solicitudtoupdate?.estudioId!.filter((x) => x == id);
+      //     if (count!.length > 0) {
+      //       let estudios = solicitudtoupdate?.estudioId.filter((x) => x != id);
+      //       solicitudtoupdate.estudioId = estudios;
+      //       let indexsoli = dataupdate?.findIndex(
+      //         (x) => x.solicitudId == solicitud
+      //       );
+      //       dataupdate[indexsoli!] = solicitudtoupdate;
+      //     }
+      //   }
+      // }
     }
-    console.log(dataupdate.length,"onchange");
-    if(dataupdate.length<=0){
-      console.log("if")
+    console.log("dataupdate", dataupdate);
+    if (dataupdate.length <= 0) {
+      console.log("if");
       setActivar(false);
-    }else{
-      console.log("else")
+    } else {
+      console.log("else");
       setActivar(true);
     }
-    
-    setUpdateDate(dataupdate);
+
+    setUpdateData(dataupdate);
   };
   const updatedata = async () => {
     setLoading(true);
@@ -194,6 +219,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       setIds([]);
       SetSolicitudesData([]);
       setActivar(false);
+      setUpdateData([]);
     } else {
       setLoading(false);
     }
@@ -614,7 +640,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                 updatedata();
               }}
             >
-              {activar?"":" "}
+              {activar ? "" : " "}
               Aceptar Registro
             </Button>
           ) : (
@@ -622,20 +648,18 @@ const SamplingTable: FC<ProceedingTableProps> = ({
           )}
           {activiti == "cancel" ? (
             <Button
-              style={
-                {
-                  marginTop: "10px",
-                  marginBottom: "10px",
-                  marginLeft: "30%",
-                }
-              }
+              style={{
+                marginTop: "10px",
+                marginBottom: "10px",
+                marginLeft: "30%",
+              }}
               type="primary"
               disabled={!activar}
               onClick={() => {
                 updatedata();
               }}
             >
-              {activar?"":" "}
+              {activar ? "" : " "}
               Cancelar Registro
             </Button>
           ) : (
@@ -647,13 +671,12 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       <Fragment>
         <SamplinTableStudy
           data={studys}
-          columns={SamplingStudyColumns ({printTicket})}
+          columns={SamplingStudyColumns({ printTicket })}
           expandable={SamplingStudyExpandable({
             activiti,
             onChange,
           })}
         />
-
       </Fragment>
     </Fragment>
   );
