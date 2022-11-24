@@ -39,9 +39,11 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     studyUpdate,
     loadingTabContent,
     getStudies,
+    getPayments,
     updateGeneral,
     updateStudies,
     cancelRequest,
+    setGlobalPayments,
     studyFilter,
     totals,
     totalsOriginal,
@@ -55,7 +57,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   const [currentKey, setCurrentKey] = useState<keys>("general");
 
   const onChangeTab = async (key: string) => {
-    const ok = await submit();
+    const ok = await submit(false);
 
     if (ok) {
       setCurrentKey(key as keys);
@@ -103,17 +105,17 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     }
   };
 
-  const submit = async () => {
+  const submit = async (showResult: boolean = true) => {
     let ok = true;
 
     if (currentKey === "general") {
-      ok = await submitGeneral(formGeneral);
+      ok = await submitGeneral(formGeneral, showResult);
     } else if (
       currentKey === "studies" ||
       currentKey === "request" ||
       currentKey === "sampler"
     ) {
-      ok = await updateStudies(studyUpdate);
+      ok = await updateStudies(studyUpdate, showResult);
       await modificarSaldo();
     }
 
@@ -136,15 +138,25 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   useEffect(() => {
     if (request) {
       getStudies(request.expedienteId, request.solicitudId!);
+      getPayments(request.expedienteId, request.solicitudId!).then(
+        (payments) => {
+          setGlobalPayments(payments);
+        }
+      );
     }
-  }, [getStudies, request]);
+  }, [getStudies, getPayments, request, setGlobalPayments]);
 
   const operations = (
     <Space>
       <Button key="cancel" size="small" ghost danger onClick={cancel}>
         Cancelar
       </Button>
-      <Button key="save" size="small" type="primary" onClick={submit}>
+      <Button
+        key="save"
+        size="small"
+        type="primary"
+        onClick={() => submit(true)}
+      >
         Guardar
       </Button>
     </Space>
@@ -155,8 +167,8 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       <RequestGeneral
         branchId={branchId}
         form={formGeneral}
-        onSubmit={(request) => {
-          onSubmitGeneral(request, updateGeneral).then((ok) => {
+        onSubmit={(request, showResult) => {
+          onSubmitGeneral(request, showResult, updateGeneral).then((ok) => {
             if (!ok) setCurrentKey("general");
           });
         }}

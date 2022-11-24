@@ -77,17 +77,17 @@ export interface IClinicResultCaptureForm {
 }
 
 export interface IClinicResultForm {
-  sucursalId: string[];
-  medicoId: string[];
-  compañiaId: string[];
-  fecha: moment.Moment[];
-  buscar: string;
-  procedencia: number[];
-  departamento: number[];
-  area: number[];
-  tipoSolicitud: string[];
-  estatus: number[];
-  estudio: number[];
+  sucursalId?: string[];
+  medicoId?: string[];
+  compañiaId?: string[];
+  fecha?: moment.Moment[];
+  buscar?: string;
+  procedencia?: number[];
+  departamento?: number[];
+  area?: number[];
+  tipoSolicitud?: string[];
+  estatus?: number[];
+  estudio?: number[];
 }
 
 export interface IStudyList {

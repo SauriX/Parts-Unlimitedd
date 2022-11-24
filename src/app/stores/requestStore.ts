@@ -52,6 +52,7 @@ export default class RequestStore {
   totalsOriginal: IRequestTotal = new RequestTotal();
   studies: IRequestStudy[] = [];
   packs: IRequestPack[] = [];
+  globalPayments: IRequestPayment[] = [];
   loadingRequests: boolean = false;
   loadingTabContentCount: number = 0;
 
@@ -159,6 +160,11 @@ export default class RequestStore {
       ...this.totals,
       totalEstudios: total,
       total: finalTotal,
+      saldo:
+        finalTotal -
+        this.globalPayments
+          .filter((x) => x.estatusId !== status.requestPayment.cancelado)
+          .reduce((acc, p) => acc + p.cantidad, 0),
     };
   };
 
@@ -196,6 +202,10 @@ export default class RequestStore {
     if (index > -1) {
       this.packs[index] = pack;
     }
+  };
+
+  setGlobalPayments = (payments: IRequestPayment[]) => {
+    this.globalPayments = payments;
   };
 
   setPartiality = (apply: boolean) => {
@@ -307,9 +317,12 @@ export default class RequestStore {
       console.log(study);
 
       const repeated = this.studies.filter(function (item) {
-        return item.parametros
-          .map((x) => x.id)
-          .filter((x) => study.parametros.map((y) => y.id).indexOf(x) !== -1);
+        return (
+          item.parametros
+            .map((x) => x.id)
+            .filter((x) => study.parametros.map((y) => y.id).indexOf(x) !== -1)
+            .length > 0
+        );
       });
 
       if (repeated && repeated.length > 0) {
@@ -422,11 +435,11 @@ export default class RequestStore {
     }
   };
 
-  updateGeneral = async (request: IRequestGeneral) => {
+  updateGeneral = async (request: IRequestGeneral, showResult: boolean) => {
     try {
       this.loadingTabContentCount++;
       await Request.updateGeneral(request);
-      alerts.success(messages.updated);
+      if (showResult) alerts.success(messages.updated);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -447,13 +460,13 @@ export default class RequestStore {
     }
   };
 
-  updateStudies = async (request: IRequestStudyUpdate) => {
+  updateStudies = async (request: IRequestStudyUpdate, showResult: boolean) => {
     try {
       this.loadingTabContentCount++;
       await Request.updateStudies(request);
       this.studies = this.studies.map((x) => ({ ...x, nuevo: false }));
       this.packs = this.packs.map((x) => ({ ...x, nuevo: false }));
-      alerts.success(messages.updated);
+      if (showResult) alerts.success(messages.updated);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));

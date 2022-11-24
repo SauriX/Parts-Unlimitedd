@@ -188,9 +188,13 @@ export default class OptionStore {
 
   getcfdiOptions = async () => {
     try {
-      const cfdi = await Catalog.getActive<ICatalogNormalList>("useOfCFDI");
-      console.log(cfdi);
-      this.cfdiOptions = cfdi.map((x) => ({ value: x.id, label: x.nombre }));
+      const cfdi = await Catalog.getActive<ICatalogDescriptionList>(
+        "useOfCFDI"
+      );
+      this.cfdiOptions = cfdi.map((x) => ({
+        value: x.id,
+        label: x.clave + " " + x.descripcion,
+      }));
     } catch (error) {
       this.cfdiOptions = [];
     }
@@ -203,10 +207,9 @@ export default class OptionStore {
       const paymentMethod = await Catalog.getActive<ICatalogNormalList>(
         "paymentMethod"
       );
-      console.log(paymentMethod);
       this.paymentMethodOptions = paymentMethod.map((x) => ({
         value: x.id,
-        label: x.nombre,
+        label: x.clave + " " + x.nombre,
       }));
     } catch (error) {
       this.paymentMethodOptions = [];
@@ -220,7 +223,6 @@ export default class OptionStore {
       const payment = await Catalog.getActive<ICatalogDescriptionList>(
         "payment"
       );
-      console.log(payment);
       this.paymentOptions = payment.map((x) => ({
         value: x.id,
         label: x.clave + " " + x.descripcion,
@@ -356,8 +358,8 @@ export default class OptionStore {
       this.workListOptions2 = workList.map((x) => ({
         id: x.id,
         nombre: x.nombre,
-        clave:x.clave,
-        activo:x.activo
+        clave: x.clave,
+        activo: x.activo,
       }));
     } catch (error) {
       this.workListOptions2 = [];
@@ -416,7 +418,7 @@ export default class OptionStore {
   };
 
   BranchOptions: IOptions[] = [];
-  cityOptions:IOptions[]=[];
+  cityOptions: IOptions[] = [];
   getBranchOptions = async () => {
     try {
       const branch = Branch.getAll("");
@@ -424,9 +426,9 @@ export default class OptionStore {
         value: x.idSucursal,
         label: x.nombre,
       }));
-      this.cityOptions=  (await branch).map((x)=>({
-        value:x.ciudad, 
-        label:x.ciudad
+      this.cityOptions = (await branch).map((x) => ({
+        value: x.ciudad,
+        label: x.ciudad,
       }));
     } catch (error) {
       this.BranchOptions = [];
@@ -634,14 +636,14 @@ export default class OptionStore {
 
   typeValue: IOptions[] = [];
   getTypeValues = async (id: string, tipo: string) => {
-    try{
+    try {
       const type = Parameter.getAllValues(id, tipo);
       this.typeValue = (await type).map((x) => ({
         value: x.id!,
         label: x.descripcionTexto as string,
-      }))
-    } catch(error) {
+      }));
+    } catch (error) {
       this.typeValue = [];
     }
-  }
+  };
 }

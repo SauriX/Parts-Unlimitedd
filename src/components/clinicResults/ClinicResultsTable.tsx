@@ -1,6 +1,7 @@
 import { Button, Table, Tag } from "antd";
 import { ExpandableConfig } from "antd/lib/table/interface";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import React, { Fragment, useEffect, useState } from "react";
 import { IColumns } from "../../app/common/table/utils";
 import { IClinicResultList } from "../../app/models/clinicResults";
@@ -18,7 +19,7 @@ const ClinicResultsTable = ({
   expandable,
 }: ClinicResultsTableProps) => {
   const { clinicResultsStore } = useStore();
-  const { loadingStudies } = clinicResultsStore;
+  const { loadingStudies, getAll } = clinicResultsStore;
   const [openRows, setOpenRows] = useState<boolean>(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
 
@@ -49,6 +50,16 @@ const ClinicResultsTable = ({
     }
     setExpandedRowKeys(expandRows);
   };
+
+  useEffect(() => {
+    getAll({
+      fecha: [
+        moment(Date.now()).utcOffset(0, true),
+        moment(Date.now()).utcOffset(0, true),
+      ],
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Fragment>
