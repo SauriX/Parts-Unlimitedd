@@ -867,10 +867,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   }}
                   max={500}
                   // readonly={readonly}
-                  readonly={
-                    searchParams.get("mode") == "edit" ||
-                    searchParams.get("mode") == "readonly"
-                  }
+                  readonly={true}
                 />
               </Col>
               <Col span={4}>
@@ -935,6 +932,18 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           max={10}
                           min={10}
+                          onChange={(e) => {
+                            let valu = e.target.value;
+                            if (!Number(valu)) {
+                              form.setFieldValue(
+                                "telefono",
+                                valu.substring(0, valu.length - 1)
+                              );
+
+                              return;
+                            }
+                            form.setFieldValue("telefono", valu);
+                          }}
                           showLabel
                           errors={
                             errors.find((x) => x.name === "telefono")?.errors
@@ -951,6 +960,18 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           max={10}
                           min={10}
+                          onChange={(e) => {
+                            let valu = e.target.value;
+                            if (!Number(valu)) {
+                              form.setFieldValue(
+                                "celular",
+                                valu.substring(0, valu.length - 1)
+                              );
+
+                              return;
+                            }
+                            form.setFieldValue("celular", valu);
+                          }}
                           showLabel
                           errors={
                             errors.find((x) => x.name === "celular")?.errors
@@ -980,6 +1001,19 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                             noStyle: true,
                           }}
                           max={5}
+                          min={5}
+                          onChange={(e) => {
+                            let valu = e.target.value;
+                            if (!Number(valu)) {
+                              form.setFieldValue(
+                                "cp",
+                                valu.substring(0, valu.length - 1)
+                              );
+
+                              return;
+                            }
+                            form.setFieldValue("cp", valu);
+                          }}
                           showLabel
                           readonly={readonly}
                         />
