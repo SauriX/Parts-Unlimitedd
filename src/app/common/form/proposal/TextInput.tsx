@@ -8,6 +8,7 @@ import "./index.less";
 interface IProps {
   formProps: FormItemProps<any>;
   max?: number;
+  min?: number;
   required?: boolean;
   prefix?: React.ReactNode;
   type?: RuleType;
@@ -26,6 +27,7 @@ interface IProps {
 const TextInput = ({
   formProps: itemProps,
   max,
+  min,
   required,
   prefix,
   type,
@@ -71,6 +73,16 @@ IProps) => {
       },
     });
   }
+  if (min) {
+    rules.push({
+      validator: (_, value: string) => {
+        if (!value || value.length >= min) {
+          return Promise.resolve();
+        }
+        return Promise.reject(`La longitud máxima es de ${min}`);
+      },
+    });
+  }
 
   if (required) {
     rules.push({
@@ -107,6 +119,7 @@ IProps) => {
           onKeyUp={onKeyUp}
           // onChange={onChange}
           maxLength={max ?? undefined}
+          minLength={min ?? undefined}
           style={{
             paddingRight: paddingRight,
             width: width ?? "100%",

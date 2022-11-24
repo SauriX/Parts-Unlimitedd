@@ -13,6 +13,7 @@ import { IRequestStudy } from "../../app/models/request";
 import {
   IRequestedStudy,
   IRequestedStudyList,
+  IUpdate,
 } from "../../app/models/requestedStudy";
 import { Ivalidationlist, IvalidationStudyList } from "../../app/models/resultValidation";
 
@@ -26,6 +27,8 @@ type expandableProps = {
   viewTicket: (recordId: any) => Promise<void>;
   visto: number[],
   setvisto: React.Dispatch<React.SetStateAction<number[]>>
+  updateData: IUpdate[],
+  //cambiar: boolean
 };
 
 type tableProps = {
@@ -133,9 +136,12 @@ export const ValidationStudyExpandable = ({
   onChange,
   viewTicket,
   visto,
-  setvisto
+  setvisto,
+  updateData,
+ // cambiar
 }: expandableProps) => {
   const [ver, setver]=useState<boolean>(false);
+  const [cambio, stcambio]=useState<boolean>(false);
   const nestedColumns: IColumns<IvalidationStudyList> = [
     {
       ...getDefaultColumnProps("clave", "Estudio", {
@@ -153,13 +159,13 @@ export const ValidationStudyExpandable = ({
       ...getDefaultColumnProps("registro", "Registro", {
         width: "20%",
       }),
-      render: (_value, record) => moment(record.registro).format("DD/MM/YYYY-h:mmA"),
+      render: (_value, record) => record.registro,
     },
     {
       ...getDefaultColumnProps("entrega", "Entrega", {
         width: "20%",
       }),
-      render: (_value, record) =>moment(record.entrega).format("DD/MM/YYYY-h:mmA"),
+      render: (_value, record) =>record.entrega,
     },
     {
       key: "Seleccionar",
@@ -171,18 +177,22 @@ export const ValidationStudyExpandable = ({
         <>
           {(record.estatus === 4 && visto.includes(record.id) || (ver && visto.includes(record.id) && record.estatus === 4 )) && (
             <Checkbox
-              onChange={(e) => onChange(e, record.id, record.solicitudId)}
+              onChange={(e) =>{ onChange(e, record.id, record.solicitudId);stcambio(!cambio);}}
+              checked={ updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id)||(cambio&&updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id))}
               disabled={!(activiti == "register")}
             >
             </Checkbox>
           )}
+           {updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id)||(cambio&&updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id))?"":""}
           {record.estatus === 5 &&   (
             <Checkbox
-              onChange={(e) => onChange(e, record.id, record.solicitudId)}
+              onChange={(e) => {{onChange(e, record.id, record.solicitudId); stcambio(!cambio);}}}
+              checked={ updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id)||(cambio&&updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id))}
               disabled={!(activiti == "cancel")}
             >
             </Checkbox>
           )}
+         
           
          {(record.estatus === 4 ) && ( <EyeOutlined
                 style={{marginLeft:"20%"}}

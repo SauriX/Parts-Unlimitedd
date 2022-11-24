@@ -42,7 +42,7 @@ const { width: windowWidth } = useWindowDimensions();
   const [lista, setLista] = useState(/* studies */);
   const [searchParams, setSearchParams] = useSearchParams();
   const [areaId, setAreaId] = useState<number>();
-  const [discunt, setDiscunt] = useState<string>();
+  const [discunt, setDiscunt] = useState<string>("");
   const [branch,setBranch] = useState<IOptions[]>();
  const [medic,setMedic] = useState<IOptions[]>([]);
   const [sucursal,setSucursal] = useState<ISucMedComList>();
@@ -889,11 +889,15 @@ useEffect(()=>{
                         name: "cantidad",
                         label: "Descuento",
                       }}
-                      max={100}
+                      max={ discunt === "number"?99999:100}
                       min={0}
                       required
                       readonly={readonly}
+
                   ></NumberInput>
+                  <div>
+
+                  </div>
               </Col>
               <Col md={12} sm={24} xs={12}>
 

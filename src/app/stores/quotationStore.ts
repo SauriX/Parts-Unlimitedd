@@ -342,6 +342,13 @@ export default class QuotationStore {
       alerts.warning(getErrors(error));
     }
   };
+  deactivateQuotation = async (quotationId: string) => {
+    try {
+      await Quotation.deactivateQuotation(quotationId);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
 
   updateGeneral = async (quotation: IQuotationGeneral) => {
     try {
