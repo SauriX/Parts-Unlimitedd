@@ -67,6 +67,7 @@ const ValidationTableStudy = ({
           </div>
         )}
       <Table<Ivalidationlist>
+        rowClassName={"row-search"}
         loading={loadingStudies}
         size="small"
         rowKey={(record) => record.id}

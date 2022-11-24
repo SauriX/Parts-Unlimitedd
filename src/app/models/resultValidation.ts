@@ -18,8 +18,8 @@ export interface IvalidationStudyList {
     study:string,
     area:string,
     status:string,
-    registro:moment.Moment,
-    entrega:moment.Moment,
+    registro:string,
+    entrega:string,
     estatus :number
     solicitudId:string,
 }
