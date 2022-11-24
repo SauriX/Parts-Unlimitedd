@@ -6,6 +6,7 @@ import {
   Collapse,
   Descriptions,
   Form,
+  Input,
   Row,
   Table,
   Tag,
@@ -44,7 +45,10 @@ import {
 } from "../../app/models/resultValidation";
 import moment from "moment";
 import ValidationTableStudy from "./ValidationTableStudy";
-import ValidationStudyColumns, { ValidationStudyExpandable } from "./ValidationStudyTable";
+import ValidationStudyColumns, {
+  ValidationStudyExpandable,
+} from "./ValidationStudyTable";
+import { IOptions } from "../../app/models/shared";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -55,8 +59,14 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   componentRef,
   printing,
 }) => {
-  const { procedingStore, optionStore, locationStore, samplig,resultValidationStore } = useStore();
-  const { expedientes, getnow, } = procedingStore;
+  const {
+    procedingStore,
+    optionStore,
+    locationStore,
+    samplig,
+    resultValidationStore,
+  } = useStore();
+  const { expedientes, getnow } = procedingStore;
   const {
     branchCityOptions,
     getBranchCityOptions,
@@ -72,7 +82,6 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     getCompanyOptions,
     studiesOptions,
     getStudiesOptions,
-    
   } = optionStore;
   const {
     getAll,
@@ -84,9 +93,9 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     soliCont,
     studyCont,
     viewTicket,
-    setSearch
+    setSearch,
   } = resultValidationStore;
-  const { getCity, cityOptions } = locationStore;
+  const { getCity,  } = locationStore;
   const [searchParams] = useSearchParams();
   const [form] = Form.useForm<ISearchValidation>();
   let navigate = useNavigate();
@@ -100,7 +109,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
   const [visto, setvisto] = useState<number[]>([]);
   const hasFooterRow = true;
-  const [activar,setActivar]=useState<boolean>(false);
+  const [activar, setActivar] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [activiti, setActiviti] = useState<string>("");
   const [openRows, setOpenRows] = useState<boolean>(false);
@@ -109,15 +118,16 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     searchedText: "",
     searchedColumn: "",
   });
-  useEffect(()=>{
-    const readStudy = async ()=>{
+  const selectedCity = Form.useWatch("ciudad", form);
+  useEffect(() => {
+    const readStudy = async () => {
       await getStudiesOptions();
-    } 
+    };
     readStudy();
-  },[getStudiesOptions]);
-  useEffect(()=>{
-    console.log(studiesOptions,"estudios");
-  },[studiesOptions]);
+  }, [getStudiesOptions]);
+  useEffect(() => {
+    console.log(studiesOptions, "estudios");
+  }, [studiesOptions]);
   const togleRows = () => {
     if (openRows) {
       setOpenRows(false);
@@ -136,7 +146,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     console.log("onchange");
     var data = ids;
     var solis = solicitudesData;
-    var dataid:number[] = [];
+    var dataid: number[] = [];
     var dataupdate = updateData;
     if (e.target.checked) {
       data.push(id);
@@ -145,17 +155,21 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
       let temp = solicitudesData.filter((x) => x == solicitud);
       let temp2 = dataupdate!.filter((x) => x.solicitudId == solicitud);
       if (temp2.length <= 0) {
-        let datatoupdate:IUpdate={
-          solicitudId:solicitud,
-          estudioId:dataid
-        }
+        let datatoupdate: IUpdate = {
+          solicitudId: solicitud,
+          estudioId: dataid,
+        };
         dataupdate?.push(datatoupdate);
-      }else{
-        let solicitudtoupdate = dataupdate?.filter(x=>x.solicitudId==solicitud)[0];
-        let count = solicitudtoupdate?.estudioId!.filter(x=>x==id);
-        if(count!.length <=0){
+      } else {
+        let solicitudtoupdate = dataupdate?.filter(
+          (x) => x.solicitudId == solicitud
+        )[0];
+        let count = solicitudtoupdate?.estudioId!.filter((x) => x == id);
+        if (count!.length <= 0) {
           solicitudtoupdate?.estudioId.push(id);
-          let indexsoli = dataupdate?.findIndex(x=>x.solicitudId==solicitud);
+          let indexsoli = dataupdate?.findIndex(
+            (x) => x.solicitudId == solicitud
+          );
           dataupdate[indexsoli!] = solicitudtoupdate;
         }
       }
@@ -170,47 +184,65 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
         setIds(temp);
         //SetSolicitudesData();
       }
-      let solicitudtoupdate = dataupdate?.filter(x=>x.solicitudId==solicitud)[0];
-      if(solicitudtoupdate.estudioId.length==1){
-        dataupdate = dataupdate.filter(x=>x.solicitudId!=solicitud);
-      }else{
-        let count = solicitudtoupdate?.estudioId!.filter(x=>x==id);
-        if(count!.length >0){
-          let estudios = solicitudtoupdate?.estudioId.filter(x=>x!=id);
-          solicitudtoupdate.estudioId= estudios;
-          let indexsoli = dataupdate?.findIndex(x=>x.solicitudId==solicitud);
+      let solicitudtoupdate = dataupdate?.filter(
+        (x) => x.solicitudId == solicitud
+      )[0];
+      if (solicitudtoupdate.estudioId.length == 1) {
+        dataupdate = dataupdate.filter((x) => x.solicitudId != solicitud);
+      } else {
+        let count = solicitudtoupdate?.estudioId!.filter((x) => x == id);
+        if (count!.length > 0) {
+          let estudios = solicitudtoupdate?.estudioId.filter((x) => x != id);
+          solicitudtoupdate.estudioId = estudios;
+          let indexsoli = dataupdate?.findIndex(
+            (x) => x.solicitudId == solicitud
+          );
           dataupdate[indexsoli!] = solicitudtoupdate;
         }
       }
     }
-    console.log(dataupdate.length,"onchange");
-    if(dataupdate.length<=0){
-      console.log("if")
+    console.log(dataupdate.length, "onchange");
+    if (dataupdate.length <= 0) {
+      console.log("if");
       setActivar(false);
-    }else{
-      console.log("else")
+    } else {
+      console.log("else");
       setActivar(true);
     }
-    
+
     setUpdateDate(dataupdate);
   };
   const updatedata = async () => {
     setLoading(true);
-    var succes = await update(updateData!);
-    if (succes) {
+    
+    
       setLoading(false);
       alerts.confirm(
         "",
-        `Se han enviado ${ids.length} estudios de ${solicitudesData.length} solicitud a estatus validado de manera exitosa `,
+        `Se ha(n) enviado ${ids.length} estudio(s) de ${
+          solicitudesData.length
+        } solicitud(es) a estatus ${
+          activiti == "register" ? "validado" : "capturado"
+        } de manera exitosa `,
         async () => {
+          var succes = await update(updateData!);
+          if (succes) {
           await getAll(values);
+          setUpdateDate([]);
+          setIds([]);
+          setActivar(false);
+          SetSolicitudesData([]);
+        } else {
+          setLoading(false);
+        }
+        },
+        ()=>{
+          setLoading(false);
         }
       );
       setIds([]);
       SetSolicitudesData([]);
-    } else {
-      setLoading(false);
-    }
+
   };
 
   const expandableStudyConfig = {
@@ -272,6 +304,8 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     ),
     rowExpandable: () => true,
   };
+  const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
+  const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   console.log("Table");
   useEffect(() => {
     const readData = async () => {
@@ -317,6 +351,18 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     setExpandable(expandableStudyConfig);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
+  useEffect(() => {
+    setCityOptions(
+      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [branchCityOptions]);
+
+  useEffect(() => {
+    setBranchOptions(
+      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+    );
+    form.setFieldValue("sucursal", []);
+  }, [branchCityOptions, form, selectedCity]);
   const onExpand = (isExpanded: boolean, record: Ivalidationlist) => {
     let expandRows: string[] = expandedRowKeys;
     if (isExpanded) {
@@ -335,27 +381,34 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   }, [activiti]);
   const onFinish = async (newValues: ISearchValidation) => {
     setLoading(true);
-    
+
     const reagent = { ...values, ...newValues };
+    setValues(reagent);
     setSearch(reagent);
-         var data = await getAll(reagent);
-         let studios = [];
-         console.log(reagent, "daata");
-         setSoliCont(data?.length!);
-         data?.forEach((x) =>
-           x.estudios.forEach((x: any) => {
-             studios.push(x);
-           })
-         );
-         setStudyCont(studios.length);
+    var data = await getAll(reagent);
+    let studios = [];
+    console.log(data, "daata");
+    setSoliCont(data?.length!);
+    data?.forEach((x) =>
+      x.estudios.forEach((x: any) => {
+        studios.push(x);
+      })
+    );
+    setStudyCont(studios.length);
     setLoading(false);
   };
 
   const register = () => {
     setActiviti("register");
+    setUpdateDate([]);
+    setIds([]);
+    setActivar(false);
   };
   const cancel = () => {
     setActiviti("cancel");
+    setUpdateDate([]);
+    setIds([]);
+    setActivar(false);
   };
   const columns: IColumns<Ivalidationlist> = [
     {
@@ -432,7 +485,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
 
   return (
     <Fragment>
-            <div style={{ marginBottom: "5px", marginLeft: "90%" }}>
+      <div style={{ marginBottom: "5px", marginLeft: "90%" }}>
         <Button
           key="clean"
           onClick={(e) => {
@@ -468,33 +521,32 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
           padding: "10px",
         }}
       >
-
-            <Form<ISearchValidation>
-              {...formItemLayout}
-              form={form}
-              name="sampling"
-              initialValues={values}
-              onFinish={onFinish}
-              scrollToFirstError
-            >
-              <Row>
-                <Col span={24}>
-                  <Row justify="space-between" gutter={[12, 12]}>
-                    <Col span={8}>
-                      <DateRangeInput
-                        formProps={{ label: "Fecha", name: "fecha" }}
-                      />
-                    </Col>
-                    <Col span={8}>
-                      <TextInput
-                        formProps={{
-                          name: "search",
-                          label: "Clave",
-                        }}
-                      />
-                    </Col>
-                    <Col span={8} style={{ textAlign: "right" }}>
-                      {/*                   <Button
+        <Form<ISearchValidation>
+          {...formItemLayout}
+          form={form}
+          name="sampling"
+          initialValues={values}
+          onFinish={onFinish}
+          scrollToFirstError
+        >
+          <Row>
+            <Col span={24}>
+              <Row justify="space-between" gutter={[12, 12]}>
+                <Col span={8}>
+                  <DateRangeInput
+                    formProps={{ label: "Fecha", name: "fecha" }}
+                  />
+                </Col>
+                <Col span={8}>
+                  <TextInput
+                    formProps={{
+                      name: "search",
+                      label: "Clave",
+                    }}
+                  />
+                </Col>
+                <Col span={8} style={{ textAlign: "right" }}>
+                  {/*                   <Button
                     type="primary"
                     onClick={() => {
                       form.submit();
@@ -502,93 +554,115 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                   >
                     Buscar
                   </Button> */}
-                    </Col>
-                    <Col span={8}>
-                      <SelectInput
-                        formProps={{
-                          name: "estudio",
-                          label: "Estudios",
-                        }}
-                        multiple
-                        options={studiesOptions}
-                      ></SelectInput>
-                    </Col>
-                    <Col span={8}>
-                      <SelectInput
-                        formProps={{
-                          name: "tipoSoli",
-                          label: "Tipo solicitud",
-                        }}
-                        multiple
-                        options={urgencyOptions}
-                      ></SelectInput>
-                    </Col>
-                    <Col span={8}>
-                      <SelectInput
-                        formProps={{
-                          name: "estatus",
-                          label: "Estatus",
-                        }}
-                        multiple
-                        options={[
-                          { value: 0, label: "Todos" },
-                          { value: 4, label: "Capturado" },
-                          { value: 5, label: "Validado" },
-                        ]}
-                      ></SelectInput>
-                    </Col>
-                    <Col span={8}>
-                      <SelectInput
-                        formProps={{
-                          name: "departament",
-                          label: "Departamento",
-                        }}
-                        multiple
-                        options={departmentOptions}
-                      ></SelectInput>
-                    </Col>
-                    <Col span={8}>
-                      <SelectInput
-                        formProps={{
-                          name: "area",
-                          label: "Área",
-                        }}
-                        multiple
-                        options={areas}
-                      ></SelectInput>
-                    </Col>
-                    <Col span={8}>
-                      <SelectInput
-                        formProps={{
-                          name: "medico",
-                          label: "Médico",
-                        }}
-                        multiple
-                        options={medicOptions}
-                      ></SelectInput>
-                    </Col>
-                    <Col span={8}>
-                      <SelectInput
-                        formProps={{ name: "sucursal", label: "Sucursales" }}
-                        multiple
-                        options={branchCityOptions}
-                      />
-                    </Col>
-                    <Col span={8}>
-                      <SelectInput
-                        formProps={{
-                          name: "compañia",
-                          label: "Compañía",
-                        }}
-                        multiple
-                        options={companyOptions}
-                      ></SelectInput>
-                    </Col>
-                    <Col span={8}></Col>
-                  </Row>
                 </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "estudio",
+                      label: "Estudios",
+                    }}
+                    multiple
+                    options={studiesOptions}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "tipoSoli",
+                      label: "Tipo solicitud",
+                    }}
+                    multiple
+                    options={urgencyOptions}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "estatus",
+                      label: "Estatus",
+                    }}
+                    multiple
+                    options={[
+                      { value: 0, label: "Todos" },
+                      { value: 4, label: "Capturado" },
+                      { value: 5, label: "Validado" },
+                    ]}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "departament",
+                      label: "Departamento",
+                    }}
+                    multiple
+                    options={departmentOptions}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "area",
+                      label: "Área",
+                    }}
+                    multiple
+                    options={areas}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "medico",
+                      label: "Médico",
+                    }}
+                    multiple
+                    options={medicOptions}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <Form.Item label="Sucursal" className="no-error-text" help="">
+                    <Input.Group>
+                      <Row gutter={8}>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "ciudad",
+                              label: "Ciudad",
+                              noStyle: true,
+                            }}
+                            options={cityOptions}
+                          />
+                        </Col>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "sucursal",
+                              label: "Sucursales",
+                              noStyle: true,
+                            }}
+                            multiple
+                            options={branchOptions}
+                          />
+                        </Col>
+                      </Row>
+                    </Input.Group>
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "compañia",
+                      label: "Compañía",
+                    }}
+                    multiple
+                    options={companyOptions}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}></Col>
               </Row>
-            </Form>
+            </Col>
+          </Row>
+        </Form>
       </div>
       <Row>
         <Col md={8}>
@@ -626,7 +700,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                 updatedata();
               }}
             >
-              {activar?"":" "}
+              {activar ? "" : " "}
               Aceptar Registro
             </Button>
           ) : (
@@ -634,20 +708,18 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
           )}
           {activiti == "cancel" ? (
             <Button
-              style={
-                {
-                  marginTop: "10px",
-                  marginBottom: "10px",
-                  marginLeft: "30%",
-                }
-              }
+              style={{
+                marginTop: "10px",
+                marginBottom: "10px",
+                marginLeft: "30%",
+              }}
               type="primary"
               disabled={!activar}
               onClick={() => {
                 updatedata();
               }}
             >
-              {activar?"":" "}
+              {activar ? "" : " "}
               Cancelar Registro
             </Button>
           ) : (
@@ -657,18 +729,17 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
       </Row>
       <Fragment>
         <ValidationTableStudy
-        
           data={studys}
-          columns={ValidationStudyColumns ({printTicket})}
+          columns={ValidationStudyColumns({ printTicket })}
           expandable={ValidationStudyExpandable({
             activiti,
-            onChange
-            ,viewTicket,
+            onChange,
+            viewTicket,
             visto,
-            setvisto
+            setvisto,
+            updateData,
           })}
         />
-
       </Fragment>
     </Fragment>
   );
