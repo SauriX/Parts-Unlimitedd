@@ -32,7 +32,7 @@ const sendOptions = [
 type RequestGeneralProps = {
   branchId: string | undefined;
   form: FormInstance<IRequestGeneral>;
-  onSubmit: (general: IRequestGeneral) => void;
+  onSubmit: (general: IRequestGeneral, showResult: boolean) => void;
 };
 
 const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
@@ -126,7 +126,7 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
   const onFinish = (values: IRequestGeneral) => {
     const request = { ...requestGeneral, ...values };
 
-    onSubmit(request);
+    onSubmit(request, true);
   };
 
   const sendEmail = async () => {

@@ -1,5 +1,6 @@
 import { Tabs } from "antd";
 import React, { useState } from "react";
+import { IRequestPayment } from "../../../../../app/models/request";
 import { ITaxData } from "../../../../../app/models/taxdata";
 import { useStore } from "../../../../../app/stores/store";
 import DatosFiscalesForm from "../../../../proceedings/details/DatosFiscalesForm";
@@ -9,9 +10,15 @@ const { TabPane } = Tabs;
 
 type RequestInvoiceTabProps = {
   recordId: string;
+  requestId: string;
+  payments: IRequestPayment[];
 };
 
-const RequestInvoiceTab = ({ recordId }: RequestInvoiceTabProps) => {
+const RequestInvoiceTab = ({
+  recordId,
+  requestId,
+  payments,
+}: RequestInvoiceTabProps) => {
   const { modalStore } = useStore();
   const { setTitle } = modalStore;
 
@@ -32,10 +39,19 @@ const RequestInvoiceTab = ({ recordId }: RequestInvoiceTabProps) => {
   return (
     <Tabs defaultActiveKey="1" onChange={onTabChange}>
       <TabPane tab="Datos Fiscales" key="taxData">
-        <DatosFiscalesForm local recordId={recordId} onSelectRow={onSelectTaxData} />
+        <DatosFiscalesForm
+          local
+          recordId={recordId}
+          onSelectRow={onSelectTaxData}
+        />
       </TabPane>
       <TabPane tab="Facturación" key="invoice" disabled={!taxData}>
-        <RequestInvoiceDetail />
+        <RequestInvoiceDetail
+          recordId={recordId}
+          requestId={requestId}
+          payments={payments}
+          taxData={taxData!}
+        />
       </TabPane>
     </Tabs>
   );

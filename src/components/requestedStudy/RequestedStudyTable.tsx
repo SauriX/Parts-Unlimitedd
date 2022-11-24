@@ -1,6 +1,7 @@
 import { Button, Table, Tag } from "antd";
 import { ExpandableConfig } from "antd/lib/table/interface";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import React, { Fragment, useEffect, useState } from "react";
 import { IColumns } from "../../app/common/table/utils";
 import { IRequestedStudyList } from "../../app/models/requestedStudy";
@@ -18,7 +19,7 @@ const RequestedStudyTable = ({
   expandable,
 }: RequestedStudyTableProps) => {
   const { requestedStudyStore } = useStore();
-  const { loadingStudies } = requestedStudyStore;
+  const { loadingStudies, getAll } = requestedStudyStore;
   const [openRows, setOpenRows] = useState<boolean>(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
 
@@ -50,20 +51,29 @@ const RequestedStudyTable = ({
     setExpandedRowKeys(expandRows);
   };
 
+  useEffect(() => {
+    getAll({
+      fecha: [
+        moment(Date.now()).utcOffset(0, true),
+        moment(Date.now()).utcOffset(0, true),
+      ],
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Fragment>
-      {data.length > 0 &&
-        (
-          <div style={{ textAlign: "right", marginBottom: 10 }}>
-            <Button
-              type="primary"
-              onClick={toggleRow}
-              style={{ marginRight: 10 }}
-            >
-              {!openRows ? "Abrir tabla" : "Cerrar tabla"}
-            </Button>
-          </div>
-        )}
+      {data.length > 0 && (
+        <div style={{ textAlign: "right", marginBottom: 10 }}>
+          <Button
+            type="primary"
+            onClick={toggleRow}
+            style={{ marginRight: 10 }}
+          >
+            {!openRows ? "Abrir tabla" : "Cerrar tabla"}
+          </Button>
+        </div>
+      )}
       <Table<IRequestedStudyList>
         loading={loadingStudies}
         size="small"

@@ -35,16 +35,16 @@ export interface IUpdate {
 }
 
 export interface IRequestedStudyForm {
-  sucursalId: string[];
-  medicoId: string[];
-  compañiaId: string[];
-  fecha: moment.Moment[];
-  buscar: string;
-  procedencia: number[];
-  departamento: number[];
-  area: number[];
-  tipoSolicitud: string[];
-  estatus: number[];
+  sucursalId?: string[];
+  medicoId?: string[];
+  compañiaId?: string[];
+  fecha?: moment.Moment[];
+  buscar?: string;
+  procedencia?: number[];
+  departamento?: number[];
+  area?: number[];
+  tipoSolicitud?: string[];
+  estatus?: number[];
 }
 
 export interface IStudyList {

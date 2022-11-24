@@ -12,9 +12,9 @@ import ClinicResultsTable from "./ClinicResultsTable";
 import { IClinicResultForm } from "../../app/models/clinicResults";
 
 type CRDefaultProps = {
-    printing: boolean;
-    formValues: IClinicResultForm;
-  };
+  printing: boolean;
+  formValues: IClinicResultForm;
+};
 
 const ClinicResultsBody = ({ printing, formValues }: CRDefaultProps) => {
   const { clinicResultsStore } = useStore();
@@ -24,7 +24,7 @@ const ClinicResultsBody = ({ printing, formValues }: CRDefaultProps) => {
   return (
     <Fragment>
       <ClinicResultsFilter />
-      <Divider orientation="left">{formValues.fecha[0].format('DD-MMM-YYYY')} - {formValues.fecha[1].format('DD-MMM-YYYY')}</Divider>
+      {/* <Divider orientation="left">{formValues.fecha[0].format('DD-MMM-YYYY')} - {formValues.fecha[1].format('DD-MMM-YYYY')}</Divider> */}
       <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
         <ClinicResultsTable
           data={data}
@@ -34,6 +34,6 @@ const ClinicResultsBody = ({ printing, formValues }: CRDefaultProps) => {
       </Spin>
     </Fragment>
   );
-}
+};
 
-export default observer(ClinicResultsBody)
+export default observer(ClinicResultsBody);

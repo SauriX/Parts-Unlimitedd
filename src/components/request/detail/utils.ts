@@ -3,10 +3,12 @@ import { IRequestGeneral } from "../../../app/models/request";
 import alerts from "../../../app/util/alerts";
 
 export const submitGeneral = async (
-  formGeneral: FormInstance<IRequestGeneral>
+  formGeneral: FormInstance<IRequestGeneral>,
+  showResult: boolean
 ) => {
   try {
     await formGeneral.validateFields();
+    formGeneral.setFieldValue("showResult", showResult);
     formGeneral.submit();
     return true;
   } catch (error: any) {
@@ -21,7 +23,11 @@ export const submitGeneral = async (
 
 export const onSubmitGeneral = (
   general: IRequestGeneral,
-  updateGeneral: (request: IRequestGeneral) => Promise<boolean>
+  showResult: boolean,
+  updateGeneral: (
+    request: IRequestGeneral,
+    showResult: boolean
+  ) => Promise<boolean>
 ) => {
-  return updateGeneral(general);
+  return updateGeneral(general, showResult);
 };
