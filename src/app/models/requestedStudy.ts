@@ -28,6 +28,7 @@ export interface IRequestedStudy {
   nombreEstatus: string;
   solicitudId: string;
   fechaActualizacion: string;
+  usuarioActualizacion: string;
 }
 
 export interface IUpdate {
