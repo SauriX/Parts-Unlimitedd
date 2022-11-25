@@ -2,16 +2,16 @@ import moment from "moment";
 
 export interface IsamplingForm {
   fecha?: moment.Moment[];
-  buscar: string;
-  procedencia: number[];
-  departamento: number[];
-  ciudad: string[];
-  tipoSolicitud: string[];
-  area: number[];
-  sucursal: string[];
-  status: number[];
-  medico: string[];
-  compañia: string[];
+  buscar?: string;
+  procedencia?: number[];
+  departamento?: number[];
+  ciudad?: string[];
+  tipoSolicitud?: string[];
+  area?: number[];
+  sucursal?: string[];
+  status?: number[];
+  medico?: string[];
+  compañia?: string[];
 }
 export interface IsamplingList {
   id: string;
@@ -25,7 +25,6 @@ export interface IsamplingList {
   compañia: string;
   seleccion: boolean;
   estudios: IstudySampling[];
-  
 }
 export interface IstudySampling {
   id: number;
@@ -36,10 +35,10 @@ export interface IstudySampling {
   entrega: string;
   seleccion: boolean;
   clave: string;
-  solicitudId:string;
+  solicitudId: string;
 }
 export interface IUpdate {
-  solicitudId:string;
+  solicitudId: string;
   estudioId: number[];
 }
 export class samplingFormValues implements IsamplingForm {
