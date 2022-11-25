@@ -113,15 +113,21 @@ export const ClinicResultsExpandable = () => {
   const nestedColumns: IColumns<IClinicStudy> = [
     {
       ...getDefaultColumnProps("clave", "Estudio", {
-        width: "50%",
+        width: "40%",
       }),
       render: (_value, record) => record.clave + " - " + record.nombre,
     },
     {
       ...getDefaultColumnProps("nombreEstatus", "Estatus", {
-        width: "50%",
+        width: "20%",
       }),
       render: (_value, record) => record.nombreEstatus!,
+    },
+    {
+      ...getDefaultColumnProps("fechaActualizacion", "Fecha de actualización", {
+        width: "40%",
+      }),
+      render: (_value, record) => record.fechaActualizacion! + " - " + record.usuarioActualizacion!,
     },
   ];
 

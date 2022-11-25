@@ -597,7 +597,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                         {fieldValue.tipoValorId == "5" ||
                                         fieldValue.tipoValorId == "6" ? (
                                           <Select
-                                            mode="multiple"
                                             options={fieldValue.tipoValores!.map(
                                               (x) => ({
                                                 key: x.id,
@@ -642,12 +641,12 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   </Col>
                                   <Col span={4}>
                                     {fieldValue.unidadNombre == null
-                                      ? "No cuenta con unidades"
+                                      ? "-"
                                       : fieldValue.unidadNombre}
                                   </Col>
                                   <Col span={4}>
                                     {fieldValue.valorInicial == null
-                                      ? "No cuenta con valores de referencia"
+                                      ? "-"
                                       : referenceValues(
                                           fieldValue.tipoValorId,
                                           fieldValue.valorInicial,
