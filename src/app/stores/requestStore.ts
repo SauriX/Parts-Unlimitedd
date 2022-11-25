@@ -297,6 +297,15 @@ export default class RequestStore {
     }
   };
 
+  getNextPaymentCode = async (serie: string) => {
+    try {
+      const data = await Request.getNextPaymentCode(serie);
+      return data.toString();
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
   getPriceStudy = async (studyId: number, filter: IPriceListInfoFilter) => {
     try {
       filter.estudioId = studyId;
@@ -463,9 +472,9 @@ export default class RequestStore {
   updateStudies = async (request: IRequestStudyUpdate, autoSave: boolean) => {
     try {
       if (!autoSave) this.loadingTabContentCount++;
-      await Request.updateStudies(request);
-      this.studies = this.studies.map((x) => ({ ...x, nuevo: false }));
-      this.packs = this.packs.map((x) => ({ ...x, nuevo: false }));
+      const response = await Request.updateStudies(request);
+      this.packs = response.paquetes ?? [];
+      this.studies = response.estudios;
       if (!autoSave) alerts.success(messages.updated);
       return true;
     } catch (error: any) {

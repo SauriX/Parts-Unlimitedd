@@ -36,6 +36,8 @@ const Request = {
     requests.get(`request/payments/${recordId}/${requestId}`),
   getImages: (recordId: string, requestId: string): Promise<string[]> =>
     requests.get(`request/images/${recordId}/${requestId}`),
+  getNextPaymentCode: (serie: string): Promise<string> =>
+    requests.get(`request/nextPaymentCode/${serie}`),
   sendTestEmail: (
     recordId: string,
     requestId: string,
@@ -58,7 +60,7 @@ const Request = {
     requests.put("request/general", request),
   updateTotals: (request: IRequestTotal): Promise<void> =>
     requests.put("request/totals", request),
-  updateStudies: (request: IRequestStudyUpdate): Promise<void> =>
+  updateStudies: (request: IRequestStudyUpdate): Promise<IRequestStudyUpdate> =>
     requests.post("request/studies", request),
   cancelRequest: (recordId: string, requestId: string): Promise<void> =>
     requests.put(`request/cancel/${recordId}/${requestId}`, {}),
