@@ -4,11 +4,11 @@ import alerts from "../../../app/util/alerts";
 
 export const submitGeneral = async (
   formGeneral: FormInstance<IRequestGeneral>,
-  showResult: boolean
+  autoSave: boolean
 ) => {
   try {
     await formGeneral.validateFields();
-    formGeneral.setFieldValue("showResult", showResult);
+    formGeneral.setFieldValue("guardadoAutomatico", autoSave);
     formGeneral.submit();
     return true;
   } catch (error: any) {
@@ -23,11 +23,11 @@ export const submitGeneral = async (
 
 export const onSubmitGeneral = (
   general: IRequestGeneral,
-  showResult: boolean,
+  showLoader: boolean,
   updateGeneral: (
     request: IRequestGeneral,
     showResult: boolean
   ) => Promise<boolean>
 ) => {
-  return updateGeneral(general, showResult);
+  return updateGeneral(general, showLoader);
 };

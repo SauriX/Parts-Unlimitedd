@@ -435,17 +435,17 @@ export default class RequestStore {
     }
   };
 
-  updateGeneral = async (request: IRequestGeneral, showResult: boolean) => {
+  updateGeneral = async (request: IRequestGeneral, autoSave: boolean) => {
     try {
-      this.loadingTabContentCount++;
+      if (!autoSave) this.loadingTabContentCount++;
       await Request.updateGeneral(request);
-      if (showResult) alerts.success(messages.updated);
+      if (!autoSave) alerts.success(messages.updated);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
     } finally {
-      this.loadingTabContentCount--;
+      if (!autoSave) this.loadingTabContentCount--;
     }
   };
 
@@ -460,19 +460,19 @@ export default class RequestStore {
     }
   };
 
-  updateStudies = async (request: IRequestStudyUpdate, showResult: boolean) => {
+  updateStudies = async (request: IRequestStudyUpdate, autoSave: boolean) => {
     try {
-      this.loadingTabContentCount++;
+      if (!autoSave) this.loadingTabContentCount++;
       await Request.updateStudies(request);
       this.studies = this.studies.map((x) => ({ ...x, nuevo: false }));
       this.packs = this.packs.map((x) => ({ ...x, nuevo: false }));
-      if (showResult) alerts.success(messages.updated);
+      if (!autoSave) alerts.success(messages.updated);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
     } finally {
-      this.loadingTabContentCount--;
+      if (!autoSave) this.loadingTabContentCount--;
     }
   };
 
