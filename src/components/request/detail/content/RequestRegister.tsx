@@ -27,6 +27,7 @@ const RequestRegister = () => {
     request,
     setGlobalPayments,
     getPayments,
+    getNextPaymentCode,
     printTicket,
     createPayment,
     cancelPayments,
@@ -35,6 +36,8 @@ const RequestRegister = () => {
   const { openModal } = modalStore;
 
   const [form] = Form.useForm<IRequestPayment>();
+
+  const series = Form.useWatch("serie", form);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [payments, setPayments] = useState<IRequestPayment[]>([]);
@@ -65,7 +68,7 @@ const RequestRegister = () => {
         setSearchState,
         width: 135,
       }),
-      render: (_, record) => record.serie + " - " + record.numero,
+      render: (_, record) => record.serie + " " + record.numero,
     },
     {
       ...getDefaultColumnProps("formaPago", "Forma de Pago", {
@@ -139,7 +142,22 @@ const RequestRegister = () => {
   useEffect(() => {
     setGlobalPayments(payments);
     calculateTotals();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [payments, setGlobalPayments]);
+
+  useEffect(() => {
+    const getNumber = async () => {
+      if (!series) {
+        form.setFieldValue("numero", undefined);
+      } else {
+        const next = await getNextPaymentCode(series);
+        form.setFieldValue("numero", next);
+      }
+    };
+
+    getNumber();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [series]);
 
   const cancel = async () => {
     alerts.confirm(
@@ -252,8 +270,6 @@ const RequestRegister = () => {
                     label: "Número de cuenta",
                   }}
                   max={100}
-                  errors={errors.find((x) => x.name === "numeroCuenta")?.errors}
-                  required
                 />
               </Col>
               <Col span={2}>
@@ -267,18 +283,19 @@ const RequestRegister = () => {
                   errors={errors.find((x) => x.name === "serie")?.errors}
                 />
               </Col>
-              <Col span={4}>
+              <Col span={2}>
                 <TextInput
                   formProps={{
                     name: "numero",
                   }}
                   placeholder="Número"
                   max={100}
+                  readonly
                   required
                   errors={errors.find((x) => x.name === "numero")?.errors}
                 />
               </Col>
-              <Col span={6} style={{ textAlign: "right" }}>
+              <Col span={8} style={{ textAlign: "right" }}>
                 <Button htmlType="submit" type="primary">
                   Registrar Pago
                 </Button>
