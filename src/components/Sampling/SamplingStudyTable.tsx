@@ -159,25 +159,24 @@ export const SamplingStudyExpandable = ({
       title: "Seleccionar",
       align: "center",
       width: "10%",
-      render: (_value, record) => {
-        console.log("record", toJS(record));
-        return (
-          <>
-            {record.status === 1 && (
-              <Checkbox
-                onChange={(e) => onChange(e, record.id, record.solicitudId)}
-                disabled={!(activiti == "register")}
-              ></Checkbox>
-            )}
-            {record.status === 2 && (
-              <Checkbox
-                onChange={(e) => onChange(e, record.id, record.solicitudId)}
-                disabled={!(activiti == "cancel")}
-              ></Checkbox>
-            )}
-          </>
-        );
-      },
+      render: (_value, record) => (
+        <>
+          {record.estatus === 1 && (
+            <Checkbox
+              onChange={(e) => onChange(e, record.id, record.solicitudId)}
+              disabled={!(activiti == "register")}
+            >
+            </Checkbox>
+          )}
+          {record.estatus === 2 && (
+            <Checkbox
+              onChange={(e) => onChange(e, record.id, record.solicitudId)}
+              disabled={!(activiti == "cancel")}
+            >
+            </Checkbox>
+          )}
+        </>
+      ),
     },
   ];
 

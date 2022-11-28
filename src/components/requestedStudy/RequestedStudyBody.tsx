@@ -64,31 +64,32 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
       setLoading(false);
       {
         activity == "register"
-          ? alerts.confirm(
+          ? alerts.confirmInfo(
               "",
-              `Se han enviado ${
+              `Se ha(n) enviado ${
                 updateForm.flatMap((x) => x.estudioId).length
-              } estudios de ${
+              } estudio(s) de ${
                 updateForm.length
               } solicitud(es) a estatus Solicitado de manera exitosa `,
               async () => {
                 setUpdateForm([]);
-              }
+                getAll(formValues);
+              },
             )
-          : alerts.confirm(
+          : alerts.confirmInfo(
               "",
-              `Se han enviado ${
+              `Se ha(n) enviado ${
                 updateForm.flatMap((x) => x.estudioId).length
-              } estudios de ${
+              } estudio(s) de ${
                 updateForm.length
               } solicitud(es) a estatus Toma de Muestra de manera exitosa `,
               async () => {
                 setUpdateForm([]);
+                getAll(formValues);
               }
             );
       }
       setActivity("");
-      getAll(formValues)
     } else {
       setLoading(false);
       setActivity("");

@@ -50,6 +50,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   estudioId,
   claveMedico,
   isMarked,
+  solicitud,
   showHeaderTable,
 }) => {
   const [disabled, setDisabled] = useState(false);
@@ -123,10 +124,11 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
         const obj = {
           ...x,
           resultado:
-            x.tipoValorId === "5"
+            x.tipoValorId === "5" || x.tipoValorId === "6"
               ? x.resultado?.toString()?.split(",")
               : x.resultado,
           rango:
+          x.criticoMinimo == 0 && x.criticoMaximo == 0 ? false :
             x.criticoMinimo! >= parseFloat(x.resultado as string) ||
             parseFloat(x.resultado as string) >= x.criticoMaximo!,
         };
@@ -154,7 +156,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     );
   }, [estudio]);
 
-  const { width: windowWidth } = useWindowDimensions();
   const columns: IColumns<any> = [
     {
       key: "id",
@@ -220,7 +221,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const renderUpdateStatus = () => {
     return (
       <>
-        {currentStudy.estatusId >= status.requestStudy.solicitado ? (
+        {currentStudy.estatusId >= status.requestStudy.solicitado && currentStudy.estatusId < status.requestStudy.liberado ? (
           <Row>
             <Col span={24}>
               <Row justify="space-between" gutter={[12, 24]}>
@@ -304,7 +305,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     });
 
     console.log(labResults);
-    success = await updateResults(labResults);
+    success = await updateResults(labResults, solicitud.expedienteId);
     if (success) {
       setHideWhenCancel(false);
       await loadInit();
@@ -515,13 +516,19 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                               key={field.key}
                               justify="space-between"
                               gutter={[0, 24]}
-                              style={{ textAlign: "center" }}
+                              style={{ textAlign: "center", marginBottom: 5 }}
                               align="middle"
                             >
                               {fieldValue.tipoValorId == "9" ? (
-                                <Col span={24}>
-                                  <br />
-                                </Col>
+                                fieldValue.nombre != null ? (
+                                  <Col span={4}>
+                                    <strong>{fieldValue.nombre}</strong>
+                                  </Col>
+                                ) : (
+                                  <Col span={24}>
+                                    <br />
+                                  </Col>
+                                )
                               ) : (
                                 <>
                                   <Col span={4}>
@@ -587,9 +594,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                         validateTrigger={["onChange", "onBlur"]}
                                         noStyle
                                       >
-                                        {fieldValue.tipoValorId == "5" ? (
+                                        {fieldValue.tipoValorId == "5" ||
+                                        fieldValue.tipoValorId == "6" ? (
                                           <Select
-                                            mode="multiple"
                                             options={fieldValue.tipoValores!.map(
                                               (x) => ({
                                                 key: x.id,
@@ -618,6 +625,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                                   }
                                             }
                                             allowClear
+                                            disabled={
+                                              !fieldValue.editable ||
+                                              currentStudy.estatusId > 3
+                                            }
                                           />
                                         )}
                                       </Form.Item>
@@ -630,12 +641,12 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   </Col>
                                   <Col span={4}>
                                     {fieldValue.unidadNombre == null
-                                      ? "No cuenta con unidades"
+                                      ? "-"
                                       : fieldValue.unidadNombre}
                                   </Col>
                                   <Col span={4}>
                                     {fieldValue.valorInicial == null
-                                      ? "No cuenta con valores de referencia"
+                                      ? "-"
                                       : referenceValues(
                                           fieldValue.tipoValorId,
                                           fieldValue.valorInicial,
@@ -654,96 +665,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
               </Row>
             </Form>
           </Card>
-          {/* {resultParam.some((x) => x.rango) && !hideWhenCancel && (
-            <Card className="capture-details">
-              <Title level={4}>Valores Críticos</Title>
-              <Row justify="space-between" style={{ textAlign: "center" }}>
-                <Col span={8}>
-                  <h3>EXAMEN</h3>
-                </Col>
-                <Col span={8}>
-                  <h3>RESULTADO CRÍTICO</h3>
-                </Col>
-                <Col span={8}>
-                  <h3>REFERENCIAS CRÍTICAS</h3>
-                </Col>
-              </Row>
-              {resultParam?.map((x) =>
-                x.rango ? (
-                  <Row justify="space-between" style={{ textAlign: "center" }}>
-                    <Col span={8}>
-                      <h4>{x.nombre}</h4>
-                    </Col>
-                    <Col span={8}>
-                      <h4 style={{ color: "red" }}>
-                        {x.resultado} {x.unidadNombre}
-                      </h4>
-                    </Col>
-                    <Col span={8}>
-                      <h4>
-                        {"<"} {x.criticoMinimo} - {x.criticoMaximo} {">"}
-                      </h4>
-                    </Col>
-                  </Row>
-                ) : null
-              )}
-            </Card>
-          )} */}
-          {/* {resultParam.some(
-            (x) => x.deltaCheck && !!x.ultimoResultado && x.resultado
-          ) &&
-            !hideWhenCancel && (
-              <Card className="capture-details">
-                <Title level={4}>Análisis previo</Title>
-                <Row>
-                  <Col span={24}>
-                    <Row
-                      justify="space-between"
-                      style={{ textAlign: "center" }}
-                    >
-                      <Col span={6}>
-                        <h3>EXAMEN</h3>
-                      </Col>
-                      <Col span={6}>
-                        <h4>RESULTADO ACTUAL</h4>
-                      </Col>
-                      <Col span={6}>
-                        <h4>RESULTADO PREVIO</h4>
-                      </Col>
-                      <Col span={6}>
-                        <h4>DIFERENCIA</h4>
-                      </Col>
-                      {resultParam?.map((x) =>
-                        x.deltaCheck ? (
-                          <>
-                            <Col span={6}>
-                              <h4>{x.nombre}</h4>
-                            </Col>
-                            <Col span={6}>
-                              <h4>
-                                {x.resultado} {x.unidadNombre}
-                              </h4>
-                            </Col>
-                            <Col span={6}>
-                              <h4>
-                                {x.ultimoResultado} {x.unidadNombre}
-                              </h4>
-                            </Col>
-                            <Col span={6}>
-                              <h4>
-                                {parseFloat(x.resultado) -
-                                  parseFloat(x.ultimoResultado)}{" "}
-                                {x.unidadNombre}
-                              </h4>
-                            </Col>
-                          </>
-                        ) : null
-                      )}
-                    </Row>
-                  </Col>
-                </Row>
-              </Card>
-            )} */}
         </Spin>
       ) : null}
     </Fragment>

@@ -119,10 +119,11 @@ export default class ClinicResultsStores {
     }
   };
 
-  updateResults = async (results: IClinicResultCaptureForm[]) => {
+  updateResults = async (results: IClinicResultCaptureForm[], recordId: string) => {
     try {
       await ClinicResults.updateResults(results);
       alerts.success(messages.updated);
+      this.getStudies(recordId, results[0].solicitudId)
       const index = this.studies.findIndex(
         (x) => x.id === results[0].estudioId
       );
@@ -257,7 +258,9 @@ export default class ClinicResultsStores {
           criticoMaximo: y.criticoMaximo,
           ultimoResultado: y.ultimoResultado,
           deltaCheck: y.deltaCheck,
-          orden: i,
+          editable: y.editable,
+          orden: y.index!,
+          clave: y.clave,
           rango:
             y.criticoMinimo >= parseFloat(y.resultado) ||
             parseFloat(y.resultado) >= y.criticoMaximo,

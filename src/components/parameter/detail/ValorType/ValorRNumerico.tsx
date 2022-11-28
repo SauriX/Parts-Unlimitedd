@@ -71,24 +71,28 @@ const ValorRNumerico: FC<Props> = ({ idTipeVAlue, parameter }) => {
     } else if (value.valorFinal === value.valorInicial) {
       alerts.warning(messages.warnings.finalValue);
       return;
-    } else if (value.criticoMinimo! > value.criticoMaximo!) {
-      alerts.warning(messages.warnings.minimumValue);
-      return;
-    } else if (value.criticoMinimo === value.criticoMaximo) {
-      alerts.warning(messages.warnings.maximumValue);
-      return;
-    } else if (
-      value.criticoMinimo! > value.valorInicial! ||
-      value.criticoMinimo === value.valorInicial
-    ) {
-      alerts.warning(messages.warnings.initialMinimumValue);
-      return;
-    } else if (
-      value.criticoMaximo! < value.valorFinal! ||
-      value.criticoMaximo === value.valorFinal
-    ) {
-      alerts.warning(messages.warnings.finalMaximumValue);
-      return;
+    }
+
+    if (value.criticoMinimo != 0 && value.criticoMaximo != 0) {
+      if (value.criticoMinimo! > value.criticoMaximo!) {
+        alerts.warning(messages.warnings.minimumValue);
+        return;
+      } else if (value.criticoMinimo === value.criticoMaximo) {
+        alerts.warning(messages.warnings.maximumValue);
+        return;
+      } else if (
+        value.criticoMinimo! > value.valorInicial! ||
+        value.criticoMinimo === value.valorInicial
+      ) {
+        alerts.warning(messages.warnings.initialMinimumValue);
+        return;
+      } else if (
+        value.criticoMaximo! < value.valorFinal! ||
+        value.criticoMaximo === value.valorFinal
+      ) {
+        alerts.warning(messages.warnings.finalMaximumValue);
+        return;
+      }
     }
     let success = false;
     if (!value.id) {
@@ -170,7 +174,6 @@ const ValorRNumerico: FC<Props> = ({ idTipeVAlue, parameter }) => {
                     label: "Valor Crítico Mínimo",
                   }}
                   max={9999999999}
-                  min={0}
                   readonly={disabled}
                 />
               </Col>
@@ -181,7 +184,6 @@ const ValorRNumerico: FC<Props> = ({ idTipeVAlue, parameter }) => {
                     label: "Valor Crítico Máximo",
                   }}
                   max={9999999999}
-                  min={0}
                   readonly={disabled}
                 />
               </Col>

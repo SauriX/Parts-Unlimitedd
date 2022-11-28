@@ -1,6 +1,6 @@
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { message, Modal } from "antd";
-const { confirm } = Modal;
+const { confirm, info } = Modal;
 
 const alerts = {
   success(text: string) {
@@ -37,6 +37,22 @@ const alerts = {
       cancelText: cancelText || "Cancelar",
     });
   },
+  confirmInfo(
+    title: string,
+    text: React.ReactNode,
+    onOk: () => Promise<void>,
+    okText: string | null = null,
+  ) {
+    info({
+      title,
+      icon: <ExclamationCircleOutlined />,
+      content: text,
+      onOk() {
+        return onOk();
+      },
+      okText: okText || "Volver",
+    });
+  }
 };
 
 export default alerts;

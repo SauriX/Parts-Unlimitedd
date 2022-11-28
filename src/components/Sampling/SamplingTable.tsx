@@ -17,6 +17,7 @@ import {
   IColumns,
   ISearch,
 } from "../../app/common/table/utils";
+import moment from "moment";
 import useWindowDimensions from "../../app/util/window";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
@@ -274,7 +275,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                   label="Estatus"
                   style={{ maxWidth: 30, color: "#000000" }}
                 >
-                  {x.status == 1 ? "Pendiente" : "Toma de muestra"}
+                  {x.estatus == 1 ? "Pendiente" : "Toma de muestra"}
                 </Descriptions.Item>
                 <Descriptions.Item label="Registro" style={{ maxWidth: 30 }}>
                   {x.registro}
@@ -283,12 +284,12 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                   {x.entrega}
                 </Descriptions.Item>
                 <Descriptions.Item label="" style={{ maxWidth: 30 }}>
-                  {x.status == 1 && activiti == "register" && (
+                  {x.estatus == 1 && activiti == "register" && (
                     <Checkbox onChange={(e) => onChange(e, x.id, item.id)}>
                       Selecciona
                     </Checkbox>
                   )}
-                  {x.status == 2 && activiti == "cancel" && (
+                  {x.estatus == 2 && activiti == "cancel" && (
                     <Checkbox onChange={(e) => onChange(e, x.id, item.id)}>
                       Selecciona
                     </Checkbox>
@@ -387,6 +388,17 @@ const SamplingTable: FC<ProceedingTableProps> = ({
   const cancel = () => {
     setActiviti("cancel");
   };
+
+  useEffect(() => {
+    getAll({
+      fecha: [
+        moment(Date.now()).utcOffset(0, true),
+        moment(Date.now()).utcOffset(0, true),
+      ],
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const columns: IColumns<IsamplingList> = [
     {
       ...getDefaultColumnProps("solicitud", "Clave", {

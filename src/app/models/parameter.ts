@@ -24,6 +24,7 @@ export interface IParameterList {
   resultado: string;
   ultimoResultado?: string;
   formula?: string;
+  editable: boolean;
   index?: number;
   tipoValores?: ItipoValorForm[];
 }
@@ -55,7 +56,7 @@ export interface IParameterForm {
   nombreCorto: string;
   unidades: number;
   tipoValor: any;
-  formula: string;
+  formula?: string;
   valorInicial: string;
   departamentoId: number;
   areaId: number;
@@ -117,7 +118,6 @@ export class ParameterFormValues implements IParameterForm {
   nombreCorto = "";
   unidades = 0;
   tipoValor = "0";
-  formula = "";
   valorInicial = "";
   departamentoId = 0;
   areaId = 0;
@@ -151,8 +151,6 @@ export class tipoValorFormValues implements ItipoValorForm {
   hombreValorFinal = 0;
   mujerValorInicial = 0;
   mujerValorFinal = 0;
-  criticoMinimo = 0;
-  criticoMaximo = 0;
   hombreCriticoMinimo = 0;
   hombreCriticoMaximo = 0;
   mujerCriticoMinimo = 0;

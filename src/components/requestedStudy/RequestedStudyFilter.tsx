@@ -16,6 +16,7 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 import moment from "moment";
 import { IOptions } from "../../app/models/shared";
+import { IRequestStudy, RequestStudyValues } from "../../app/models/request";
 const { Panel } = Collapse;
 
 const RequestedStudyFilter = () => {
@@ -28,6 +29,8 @@ const RequestedStudyFilter = () => {
     companyOptions,
     departmentAreaOptions,
     getDepartmentAreaOptions,
+    getDepartmentOptions,
+    getareaOptions,
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
@@ -37,8 +40,14 @@ const RequestedStudyFilter = () => {
   const [loading, setLoading] = useState(false);
 
   const selectedCity = Form.useWatch("ciudad", form);
+  const selectedDepartment = Form.useWatch("departament", form);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
+  const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
+  const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
+  const [currentStudy, setCurrentStudy] = useState<IRequestStudy>(
+    new RequestStudyValues()
+  );
 
   useEffect(() => {
     getBranchCityOptions();
@@ -64,6 +73,19 @@ const RequestedStudyFilter = () => {
     );
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
+
+  useEffect(() => {
+    setDepartmentOptions(
+      departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [departmentAreaOptions]);
+
+  useEffect(() => {
+    setAreaOptions(
+      departmentAreaOptions.find((x) => x.value === selectedDepartment)?.options ?? []
+    );
+    form.setFieldValue("sucursalId", []);
+  }, [departmentAreaOptions, form, selectedDepartment]);
 
   const onFinish = async (newFormValues: IRequestedStudyForm) => {
     setLoading(true);
@@ -117,6 +139,8 @@ const RequestedStudyFilter = () => {
                 <Col span={8}>
                   <DateRangeInput
                     formProps={{ label: "Fecha", name: "fecha" }}
+                    disableAfterDates={true}
+                    required
                   />
                 </Col>
                 <Col span={8}>
@@ -158,14 +182,41 @@ const RequestedStudyFilter = () => {
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
-                  <SelectInput
+                  {/* <SelectInput
                     formProps={{
                       name: "departamento",
                       label: "Departamento",
                     }}
                     multiple
                     options={departmentAreaOptions}
-                  ></SelectInput>
+                  ></SelectInput> */}
+                  <Form.Item label="Áreas" className="no-error-text" help="">
+                    <Input.Group>
+                      <Row gutter={8}>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "departament",
+                              label: "Departamento",
+                              noStyle: true,
+                            }}
+                            options={departmentOptions}
+                          />
+                        </Col>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "area",
+                              label: "Área",
+                              noStyle: true,
+                            }}
+                            multiple
+                            options={areaOptions}
+                          />
+                        </Col>
+                      </Row>
+                    </Input.Group>
+                  </Form.Item>
                 </Col>
                 <Col span={8}>
                   <SelectInput
