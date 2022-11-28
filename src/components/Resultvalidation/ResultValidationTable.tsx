@@ -463,26 +463,6 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     },
   ];
 
-  /*   const PriceListTablePrint = () => {
-    return (
-      <div ref={componentRef}>
-        <PageHeader
-          ghost={false}
-          title={<HeaderTitle title="Catálogo de Lista de Expedientes"  />}
-          className="header-container"
-        ></PageHeader>
-        <Divider className="header-divider" />
-        <Table<IProceedingList>
-          size="small"
-          rowKey={(record) => record.id}
-          columns={columns.slice(0, 7)}
-          pagination={false}
-          dataSource={[...expedientes]}
-        />
-      </div>
-    );
-  }; */
-
   return (
     <Fragment>
       <div style={{ marginBottom: "5px", marginLeft: "90%" }}>
@@ -492,7 +472,6 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
            
             form.setFieldsValue(new searchValues() );
             setValues(new searchValues());
-            e.stopPropagation();
             form.resetFields();
           }}
           style={{ marginLeft: "10%" }}
@@ -503,7 +482,6 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
           key="filter"
           type="primary"
           onClick={(e) => {
-            e.stopPropagation();
             form.submit();
           }}
           style={{ marginLeft: "10%" }}
@@ -527,7 +505,12 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
           {...formItemLayout}
           form={form}
           name="sampling"
-          initialValues={values}
+          initialValues={{
+            fecha: [
+              moment(Date.now()).utcOffset(0, true),
+              moment(Date.now()).utcOffset(0, true),
+            ],
+          }}
           onFinish={onFinish}
           scrollToFirstError
         >
@@ -546,16 +529,6 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                       label: "Clave",
                     }}
                   />
-                </Col>
-                <Col span={8} style={{ textAlign: "right" }}>
-                  {/*                   <Button
-                    type="primary"
-                    onClick={() => {
-                      form.submit();
-                    }}
-                  >
-                    Buscar
-                  </Button> */}
                 </Col>
                 <Col span={8}>
                   <SelectInput

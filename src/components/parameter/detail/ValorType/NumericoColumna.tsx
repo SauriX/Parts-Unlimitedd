@@ -8,7 +8,6 @@ import {
 } from "../../../../app/models/parameter";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../../app/stores/store";
-import alerts from "../../../../app/util/alerts";
 type Props = {
   idTipeVAlue: string;
   parameter: IParameterForm;
@@ -20,6 +19,8 @@ const NumeroColumna: FC<Props> = ({ idTipeVAlue, parameter }) => {
   const [lista, setLista] = useState<any[]>([]);
   const [formValue] = Form.useForm<ItipoValorForm[]>();
   const [disabled, setDisabled] = useState(false);
+  const [columnsFields, setColumnsFields] = useState([]);
+
   let { id } = useParams<UrlParams>();
   const { parameterStore } = useStore();
   const { addvalues, getAllvalues, update } = parameterStore;
@@ -58,18 +59,18 @@ const NumeroColumna: FC<Props> = ({ idTipeVAlue, parameter }) => {
       return data;
     });
 
-      var succes = await addvalues(val, id!);
+    var succes = await addvalues(val, id!);
+    if (succes) {
+      succes = await update(parameter);
       if (succes) {
-        succes = await update(parameter);
-        if (succes) {
-          navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
-        }
+        navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
       }
+    }
   };
   return (
     <div>
       <Divider orientation="left">
-        Valores de referencia (Numérico con una columna):
+        Valores de referencia (Numérico por columna):
       </Divider>
 
       <Col md={24} sm={24} xs={24} style={{ marginLeft: "50%" }}>
@@ -122,6 +123,7 @@ const NumeroColumna: FC<Props> = ({ idTipeVAlue, parameter }) => {
                     />
                   </Form.Item>
                   <MinusCircleOutlined onClick={() => remove(name)} />
+                  {/* {columnsFields.map()} */}
                 </Space>
               ))}
               <Form.Item>
