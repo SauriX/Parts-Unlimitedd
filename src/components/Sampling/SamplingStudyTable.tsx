@@ -1,7 +1,9 @@
-import { Descriptions, Checkbox, Table } from "antd";
+import { Descriptions, Checkbox, Table, Typography } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import { toJS } from "mobx";
 import moment from "moment";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PrintIcon from "../../app/common/icons/PrintIcon";
 import {
   IColumns,
@@ -15,7 +17,7 @@ import {
 } from "../../app/models/requestedStudy";
 import { IsamplingList, IstudySampling } from "../../app/models/sampling";
 import { status } from "../../app/util/catalogs";
-
+const { Link, Text } = Typography;
 type expandableProps = {
   activiti: string;
   onChange: (e: CheckboxChangeEvent, id: number, solicitud: string) => void;
@@ -26,6 +28,7 @@ type tableProps = {
 };
 
 const SamplingStudyColumns = ({ printTicket }: tableProps) => {
+  let navigate = useNavigate();
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -37,6 +40,23 @@ const SamplingStudyColumns = ({ printTicket }: tableProps) => {
         setSearchState,
         width: "15%",
       }),
+      render: (value, item) => (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Link
+            onClick={() => {
+              navigate(
+                // ""
+                `/requests/${item.order}/${item.id}`
+              );
+            }}
+          >
+            {value}
+          </Link>
+          <small>
+            <Text type="secondary">{item.solicitud}</Text>
+          </small>
+        </div>
+      ),
     },
     {
       ...getDefaultColumnProps("nombre", "Nombre del Paciente", {
@@ -87,14 +107,17 @@ const SamplingStudyColumns = ({ printTicket }: tableProps) => {
       title: "Imprimir orden",
       align: "center",
       width: "10%",
-      render: (_value, record) => (
-        <PrintIcon
-          key="imprimir"
-          onClick={() => {
-            printTicket(record.order, record.id);
-          }}
-        />
-      ),
+      render: (_value, record) => {
+        // console.log("record ready", toJS(record));
+        return (
+          <PrintIcon
+            key="imprimir"
+            onClick={() => {
+              printTicket(record.order, record.id);
+            }}
+          />
+        );
+      },
     },
   ];
   return columns;
@@ -115,7 +138,8 @@ export const SamplingStudyExpandable = ({
       ...getDefaultColumnProps("nombreEstatus", "Estatus", {
         width: "20%",
       }),
-      render: (_value, record) => record.status == 1 ? "Pendiente" : "Toma de muestra",
+      render: (_value, record) =>
+        record.status == 1 ? "Pendiente" : "Toma de muestra",
     },
     {
       ...getDefaultColumnProps("registro", "Registro", {
@@ -135,24 +159,25 @@ export const SamplingStudyExpandable = ({
       title: "Seleccionar",
       align: "center",
       width: "10%",
-      render: (_value, record) => (
-        <>
-          {record.status === 1 && (
-            <Checkbox
-              onChange={(e) => onChange(e, record.id, record.solicitudId)}
-              disabled={!(activiti == "register")}
-            >
-            </Checkbox>
-          )}
-          {record.status === 2 && (
-            <Checkbox
-              onChange={(e) => onChange(e, record.id, record.solicitudId)}
-              disabled={!(activiti == "cancel")}
-            >
-            </Checkbox>
-          )}
-        </>
-      ),
+      render: (_value, record) => {
+        console.log("record", toJS(record));
+        return (
+          <>
+            {record.status === 1 && (
+              <Checkbox
+                onChange={(e) => onChange(e, record.id, record.solicitudId)}
+                disabled={!(activiti == "register")}
+              ></Checkbox>
+            )}
+            {record.status === 2 && (
+              <Checkbox
+                onChange={(e) => onChange(e, record.id, record.solicitudId)}
+                disabled={!(activiti == "cancel")}
+              ></Checkbox>
+            )}
+          </>
+        );
+      },
     },
   ];
 

@@ -6,6 +6,7 @@ import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 import Sampling from "../api/sampling";
 import { IsamplingForm, IsamplingList, IUpdate } from "../models/sampling";
+import { ISearchMedical } from "../models/Proceeding";
 
 export default class SamplingStore {
   constructor() {
@@ -14,14 +15,14 @@ export default class SamplingStore {
 
   scopes?: IScopes;
   studys: IsamplingList[] = [];
-  studyCont:number=0;
-  soliCont:number=0;
+  studyCont: number = 0;
+  soliCont: number = 0;
 
-  setStudyCont=(cont:number)=>{
-    this.studyCont=cont;
+  setStudyCont = (cont: number) => {
+    this.studyCont = cont;
   };
-  setSoliCont=(cont:number)=>{
-    this.soliCont=cont;
+  setSoliCont = (cont: number) => {
+    this.soliCont = cont;
   };
   clearScopes = () => {
     this.scopes = undefined;
@@ -68,6 +69,14 @@ export default class SamplingStore {
   printTicket = async (recordId: string, requestId: string) => {
     try {
       await Sampling.getOrderPdf(recordId, requestId);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  exportList = async (search: ISearchMedical) => {
+    try {
+      await Sampling.exportList(search);
+      return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }

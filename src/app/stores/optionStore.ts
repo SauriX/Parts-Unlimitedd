@@ -58,6 +58,7 @@ export default class OptionStore {
   }
 
   departmentOptions: IOptions[] = [];
+  departmentOptions2: IOptions[] = [];
 
   getDepartmentOptions = async () => {
     try {
@@ -66,6 +67,11 @@ export default class OptionStore {
       );
       this.departmentOptions = departments.map((x) => ({
         value: x.id,
+        label: x.nombre,
+      }));
+      this.departmentOptions2 = departments.map((x) => ({
+        value: x.id,
+        key: x.nombre,
         label: x.nombre,
       }));
       return departments.map((x) => ({
