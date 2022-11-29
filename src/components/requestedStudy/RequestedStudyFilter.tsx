@@ -29,8 +29,6 @@ const RequestedStudyFilter = () => {
     companyOptions,
     departmentAreaOptions,
     getDepartmentAreaOptions,
-    getDepartmentOptions,
-    getareaOptions,
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
@@ -81,7 +79,7 @@ const RequestedStudyFilter = () => {
     setAreaOptions(
       departmentAreaOptions.find((x) => x.value === selectedDepartment)?.options ?? []
     );
-    form.setFieldValue("sucursalId", []);
+    form.setFieldValue("area", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
 
   const onFinish = async (newFormValues: IRequestedStudyForm) => {

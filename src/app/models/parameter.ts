@@ -98,6 +98,11 @@ export interface ItipoValorForm {
   opcion?: string | "";
   descripcionTexto?: string | "";
   descripcionParrafo?: string | "";
+  primeraColumna?: string | "";
+  segundaColumna?: string | "";
+  terceraColumna?: string | "";
+  cuartaColumna?: string | "";
+  quintaColumna?: string | "";
 }
 
 export interface IReagentForm {
@@ -159,6 +164,11 @@ export class tipoValorFormValues implements ItipoValorForm {
   opcion = "";
   descripcionTexto = "";
   descripcionParrafo = "";
+  primeraColumna = "";
+  segundaColumna = "";
+  terceraColumna = "";
+  cuartaColumna = "";
+  quintaColumna = "";
   constructor(init?: ItipoValorForm) {
     Object.assign(this, init);
   }

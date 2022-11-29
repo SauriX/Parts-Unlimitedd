@@ -174,24 +174,6 @@ const SamplingTable: FC<ProceedingTableProps> = ({
         dataupdate = dataupdate.filter((x) => x.estudioId.length !== 0);
         // setUpdateDate(temp);
       }
-      // let solicitudtoupdate = dataupdate?.filter(
-      //   (x) => x.solicitudId == solicitud
-      // )[0];
-      // if (!!solicitudtoupdate) {
-      //   if (solicitudtoupdate.estudioId.length == 1) {
-      //     dataupdate = dataupdate.filter((x) => x.solicitudId != solicitud);
-      //   } else {
-      //     let count = solicitudtoupdate?.estudioId!.filter((x) => x == id);
-      //     if (count!.length > 0) {
-      //       let estudios = solicitudtoupdate?.estudioId.filter((x) => x != id);
-      //       solicitudtoupdate.estudioId = estudios;
-      //       let indexsoli = dataupdate?.findIndex(
-      //         (x) => x.solicitudId == solicitud
-      //       );
-      //       dataupdate[indexsoli!] = solicitudtoupdate;
-      //     }
-      //   }
-      // }
     }
     console.log("dataupdate", dataupdate);
     if (dataupdate.length <= 0) {
