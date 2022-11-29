@@ -97,7 +97,6 @@ const RequestedStudyFilter = () => {
           <Button
             key="clean"
             onClick={(e) => {
-              clearFilter();
               form.resetFields();
             }}
           >

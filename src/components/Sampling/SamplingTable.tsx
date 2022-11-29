@@ -8,8 +8,6 @@ import {
   Form,
   Input,
   Row,
-  Table,
-  Tag,
 } from "antd";
 import React, { FC, Fragment, ReactNode, useEffect, useState } from "react";
 import {
@@ -18,8 +16,6 @@ import {
   ISearch,
 } from "../../app/common/table/utils";
 import moment from "moment";
-import useWindowDimensions from "../../app/util/window";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import {
@@ -32,9 +28,7 @@ import { formItemLayout } from "../../app/util/utils";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
-import { getExpandableConfig } from "../report/utils";
 import { ExpandableConfig } from "antd/lib/table/interface";
-import ImageButton from "../../app/common/button/ImageButton";
 import { originOptions, urgencyOptions } from "../../app/stores/optionStore";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../app/util/alerts";
@@ -44,9 +38,7 @@ import SamplingStudyColumns, {
   SamplingStudyExpandable,
 } from "./SamplingStudyTable";
 import { IOptions } from "../../app/models/shared";
-import { toJS } from "mobx";
 
-const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
@@ -67,7 +59,6 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     getMedicOptions,
     CityOptions,
     getCityOptions,
-    departmentOptions,
     getDepartmentOptions,
     companyOptions,
     getCompanyOptions,
@@ -85,43 +76,35 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     studyCont,
     search,
   } = samplig;
-  const { getCity } = locationStore;
-  const [searchParams] = useSearchParams();
+
   const [form] = Form.useForm<IsamplingForm>();
-  const selectedCity: any = Form.useWatch("ciudad", form);
-  let navigate = useNavigate();
   const [values, setValues] = useState<IsamplingForm>(new samplingFormValues());
   const [updateData, setUpdateData] = useState<IUpdate[]>([]);
   const [ids, setIds] = useState<number[]>([]);
   const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
-  const { width: windowWidth } = useWindowDimensions();
+
   const [expandable, setExpandable] =
     useState<ExpandableConfig<IsamplingList>>();
   const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
   const [filteredAreas, setFilteredAreas] = useState<any>([]);
-  const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
-  const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const hasFooterRow = true;
   const [activar, setActivar] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [activiti, setActiviti] = useState<string>("");
   const [openRows, setOpenRows] = useState<boolean>(false);
   const areaSelected = Form.useWatch(["departamento"], form);
-  //const [search,SetSearch] = useState<ISearchMedical>(new SearchMedicalFormValues())
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-  const togleRows = () => {
-    console.log("togle");
-    if (openRows) {
-      setOpenRows(false);
-      setexpandedRowKeys([]);
-    } else {
-      setOpenRows(true);
-      setexpandedRowKeys(studys!.map((x) => x.id));
-    }
-  };
+
+  const selectedCity: any = Form.useWatch("ciudad", form);
+  const selectedDepartment = Form.useWatch("departament", form);
+  const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
+  const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
+  const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
+  const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
+
   useEffect(() => {
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
@@ -133,6 +116,21 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     );
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
+
+  useEffect(() => {
+    setDepartmentOptions(
+      departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [departmentAreaOptions]);
+
+  useEffect(() => {
+    setAreaOptions(
+      departmentAreaOptions.find((x) => x.value === selectedDepartment)
+        ?.options ?? []
+    );
+    form.setFieldValue("area", []);
+  }, [departmentAreaOptions, form, selectedDepartment]);
+
   useEffect(() => {
     setexpandedRowKeys(studys!.map((x) => x.id));
     setOpenRows(true);
@@ -305,7 +303,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     };
 
     readData();
-  }, [getBranchCityOptions]);
+  }, [getBranchCityOptions, getDepartmentAreaOptions]);
 
   useEffect(() => {
     console.log("here");
@@ -435,69 +433,40 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     },
   ];
 
-  /*   const PriceListTablePrint = () => {
-    return (
-      <div ref={componentRef}>
-        <PageHeader
-          ghost={false}
-          title={<HeaderTitle title="Catálogo de Lista de Expedientes"  />}
-          className="header-container"
-        ></PageHeader>
-        <Divider className="header-divider" />
-        <Table<IProceedingList>
-          size="small"
-          rowKey={(record) => record.id}
-          columns={columns.slice(0, 7)}
-          pagination={false}
-          dataSource={[...expedientes]}
-        />
-      </div>
-    );
-  }; */
-
   return (
     <Fragment>
-      <div style={{ marginBottom: "5px", marginLeft: "90%" }}>
-        <Button
-          key="clean"
-          onClick={(e) => {
-            e.stopPropagation();
-
-            form.resetFields();
-          }}
-          style={{ marginLeft: "10%" }}
-        >
-          Limpiar
-        </Button>
-        <Button
-          key="filter"
-          type="primary"
-          onClick={(e) => {
-            e.stopPropagation();
-            form.submit();
-          }}
-          style={{ marginLeft: "10%" }}
-        >
-          Filtrar
-        </Button>
-      </div>
-      <div
-        className="status-container"
-        style={{
-          // backgroundColor: "#F2F2F2",
-          height: "auto",
-          borderStyle: "solid",
-          borderColor: "#CBC9C9",
-          borderWidth: "1px",
-          borderRadius: "10px",
-          padding: "10px",
-        }}
-      >
+      <Row justify="end" gutter={[24, 12]} className="filter-buttons">
+        <Col span={24}>
+          <Button
+            key="clean"
+            onClick={(e) => {
+              form.resetFields();
+            }}
+          >
+            Limpiar
+          </Button>
+          <Button
+            key="filter"
+            type="primary"
+            onClick={(e) => {
+              form.submit();
+            }}
+          >
+            Buscar
+          </Button>
+        </Col>
+      </Row>
+      <div className="status-container">
         <Form<IsamplingForm>
           {...formItemLayout}
           form={form}
           name="sampling"
-          initialValues={values}
+          initialValues={{
+            fecha: [
+              moment(Date.now()).utcOffset(0, true),
+              moment(Date.now()).utcOffset(0, true),
+            ],
+          }}
           onFinish={onFinish}
           scrollToFirstError
           onValuesChange={(changedValues, allValues) => {
@@ -522,6 +491,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                   <DateRangeInput
                     formProps={{ label: "Fecha", name: "fecha" }}
                     disableAfterDates
+                    required
                   />
                 </Col>
                 <Col span={8}>
@@ -532,16 +502,16 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                     }}
                   />
                 </Col>
-                {/* <Col span={8} style={{ textAlign: "right" }}> */}
-                {/*                   <Button
-                    type="primary"
-                    onClick={() => {
-                      form.submit();
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "tipoSolicitud",
+                      label: "Tipo solicitud",
                     }}
-                  >
-                    Buscar
-                  </Button> */}
-                {/* </Col> */}
+                    multiple
+                    options={urgencyOptions}
+                  ></SelectInput>
+                </Col>
                 <Col span={8}>
                   <SelectInput
                     formProps={{
@@ -567,25 +537,33 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
-                  <SelectInput
-                    formProps={{
-                      name: "departamento",
-                      label: "Departamento",
-                    }}
-                    multiple
-                    options={departmentOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{
-                      name: "area",
-                      label: "Área",
-                    }}
-                    multiple
-                    // options={areas}
-                    options={filteredAreas ?? []}
-                  ></SelectInput>
+                  <Form.Item label="Áreas" className="no-error-text" help="">
+                    <Input.Group>
+                      <Row gutter={8}>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "departament",
+                              label: "Departamento",
+                              noStyle: true,
+                            }}
+                            options={departmentOptions}
+                          />
+                        </Col>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "area",
+                              label: "Área",
+                              noStyle: true,
+                            }}
+                            multiple
+                            options={areaOptions}
+                          />
+                        </Col>
+                      </Row>
+                    </Input.Group>
+                  </Form.Item>
                 </Col>
                 <Col span={8}>
                   <SelectInput
@@ -598,11 +576,6 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
-                  {/* <SelectInput
-                    formProps={{ name: "sucursalId", label: "Sucursales" }}
-                    multiple
-                    options={branchCityOptions}
-                  /> */}
                   <Form.Item label="Sucursal" className="no-error-text" help="">
                     <Input.Group>
                       <Row gutter={8}>
@@ -639,17 +612,6 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                     }}
                     multiple
                     options={companyOptions}
-                  ></SelectInput>
-                </Col>
-                {/* <Col span={8}></Col> */}
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{
-                      name: "tipoSolicitud",
-                      label: "Tipo solicitud",
-                    }}
-                    multiple
-                    options={urgencyOptions}
                   ></SelectInput>
                 </Col>
               </Row>
