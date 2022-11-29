@@ -6,11 +6,12 @@ import {
   Collapse,
   Descriptions,
   Form,
+  Input,
   Row,
   Table,
   Tag,
 } from "antd";
-import React, { FC, Fragment, useEffect, useState } from "react";
+import React, { FC, Fragment, ReactNode, useEffect, useState } from "react";
 import {
   getDefaultColumnProps,
   IColumns,
@@ -42,6 +43,9 @@ import SamplinTableStudy from "./SamplinTableStudy";
 import SamplingStudyColumns, {
   SamplingStudyExpandable,
 } from "./SamplingStudyTable";
+import { IOptions } from "../../app/models/shared";
+import { toJS } from "mobx";
+
 const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -67,6 +71,8 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     getDepartmentOptions,
     companyOptions,
     getCompanyOptions,
+    departmentAreaOptions,
+    getDepartmentAreaOptions,
   } = optionStore;
   const {
     getAll,
@@ -77,10 +83,12 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     setStudyCont,
     soliCont,
     studyCont,
+    search,
   } = samplig;
-  const { getCity, cityOptions } = locationStore;
+  const { getCity } = locationStore;
   const [searchParams] = useSearchParams();
   const [form] = Form.useForm<IsamplingForm>();
+  const selectedCity: any = Form.useWatch("ciudad", form);
   let navigate = useNavigate();
   const [values, setValues] = useState<IsamplingForm>(new samplingFormValues());
   const [updateData, setUpdateData] = useState<IUpdate[]>([]);
@@ -90,11 +98,15 @@ const SamplingTable: FC<ProceedingTableProps> = ({
   const [expandable, setExpandable] =
     useState<ExpandableConfig<IsamplingList>>();
   const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
+  const [filteredAreas, setFilteredAreas] = useState<any>([]);
+  const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
+  const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const hasFooterRow = true;
   const [activar, setActivar] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [activiti, setActiviti] = useState<string>("");
   const [openRows, setOpenRows] = useState<boolean>(false);
+  const areaSelected = Form.useWatch(["departamento"], form);
   //const [search,SetSearch] = useState<ISearchMedical>(new SearchMedicalFormValues())
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
@@ -111,10 +123,17 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     }
   };
   useEffect(() => {
-    console.log(
-      studys!.map((x) => x.id),
-      "maps"
+    setCityOptions(
+      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
+  }, [branchCityOptions]);
+  useEffect(() => {
+    setBranchOptions(
+      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+    );
+    form.setFieldValue("sucursalId", []);
+  }, [branchCityOptions, form, selectedCity]);
+  useEffect(() => {
     setexpandedRowKeys(studys!.map((x) => x.id));
     setOpenRows(true);
   }, [studys]);
@@ -189,20 +208,20 @@ const SamplingTable: FC<ProceedingTableProps> = ({
   const updatedata = async () => {
     setLoading(true);
     var succes = await update(updateData!);
-    console.log("succes");
     if (succes) {
       setLoading(false);
-      alerts.confirm(
+      alerts.confirmInfo(
         "",
-        `Se han enviado ${ids.length} estudios de ${solicitudesData.length} solicitud a estatus pendiente de manera exitosa `,
+        `Se ha(n) enviado ${ids.length} estudio(s) de ${solicitudesData.length} solicitud(es) a estatus de toma de muestra de manera exitosa `,
         async () => {
-          await getAll(values);
+          await getAll(search);
+          // await getAll(values);
+          setIds([]);
+          SetSolicitudesData([]);
+          setActivar(false);
+          setUpdateData([]);
         }
       );
-      setIds([]);
-      SetSolicitudesData([]);
-      setActivar(false);
-      setUpdateData([]);
     } else {
       setLoading(false);
     }
@@ -273,7 +292,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     ),
     rowExpandable: () => true,
   };
-  console.log("Table");
+
   useEffect(() => {
     const readData = async () => {
       await getBranchCityOptions();
@@ -282,16 +301,12 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       await getCityOptions();
       await getDepartmentOptions();
       await getCompanyOptions();
+      await getDepartmentAreaOptions();
     };
 
     readData();
   }, [getBranchCityOptions]);
-  useEffect(() => {
-    const readData = async () => {
-      await getCity();
-    };
-    readData();
-  }, [getCity]);
+
   useEffect(() => {
     console.log("here");
     const readPriceList = async () => {
@@ -485,6 +500,20 @@ const SamplingTable: FC<ProceedingTableProps> = ({
           initialValues={values}
           onFinish={onFinish}
           scrollToFirstError
+          onValuesChange={(changedValues, allValues) => {
+            const changesKyes = Object.keys(changedValues);
+            if (changesKyes.includes("departamento")) {
+              const selectedDepatements: ReactNode[] = departmentOptions
+                .filter((x) => changedValues.departamento.includes(x.value))
+                .map((x) => x.label);
+              const filterAreas = departmentAreaOptions
+                .filter((x) => selectedDepatements.includes(x.value))
+                .map((x) => x.options)
+                .flatMap((x) => x);
+              setFilteredAreas(filterAreas);
+            }
+            console.log("values change", changedValues, allValues);
+          }}
         >
           <Row>
             <Col span={24}>
@@ -492,6 +521,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                 <Col span={8}>
                   <DateRangeInput
                     formProps={{ label: "Fecha", name: "fecha" }}
+                    disableAfterDates
                   />
                 </Col>
                 <Col span={8}>
@@ -502,8 +532,8 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                     }}
                   />
                 </Col>
-                <Col span={8} style={{ textAlign: "right" }}>
-                  {/*                   <Button
+                {/* <Col span={8} style={{ textAlign: "right" }}> */}
+                {/*                   <Button
                     type="primary"
                     onClick={() => {
                       form.submit();
@@ -511,7 +541,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                   >
                     Buscar
                   </Button> */}
-                </Col>
+                {/* </Col> */}
                 <Col span={8}>
                   <SelectInput
                     formProps={{
@@ -522,21 +552,12 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                     options={originOptions}
                   ></SelectInput>
                 </Col>
+
                 <Col span={8}>
                   <SelectInput
                     formProps={{
-                      name: "tipoSolicitud",
-                      label: "Tipo solicitud",
-                    }}
-                    multiple
-                    options={urgencyOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{
-                      name: "status",
-                      label: "Status",
+                      name: "estatus",
+                      label: "Estatus",
                     }}
                     multiple
                     options={[
@@ -562,7 +583,8 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                       label: "Área",
                     }}
                     multiple
-                    options={areas}
+                    // options={areas}
+                    options={filteredAreas ?? []}
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
@@ -576,11 +598,38 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
-                  <SelectInput
+                  {/* <SelectInput
                     formProps={{ name: "sucursalId", label: "Sucursales" }}
                     multiple
                     options={branchCityOptions}
-                  />
+                  /> */}
+                  <Form.Item label="Sucursal" className="no-error-text" help="">
+                    <Input.Group>
+                      <Row gutter={8}>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "ciudad",
+                              label: "Ciudad",
+                              noStyle: true,
+                            }}
+                            options={cityOptions}
+                          />
+                        </Col>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "sucursalId",
+                              label: "Sucursales",
+                              noStyle: true,
+                            }}
+                            multiple
+                            options={branchOptions}
+                          />
+                        </Col>
+                      </Row>
+                    </Input.Group>
+                  </Form.Item>
                 </Col>
                 <Col span={8}>
                   <SelectInput
@@ -592,7 +641,17 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                     options={companyOptions}
                   ></SelectInput>
                 </Col>
-                <Col span={8}></Col>
+                {/* <Col span={8}></Col> */}
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "tipoSolicitud",
+                      label: "Tipo solicitud",
+                    }}
+                    multiple
+                    options={urgencyOptions}
+                  ></SelectInput>
+                </Col>
               </Row>
             </Col>
           </Row>

@@ -359,6 +359,10 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     if (reagent.nombre == "" || reagent.apellido == "" || reagent.sexo == "") {
       alerts.warning("El nombre y sexo no pueden estar vacíos");
     }
+    console.log("REAGENT NEW ",toJS(reagent))
+    if(reagent.colonia ){
+
+    }
     if (coincidencia.length > 0 && !reagent.id!) {
       openModal({
         title: "Se encuentran coincidencias con los siguientes expedientes",
@@ -435,7 +439,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
 
   const columnsP: IColumns<IQuotationInfo> = [
     {
-      ...getDefaultColumnProps("clave", "clave", {
+      ...getDefaultColumnProps("clave", "Clave", {
         width: 200,
         minWidth: 150,
         windowSize: windowWidth,
@@ -1016,6 +1020,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           }}
                           showLabel
                           readonly={readonly}
+                          errors={errors.find((x) => x.name === "cp")?.errors}
                         />
                       </Col>
                       <Col span={4}>

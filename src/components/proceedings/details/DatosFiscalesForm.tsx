@@ -49,6 +49,7 @@ const DatosFiscalesForm = ({
     searchedText: "",
     searchedColumn: "",
   });
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const readTaxData = async () => {
@@ -108,6 +109,7 @@ const DatosFiscalesForm = ({
 
   const onFinish = async (newValues: ITaxData) => {
     setLoading(true);
+    
     setErrors([]);
     if (!newValues.cp || newValues.cp.length < 5) {
       alerts.warning("Favor de ingresar un Código Postal válido");
@@ -132,11 +134,17 @@ const DatosFiscalesForm = ({
       return;
     }
     var taxes: ITaxData[] = local ? [...localTaxData] : [...(tax ?? [])];
+    if (!isEditing) {
 
-    if (taxes.find((x) => x.rfc === newValues.rfc)) {
-      alerts.warning(`El RFC ${newValues.rfc} ya existe`);
-      setLoading(false);
-      return;
+      if (
+        taxes.find(
+          (x) => x.rfc === newValues.rfc || x.razonSocial == newValues.razonSocial
+        )
+      ) {
+        alerts.warning(`El RFC ${newValues.rfc} ya existe`);
+        setLoading(false);
+        return;
+      }
     }
     newValues.expedienteId = recordId;
     if (newValues.id) {
@@ -167,7 +175,7 @@ const DatosFiscalesForm = ({
       setTax(taxes);
       form.resetFields();
     }
-
+    setIsEditing(false);
     setLoading(false);
   };
 
@@ -180,7 +188,7 @@ const DatosFiscalesForm = ({
       }),
     },
     {
-      ...getDefaultColumnProps("razonSocial", "Razon Social", {
+      ...getDefaultColumnProps("razonSocial", "Razón Social", {
         searchState,
         setSearchState,
         width: "30%",
@@ -192,6 +200,9 @@ const DatosFiscalesForm = ({
         setSearchState,
         width: "25%",
       }),
+      render(value, record, index) {
+        return `${record.calle ?? ""} C.P: ${record.cp}`;
+      },
     },
     {
       ...getDefaultColumnProps("correo", "Correo", {
@@ -208,9 +219,10 @@ const DatosFiscalesForm = ({
       width: "10%",
       render: (_, item) => (
         <IconButton
-          title="Editar lista de precio"
+          title="Editar datos fiscales"
           icon={<EditOutlined />}
           onClick={() => {
+            setIsEditing(true);
             getColonies(item.cp);
             console.log("item", toJS(item));
             item.regimenFiscal =
@@ -303,11 +315,12 @@ const DatosFiscalesForm = ({
                 <SelectInput
                   formProps={{
                     name: "regimenFiscal",
-                    label: "Regimen Fiscal",
+                    label: "Régimen Fiscal",
                     labelCol: { span: 6 },
                     wrapperCol: { span: 18 },
                   }}
                   options={regimenFiscal}
+                  required
                   errors={
                     errors.find((x) => x.name === "regimenFiscal")?.errors
                   }
@@ -331,8 +344,22 @@ const DatosFiscalesForm = ({
                             label: "CP",
                             noStyle: true,
                           }}
+                          min={5}
                           max={5}
+                          onChange={(e) => {
+                            let valu = e.target.value;
+                            if (!Number(valu)) {
+                              form.setFieldValue(
+                                "cp",
+                                valu.substring(0, valu.length - 1)
+                              );
+
+                              return;
+                            }
+                            form.setFieldValue("cp", valu);
+                          }}
                           showLabel
+                          required
                           errors={errors.find((x) => x.name === "cp")?.errors}
                         />
                       </Col>

@@ -108,7 +108,7 @@ const DeliveryResultsForm = () => {
           form={form}
           onFinish={onFinish}
           size="small"
-          initialValues={{ fechas: [moment(), moment()] }}
+          initialValues={{ fechas: [moment(), moment()], tipoFecha: 1 }}
         >
           <Row gutter={[0, 12]}>
             <Col span={8}>
