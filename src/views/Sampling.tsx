@@ -8,9 +8,8 @@ import SamplingTable from "../components/Sampling/SamplingTable";
 
 const Sampling = () => {
   const { procedingStore, samplig } = useStore();
-  const { /* scopes, access, clearScopes, exportList,*/ search } =
-    procedingStore;
-  const { exportList } = samplig;
+
+  const { exportList, search } = samplig;
 
   const [searchParams] = useSearchParams();
 

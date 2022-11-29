@@ -11,7 +11,7 @@ const Sampling = {
     requests.put("sampling", update),
   getOrderPdf: (recordId: string, requestId: string): Promise<void> =>
     requests.print(`sampling/order/${recordId}/${requestId}`),
-  exportList: (search: ISearchMedical): Promise<void> =>
+  exportList: (search: IsamplingForm): Promise<void> =>
     requests.download(`sampling/export/getList`, search),
 };
 

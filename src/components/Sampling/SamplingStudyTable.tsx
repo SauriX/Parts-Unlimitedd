@@ -108,12 +108,13 @@ const SamplingStudyColumns = ({ printTicket }: tableProps) => {
       align: "center",
       width: "10%",
       render: (_value, record) => {
-        // console.log("record ready", toJS(record));
+        console.log("record ready", toJS(record.expedienteId));
         return (
           <PrintIcon
             key="imprimir"
             onClick={() => {
-              printTicket(record.order, record.id);
+              // printTicket(record.order, record.id);
+              printTicket(record.expedienteId!, record.id);
             }}
           />
         );
@@ -165,15 +166,13 @@ export const SamplingStudyExpandable = ({
             <Checkbox
               onChange={(e) => onChange(e, record.id, record.solicitudId)}
               disabled={!(activiti == "register")}
-            >
-            </Checkbox>
+            ></Checkbox>
           )}
           {record.estatus === 2 && (
             <Checkbox
               onChange={(e) => onChange(e, record.id, record.solicitudId)}
               disabled={!(activiti == "cancel")}
-            >
-            </Checkbox>
+            ></Checkbox>
           )}
         </>
       ),

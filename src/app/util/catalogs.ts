@@ -38,7 +38,6 @@ export const regimenFiscal: IOptionsCatalog[] = [
   { value: "607", label: "Régimen de Enajenación o Adquisición de Bienes", type: "description" },
   { value: "629", label: "De los Regímenes Fiscales Preferentes y de las Empresas Multinacionales", type: "description" },
   { value: "630", label: "Enajenación de acciones en bolsa de valores", type: "description" },
-  { value: "630", label: "Enajenación de acciones en bolsa de valores", type: "description" },
   { value: "615", label: "Régimen de los ingresos por obtención de premios", type: "description" },
   { value: "625", label: "Régimen de las Actividades Empresariales con ingresos a través de Plataformas Tecnológicas", type: "description" },
   

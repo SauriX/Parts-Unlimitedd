@@ -83,11 +83,12 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     setStudyCont,
     soliCont,
     studyCont,
+    search,
   } = samplig;
   const { getCity } = locationStore;
   const [searchParams] = useSearchParams();
   const [form] = Form.useForm<IsamplingForm>();
-  const selectedCity = Form.useWatch("ciudad", form);
+  const selectedCity: any = Form.useWatch("ciudad", form);
   let navigate = useNavigate();
   const [values, setValues] = useState<IsamplingForm>(new samplingFormValues());
   const [updateData, setUpdateData] = useState<IUpdate[]>([]);
@@ -225,20 +226,20 @@ const SamplingTable: FC<ProceedingTableProps> = ({
   const updatedata = async () => {
     setLoading(true);
     var succes = await update(updateData!);
-    console.log("succes");
     if (succes) {
       setLoading(false);
-      alerts.confirm(
+      alerts.confirmInfo(
         "",
-        `Se han enviado ${ids.length} estudios de ${solicitudesData.length} solicitud a estatus pendiente de manera exitosa `,
+        `Se ha(n) enviado ${ids.length} estudio(s) de ${solicitudesData.length} solicitud(es) a estatus de toma de muestra de manera exitosa `,
         async () => {
-          await getAll(values);
+          await getAll(search);
+          // await getAll(values);
+          setIds([]);
+          SetSolicitudesData([]);
+          setActivar(false);
+          setUpdateData([]);
         }
       );
-      setIds([]);
-      SetSolicitudesData([]);
-      setActivar(false);
-      setUpdateData([]);
     } else {
       setLoading(false);
     }
@@ -523,12 +524,10 @@ const SamplingTable: FC<ProceedingTableProps> = ({
               const selectedDepatements: ReactNode[] = departmentOptions
                 .filter((x) => changedValues.departamento.includes(x.value))
                 .map((x) => x.label);
-              console.log(toJS(selectedDepatements), "selectedDepatements");
               const filterAreas = departmentAreaOptions
                 .filter((x) => selectedDepatements.includes(x.value))
                 .map((x) => x.options)
                 .flatMap((x) => x);
-              console.log(toJS(filterAreas), "filterAreas");
               setFilteredAreas(filterAreas);
             }
             console.log("values change", changedValues, allValues);

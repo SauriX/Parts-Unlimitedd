@@ -537,6 +537,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                 <Col span={8}>
                   <DateRangeInput
                     formProps={{ label: "Fecha", name: "fecha" }}
+                    disableAfterDates
                   />
                 </Col>
                 <Col span={8}>
