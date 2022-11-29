@@ -22,6 +22,14 @@ export default class ResultValidationStore {
   setSearch=(search:  ISearchValidation)=>{
     this.search = search;
   };
+  clear: boolean = false;
+
+  clearFilter = () => {
+    new searchValues();
+    this.studys = [];
+    this.clear = !this.clear
+  }
+
   exportList = async (search:  ISearchValidation) => {
     try {
       await ResultValidation.exportList(search);

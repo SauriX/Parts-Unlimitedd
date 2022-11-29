@@ -45,9 +45,6 @@ const RequestedStudyFilter = () => {
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
-  const [currentStudy, setCurrentStudy] = useState<IRequestStudy>(
-    new RequestStudyValues()
-  );
 
   useEffect(() => {
     getBranchCityOptions();
@@ -182,14 +179,6 @@ const RequestedStudyFilter = () => {
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
-                  {/* <SelectInput
-                    formProps={{
-                      name: "departamento",
-                      label: "Departamento",
-                    }}
-                    multiple
-                    options={departmentAreaOptions}
-                  ></SelectInput> */}
                   <Form.Item label="Áreas" className="no-error-text" help="">
                     <Input.Group>
                       <Row gutter={8}>
