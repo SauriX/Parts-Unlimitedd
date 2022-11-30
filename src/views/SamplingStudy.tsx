@@ -2,10 +2,10 @@ import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
 import { Fragment, useEffect, useState } from "react";
 import { useStore } from "../app/stores/store";
-import RequestedStudyBody from "../components/requestedStudy/RequestedStudyBody";
-import RequestedStudyHeader from "../components/requestedStudy/RequestedStudyHeader";
+import SamplingStudyBody from "../components/Sampling/SamplingStudyBody";
+import SamplingStudyHeader from "../components/Sampling/SamplingStudyHeader";
 
-const RequestedStudy = () => {
+const SamplingStudy = () => {
   const { requestedStudyStore } = useStore();
   const { scopes, access, clearScopes, exportList, formValues } = requestedStudyStore;
   const [loading, setLoading] = useState(false);
@@ -34,11 +34,11 @@ const RequestedStudy = () => {
 
   return (
     <Fragment>
-      <RequestedStudyHeader handleList={handleDownload} /> 
+      <SamplingStudyHeader handleList={handleDownload} /> 
       <Divider className="header-divider" />
-      <RequestedStudyBody printing={loading} />
+      <SamplingStudyBody printing={loading} />
     </Fragment>
   );
 };
 
-export default observer(RequestedStudy);
+export default observer(SamplingStudy);
