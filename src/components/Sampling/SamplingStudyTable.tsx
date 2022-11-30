@@ -1,197 +1,85 @@
-import { Descriptions, Checkbox, Table, Typography } from "antd";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import { toJS } from "mobx";
-import moment from "moment";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import PrintIcon from "../../app/common/icons/PrintIcon";
-import {
-  IColumns,
-  ISearch,
-  getDefaultColumnProps,
-} from "../../app/common/table/utils";
-import { IRequestStudy } from "../../app/models/request";
-import {
-  IRequestedStudy,
-  IRequestedStudyList,
-} from "../../app/models/requestedStudy";
-import { IsamplingList, IstudySampling } from "../../app/models/sampling";
-import { status } from "../../app/util/catalogs";
-const { Link, Text } = Typography;
-type expandableProps = {
-  activiti: string;
-  onChange: (e: CheckboxChangeEvent, id: number, solicitud: string) => void;
+import { Button, Table } from "antd";
+import { ExpandableConfig } from "antd/lib/table/interface";
+import { observer } from "mobx-react-lite";
+import { Fragment, useEffect, useState } from "react";
+import { IColumns } from "../../app/common/table/utils";
+import { ISamplingList } from "../../app/models/sampling";
+import { useStore } from "../../app/stores/store";
+
+type RequestedStudyTableProps = {
+  data: ISamplingList[];
+  columns: IColumns<ISamplingList>;
+  expandable?: ExpandableConfig<ISamplingList> | undefined;
 };
 
-type tableProps = {
-  printTicket: (recordId: string, requestId: string) => Promise<void>;
-};
+const SamplingStudyTable = ({
+  data,
+  columns,
+  expandable,
+}: RequestedStudyTableProps) => {
+  const { samplingStudyStore } = useStore();
+  const { loadingStudies } = samplingStudyStore;
+  const [openRows, setOpenRows] = useState<boolean>(false);
+  const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
 
-const SamplingStudyColumns = ({ printTicket }: tableProps) => {
-  let navigate = useNavigate();
-  const [searchState, setSearchState] = useState<ISearch>({
-    searchedText: "",
-    searchedColumn: "",
-  });
-  const columns: IColumns<IsamplingList> = [
-    {
-      ...getDefaultColumnProps("solicitud", "Clave", {
-        searchState,
-        setSearchState,
-        width: "15%",
-      }),
-      render: (value, item) => (
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <Link
-            onClick={() => {
-              navigate(
-                // ""
-                `/requests/${item.order}/${item.id}`
-              );
-            }}
-          >
-            {value}
-          </Link>
-          <small>
-            <Text type="secondary">{item.solicitud}</Text>
-          </small>
-        </div>
-      ),
-    },
-    {
-      ...getDefaultColumnProps("nombre", "Nombre del Paciente", {
-        searchState,
-        setSearchState,
-        width: "25%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("registro", "Registro", {
-        searchState,
-        setSearchState,
-        width: "10%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("sucursal", "Sucursal", {
-        searchState,
-        setSearchState,
-        width: "15%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("edad", "Edad", {
-        searchState,
-        setSearchState,
-        width: "5%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("sexo", "Sexo", {
-        searchState,
-        setSearchState,
-        width: "5%",
-      }),
-    },
+  useEffect(() => {
+    setExpandedRowKeys(data.map((x) => x.id));
+    setOpenRows(true);
+  }, [data]);
 
-    {
-      ...getDefaultColumnProps("compañia", "Compañía", {
-        searchState,
-        setSearchState,
-        width: "15%",
-      }),
-    },
-    {
-      key: "imprimir",
-      dataIndex: "imprimir",
-      title: "Imprimir orden",
-      align: "center",
-      width: "10%",
-      render: (_value, record) => {
-        console.log("record ready", toJS(record.expedienteId));
-        return (
-          <PrintIcon
-            key="imprimir"
-            onClick={() => {
-              // printTicket(record.order, record.id);
-              printTicket(record.expedienteId!, record.id);
-            }}
-          />
-        );
-      },
-    },
-  ];
-  return columns;
-};
-
-export const SamplingStudyExpandable = ({
-  activiti,
-  onChange,
-}: expandableProps) => {
-  const nestedColumns: IColumns<IstudySampling> = [
-    {
-      ...getDefaultColumnProps("clave", "Estudio", {
-        width: "30%",
-      }),
-      render: (_value, record) => record.clave + " - " + record.nombre,
-    },
-    {
-      ...getDefaultColumnProps("nombreEstatus", "Estatus", {
-        width: "20%",
-      }),
-      render: (_value, record) =>
-        record.status == 1 ? "Pendiente" : "Toma de muestra",
-    },
-    {
-      ...getDefaultColumnProps("registro", "Registro", {
-        width: "20%",
-      }),
-      render: (_value, record) => record.registro,
-    },
-    {
-      ...getDefaultColumnProps("entrega", "Entrega", {
-        width: "20%",
-      }),
-      render: (_value, record) => record.entrega,
-    },
-    {
-      key: "Seleccionar",
-      dataIndex: "seleccionar",
-      title: "Seleccionar",
-      align: "center",
-      width: "10%",
-      render: (_value, record) => (
-        <>
-          {record.estatus === 1 && (
-            <Checkbox
-              onChange={(e) => onChange(e, record.id, record.solicitudId)}
-              disabled={!(activiti == "register")}
-            ></Checkbox>
-          )}
-          {record.estatus === 2 && (
-            <Checkbox
-              onChange={(e) => onChange(e, record.id, record.solicitudId)}
-              disabled={!(activiti == "cancel")}
-            ></Checkbox>
-          )}
-        </>
-      ),
-    },
-  ];
-
-  return {
-    expandedRowRender: (item: IsamplingList, index: any) => (
-      <Table
-        columns={nestedColumns}
-        dataSource={item.estudios}
-        pagination={false}
-        className="header-expandable-table"
-        showHeader={index === 0}
-      />
-    ),
-    rowExpandable: () => true,
-    defaultExpandAllRows: true,
+  const toggleRow = () => {
+    if (openRows) {
+      setOpenRows(false);
+      setExpandedRowKeys([]);
+    } else {
+      setOpenRows(true);
+      setExpandedRowKeys(data.map((x) => x.id));
+    }
   };
+
+  const onExpand = (isExpanded: boolean, record: ISamplingList) => {
+    let expandRows: string[] = expandedRowKeys;
+    if (isExpanded) {
+      expandRows.push(record.id);
+    } else {
+      const index = expandRows.findIndex((x) => x === record.id);
+      if (index > -1) {
+        expandRows.splice(index, 1);
+      }
+    }
+    setExpandedRowKeys(expandRows);
+  };
+
+  return (
+    <Fragment>
+      {data.length > 0 && (
+        <div style={{ textAlign: "right", marginBottom: 10 }}>
+          <Button
+            type="primary"
+            onClick={toggleRow}
+            style={{ marginRight: 10 }}
+          >
+            {!openRows ? "Abrir tabla" : "Cerrar tabla"}
+          </Button>
+        </div>
+      )}
+      <Table<ISamplingList>
+        loading={loadingStudies}
+        size="small"
+        rowKey={(record) => record.id}
+        columns={columns}
+        pagination={false}
+        dataSource={[...data]}
+        rowClassName={"row-search"}
+        scroll={{ y: 450 }}
+        expandable={{
+          ...expandable,
+          onExpand: onExpand,
+          expandedRowKeys: expandedRowKeys,
+        }}
+      />
+    </Fragment>
+  );
 };
 
-export default SamplingStudyColumns;
+export default observer(SamplingStudyTable);

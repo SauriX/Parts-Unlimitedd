@@ -79,7 +79,7 @@ interface Store {
   requestStore: RequestStore;
   appointmentStore: AppointmentStore;
   notificationStore: NotificationStore;
-  samplig: SamplingStore;
+  samplingStudyStore: SamplingStore;
   requestedStudyStore: RequestedStudyStore;
   clinicResultsStore: ClinicResultsStore;
   equipmentMantainStore: EquipmentMantainStore;
@@ -124,7 +124,7 @@ export const store: Store = {
   requestStore: new RequestStore(),
   appointmentStore: new AppointmentStore(),
   notificationStore: new NotificationStore(),
-  samplig: new SamplingStore(),
+  samplingStudyStore: new SamplingStore(),
   requestedStudyStore: new RequestedStudyStore(),
   clinicResultsStore: new ClinicResultsStore(),
   equipmentMantainStore: new EquipmentMantainStore(),

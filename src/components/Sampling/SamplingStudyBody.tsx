@@ -6,19 +6,19 @@ import { Fragment, useState } from "react";
 import { IUpdate } from "../../app/models/requestedStudy";
 import { useStore } from "../../app/stores/store";
 import alerts from "../../app/util/alerts";
-import RequestedStudyColumns, {
-  RequestedStudyExpandable,
-} from "./columnDefinition/requestedStudy";
-import RequestedStudyFilter from "./RequestedStudyFilter";
-import RequestedStudyTable from "./RequestedStudyTable";
+import SamplingStudyColumns, {
+  SamplingStudyExpandable,
+} from "./columnDefinition/samplingStudy";
+import SamplingStudyFilter from "./SamplingStudyFilter";
+import SamplingStudyTable from "./SamplingStudyTable";
 
 type RSDefaultProps = {
   printing: boolean;
 };
 
-const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
-  const { requestedStudyStore } = useStore();
-  const { data, update, printOrder, getAll, formValues } = requestedStudyStore;
+const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
+  const { samplingStudyStore } = useStore();
+  const { data, update, printOrder, getAll, formValues } = samplingStudyStore;
   const [updateForm, setUpdateForm] = useState<IUpdate[]>([]);
   const [activity, setActivity] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -61,12 +61,12 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
     setLoading(true);
     if (activity == "register") {
       alerts.confirm(
-        "Estudio a Solicitado",
+        "Estudio a Toma de Muestra",
         `Se enviará(n) ${
           updateForm.flatMap((x) => x.estudioId).length
         } estudio(s) de ${
           updateForm.length
-        } solicitud(es) a estatus Solicitado. ¿Deseas continuar?`,
+        } solicitud(es) a estatus Toma de Muestra. ¿Deseas continuar?`,
         async() => {
           var success = await update(updateForm!);
           if(success){
@@ -82,12 +82,12 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
       );
     } else {
       alerts.confirm(
-        "Estudio a Toma de Muestra",
-        `Se enviará(n)  ${
+        "Estudio a Pendiente",
+        `Se enviará(n) ${
           updateForm.flatMap((x) => x.estudioId).length
         } estudio(s) de ${
           updateForm.length
-        } solicitud(es) a estatus Toma de Muestra. ¿Deseas continuar?`,
+        } solicitud(es) a estatus Pendiente. ¿Deseas continuar?`,
         async() => {
           var success = await update(updateForm!);
           if(success){
@@ -115,7 +115,7 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
 
   return (
     <Fragment>
-      <RequestedStudyFilter />
+      <SamplingStudyFilter />
       <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
         <Row style={{ marginBottom: 10 }}>
           <Col span={24}>
@@ -125,13 +125,13 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
                   type={activity == "register" ? "primary" : "ghost"}
                   onClick={register}
                 >
-                  Solicitar Estudio
+                  Registrar Toma
                 </Button>
                 <Button
                   type={activity == "cancel" ? "primary" : "ghost"}
                   onClick={cancel}
                 >
-                  Cancelar Solicitud
+                  Cancelar Toma
                 </Button>
               </Col>
               {activity == "register" ? (
@@ -167,10 +167,10 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
             </Row>
           </Col>
         </Row>
-        <RequestedStudyTable
+        <SamplingStudyTable
           data={data}
-          columns={RequestedStudyColumns({printOrder})}
-          expandable={RequestedStudyExpandable({
+          columns={SamplingStudyColumns({ printOrder })}
+          expandable={SamplingStudyExpandable({
             activity,
             onChange,
           })}
@@ -180,4 +180,4 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
   );
 };
 
-export default observer(RequestedStudyBody);
+export default observer(SamplingStudyBody);

@@ -20,7 +20,7 @@ import {
   import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
   import SelectInput from "../../../app/common/form/proposal/SelectInput";
   import TextInput from "../../../app/common/form/proposal/TextInput";
-  import { IsamplingForm, IsamplingList, IUpdate, samplingFormValues } from "../../../app/models/sampling";
+  import { ISamplingForm, ISamplingList, IUpdate, SamplingFormValues } from "../../../app/models/sampling";
   import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
   import { ExpandableConfig } from "antd/lib/table/interface";
   import ImageButton from "../../../app/common/button/ImageButton";
@@ -138,7 +138,7 @@ import { formItemLayout } from "../../../app/util/utils";
 },
 ] */
   const PendingRecive = () => {
-    const { procedingStore, optionStore, locationStore, samplig,routeTrackingStore,profileStore } = useStore();
+    const { procedingStore, optionStore, locationStore, samplingStudyStore: samplig,routeTrackingStore,profileStore } = useStore();
     const { getAll, studys, printTicket, update,exportForm,getAllRecive,pendings,setSearchi,setventana} = routeTrackingStore;
     const {branchCityOptions,getBranchCityOptions}=optionStore;
     const {profile}=profileStore;
