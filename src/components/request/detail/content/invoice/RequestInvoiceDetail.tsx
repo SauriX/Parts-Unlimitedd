@@ -50,13 +50,15 @@ const RequestInvoiceDetail = ({
   payments,
   taxData,
 }: RequestInvoiceDetailProps) => {
-  const { requestStore, optionStore } = useStore();
+  const { requestStore, optionStore, modalStore } = useStore();
   const { checkInPayment } = requestStore;
   const { paymentOptions, cfdiOptions, getPaymentOptions, getcfdiOptions } =
     optionStore;
+  const { closeModal } = modalStore;
 
   const [form] = Form.useForm<IFormInvoice>();
 
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<IFormError[]>([]);
 
   useEffect(() => {
@@ -85,7 +87,15 @@ const RequestInvoiceDetail = ({
       formaPago: "",
     };
 
-    await checkInPayment(requestCheckIn);
+    setLoading(true);
+    const checkedIn = await checkInPayment(requestCheckIn);
+    setLoading(false);
+
+    if (checkedIn.length > 0) {
+      closeModal();
+    } else {
+      alerts.warning("No se facturó ningun pago");
+    }
   };
 
   useEffect(() => {
@@ -96,7 +106,7 @@ const RequestInvoiceDetail = ({
   }, [form, payments]);
 
   return (
-    <Spin spinning={false}>
+    <Spin spinning={loading}>
       <Form<IFormInvoice>
         {...formItemLayout}
         form={form}

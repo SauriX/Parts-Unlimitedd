@@ -11,7 +11,7 @@ export interface ITaxData {
   expedienteId?: string;
   rfc: string;
   razonSocial: string;
-  regimenFiscal: string;
+  regimenFiscal?: string;
   cp: string;
   estado: string;
   municipio: string;

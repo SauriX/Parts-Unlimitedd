@@ -57,7 +57,7 @@ const Request = {
     requests.post("request/weeClinic", request),
   createPayment: (request: IRequestPayment): Promise<IRequestPayment> =>
     requests.post("request/payment", request),
-  checkInPayment: (request: IRequestCheckIn): Promise<string> =>
+  checkInPayment: (request: IRequestCheckIn): Promise<IRequestPayment[]> =>
     requests.post("request/payment/checkin", request),
   updateGeneral: (request: IRequestGeneral): Promise<void> =>
     requests.put("request/general", request),

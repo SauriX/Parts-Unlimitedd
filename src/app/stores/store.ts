@@ -42,6 +42,7 @@ import WeeClinicStore from "./weeClinicStore";
 import RouteTrackingStore from "./routeTracking";
 import MassResultSearchStore from "./massResultSearch";
 import ResultValidationStore from "./resultValidationStore";
+import InvoiceStore from "./invoiceStore";
 configure({
   enforceActions: "never",
 });
@@ -87,7 +88,8 @@ interface Store {
   shipmentTracking: shipmentTackingStore;
   workListStore: WorkListStore;
   massResultSearchStore: MassResultSearchStore;
-  resultValidationStore:  ResultValidationStore
+  resultValidationStore: ResultValidationStore;
+  invoiceStore: InvoiceStore;
 }
 
 export const store: Store = {
@@ -131,7 +133,8 @@ export const store: Store = {
   shipmentTracking: new shipmentTackingStore(),
   workListStore: new WorkListStore(),
   massResultSearchStore: new MassResultSearchStore(),
-  resultValidationStore:new   ResultValidationStore(),
+  resultValidationStore: new ResultValidationStore(),
+  invoiceStore: new InvoiceStore(),
 };
 
 export const StoreContext = createContext(store);

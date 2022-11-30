@@ -130,7 +130,9 @@ export interface IRequestPayment extends IRequestBase {
   serie: string;
   numero: string;
   estatusId: number;
-  usuarioRegistra: string;
+  facturaId?: string;
+  facturapiId: string;
+  usuarioRegistra?: string;
   fechaPago: moment.Moment;
 }
 

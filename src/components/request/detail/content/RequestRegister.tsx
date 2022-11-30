@@ -20,12 +20,13 @@ import { moneyFormatter } from "../../../../app/util/utils";
 import RequestInvoiceTab from "./invoice/RequestInvoiceTab";
 
 const RequestRegister = () => {
-  const { requestStore, optionStore, modalStore, profileStore } = useStore();
+  const { requestStore, optionStore, modalStore, profileStore, invoiceStore } =
+    useStore();
   const { profile } = profileStore;
   const { paymentOptions, getPaymentOptions } = optionStore;
   const {
     request,
-    setGlobalPayments,
+    payments,
     getPayments,
     getNextPaymentCode,
     printTicket,
@@ -34,13 +35,13 @@ const RequestRegister = () => {
     calculateTotals,
   } = requestStore;
   const { openModal } = modalStore;
+  const { printXML } = invoiceStore;
 
   const [form] = Form.useForm<IRequestPayment>();
 
   const series = Form.useWatch("serie", form);
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [payments, setPayments] = useState<IRequestPayment[]>([]);
   const [errors, setErrors] = useState<IFormError[]>([]);
   const [selectedPayments, setSelectedPayments] = useState<IRequestPayment[]>(
     []
@@ -116,10 +117,9 @@ const RequestRegister = () => {
     payment.formaPago = paymentOptions
       .find((x) => x.value === payment.formaPagoId)!
       .label!.toString();
-    const newPayment = await createPayment(payment);
+    const ok = await createPayment(payment);
 
-    if (newPayment) {
-      setPayments((prev) => [...prev, newPayment]);
+    if (ok) {
       form.resetFields();
     }
   };
@@ -127,23 +127,13 @@ const RequestRegister = () => {
   useEffect(() => {
     const readPayments = async () => {
       if (request) {
-        const payments = await getPayments(
-          request.expedienteId,
-          request.solicitudId!
-        );
-        setPayments(payments);
+        await getPayments(request.expedienteId, request.solicitudId!);
       }
     };
 
     readPayments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    setGlobalPayments(payments);
-    calculateTotals();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [payments, setGlobalPayments]);
 
   useEffect(() => {
     const getNumber = async () => {
@@ -183,19 +173,8 @@ const RequestRegister = () => {
       );
       if (cancelled.length > 0) {
         setSelectedPayments([]);
-        setPayments((prev) =>
-          prev.map((x) => {
-            const payment = cancelled.find((p) => p.id === x.id);
-            if (payment) {
-              return {
-                ...x,
-                estatusId: payment.estatusId,
-                usuarioRegistra: payment.usuarioRegistra,
-              };
-            }
-            return x;
-          })
-        );
+      } else {
+        alerts.warning("No se canceló ningun pago");
       }
     }
   };
@@ -212,6 +191,14 @@ const RequestRegister = () => {
       ),
       width: 900,
     });
+  };
+
+  const downloadXML = async () => {
+    const invoiceId = selectedPayments[0].facturaId;
+
+    setLoading(true);
+    await printXML(invoiceId!);
+    setLoading(false);
   };
 
   return (
@@ -365,6 +352,7 @@ const RequestRegister = () => {
                 (x) => x.estatusId === status.requestPayment.facturado
               ).length === 0
             }
+            onClick={downloadXML}
           >
             Descargar XML
           </Button>
