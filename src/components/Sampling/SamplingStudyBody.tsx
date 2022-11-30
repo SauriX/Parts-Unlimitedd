@@ -59,41 +59,50 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
 
   const updateData = async () => {
     setLoading(true);
-    var success = await update(updateForm!);
-    if (success) {
-      setLoading(false);
-      {
-        activity == "register"
-          ? alerts.confirmInfo(
-              "",
-              `Se ha(n) enviado ${
-                updateForm.flatMap((x) => x.estudioId).length
-              } estudio(s) de ${
-                updateForm.length
-              } solicitud(es) a estatus Toma de Muestra de manera exitosa `,
-              async () => {
-                setUpdateForm([]);
-                getAll(formValues);
-              },
-            )
-          : alerts.confirmInfo(
-              "",
-              `Se ha(n) enviado ${
-                updateForm.flatMap((x) => x.estudioId).length
-              } estudio(s) de ${
-                updateForm.length
-              } solicitud(es) a estatus Pendiente de manera exitosa `,
-              async () => {
-                setUpdateForm([]);
-                getAll(formValues);
-              }
-            );
-      }
-      setActivity("");
+    if (activity == "register") {
+      alerts.confirm(
+        "Estudio a Toma de Muestra",
+        `Se enviará(n) ${
+          updateForm.flatMap((x) => x.estudioId).length
+        } estudio(s) de ${
+          updateForm.length
+        } solicitud(es) a estatus Toma de Muestra. ¿Deseas continuar?`,
+        async() => {
+          var success = await update(updateForm!);
+          if(success){
+            setLoading(false);
+            setUpdateForm([]);
+            setActivity("");
+            getAll(formValues);
+          }
+        },
+        async() => {
+          setLoading(false);
+        }
+      );
     } else {
-      setLoading(false);
-      setActivity("");
+      alerts.confirm(
+        "Estudio a Pendiente",
+        `Se enviará(n) ${
+          updateForm.flatMap((x) => x.estudioId).length
+        } estudio(s) de ${
+          updateForm.length
+        } solicitud(es) a estatus Pendiente. ¿Deseas continuar?`,
+        async() => {
+          var success = await update(updateForm!);
+          if(success){
+            setLoading(false);
+            setUpdateForm([]);
+            setActivity("");
+            getAll(formValues);
+          }
+        },
+        async() => {
+          setLoading(false);
+        }
+      );
     }
+    setLoading(false);
   };
 
   const register = () => {
@@ -160,7 +169,7 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
         </Row>
         <SamplingStudyTable
           data={data}
-          columns={SamplingStudyColumns({printOrder})}
+          columns={SamplingStudyColumns({ printOrder })}
           expandable={SamplingStudyExpandable({
             activity,
             onChange,
