@@ -5,7 +5,13 @@ import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 import Sampling from "../api/sampling";
-import { IsamplingForm, IsamplingList, IUpdate } from "../models/sampling";
+import {
+  IsamplingForm,
+  IsamplingList,
+  IUpdate,
+  samplingFormValues,
+} from "../models/sampling";
+import { ISearchMedical } from "../models/Proceeding";
 
 export default class SamplingStore {
   constructor() {
@@ -14,14 +20,15 @@ export default class SamplingStore {
 
   scopes?: IScopes;
   studys: IsamplingList[] = [];
-  studyCont:number=0;
-  soliCont:number=0;
+  studyCont: number = 0;
+  soliCont: number = 0;
+  search: IsamplingForm = new samplingFormValues();
 
-  setStudyCont=(cont:number)=>{
-    this.studyCont=cont;
+  setStudyCont = (cont: number) => {
+    this.studyCont = cont;
   };
-  setSoliCont=(cont:number)=>{
-    this.soliCont=cont;
+  setSoliCont = (cont: number) => {
+    this.soliCont = cont;
   };
   clearScopes = () => {
     this.scopes = undefined;
@@ -45,6 +52,7 @@ export default class SamplingStore {
   getAll = async (search: IsamplingForm) => {
     try {
       const study = await Sampling.getAll(search);
+      this.search = search;
       this.studys = study;
       return study;
     } catch (error) {
@@ -68,6 +76,14 @@ export default class SamplingStore {
   printTicket = async (recordId: string, requestId: string) => {
     try {
       await Sampling.getOrderPdf(recordId, requestId);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  exportList = async (search: IsamplingForm) => {
+    try {
+      await Sampling.exportList(search);
+      return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }

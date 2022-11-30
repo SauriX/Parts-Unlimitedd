@@ -19,6 +19,7 @@ export interface IsamplingList {
   nombre: string;
   order: string;
   registro: string;
+  expedienteId?: string;
   sucursal: string;
   edad: string;
   sexo: string;
@@ -31,6 +32,8 @@ export interface IstudySampling {
   nombre: string;
   area: string;
   estatus: number;
+  expedienteId?: string;
+  status: number;
   registro: string;
   entrega: string;
   seleccion: boolean;

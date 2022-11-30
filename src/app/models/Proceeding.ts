@@ -27,7 +27,7 @@ export interface IProceedingForm {
   sexo: string;
   fechaNacimiento?: Date | moment.Moment;
   fechaNacimientoFormat?: string;
-  edad: number | string;
+  edad?: number | string;
   edadCheck: boolean;
   telefono: string;
   correo: string;
@@ -36,7 +36,7 @@ export interface IProceedingForm {
   municipio: string;
   celular: string;
   calle: string;
-  colonia?: number | string;
+  colonia?: number | string | null;
   colonian?: string;
   taxData?: ITaxData[];
   sucursal?: string;
@@ -65,7 +65,7 @@ export class ProceedingFormValues implements IProceedingForm {
   expediente = "";
   sexo = "";
   fechaNacimiento = new Date(moment.now());
-  edad = 0;
+  edad = undefined;
   edadCheck = false;
   telefono = "";
   correo = "";

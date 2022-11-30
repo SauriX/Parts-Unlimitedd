@@ -56,6 +56,10 @@ const ValorType: FC<ValorProps> = ({ value, form }) => {
         );
         break;
       case 6:
+      case 11:
+      case 12:
+      case 13:
+      case 14:
         return (
           <NumericoColumna
             parameter={form}

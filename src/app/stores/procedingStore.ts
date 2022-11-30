@@ -124,6 +124,7 @@ export default class ProcedingStore {
   getById = async (id: string) => {
     try {
       const rol = await Proceding.getById(id);
+      // rol.colonia = rol.colonia ?? null;
       rol.edad = "" + rol.edad;
       console.log(rol);
       // this.expediente = rol; // Comentado porque no se usa

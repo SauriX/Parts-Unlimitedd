@@ -94,8 +94,9 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     studyCont,
     viewTicket,
     setSearch,
+    clearFilter
   } = resultValidationStore;
-  const { getCity,  } = locationStore;
+  const { getCity } = locationStore;
   const [searchParams] = useSearchParams();
   const [form] = Form.useForm<ISearchValidation>();
   let navigate = useNavigate();
@@ -214,19 +215,18 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   };
   const updatedata = async () => {
     setLoading(true);
-    
-    
-      setLoading(false);
-      alerts.confirm(
-        "",
-        `Se ha(n) enviado ${ids.length} estudio(s) de ${
-          solicitudesData.length
-        } solicitud(es) a estatus ${
-          activiti == "register" ? "validado" : "capturado"
-        } de manera exitosa `,
-        async () => {
-          var succes = await update(updateData!);
-          if (succes) {
+
+    setLoading(false);
+    alerts.confirm(
+      "",
+      `Se ha(n) enviado ${ids.length} estudio(s) de ${
+        solicitudesData.length
+      } solicitud(es) a estatus ${
+        activiti == "register" ? "validado" : "capturado"
+      } de manera exitosa `,
+      async () => {
+        var succes = await update(updateData!);
+        if (succes) {
           await getAll(values);
           setUpdateDate([]);
           setIds([]);
@@ -235,14 +235,13 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
         } else {
           setLoading(false);
         }
-        },
-        ()=>{
-          setLoading(false);
-        }
-      );
-      setIds([]);
-      SetSolicitudesData([]);
-
+      },
+      () => {
+        setLoading(false);
+      }
+    );
+    setIds([]);
+    SetSolicitudesData([]);
   };
 
   const expandableStudyConfig = {
@@ -463,54 +462,30 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     },
   ];
 
-  /*   const PriceListTablePrint = () => {
-    return (
-      <div ref={componentRef}>
-        <PageHeader
-          ghost={false}
-          title={<HeaderTitle title="Catálogo de Lista de Expedientes"  />}
-          className="header-container"
-        ></PageHeader>
-        <Divider className="header-divider" />
-        <Table<IProceedingList>
-          size="small"
-          rowKey={(record) => record.id}
-          columns={columns.slice(0, 7)}
-          pagination={false}
-          dataSource={[...expedientes]}
-        />
-      </div>
-    );
-  }; */
-
   return (
     <Fragment>
-      <div style={{ marginBottom: "5px", marginLeft: "90%" }}>
-        <Button
-          key="clean"
-          onClick={(e) => {
-           
-            form.setFieldsValue(new searchValues() );
-            setValues(new searchValues());
-            e.stopPropagation();
-            form.resetFields();
-          }}
-          style={{ marginLeft: "10%" }}
-        >
-          Limpiar
-        </Button>
-        <Button
-          key="filter"
-          type="primary"
-          onClick={(e) => {
-            e.stopPropagation();
-            form.submit();
-          }}
-          style={{ marginLeft: "10%" }}
-        >
-          Filtrar
-        </Button>
-      </div>
+      <Row justify="end" gutter={[24, 12]} className="filter-buttons">
+        <Col span={24}>
+          <Button
+            key="clean"
+            onClick={(e) => {
+              clearFilter();
+              form.resetFields();
+            }}
+          >
+            Limpiar
+          </Button>
+          <Button
+            key="filter"
+            type="primary"
+            onClick={(e) => {
+              form.submit();
+            }}
+          >
+            Buscar
+          </Button>
+        </Col>
+      </Row>
       <div
         className="status-container"
         style={{
@@ -527,7 +502,12 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
           {...formItemLayout}
           form={form}
           name="sampling"
-          initialValues={values}
+          initialValues={{
+            fecha: [
+              moment(Date.now()).utcOffset(0, true),
+              moment(Date.now()).utcOffset(0, true),
+            ],
+          }}
           onFinish={onFinish}
           scrollToFirstError
         >
@@ -537,6 +517,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                 <Col span={8}>
                   <DateRangeInput
                     formProps={{ label: "Fecha", name: "fecha" }}
+                    disableAfterDates
                   />
                 </Col>
                 <Col span={8}>
@@ -546,16 +527,6 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                       label: "Clave",
                     }}
                   />
-                </Col>
-                <Col span={8} style={{ textAlign: "right" }}>
-                  {/*                   <Button
-                    type="primary"
-                    onClick={() => {
-                      form.submit();
-                    }}
-                  >
-                    Buscar
-                  </Button> */}
                 </Col>
                 <Col span={8}>
                   <SelectInput

@@ -41,8 +41,11 @@ const ClinicResultsFilter = () => {
   const [studyFilter, setStudyFilter] = useState<any[]>(studiesOptions);
 
   const selectedCity = Form.useWatch("ciudad", form);
+  const selectedDepartment = Form.useWatch("departament", form);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
+  const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
+  const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
     const update = async () => {
@@ -74,6 +77,19 @@ const ClinicResultsFilter = () => {
     );
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
+
+  useEffect(() => {
+    setDepartmentOptions(
+      departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [departmentAreaOptions]);
+
+  useEffect(() => {
+    setAreaOptions(
+      departmentAreaOptions.find((x) => x.value === selectedDepartment)?.options ?? []
+    );
+    form.setFieldValue("sucursalId", []);
+  }, [departmentAreaOptions, form, selectedDepartment]);
 
   const onFinish = async (newFormValues: IClinicResultForm) => {
     setLoading(true);
@@ -169,7 +185,7 @@ const ClinicResultsFilter = () => {
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
-                  <SelectInput
+                  {/* <SelectInput
                     formProps={{
                       name: "area",
                       label: "Departamento",
@@ -182,7 +198,34 @@ const ClinicResultsFilter = () => {
                       );
                       setStudyFilter(filtradoEstudios);
                     }}
-                  ></SelectInput>
+                  ></SelectInput> */}
+                  <Form.Item label="Áreas" className="no-error-text" help="">
+                    <Input.Group>
+                      <Row gutter={8}>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "departament",
+                              label: "Departamento",
+                              noStyle: true,
+                            }}
+                            options={departmentOptions}
+                          />
+                        </Col>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "area",
+                              label: "Área",
+                              noStyle: true,
+                            }}
+                            multiple
+                            options={areaOptions}
+                          />
+                        </Col>
+                      </Row>
+                    </Input.Group>
+                  </Form.Item>
                 </Col>
                 <Col span={8}>
                   <SelectInput

@@ -29,8 +29,6 @@ const RequestedStudyFilter = () => {
     companyOptions,
     departmentAreaOptions,
     getDepartmentAreaOptions,
-    getDepartmentOptions,
-    getareaOptions,
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
@@ -45,9 +43,6 @@ const RequestedStudyFilter = () => {
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
-  const [currentStudy, setCurrentStudy] = useState<IRequestStudy>(
-    new RequestStudyValues()
-  );
 
   useEffect(() => {
     getBranchCityOptions();
@@ -84,7 +79,7 @@ const RequestedStudyFilter = () => {
     setAreaOptions(
       departmentAreaOptions.find((x) => x.value === selectedDepartment)?.options ?? []
     );
-    form.setFieldValue("sucursalId", []);
+    form.setFieldValue("area", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
 
   const onFinish = async (newFormValues: IRequestedStudyForm) => {
@@ -102,7 +97,6 @@ const RequestedStudyFilter = () => {
           <Button
             key="clean"
             onClick={(e) => {
-              clearFilter();
               form.resetFields();
             }}
           >
@@ -182,14 +176,6 @@ const RequestedStudyFilter = () => {
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
-                  {/* <SelectInput
-                    formProps={{
-                      name: "departamento",
-                      label: "Departamento",
-                    }}
-                    multiple
-                    options={departmentAreaOptions}
-                  ></SelectInput> */}
                   <Form.Item label="Áreas" className="no-error-text" help="">
                     <Input.Group>
                       <Row gutter={8}>

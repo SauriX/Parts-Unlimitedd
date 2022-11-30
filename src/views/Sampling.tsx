@@ -7,8 +7,9 @@ import SamplingHeader from "../components/Sampling/SamplingHeader";
 import SamplingTable from "../components/Sampling/SamplingTable";
 
 const Sampling = () => {
-  const { procedingStore } = useStore();
-   const { /* scopes, access, clearScopes, */ exportList,search } = procedingStore;
+  const { procedingStore, samplig } = useStore();
+
+  const { exportList, search } = samplig;
 
   const [searchParams] = useSearchParams();
 
@@ -16,33 +17,41 @@ const Sampling = () => {
 
   const componentRef = useRef<any>();
 
-
-
   const handleDownload = async () => {
     setLoading(true);
     await exportList(search);
     setLoading(false);
   };
 
-  useEffect(() => {
-    const checkAccess = async () => {
-     // await access();
-    };
+  useEffect(
+    () => {
+      const checkAccess = async () => {
+        // await access();
+      };
 
-    checkAccess();
-  }, [/* access */]);
+      checkAccess();
+    },
+    [
+      /* access */
+    ]
+  );
 
-  useEffect(() => {
-    return () => {
-      //clearScopes();
-    };
-  }, [/* clearScopes */]);
-/* 
+  useEffect(
+    () => {
+      return () => {
+        //clearScopes();
+      };
+    },
+    [
+      /* clearScopes */
+    ]
+  );
+  /* 
   if (!scopes?.acceder) return null;
  */
   return (
     <Fragment>
-      <SamplingHeader  handleList={handleDownload} />
+      <SamplingHeader handleList={handleDownload} />
       <Divider className="header-divider" />
       <SamplingTable componentRef={componentRef} printing={loading} />
     </Fragment>
