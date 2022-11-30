@@ -134,6 +134,17 @@ export interface IRequestPayment extends IRequestBase {
   fechaPago: moment.Moment;
 }
 
+export interface IRequestCheckIn extends IRequestBase {
+  datoFiscalId: string;
+  usoCFDI: string;
+  formaPago: string;
+  desglozado: boolean;
+  conNombre: boolean;
+  envioCorreo: boolean;
+  envioWhatsapp: boolean;
+  pagos: IRequestPayment[];
+}
+
 export interface IRequestImage extends IRequestBase {
   imagen?: File | Blob;
   imagenUrl?: string;

@@ -3,11 +3,23 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import SelectInput from "../../../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../../../app/common/form/proposal/TextInput";
-import { IRequestPayment } from "../../../../../app/models/request";
+import {
+  IRequestCheckIn,
+  IRequestPayment,
+} from "../../../../../app/models/request";
 import { IFormError } from "../../../../../app/models/shared";
 import { ITaxData } from "../../../../../app/models/taxdata";
 import { useStore } from "../../../../../app/stores/store";
+import alerts from "../../../../../app/util/alerts";
 import { moneyFormatter } from "../../../../../app/util/utils";
+
+interface IFormInvoice {
+  usoCfdi: number;
+  cantidad: string;
+  numeroCuenta: string;
+  configuracion: string[];
+  metodoEnvio: string[];
+}
 
 const formItemLayout = {
   labelCol: { span: 8 },
@@ -39,10 +51,11 @@ const RequestInvoiceDetail = ({
   taxData,
 }: RequestInvoiceDetailProps) => {
   const { requestStore, optionStore } = useStore();
+  const { checkInPayment } = requestStore;
   const { paymentOptions, cfdiOptions, getPaymentOptions, getcfdiOptions } =
     optionStore;
 
-  const [form] = Form.useForm<any>();
+  const [form] = Form.useForm<IFormInvoice>();
 
   const [errors, setErrors] = useState<IFormError[]>([]);
 
@@ -51,7 +64,29 @@ const RequestInvoiceDetail = ({
     getcfdiOptions();
   }, [getPaymentOptions, getcfdiOptions]);
 
-  const onFinish = () => {};
+  const onFinish = async (values: IFormInvoice) => {
+    const use = cfdiOptions.find((x) => x.value === values.usoCfdi);
+
+    if (!use) {
+      alerts.warning("Uso de CFDI inválido");
+      return;
+    }
+
+    const requestCheckIn: IRequestCheckIn = {
+      expedienteId: recordId,
+      solicitudId: requestId,
+      datoFiscalId: taxData.id!,
+      usoCFDI: use.label!.toString(),
+      conNombre: values.configuracion.includes("nombre"),
+      desglozado: values.configuracion.includes("desglozado"),
+      envioCorreo: values.metodoEnvio.includes("correo"),
+      envioWhatsapp: values.metodoEnvio.includes("whatsapp"),
+      pagos: payments,
+      formaPago: "",
+    };
+
+    await checkInPayment(requestCheckIn);
+  };
 
   useEffect(() => {
     form.setFieldValue(
@@ -62,7 +97,7 @@ const RequestInvoiceDetail = ({
 
   return (
     <Spin spinning={false}>
-      <Form
+      <Form<IFormInvoice>
         {...formItemLayout}
         form={form}
         name="invoice"

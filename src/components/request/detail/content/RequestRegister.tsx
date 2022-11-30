@@ -200,7 +200,7 @@ const RequestRegister = () => {
     }
   };
 
-  const startInvoice = () => {
+  const checkin = () => {
     openModal({
       title: "Datos Fiscales",
       body: (
@@ -354,7 +354,7 @@ const RequestRegister = () => {
                 (x) => x.estatusId === status.requestPayment.pagado
               ).length === 0
             }
-            onClick={startInvoice}
+            onClick={checkin}
           >
             Facturar
           </Button>

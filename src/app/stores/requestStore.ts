@@ -17,6 +17,7 @@ import {
   RequestTotal,
   IRequestPayment,
   IRequestToken,
+  IRequestCheckIn,
 } from "../models/request";
 import alerts from "../util/alerts";
 import { status, statusName } from "../util/catalogs";
@@ -439,6 +440,15 @@ export default class RequestStore {
     try {
       const payment = await Request.createPayment(request);
       return payment;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  checkInPayment = async (request: IRequestCheckIn) => {
+    try {
+      const facturapiId = await Request.checkInPayment(request);
+      return facturapiId;
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
