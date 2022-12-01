@@ -7,7 +7,7 @@ export const catalogs: IOptionsCatalog[] = [
   { value: "department", label: "Departamentos", type: "normal" },
   { value: "dimension", label: "Dimensiones", type: "dimension" },
   { value: "field", label: "Especialidades", type: "normal" },
-  { value: "payment", label: "Formas de pago", type: "normal" },
+  { value: "payment", label: "Formas de pago", type: "description" },
   { value: "indicator", label: "Indicadores", type: "description" },
   { value: "workList", label: "Listas de trabajo", type: "normal" },
   { value: "delivery", label: "Paqueterías", type: "normal" },
@@ -103,7 +103,11 @@ export const reports: IOptionsReport[] = [
   { value: "canceladas", label: "Sol. Canceladas", type: "canceladas" },
   { value: "descuento", label: "Sol. Descuento", type: "descuento" },
   { value: "cargo", label: "Sol. Cargo", type: "cargo" },
-  { value: "presupuestos", label: "Presupuestos por Suc.", type: "presupuestos" },
+  {
+    value: "presupuestos",
+    label: "Presupuestos por Suc.",
+    type: "presupuestos",
+  },
   {
     value: "maquila_interna",
     label: "Sol. Maquila Int.",

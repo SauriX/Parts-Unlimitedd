@@ -41,19 +41,6 @@ const CatalogNormalTable: FC<CatalogNormalTableProps> = ({ componentRef, printin
 
   console.log("Table");
 
-  useEffect(() => {
-    const readCatalogs = async () => {
-      setLoading(true);
-      await getAll(catalogName, searchParams.get("search") ?? "all");
-      setLoading(false);
-    };
-
-    if (catalogOption.length === 0) {
-      readCatalogs();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const catalogType = (catalogName: string) => {
     switch(catalogName) {
       case "department":

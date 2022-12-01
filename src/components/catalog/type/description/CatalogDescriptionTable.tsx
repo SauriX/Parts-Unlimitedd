@@ -44,22 +44,24 @@ const CatalogDescriptionTable: FC<CatalogDescriptionTableProps> = ({
   console.log("Table");
 
   const catalogType = (catalogName: string) => {
-    switch(catalogName) {
+    switch (catalogName) {
       case "indicator":
-        return "indicador"
+        return "indicador";
       case "paymentMethod":
-        return "método de pago"
+        return "método de pago";
+      case "payment":
+        return "forma de pago";
       case "useOfCFDI":
-        return "uso de CFDI"
+        return "uso de CFDI";
     }
-  }
+  };
 
   const columns: IColumns<ICatalogList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -78,7 +80,7 @@ const CatalogDescriptionTable: FC<CatalogDescriptionTableProps> = ({
       ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "15%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -87,7 +89,7 @@ const CatalogDescriptionTable: FC<CatalogDescriptionTableProps> = ({
       ...getDefaultColumnProps("descripcion", "Descripción", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "55%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
