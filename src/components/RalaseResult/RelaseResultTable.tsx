@@ -22,10 +22,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import {
-  IsamplingForm,
-  IsamplingList,
+
   IUpdate,
-  samplingFormValues,
+
 } from "../../app/models/sampling";
 import { formItemLayout } from "../../app/util/utils";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
@@ -82,7 +81,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     procedingStore,
     optionStore,
     locationStore,
-    samplig,
+    //samplig,
     resultValidationStore,
     relaseResultStore
   } = useStore();
