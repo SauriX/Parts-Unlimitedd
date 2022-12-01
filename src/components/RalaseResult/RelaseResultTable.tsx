@@ -81,7 +81,6 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     procedingStore,
     optionStore,
     locationStore,
-    //samplig,
     resultValidationStore,
     relaseResultStore
   } = useStore();
