@@ -103,6 +103,7 @@ export const reports: IOptionsReport[] = [
   { value: "canceladas", label: "Sol. Canceladas", type: "canceladas" },
   { value: "descuento", label: "Sol. Descuento", type: "descuento" },
   { value: "cargo", label: "Sol. Cargo", type: "cargo" },
+  { value: "presupuestos", label: "Presupuestos por Suc.", type: "presupuestos" },
   {
     value: "maquila_interna",
     label: "Sol. Maquila Int.",

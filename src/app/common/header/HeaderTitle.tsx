@@ -60,6 +60,7 @@ export type imagesType =
   | "paquete"
   | "parametro"
   | "precio"
+  | "presupuestos"
   | "promocion"
   | "reactivo"
   | "registradora"

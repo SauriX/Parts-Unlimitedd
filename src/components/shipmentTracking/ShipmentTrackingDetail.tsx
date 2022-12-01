@@ -86,6 +86,7 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
       const prevnextMaquilador = (index: number) => {
         const maquila = studys[index];
         navigate(`/ShipmentTracking/${maquila.id}`);
+       // navigate(`/${views.route}/${route.id}?${searchParams}&mode=readonly`);
       };
     const columns: IColumns<shipmentStudy> = [
         {

@@ -22,10 +22,9 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import {
-  ISamplingForm,
-  ISamplingList,
+
   IUpdate,
-  SamplingFormValues,
+
 } from "../../app/models/sampling";
 import { formItemLayout } from "../../app/util/utils";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
@@ -38,24 +37,43 @@ import { originOptions, urgencyOptions } from "../../app/stores/optionStore";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../app/util/alerts";
 import PrintIcon from "../../app/common/icons/PrintIcon";
-import {
-  ISearchValidation,
-  Ivalidationlist,
-  searchValues,
-} from "../../app/models/resultValidation";
+
 import moment from "moment";
-import ValidationTableStudy from "./ValidationTableStudy";
+import ValidationTableStudy from "./RelaseTableStudy";
 import ValidationStudyColumns, {
   ValidationStudyExpandable,
-} from "./ValidationStudyTable";
+} from "./RelaseStudyTable";
 import { IOptions } from "../../app/models/shared";
+import { Irelacelist, ISearchRelase, searchrelase } from "../../app/models/relaseresult";
+import RelaseTableStudy from "./RelaseTableStudy";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
-
-const ResultValidationTable: FC<ProceedingTableProps> = ({
+const studys =[{
+  id:"string",
+  solicitud:"string",
+  nombre:"string",
+  registro:"string",
+  sucursal:"string",
+  edad:"string",
+  sexo:"string",
+  compañia:"string",
+  estudios:[{
+      id:1,
+      study:"string",
+      area:"string",
+      status:"string",
+      registro:"string",
+      entrega:"string",
+      estatus :4,
+      solicitudId:"string",
+  }],
+  order: "string",
+  parcialidad:true
+}]
+const RelaseResultTable: FC<ProceedingTableProps> = ({
   componentRef,
   printing,
 }) => {
@@ -63,8 +81,8 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     procedingStore,
     optionStore,
     locationStore,
-    samplingStudyStore: samplig,
     resultValidationStore,
+    relaseResultStore
   } = useStore();
   const { expedientes, getnow } = procedingStore;
   const {
@@ -76,16 +94,17 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     getMedicOptions,
     CityOptions,
     getCityOptions,
-    departmentOptions,
     getDepartmentOptions,
     companyOptions,
     getCompanyOptions,
     studiesOptions,
     getStudiesOptions,
+    departmentAreaOptions,
+    getDepartmentAreaOptions,
   } = optionStore;
   const {
     getAll,
-    studys,
+    //studys,
     printTicket,
     update,
     setSoliCont,
@@ -94,19 +113,19 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     studyCont,
     viewTicket,
     setSearch,
-    clearFilter
-  } = resultValidationStore;
-  const { getCity } = locationStore;
+  } = relaseResultStore;
+  const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
+  const { getCity,  } = locationStore;
   const [searchParams] = useSearchParams();
-  const [form] = Form.useForm<ISearchValidation>();
+  const [form] = Form.useForm<ISearchRelase>();
   let navigate = useNavigate();
-  const [values, setValues] = useState<ISearchValidation>(new searchValues());
+  const [values, setValues] = useState<ISearchRelase>(new searchrelase());
   const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
   const [ids, setIds] = useState<number[]>([]);
   const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
   const { width: windowWidth } = useWindowDimensions();
   const [expandable, setExpandable] =
-    useState<ExpandableConfig<Ivalidationlist>>();
+    useState<ExpandableConfig<Irelacelist>>();
   const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
   const [visto, setvisto] = useState<number[]>([]);
   const hasFooterRow = true;
@@ -115,10 +134,18 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   const [activiti, setActiviti] = useState<string>("");
   const [openRows, setOpenRows] = useState<boolean>(false);
   //const [search,SetSearch] = useState<ISearchMedical>(new SearchMedicalFormValues())
+  const selectedDepartment = Form.useWatch("departament", form);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
+  useEffect(() => {
+
+    getDepartmentAreaOptions();
+  }, [
+
+    getDepartmentAreaOptions,
+  ]);
   const selectedCity = Form.useWatch("ciudad", form);
   useEffect(() => {
     const readStudy = async () => {
@@ -215,18 +242,19 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   };
   const updatedata = async () => {
     setLoading(true);
-
-    setLoading(false);
-    alerts.confirm(
-      "",
-      `Se ha(n) enviado ${ids.length} estudio(s) de ${
-        solicitudesData.length
-      } solicitud(es) a estatus ${
-        activiti == "register" ? "validado" : "capturado"
-      } de manera exitosa `,
-      async () => {
-        var succes = await update(updateData!);
-        if (succes) {
+    
+    
+      setLoading(false);
+      alerts.confirm(
+        "",
+        `Se ha(n) enviado ${ids.length} estudio(s) de ${
+          solicitudesData.length
+        } solicitud(es) a estatus ${
+          activiti == "register" ? "validado" : "capturado"
+        } de manera exitosa `,
+        async () => {
+          var succes = await update(updateData!);
+          if (succes) {
           await getAll(values);
           setUpdateDate([]);
           setIds([]);
@@ -235,17 +263,18 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
         } else {
           setLoading(false);
         }
-      },
-      () => {
-        setLoading(false);
-      }
-    );
-    setIds([]);
-    SetSolicitudesData([]);
+        },
+        ()=>{
+          setLoading(false);
+        }
+      );
+      setIds([]);
+      SetSolicitudesData([]);
+
   };
 
   const expandableStudyConfig = {
-    expandedRowRender: (item: Ivalidationlist) => (
+    expandedRowRender: (item: Irelacelist) => (
       <div>
         <h4>Estudios</h4>
 
@@ -305,6 +334,12 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   };
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
+  const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
+  useEffect(() => {
+    setDepartmentOptions(
+      departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [departmentAreaOptions]);
   console.log("Table");
   useEffect(() => {
     const readData = async () => {
@@ -355,14 +390,19 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
-
+  useEffect(() => {
+    setAreaOptions(
+      departmentAreaOptions.find((x) => x.value === selectedDepartment)?.options ?? []
+    );
+    form.setFieldValue("sucursalId", []);
+  }, [departmentAreaOptions, form, selectedDepartment]);
   useEffect(() => {
     setBranchOptions(
       branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
     );
     form.setFieldValue("sucursal", []);
   }, [branchCityOptions, form, selectedCity]);
-  const onExpand = (isExpanded: boolean, record: Ivalidationlist) => {
+  const onExpand = (isExpanded: boolean, record: Irelacelist) => {
     let expandRows: string[] = expandedRowKeys;
     if (isExpanded) {
       expandRows.push(record.id);
@@ -378,7 +418,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     console.log(activiti, "useffect");
     setExpandable(expandableStudyConfig);
   }, [activiti]);
-  const onFinish = async (newValues: ISearchValidation) => {
+  const onFinish = async (newValues: ISearchRelase) => {
     setLoading(true);
 
     const reagent = { ...values, ...newValues };
@@ -409,7 +449,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     setIds([]);
     setActivar(false);
   };
-  const columns: IColumns<Ivalidationlist> = [
+  const columns: IColumns<Irelacelist> = [
     {
       ...getDefaultColumnProps("solicitud", "Clave", {
         searchState,
@@ -462,30 +502,54 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     },
   ];
 
+  /*   const PriceListTablePrint = () => {
+    return (
+      <div ref={componentRef}>
+        <PageHeader
+          ghost={false}
+          title={<HeaderTitle title="Catálogo de Lista de Expedientes"  />}
+          className="header-container"
+        ></PageHeader>
+        <Divider className="header-divider" />
+        <Table<IProceedingList>
+          size="small"
+          rowKey={(record) => record.id}
+          columns={columns.slice(0, 7)}
+          pagination={false}
+          dataSource={[...expedientes]}
+        />
+      </div>
+    );
+  }; */
+
   return (
     <Fragment>
-      <Row justify="end" gutter={[24, 12]} className="filter-buttons">
-        <Col span={24}>
-          <Button
-            key="clean"
-            onClick={(e) => {
-              clearFilter();
-              form.resetFields();
-            }}
-          >
-            Limpiar
-          </Button>
-          <Button
-            key="filter"
-            type="primary"
-            onClick={(e) => {
-              form.submit();
-            }}
-          >
-            Buscar
-          </Button>
-        </Col>
-      </Row>
+      <div style={{ marginBottom: "5px", marginLeft: "90%" }}>
+        <Button
+          key="clean"
+          onClick={(e) => {
+           
+            form.setFieldsValue(new searchrelase() );
+            setValues(new searchrelase());
+            e.stopPropagation();
+            form.resetFields();
+          }}
+          style={{ marginLeft: "10%" }}
+        >
+          Limpiar
+        </Button>
+        <Button
+          key="filter"
+          type="primary"
+          onClick={(e) => {
+            e.stopPropagation();
+            form.submit();
+          }}
+          style={{ marginLeft: "10%" }}
+        >
+          Filtrar
+        </Button>
+      </div>
       <div
         className="status-container"
         style={{
@@ -498,16 +562,11 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
           padding: "10px",
         }}
       >
-        <Form<ISearchValidation>
+<Form<ISearchRelase>
           {...formItemLayout}
           form={form}
           name="sampling"
-          initialValues={{
-            fecha: [
-              moment(Date.now()).utcOffset(0, true),
-              moment(Date.now()).utcOffset(0, true),
-            ],
-          }}
+          initialValues={values}
           onFinish={onFinish}
           scrollToFirstError
         >
@@ -517,7 +576,6 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                 <Col span={8}>
                   <DateRangeInput
                     formProps={{ label: "Fecha", name: "fecha" }}
-                    disableAfterDates
                   />
                 </Col>
                 <Col span={8}>
@@ -562,24 +620,41 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
-                  <SelectInput
+                  {/* <SelectInput
                     formProps={{
-                      name: "departament",
+                      name: "departamento",
                       label: "Departamento",
                     }}
                     multiple
-                    options={departmentOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{
-                      name: "area",
-                      label: "Área",
-                    }}
-                    multiple
-                    options={areas}
-                  ></SelectInput>
+                    options={departmentAreaOptions}
+                  ></SelectInput> */}
+                  <Form.Item label="Áreas" className="no-error-text" help="">
+                    <Input.Group>
+                      <Row gutter={8}>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "departament",
+                              label: "Departamento",
+                              noStyle: true,
+                            }}
+                            options={departmentOptions}
+                          />
+                        </Col>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "area",
+                              label: "Área",
+                              noStyle: true,
+                            }}
+                            multiple
+                            options={areaOptions}
+                          />
+                        </Col>
+                      </Row>
+                    </Input.Group>
+                  </Form.Item>
                 </Col>
                 <Col span={8}>
                   <SelectInput
@@ -700,7 +775,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
         </Col>
       </Row>
       <Fragment>
-        <ValidationTableStudy
+        <RelaseTableStudy
           data={studys}
           columns={ValidationStudyColumns({ printTicket })}
           expandable={ValidationStudyExpandable({
@@ -717,4 +792,4 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   );
 };
 
-export default observer(ResultValidationTable);
+export default observer(RelaseResultTable);

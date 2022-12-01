@@ -7,6 +7,7 @@ import {
   IReportData,
   IReportStudyData,
   IMaquilaData,
+  IBudgetData,
 } from "../../app/models/report";
 import ReportChart from "./ReportChart";
 
@@ -114,6 +115,15 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
         data={data as IMaquilaData[]}
         serieX={"maquila"}
         series={[{ title: "Cantidad de Solicitudes", dataIndex: "noSolicitudes" }]}
+        axisLabel={{ interval: 0, rotate: 0 }}
+      />
+    );
+  } else if (report === "presupuestos") {
+    return (
+      <ReportChart<IBudgetData>
+        data={data as IBudgetData[]}
+        serieX={"sucursal"}
+        series={[{ title: "Presupuesto por Sucursal", dataIndex: "total" }]}
         axisLabel={{ interval: 0, rotate: 0 }}
       />
     );

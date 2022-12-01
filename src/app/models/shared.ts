@@ -77,6 +77,7 @@ export interface IOptionsReport extends IOptions {
     | "cargo"
     | "maquila_interna"
     | "maquila_externa"
+    | "presupuestos"
     | "corte_caja";
 }
 

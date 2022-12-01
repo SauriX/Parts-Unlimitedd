@@ -102,6 +102,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
         currentReport == "empresa" ||
         currentReport == "canceladas" ||
         currentReport == "descuento" ||
+        currentReport == "presupuestos" ||
         currentReport == "cargo" ||
         currentReport == "maquila_interna" ||
         currentReport == "maquila_externa" ||
