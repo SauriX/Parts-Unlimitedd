@@ -46,6 +46,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
         value == "canceladas" ||
         value == "descuento" ||
         value == "cargo" ||
+        value == "presupuestos" ||
         value == "maquila_interna" ||
         value == "maquila_externa"
       ) {

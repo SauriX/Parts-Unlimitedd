@@ -93,6 +93,7 @@ const ReportTable = ({
       {data.length > 0 &&
         (report == "cargo" ||
           report == "descuento" ||
+          report == "presupuestos" ||
           report == "empresa" ||
           report == "medicos-desglosado" ||
           report == "maquila_interna" ||
@@ -115,7 +116,7 @@ const ReportTable = ({
         columns={columns}
         pagination={false}
         dataSource={[...data]}
-        scroll={{ y: 500 }}
+        scroll={{ y: 400 }}
         rowClassName={(item) =>
           item.claveMedico == "Total" || item.paciente === "Total"
             ? "Resumen Total"
