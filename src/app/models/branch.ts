@@ -35,6 +35,7 @@ export interface IBranchInfo {
   activo: boolean;
   codigoPostal: string;
   ciudad: string;
+  codigo: string;
 }
 
 export interface IBranchDepartment {
