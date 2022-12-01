@@ -14,7 +14,9 @@ import {
   urgencyOptions,
 } from "../../../../app/stores/optionStore";
 import { useStore } from "../../../../app/stores/store";
+import alerts from "../../../../app/util/alerts";
 import { catalog } from "../../../../app/util/catalogs";
+import { validateEmail } from "../../../../app/util/utils";
 
 const formItemLayout = {
   labelCol: { span: 4 },
@@ -32,7 +34,7 @@ const sendOptions = [
 type RequestGeneralProps = {
   branchId: string | undefined;
   form: FormInstance<IRequestGeneral>;
-  onSubmit: (general: IRequestGeneral, showResult: boolean) => void;
+  onSubmit: (general: IRequestGeneral, showLoader: boolean) => void;
 };
 
 const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
@@ -62,6 +64,8 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
   const [errors, setErrors] = useState<IFormError[]>([]);
   const [previousSendings, setPreviousSendings] = useState<string[]>([]);
   const [requestGeneral, setRequestGeneral] = useState<IRequestGeneral>();
+  const [isValidEmail, setIsValidEmail] = useState(false);
+  const [isValidWhatsapp, setIsValidWhatsapp] = useState(false);
 
   useEffect(() => {
     getCompanyOptions();
@@ -89,6 +93,13 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [request]);
+
+  useEffect(() => {
+    setIsValidEmail(validateEmail(email));
+    setIsValidWhatsapp(
+      (whatsapp ?? "").replaceAll("-", "").replaceAll("_", "").length === 10
+    );
+  }, [email, whatsapp]);
 
   const onValuesChange = (changedValues: any) => {
     const path = Object.keys(changedValues)[0];
@@ -125,8 +136,9 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
 
   const onFinish = (values: IRequestGeneral) => {
     const request = { ...requestGeneral, ...values };
+    const autoSave = form.getFieldValue("guardadoAutomatico");
 
-    onSubmit(request, true);
+    onSubmit(request, autoSave);
   };
 
   const sendEmail = async () => {
@@ -259,7 +271,7 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
                 <Col span={12}>
                   <Button
                     type="primary"
-                    disabled={!sendings?.includes("correo")}
+                    disabled={!sendings?.includes("correo") || !isValidEmail}
                     onClick={sendEmail}
                   >
                     Prueba
@@ -313,7 +325,7 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
               />
               <Button
                 type="primary"
-                disabled={!sendings?.includes("whatsapp")}
+                disabled={!sendings?.includes("whatsapp") || !isValidWhatsapp}
                 onClick={sendWhatsapp}
               >
                 Prueba

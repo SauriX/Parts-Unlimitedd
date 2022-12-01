@@ -5,7 +5,7 @@ import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 import Sampling from "../api/sampling";
-import { IsamplingForm, IsamplingList, IUpdate } from "../models/sampling";
+import { ISamplingForm, ISamplingList, IUpdate } from "../models/sampling";
 import { IRouteList, SearchTracking } from "../models/routeTracking";
 import RouteTracking from "../api/routetracking";
 import responses from "../util/responses";

@@ -1,6 +1,6 @@
 import moment from "moment";
 
-export interface IsamplingForm {
+export interface ISamplingForm {
   fecha?: moment.Moment[];
   buscar?: string;
   procedencia?: number[];
@@ -13,35 +13,39 @@ export interface IsamplingForm {
   medico?: string[];
   compañia?: string[];
 }
-export interface IsamplingList {
+export interface ISamplingList {
   id: string;
   solicitud: string;
   nombre: string;
   order: string;
   registro: string;
+  expedienteId?: string;
   sucursal: string;
   edad: string;
   sexo: string;
   compañia: string;
   seleccion: boolean;
-  estudios: IstudySampling[];
+  estudios: IStudySampling[];
 }
-export interface IstudySampling {
+export interface IStudySampling {
   id: number;
   nombre: string;
   area: string;
   estatus: number;
+  expedienteId?: string;
+  status: number;
   registro: string;
   entrega: string;
   seleccion: boolean;
   clave: string;
   solicitudId: string;
+  nombreEstatus: string;
 }
 export interface IUpdate {
   solicitudId: string;
   estudioId: number[];
 }
-export class samplingFormValues implements IsamplingForm {
+export class SamplingFormValues implements ISamplingForm {
   fecha = [moment(moment.now()), moment(moment.now())];
   buscar = "";
   procedencia = [];
@@ -54,7 +58,7 @@ export class samplingFormValues implements IsamplingForm {
   medico = [];
   compañia = [];
 
-  constructor(init?: IsamplingForm) {
+  constructor(init?: ISamplingForm) {
     Object.assign(this, init);
   }
 }

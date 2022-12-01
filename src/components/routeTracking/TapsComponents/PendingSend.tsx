@@ -20,10 +20,10 @@ import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import {
-  IsamplingForm,
-  IsamplingList,
+  ISamplingForm,
+  ISamplingList,
   IUpdate,
-  samplingFormValues,
+  SamplingFormValues,
 } from "../../../app/models/sampling";
 import {
   getDefaultColumnProps,
@@ -45,7 +45,7 @@ import PrintIcon from "../../../app/common/icons/PrintIcon";
 import { formItemLayout } from "../../../app/util/utils";
 
 const PendingSend = () => {
-  const { procedingStore, optionStore, locationStore, samplig,routeTrackingStore } = useStore();
+  const { procedingStore, optionStore, locationStore, samplingStudyStore: samplig,routeTrackingStore } = useStore();
   const { getAll, studys, printTicket, update,exportForm,setventana } = routeTrackingStore;
   const { branchCityOptions,getBranchCityOptions } = optionStore;
   const [values, setValues] = useState<SearchTracking>(new TrackingFormValues());

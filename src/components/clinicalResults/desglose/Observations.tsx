@@ -55,8 +55,8 @@ const ParameterReagent = ({ getResult, id, tipo }: Props) => {
     },
   ];
 
-  const onSelectChange = (item: IOptions) => {
-    setSelectedObservation(item.label as string);
+  const onSelectChange = (item: IOptions, checked: boolean, selectedRows: IOptions[]) => {
+    setSelectedObservation(selectedRows.map(x => x.label?.toString()).join("\r\n"));
   };
 
   const rowSelection = {
@@ -90,7 +90,7 @@ const ParameterReagent = ({ getResult, id, tipo }: Props) => {
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
         rowSelection={{
-          type: "radio",
+          type: "checkbox",
           ...rowSelection,
         }}
       />

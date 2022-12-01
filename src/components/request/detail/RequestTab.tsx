@@ -1,4 +1,4 @@
-import { Button, Col, Form, Row, Space, Spin, Tabs } from "antd";
+import { Button, Col, Form, notification, Row, Space, Spin, Tabs } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
@@ -32,6 +32,14 @@ type keys =
   | "sampler"
   | "images";
 
+const showAutoSaveMessage = () => {
+  notification.info({
+    message: `Guardado automatico`,
+    placement: "bottomRight",
+    icon: "",
+  });
+};
+
 const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   const { requestStore, procedingStore, loyaltyStore } = useStore();
   const {
@@ -43,7 +51,6 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     updateGeneral,
     updateStudies,
     cancelRequest,
-    setGlobalPayments,
     studyFilter,
     totals,
     totalsOriginal,
@@ -57,11 +64,8 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   const [currentKey, setCurrentKey] = useState<keys>("general");
 
   const onChangeTab = async (key: string) => {
-    const ok = await submit(false);
-
-    if (ok) {
-      setCurrentKey(key as keys);
-    }
+    submit(true);
+    setCurrentKey(key as keys);
   };
 
   useEffect(() => {
@@ -105,21 +109,38 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     }
   };
 
-  const submit = async (showResult: boolean = true) => {
-    let ok = true;
-
+  const submit = async (autoSave: boolean = false) => {
     if (currentKey === "general") {
-      ok = await submitGeneral(formGeneral, showResult);
-    } else if (
-      currentKey === "studies" ||
-      currentKey === "request" ||
-      currentKey === "sampler"
-    ) {
-      ok = await updateStudies(studyUpdate, showResult);
-      await modificarSaldo();
+      const ok = await submitGeneral(formGeneral, autoSave);
+      if (!ok) {
+        setCurrentKey("general");
+        return;
+      }
+    } else if (currentKey === "studies") {
+      const ok = await updateStudies(studyUpdate, autoSave);
+      if (!ok) {
+        setCurrentKey("studies");
+        return;
+      } else {
+        await modificarSaldo();
+      }
+    } else if (currentKey === "request") {
+      const ok = await updateStudies(studyUpdate, autoSave);
+      if (!ok) {
+        setCurrentKey("request");
+        return;
+      }
+    } else if (currentKey === "sampler") {
+      const ok = await updateStudies(studyUpdate, autoSave);
+      if (!ok) {
+        setCurrentKey("sampler");
+        return;
+      }
     }
 
-    return ok;
+    if (autoSave) {
+      showAutoSaveMessage();
+    }
   };
 
   const cancel = () => {
@@ -128,8 +149,13 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       `¿Desea cancelar la solicitud?, esta acción no se puede deshacer`,
       async () => {
         if (request) {
-          await cancelRequest(request.expedienteId, request.solicitudId!);
-          await modificarSaldo();
+          const ok = await cancelRequest(
+            request.expedienteId,
+            request.solicitudId!
+          );
+          if (ok) {
+            await modificarSaldo();
+          }
         }
       }
     );
@@ -138,25 +164,16 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   useEffect(() => {
     if (request) {
       getStudies(request.expedienteId, request.solicitudId!);
-      getPayments(request.expedienteId, request.solicitudId!).then(
-        (payments) => {
-          setGlobalPayments(payments);
-        }
-      );
+      getPayments(request.expedienteId, request.solicitudId!);
     }
-  }, [getStudies, getPayments, request, setGlobalPayments]);
+  }, [getStudies, getPayments, request]);
 
   const operations = (
     <Space>
       <Button key="cancel" size="small" ghost danger onClick={cancel}>
         Cancelar
       </Button>
-      <Button
-        key="save"
-        size="small"
-        type="primary"
-        onClick={() => submit(true)}
-      >
+      <Button key="save" size="small" type="primary" onClick={() => submit()}>
         Guardar
       </Button>
     </Space>
@@ -167,8 +184,8 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       <RequestGeneral
         branchId={branchId}
         form={formGeneral}
-        onSubmit={(request, showResult) => {
-          onSubmitGeneral(request, showResult, updateGeneral).then((ok) => {
+        onSubmit={(request, showLoader) => {
+          onSubmitGeneral(request, showLoader, updateGeneral).then((ok) => {
             if (!ok) setCurrentKey("general");
           });
         }}

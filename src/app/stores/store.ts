@@ -43,6 +43,7 @@ import RouteTrackingStore from "./routeTracking";
 import MassResultSearchStore from "./massResultSearch";
 import ResultValidationStore from "./resultValidationStore";
 import RelaseResultStore from "./RelaseResultStore";
+import InvoiceStore from "./invoiceStore";
 configure({
   enforceActions: "never",
 });
@@ -79,7 +80,7 @@ interface Store {
   requestStore: RequestStore;
   appointmentStore: AppointmentStore;
   notificationStore: NotificationStore;
-  samplig: SamplingStore;
+  samplingStudyStore: SamplingStore;
   requestedStudyStore: RequestedStudyStore;
   clinicResultsStore: ClinicResultsStore;
   equipmentMantainStore: EquipmentMantainStore;
@@ -90,6 +91,7 @@ interface Store {
   massResultSearchStore: MassResultSearchStore;
   resultValidationStore:  ResultValidationStore;
   relaseResultStore:RelaseResultStore;
+  invoiceStore: InvoiceStore;
 }
 
 export const store: Store = {
@@ -124,7 +126,7 @@ export const store: Store = {
   requestStore: new RequestStore(),
   appointmentStore: new AppointmentStore(),
   notificationStore: new NotificationStore(),
-  samplig: new SamplingStore(),
+  samplingStudyStore: new SamplingStore(),
   requestedStudyStore: new RequestedStudyStore(),
   clinicResultsStore: new ClinicResultsStore(),
   equipmentMantainStore: new EquipmentMantainStore(),
@@ -135,6 +137,7 @@ export const store: Store = {
   massResultSearchStore: new MassResultSearchStore(),
   resultValidationStore:new   ResultValidationStore(),
   relaseResultStore: new RelaseResultStore(),
+  invoiceStore: new InvoiceStore(),
 };
 
 export const StoreContext = createContext(store);

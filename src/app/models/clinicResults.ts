@@ -46,6 +46,8 @@ export interface IClinicStudy {
   nombreEstatus?: string;
   seleccion?: boolean;
   clave: string;
+  fechaActualizacion?: string;
+  usuarioActualizacion?: string;
   parametros: IClinicResultCaptureForm[];
 }
 

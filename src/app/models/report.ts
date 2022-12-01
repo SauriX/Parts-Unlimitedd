@@ -93,6 +93,13 @@ export interface IMaquilaData {
   noSolicitudes: number;
 }
 
+export interface IBudgetData {
+  id: string;
+  sucursal: string;
+  fecha: string;
+  total: number;
+}
+
 export interface IReportFilter {
   sucursalId: string[];
   medicoId: string[];

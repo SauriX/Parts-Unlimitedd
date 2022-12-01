@@ -1,12 +1,11 @@
 import "./css/changeStatus.less";
-import { Button, Col, Collapse, Form, Input, Row } from "antd";
+import { Button, Col, Form, Input, Row } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
-import { IRequestedStudyForm } from "../../app/models/requestedStudy";
 import {
   originOptions,
   requestedStudyOptions,
@@ -16,11 +15,11 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 import moment from "moment";
 import { IOptions } from "../../app/models/shared";
+import { ISamplingForm } from "../../app/models/sampling";
 
-const RequestedStudyFilter = () => {
-  const { optionStore, requestedStudyStore } = useStore();
-  const { getAll, setFormValues } =
-    requestedStudyStore;
+const SamplingStudyFilter = () => {
+  const { optionStore, samplingStudyStore } = useStore();
+  const { getAll, setFormValues } = samplingStudyStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -75,12 +74,13 @@ const RequestedStudyFilter = () => {
 
   useEffect(() => {
     setAreaOptions(
-      departmentAreaOptions.find((x) => x.value === selectedDepartment)?.options ?? []
+      departmentAreaOptions.find((x) => x.value === selectedDepartment)
+        ?.options ?? []
     );
     form.setFieldValue("area", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
 
-  const onFinish = async (newFormValues: IRequestedStudyForm) => {
+  const onFinish = async (newFormValues: ISamplingForm) => {
     setLoading(true);
     const filter = { ...newFormValues };
     setFormValues(newFormValues);
@@ -112,7 +112,7 @@ const RequestedStudyFilter = () => {
         </Col>
       </Row>
       <div className="status-container">
-        <Form<IRequestedStudyForm>
+        <Form<ISamplingForm>
           {...formItemLayout}
           form={form}
           name="requestedStudy"
@@ -260,4 +260,4 @@ const RequestedStudyFilter = () => {
   );
 };
 
-export default observer(RequestedStudyFilter);
+export default observer(SamplingStudyFilter);

@@ -28,7 +28,15 @@ import {
   faVial,
   faVials,
   faArrowsTurnToDots,
-  faLaptopMedical
+  faLaptopMedical,
+  faChalkboardUser,
+  faMagnifyingGlass,
+  faMagnifyingGlassArrowRight,
+  faMapLocation,
+  faClipboardList,
+  faSyringe,
+  faMoneyBill1Wave
+  
 } from "@fortawesome/free-solid-svg-icons";
 
 const getMenuIcon = (name: string) => {
@@ -84,7 +92,7 @@ const getMenuIcon = (name: string) => {
     case "reception":
       return faLaptopFile;
     case "samplings":
-      return faVial;
+      return faSyringe;
     case "request":
       return faFileContract;
     case "cash":
@@ -92,7 +100,21 @@ const getMenuIcon = (name: string) => {
     case "requestedstudy":
       return faArrowsTurnToDots;
     case "clinicResults":
-      return faLaptopMedical;
+      return faChalkboardUser;
+    case "massSearch":
+      return faMagnifyingGlass;
+    case "deliveryResults":
+      return faMagnifyingGlassArrowRight;
+    case "deliveryResults":
+      return faMagnifyingGlassArrowRight;
+    case "RouteTracking":
+      return faMapLocation;
+    case "worklist":
+      return faClipboardList;
+    case "ResultValidation":
+      return faListCheck;
+    case "quotation":
+      return faMoneyBill1Wave;
     default:
       return faCircle;
   }

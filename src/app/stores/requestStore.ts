@@ -17,6 +17,7 @@ import {
   RequestTotal,
   IRequestPayment,
   IRequestToken,
+  IRequestCheckIn,
 } from "../models/request";
 import alerts from "../util/alerts";
 import { status, statusName } from "../util/catalogs";
@@ -52,7 +53,7 @@ export default class RequestStore {
   totalsOriginal: IRequestTotal = new RequestTotal();
   studies: IRequestStudy[] = [];
   packs: IRequestPack[] = [];
-  globalPayments: IRequestPayment[] = [];
+  payments: IRequestPayment[] = [];
   loadingRequests: boolean = false;
   loadingTabContentCount: number = 0;
 
@@ -162,7 +163,7 @@ export default class RequestStore {
       total: finalTotal,
       saldo:
         finalTotal -
-        this.globalPayments
+        this.payments
           .filter((x) => x.estatusId !== status.requestPayment.cancelado)
           .reduce((acc, p) => acc + p.cantidad, 0),
     };
@@ -202,10 +203,6 @@ export default class RequestStore {
     if (index > -1) {
       this.packs[index] = pack;
     }
-  };
-
-  setGlobalPayments = (payments: IRequestPayment[]) => {
-    this.globalPayments = payments;
   };
 
   setPartiality = (apply: boolean) => {
@@ -279,8 +276,8 @@ export default class RequestStore {
 
   getPayments = async (recordId: string, requestId: string) => {
     try {
-      const data = await Request.getPayments(recordId, requestId);
-      return data;
+      const payments = await Request.getPayments(recordId, requestId);
+      this.payments = payments;
     } catch (error) {
       alerts.warning(getErrors(error));
       return [];
@@ -294,6 +291,15 @@ export default class RequestStore {
     } catch (error) {
       alerts.warning(getErrors(error));
       return [];
+    }
+  };
+
+  getNextPaymentCode = async (serie: string) => {
+    try {
+      const data = await Request.getNextPaymentCode(serie);
+      return data.toString();
+    } catch (error) {
+      alerts.warning(getErrors(error));
     }
   };
 
@@ -429,23 +435,41 @@ export default class RequestStore {
   createPayment = async (request: IRequestPayment) => {
     try {
       const payment = await Request.createPayment(request);
-      return payment;
+      this.payments.push(payment);
+      return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
+      return false;
     }
   };
 
-  updateGeneral = async (request: IRequestGeneral, showResult: boolean) => {
+  checkInPayment = async (request: IRequestCheckIn) => {
     try {
-      this.loadingTabContentCount++;
+      const checkedIn = await Request.checkInPayment(request);
+      this.payments = [
+        ...this.payments.filter(
+          (x) => !checkedIn.map((p) => p.id).includes(x.id)
+        ),
+        ...checkedIn,
+      ];
+      return checkedIn;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return [];
+    }
+  };
+
+  updateGeneral = async (request: IRequestGeneral, autoSave: boolean) => {
+    try {
+      if (!autoSave) this.loadingTabContentCount++;
       await Request.updateGeneral(request);
-      if (showResult) alerts.success(messages.updated);
+      if (!autoSave) alerts.success(messages.updated);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
     } finally {
-      this.loadingTabContentCount--;
+      if (!autoSave) this.loadingTabContentCount--;
     }
   };
 
@@ -460,19 +484,19 @@ export default class RequestStore {
     }
   };
 
-  updateStudies = async (request: IRequestStudyUpdate, showResult: boolean) => {
+  updateStudies = async (request: IRequestStudyUpdate, autoSave: boolean) => {
     try {
-      this.loadingTabContentCount++;
-      await Request.updateStudies(request);
-      this.studies = this.studies.map((x) => ({ ...x, nuevo: false }));
-      this.packs = this.packs.map((x) => ({ ...x, nuevo: false }));
-      if (showResult) alerts.success(messages.updated);
+      if (!autoSave) this.loadingTabContentCount++;
+      const response = await Request.updateStudies(request);
+      this.packs = response.paquetes ?? [];
+      this.studies = response.estudios;
+      if (!autoSave) alerts.success(messages.updated);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
     } finally {
-      this.loadingTabContentCount--;
+      if (!autoSave) this.loadingTabContentCount--;
     }
   };
 
@@ -566,6 +590,12 @@ export default class RequestStore {
         requestId,
         payments
       );
+      this.payments = [
+        ...this.payments.filter(
+          (x) => !cancelled.map((p) => p.id).includes(x.id)
+        ),
+        ...cancelled,
+      ];
       return cancelled;
     } catch (error) {
       alerts.warning(getErrors(error));

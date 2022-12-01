@@ -119,7 +119,6 @@ export interface IRequestGeneral extends IRequestBase {
   correo: string;
   whatsapp: string;
   observaciones: string;
-  showResult?: boolean;
 }
 
 export interface IRequestPayment extends IRequestBase {
@@ -131,8 +130,21 @@ export interface IRequestPayment extends IRequestBase {
   serie: string;
   numero: string;
   estatusId: number;
-  usuarioRegistra: string;
+  facturaId?: string;
+  facturapiId: string;
+  usuarioRegistra?: string;
   fechaPago: moment.Moment;
+}
+
+export interface IRequestCheckIn extends IRequestBase {
+  datoFiscalId: string;
+  usoCFDI: string;
+  formaPago: string;
+  desglozado: boolean;
+  conNombre: boolean;
+  envioCorreo: boolean;
+  envioWhatsapp: boolean;
+  pagos: IRequestPayment[];
 }
 
 export interface IRequestImage extends IRequestBase {

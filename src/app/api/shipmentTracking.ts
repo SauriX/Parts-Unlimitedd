@@ -1,4 +1,4 @@
-import { IsamplingForm, IsamplingList, IUpdate } from "../models/sampling";
+import { ISamplingForm, ISamplingList, IUpdate } from "../models/sampling";
 import { IScopes } from "../models/shared";
 import requests from "./agent";
 import {shipmenttracking} from "../models/shipmentTracking"

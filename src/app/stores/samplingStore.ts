@@ -5,7 +5,14 @@ import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 import Sampling from "../api/sampling";
-import { IsamplingForm, IsamplingList, IUpdate } from "../models/sampling";
+import {
+  ISamplingForm,
+  ISamplingList,
+  IUpdate,
+  SamplingFormValues,
+} from "../models/sampling";
+import { status } from "../util/catalogs";
+import { IRequestedStudy } from "../models/requestedStudy";
 
 export default class SamplingStore {
   constructor() {
@@ -13,22 +20,21 @@ export default class SamplingStore {
   }
 
   scopes?: IScopes;
-  studys: IsamplingList[] = [];
-  studyCont:number=0;
-  soliCont:number=0;
+  data: ISamplingList[] = [];
+  studies: IRequestedStudy[] = [];
+  formValues: ISamplingForm = new SamplingFormValues();
+  loadingStudies: boolean = false;
 
-  setStudyCont=(cont:number)=>{
-    this.studyCont=cont;
-  };
-  setSoliCont=(cont:number)=>{
-    this.soliCont=cont;
-  };
   clearScopes = () => {
     this.scopes = undefined;
   };
 
   clearStudy = () => {
-    this.studys = [];
+    this.data = [];
+  };
+
+  setFormValues = (newFormValues: ISamplingForm) => {
+    this.formValues = newFormValues;
   };
 
   access = async () => {
@@ -42,22 +48,42 @@ export default class SamplingStore {
     }
   };
 
-  getAll = async (search: IsamplingForm) => {
+  getAll = async (search: ISamplingForm) => {
     try {
+      this.loadingStudies = true;
       const study = await Sampling.getAll(search);
-      this.studys = study;
+      this.data = study;
       return study;
     } catch (error) {
       alerts.warning(getErrors(error));
-      this.studys = [];
+      this.data = [];
+    } finally {
+      this.loadingStudies = false;
     }
   };
 
   update = async (study: IUpdate[]) => {
     try {
-      console.log(study);
       await Sampling.update(study);
       alerts.success(messages.updated);
+
+      this.data = this.data.map((x) => {
+        x.estudios = x.estudios.map((z) => {
+          const updated = study.find(
+            (y) => y.solicitudId === x.id && y.estudioId.includes(z.id)
+          );
+          if (updated) {
+            z.estatus =
+              z.estatus === status.requestStudy.pendiente
+                ? status.requestStudy.tomaDeMuestra
+                : status.requestStudy.pendiente;
+          }
+
+          return z;
+        });
+        return x;
+      });
+
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -65,9 +91,18 @@ export default class SamplingStore {
     }
   };
 
-  printTicket = async (recordId: string, requestId: string) => {
+  printOrder = async (recordId: string, requestId: string) => {
     try {
       await Sampling.getOrderPdf(recordId, requestId);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  
+  exportList = async (search: ISamplingForm) => {
+    try {
+      await Sampling.exportList(search);
+      return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }

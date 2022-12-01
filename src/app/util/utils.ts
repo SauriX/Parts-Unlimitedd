@@ -70,6 +70,11 @@ export const objectToFormData = (obj: any, rootName?: any) => {
   return formData;
 };
 
+export const validateEmail = (email: string) => {
+  var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+};
+
 export const beforeUploadValidation = (
   file: RcFile,
   sizeMb: number = 2,
