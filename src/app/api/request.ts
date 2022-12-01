@@ -9,6 +9,7 @@ import {
   IRequestTotal,
   IRequestPayment,
   IRequestToken,
+  IRequestCheckIn,
 } from "../models/request";
 import {
   IWeeAssignment,
@@ -56,6 +57,8 @@ const Request = {
     requests.post("request/weeClinic", request),
   createPayment: (request: IRequestPayment): Promise<IRequestPayment> =>
     requests.post("request/payment", request),
+  checkInPayment: (request: IRequestCheckIn): Promise<IRequestPayment[]> =>
+    requests.post("request/payment/checkin", request),
   updateGeneral: (request: IRequestGeneral): Promise<void> =>
     requests.put("request/general", request),
   updateTotals: (request: IRequestTotal): Promise<void> =>

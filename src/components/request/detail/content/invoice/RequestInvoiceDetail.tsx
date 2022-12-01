@@ -3,11 +3,23 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import SelectInput from "../../../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../../../app/common/form/proposal/TextInput";
-import { IRequestPayment } from "../../../../../app/models/request";
+import {
+  IRequestCheckIn,
+  IRequestPayment,
+} from "../../../../../app/models/request";
 import { IFormError } from "../../../../../app/models/shared";
 import { ITaxData } from "../../../../../app/models/taxdata";
 import { useStore } from "../../../../../app/stores/store";
+import alerts from "../../../../../app/util/alerts";
 import { moneyFormatter } from "../../../../../app/util/utils";
+
+interface IFormInvoice {
+  usoCfdi: number;
+  cantidad: string;
+  numeroCuenta: string;
+  configuracion: string[];
+  metodoEnvio: string[];
+}
 
 const formItemLayout = {
   labelCol: { span: 8 },
@@ -38,12 +50,15 @@ const RequestInvoiceDetail = ({
   payments,
   taxData,
 }: RequestInvoiceDetailProps) => {
-  const { requestStore, optionStore } = useStore();
+  const { requestStore, optionStore, modalStore } = useStore();
+  const { checkInPayment } = requestStore;
   const { paymentOptions, cfdiOptions, getPaymentOptions, getcfdiOptions } =
     optionStore;
+  const { closeModal } = modalStore;
 
-  const [form] = Form.useForm<any>();
+  const [form] = Form.useForm<IFormInvoice>();
 
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<IFormError[]>([]);
 
   useEffect(() => {
@@ -51,7 +66,37 @@ const RequestInvoiceDetail = ({
     getcfdiOptions();
   }, [getPaymentOptions, getcfdiOptions]);
 
-  const onFinish = () => {};
+  const onFinish = async (values: IFormInvoice) => {
+    const use = cfdiOptions.find((x) => x.value === values.usoCfdi);
+
+    if (!use) {
+      alerts.warning("Uso de CFDI inválido");
+      return;
+    }
+
+    const requestCheckIn: IRequestCheckIn = {
+      expedienteId: recordId,
+      solicitudId: requestId,
+      datoFiscalId: taxData.id!,
+      usoCFDI: use.label!.toString(),
+      conNombre: values.configuracion.includes("nombre"),
+      desglozado: values.configuracion.includes("desglozado"),
+      envioCorreo: values.metodoEnvio.includes("correo"),
+      envioWhatsapp: values.metodoEnvio.includes("whatsapp"),
+      pagos: payments,
+      formaPago: "",
+    };
+
+    setLoading(true);
+    const checkedIn = await checkInPayment(requestCheckIn);
+    setLoading(false);
+
+    if (checkedIn.length > 0) {
+      closeModal();
+    } else {
+      alerts.warning("No se facturó ningun pago");
+    }
+  };
 
   useEffect(() => {
     form.setFieldValue(
@@ -61,8 +106,8 @@ const RequestInvoiceDetail = ({
   }, [form, payments]);
 
   return (
-    <Spin spinning={false}>
-      <Form
+    <Spin spinning={loading}>
+      <Form<IFormInvoice>
         {...formItemLayout}
         form={form}
         name="invoice"

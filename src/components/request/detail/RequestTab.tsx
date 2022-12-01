@@ -51,7 +51,6 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     updateGeneral,
     updateStudies,
     cancelRequest,
-    setGlobalPayments,
     studyFilter,
     totals,
     totalsOriginal,
@@ -165,13 +164,9 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   useEffect(() => {
     if (request) {
       getStudies(request.expedienteId, request.solicitudId!);
-      getPayments(request.expedienteId, request.solicitudId!).then(
-        (payments) => {
-          setGlobalPayments(payments);
-        }
-      );
+      getPayments(request.expedienteId, request.solicitudId!);
     }
-  }, [getStudies, getPayments, request, setGlobalPayments]);
+  }, [getStudies, getPayments, request]);
 
   const operations = (
     <Space>

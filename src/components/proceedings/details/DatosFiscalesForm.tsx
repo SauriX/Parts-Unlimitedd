@@ -16,6 +16,7 @@ import { EditOutlined } from "@ant-design/icons";
 import alerts from "../../../app/util/alerts";
 import { regimenFiscal } from "../../../app/util/catalogs";
 import { toJS } from "mobx";
+import { values } from "lodash";
 
 const formItemLayout = {
   labelCol: { span: 8 },
@@ -109,7 +110,7 @@ const DatosFiscalesForm = ({
 
   const onFinish = async (newValues: ITaxData) => {
     setLoading(true);
-    
+
     setErrors([]);
     if (!newValues.cp || newValues.cp.length < 5) {
       alerts.warning("Favor de ingresar un Código Postal válido");
@@ -133,12 +134,18 @@ const DatosFiscalesForm = ({
       setLoading(false);
       return;
     }
+
+    const regimen = regimenFiscal.find(
+      (x) => x.value === newValues.regimenFiscal
+    );
+    newValues.regimenFiscal = regimen?.label?.toString();
+
     var taxes: ITaxData[] = local ? [...localTaxData] : [...(tax ?? [])];
     if (!isEditing) {
-
       if (
         taxes.find(
-          (x) => x.rfc === newValues.rfc || x.razonSocial == newValues.razonSocial
+          (x) =>
+            x.rfc === newValues.rfc || x.razonSocial == newValues.razonSocial
         )
       ) {
         alerts.warning(`El RFC ${newValues.rfc} ya existe`);
@@ -224,11 +231,9 @@ const DatosFiscalesForm = ({
           onClick={() => {
             setIsEditing(true);
             getColonies(item.cp);
-            console.log("item", toJS(item));
-            item.regimenFiscal =
-              "" +
-                regimenFiscal.find((x) => x.value === item.regimenFiscal)
-                  ?.label ?? "";
+            item.regimenFiscal = regimenFiscal
+              .find((x) => x.label === item.regimenFiscal)
+              ?.value?.toString();
             form.setFieldsValue(item);
           }}
         />
