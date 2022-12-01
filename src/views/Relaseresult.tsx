@@ -7,8 +7,6 @@ import RelaseResultHeader from "../components/RalaseResult/RelaseResultHeader";
 import RelaseResultTable from "../components/RalaseResult/RelaseResultTable";
 import ResultValidationHeader from "../components/Resultvalidation/ResultValidationHeader";
 import ResultValidationTable from "../components/Resultvalidation/ResultValidationTable";
-import SamplingHeader from "../components/Sampling/SamplingHeader";
-import SamplingTable from "../components/Sampling/SamplingTable";
 
 const Relaseresult = () => {
   const { resultValidationStore,procedingStore } = useStore();
