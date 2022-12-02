@@ -1,8 +1,9 @@
 import { IColumns, ISearch } from "../../../app/common/table/utils";
-import { IReportData } from "../../../app/models/report";
+import { IReportData, IStudiesData } from "../../../app/models/report";
 import { getDefaultColumnProps } from "../../../app/common/table/utils";
-import { Descriptions } from "antd";
+import { Descriptions, Table } from "antd";
 import "../css/report.less";
+import { moneyFormatter } from "../../../app/util/utils";
 
 const getMaquilaExternColumns = (
   searchState: ISearch,
@@ -56,33 +57,43 @@ const getMaquilaExternColumns = (
   return columns;
 };
 
-export const expandableMaquilaExternConfig = {
-  expandedRowRender: (item: IReportData) => (
-    <div>
-      <h4>Estudios</h4>
-      <Descriptions
-        key={item.id}
-        size="small"
-        bordered
-        style={{ marginBottom: 5 }}
-      >
-        <Descriptions.Item label="Clave" style={{ maxWidth: 50 }} className="description-content">
-          {item.claveEstudio}
-        </Descriptions.Item>
-        <Descriptions.Item label="Estudio" style={{ maxWidth: 50 }} className="description-content">
-          {item.nombreEstudio}
-        </Descriptions.Item>
-        <Descriptions.Item label="Estatus" style={{ maxWidth: 50 }} className="description-content">
-          {item.estatus}
-        </Descriptions.Item>
-        <Descriptions.Item label="Maquilador" style={{ maxWidth: 50 }} className="description-content">
-          {item.maquila}
-        </Descriptions.Item>
-      </Descriptions>
-    </div>
-  ),
-  rowExpandable: () => true,
-  defaultExpandAllRows: true,
+export const expandableMaquilaExternConfig = () => {
+  const nestedColumns: IColumns<IStudiesData> = [
+    {
+      ...getDefaultColumnProps("clave", "Clave", {
+        width: "20%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("estudio", "Nombre del estudio", {
+        width: "40%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("estatus", "Estatus", {
+        width: "20%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("maquila", "Maquilador", {
+        width: "20%",
+      }),
+    },
+  ];
+
+  return {
+    expandedRowRender: (item: IReportData, index: any) => (
+      <Table
+        columns={nestedColumns}
+        dataSource={item.estudio}
+        pagination={false}
+        className="header-expandable-table"
+        showHeader={index === 0}
+      />
+    ),
+    rowExpandable: () => true,
+    defaultExpandAllRows: true,
+  };
 };
 
 export default getMaquilaExternColumns;
