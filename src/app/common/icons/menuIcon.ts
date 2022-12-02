@@ -91,7 +91,7 @@ const getMenuIcon = (name: string) => {
       return faCalendarCheck;
     case "reception":
       return faLaptopFile;
-    case "samplings":
+    case "sampling":
       return faSyringe;
     case "request":
       return faFileContract;
