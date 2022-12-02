@@ -4,8 +4,6 @@ import {
   Card,
   Checkbox,
   Col,
-  Descriptions,
-  Divider,
   Form,
   Input,
   Row,
@@ -15,7 +13,6 @@ import {
 } from "antd";
 import { observer } from "mobx-react-lite";
 import { Typography } from "antd";
-import useWindowDimensions from "../../../app/util/window";
 import { IColumns } from "../../../app/common/table/utils";
 import {
   IRequest,
@@ -30,7 +27,7 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { IClinicResultCaptureForm } from "../../../app/models/clinicResults";
 import moment from "moment";
 import { ObservationModal } from "./ObservationModal";
-const { Text, Title } = Typography;
+import { DownloadOutlined } from '@ant-design/icons';
 const { TextArea } = Input;
 
 type ClinicalResultsDetailProps = {
@@ -61,13 +58,15 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const [loading, setLoading] = useState(false);
   const [checkedPrint, setCheckedPrint] = useState(false);
   const [hideWhenCancel, setHideWhenCancel] = useState(false);
-  const { optionStore, clinicResultsStore, parameterStore } = useStore();
+  const [exportGlucoseData, setExportGlucoseData] = useState<IClinicResultCaptureForm>();
   const [resultParam, setResultParam] = useState<any[]>([]);
+  const { optionStore, clinicResultsStore } = useStore();
+
   const {
     getRequestStudyById,
     updateStatusStudy,
     studies,
-    data,
+    exportGlucose,
     updateResults,
     cancelResults,
     addSelectedStudy,
@@ -128,15 +127,19 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
               ? x.resultado?.toString()?.split(",")
               : x.resultado,
           rango:
-          x.criticoMinimo == 0 && x.criticoMaximo == 0 ? false :
-            x.criticoMinimo! >= parseFloat(x.resultado as string) ||
-            parseFloat(x.resultado as string) >= x.criticoMaximo!,
+            x.criticoMinimo == 0 && x.criticoMaximo == 0
+              ? false
+              : x.criticoMinimo! >= parseFloat(x.resultado as string) ||
+                parseFloat(x.resultado as string) >= x.criticoMaximo!,
         };
         return obj;
       });
     }
 
     setResultParam(captureResult === undefined ? [] : captureResult.parametros);
+    setExportGlucoseData(
+      captureResult?.parametros.find((x) => x.estudioId == 631)
+    );
     form.setFieldValue("parametros", captureResult?.parametros);
   };
 
@@ -221,44 +224,48 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const renderUpdateStatus = () => {
     return (
       <>
-        {currentStudy.estatusId >= status.requestStudy.solicitado && currentStudy.estatusId < status.requestStudy.liberado ? (
+        {currentStudy.estatusId >= status.requestStudy.solicitado &&
+        currentStudy.estatusId < status.requestStudy.liberado ? (
           <Row>
             <Col span={24}>
               <Row justify="space-between" gutter={[12, 24]}>
                 {currentStudy.estatusId <= 3 ? (
                   ""
                 ) : (
-                  <Col span={12}>
-                    <Button
-                      type="default"
-                      htmlType="submit"
-                      disabled={
-                        currentStudy.estatusId ===
-                          status.requestStudy.tomaDeMuestra ||
-                        currentStudy.estatusId === status.requestStudy.pendiente
-                      }
-                      onClick={async () => {
-                        setLoading(true);
-                        await updateStatus(true);
-                        setLoading(false);
-                      }}
-                      danger
-                    >
-                      Cancelar{" "}
-                      {currentStudy.estatusId === status.requestStudy.capturado
-                        ? "Captura"
-                        : currentStudy.estatusId ===
-                          status.requestStudy.validado
-                        ? "Validación"
-                        : ""}
-                    </Button>
-                  </Col>
+                  <>
+                    <Col span={currentStudy.estudioId == 631 ? 8 : 12}>
+                      <Button
+                        type="default"
+                        htmlType="submit"
+                        disabled={
+                          currentStudy.estatusId ===
+                            status.requestStudy.tomaDeMuestra ||
+                          currentStudy.estatusId ===
+                            status.requestStudy.pendiente
+                        }
+                        onClick={async () => {
+                          setLoading(true);
+                          await updateStatus(true);
+                          setLoading(false);
+                        }}
+                        danger
+                      >
+                        Cancelar{" "}
+                        {currentStudy.estatusId ===
+                        status.requestStudy.capturado
+                          ? "Captura"
+                          : currentStudy.estatusId ===
+                            status.requestStudy.validado
+                          ? "Validación"
+                          : ""}
+                      </Button>
+                    </Col>
+                  </>
                 )}
-                <Col span={12}>
+                <Col span={currentStudy.estudioId == 631 ? 8 : 12}>
                   <Button
                     type="primary"
                     htmlType="submit"
-                    // disabled={disabled}
                     onClick={() => {
                       form.submit();
                     }}
@@ -278,6 +285,23 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                       : ""}
                   </Button>
                 </Col>
+                {currentStudy.estudioId == 631 ? (
+                  <Col span={8}>
+                    <Button
+                      type="primary"
+                      icon={<DownloadOutlined />}
+                      onClick={async () => {
+                        setLoading(true);
+                        await exportGlucose(exportGlucoseData!);
+                        setLoading(false);
+                      }}
+                    >
+                      Exportar a Excel
+                    </Button>
+                  </Col>
+                ) : (
+                  ""
+                )}
               </Row>
             </Col>
           </Row>
@@ -513,11 +537,12 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                             parseFloat(fieldResult ?? 0) >
                               parseFloat(fieldValue.valorFinal);
 
-                          let valuesByColumn = fieldValue.tipoValorId == "6" ||
-                          fieldValue.tipoValorId == "11" ||
-                          fieldValue.tipoValorId == "12" ||
-                          fieldValue.tipoValorId == "13" ||
-                          fieldValue.tipoValorId == "14";
+                          let valuesByColumn =
+                            fieldValue.tipoValorId == "6" ||
+                            fieldValue.tipoValorId == "11" ||
+                            fieldValue.tipoValorId == "12" ||
+                            fieldValue.tipoValorId == "13" ||
+                            fieldValue.tipoValorId == "14";
 
                           return (
                             <Row
@@ -608,8 +633,20 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                             options={fieldValue.tipoValores!.map(
                                               (x) => ({
                                                 key: x.id,
-                                                value: fieldValue.tipoValorId == "5" ? x.opcion! : fieldValue.tipoValorId == "6" ? x.primeraColumna : x.opcion!,
-                                                label: fieldValue.tipoValorId == "5" ? x.opcion! : fieldValue.tipoValorId == "6" ? x.primeraColumna : x.opcion!,
+                                                value:
+                                                  fieldValue.tipoValorId == "5"
+                                                    ? x.opcion!
+                                                    : fieldValue.tipoValorId ==
+                                                      "6"
+                                                    ? x.primeraColumna
+                                                    : x.opcion!,
+                                                label:
+                                                  fieldValue.tipoValorId == "5"
+                                                    ? x.opcion!
+                                                    : fieldValue.tipoValorId ==
+                                                      "6"
+                                                    ? x.primeraColumna
+                                                    : x.opcion!,
                                               })
                                             )}
                                             style={{
