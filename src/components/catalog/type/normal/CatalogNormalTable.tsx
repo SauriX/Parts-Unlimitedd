@@ -22,7 +22,11 @@ type CatalogNormalTableProps = {
   catalogName: string;
 };
 
-const CatalogNormalTable: FC<CatalogNormalTableProps> = ({ componentRef, printing, catalogName }) => {
+const CatalogNormalTable: FC<CatalogNormalTableProps> = ({
+  componentRef,
+  printing,
+  catalogName,
+}) => {
   const { catalogStore } = useStore();
   const { catalogs: catalogOption, getAll } = catalogStore;
 
@@ -41,43 +45,31 @@ const CatalogNormalTable: FC<CatalogNormalTableProps> = ({ componentRef, printin
 
   console.log("Table");
 
-  useEffect(() => {
-    const readCatalogs = async () => {
-      setLoading(true);
-      await getAll(catalogName, searchParams.get("search") ?? "all");
-      setLoading(false);
-    };
-
-    if (catalogOption.length === 0) {
-      readCatalogs();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const catalogType = (catalogName: string) => {
-    switch(catalogName) {
+    switch (catalogName) {
       case "department":
-        return "departamento"
+        return "departamento";
       case "bank":
-        return "banco"
+        return "banco";
       case "clinic":
-        return "clínica"
+        return "clínica";
       case "field":
-        return "especialidad"
+        return "especialidad";
+      case "paymentMethod":
+        return "método de pago";
       case "payment":
-        return "forma de pago"
+        return "forma de pago";
       case "workList":
-        return "lista de trabajo"
+        return "lista de trabajo";
       case "delivery":
-        return "paquetería"
+        return "paquetería";
       case "method":
-        return "método"
+        return "método";
       case "sampleType":
-        return "tipo de muestra"
+        return "tipo de muestra";
     }
-  }
+  };
 
-  
   const columns: IColumns<ICatalogList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {

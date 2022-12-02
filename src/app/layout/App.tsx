@@ -76,6 +76,7 @@ import ResultValidation from "../../views/ResultValidation";
 import RequestWee from "../../components/request/list/RequestWee";
 import RequestTokenValidation from "../../components/request/detail/RequestTokenValidation";
 import DeliveryResults from "../../views/DeliveryResults";
+import Relaseresult from "../../views/Relaseresult";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -236,6 +237,10 @@ function App() {
             <Route
               path={`${views.resultValidation}`}
               element={<ResultValidation />}
+            />
+                        <Route
+              path={`${views.relaseValidation}`}
+              element={<Relaseresult />}
             />
             <Route
               path="forbidden"
