@@ -506,11 +506,19 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                           let fieldResult = resultValue?.find(
                             (x) => x.id === fieldValue.id
                           )?.resultado as string;
+
                           let fieldRange =
                             parseFloat(fieldValue.valorInicial) >
                               parseFloat(fieldResult ?? 0) ||
                             parseFloat(fieldResult ?? 0) >
                               parseFloat(fieldValue.valorFinal);
+
+                          let valuesByColumn = fieldValue.tipoValorId == "6" ||
+                          fieldValue.tipoValorId == "11" ||
+                          fieldValue.tipoValorId == "12" ||
+                          fieldValue.tipoValorId == "13" ||
+                          fieldValue.tipoValorId == "14";
+
                           return (
                             <Row
                               key={field.key}
@@ -600,8 +608,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                             options={fieldValue.tipoValores!.map(
                                               (x) => ({
                                                 key: x.id,
-                                                value: x.opcion!,
-                                                label: x.opcion!,
+                                                value: fieldValue.tipoValorId == "5" ? x.opcion! : fieldValue.tipoValorId == "6" ? x.primeraColumna : x.opcion!,
+                                                label: fieldValue.tipoValorId == "5" ? x.opcion! : fieldValue.tipoValorId == "6" ? x.primeraColumna : x.opcion!,
                                               })
                                             )}
                                             style={{
@@ -612,6 +620,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                         ) : (
                                           <Input
                                             placeholder="Resultado"
+                                            className={"center-input"}
                                             style={
                                               fieldRange && fieldResult
                                                 ? {

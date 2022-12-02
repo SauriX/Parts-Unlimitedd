@@ -19,8 +19,8 @@ const SamplingStudyHeader: FC<UserHeaderProps> = ({ handleList }) => {
       ghost={false}
       title={
         <HeaderTitle
-          title={`Registrar Solicitud de Estudio`}
-          image="sitio-web"
+          title={`Registrar Toma de Muestra`}
+          image="tomaMuestra"
         />
       }
       className="header-container"
