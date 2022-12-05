@@ -8,7 +8,7 @@ import SelectInput from "../../app/common/form/proposal/SelectInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
 import {
   originOptions,
-  requestedStudyOptions,
+  samplingStudyOptions,
   urgencyOptions,
 } from "../../app/stores/optionStore";
 import { useStore } from "../../app/stores/store";
@@ -170,7 +170,7 @@ const SamplingStudyFilter = () => {
                       label: "Estatus",
                     }}
                     multiple
-                    options={requestedStudyOptions}
+                    options={samplingStudyOptions}
                   ></SelectInput>
                 </Col>
                 <Col span={8}>

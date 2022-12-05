@@ -6,8 +6,8 @@ import SamplingStudyBody from "../components/Sampling/SamplingStudyBody";
 import SamplingStudyHeader from "../components/Sampling/SamplingStudyHeader";
 
 const SamplingStudy = () => {
-  const { requestedStudyStore } = useStore();
-  const { scopes, access, clearScopes, exportList, formValues } = requestedStudyStore;
+  const { samplingStudyStore } = useStore();
+  const { scopes, access, clearScopes, exportList, formValues } = samplingStudyStore;
   const [loading, setLoading] = useState(false);
 
   const handleDownload = async () => {

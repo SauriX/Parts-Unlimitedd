@@ -1,7 +1,7 @@
 import { IColumns, ISearch } from "../../../app/common/table/utils";
-import { IReportData } from "../../../app/models/report";
+import { IReportData, IStudiesData } from "../../../app/models/report";
 import { getDefaultColumnProps } from "../../../app/common/table/utils";
-import { Card, Descriptions, List } from "antd";
+import { Card, Descriptions, List, Table } from "antd";
 import moment from "moment";
 import { useState } from "react";
 
@@ -68,36 +68,38 @@ const getStudyStatsColumns = (
   return columns;
 };
 
-export const expandableStudyConfig = {
-  expandedRowRender: (item: IReportData) => (
-    <div>
-      <h4>Estudios</h4>
-      {item.estudio?.map((x) => {
-        return (
-          <>
-            <Descriptions
-              key={x.id}
-              size="small"
-              bordered
-              style={{ marginBottom: 5 }}
-            >
-              <Descriptions.Item label="Clave" style={{ maxWidth: 30 }} className="description-content">
-                {x.clave}
-              </Descriptions.Item>
-              <Descriptions.Item label="Estudio" style={{ maxWidth: 30 }} className="description-content">
-                {x.estudio}
-              </Descriptions.Item>
-              <Descriptions.Item label="Estatus" style={{ maxWidth: 30 }} className="description-content">
-                {x.estatus}
-              </Descriptions.Item>
-            </Descriptions>
-          </>
-        );
-      })}
-    </div>
-  ),
-  rowExpandable: () => true,
-  defaultExpandAllRows: true,
+export const expandableStudyConfig = () => {
+  const nestedColumns: IColumns<IStudiesData> = [
+    {
+      ...getDefaultColumnProps("clave", "Clave", {
+        width: "30%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("estudio", "Nombre del estudio", {
+        width: "40%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("estatus", "Estatus", {
+        width: "30%",
+      }),
+    },
+  ];
+
+  return {
+    expandedRowRender: (item: IReportData, index: any) => (
+      <Table
+        columns={nestedColumns}
+        dataSource={item.estudio}
+        pagination={false}
+        className="header-expandable-table"
+        showHeader={index === 0}
+      />
+    ),
+    rowExpandable: () => true,
+    defaultExpandAllRows: true,
+  };
 };
 
 export default getStudyStatsColumns;

@@ -144,6 +144,7 @@ const ClinicResultsFilter = () => {
                   <DateRangeInput
                     formProps={{ label: "Fecha", name: "fecha" }}
                     required={true}
+                    disableAfterDates
                   />
                 </Col>
                 <Col span={8}>
@@ -185,20 +186,6 @@ const ClinicResultsFilter = () => {
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
-                  {/* <SelectInput
-                    formProps={{
-                      name: "area",
-                      label: "Departamento",
-                    }}
-                    multiple
-                    options={departmentAreaOptions}
-                    onChange={(value) => {
-                      let filtradoEstudios = studiesOptions.filter((estudio) =>
-                        value.includes(+estudio.area)
-                      );
-                      setStudyFilter(filtradoEstudios);
-                    }}
-                  ></SelectInput> */}
                   <Form.Item label="Áreas" className="no-error-text" help="">
                     <Input.Group>
                       <Row gutter={8}>

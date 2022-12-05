@@ -133,7 +133,7 @@ export class ClinicResultsFormValues implements IClinicResultForm {
   compañiaId = [];
   fecha = [
     moment(Date.now()).utcOffset(0, true),
-    moment(Date.now()).utcOffset(0, true).add(1, "day"),
+    moment(Date.now()).utcOffset(0, true),
   ];
   buscar = "";
   procedencia = [];

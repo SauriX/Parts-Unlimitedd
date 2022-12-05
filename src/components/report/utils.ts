@@ -23,7 +23,7 @@ import getMaquilaInternColumns, {
   expandableMaquilaInternConfig,
 } from "./columnDefinition/maquilaIntern";
 import { imagesType } from "../../app/common/header/HeaderTitle";
-import getBudgetRequestColumns, { expandableBudgetStatsConfig } from "./columnDefinition/budgetStats";
+import getBudgetRequestColumns from "./columnDefinition/budgetStats";
 
 export type reportType =
   | "medicos"
@@ -216,7 +216,7 @@ export const getExpandableConfig = (
   reportName: reportType
 ): ExpandableConfig<IReportData> | undefined => {
   if (reportName === "estudios" || reportName === "urgentes") {
-    return expandableStudyConfig;
+    return expandableStudyConfig();
   } else if (
     reportName == "empresa" ||
     reportName == "canceladas" ||
@@ -225,15 +225,12 @@ export const getExpandableConfig = (
     reportName == "presupuestos" ||
     reportName === "medicos-desglosado"
   ) {
-    return expandablePriceConfig;
+    return expandablePriceConfig();
   } else if (reportName === "maquila_interna") {
-    return expandableMaquilaInternConfig;
+    return expandableMaquilaInternConfig();
   } else if (reportName === "maquila_externa") {
-    return expandableMaquilaExternConfig;
-  }
-  // } else if (reportName === "presupuestos") {
-  //   return expandableBudgetStatsConfig;
-  // }
+    return expandableMaquilaExternConfig();
+  } 
 
   return undefined;
 };

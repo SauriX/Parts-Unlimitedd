@@ -54,6 +54,17 @@ export interface IStudiesData {
   maquila?: string;
   sucursal?: string;
 }
+
+export interface InvoiceData {
+  key: string;
+  totalEstudios: number;
+  totalDescuentoPorcentual: number;
+  totalDescuentos: number;
+  subtotal: number;
+  iva: number;
+  total: number;
+}
+
 export interface IReportRequestData {
   id: string;
   sucursal: string;
@@ -118,7 +129,7 @@ export class ReportFilterValues implements IReportFilter {
   metodoEnvio = [];
   tipoCompañia = [];
   urgencia = [];
-  fecha = [moment(Date.now()).utcOffset(0, true), moment(Date.now()).utcOffset(0, true).add(1, "day")];
+  fecha = [moment(Date.now()).utcOffset(0, true), moment(Date.now()).utcOffset(0, true)];
   grafica = false;
 
   constructor(init?: IReportFilter) {
