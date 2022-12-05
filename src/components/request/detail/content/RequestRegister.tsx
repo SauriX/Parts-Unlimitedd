@@ -186,7 +186,9 @@ const RequestRegister = () => {
         <RequestInvoiceTab
           recordId={request!.expedienteId}
           requestId={request!.solicitudId!}
-          payments={selectedPayments}
+          payments={selectedPayments.filter(
+            (x) => x.estatusId === status.requestPayment.pagado
+          )}
         />
       ),
       width: 900,
@@ -315,10 +317,15 @@ const RequestRegister = () => {
         <Col span={24} style={{ textAlign: "right" }}>
           <Button
             type="default"
+            disabled={selectedPayments.length === 0}
             onClick={async () => {
               if (request) {
                 setLoading(true);
-                await printTicket(request.expedienteId, request.solicitudId!);
+                await printTicket(
+                  request.expedienteId,
+                  request.solicitudId!,
+                  selectedPayments[0].id
+                );
                 setLoading(false);
               }
             }}
