@@ -6,9 +6,10 @@ interface IProps {
   title?: string;
   danger?: boolean;
   onClick?: React.MouseEventHandler<HTMLElement>;
+  disabled?: boolean;
 }
 
-const IconButton: FC<IProps> = ({ title, icon, danger, onClick }) => {
+const IconButton: FC<IProps> = ({ title, icon, danger, onClick, disabled }) => {
   return (
     <Tooltip title={title}>
       <Button
@@ -17,6 +18,7 @@ const IconButton: FC<IProps> = ({ title, icon, danger, onClick }) => {
         icon={icon}
         size="small"
         onClick={onClick}
+        disabled={disabled}
       />
     </Tooltip>
   );

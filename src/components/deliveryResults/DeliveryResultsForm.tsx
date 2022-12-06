@@ -151,9 +151,6 @@ const DeliveryResultsForm = () => {
                 multiple
                 formProps={{ label: "Compañias", name: "companias" }}
                 options={companyOptions}
-                onChange={(value: any, option: any) => {
-                  console.log("areas", value, option);
-                }}
               />
             </Col>
             <Col span={8}>

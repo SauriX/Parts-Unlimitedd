@@ -26,12 +26,19 @@ const ClinicResults = {
     requests.get(`parameter/${id}`),
   createResults: (results: IClinicResultCaptureForm[]): Promise<string[]> =>
     requests.post(`clinicResults/saveResults`, results),
-  updateResults: (results: IClinicResultCaptureForm[]): Promise<void> =>
-    requests.put(`clinicResults/updateResults`, results),
+  updateResults: (
+    results: IClinicResultCaptureForm[],
+    envioManual: boolean
+  ): Promise<void> =>
+    requests.put(`clinicResults/updateResults/${envioManual}`, results),
   createResultPathological: (search: FormData): Promise<void> =>
     requests.post(`clinicResults/savePathological`, search),
-  updateResultPathological: (search: FormData): Promise<void> =>
-    requests.put(`clinicResults/updatePathological`, search),
+  // updateResultPathological: (search: IResultPathological): Promise<void> =>
+  updateResultPathological: (
+    search: FormData,
+    envioManual: boolean
+  ): Promise<void> =>
+    requests.put(`clinicResults/updatePathological/${envioManual}`, search),
   sendResultFile: (listResults: any): Promise<void> =>
     requests.put(`clinicResults/sendResultFile`, listResults),
   updateStatusStudy: (requestStudyId: number, status: number): Promise<void> =>
