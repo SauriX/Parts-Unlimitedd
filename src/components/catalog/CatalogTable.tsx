@@ -5,6 +5,7 @@ import CatalogDescriptionTable from "./type/description/CatalogDescriptionTable"
 import CatalogAreaTable from "./type/area/CatalogAreaTable";
 import CatalogDimensionTable from "./type/dimension/CatalogDimensionTable";
 import { observer } from "mobx-react-lite";
+import CatalogBudgetTable from "./type/budget/CatalogBudgetTable";
 
 type CatalogTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -29,6 +30,8 @@ const CatalogTable: FC<CatalogTableProps> = ({ componentRef, printing, catalog }
     <CatalogAreaTable componentRef={componentRef} printing={printing} />
   ) : catalog.type === "dimension" ? (
     <CatalogDimensionTable componentRef={componentRef} printing={printing} />
+  ) : catalog.type === "budget" ? (
+    <CatalogBudgetTable componentRef={componentRef} printing={printing}/>
   ) : null;
 };
 

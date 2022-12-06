@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import { IOptionsCatalog } from "../../../app/models/shared";
 import CatalogAreaForm from "../type/area/CatalogAreaForm";
+import CatalogBudgetForm from "../type/budget/CatalogBudgetForm";
 import CatalogDescriptionForm from "../type/description/CatalogDescriptionForm";
 import CatalogDimensionForm from "../type/dimension/CatalogDimensionForm";
 import CatalogNormalForm from "../type/normal/CatalogNormalForm";
@@ -31,6 +32,8 @@ const CatalogForm: FC<CatalogFormProps> = ({ id, catalog, componentRef, printing
     <CatalogAreaForm id={id} componentRef={componentRef} printing={printing} />
   ) : catalog.type === "dimension" ? (
     <CatalogDimensionForm id={id} componentRef={componentRef} printing={printing} />
+  ) : catalog.type === "budget" ? (
+    <CatalogBudgetForm id={id} componentRef={componentRef} printing={printing} />
   ) : null;
 };
 
