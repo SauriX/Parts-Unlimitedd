@@ -6,19 +6,24 @@ import { observer } from "mobx-react-lite";
 import DownloadIcon from "../../app/common/icons/DownloadIcon";
 import { useStore } from "../../app/stores/store";
 
-type UserHeaderProps = {
+type RelaseResultHeaderProps = {
   handleList: () => void;
 };
 const { Text } = Typography;
-const SampleHeader: FC<UserHeaderProps> = ({ handleList }) => {
-  const { procedingStore, optionStore, locationStore, samplig } = useStore();
+const RelaseResultHeader: FC<RelaseResultHeaderProps> = ({
+  handleList,
+}) => {
+  const { procedingStore, optionStore, locationStore, resultValidationStore } = useStore();
 
-  const { getAll, studys, printTicket, update,soliCont,studyCont } = samplig;
+  const { getAll, studys, printTicket, update,soliCont,studyCont } =  resultValidationStore;
   return (
     <PageHeader
       ghost={false}
       title={
-        <HeaderTitle title={`Registrar Toma de Muestra`} image="tomaMuestra" />
+        <HeaderTitle
+          title={`Liberación de resultados (Clínicos)`}
+          image="validacion"
+        />
       }
       className="header-container"
       extra={[
@@ -38,4 +43,4 @@ const SampleHeader: FC<UserHeaderProps> = ({ handleList }) => {
   );
 };
 
-export default observer(SampleHeader);
+export default observer(RelaseResultHeader);

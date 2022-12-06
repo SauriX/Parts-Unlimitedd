@@ -40,17 +40,7 @@ const CatalogAreaTable: FC<CatalogAreaTableProps> = ({ componentRef, printing })
   });
 
   console.log("Table");
-
-  // useEffect(() => {
-  //   const readCatalogs = async () => {
-  //     setLoading(true);
-  //     await getAll(catalogName, searchParams.get("search") ?? "all");
-  //     setLoading(false);
-  //   };
-
-  //   readCatalogs();
-  // }, [getAll, searchParams]);
-
+  
   const columns: IColumns<ICatalogList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {

@@ -22,10 +22,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import {
-  IsamplingForm,
-  IsamplingList,
+  ISamplingForm,
+  ISamplingList,
   IUpdate,
-  samplingFormValues,
+  SamplingFormValues,
 } from "../../app/models/sampling";
 import { formItemLayout } from "../../app/util/utils";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
@@ -63,7 +63,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     procedingStore,
     optionStore,
     locationStore,
-    samplig,
+    samplingStudyStore: samplig,
     resultValidationStore,
   } = useStore();
   const { expedientes, getnow } = procedingStore;
@@ -524,19 +524,9 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                   <TextInput
                     formProps={{
                       name: "search",
-                      label: "Clave",
+                      label: "Buscar",
                     }}
                   />
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{
-                      name: "estudio",
-                      label: "Estudios",
-                    }}
-                    multiple
-                    options={studiesOptions}
-                  ></SelectInput>
                 </Col>
                 <Col span={8}>
                   <SelectInput
@@ -551,12 +541,21 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                 <Col span={8}>
                   <SelectInput
                     formProps={{
+                      name: "estudio",
+                      label: "Estudios",
+                    }}
+                    multiple
+                    options={studiesOptions}
+                  ></SelectInput>
+                </Col>
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
                       name: "estatus",
                       label: "Estatus",
                     }}
                     multiple
                     options={[
-                      { value: 0, label: "Todos" },
                       { value: 4, label: "Capturado" },
                       { value: 5, label: "Validado" },
                     ]}

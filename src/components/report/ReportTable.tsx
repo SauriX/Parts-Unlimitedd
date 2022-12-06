@@ -2,9 +2,10 @@ import { Button, Descriptions, Table, Tag } from "antd";
 import { observer } from "mobx-react-lite";
 import { Fragment, useEffect, useState } from "react";
 import { IColumns } from "../../app/common/table/utils";
-import { IReportData } from "../../app/models/report";
+import { InvoiceData, IReportData } from "../../app/models/report";
 import { ExpandableConfig } from "antd/lib/table/interface";
 import { useSearchParams } from "react-router-dom";
+import getInvoiceDataColumns from "./columnDefinition/invoiceData";
 
 type ReportTableProps = {
   loading: boolean;
@@ -65,6 +66,20 @@ const ReportTable = ({
   IVA = total * 0.16;
   subtotal = total - IVA;
 
+  const dataInvoice: InvoiceData[] = [
+    {
+      key: "1",
+      totalEstudios: totalEstudios == 0 ? 0 : totalEstudios,
+      totalDescuentoPorcentual: isNaN(totalDescuentosPorcentual)
+        ? 0
+        : totalDescuentosPorcentual,
+      totalDescuentos: totalDescuentos,
+      subtotal: Math.round(subtotal * 100) / 100,
+      iva: Math.round(IVA * 100) / 100,
+      total: total,
+    },
+  ];
+
   const toggleRow = () => {
     if (openRows) {
       setOpenRows(false);
@@ -93,6 +108,7 @@ const ReportTable = ({
       {data.length > 0 &&
         (report == "cargo" ||
           report == "descuento" ||
+          report == "presupuestos" ||
           report == "empresa" ||
           report == "medicos-desglosado" ||
           report == "maquila_interna" ||
@@ -115,7 +131,7 @@ const ReportTable = ({
         columns={columns}
         pagination={false}
         dataSource={[...data]}
-        scroll={{ y: 500 }}
+        scroll={{ y: 400 }}
         rowClassName={(item) =>
           item.claveMedico == "Total" || item.paciente === "Total"
             ? "Resumen Total"
@@ -127,47 +143,18 @@ const ReportTable = ({
           expandedRowKeys: expandedRowKeys,
         }}
       />
-      <div style={{ textAlign: "right", marginTop: 10 }}>
+      <div style={{ textAlign: "right", marginTop: 10, marginBottom: 10 }}>
         <Tag color="lime">
           {!hasFooterRow ? data.length : Math.max(data.length - 1, 0)} Registros
         </Tag>
       </div>
       {summary ? (
         <>
-          <Descriptions
-            title="Desglose Final"
-            size="small"
-            bordered
-            style={{ marginBottom: 5 }}
-          >
-            <Descriptions.Item label="Estudios" style={{ maxWidth: 30 }} className="description-content">
-              ${totalEstudios == 0 ? 0 : totalEstudios}
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={report == "cargo" ? "Cargo %" : "Desc. %"}
-              style={{ maxWidth: 30 }}
-              className="description-content"
-            >
-              {isNaN(totalDescuentosPorcentual) ? 0 : totalDescuentosPorcentual}
-              %
-            </Descriptions.Item>
-            <Descriptions.Item
-              label={report == "cargo" ? "Cargo" : "Desc."}
-              style={{ maxWidth: 30 }}
-              className="description-content"
-            >
-              ${totalDescuentos}
-            </Descriptions.Item>
-            <Descriptions.Item label="Subtotal" style={{ maxWidth: 30 }} className="description-content">
-              ${Math.round(subtotal * 100) / 100}
-            </Descriptions.Item>
-            <Descriptions.Item label="IVA" style={{ maxWidth: 30 }} className="description-content">
-              ${Math.round(IVA * 100) / 100}
-            </Descriptions.Item>
-            <Descriptions.Item label="Total" style={{ maxWidth: 30 }} className="description-content">
-              ${total}
-            </Descriptions.Item>
-          </Descriptions>
+          <Table
+            columns={getInvoiceDataColumns(report as string)}
+            dataSource={dataInvoice}
+            pagination={false}
+          />
         </>
       ) : (
         ""

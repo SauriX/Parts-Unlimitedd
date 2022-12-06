@@ -1,5 +1,6 @@
-import { Form, Row, Col, Button, Spin } from "antd";
+import { Form, Row, Col, Button, Spin, Input } from "antd";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
@@ -72,14 +73,30 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
 
   const [form] = Form.useForm<IReportFilter>();
   const chartValue = Form.useWatch("grafica", form);
+  const selectedCity = Form.useWatch("ciudad", form);
 
   const [loading, setLoading] = useState(false);
+  const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
+  const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
     getBranchCityOptions();
     getMedicOptions();
     getCompanyOptions();
   }, [getBranchCityOptions, getMedicOptions, getCompanyOptions]);
+
+  useEffect(() => {
+    setCityOptions(
+      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [branchCityOptions]);
+
+  useEffect(() => {
+    setBranchOptions(
+      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+    );
+    form.setFieldValue("sucursalId", []);
+  }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
     setShowChart(chartValue);
@@ -102,6 +119,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
         currentReport == "empresa" ||
         currentReport == "canceladas" ||
         currentReport == "descuento" ||
+        currentReport == "presupuestos" ||
         currentReport == "cargo" ||
         currentReport == "maquila_interna" ||
         currentReport == "maquila_externa" ||
@@ -109,7 +127,6 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
       ) {
         await getByChart(currentReport, filter);
       }
-      console.log(filter);
     }
     setLoading(false);
   };
@@ -120,7 +137,12 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
         {...formItemLayout}
         form={form}
         name="report"
-        initialValues={filter}
+        initialValues={{
+          fecha: [
+            moment(Date.now()).utcOffset(0, true),
+            moment(Date.now()).utcOffset(0, true),
+          ],
+        }}
         onFinish={onFinish}
       >
         <Row>
@@ -131,16 +153,39 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
                   <DateRangeInput
                     formProps={{ label: "Fecha", name: "fecha" }}
                     required={true}
+                    disableAfterDates
                   />
                 </Col>
               )}
               {input.includes("sucursal") && (
                 <Col span={8}>
-                  <SelectInput
-                    formProps={{ name: "sucursalId", label: "Sucursales" }}
-                    multiple
-                    options={branchCityOptions}
-                  />
+                  <Form.Item label="Sucursal" className="no-error-text" help="">
+                    <Input.Group>
+                      <Row gutter={8}>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "ciudad",
+                              label: "Ciudad",
+                              noStyle: true,
+                            }}
+                            options={cityOptions}
+                          />
+                        </Col>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "sucursalId",
+                              label: "Sucursales",
+                              noStyle: true,
+                            }}
+                            multiple
+                            options={branchOptions}
+                          />
+                        </Col>
+                      </Row>
+                    </Input.Group>
+                  </Form.Item>
                 </Col>
               )}
               {input.includes("medico") && (

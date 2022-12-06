@@ -230,6 +230,15 @@ export default class ClinicResultsStores {
     }
   };
 
+  exportGlucose = async (results: IClinicResultCaptureForm) => {
+    try {
+      await ClinicResults.exportGlucose(results);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
   getStudies = async (recordId: string, requestId: string) => {
     try {
       const params = await ClinicResults.getStudies(recordId, requestId);

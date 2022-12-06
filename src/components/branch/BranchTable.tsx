@@ -1,4 +1,14 @@
-import { Button, Divider, PageHeader, Spin, Table, Form, Row, Col, Modal } from "antd";
+import {
+  Button,
+  Divider,
+  PageHeader,
+  Spin,
+  Table,
+  Form,
+  Row,
+  Col,
+  Modal,
+} from "antd";
 import React, { FC, Fragment, useEffect, useRef, useState } from "react";
 import {
   defaultPaginationProperties,
@@ -33,7 +43,8 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
       ubicacion: "ubicacion",
       clinico: "string",
       activo: true,
-      ciudad:""
+      ciudad: "",
+      codigo: "",
     },
   ];
   const { branchStore } = useStore();
@@ -58,6 +69,12 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
   }, [getAll, searchParams]);
   const columns: IColumns<IBranchInfo> = [
     {
+      ...getDefaultColumnProps("codigo", "Id", {
+        searchable: false,
+        width: 50,
+      }),
+    },
+    {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
@@ -68,7 +85,9 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
           type="link"
           onClick={() => {
             navigate(
-              `/branches/${role.idSucursal}?mode=ReadOnly&search=${searchParams.get("search") ?? "all"}`
+              `/branches/${role.idSucursal}?mode=ReadOnly&search=${
+                searchParams.get("search") ?? "all"
+              }`
             );
           }}
         >
@@ -139,32 +158,36 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
           title="Editar sucursal"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/branches/${rol.idSucursal}?search=${searchParams.get("search") ?? "all"}`);
+            navigate(
+              `/branches/${rol.idSucursal}?search=${
+                searchParams.get("search") ?? "all"
+              }`
+            );
           }}
         />
       ),
     },
   ];
-  const TablePrint=() =>{
-    return(
+  const TablePrint = () => {
+    return (
       <div ref={componentRef}>
-      <PageHeader
-      ghost={false} 
-      title={<HeaderTitle title="Sucursales" image="laboratorio" />}
-      className="header-container"
-  ></PageHeader>
-  <Divider className="header-divider" />
-    <Table<IBranchInfo>
-    loading={loading}
-    size="small"
-    dataSource={sucursales}
-    rowKey={(record) => record.idSucursal}
-    columns={columns.slice(0, 6)}
-    pagination={false}
-    />
-  </div>
+        <PageHeader
+          ghost={false}
+          title={<HeaderTitle title="Sucursales" image="laboratorio" />}
+          className="header-container"
+        ></PageHeader>
+        <Divider className="header-divider" />
+        <Table<IBranchInfo>
+          loading={loading}
+          size="small"
+          dataSource={sucursales}
+          rowKey={(record) => record.idSucursal}
+          columns={columns.slice(0, 6)}
+          pagination={false}
+        />
+      </div>
     );
-  }
+  };
   return (
     <Fragment>
       <Table<IBranchInfo>
@@ -177,7 +200,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
         sticky
         scroll={{ x: "max-content" }}
       />
-      <div style={{ display: "none" }}>{< TablePrint  />}</div>
+      <div style={{ display: "none" }}>{<TablePrint />}</div>
     </Fragment>
   );
 };

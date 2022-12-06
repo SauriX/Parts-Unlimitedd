@@ -16,12 +16,10 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 import moment from "moment";
 import { IOptions } from "../../app/models/shared";
-import { IRequestStudy, RequestStudyValues } from "../../app/models/request";
-const { Panel } = Collapse;
 
 const RequestedStudyFilter = () => {
   const { optionStore, requestedStudyStore } = useStore();
-  const { formValues, getAll, setFormValues, clearFilter } =
+  const { getAll, setFormValues } =
     requestedStudyStore;
   const {
     branchCityOptions,
@@ -29,8 +27,6 @@ const RequestedStudyFilter = () => {
     companyOptions,
     departmentAreaOptions,
     getDepartmentAreaOptions,
-    getDepartmentOptions,
-    getareaOptions,
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
@@ -81,7 +77,7 @@ const RequestedStudyFilter = () => {
     setAreaOptions(
       departmentAreaOptions.find((x) => x.value === selectedDepartment)?.options ?? []
     );
-    form.setFieldValue("sucursalId", []);
+    form.setFieldValue("area", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
 
   const onFinish = async (newFormValues: IRequestedStudyForm) => {
@@ -99,7 +95,6 @@ const RequestedStudyFilter = () => {
           <Button
             key="clean"
             onClick={(e) => {
-              clearFilter();
               form.resetFields();
             }}
           >

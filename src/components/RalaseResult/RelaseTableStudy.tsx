@@ -3,17 +3,19 @@ import { ExpandableConfig } from "antd/lib/table/interface";
 import { observer } from "mobx-react-lite";
 import React, { Fragment, useEffect, useState } from "react";
 import { IColumns } from "../../app/common/table/utils";
+import { Irelacelist } from "../../app/models/relaseresult";
 import { IRequestedStudyList } from "../../app/models/requestedStudy";
-import { IsamplingList } from "../../app/models/sampling";
+
+
 import { useStore } from "../../app/stores/store";
 
 type RequestedStudyTableProps = {
-  data: IsamplingList[];
-  columns: IColumns<IsamplingList>;
-  expandable?: ExpandableConfig<IsamplingList> | undefined;
+  data: Irelacelist[];
+  columns: IColumns<Irelacelist>;
+  expandable?: ExpandableConfig<Irelacelist> | undefined;
 };
 
-const SamplinTableStudy = ({
+const RelaseTableStudy = ({
   data,
   columns,
   expandable,
@@ -38,7 +40,7 @@ const SamplinTableStudy = ({
     }
   };
 
-  const onExpand = (isExpanded: boolean, record: IsamplingList) => {
+  const onExpand = (isExpanded: boolean, record: Irelacelist) => {
     let expandRows: string[] = expandedRowKeys;
     if (isExpanded) {
       expandRows.push(record.id);
@@ -53,25 +55,26 @@ const SamplinTableStudy = ({
 
   return (
     <Fragment>
-      {data.length > 0 && (
-        <div style={{ textAlign: "right", marginBottom: 10 }}>
-          <Button
-            type="primary"
-            onClick={toggleRow}
-            style={{ marginRight: 10 }}
-          >
-            {!openRows ? "Abrir tabla" : "Cerrar tabla"}
-          </Button>
-        </div>
-      )}
-      <Table<IsamplingList>
+      {data.length > 0 &&
+        (
+          <div style={{ textAlign: "right", marginBottom: 10 }}>
+            <Button
+              type="primary"
+              onClick={toggleRow}
+              style={{ marginRight: 10 }}
+            >
+              {!openRows ? "Abrir tabla" : "Cerrar tabla"}
+            </Button>
+          </div>
+        )}
+      <Table<Irelacelist>
+        rowClassName={"row-search"}
         loading={loadingStudies}
         size="small"
         rowKey={(record) => record.id}
         columns={columns}
         pagination={false}
         dataSource={[...data]}
-        rowClassName={"row-search"}
         scroll={{ y: 450 }}
         expandable={{
           ...expandable,
@@ -83,4 +86,4 @@ const SamplinTableStudy = ({
   );
 };
 
-export default observer(SamplinTableStudy);
+export default observer(RelaseTableStudy);

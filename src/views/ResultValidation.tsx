@@ -5,8 +5,8 @@ import { useSearchParams } from "react-router-dom";
 import { useStore } from "../app/stores/store";
 import ResultValidationHeader from "../components/Resultvalidation/ResultValidationHeader";
 import ResultValidationTable from "../components/Resultvalidation/ResultValidationTable";
-import SamplingHeader from "../components/Sampling/SamplingHeader";
-import SamplingTable from "../components/Sampling/SamplingTable";
+import SamplingHeader from "../components/Sampling/SamplingStudyHeader";
+import SamplingTable from "../components/Sampling/SamplingStudyBody";
 
 const ResultValidation = () => {
   const { resultValidationStore,procedingStore } = useStore();

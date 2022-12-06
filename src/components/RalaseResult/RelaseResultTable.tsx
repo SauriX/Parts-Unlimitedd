@@ -11,22 +11,20 @@ import {
   Table,
   Tag,
 } from "antd";
-import React, { FC, Fragment, ReactNode, useEffect, useState } from "react";
+import React, { FC, Fragment, useEffect, useState } from "react";
 import {
   getDefaultColumnProps,
   IColumns,
   ISearch,
 } from "../../app/common/table/utils";
-import moment from "moment";
 import useWindowDimensions from "../../app/util/window";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import {
-  IsamplingForm,
-  IsamplingList,
+
   IUpdate,
-  samplingFormValues,
+
 } from "../../app/models/sampling";
 import { formItemLayout } from "../../app/util/utils";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
@@ -39,25 +37,54 @@ import { originOptions, urgencyOptions } from "../../app/stores/optionStore";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../app/util/alerts";
 import PrintIcon from "../../app/common/icons/PrintIcon";
-import SamplinTableStudy from "./SamplinTableStudy";
-import SamplingStudyColumns, {
-  SamplingStudyExpandable,
-} from "./SamplingStudyTable";
-import { IOptions } from "../../app/models/shared";
-import { toJS } from "mobx";
 
+import moment from "moment";
+import ValidationTableStudy from "./RelaseTableStudy";
+import ValidationStudyColumns, {
+  ValidationStudyExpandable,
+} from "./RelaseStudyTable";
+import { IOptions } from "../../app/models/shared";
+import { Irelacelist, ISearchRelase, searchrelase } from "../../app/models/relaseresult";
+import RelaseTableStudy from "./RelaseTableStudy";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
-
-const SamplingTable: FC<ProceedingTableProps> = ({
+const studys =[{
+  id:"string",
+  solicitud:"string",
+  nombre:"string",
+  registro:"string",
+  sucursal:"string",
+  edad:"string",
+  sexo:"string",
+  compañia:"string",
+  estudios:[{
+      id:1,
+      study:"string",
+      area:"string",
+      status:"string",
+      registro:"string",
+      entrega:"string",
+      estatus :4,
+      solicitudId:"string",
+  }],
+  order: "string",
+  parcialidad:true
+}]
+const RelaseResultTable: FC<ProceedingTableProps> = ({
   componentRef,
   printing,
 }) => {
-  const { procedingStore, optionStore, locationStore, samplig } = useStore();
-  const { expedientes, getnow, setSearch } = procedingStore;
+  const {
+    procedingStore,
+    optionStore,
+    locationStore,
+    resultValidationStore,
+    relaseResultStore
+  } = useStore();
+  const { expedientes, getnow } = procedingStore;
   const {
     branchCityOptions,
     getBranchCityOptions,
@@ -67,53 +94,69 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     getMedicOptions,
     CityOptions,
     getCityOptions,
-    departmentOptions,
     getDepartmentOptions,
     companyOptions,
     getCompanyOptions,
+    studiesOptions,
+    getStudiesOptions,
     departmentAreaOptions,
     getDepartmentAreaOptions,
   } = optionStore;
   const {
     getAll,
-    studys,
+    //studys,
     printTicket,
     update,
     setSoliCont,
     setStudyCont,
     soliCont,
     studyCont,
-    search,
-  } = samplig;
-  const { getCity } = locationStore;
+    viewTicket,
+    setSearch,
+  } = relaseResultStore;
+  const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
+  const { getCity,  } = locationStore;
   const [searchParams] = useSearchParams();
-  const [form] = Form.useForm<IsamplingForm>();
-  const selectedCity: any = Form.useWatch("ciudad", form);
+  const [form] = Form.useForm<ISearchRelase>();
   let navigate = useNavigate();
-  const [values, setValues] = useState<IsamplingForm>(new samplingFormValues());
-  const [updateData, setUpdateData] = useState<IUpdate[]>([]);
+  const [values, setValues] = useState<ISearchRelase>(new searchrelase());
+  const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
   const [ids, setIds] = useState<number[]>([]);
   const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
   const { width: windowWidth } = useWindowDimensions();
   const [expandable, setExpandable] =
-    useState<ExpandableConfig<IsamplingList>>();
+    useState<ExpandableConfig<Irelacelist>>();
   const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
-  const [filteredAreas, setFilteredAreas] = useState<any>([]);
-  const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
-  const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
+  const [visto, setvisto] = useState<number[]>([]);
   const hasFooterRow = true;
   const [activar, setActivar] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [activiti, setActiviti] = useState<string>("");
   const [openRows, setOpenRows] = useState<boolean>(false);
-  const areaSelected = Form.useWatch(["departamento"], form);
   //const [search,SetSearch] = useState<ISearchMedical>(new SearchMedicalFormValues())
+  const selectedDepartment = Form.useWatch("departament", form);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
+  useEffect(() => {
+
+    getDepartmentAreaOptions();
+  }, [
+
+    getDepartmentAreaOptions,
+  ]);
+  const selectedCity = Form.useWatch("ciudad", form);
+  useEffect(() => {
+    const readStudy = async () => {
+      await getStudiesOptions();
+    };
+    readStudy();
+  }, [getStudiesOptions]);
+  useEffect(() => {
+    console.log(studiesOptions, "estudios");
+  }, [studiesOptions]);
   const togleRows = () => {
-    console.log("togle");
     if (openRows) {
       setOpenRows(false);
       setexpandedRowKeys([]);
@@ -122,17 +165,6 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       setexpandedRowKeys(studys!.map((x) => x.id));
     }
   };
-  useEffect(() => {
-    setCityOptions(
-      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
-    );
-  }, [branchCityOptions]);
-  useEffect(() => {
-    setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
-    );
-    form.setFieldValue("sucursalId", []);
-  }, [branchCityOptions, form, selectedCity]);
   useEffect(() => {
     setexpandedRowKeys(studys!.map((x) => x.id));
     setOpenRows(true);
@@ -180,39 +212,24 @@ const SamplingTable: FC<ProceedingTableProps> = ({
         setIds(temp);
         //SetSolicitudesData();
       }
-      let soliAux = dataupdate?.find((x) => x.solicitudId == solicitud);
-
-      if (!!soliAux) {
-        let tempAux = soliAux.estudioId.filter((x) => x != id);
-        soliAux.estudioId = tempAux;
-        let index = dataupdate?.findIndex((x) => x.solicitudId == solicitud);
-        dataupdate[index!] = soliAux;
+      let solicitudtoupdate = dataupdate?.filter(
+        (x) => x.solicitudId == solicitud
+      )[0];
+      if (solicitudtoupdate.estudioId.length == 1) {
+        dataupdate = dataupdate.filter((x) => x.solicitudId != solicitud);
+      } else {
+        let count = solicitudtoupdate?.estudioId!.filter((x) => x == id);
+        if (count!.length > 0) {
+          let estudios = solicitudtoupdate?.estudioId.filter((x) => x != id);
+          solicitudtoupdate.estudioId = estudios;
+          let indexsoli = dataupdate?.findIndex(
+            (x) => x.solicitudId == solicitud
+          );
+          dataupdate[indexsoli!] = solicitudtoupdate;
+        }
       }
-
-      if (dataupdate.some((x) => x.estudioId.length === 0)) {
-        dataupdate = dataupdate.filter((x) => x.estudioId.length !== 0);
-        // setUpdateDate(temp);
-      }
-      // let solicitudtoupdate = dataupdate?.filter(
-      //   (x) => x.solicitudId == solicitud
-      // )[0];
-      // if (!!solicitudtoupdate) {
-      //   if (solicitudtoupdate.estudioId.length == 1) {
-      //     dataupdate = dataupdate.filter((x) => x.solicitudId != solicitud);
-      //   } else {
-      //     let count = solicitudtoupdate?.estudioId!.filter((x) => x == id);
-      //     if (count!.length > 0) {
-      //       let estudios = solicitudtoupdate?.estudioId.filter((x) => x != id);
-      //       solicitudtoupdate.estudioId = estudios;
-      //       let indexsoli = dataupdate?.findIndex(
-      //         (x) => x.solicitudId == solicitud
-      //       );
-      //       dataupdate[indexsoli!] = solicitudtoupdate;
-      //     }
-      //   }
-      // }
     }
-    console.log("dataupdate", dataupdate);
+    console.log(dataupdate.length, "onchange");
     if (dataupdate.length <= 0) {
       console.log("if");
       setActivar(false);
@@ -221,32 +238,43 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       setActivar(true);
     }
 
-    setUpdateData(dataupdate);
+    setUpdateDate(dataupdate);
   };
   const updatedata = async () => {
     setLoading(true);
-    var succes = await update(updateData!);
-    if (succes) {
+    
+    
       setLoading(false);
-      alerts.confirmInfo(
+      alerts.confirm(
         "",
-        `Se ha(n) enviado ${ids.length} estudio(s) de ${solicitudesData.length} solicitud(es) a estatus de toma de muestra de manera exitosa `,
+        `Se ha(n) enviado ${ids.length} estudio(s) de ${
+          solicitudesData.length
+        } solicitud(es) a estatus ${
+          activiti == "register" ? "validado" : "capturado"
+        } de manera exitosa `,
         async () => {
-          await getAll(search);
-          // await getAll(values);
+          var succes = await update(updateData!);
+          if (succes) {
+          await getAll(values);
+          setUpdateDate([]);
           setIds([]);
-          SetSolicitudesData([]);
           setActivar(false);
-          setUpdateData([]);
+          SetSolicitudesData([]);
+        } else {
+          setLoading(false);
+        }
+        },
+        ()=>{
+          setLoading(false);
         }
       );
-    } else {
-      setLoading(false);
-    }
+      setIds([]);
+      SetSolicitudesData([]);
+
   };
 
   const expandableStudyConfig = {
-    expandedRowRender: (item: IsamplingList) => (
+    expandedRowRender: (item: Irelacelist) => (
       <div>
         <h4>Estudios</h4>
 
@@ -261,36 +289,30 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                 column={7}
               >
                 <Descriptions.Item
-                  label="Clave"
-                  style={{ maxWidth: 30, color: "#000000" }}
-                >
-                  {x.clave}
-                </Descriptions.Item>
-                <Descriptions.Item
                   label="Estudio"
                   style={{ maxWidth: 30, color: "#000000" }}
                 >
-                  {x.nombre}
+                  {x.study}
                 </Descriptions.Item>
                 <Descriptions.Item
                   label="Estatus"
                   style={{ maxWidth: 30, color: "#000000" }}
                 >
-                  {x.estatus == 1 ? "Pendiente" : "Toma de muestra"}
+                  {x.status == "1" ? "Pendiente" : "Toma de muestra"}
                 </Descriptions.Item>
                 <Descriptions.Item label="Registro" style={{ maxWidth: 30 }}>
-                  {x.registro}
+                  {moment(x.registro).format("DD/MM/YYYY-h:mmA")}
                 </Descriptions.Item>
                 <Descriptions.Item label="Entrega" style={{ maxWidth: 30 }}>
-                  {x.entrega}
+                  {moment(x.entrega).format("DD/MM/YYYY-h:mmA")}
                 </Descriptions.Item>
                 <Descriptions.Item label="" style={{ maxWidth: 30 }}>
-                  {x.estatus == 1 && activiti == "register" && (
+                  {x.status == "4" && activiti == "register" && (
                     <Checkbox onChange={(e) => onChange(e, x.id, item.id)}>
                       Selecciona
                     </Checkbox>
                   )}
-                  {x.estatus == 2 && activiti == "cancel" && (
+                  {x.status == "5" && activiti == "cancel" && (
                     <Checkbox onChange={(e) => onChange(e, x.id, item.id)}>
                       Selecciona
                     </Checkbox>
@@ -310,7 +332,15 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     ),
     rowExpandable: () => true,
   };
-
+  const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
+  const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
+  const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
+  useEffect(() => {
+    setDepartmentOptions(
+      departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [departmentAreaOptions]);
+  console.log("Table");
   useEffect(() => {
     const readData = async () => {
       await getBranchCityOptions();
@@ -319,12 +349,16 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       await getCityOptions();
       await getDepartmentOptions();
       await getCompanyOptions();
-      await getDepartmentAreaOptions();
     };
 
     readData();
   }, [getBranchCityOptions]);
-
+  useEffect(() => {
+    const readData = async () => {
+      await getCity();
+    };
+    readData();
+  }, [getCity]);
   useEffect(() => {
     console.log("here");
     const readPriceList = async () => {
@@ -340,6 +374,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
         })
       );
       setStudyCont(studios.length);
+      setStudyCont(studios.length);
       setLoading(false);
     };
 
@@ -350,7 +385,24 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     setExpandable(expandableStudyConfig);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
-  const onExpand = (isExpanded: boolean, record: IsamplingList) => {
+  useEffect(() => {
+    setCityOptions(
+      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [branchCityOptions]);
+  useEffect(() => {
+    setAreaOptions(
+      departmentAreaOptions.find((x) => x.value === selectedDepartment)?.options ?? []
+    );
+    form.setFieldValue("sucursalId", []);
+  }, [departmentAreaOptions, form, selectedDepartment]);
+  useEffect(() => {
+    setBranchOptions(
+      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+    );
+    form.setFieldValue("sucursal", []);
+  }, [branchCityOptions, form, selectedCity]);
+  const onExpand = (isExpanded: boolean, record: Irelacelist) => {
     let expandRows: string[] = expandedRowKeys;
     if (isExpanded) {
       expandRows.push(record.id);
@@ -366,11 +418,14 @@ const SamplingTable: FC<ProceedingTableProps> = ({
     console.log(activiti, "useffect");
     setExpandable(expandableStudyConfig);
   }, [activiti]);
-  const onFinish = async (newValues: IsamplingForm) => {
+  const onFinish = async (newValues: ISearchRelase) => {
     setLoading(true);
-    let studios = [];
+
     const reagent = { ...values, ...newValues };
+    setValues(reagent);
+    setSearch(reagent);
     var data = await getAll(reagent);
+    let studios = [];
     console.log(data, "daata");
     setSoliCont(data?.length!);
     data?.forEach((x) =>
@@ -379,28 +434,22 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       })
     );
     setStudyCont(studios.length);
-    console.log(data, "datas");
     setLoading(false);
   };
 
   const register = () => {
     setActiviti("register");
+    setUpdateDate([]);
+    setIds([]);
+    setActivar(false);
   };
   const cancel = () => {
     setActiviti("cancel");
+    setUpdateDate([]);
+    setIds([]);
+    setActivar(false);
   };
-
-  useEffect(() => {
-    getAll({
-      fecha: [
-        moment(Date.now()).utcOffset(0, true),
-        moment(Date.now()).utcOffset(0, true),
-      ],
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const columns: IColumns<IsamplingList> = [
+  const columns: IColumns<Irelacelist> = [
     {
       ...getDefaultColumnProps("solicitud", "Clave", {
         searchState,
@@ -409,7 +458,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
       }),
     },
     {
-      ...getDefaultColumnProps("nombre", "Nombre del Paciente", {
+      ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
         width: "30%",
@@ -479,8 +528,10 @@ const SamplingTable: FC<ProceedingTableProps> = ({
         <Button
           key="clean"
           onClick={(e) => {
+           
+            form.setFieldsValue(new searchrelase() );
+            setValues(new searchrelase());
             e.stopPropagation();
-
             form.resetFields();
           }}
           style={{ marginLeft: "10%" }}
@@ -511,27 +562,13 @@ const SamplingTable: FC<ProceedingTableProps> = ({
           padding: "10px",
         }}
       >
-        <Form<IsamplingForm>
+<Form<ISearchRelase>
           {...formItemLayout}
           form={form}
           name="sampling"
           initialValues={values}
           onFinish={onFinish}
           scrollToFirstError
-          onValuesChange={(changedValues, allValues) => {
-            const changesKyes = Object.keys(changedValues);
-            if (changesKyes.includes("departamento")) {
-              const selectedDepatements: ReactNode[] = departmentOptions
-                .filter((x) => changedValues.departamento.includes(x.value))
-                .map((x) => x.label);
-              const filterAreas = departmentAreaOptions
-                .filter((x) => selectedDepatements.includes(x.value))
-                .map((x) => x.options)
-                .flatMap((x) => x);
-              setFilteredAreas(filterAreas);
-            }
-            console.log("values change", changedValues, allValues);
-          }}
         >
           <Row>
             <Col span={24}>
@@ -539,38 +576,36 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                 <Col span={8}>
                   <DateRangeInput
                     formProps={{ label: "Fecha", name: "fecha" }}
-                    disableAfterDates
                   />
                 </Col>
                 <Col span={8}>
                   <TextInput
                     formProps={{
-                      name: "buscar",
+                      name: "search",
                       label: "Buscar",
                     }}
                   />
                 </Col>
-                {/* <Col span={8} style={{ textAlign: "right" }}> */}
-                {/*                   <Button
-                    type="primary"
-                    onClick={() => {
-                      form.submit();
-                    }}
-                  >
-                    Buscar
-                  </Button> */}
-                {/* </Col> */}
                 <Col span={8}>
                   <SelectInput
                     formProps={{
-                      name: "procedencia",
-                      label: "Procedencia",
+                      name: "tipoSoli",
+                      label: "Tipo solicitud",
                     }}
                     multiple
-                    options={originOptions}
+                    options={urgencyOptions}
                   ></SelectInput>
                 </Col>
-
+                <Col span={8}>
+                  <SelectInput
+                    formProps={{
+                      name: "estudio",
+                      label: "Estudios",
+                    }}
+                    multiple
+                    options={studiesOptions}
+                  ></SelectInput>
+                </Col>
                 <Col span={8}>
                   <SelectInput
                     formProps={{
@@ -579,31 +614,47 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                     }}
                     multiple
                     options={[
-                      { value: 1, label: "Pendiente" },
-                      { value: 2, label: "Toma" },
+                      { value: 4, label: "Capturado" },
+                      { value: 5, label: "Validado" },
                     ]}
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
-                  <SelectInput
+                  {/* <SelectInput
                     formProps={{
                       name: "departamento",
                       label: "Departamento",
                     }}
                     multiple
-                    options={departmentOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{
-                      name: "area",
-                      label: "Área",
-                    }}
-                    multiple
-                    // options={areas}
-                    options={filteredAreas ?? []}
-                  ></SelectInput>
+                    options={departmentAreaOptions}
+                  ></SelectInput> */}
+                  <Form.Item label="Áreas" className="no-error-text" help="">
+                    <Input.Group>
+                      <Row gutter={8}>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "departament",
+                              label: "Departamento",
+                              noStyle: true,
+                            }}
+                            options={departmentOptions}
+                          />
+                        </Col>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "area",
+                              label: "Área",
+                              noStyle: true,
+                            }}
+                            multiple
+                            options={areaOptions}
+                          />
+                        </Col>
+                      </Row>
+                    </Input.Group>
+                  </Form.Item>
                 </Col>
                 <Col span={8}>
                   <SelectInput
@@ -616,11 +667,6 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
-                  {/* <SelectInput
-                    formProps={{ name: "sucursalId", label: "Sucursales" }}
-                    multiple
-                    options={branchCityOptions}
-                  /> */}
                   <Form.Item label="Sucursal" className="no-error-text" help="">
                     <Input.Group>
                       <Row gutter={8}>
@@ -637,7 +683,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                         <Col span={12}>
                           <SelectInput
                             formProps={{
-                              name: "sucursalId",
+                              name: "sucursal",
                               label: "Sucursales",
                               noStyle: true,
                             }}
@@ -659,17 +705,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
                     options={companyOptions}
                   ></SelectInput>
                 </Col>
-                {/* <Col span={8}></Col> */}
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{
-                      name: "tipoSolicitud",
-                      label: "Tipo solicitud",
-                    }}
-                    multiple
-                    options={urgencyOptions}
-                  ></SelectInput>
-                </Col>
+                <Col span={8}></Col>
               </Row>
             </Col>
           </Row>
@@ -682,7 +718,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
             type={activiti == "register" ? "primary" : "ghost"}
             onClick={register}
           >
-            Registrar Toma
+            Registrar Validación
           </Button>
           <Button
             style={{
@@ -693,7 +729,7 @@ const SamplingTable: FC<ProceedingTableProps> = ({
             type={activiti == "cancel" ? "primary" : "ghost"}
             onClick={cancel}
           >
-            Cancelar Registro
+            Cancelar Validación
           </Button>
         </Col>
         <Col md={13}></Col>
@@ -738,14 +774,17 @@ const SamplingTable: FC<ProceedingTableProps> = ({
           )}
         </Col>
       </Row>
-
       <Fragment>
-        <SamplinTableStudy
+        <RelaseTableStudy
           data={studys}
-          columns={SamplingStudyColumns({ printTicket })}
-          expandable={SamplingStudyExpandable({
+          columns={ValidationStudyColumns({ printTicket })}
+          expandable={ValidationStudyExpandable({
             activiti,
             onChange,
+            viewTicket,
+            visto,
+            setvisto,
+            updateData,
           })}
         />
       </Fragment>
@@ -753,4 +792,4 @@ const SamplingTable: FC<ProceedingTableProps> = ({
   );
 };
 
-export default observer(SamplingTable);
+export default observer(RelaseResultTable);

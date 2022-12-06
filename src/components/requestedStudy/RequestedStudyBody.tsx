@@ -59,49 +59,64 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
 
   const updateData = async () => {
     setLoading(true);
-    var success = await update(updateForm!);
-    if (success) {
-      setLoading(false);
-      {
-        activity == "register"
-          ? alerts.confirmInfo(
-              "",
-              `Se ha(n) enviado ${
-                updateForm.flatMap((x) => x.estudioId).length
-              } estudio(s) de ${
-                updateForm.length
-              } solicitud(es) a estatus Solicitado de manera exitosa `,
-              async () => {
-                setUpdateForm([]);
-                getAll(formValues);
-              },
-            )
-          : alerts.confirmInfo(
-              "",
-              `Se ha(n) enviado ${
-                updateForm.flatMap((x) => x.estudioId).length
-              } estudio(s) de ${
-                updateForm.length
-              } solicitud(es) a estatus Toma de Muestra de manera exitosa `,
-              async () => {
-                setUpdateForm([]);
-                getAll(formValues);
-              }
-            );
-      }
-      setActivity("");
+    if (activity == "register") {
+      alerts.confirm(
+        "Estudio a Solicitado",
+        `Se enviará(n) ${
+          updateForm.flatMap((x) => x.estudioId).length
+        } estudio(s) de ${
+          updateForm.length
+        } solicitud(es) a estatus Solicitado. ¿Deseas continuar?`,
+        async () => {
+          var success = await update(updateForm!);
+          if (success) {
+            setLoading(false);
+            setUpdateForm([]);
+            setActivity("");
+            getAll(formValues);
+          }
+        },
+        async () => {
+          setLoading(false);
+        }
+      );
     } else {
-      setLoading(false);
-      setActivity("");
+      alerts.confirm(
+        "Estudio a Toma de Muestra",
+        `Se enviará(n)  ${
+          updateForm.flatMap((x) => x.estudioId).length
+        } estudio(s) de ${
+          updateForm.length
+        } solicitud(es) a estatus Toma de Muestra. ¿Deseas continuar?`,
+        async () => {
+          var success = await update(updateForm!);
+          if (success) {
+            setLoading(false);
+            setUpdateForm([]);
+            setActivity("");
+            getAll(formValues);
+          }
+        },
+        async () => {
+          setLoading(false);
+        }
+      );
     }
+    setLoading(false);
   };
 
   const register = () => {
     setActivity("register");
+    if (activity == "register") {
+      setActivity("");
+    }
   };
 
   const cancel = () => {
     setActivity("cancel");
+    if (activity == "cancel") {
+      setActivity("");
+    }
   };
 
   return (
@@ -160,7 +175,7 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
         </Row>
         <RequestedStudyTable
           data={data}
-          columns={RequestedStudyColumns({printOrder})}
+          columns={RequestedStudyColumns({ printOrder })}
           expandable={RequestedStudyExpandable({
             activity,
             onChange,

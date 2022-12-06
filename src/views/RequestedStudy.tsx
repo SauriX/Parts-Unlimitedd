@@ -1,7 +1,6 @@
 import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
-import { Fragment, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Fragment, useEffect, useState } from "react";
 import { useStore } from "../app/stores/store";
 import RequestedStudyBody from "../components/requestedStudy/RequestedStudyBody";
 import RequestedStudyHeader from "../components/requestedStudy/RequestedStudyHeader";

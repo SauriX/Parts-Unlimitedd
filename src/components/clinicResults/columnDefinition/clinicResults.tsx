@@ -119,15 +119,33 @@ export const ClinicResultsExpandable = () => {
     },
     {
       ...getDefaultColumnProps("nombreEstatus", "Estatus", {
-        width: "20%",
+        width: "15%",
       }),
       render: (_value, record) => record.nombreEstatus!,
     },
     {
-      ...getDefaultColumnProps("fechaActualizacion", "Fecha de actualización", {
-        width: "40%",
+      ...getDefaultColumnProps("fechaActualizacion", "Fecha de Actualización", {
+        width: "15%",
       }),
-      render: (_value, record) => record.fechaActualizacion! + " - " + record.usuarioActualizacion!,
+      render: (_value, record) => record.fechaActualizacion == null ? " - " : record.fechaActualizacion + " - " + record.usuarioActualizacion,
+    },
+    {
+      ...getDefaultColumnProps("registro", "Fecha de Registro", {
+        width: "15%",
+      }),
+      render: (_value, record) => record.registro,
+    },
+    {
+      ...getDefaultColumnProps("entrega", "Fecha de Entrega", {
+        width: "15%",
+      }),
+      render: (_value, record) => (
+        <Typography>
+          <Text style={record.urgencia! > 1 ? {color: "red"} : {}}>
+            {record.entrega}
+          </Text>
+        </Typography>
+      ),
     },
   ];
 

@@ -5,7 +5,6 @@ import {
   IParameterList,
   Itipovalor,
   ItipoValorForm,
-  IObservations,
 } from "../models/parameter";
 import alerts from "../util/alerts";
 import messages from "../util/messages";
@@ -13,7 +12,6 @@ import responses from "../util/responses";
 import { getErrors } from "../util/utils";
 import history from "../util/history";
 import { IReagentList } from "../models/reagent";
-import Request from "../api/request";
 
 export default class ParameterStore {
   constructor() {
@@ -24,7 +22,6 @@ export default class ParameterStore {
   ValueTipe?: ItipoValorForm;
   ValuesTipe: ItipoValorForm[] = [];
   reagentsSelected: IReagentList[] = [];
-  // observationsSelected: IObservations[] = [];
 
   setReagentSelected = (reagentsSelected: IReagentList[]) => {
     this.reagentsSelected = reagentsSelected;
@@ -33,14 +30,6 @@ export default class ParameterStore {
   getReagentSelected = () => {
     return this.reagentsSelected;
   };
-
-  // setObservationSelected = (observationsSelected: IObservations[]) => {
-  //   this.observationsSelected = observationsSelected;
-  // }
-
-  // getObservationSelected = () => {
-  //   return this.observationsSelected;
-  // }
 
   getAll = async (search: string = "all") => {
     try {
@@ -66,7 +55,8 @@ export default class ParameterStore {
   getById = async (id: string) => {
     try {
       const rol = await Parameter.getById(id);
-      rol.tipoValor = rol.tipoValor == null ? "Sin valor" : parseInt(rol.tipoValor);
+      rol.tipoValor =
+        rol.tipoValor == null ? "Sin valor" : parseInt(rol.tipoValor);
       console.log(rol);
       this.parameter = rol;
       return rol;

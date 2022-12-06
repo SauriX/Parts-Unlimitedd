@@ -23,6 +23,7 @@ import getMaquilaInternColumns, {
   expandableMaquilaInternConfig,
 } from "./columnDefinition/maquilaIntern";
 import { imagesType } from "../../app/common/header/HeaderTitle";
+import getBudgetRequestColumns from "./columnDefinition/budgetStats";
 
 export type reportType =
   | "medicos"
@@ -36,6 +37,7 @@ export type reportType =
   | "canceladas"
   | "descuento"
   | "cargo"
+  | "presupuestos"
   | "maquila_interna"
   | "maquila_externa"
   | "corte_caja"
@@ -66,7 +68,8 @@ export const getInputs = (
     reportName === "medicos" ||
     reportName === "medicos-desglosado" ||
     reportName === "maquila_interna" ||
-    reportName === "maquila_externa"
+    reportName === "maquila_externa" ||
+    reportName === "presupuestos"
   ) {
     filters.push("medico");
   } else if (reportName === "contacto") {
@@ -161,6 +164,11 @@ export const getReportConfig = (
   } else if (reportName === "corte_caja") {
     title = "Corte de Caja";
     image = "registradora";
+  } else if (reportName === "presupuestos") {
+    title = "Presupuestos por Sucursal";
+    image = "presupuestos";
+    hasFooterRow = false;
+    summary = true;
   }
 
   return { title, image, hasFooterRow, summary };
@@ -197,6 +205,8 @@ export const getColumns = (
     return getMaquilaInternColumns(searchState, setSearchState);
   } else if (reportName === "maquila_externa") {
     return getMaquilaExternColumns(searchState, setSearchState);
+  } else if (reportName === "presupuestos") {
+    return getBudgetRequestColumns(searchState, setSearchState);
   }
 
   return [];
@@ -206,20 +216,21 @@ export const getExpandableConfig = (
   reportName: reportType
 ): ExpandableConfig<IReportData> | undefined => {
   if (reportName === "estudios" || reportName === "urgentes") {
-    return expandableStudyConfig;
+    return expandableStudyConfig();
   } else if (
     reportName == "empresa" ||
     reportName == "canceladas" ||
     reportName == "descuento" ||
     reportName == "cargo" ||
+    reportName == "presupuestos" ||
     reportName === "medicos-desglosado"
   ) {
-    return expandablePriceConfig;
+    return expandablePriceConfig();
   } else if (reportName === "maquila_interna") {
-    return expandableMaquilaInternConfig;
+    return expandableMaquilaInternConfig();
   } else if (reportName === "maquila_externa") {
-    return expandableMaquilaExternConfig;
-  }
+    return expandableMaquilaExternConfig();
+  } 
 
   return undefined;
 };

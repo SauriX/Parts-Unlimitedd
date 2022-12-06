@@ -18,6 +18,7 @@ const views = {
   recivetracking:"ReciveTracking",
   workLists: "workLists",
   resultValidation:"ResultValidation",
+  relaseValidation:"RelaseResult"
 };
 
 export default views;

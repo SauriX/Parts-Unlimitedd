@@ -9,6 +9,7 @@ import {
   IRequestTotal,
   IRequestPayment,
   IRequestToken,
+  IRequestCheckIn,
 } from "../models/request";
 import {
   IWeeAssignment,
@@ -56,6 +57,8 @@ const Request = {
     requests.post("request/weeClinic", request),
   createPayment: (request: IRequestPayment): Promise<IRequestPayment> =>
     requests.post("request/payment", request),
+  checkInPayment: (request: IRequestCheckIn): Promise<IRequestPayment[]> =>
+    requests.post("request/payment/checkin", request),
   updateGeneral: (request: IRequestGeneral): Promise<void> =>
     requests.put("request/general", request),
   updateTotals: (request: IRequestTotal): Promise<void> =>
@@ -78,8 +81,12 @@ const Request = {
     requests.put("request/studies/request", request),
   addPartiality: (request: IRequestPartiality): Promise<void> =>
     requests.put("request/partiality", request),
-  printTicket: (recordId: string, requestId: string): Promise<void> =>
-    requests.print(`request/ticket/${recordId}/${requestId}`),
+  printTicket: (
+    recordId: string,
+    requestId: string,
+    paymentId: string
+  ): Promise<void> =>
+    requests.print(`request/ticket/${recordId}/${requestId}/${paymentId}`),
   getOrderPdfUrl: (recordId: string, requestId: string): Promise<string> =>
     requests.getFileUrl(
       `request/order/${recordId}/${requestId}`,

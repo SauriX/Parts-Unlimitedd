@@ -41,9 +41,7 @@ const RequestedStudyColumns = ({ printOrder }: tableProps) => {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <Link
             onClick={() => {
-              navigate(
-                `/requests/${record.expedienteId}/${record.id}`
-              );
+              navigate(`/requests/${record.expedienteId}/${record.id}`);
             }}
           >
             {record.solicitud}
@@ -124,21 +122,42 @@ export const RequestedStudyExpandable = ({
   const nestedColumns: IColumns<IRequestedStudy> = [
     {
       ...getDefaultColumnProps("clave", "Estudio", {
-        width: "35%",
+        width: "30%",
       }),
       render: (_value, record) => record.clave + " - " + record.nombre,
     },
     {
       ...getDefaultColumnProps("nombreEstatus", "Estatus", {
-        width: "25%",
+        width: "15%",
       }),
       render: (_value, record) => record.nombreEstatus,
     },
     {
-      ...getDefaultColumnProps("fechaActualizacion", "Fecha de actualización", {
-        width: "30%",
+      ...getDefaultColumnProps("fechaActualizacion", "Fecha de Actualización", {
+        width: "15%",
       }),
-      render: (_value, record) => record.fechaActualizacion,
+      render: (_value, record) =>
+        record.fechaActualizacion == null
+          ? " - "
+          : record.fechaActualizacion + " - " + record.usuarioActualizacion,
+    },
+    {
+      ...getDefaultColumnProps("registro", "Fecha de Registro", {
+        width: "15%",
+      }),
+      render: (_value, record) => record.registro,
+    },
+    {
+      ...getDefaultColumnProps("entrega", "Fecha de Entrega", {
+        width: "15%",
+      }),
+      render: (_value, record) => (
+        <Typography>
+          <Text style={record.urgencia > 1 ? { color: "red" } : {}}>
+            {record.entrega}
+          </Text>
+        </Typography>
+      ),
     },
     {
       key: "Seleccionar",
@@ -152,15 +171,13 @@ export const RequestedStudyExpandable = ({
             <Checkbox
               onChange={(e) => onChange(e, record.id, record.solicitudId)}
               disabled={!(activity == "register")}
-            >
-            </Checkbox>
+            ></Checkbox>
           )}
           {record.estatus === status.requestStudy.solicitado && (
             <Checkbox
               onChange={(e) => onChange(e, record.id, record.solicitudId)}
               disabled={!(activity == "cancel")}
-            >
-            </Checkbox>
+            ></Checkbox>
           )}
         </>
       ),

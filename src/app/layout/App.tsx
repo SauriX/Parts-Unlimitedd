@@ -59,7 +59,7 @@ import Quotation from "../../views/Quotation";
 import QuotationDetail from "../../components/quotation/detail/QuotationDetail";
 import Report from "../../views/Report";
 import ApointmentDetail from "../../components/appointment/detail/apointmentDetail";
-import Sampling from "../../views/Sampling";
+import SamplingStudy from "../../views/SamplingStudy";
 import Equipment from "../../views/Equipment";
 import RequestedStudy from "../../views/RequestedStudy";
 import EquipmentMantain from "../../views/EquipmentMantain";
@@ -79,6 +79,7 @@ import DeliveryResults from "../../views/DeliveryResults";
 import Invoice from "../../views/Invoice";
 import Notifications from "../../views/Notifications";
 import NotificationsDetail from "../../components/notifications/NotificationsDetail";
+import Relaseresult from "../../views/Relaseresult";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -201,9 +202,9 @@ function App() {
               element={<QuotationDetail />}
             />
             <Route path="cotizacion/new" element={<QuotationDetail />} />
-            <Route path="samplings" element={<Sampling />} />
-            <Route path="samplings/:id" element={<Sampling />} />
-            <Route path="samplings/new" element={<Sampling />} />
+            <Route path="samplings" element={<SamplingStudy />} />
+            <Route path="samplings/:id" element={<SamplingStudy />} />
+            <Route path="samplings/new" element={<SamplingStudy />} />
             <Route path="requestedstudy" element={<RequestedStudy />} />
             <Route path="clinicResults" element={<ClinicResults />} />
             <Route path="requestedstudy/:id" element={<RequestedStudy />} />
@@ -242,6 +243,10 @@ function App() {
             <Route
               path={`${views.resultValidation}`}
               element={<ResultValidation />}
+            />
+            <Route
+              path={`${views.relaseValidation}`}
+              element={<Relaseresult />}
             />
             <Route
               path="forbidden"
