@@ -119,9 +119,9 @@ export default class ClinicResultsStores {
     }
   };
 
-  updateResults = async (results: IClinicResultCaptureForm[], recordId: string) => {
+  updateResults = async (results: IClinicResultCaptureForm[], recordId: string, envioManual: boolean) => {
     try {
-      await ClinicResults.updateResults(results);
+      await ClinicResults.updateResults(results, envioManual);
       alerts.success(messages.updated);
       this.getStudies(recordId, results[0].solicitudId)
       const index = this.studies.findIndex(
@@ -181,10 +181,10 @@ export default class ClinicResultsStores {
     }
   };
 
-  updateResultPathological = async (result: FormData) => {
+  updateResultPathological = async (result: FormData, envioManual: boolean) => {
     // updateResultPathological = async (result: IResultPathological) => {
     try {
-      await ClinicResults.updateResultPathological(result);
+      await ClinicResults.updateResultPathological(result, envioManual);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));

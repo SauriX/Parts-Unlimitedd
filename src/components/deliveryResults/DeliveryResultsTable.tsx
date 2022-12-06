@@ -12,7 +12,7 @@ import {
 } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState, FC } from "react";
 import PrintIcon from "../../app/common/icons/PrintIcon";
 import { IColumns } from "../../app/common/table/utils";
@@ -44,6 +44,11 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
     CheckboxValueType[]
   >([]);
   const [openRows, setOpenRows] = useState<boolean>(false);
+  useEffect(() => {
+    setExpandedRowKeys(requests.map((x) => x.solicitudId));
+    setOpenRows(true);
+  }, [requests]);
+
   const columns: IColumns = [
     {
       key: "solicitudId",
@@ -108,6 +113,13 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
       title: "Compañía",
       align: "center",
     },
+    {
+      key: "solicitudId",
+      dataIndex: "parcialidad",
+      title: "Parcialidad",
+      align: "center",
+    },
+
     {
       key: "solicitudId",
       dataIndex: "orden",
@@ -209,11 +221,12 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
   };
   return (
     <>
-      <Divider orientation="right">
+      <Divider />
+      {/* <Divider orientation="right">
         {`${formDeliverResult.fechaInicial?.format(
           "DD-MMM-YYYY"
         )} - ${formDeliverResult.fechaFinal?.format("DD-MMM-YYYY")}`}
-      </Divider>
+      </Divider> */}
       <Row justify="center">
         <Col>
           <Checkbox.Group options={options} onChange={onChange} />
@@ -262,9 +275,12 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
               rowClassName="row-search"
               // pagination={false}
               // scroll={{ x: 450 }}
+
               expandable={{
                 onExpand: onExpand,
                 expandedRowKeys: expandedRowKeys,
+                rowExpandable: () => true,
+                defaultExpandAllRows: true,
                 expandedRowRender: (data: any, index: number) => (
                   <>
                     {/* {console.log("no se que data", toJS(data.estudios))} */}
@@ -281,12 +297,6 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
                       rowSelection={{
                         type: "checkbox",
                         onSelect: (selectedRow, isSelected, a: any) => {
-                          // console.log(
-                          //   "selectedssssss row keys",
-                          //   toJS(selectedRow)
-                          // );
-                          // console.log("selectedtsss rows", toJS(isSelected));
-                          // console.log("a", toJS(a));
                           let existingStudy = null;
                           if (!!selectedStudies.length) {
                             existingStudy = selectedStudies.find(
@@ -389,8 +399,6 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
                     ></Table>
                   </>
                 ),
-                rowExpandable: () => true,
-                defaultExpandAllRows: true,
               }}
               bordered
             ></Table>

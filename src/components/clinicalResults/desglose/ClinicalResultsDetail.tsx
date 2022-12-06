@@ -59,6 +59,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   );
 
   const [loading, setLoading] = useState(false);
+  const [envioManual, setEnvioManual] = useState(false);
   const [checkedPrint, setCheckedPrint] = useState(false);
   const [hideWhenCancel, setHideWhenCancel] = useState(false);
   const { optionStore, clinicResultsStore, parameterStore } = useStore();
@@ -221,14 +222,14 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const renderUpdateStatus = () => {
     return (
       <>
-        {currentStudy.estatusId >= status.requestStudy.solicitado && currentStudy.estatusId < status.requestStudy.liberado ? (
+        {currentStudy.estatusId >= status.requestStudy.solicitado ? (
           <Row>
             <Col span={24}>
               <Row justify="space-between" gutter={[12, 24]}>
                 {currentStudy.estatusId <= 3 ? (
                   ""
                 ) : (
-                  <Col span={12}>
+                  <Col span={8}>
                     <Button
                       type="default"
                       htmlType="submit"
@@ -254,12 +255,13 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                     </Button>
                   </Col>
                 )}
-                <Col span={12}>
+                <Col span={8}>
                   <Button
                     type="primary"
                     htmlType="submit"
                     // disabled={disabled}
                     onClick={() => {
+                      setEnvioManual(false)
                       form.submit();
                     }}
                     style={{
@@ -278,6 +280,28 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                       : ""}
                   </Button>
                 </Col>
+                {currentStudy.estatusId === status.requestStudy.liberado ? (
+                  <Col span={8}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      // disabled={disabled}
+                      onClick={() => {
+                        setEnvioManual(true);
+                        form.submit();
+                      }}
+                      style={{
+                        backgroundColor: "#6EAA46",
+                        color: "white",
+                        borderColor: "#6EAA46",
+                      }}
+                    >
+                      Envio Manual
+                    </Button>
+                  </Col>
+                ) : (
+                  ""
+                )}
               </Row>
             </Col>
           </Row>
@@ -305,7 +329,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     });
 
     console.log(labResults);
-    success = await updateResults(labResults, solicitud.expedienteId);
+    success = await updateResults(labResults, solicitud.expedienteId, envioManual);
     if (success) {
       setHideWhenCancel(false);
       await loadInit();
