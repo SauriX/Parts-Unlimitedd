@@ -285,7 +285,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                       : ""}
                   </Button>
                 </Col>
-                {currentStudy.estudioId == 631 ? (
+                {currentStudy.estudioId == 631 && currentStudy.estatusId >= 5 ? (
                   <Col span={8}>
                     <Button
                       type="primary"
