@@ -654,9 +654,13 @@ export default class RequestStore {
     }
   };
 
-  printTicket = async (recordId: string, requestId: string) => {
+  printTicket = async (
+    recordId: string,
+    requestId: string,
+    paymentId: string
+  ) => {
     try {
-      await Request.printTicket(recordId, requestId);
+      await Request.printTicket(recordId, requestId, paymentId);
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
