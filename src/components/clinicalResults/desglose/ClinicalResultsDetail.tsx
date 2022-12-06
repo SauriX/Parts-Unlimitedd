@@ -27,7 +27,7 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { IClinicResultCaptureForm } from "../../../app/models/clinicResults";
 import moment from "moment";
 import { ObservationModal } from "./ObservationModal";
-import { DownloadOutlined } from '@ant-design/icons';
+import { DownloadOutlined } from "@ant-design/icons";
 const { TextArea } = Input;
 
 type ClinicalResultsDetailProps = {
@@ -56,9 +56,11 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   );
 
   const [loading, setLoading] = useState(false);
+  const [envioManual, setEnvioManual] = useState(false);
   const [checkedPrint, setCheckedPrint] = useState(false);
   const [hideWhenCancel, setHideWhenCancel] = useState(false);
-  const [exportGlucoseData, setExportGlucoseData] = useState<IClinicResultCaptureForm>();
+  const [exportGlucoseData, setExportGlucoseData] =
+    useState<IClinicResultCaptureForm>();
   const [resultParam, setResultParam] = useState<any[]>([]);
   const { optionStore, clinicResultsStore } = useStore();
 
@@ -224,8 +226,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const renderUpdateStatus = () => {
     return (
       <>
-        {currentStudy.estatusId >= status.requestStudy.solicitado &&
-        currentStudy.estatusId < status.requestStudy.liberado ? (
+        {currentStudy.estatusId >= status.requestStudy.solicitado ? (
           <Row>
             <Col span={24}>
               <Row justify="space-between" gutter={[12, 24]}>
@@ -267,6 +268,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                     type="primary"
                     htmlType="submit"
                     onClick={() => {
+                      setEnvioManual(false);
                       form.submit();
                     }}
                     style={{
@@ -285,7 +287,30 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                       : ""}
                   </Button>
                 </Col>
-                {currentStudy.estudioId == 631 && currentStudy.estatusId >= 5 ? (
+                {currentStudy.estatusId === status.requestStudy.liberado ? (
+                  <Col span={8}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      // disabled={disabled}
+                      onClick={() => {
+                        setEnvioManual(true);
+                        form.submit();
+                      }}
+                      style={{
+                        backgroundColor: "#6EAA46",
+                        color: "white",
+                        borderColor: "#6EAA46",
+                      }}
+                    >
+                      Envio Manual
+                    </Button>
+                  </Col>
+                ) : (
+                  ""
+                )}
+                {currentStudy.estudioId == 631 &&
+                currentStudy.estatusId >= 5 ? (
                   <Col span={8}>
                     <Button
                       type="primary"
@@ -329,7 +354,11 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     });
 
     console.log(labResults);
-    success = await updateResults(labResults, solicitud.expedienteId);
+    success = await updateResults(
+      labResults,
+      solicitud.expedienteId,
+      envioManual
+    );
     if (success) {
       setHideWhenCancel(false);
       await loadInit();

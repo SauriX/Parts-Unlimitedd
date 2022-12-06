@@ -44,7 +44,7 @@ const DeliveryResultsHeader: FC<DeliveryResultsHeaderProps> = ({
             </Text>
           </Text>,
           <DownloadIcon key="doc" onClick={handleDownload} />,
-          <PrintIcon key="print" onClick={handlePrint} />,
+          // <PrintIcon key="print" onClick={handlePrint} />,
         ]}
       />
     </>
