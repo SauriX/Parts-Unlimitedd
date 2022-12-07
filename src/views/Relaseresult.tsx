@@ -8,7 +8,6 @@ import RelaseResultTable from "../components/RalaseResult/RelaseResultTable";
 import ResultValidationHeader from "../components/Resultvalidation/ResultValidationHeader";
 import ResultValidationTable from "../components/Resultvalidation/ResultValidationTable";
 
-
 const Relaseresult = () => {
   const { resultValidationStore,procedingStore,relaseResultStore } = useStore();
    //const { /* scopes, access, clearScopes, */ exportList,search } = procedingStore;

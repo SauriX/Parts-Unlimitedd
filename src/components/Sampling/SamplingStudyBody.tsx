@@ -67,16 +67,16 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
         } estudio(s) de ${
           updateForm.length
         } solicitud(es) a estatus Toma de Muestra. ¿Deseas continuar?`,
-        async() => {
+        async () => {
           var success = await update(updateForm!);
-          if(success){
+          if (success) {
             setLoading(false);
             setUpdateForm([]);
             setActivity("");
             getAll(formValues);
           }
         },
-        async() => {
+        async () => {
           setLoading(false);
         }
       );
@@ -88,16 +88,16 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
         } estudio(s) de ${
           updateForm.length
         } solicitud(es) a estatus Pendiente. ¿Deseas continuar?`,
-        async() => {
+        async () => {
           var success = await update(updateForm!);
-          if(success){
+          if (success) {
             setLoading(false);
             setUpdateForm([]);
             setActivity("");
             getAll(formValues);
           }
         },
-        async() => {
+        async () => {
           setLoading(false);
         }
       );
@@ -107,10 +107,16 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
 
   const register = () => {
     setActivity("register");
+    if (activity == "register") {
+      setActivity("");
+    }
   };
 
   const cancel = () => {
     setActivity("cancel");
+    if (activity == "cancel") {
+      setActivity("");
+    }
   };
 
   return (

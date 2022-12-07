@@ -39,6 +39,11 @@ export const requestedStudyOptions = [
   { label: "Solicitado", value: 3 },
 ];
 
+export const samplingStudyOptions = [
+  { label: "Pendiente", value: 1 },
+  { label: "Toma de Muestra", value: 2 },
+];
+
 export const studyStatusOptions = [
   { label: "Pendiente", value: 1 },
   { label: "Toma de muestra", value: 2 },

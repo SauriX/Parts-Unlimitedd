@@ -27,7 +27,7 @@ const CatalogHeader: FC<CatalogHeaderProps> = ({
   handleDownload,
 }) => {
   const { catalogStore } = useStore();
-  const { setCurrentCatalog, getAll } = catalogStore;
+  const { catalogs: catalogList, setCurrentCatalog, getAll } = catalogStore;
 
   const navigate = useNavigate();
 
@@ -40,6 +40,20 @@ const CatalogHeader: FC<CatalogHeaderProps> = ({
       setCatalog(catalog);
     }
   }, [searchParams, setCatalog]);
+
+  useEffect(() => {
+    const readCatalogs = async () => {
+      await getAll(
+        searchParams.get("catalog")!,
+        searchParams.get("search") ?? "all"
+      );
+    };
+
+    if (catalogList.length === 0 && searchParams.get("catalog")) {
+      readCatalogs();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleChange = async (value: string) => {
     const selected = catalogs.find((x) => x.value === value);

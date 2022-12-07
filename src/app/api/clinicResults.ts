@@ -26,14 +26,19 @@ const ClinicResults = {
     requests.get(`parameter/${id}`),
   createResults: (results: IClinicResultCaptureForm[]): Promise<string[]> =>
     requests.post(`clinicResults/saveResults`, results),
-  updateResults: (results: IClinicResultCaptureForm[]): Promise<void> =>
-    requests.put(`clinicResults/updateResults`, results),
+  updateResults: (
+    results: IClinicResultCaptureForm[],
+    envioManual: boolean
+  ): Promise<void> =>
+    requests.put(`clinicResults/updateResults/${envioManual}`, results),
   createResultPathological: (search: FormData): Promise<void> =>
-    // createResultPathological: (search: IResultPathological): Promise<void> =>
     requests.post(`clinicResults/savePathological`, search),
   // updateResultPathological: (search: IResultPathological): Promise<void> =>
-  updateResultPathological: (search: FormData): Promise<void> =>
-    requests.put(`clinicResults/updatePathological`, search),
+  updateResultPathological: (
+    search: FormData,
+    envioManual: boolean
+  ): Promise<void> =>
+    requests.put(`clinicResults/updatePathological/${envioManual}`, search),
   sendResultFile: (listResults: any): Promise<void> =>
     requests.put(`clinicResults/sendResultFile`, listResults),
   updateStatusStudy: (requestStudyId: number, status: number): Promise<void> =>
@@ -46,6 +51,8 @@ const ClinicResults = {
     requests.post(`clinicResults/getRequestStudyById`, requestStudy),
   exportList: (search: IClinicResultForm): Promise<void> =>
     requests.download(`clinicResults/export/list`, search),
+  exportGlucose: (search: IClinicResultCaptureForm): Promise<void> =>
+    requests.download(`clinicResults/export/glucose`, search),
   printResults: (recordId: string, requestId: string): Promise<void> =>
     requests.print(`clinicResults/labResults/${recordId}/${requestId}`),
   printSelectedStudies: (configuration: any): Promise<void> =>

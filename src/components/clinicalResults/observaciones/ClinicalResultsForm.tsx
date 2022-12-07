@@ -64,6 +64,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     new RequestStudyValues()
   );
   const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
+  const [envioManual, setEnvioManual] = useState<boolean>(false);
   const [prueba, setPrueba] = useState<UploadFile[]>([]);
   const [editorMacroscopica, setEditorMacroscopica] = useState<any>(
     EditorState.createEmpty()
@@ -265,7 +266,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                 {currentStudy.estatusId <= 3 ? (
                   ""
                 ) : (
-                  <Col span={12}>
+                  <Col span={8}>
                     <Button
                       type="default"
                       htmlType="submit"
@@ -291,12 +292,13 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                     </Button>
                   </Col>
                 )}
-                <Col span={12}>
+                <Col span={8}>
                   <Button
                     type="primary"
                     htmlType="submit"
                     // disabled={disabled}
                     onClick={() => {
+                      setEnvioManual(false)
                       form.submit();
                     }}
                     style={{
@@ -306,15 +308,35 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                     }}
                   >
                     {currentStudy.estatusId === status.requestStudy.capturado
-                      ? "Validar estudio"
+                      ? "Validar Estudio"
                       : currentStudy.estatusId === status.requestStudy.validado
-                      ? "Liberar estudio"
+                      ? "Liberar Estudio"
                       : currentStudy.estatusId ===
                         status.requestStudy.solicitado
-                      ? "Guardar captura"
+                      ? "Guardar Captura"
                       : ""}
                   </Button>
                 </Col>
+                {currentStudy.estatusId === status.requestStudy.liberado ? (
+                <Col span={8}>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    // disabled={disabled}
+                    onClick={() => {
+                      setEnvioManual(true);
+                      form.submit();
+                    }}
+                    style={{
+                      backgroundColor: "#6EAA46",
+                      color: "white",
+                      borderColor: "#6EAA46",
+                    }}
+                  >
+                    Envio Manual
+                  </Button>
+                </Col>
+                ): ""}
               </Row>
             </Col>
           </Row>
@@ -347,11 +369,12 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       departamentoEstudio:
         estudio.areaId === 30 ? "HISTOPATOLÓGICO" : "CITOLÓGICO",
     };
+    
     const formData = objectToFormData(reporteClinico);
 
     console.log("resultado actual", toJS(currentResult));
     if (!!currentResult) {
-      await updateResultPathological(formData);
+      await updateResultPathological(formData, envioManual);
     } else {
       await createResultPathological(formData);
     }
@@ -429,7 +452,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
         </Col>
         <Col span={8}>
           <p>
-            IMP -
+            IMP - 
             {currentStudy.estatusId >= 8 && (
               <strong>{`${moment(currentStudy.fechaValidacion).format(
                 "DD/MM/YYYY HH:mm"
@@ -442,7 +465,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
         </Col>
         <Col span={8}>
           <p>
-            VAL -{" "}
+            VAL - {" "}
             {currentStudy.estatusId >= 5 && (
               <strong>{`${moment(currentStudy.fechaValidacion).format(
                 "DD/MM/YYYY HH:mm"
@@ -452,7 +475,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
         </Col>
         <Col span={8}>
           <p>
-            ENV -{" "}
+            ENV - {" "}
             {currentStudy.estatusId >= 7 && (
               <strong>{`${moment(currentStudy.fechaValidacion).format(
                 "DD/MM/YYYY HH:mm"
@@ -462,7 +485,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
         </Col>
         <Col span={8}>
           <p>
-            ENT -{" "}
+            ENT - {" "}
             {currentStudy.estatusId >= 8 && (
               <strong>{`${moment(currentStudy.fechaValidacion).format(
                 "DD/MM/YYYY HH:mm"

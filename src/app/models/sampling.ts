@@ -40,6 +40,9 @@ export interface IStudySampling {
   clave: string;
   solicitudId: string;
   nombreEstatus: string;
+  fechaActualizacion: string;
+  usuarioActualizacion: string;
+  urgencia: number;
 }
 export interface IUpdate {
   solicitudId: string;

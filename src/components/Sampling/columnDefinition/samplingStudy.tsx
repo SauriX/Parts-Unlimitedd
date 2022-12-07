@@ -10,6 +10,7 @@ import {
 } from "../../../app/common/table/utils";
 import { ISamplingList, IStudySampling } from "../../../app/models/sampling";
 const { Link, Text } = Typography;
+
 type expandableProps = {
   activity: string;
   onChange: (e: CheckboxChangeEvent, id: number, solicitud: string) => void;
@@ -127,21 +128,33 @@ export const SamplingStudyExpandable = ({
     },
     {
       ...getDefaultColumnProps("nombreEstatus", "Estatus", {
-        width: "20%",
+        width: "15%",
       }),
-      render: (_value, record) => record.nombreEstatus
+      render: (_value, record) => record.nombreEstatus,
     },
     {
-      ...getDefaultColumnProps("registro", "Registro", {
-        width: "20%",
+      ...getDefaultColumnProps("fechaActualizacion", "Fecha de Actualización", {
+        width: "15%",
+      }),
+      render: (_value, record) => record.fechaActualizacion == null ? " - " : record.fechaActualizacion + " - " + record.usuarioActualizacion,
+    },
+    {
+      ...getDefaultColumnProps("registro", "Fecha de Registro", {
+        width: "15%",
       }),
       render: (_value, record) => record.registro,
     },
     {
-      ...getDefaultColumnProps("entrega", "Entrega", {
-        width: "20%",
+      ...getDefaultColumnProps("entrega", "Fecha de Entrega", {
+        width: "15%",
       }),
-      render: (_value, record) => record.entrega,
+      render: (_value, record) => (
+        <Typography>
+          <Text style={record.urgencia > 1 ? {color: "red"} : {}}>
+            {record.entrega}
+          </Text>
+        </Typography>
+      ),
     },
     {
       key: "Seleccionar",
