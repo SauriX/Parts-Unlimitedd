@@ -19,15 +19,15 @@ import {
 
 import { status } from "../../app/util/catalogs";
 import { useNavigate } from "react-router";
-import { Irelacelist, IrelaceStudyList } from "../../app/models/relaseresult";
+import { checked, Irelacelist, IrelaceStudyList } from "../../app/models/relaseresult";
 const { Link, Text } = Typography;
 
 type expandableProps = {
   activiti: string;
   onChange: (e: CheckboxChangeEvent, id: number, solicitud: string) => void;
   viewTicket: (recordId: any) => Promise<void>;
-  visto: number[],
-  setvisto: React.Dispatch<React.SetStateAction<number[]>>
+  visto: checked[],
+  setvisto: React.Dispatch<React.SetStateAction<checked[]>>
   updateData: IUpdate[],
   //cambiar: boolean
 };
@@ -169,11 +169,20 @@ export const ValidationStudyExpandable = ({
       render: (_value, record) => record.status ,
     },
     {
-      ...getDefaultColumnProps("registro", "Registro", {
-        width: "20%",
-      }),
-      render: (_value, record) => record.registro,
+      key: "registro",
+      dataIndex: "Registro",
+      title: "registro",
+      align: "center",
+      width: "10%",
+      render: (_value, record) => (
+        <>
+            {!record.tipo&&(<p style={{color:"red"}}>{record.registro }</p>)}     
+            { record.tipo&&(<p >{record.registro }</p>)}    
+ 
+        </>
+      ),
     },
+
     {
       ...getDefaultColumnProps("entrega", "Entrega", {
         width: "20%",
@@ -188,7 +197,7 @@ export const ValidationStudyExpandable = ({
       width: "10%",
       render: (_value, record) => (
         <>
-          {(record.estatus === 4 && visto.includes(record.id) || (ver && visto.includes(record.id) && record.estatus === 4 )) && (
+          {(record.estatus === 5 && (visto.find(x=> x.idSolicitud==record.solicitudId && x.idstudio == record.id)!=undefined) || (ver && (visto.find(x=> x.idSolicitud==record.solicitudId && x.idstudio == record.id)!=undefined) && record.estatus ===5 )) && (
             <Checkbox
               onChange={(e) =>{ onChange(e, record.id, record.solicitudId);stcambio(!cambio);}}
               checked={ updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id)||(cambio&&updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id))}
@@ -197,7 +206,7 @@ export const ValidationStudyExpandable = ({
             </Checkbox>
           )}
            {updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id)||(cambio&&updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id))?"":""}
-          {record.estatus === 5 &&   (
+          {record.estatus === 6 &&   (
             <Checkbox
               onChange={(e) => {{onChange(e, record.id, record.solicitudId); stcambio(!cambio);}}}
               checked={ updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id)||(cambio&&updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id))}
@@ -207,7 +216,7 @@ export const ValidationStudyExpandable = ({
           )}
          
           
-         {(record.estatus === 4 ) && ( <EyeOutlined
+         {(record.estatus === 5 ) && ( <EyeOutlined
                 style={{marginLeft:"20%"}}
           key="imprimir"
           onClick={ async () => {
@@ -216,8 +225,8 @@ export const ValidationStudyExpandable = ({
               estudios: [{solicitudId:record.solicitudId,EstudiosId:[{EstudioId:record.id,  }]}],
             };
             var vistos = visto;
-             vistos.push(record.id)
-            
+             vistos.push({idSolicitud:record.solicitudId, idstudio:record.id})
+      
            await  viewTicket(sendFiles);
             setvisto(vistos);
             setver(!ver)
