@@ -80,7 +80,7 @@ const CatalogBudgetForm: FC<CatalogBudgetFormProps> = ({
     setBranchOptions(
       branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
     );
-    form.setFieldValue("sucursal", []);
+    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
@@ -242,7 +242,7 @@ const CatalogBudgetForm: FC<CatalogBudgetFormProps> = ({
                       <Col span={12}>
                         <SelectInput
                           formProps={{
-                            name: "sucursal",
+                            name: "sucursalId",
                             label: "Sucursales",
                             noStyle: true,
                           }}

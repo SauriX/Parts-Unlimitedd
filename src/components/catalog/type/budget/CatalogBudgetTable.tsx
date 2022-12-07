@@ -60,7 +60,7 @@ const CatalogBudgetTable: FC<CatalogBudgetTableProps> = ({
       ),
     },
     {
-      ...getDefaultColumnProps("nombreServicio", "Servicio", {
+      ...getDefaultColumnProps("nombre", "Servicio", {
         searchState,
         setSearchState,
         width: "15%",

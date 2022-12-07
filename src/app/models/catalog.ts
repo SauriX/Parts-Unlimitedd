@@ -42,7 +42,7 @@ export interface ICatalogBudgetForm extends ICatalogForm {
   clave: string;
   nombre: string;
   costoFijo: number;
-  sucursal: string;
+  sucursalId: string;
   activo: boolean;
 }
 
@@ -100,7 +100,7 @@ export class CatalogBudgetFormValues implements ICatalogBudgetForm {
   clave = "";
   nombre = "";
   costoFijo = 0;
-  sucursal = "";
+  sucursalId = "";
   activo = true;
 
   constructor(init?: ICatalogNormalForm) {
