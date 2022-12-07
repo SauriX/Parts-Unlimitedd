@@ -59,7 +59,7 @@ export default class PriceListStore {
   getAllPack = async () => {
     try {
       const roles = await Pack.getAll("all");
-      console.log(roles);
+
       console.log(roles);
       var studies = roles.map((x) => {
         let data: IPriceListEstudioList = {
@@ -76,6 +76,7 @@ export default class PriceListStore {
         };
         return data;
       });
+      
       this.packs = studies;
       return studies;
     } catch (error: any) {

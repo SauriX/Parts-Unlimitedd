@@ -3,8 +3,8 @@ import moment, { Moment } from "moment";
 export interface ISearchValidation{
     fecha: moment.Moment[],
     search:string,
-    departament:number[],
-    area:number[],
+    departament?:number,
+    area?:number,
     estudio:number[],
     medico:string[],
     tipoSoli:number[],
@@ -38,8 +38,8 @@ export interface Ivalidationlist{
 export class searchValues implements ISearchValidation {
     fecha = [moment(moment.now()),moment(moment.now())]
     search="";
-    departament=[];
-    area=[];
+    departament=undefined;
+    area=undefined;
     estudio=[];
     medico=[];
     tipoSoli=[];

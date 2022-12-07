@@ -49,6 +49,7 @@ import ValidationStudyColumns, {
   ValidationStudyExpandable,
 } from "./ValidationStudyTable";
 import { IOptions } from "../../app/models/shared";
+import { checked } from "../../app/models/relaseresult";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -76,12 +77,14 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     getMedicOptions,
     CityOptions,
     getCityOptions,
-    departmentOptions,
+
     getDepartmentOptions,
     companyOptions,
     getCompanyOptions,
     studiesOptions,
     getStudiesOptions,
+    departmentAreaOptions,
+    getDepartmentAreaOptions,
   } = optionStore;
   const {
     getAll,
@@ -96,9 +99,12 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     setSearch,
     clearFilter
   } = resultValidationStore;
+  
+    const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
   const { getCity } = locationStore;
   const [searchParams] = useSearchParams();
   const [form] = Form.useForm<ISearchValidation>();
+  const selectedDepartment = Form.useWatch("departament", form);
   let navigate = useNavigate();
   const [values, setValues] = useState<ISearchValidation>(new searchValues());
   const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
@@ -108,18 +114,37 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   const [expandable, setExpandable] =
     useState<ExpandableConfig<Ivalidationlist>>();
   const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
-  const [visto, setvisto] = useState<number[]>([]);
+  const [visto, setvisto] = useState<checked[]>([]);
   const hasFooterRow = true;
   const [activar, setActivar] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [activiti, setActiviti] = useState<string>("");
   const [openRows, setOpenRows] = useState<boolean>(false);
+  const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
   //const [search,SetSearch] = useState<ISearchMedical>(new SearchMedicalFormValues())
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
+  useEffect(() => {
+
+    getDepartmentAreaOptions();
+  }, [
+
+    getDepartmentAreaOptions,
+  ]);
   const selectedCity = Form.useWatch("ciudad", form);
+  useEffect(() => {
+    setDepartmentOptions(
+      departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [departmentAreaOptions]);
+  useEffect(() => {
+    setAreaOptions(
+      departmentAreaOptions.find((x) => x.value === selectedDepartment)?.options ?? []
+    );
+    form.setFieldValue("sucursalId", []);
+  }, [departmentAreaOptions, form, selectedDepartment]);
   useEffect(() => {
     const readStudy = async () => {
       await getStudiesOptions();
@@ -498,16 +523,11 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
           padding: "10px",
         }}
       >
-        <Form<ISearchValidation>
+       <Form<ISearchValidation>
           {...formItemLayout}
           form={form}
           name="sampling"
-          initialValues={{
-            fecha: [
-              moment(Date.now()).utcOffset(0, true),
-              moment(Date.now()).utcOffset(0, true),
-            ],
-          }}
+          initialValues={values}
           onFinish={onFinish}
           scrollToFirstError
         >
@@ -517,7 +537,6 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                 <Col span={8}>
                   <DateRangeInput
                     formProps={{ label: "Fecha", name: "fecha" }}
-                    disableAfterDates
                   />
                 </Col>
                 <Col span={8}>
@@ -556,30 +575,49 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                     }}
                     multiple
                     options={[
-                      { value: 4, label: "Capturado" },
+                     
                       { value: 5, label: "Validado" },
+                      { value: 6, label: "Liberado" },
+                      { value: 7, label: "Enviado" },
                     ]}
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
-                  <SelectInput
+                  {/* <SelectInput
                     formProps={{
-                      name: "departament",
+                      name: "departamento",
                       label: "Departamento",
                     }}
                     multiple
-                    options={departmentOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{
-                      name: "area",
-                      label: "Área",
-                    }}
-                    multiple
-                    options={areas}
-                  ></SelectInput>
+                    options={departmentAreaOptions}
+                  ></SelectInput> */}
+                  <Form.Item label="Áreas" className="no-error-text" help="">
+                    <Input.Group>
+                      <Row gutter={8}>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "departament",
+                              label: "Departamento",
+                              noStyle: true,
+                            }}
+                            options={departmentOptions}
+                          />
+                        </Col>
+                        <Col span={12}>
+                          <SelectInput
+                            formProps={{
+                              name: "area",
+                              label: "Área",
+                              noStyle: true,
+                            }}
+                            
+                            options={areaOptions}
+                          />
+                        </Col>
+                      </Row>
+                    </Input.Group>
+                  </Form.Item>
                 </Col>
                 <Col span={8}>
                   <SelectInput
