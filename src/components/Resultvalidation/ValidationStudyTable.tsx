@@ -176,7 +176,7 @@ export const ValidationStudyExpandable = ({
       width: "10%",
       render: (_value, record) => (
         <>
-          {(record.estatus === 5 && (visto.find(x=> x.idSolicitud==record.solicitudId && x.idstudio == record.id)!=undefined) || (ver && (visto.find(x=> x.idSolicitud==record.solicitudId && x.idstudio == record.id)!=undefined) && record.estatus ===5 )) && (
+          {(record.estatus === 4 && (visto.find(x=> x.idSolicitud==record.solicitudId && x.idstudio == record.id)!=undefined) || (ver && (visto.find(x=> x.idSolicitud==record.solicitudId && x.idstudio == record.id)!=undefined) && record.estatus ===4 )) && (
             <Checkbox
               onChange={(e) =>{ onChange(e, record.id, record.solicitudId);stcambio(!cambio);}}
               checked={ updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id)||(cambio&&updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id))}
@@ -185,7 +185,7 @@ export const ValidationStudyExpandable = ({
             </Checkbox>
           )}
            {updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id)||(cambio&&updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id))?"":""}
-          {record.estatus === 6 &&   (
+          {record.estatus === 5 &&   (
             <Checkbox
               onChange={(e) => {{onChange(e, record.id, record.solicitudId); stcambio(!cambio);}}}
               checked={ updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id)||(cambio&&updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id))}
@@ -206,7 +206,7 @@ export const ValidationStudyExpandable = ({
             var vistos = visto;
              vistos.push({idSolicitud:record.solicitudId, idstudio:record.id})
       
-            
+            console.log(vistos,"vistos");
            await  viewTicket(sendFiles);
             setvisto(vistos);
             setver(!ver)
