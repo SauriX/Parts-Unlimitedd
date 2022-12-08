@@ -13,9 +13,9 @@ const { Text } = Typography;
 const RelaseResultHeader: FC<RelaseResultHeaderProps> = ({
   handleList,
 }) => {
-  const { procedingStore, optionStore, locationStore, resultValidationStore } = useStore();
+  const { procedingStore, optionStore, locationStore, resultValidationStore,relaseResultStore } = useStore();
 
-  const { getAll, studys, printTicket, update,soliCont,studyCont } =  resultValidationStore;
+  const { getAll, studys, printTicket, update,soliCont,studyCont } =  relaseResultStore;
   return (
     <PageHeader
       ghost={false}

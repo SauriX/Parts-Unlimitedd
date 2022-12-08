@@ -105,7 +105,9 @@ const PriceListForm: FC<PriceListFormProps> = ({
   useEffect(() => {
     const readtabla = async () => {
       let estudiostabla = await getAllStudy();
+     
       let paquetestabla = await getAllPack();
+      
       paquetestabla = paquetestabla?.filter(x=>x.activo);
       let tabla = estudiostabla!.concat(paquetestabla!);
       console.log(tabla);

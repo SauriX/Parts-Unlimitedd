@@ -1,5 +1,10 @@
 import moment, { Moment } from "moment";
 
+export interface checked{
+    idSolicitud:string;
+    idstudio:number;
+}
+
 export interface ISearchRelase{
     fecha: moment.Moment[],
     search:string,
@@ -22,6 +27,7 @@ export interface IrelaceStudyList {
     entrega:string,
     estatus :number
     solicitudId:string,
+    tipo:boolean
 }
 export interface Irelacelist{
     id:string;

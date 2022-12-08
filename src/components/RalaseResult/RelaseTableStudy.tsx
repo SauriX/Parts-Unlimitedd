@@ -28,6 +28,7 @@ const RelaseTableStudy = ({
   useEffect(() => {
     setExpandedRowKeys(data.map((x) => x.id));
     setOpenRows(true);
+    console.log(data,"datas");
   }, [data]);
 
   const toggleRow = () => {

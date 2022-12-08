@@ -9,9 +9,9 @@ import ResultValidationHeader from "../components/Resultvalidation/ResultValidat
 import ResultValidationTable from "../components/Resultvalidation/ResultValidationTable";
 
 const Relaseresult = () => {
-  const { resultValidationStore,procedingStore } = useStore();
+  const { resultValidationStore,procedingStore,relaseResultStore } = useStore();
    //const { /* scopes, access, clearScopes, */ exportList,search } = procedingStore;
-  const { /* scopes, access, clearScopes, */ exportList,search } = resultValidationStore;
+  const { /* scopes, access, clearScopes, */ exportList,search } = relaseResultStore;
   const [searchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);
