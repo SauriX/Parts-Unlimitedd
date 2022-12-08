@@ -422,6 +422,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           taxdata.push(element);
         }
       }
+      console.log("taxData", toJS(tax));
       reagent.taxData = taxdata;
       console.log("taxData", taxdata);
       if (!reagent.id) {
