@@ -29,6 +29,7 @@ export interface ISamplingList {
 }
 export interface IStudySampling {
   id: number;
+  solicitudEstudioId: number;
   nombre: string;
   area: string;
   estatus: number;
@@ -43,11 +44,19 @@ export interface IStudySampling {
   fechaActualizacion: string;
   usuarioActualizacion: string;
   urgencia: number;
+  observacion: string;
 }
 export interface IUpdate {
   solicitudId: string;
   estudioId: number[];
+  observacion?: ISamplingComment[];
 }
+
+export interface ISamplingComment {
+  id: number;
+  observacion: string;
+}
+
 export class SamplingFormValues implements ISamplingForm {
   fecha = [moment(moment.now()), moment(moment.now())];
   buscar = "";

@@ -1,9 +1,9 @@
-import { Button, Col, Row, Spin } from "antd";
+import { Button, Col, Form, Row, Spin } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { Fragment, useState } from "react";
-import { IUpdate } from "../../app/models/requestedStudy";
+import { ISamplingComment, IUpdate } from "../../app/models/sampling";
 import { useStore } from "../../app/stores/store";
 import alerts from "../../app/util/alerts";
 import SamplingStudyColumns, {
@@ -19,6 +19,9 @@ type RSDefaultProps = {
 const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
   const { samplingStudyStore } = useStore();
   const { data, update, printOrder, getAll, formValues } = samplingStudyStore;
+
+  const [form] = Form.useForm();
+
   const [updateForm, setUpdateForm] = useState<IUpdate[]>([]);
   const [activity, setActivity] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -58,6 +61,20 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
   };
 
   const updateData = async () => {
+    const obs = form.getFieldsValue();
+    console.log(obs);
+
+    let observaciones: ISamplingComment[] = Object.keys(obs).map(x => ({id: parseInt(x), observacion: obs[x]}));
+
+    let studyWithComments: IUpdate[] = updateForm.map(x => {
+      return {
+        ...x, observacion: observaciones.filter(y => x.estudioId.includes(y.id))
+      }
+    })
+
+    setUpdateForm(studyWithComments)
+    console.log(studyWithComments)
+
     setLoading(true);
     if (activity == "register") {
       alerts.confirm(
@@ -68,7 +85,7 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
           updateForm.length
         } solicitud(es) a estatus Toma de Muestra. ¿Deseas continuar?`,
         async () => {
-          var success = await update(updateForm!);
+          var success = await update(studyWithComments);
           if (success) {
             setLoading(false);
             setUpdateForm([]);
@@ -173,14 +190,16 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
             </Row>
           </Col>
         </Row>
-        <SamplingStudyTable
-          data={data}
-          columns={SamplingStudyColumns({ printOrder })}
-          expandable={SamplingStudyExpandable({
-            activity,
-            onChange,
-          })}
-        />
+        <Form form={form}>
+          <SamplingStudyTable
+            data={data}
+            columns={SamplingStudyColumns({ printOrder })}
+            expandable={SamplingStudyExpandable({
+              activity,
+              onChange,
+            })}
+          />
+        </Form>
       </Spin>
     </Fragment>
   );
