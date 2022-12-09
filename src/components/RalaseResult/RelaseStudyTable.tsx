@@ -3,7 +3,7 @@ import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import moment from "moment";
 import { useState } from "react";
 import PrintIcon from "../../app/common/icons/PrintIcon";
-import {EyeOutlined } from "@ant-design/icons";
+import { EyeOutlined } from "@ant-design/icons";
 import {
   IColumns,
   ISearch,
@@ -16,25 +16,27 @@ import {
   IUpdate,
 } from "../../app/models/requestedStudy";
 
-
 import { status } from "../../app/util/catalogs";
 import { useNavigate } from "react-router";
-import { checked, Irelacelist, IrelaceStudyList } from "../../app/models/relaseresult";
+import {
+  checked,
+  Irelacelist,
+  IrelaceStudyList,
+} from "../../app/models/relaseresult";
 const { Link, Text } = Typography;
 
 type expandableProps = {
   activiti: string;
   onChange: (e: CheckboxChangeEvent, id: number, solicitud: string) => void;
   viewTicket: (recordId: any) => Promise<void>;
-  visto: checked[],
-  setvisto: React.Dispatch<React.SetStateAction<checked[]>>
-  updateData: IUpdate[],
+  visto: checked[];
+  setvisto: React.Dispatch<React.SetStateAction<checked[]>>;
+  updateData: IUpdate[];
   //cambiar: boolean
 };
 
 type tableProps = {
   printTicket: (recordId: string, requestId: string) => Promise<void>;
-  
 };
 
 const RelaseStudyColumns = ({ printTicket }: tableProps) => {
@@ -54,10 +56,8 @@ const RelaseStudyColumns = ({ printTicket }: tableProps) => {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <Link
             onClick={() => {
-              navigate(
-                `/clinicResultsDetails/${record?.order}/${record?.id}`
-              );
-/*               navigate(
+              navigate(`/clinicResultsDetails/${record?.order}/${record?.id}`);
+              /*               navigate(
                 `/requests/${record.order}/${record.id}`
               ); */
             }}
@@ -116,11 +116,7 @@ const RelaseStudyColumns = ({ printTicket }: tableProps) => {
       title: "Parcialidad",
       align: "center",
       width: "10%",
-      render: (_value, record) => (
-        <>
-          {_value?"Si":"No"} 
-        </>
-      ),
+      render: (_value, record) => <>{_value ? "Si" : "No"}</>,
     },
     {
       key: "imprimir",
@@ -130,13 +126,12 @@ const RelaseStudyColumns = ({ printTicket }: tableProps) => {
       width: "10%",
       render: (_value, record) => (
         <>
-        <PrintIcon
-          key="imprimir"
-          onClick={() => {
-            printTicket(record.order, record.id);
-          }}
-        />
-           
+          <PrintIcon
+            key="imprimir"
+            onClick={() => {
+              printTicket(record.order, record.id);
+            }}
+          />
         </>
       ),
     },
@@ -151,10 +146,10 @@ export const ValidationStudyExpandable = ({
   visto,
   setvisto,
   updateData,
- // cambiar
-}: expandableProps) => {
-  const [ver, setver]=useState<boolean>(false);
-  const [cambio, stcambio]=useState<boolean>(false);
+}: // cambiar
+expandableProps) => {
+  const [ver, setver] = useState<boolean>(false);
+  const [cambio, stcambio] = useState<boolean>(false);
   const nestedColumns: IColumns<IrelaceStudyList> = [
     {
       ...getDefaultColumnProps("clave", "Estudio", {
@@ -166,7 +161,7 @@ export const ValidationStudyExpandable = ({
       ...getDefaultColumnProps("nombreEstatus", "Estatus", {
         width: "20%",
       }),
-      render: (_value, record) => record.status ,
+      render: (_value, record) => record.status,
     },
     {
       key: "registro",
@@ -175,11 +170,11 @@ export const ValidationStudyExpandable = ({
       align: "center",
       width: "10%",
       render: (_value, record) => (
-        <>
-            {!record.tipo&&(<p style={{color:"red"}}>{record.registro }</p>)}     
-            { record.tipo&&(<p >{record.registro }</p>)}    
- 
-        </>
+        <Typography>
+          <Text style={!record.tipo ? { color: "red" } : {}}>
+            {record.registro}
+          </Text>
+        </Typography>
       ),
     },
 
@@ -187,7 +182,7 @@ export const ValidationStudyExpandable = ({
       ...getDefaultColumnProps("entrega", "Entrega", {
         width: "20%",
       }),
-      render: (_value, record) =>record.entrega,
+      render: (_value, record) => record.entrega,
     },
     {
       key: "Seleccionar",
@@ -197,41 +192,90 @@ export const ValidationStudyExpandable = ({
       width: "10%",
       render: (_value, record) => (
         <>
-          {(record.estatus === 5 && (visto.find(x=> x.idSolicitud==record.solicitudId && x.idstudio == record.id)!=undefined) || (ver && (visto.find(x=> x.idSolicitud==record.solicitudId && x.idstudio == record.id)!=undefined) && record.estatus ===5 )) && (
+          {((record.estatus === 5 &&
+            visto.find(
+              (x) =>
+                x.idSolicitud == record.solicitudId && x.idstudio == record.id
+            ) != undefined) ||
+            (ver &&
+              visto.find(
+                (x) =>
+                  x.idSolicitud == record.solicitudId && x.idstudio == record.id
+              ) != undefined &&
+              record.estatus === 5)) && (
             <Checkbox
-              onChange={(e) =>{ onChange(e, record.id, record.solicitudId);stcambio(!cambio);}}
-              checked={ updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id)||(cambio&&updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id))}
+              onChange={(e) => {
+                onChange(e, record.id, record.solicitudId);
+                stcambio(!cambio);
+              }}
+              checked={
+                updateData
+                  .find((x) => x.solicitudId == record.solicitudId)
+                  ?.estudioId.includes(record.id) ||
+                (cambio &&
+                  updateData
+                    .find((x) => x.solicitudId == record.solicitudId)
+                    ?.estudioId.includes(record.id))
+              }
               disabled={!(activiti == "register")}
-            >
-            </Checkbox>
+            ></Checkbox>
           )}
-           {updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id)||(cambio&&updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id))?"":""}
-          {record.estatus === 6 &&   (
+          {updateData
+            .find((x) => x.solicitudId == record.solicitudId)
+            ?.estudioId.includes(record.id) ||
+          (cambio &&
+            updateData
+              .find((x) => x.solicitudId == record.solicitudId)
+              ?.estudioId.includes(record.id))
+            ? ""
+            : ""}
+          {record.estatus === 6 && (
             <Checkbox
-              onChange={(e) => {{onChange(e, record.id, record.solicitudId); stcambio(!cambio);}}}
-              checked={ updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id)||(cambio&&updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id))}
+              onChange={(e) => {
+                {
+                  onChange(e, record.id, record.solicitudId);
+                  stcambio(!cambio);
+                }
+              }}
+              checked={
+                updateData
+                  .find((x) => x.solicitudId == record.solicitudId)
+                  ?.estudioId.includes(record.id) ||
+                (cambio &&
+                  updateData
+                    .find((x) => x.solicitudId == record.solicitudId)
+                    ?.estudioId.includes(record.id))
+              }
               disabled={!(activiti == "cancel")}
-            >
-            </Checkbox>
+            ></Checkbox>
           )}
-         
-          
-         {(record.estatus === 5 ) && ( <EyeOutlined
-                style={{marginLeft:"20%"}}
-          key="imprimir"
-          onClick={ async () => {
-            const sendFiles = {
-              mediosEnvio: ["selectSendMethods"],
-              estudios: [{solicitudId:record.solicitudId,EstudiosId:[{EstudioId:record.id,  }]}],
-            };
-            var vistos = visto;
-             vistos.push({idSolicitud:record.solicitudId, idstudio:record.id})
-      
-           await  viewTicket(sendFiles);
-            setvisto(vistos);
-            setver(!ver)
-          }}
-        />)}
+
+          {record.estatus === 5 && activiti == "register" && (
+            <EyeOutlined
+              style={{ marginLeft: "20%" }}
+              key="imprimir"
+              onClick={async () => {
+                const sendFiles = {
+                  mediosEnvio: ["selectSendMethods"],
+                  estudios: [
+                    {
+                      solicitudId: record.solicitudId,
+                      EstudiosId: [{ EstudioId: record.id }],
+                    },
+                  ],
+                };
+                var vistos = visto;
+                vistos.push({
+                  idSolicitud: record.solicitudId,
+                  idstudio: record.id,
+                });
+
+                await viewTicket(sendFiles);
+                setvisto(vistos);
+                setver(!ver);
+              }}
+            />
+          )}
         </>
       ),
     },

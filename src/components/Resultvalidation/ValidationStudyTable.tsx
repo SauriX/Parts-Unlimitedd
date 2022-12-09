@@ -195,7 +195,7 @@ export const ValidationStudyExpandable = ({
           )}
          
           
-         {(record.estatus === 4 ) && ( <EyeOutlined
+         {(record.estatus === 4 && activiti == "register" ) && ( <EyeOutlined
                 style={{marginLeft:"20%"}}
           key="imprimir"
           onClick={ async () => {
