@@ -45,7 +45,7 @@ const CreationTrackingOrderHeader: FC<CreationTrackingOrderHeaderProps> = ({
             navigate(`/segRutas`);
           }}
         />,
-        <PrintIcon onClick={handlePrint} />,
+    /*     <PrintIcon onClick={handlePrint} />, */
         <DownloadIcon onClick={download} />,
       ]}
     ></PageHeader>
