@@ -1,4 +1,4 @@
-import { IOptionsCatalog } from "./shared";
+import { IOptions, IOptionsCatalog } from "./shared";
 export interface ITaxList {
   id: string;
   rfc: string;
@@ -11,7 +11,7 @@ export interface ITaxData {
   expedienteId?: string;
   rfc: string;
   razonSocial: string;
-  regimenFiscal?: string;
+  regimenFiscal?: IOptions;
   cp: string;
   estado: string;
   municipio: string;

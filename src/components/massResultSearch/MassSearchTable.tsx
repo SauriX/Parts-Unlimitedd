@@ -19,6 +19,7 @@ import useWindowDimensions, { resizeWidth } from "../../app/util/window";
 import { ppid } from "process";
 import { useNavigate } from "react-router-dom";
 import React from "react";
+import moment from "moment";
 
 const { Link } = Typography;
 
@@ -33,6 +34,7 @@ const MassSearchTable = () => {
     searchedColumn: "",
   });
   const [columnas, setColumnas] = useState<any>([]);
+
   useEffect(() => {
     const cols = parameters.map((parameter: IParameter) => {
       return {
@@ -89,10 +91,6 @@ const MassSearchTable = () => {
               <Col>
                 <Link
                   onClick={() => {
-                    console.log(
-                      "enlace",
-                      `/clinicResultsDetails/${row.expedienteId}/${row.id}`
-                    );
                     navigate(
                       `/clinicResultsDetails/${row.expedienteId}/${row.id}`
                     );
@@ -121,6 +119,7 @@ const MassSearchTable = () => {
           </>
         );
       },
+
       fixed: "left",
     },
     ...columnas,

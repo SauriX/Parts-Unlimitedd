@@ -37,6 +37,8 @@ export default class SamplingStore {
     this.formValues = newFormValues;
   };
 
+  
+
   access = async () => {
     try {
       const scopes = await Sampling.access();

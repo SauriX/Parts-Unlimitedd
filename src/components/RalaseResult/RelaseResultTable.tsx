@@ -44,14 +44,14 @@ import ValidationStudyColumns, {
   ValidationStudyExpandable,
 } from "./RelaseStudyTable";
 import { IOptions } from "../../app/models/shared";
-import { Irelacelist, ISearchRelase, searchrelase } from "../../app/models/relaseresult";
+import { checked, Irelacelist, ISearchRelase, searchrelase } from "../../app/models/relaseresult";
 import RelaseTableStudy from "./RelaseTableStudy";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
-const studys =[{
+/* const studys =[{
   id:"string",
   solicitud:"string",
   nombre:"string",
@@ -72,7 +72,7 @@ const studys =[{
   }],
   order: "string",
   parcialidad:true
-}]
+}] */
 const RelaseResultTable: FC<ProceedingTableProps> = ({
   componentRef,
   printing,
@@ -104,7 +104,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   } = optionStore;
   const {
     getAll,
-    //studys,
+    studys,
     printTicket,
     update,
     setSoliCont,
@@ -127,7 +127,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   const [expandable, setExpandable] =
     useState<ExpandableConfig<Irelacelist>>();
   const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
-  const [visto, setvisto] = useState<number[]>([]);
+  const [visto, setvisto] = useState<checked[]>([]);
   const hasFooterRow = true;
   const [activar, setActivar] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
@@ -250,7 +250,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
         `Se ha(n) enviado ${ids.length} estudio(s) de ${
           solicitudesData.length
         } solicitud(es) a estatus ${
-          activiti == "register" ? "validado" : "capturado"
+          activiti == "register" ? "liberado" : "validado"
         } de manera exitosa `,
         async () => {
           var succes = await update(updateData!);
@@ -525,6 +525,17 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   return (
     <Fragment>
       <div style={{ marginBottom: "5px", marginLeft: "90%" }}>
+      <Button
+          key="filter"
+          type="primary"
+          onClick={(e) => {
+            e.stopPropagation();
+            form.submit();
+          }}
+          style={{ marginLeft: "10%" }}
+        >
+          Filtrar
+        </Button>
         <Button
           key="clean"
           onClick={(e) => {
@@ -538,17 +549,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
         >
           Limpiar
         </Button>
-        <Button
-          key="filter"
-          type="primary"
-          onClick={(e) => {
-            e.stopPropagation();
-            form.submit();
-          }}
-          style={{ marginLeft: "10%" }}
-        >
-          Filtrar
-        </Button>
+
       </div>
       <div
         className="status-container"
@@ -614,8 +615,10 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
                     }}
                     multiple
                     options={[
-                      { value: 4, label: "Capturado" },
+                     
                       { value: 5, label: "Validado" },
+                      { value: 6, label: "Liberado" },
+                      { value: 7, label: "Enviado" },
                     ]}
                   ></SelectInput>
                 </Col>
@@ -648,7 +651,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
                               label: "Área",
                               noStyle: true,
                             }}
-                            multiple
+                            
                             options={areaOptions}
                           />
                         </Col>
@@ -718,7 +721,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
             type={activiti == "register" ? "primary" : "ghost"}
             onClick={register}
           >
-            Registrar Validación
+            Registrar Liberación  
           </Button>
           <Button
             style={{
@@ -729,7 +732,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
             type={activiti == "cancel" ? "primary" : "ghost"}
             onClick={cancel}
           >
-            Cancelar Validación
+            Cancelar Liberación  
           </Button>
         </Col>
         <Col md={13}></Col>
@@ -748,7 +751,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
               }}
             >
               {activar ? "" : " "}
-              Aceptar Registro
+              Aceptar Liberación  
             </Button>
           ) : (
             ""
@@ -767,7 +770,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
               }}
             >
               {activar ? "" : " "}
-              Cancelar Registro
+              Cancelar Liberación  
             </Button>
           ) : (
             ""

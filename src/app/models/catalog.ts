@@ -32,6 +32,20 @@ export interface ICatalogDimensionForm extends ICatalogForm {
   activo: boolean;
 }
 
+export interface ICatalogBudgetList extends ICatalogList {
+  clave: string;
+  nombreServicio: string;
+  activo: boolean;
+}
+
+export interface ICatalogBudgetForm extends ICatalogForm {
+  clave: string;
+  nombre: string;
+  costoFijo: number;
+  sucursalId: string;
+  activo: boolean;
+}
+
 export interface ICatalogDescriptionList extends ICatalogNormalList {
   descripcion: string;
 }
@@ -74,6 +88,19 @@ export class CatalogDescriptionFormValues implements ICatalogDescriptionForm {
 export class CatalogDimensionFormValues implements ICatalogDimensionForm {
   id = 0;
   clave = "";
+  activo = true;
+
+  constructor(init?: ICatalogNormalForm) {
+    Object.assign(this, init);
+  }
+}
+
+export class CatalogBudgetFormValues implements ICatalogBudgetForm {
+  id = 0;
+  clave = "";
+  nombre = "";
+  costoFijo = 0;
+  sucursalId = "";
   activo = true;
 
   constructor(init?: ICatalogNormalForm) {

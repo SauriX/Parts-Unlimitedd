@@ -76,6 +76,9 @@ import ResultValidation from "../../views/ResultValidation";
 import RequestWee from "../../components/request/list/RequestWee";
 import RequestTokenValidation from "../../components/request/detail/RequestTokenValidation";
 import DeliveryResults from "../../views/DeliveryResults";
+import Invoice from "../../views/Invoice";
+import Notifications from "../../views/Notifications";
+import NotificationsDetail from "../../components/notifications/NotificationsDetail";
 import Relaseresult from "../../views/Relaseresult";
 
 function App() {
@@ -156,6 +159,9 @@ function App() {
             <Route path="companies/new" element={<CompanyDetail />} />
             <Route path="indications" element={<Indication />} />
             <Route path="indications/:id" element={<IndicationDetail />} />
+            <Route path="invoice" element={<Invoice />} />
+            <Route path="notifications" element={<Notifications />} />
+            <Route path="notifications/:id" element={<NotificationsDetail />} />
             <Route path="roles/new-role" element={<NewRole />} />
             <Route path="roles/:id" element={<RoleDetail />} />
             <Route path="branches" element={<Branch />} />
@@ -238,7 +244,7 @@ function App() {
               path={`${views.resultValidation}`}
               element={<ResultValidation />}
             />
-                        <Route
+            <Route
               path={`${views.relaseValidation}`}
               element={<Relaseresult />}
             />

@@ -359,9 +359,8 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     if (reagent.nombre == "" || reagent.apellido == "" || reagent.sexo == "") {
       alerts.warning("El nombre y sexo no pueden estar vacíos");
     }
-    console.log("REAGENT NEW ",toJS(reagent))
-    if(reagent.colonia ){
-
+    console.log("REAGENT NEW ", toJS(reagent));
+    if (reagent.colonia) {
     }
     if (coincidencia.length > 0 && !reagent.id!) {
       openModal({
@@ -423,6 +422,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           taxdata.push(element);
         }
       }
+      console.log("taxData", toJS(tax));
       reagent.taxData = taxdata;
       console.log("taxData", taxdata);
       if (!reagent.id) {
@@ -509,6 +509,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       width: 200,
       render: (_value, cotizacion) => (
         <IconButton
+          disabled={readonly}
           title="Editar Expediente"
           icon={<EditOutlined />}
           onClick={() => {
@@ -697,6 +698,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
         <IconButton
           title="Editar cita"
           icon={<EditOutlined />}
+          disabled={readonly}
           onClick={() => {
             navigate(
               `/${views.appointment}/${value}?type=${item.type}&mode=edit`
@@ -715,6 +717,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
         <Button
           type="primary"
           title=""
+          disabled={readonly}
           onClick={async () => {
             if (item.type == "laboratorio") {
               // const convert: IConvertToRequest = {
@@ -1089,6 +1092,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     color: "white",
                     borderColor: "#6EAA46",
                   }}
+                  disabled={readonly}
                 >
                   Datos Fiscales
                 </Button>
@@ -1123,6 +1127,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                       navigate(`/requests/${id}`);
                     }}
                     type="primary"
+                    disabled={readonly}
                   >
                     {" "}
                     Agregar solicitud
@@ -1139,6 +1144,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                       navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
                     }}
                     type="primary"
+                    disabled={readonly}
                   >
                     {" "}
                     Agregar cotización
@@ -1155,6 +1161,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                       navigate(`/appointments`);
                     }}
                     type="primary"
+                    disabled={readonly}
                   >
                     {" "}
                     Agregar cita
@@ -1188,7 +1195,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                       activarMonedero();
                     }}
                     type="primary"
-                    disabled={values.hasWallet}
+                    disabled={values.hasWallet || readonly}
                   >
                     Activar monedero
                   </Button>

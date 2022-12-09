@@ -59,7 +59,7 @@ export interface IOptions {
 // }
 
 export interface IOptionsCatalog extends IOptions {
-  type: "normal" | "description" | "dimension" | "area";
+  type: "normal" | "description" | "dimension" | "area" | "budget";
 }
 
 export interface IOptionsReport extends IOptions {

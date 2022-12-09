@@ -100,7 +100,7 @@ const DatosFiscalesForm = ({
     if (field === "cp") {
       const zipCode = changedValues[field] as string;
       if (zipCode.length < 5) {
-        setErrors([{ name: "cp", errors: ["La longitud minima es de 5"] }]);
+        setErrors([{ name: "cp", errors: ["La longitud mínima es de 5"] }]);
       } else {
         setErrors([]);
       }
@@ -134,21 +134,36 @@ const DatosFiscalesForm = ({
       setLoading(false);
       return;
     }
-
     const regimen = regimenFiscal.find(
-      (x) => x.value === newValues.regimenFiscal
+      (x) => x.label === newValues.regimenFiscal
     );
-    newValues.regimenFiscal = regimen?.label?.toString();
+    // newValues.regimenFiscal = regimen?.label?.toString();
 
     var taxes: ITaxData[] = local ? [...localTaxData] : [...(tax ?? [])];
     if (!isEditing) {
+      if (taxes.find((x) => x.rfc === newValues.rfc)) {
+        alerts.warning(`El RFC ${newValues.rfc} ya existe`);
+        setLoading(false);
+        return;
+      }
+      if (taxes.find((x) => x.razonSocial === newValues.razonSocial)) {
+        alerts.warning(`La razón social ${newValues.razonSocial} ya existe`);
+        setLoading(false);
+        return;
+      }
+    } else {
+      if (taxes.find((x) => x.rfc === newValues.rfc && x.id !== newValues.id)) {
+        alerts.warning(`El RFC ${newValues.rfc} ya existe`);
+        setLoading(false);
+        return;
+      }
       if (
         taxes.find(
           (x) =>
-            x.rfc === newValues.rfc || x.razonSocial == newValues.razonSocial
+            x.razonSocial === newValues.razonSocial && x.id !== newValues.id
         )
       ) {
-        alerts.warning(`El RFC ${newValues.rfc} ya existe`);
+        alerts.warning(`La razón social ${newValues.razonSocial} ya existe`);
         setLoading(false);
         return;
       }
@@ -229,11 +244,12 @@ const DatosFiscalesForm = ({
           title="Editar datos fiscales"
           icon={<EditOutlined />}
           onClick={() => {
+            console.log("ITEM: ", toJS(item));
             setIsEditing(true);
             getColonies(item.cp);
-            item.regimenFiscal = regimenFiscal
-              .find((x) => x.label === item.regimenFiscal)
-              ?.value?.toString();
+            // item.regimenFiscal = regimenFiscal
+            //   .find((x) => x.label === item.regimenFiscal)
+            //   ?.value?.toString();
             form.setFieldsValue(item);
           }}
         />

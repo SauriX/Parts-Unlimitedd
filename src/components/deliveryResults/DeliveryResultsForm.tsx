@@ -59,6 +59,10 @@ const DeliveryResultsForm = () => {
     getDepartmentOptions,
   ]);
 
+  useEffect(() => {
+    getAllCaptureResults(form.getFieldsValue() as IDeliverResultsForm);
+  }, []);
+
   const onFinish = async (newFormValues: any) => {
     console.log("newFormValues", newFormValues);
     const formValues = {
@@ -151,9 +155,6 @@ const DeliveryResultsForm = () => {
                 multiple
                 formProps={{ label: "Compañias", name: "companias" }}
                 options={companyOptions}
-                onChange={(value: any, option: any) => {
-                  console.log("areas", value, option);
-                }}
               />
             </Col>
             <Col span={8}>

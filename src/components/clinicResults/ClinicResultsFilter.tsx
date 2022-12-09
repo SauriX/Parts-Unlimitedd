@@ -88,7 +88,7 @@ const ClinicResultsFilter = () => {
     setAreaOptions(
       departmentAreaOptions.find((x) => x.value === selectedDepartment)?.options ?? []
     );
-    form.setFieldValue("sucursalId", []);
+    form.setFieldValue("area", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
 
   const onFinish = async (newFormValues: IClinicResultForm) => {

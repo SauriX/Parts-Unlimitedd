@@ -80,7 +80,7 @@ IProps) => {
         if (!value || value.length >= min) {
           return Promise.resolve();
         }
-        return Promise.reject(`La longitud minima es de ${min}`);
+        return Promise.reject(`La longitud mínima es de ${min}`);
       },
     });
   }

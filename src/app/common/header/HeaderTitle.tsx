@@ -77,4 +77,6 @@ export type imagesType =
   | "worklist"
   | "validacion"
   | "massSearch"
+  | "invoice-company"
+  | "notifications"
   | "enviar-datos";
