@@ -1,7 +1,9 @@
-import { Checkbox, Table, Typography } from "antd";
+import { Checkbox, Input, Table, Typography } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import TextArea from "antd/lib/input/TextArea";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
 import PrintIcon from "../../../app/common/icons/PrintIcon";
 import {
   IColumns,
@@ -122,7 +124,7 @@ export const SamplingStudyExpandable = ({
   const nestedColumns: IColumns<IStudySampling> = [
     {
       ...getDefaultColumnProps("clave", "Estudio", {
-        width: "30%",
+        width: "20%",
       }),
       render: (_value, record) => record.clave + " - " + record.nombre,
     },
@@ -136,7 +138,10 @@ export const SamplingStudyExpandable = ({
       ...getDefaultColumnProps("fechaActualizacion", "Fecha de Actualización", {
         width: "15%",
       }),
-      render: (_value, record) => record.fechaActualizacion == null ? " - " : record.fechaActualizacion + " - " + record.usuarioActualizacion,
+      render: (_value, record) =>
+        record.fechaActualizacion == null
+          ? " - "
+          : record.fechaActualizacion + " - " + record.usuarioActualizacion,
     },
     {
       ...getDefaultColumnProps("registro", "Fecha de Registro", {
@@ -150,29 +155,54 @@ export const SamplingStudyExpandable = ({
       }),
       render: (_value, record) => (
         <Typography>
-          <Text style={record.urgencia > 1 ? {color: "red"} : {}}>
+          <Text style={record.urgencia > 1 ? { color: "red" } : {}}>
             {record.entrega}
           </Text>
         </Typography>
       ),
     },
     {
+      key: "observacion",
+      dataIndex: "observacion",
+      title: "Observación",
+      align: "center",
+      width: "15%",
+      render: (_value, record) => {
+        return (
+          <>
+            {record.estatus == 1 ? (
+              <TextAreaInput
+                formProps={{ name: record.solicitudEstudioId }}
+                rows={4}
+                autoSize
+                readonly={!(activity == "register")}
+              />
+            ) : (
+              <Text>
+                {record.observacion == null ? "-" : record.observacion}
+              </Text>
+            )}
+          </>
+        );
+      },
+    },
+    {
       key: "Seleccionar",
       dataIndex: "seleccionar",
       title: "Seleccionar",
       align: "center",
-      width: "10%",
+      width: "5%",
       render: (_value, record) => (
         <>
           {record.estatus === 1 && (
             <Checkbox
-              onChange={(e) => onChange(e, record.id, record.solicitudId)}
+              onChange={(e) => onChange(e, record.solicitudEstudioId, record.solicitudId)}
               disabled={!(activity == "register")}
             ></Checkbox>
           )}
           {record.estatus === 2 && (
             <Checkbox
-              onChange={(e) => onChange(e, record.id, record.solicitudId)}
+              onChange={(e) => onChange(e, record.solicitudEstudioId, record.solicitudId)}
               disabled={!(activity == "cancel")}
             ></Checkbox>
           )}

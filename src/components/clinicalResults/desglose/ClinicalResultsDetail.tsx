@@ -234,7 +234,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                   ""
                 ) : (
                   <>
-                    <Col span={currentStudy.estudioId == 631 ? 8 : 12}>
+                    <Col span={currentStudy.estudioId == 631 ? 8 : currentStudy.estatusId == status.requestStudy.liberado ? 6 : 12}>
                       <Button
                         type="default"
                         htmlType="submit"
@@ -263,7 +263,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                     </Col>
                   </>
                 )}
-                <Col span={currentStudy.estudioId == 631 ? 8 : 12}>
+                <Col span={currentStudy.estudioId == 631 ? 8 : currentStudy.estatusId == status.requestStudy.liberado ? 6 : 12}>
                   <Button
                     type="primary"
                     htmlType="submit"
@@ -288,7 +288,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                   </Button>
                 </Col>
                 {currentStudy.estatusId === status.requestStudy.liberado ? (
-                  <Col span={8}>
+                  <Col span={currentStudy.estudioId == 631 ? 8 : currentStudy.estatusId == status.requestStudy.liberado ? 6 : 12}>
                     <Button
                       type="primary"
                       htmlType="submit"
@@ -311,7 +311,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                 )}
                 {currentStudy.estudioId == 631 &&
                 currentStudy.estatusId >= 5 ? (
-                  <Col span={8}>
+                  <Col span={currentStudy.estudioId == 631 ? 8 : currentStudy.estatusId == status.requestStudy.liberado ? 6 : 12}>
                     <Button
                       type="primary"
                       icon={<DownloadOutlined />}
