@@ -27,12 +27,12 @@ const RequestRegister = () => {
   const {
     request,
     payments,
+    totals,
     getPayments,
     getNextPaymentCode,
     printTicket,
     createPayment,
     cancelPayments,
-    calculateTotals,
   } = requestStore;
   const { openModal } = modalStore;
   const { printXML } = invoiceStore;
@@ -240,7 +240,7 @@ const RequestRegister = () => {
                     label: "Cantidad",
                   }}
                   min={0}
-                  max={999999}
+                  max={totals.saldo}
                   formatter={(value) => {
                     return `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                   }}
@@ -258,7 +258,7 @@ const RequestRegister = () => {
                     name: "numeroCuenta",
                     label: "Número de cuenta",
                   }}
-                  max={100}
+                  max={20}
                 />
               </Col>
               <Col span={2}>
@@ -280,7 +280,6 @@ const RequestRegister = () => {
                   placeholder="Número"
                   max={100}
                   readonly
-                  required
                   errors={errors.find((x) => x.name === "numero")?.errors}
                 />
               </Col>
