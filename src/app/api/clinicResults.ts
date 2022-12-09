@@ -39,7 +39,7 @@ const ClinicResults = {
     envioManual: boolean
   ): Promise<void> =>
     requests.put(`clinicResults/updatePathological/${envioManual}`, search),
-  sendResultFile: (listResults: any): Promise<void> =>
+  sendResultFile: (listResults: any): Promise<boolean> =>
     requests.put(`clinicResults/sendResultFile`, listResults),
   updateStatusStudy: (requestStudyId: number, status: number): Promise<void> =>
     requests.put(`clinicResults/updateStatusStudy`, { requestStudyId, status }),

@@ -59,6 +59,10 @@ const DeliveryResultsForm = () => {
     getDepartmentOptions,
   ]);
 
+  useEffect(() => {
+    getAllCaptureResults(form.getFieldsValue() as IDeliverResultsForm);
+  }, []);
+
   const onFinish = async (newFormValues: any) => {
     console.log("newFormValues", newFormValues);
     const formValues = {
