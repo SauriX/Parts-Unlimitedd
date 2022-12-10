@@ -124,6 +124,7 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
 
   const register = () => {
     setActivity("register");
+    setUpdateForm([]);
     if (activity == "register") {
       setActivity("");
     }
@@ -131,6 +132,7 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
 
   const cancel = () => {
     setActivity("cancel");
+    setUpdateForm([]);
     if (activity == "cancel") {
       setActivity("");
     }
@@ -197,6 +199,7 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
             expandable={SamplingStudyExpandable({
               activity,
               onChange,
+              updateForm
             })}
           />
         </Form>

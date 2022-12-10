@@ -107,6 +107,7 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
 
   const register = () => {
     setActivity("register");
+    setUpdateForm([]);
     if (activity == "register") {
       setActivity("");
     }
@@ -114,6 +115,7 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
 
   const cancel = () => {
     setActivity("cancel");
+    setUpdateForm([]);
     if (activity == "cancel") {
       setActivity("");
     }
@@ -179,6 +181,7 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
           expandable={RequestedStudyExpandable({
             activity,
             onChange,
+            updateForm
           })}
         />
       </Spin>

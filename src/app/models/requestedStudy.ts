@@ -19,6 +19,7 @@ export interface IRequestedStudyList {
 export interface IRequestedStudy {
   id: number;
   nombre: string;
+  solicitudEstudioId: number;
   area: string;
   estatus: number;
   registro: string;

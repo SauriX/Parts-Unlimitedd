@@ -10,6 +10,7 @@ import {
 import {
   IRequestedStudy,
   IRequestedStudyList,
+  IUpdate,
 } from "../../../app/models/requestedStudy";
 import { status } from "../../../app/util/catalogs";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +19,7 @@ const { Link, Text } = Typography;
 type expandableProps = {
   activity: string;
   onChange: (e: CheckboxChangeEvent, id: number, solicitud: string) => void;
+  updateForm: IUpdate[];
 };
 
 type tableProps = {
@@ -118,6 +120,7 @@ const RequestedStudyColumns = ({ printOrder }: tableProps) => {
 export const RequestedStudyExpandable = ({
   activity,
   onChange,
+  updateForm
 }: expandableProps) => {
   const nestedColumns: IColumns<IRequestedStudy> = [
     {
@@ -169,13 +172,15 @@ export const RequestedStudyExpandable = ({
         <>
           {record.estatus === status.requestStudy.tomaDeMuestra && (
             <Checkbox
-              onChange={(e) => onChange(e, record.id, record.solicitudId)}
+              onChange={(e) => onChange(e, record.solicitudEstudioId, record.solicitudId)}
+              checked={updateForm.find(x => x.estudioId.includes(record.solicitudEstudioId)) != null}
               disabled={!(activity == "register")}
             ></Checkbox>
           )}
           {record.estatus === status.requestStudy.solicitado && (
             <Checkbox
-              onChange={(e) => onChange(e, record.id, record.solicitudId)}
+              onChange={(e) => onChange(e, record.solicitudEstudioId, record.solicitudId)}
+              checked={updateForm.find(x => x.estudioId.includes(record.solicitudEstudioId)) != null}
               disabled={!(activity == "cancel")}
             ></Checkbox>
           )}
