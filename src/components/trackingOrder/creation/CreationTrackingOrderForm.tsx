@@ -38,6 +38,7 @@ import DateInput from "../../../app/common/form/proposal/DateInput";
 import { IDias, IRouteForm, RouteFormValues } from "../../../app/models/route";
 import _ from "lodash";
 import NumberInput from "../../../app/common/form/NumberInput";
+import { IOptions } from "../../../app/models/shared";
 
 type TrackingOrderFormProps = {
   id: string;
@@ -156,10 +157,42 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     { id: 6, dia: "S" },
     { id: 7, dia: "D" },
   ];
-  const routeFoundOptions = foundRoutes.map((route) => ({
-    value: route.id,
-    label: route.nombre,
-  }));
+  const [routeFoundOptions,setRouteFoundOptions] = useState<IOptions[]>([]);
+  const selecteddestino  = Form.useWatch("sucursalDestinoId", form);
+  const   routesoptions:IOptions[] = foundRoutes.map((route) => {
+    var data :IOptions = {
+      value: route.id,
+      label: route.nombre,
+    };
+
+    return data;
+  });
+
+const  getrutes = (id:string ) =>{
+
+  const findedRoutes = [... foundRoutes];
+  let filterRoutes:IRouteForm[]= []; 
+  findedRoutes.forEach(x=>{
+    if( x.sucursalDestinoId == id || x.maquiladorId == id){
+      filterRoutes.push(x);
+    }
+  });
+  console.log(filterRoutes);
+  const   routesfilteredoptions:IOptions[] = filterRoutes!.map((route) => {
+    var data :IOptions = {
+      value: route.id,
+      label: route.nombre,
+    };
+
+    return data;
+  });
+  setRouteFoundOptions(routesfilteredoptions);
+  form.setFieldValue("rutaId", undefined);
+}
+  useEffect(()=>{
+    getrutes(selecteddestino);
+  },[selecteddestino]);
+
   const initialSerachRoutes = async (initial = true) => {
     let formValues = form.getFieldsValue();
     formValues = { ...formValues };
@@ -428,7 +461,45 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                     current.isBefore(moment(), "day")
                   }
                 />
+              </Col>
+              <Col md={6} sm={12} style={{ textAlign: "left" }}>
+                <Form.Item label="Destino" name="sucursalDestinoId">
+                  <TreeSelect
+                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                    treeData={treeData}
+                    treeDefaultExpandAll
+                  />
+                </Form.Item>
+              </Col>
+              <Col md={6} sm={12} style={{ textAlign: "left" }}>
+                <SelectInput
+                  formProps={{
+                    name: "sucursalOrigenId",
+                    label: "Origen",
+                  }}
+                  required
+                  readonly={true}
+                  options={sucursales}
+                />
+              </Col>
+              <Col md={6} sm={12} style={{ textAlign: "left" }}>
+                <SelectInput
+                  options={routeFoundOptions}
+                  formProps={{
+                    name: "rutaId",
+                    label: "Ruta",
+                  }}
+                  onChange={(value) => {
+                    if (value) {
+                      findStudiesByStudiesRoute(value);
+                      form.setFieldValue("rutaId", value);
+                    }
+                  }}
+                  readonly={readonly}
+                />
+              </Col>
 
+              <Col md={6} sm={12} style={{ textAlign: "left" }}>
                 <TextInput
                   formProps={{
                     name: "muestraId",
@@ -450,35 +521,8 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                   readonly={readonly}
                 />
               </Col>
-              <Col md={6} sm={12} style={{ textAlign: "left" }}>
-                <Form.Item label="Destino" name="sucursalDestinoId">
-                  <TreeSelect
-                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                    treeData={treeData}
-                    treeDefaultExpandAll
-                  />
-                </Form.Item>
 
-                <SwitchInput
-                  name="escaneado"
-                  label="Escaneo por código de barras"
-                  readonly={readonly}
-                  style={{
-                    marginLeft: 45,
-                  }}
-                />
-              </Col>
               <Col md={6} sm={12} style={{ textAlign: "left" }}>
-                <SelectInput
-                  formProps={{
-                    name: "sucursalOrigenId",
-                    label: "Origen",
-                  }}
-                  required
-                  readonly={true}
-                  options={sucursales}
-                />
-
                 <NumberInput
                   formProps={{
                     name: "temperatura",
@@ -490,8 +534,18 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                   readonly={false}
                 />
               </Col>
+              <Col md={9} sm={12} style={{ textAlign: "left" }}>
+                <SwitchInput
+                  name="escaneado"
+                  label="Escaneo por código de barras"
+                  readonly={readonly}
+                  style={{
+                    marginLeft: 45,
+                  }}
+                />
+              </Col>
               <Col md={6} sm={12} style={{ textAlign: "center" }}>
-                <Button
+                {/*                 <Button
                   type="primary"
                   htmlType="submit"
                   disabled={disabled}
@@ -502,21 +556,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                   style={{ marginBottom: 24 }}
                 >
                   Buscar rutas
-                </Button>
-                <SelectInput
-                  options={routeFoundOptions}
-                  formProps={{
-                    name: "rutaId",
-                    label: "Ruta",
-                  }}
-                  onChange={(value) => {
-                    if (value) {
-                      findStudiesByStudiesRoute(value);
-                      form.setFieldValue("rutaId", value);
-                    }
-                  }}
-                  readonly={readonly}
-                />
+                </Button> */}
               </Col>
             </Row>
           </Form>
