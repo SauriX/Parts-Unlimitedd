@@ -1,7 +1,7 @@
 import { Button, Col, Row, Spin } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect } from "react";
 import { Fragment, useState } from "react";
 import { IUpdate } from "../../app/models/requestedStudy";
 import { useStore } from "../../app/stores/store";
@@ -22,6 +22,14 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
   const [updateForm, setUpdateForm] = useState<IUpdate[]>([]);
   const [activity, setActivity] = useState<string>("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const readRequests = async () => {
+      await getAll(formValues);
+    };
+
+    readRequests();
+  }, []);
 
   const onChange = (e: CheckboxChangeEvent, id: number, solicitud: string) => {
     const index = updateForm.findIndex((x) => x.solicitudId == solicitud);
