@@ -233,6 +233,7 @@ const RequestRegister = () => {
             }}
             initialValues={{ cantidad: 0 }}
             size="small"
+            disabled={totals.saldo === 0}
           >
             <Row gutter={[8, 12]} align="bottom">
               <Col span={5}>
