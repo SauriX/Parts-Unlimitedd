@@ -45,9 +45,10 @@ import PrintIcon from "../../../app/common/icons/PrintIcon";
 import { formItemLayout } from "../../../app/util/utils";
 
 const PendingSend = () => {
-  const { procedingStore, optionStore, locationStore, samplingStudyStore: samplig,routeTrackingStore } = useStore();
+  const { procedingStore, optionStore, locationStore, samplingStudyStore: samplig,routeTrackingStore,profileStore } = useStore();
   const { getAll, studys, printTicket, update,exportForm,setventana } = routeTrackingStore;
   const { branchCityOptions,getBranchCityOptions } = optionStore;
+  const {profile}= profileStore;
   const [values, setValues] = useState<SearchTracking>(new TrackingFormValues());
   const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
 const [ids, setIds] = useState<number[]>([]);
@@ -61,6 +62,7 @@ let navigate = useNavigate();
 useEffect(()=>{
   setexpandedRowKeys(studys!.map((x)=>x.id));
   setOpenRows(true);
+  form.setFieldsValue({sucursal:profile?.sucursal!});
 },[studys]);
   useEffect(() => {
     const readPriceList = async () => {
