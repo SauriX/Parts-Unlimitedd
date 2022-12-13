@@ -30,7 +30,7 @@ export interface IRouteList {
   }
 
   export class TrackingFormValues implements SearchTracking {
-    fechas = [];
+    fechas = [moment(moment.now()),moment(moment.now())];
     buscar = "";
     sucursal = "";
 
