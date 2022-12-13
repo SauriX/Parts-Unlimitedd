@@ -236,9 +236,13 @@ const  getrutes = (id:string ) =>{
   }, [getAll, searchParams]);
 
   const onFinish = async (newValues: ITrackingOrderForm) => {
+  
     console.log("values", values);
     console.log("newValues", newValues);
     const trackingOrderSend = { ...newTrackingOrder, ...newValues };
+    if(trackingOrderSend.id==="" || trackingOrderSend === null|| trackingOrderSend === undefined){
+      trackingOrderSend.id = "00000000-0000-0000-0000-000000000000"
+    }
     const parent = treeData.find((x) =>
       x.children
         .map((x) => x.value)
