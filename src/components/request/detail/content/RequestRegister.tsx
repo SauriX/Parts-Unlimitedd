@@ -75,8 +75,11 @@ const RequestRegister = () => {
       ...getDefaultColumnProps("formaPago", "Forma de Pago", {
         searchState,
         setSearchState,
-        width: 275,
+        width: 225,
       }),
+      ellipsis: {
+        showTitle: false,
+      },
     },
     {
       ...getDefaultColumnProps("cantidad", "Cantidad", {
@@ -103,6 +106,16 @@ const RequestRegister = () => {
         width: 100,
       }),
       render: (value) => moment(value).format("DD/MM/YYYY"),
+    },
+    {
+      ...getDefaultColumnProps("facturaId", "Factura", {
+        searchState,
+        setSearchState,
+        width: 150,
+      }),
+      ellipsis: {
+        showTitle: false,
+      },
     },
     Table.SELECTION_COLUMN,
   ];
@@ -239,7 +252,7 @@ const RequestRegister = () => {
                     name: "cantidad",
                     label: "Cantidad",
                   }}
-                  min={0}
+                  min={1}
                   max={totals.saldo}
                   formatter={(value) => {
                     return `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -310,7 +323,7 @@ const RequestRegister = () => {
               selectedRowKeys: selectedPayments.map((x) => x.id),
             }}
             sticky
-            scroll={{ x: "max-content" }}
+            scroll={{ x: "fit-content" }}
           />
         </Col>
         <Col span={24} style={{ textAlign: "right" }}>
@@ -385,7 +398,7 @@ const RequestRegister = () => {
               hideSelectAll: true,
             }}
             sticky
-            scroll={{ x: "max-content" }}
+            scroll={{ x: "fit-content" }}
           />
         </Col>
       </Row>
