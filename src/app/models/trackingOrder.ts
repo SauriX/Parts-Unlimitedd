@@ -26,7 +26,7 @@ export interface ITrackingOrderList {
 }
 
 export interface ITrackingOrderForm {
-  id: number | string;
+  id?:  string;
   sucursalOrigenId?: string;
   SucursalDestinoNombre: string;
   sucursalDestinoId: string;
@@ -64,7 +64,7 @@ export class TrackingOrderListValues implements IEstudiosList {
   }
 }
 export class TrackingOrderFormValues implements ITrackingOrderForm {
-  id = "";
+ 
   fecha = moment();
   rutaId = "";
   RutaNombre = "";
