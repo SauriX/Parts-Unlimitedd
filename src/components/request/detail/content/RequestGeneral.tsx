@@ -135,6 +135,7 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
   };
 
   const onFinish = (values: IRequestGeneral) => {
+    setErrors([]);
     const request = { ...requestGeneral, ...values };
     const autoSave = form.getFieldValue("guardadoAutomatico");
 

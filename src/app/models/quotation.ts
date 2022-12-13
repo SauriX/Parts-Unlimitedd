@@ -14,7 +14,8 @@ export interface IQuotationFilter {
   fechaAFinal?: moment.Moment;
   ciudad?: number;
   sucursales?: string[];
-  correoTelefono?: string;
+  correo?: string;
+  telefono?: string;
   fechaNacimiento?: moment.Moment[];
   fechaNInicial?: moment.Moment;
   fechaNFinal?: moment.Moment;
