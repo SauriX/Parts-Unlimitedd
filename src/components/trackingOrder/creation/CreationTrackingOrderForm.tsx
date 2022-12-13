@@ -512,18 +512,7 @@ const  getrutes = (id:string ) =>{
                   max={100}
                   readonly={readonly}
                 />
-                <SwitchInput
-                  name="activo"
-                  onChange={(value) => {
-                    if (value) {
-                      alerts.info(messages.confirmations.enable);
-                    } else {
-                      alerts.info(messages.confirmations.disable);
-                    }
-                  }}
-                  label="Activo"
-                  readonly={readonly}
-                />
+ 
               </Col>
 
               <Col md={6} sm={12} style={{ textAlign: "left" }}>
@@ -538,29 +527,32 @@ const  getrutes = (id:string ) =>{
                   readonly={false}
                 />
               </Col>
-              <Col md={9} sm={12} style={{ textAlign: "left" }}>
+              <Col md={8} sm={12} style={{ textAlign: "left" }}>
                 <SwitchInput
                   name="escaneado"
                   label="Escaneo por código de barras"
                   readonly={readonly}
                   style={{
-                    marginLeft: 45,
+                    marginLeft: 96,
                   }}
                 />
               </Col>
-              <Col md={6} sm={12} style={{ textAlign: "center" }}>
-                {/*                 <Button
-                  type="primary"
-                  htmlType="submit"
-                  disabled={disabled}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    initialSerachRoutes(false);
+              <Col md={3} sm={12} style={{ textAlign: "left" }}>
+              <SwitchInput
+                  name="activo"
+                  onChange={(value) => {
+                    if (value) {
+                      alerts.info(messages.confirmations.enable);
+                    } else {
+                      alerts.info(messages.confirmations.disable);
+                    }
                   }}
-                  style={{ marginBottom: 24 }}
-                >
-                  Buscar rutas
-                </Button> */}
+                  label="Activo"
+                  readonly={readonly}
+                  style={{
+                    marginRight: 100,
+                  }}
+                />
               </Col>
             </Row>
           </Form>
