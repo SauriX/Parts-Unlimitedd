@@ -58,7 +58,10 @@ export interface ISamplingComment {
 }
 
 export class SamplingFormValues implements ISamplingForm {
-  fecha = [moment(moment.now()), moment(moment.now())];
+  fecha = [
+    moment(Date.now()).utcOffset(0, true),
+    moment(Date.now()).utcOffset(0, true),
+  ];
   buscar = "";
   procedencia = [];
   departamento = [];

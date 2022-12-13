@@ -107,9 +107,8 @@ const PriceListForm: FC<PriceListFormProps> = ({
       let estudiostabla = await getAllStudy();
      
       let paquetestabla = await getAllPack();
-      
-      paquetestabla = paquetestabla?.filter(x=>x.activo);
-      let tabla = estudiostabla!.concat(paquetestabla!);
+      // paquetestabla = paquetestabla?.filter((x) => x.activo);
+      let tabla = [...estudiostabla!, ...paquetestabla!];
       console.log(tabla);
       setValues((prev) => ({ ...prev, table: tabla }));
       setLista(tabla);
@@ -295,9 +294,9 @@ const PriceListForm: FC<PriceListFormProps> = ({
       console.log(all);
       var studis = await getAllStudy();
       var pcks = await getAllPack();
-      pcks = pcks?.filter(x=>x.activo);
+      // pcks = pcks?.filter((x) => x.activo);
       console.log(pcks, "paquetes");
-      var tabla = studis!.concat(pcks!);
+      var tabla = [...studis!, ...pcks!];
 
       console.log("Lista de precio", user);
       const branches = await getAllBranch();
@@ -511,7 +510,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       }
       setValues((prev) => ({ ...prev, table: estudios }));
     }
-    
+
     // console.log("departament");
     // console.log(values);
   };
@@ -620,13 +619,15 @@ const PriceListForm: FC<PriceListFormProps> = ({
     }
     var paquetesSindescuento: IPriceListEstudioList[] = [];
     values.paquete.forEach((element) => {
-      
-      if ((element.descuento == 0 || element.descuento == undefined) && element.paqute) {
-        console.log(element,"element");
+      if (
+        (element.descuento == 0 || element.descuento == undefined) &&
+        element.paqute
+      ) {
+        console.log(element, "element");
         paquetesSindescuento.push(element);
       }
     });
-    console.log(paquetesSindescuento,"lista");
+    console.log(paquetesSindescuento, "lista");
 
     if (paquetesSindescuento.length > 0) {
       openModal({
@@ -1100,7 +1101,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
                 onSearch={(value) => {
                   filterBySearch(value);
                 }}
-                allowClear 
+                allowClear
               />
             </Col>
             <Col span={6} offset={2}>
@@ -1110,7 +1111,6 @@ const PriceListForm: FC<PriceListFormProps> = ({
                   setAreaId(undefined);
                   setDepId(value);
                   filterByDepartament(value);
-                  
                 }}
                 value={depId}
                 placeholder={"Departamentos"}
@@ -1122,19 +1122,18 @@ const PriceListForm: FC<PriceListFormProps> = ({
             </Col>
             <Col span={6} offset={2}>
               <SelectInput
-                options={aeraSearch }
+                options={aeraSearch}
                 onChange={(value) => {
                   setAreaId(value);
                   filterByArea(value);
                 }}
-                value={areaId||undefined}
+                value={areaId || undefined}
                 placeholder={"Área"}
                 formProps={{
                   name: "area",
                   label: "Área",
                 }}
               />
-              
             </Col>
           </Row>
           <br />

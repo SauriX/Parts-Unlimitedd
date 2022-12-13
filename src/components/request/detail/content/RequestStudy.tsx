@@ -43,7 +43,6 @@ const RequestStudy = () => {
     studies,
     packs,
     studyFilter,
-    calculateTotals,
     setStudy,
     setPack,
     getPriceStudy,

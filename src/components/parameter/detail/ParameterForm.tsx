@@ -99,10 +99,10 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     { value: 8, label: "Párrafo" },
     { value: 9, label: "Etiqueta" },
     { value: 10, label: "Observación" },
-    { value: 11, label: "Numérico con dos columna" },
-    { value: 12, label: "Numérico con tres columna" },
-    { value: 13, label: "Numérico con cuatro columna" },
-    { value: 14, label: "Numérico con cinco columna" },
+    { value: 11, label: "Numérico con dos columnas" },
+    { value: 12, label: "Numérico con tres columnas" },
+    { value: 13, label: "Numérico con cuatro columnas" },
+    { value: 14, label: "Numérico con cinco columnas" },
   ];
   const [deltaCheck, setDeltaCheck] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);

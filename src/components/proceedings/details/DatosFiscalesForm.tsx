@@ -135,9 +135,9 @@ const DatosFiscalesForm = ({
       return;
     }
     const regimen = regimenFiscal.find(
-      (x) => x.label === newValues.regimenFiscal
+      (x) => x.value === newValues.regimenFiscal
     );
-    // newValues.regimenFiscal = regimen?.label?.toString();
+    newValues.regimenFiscal = regimen?.label?.toString();
 
     var taxes: ITaxData[] = local ? [...localTaxData] : [...(tax ?? [])];
     if (!isEditing) {
@@ -247,10 +247,10 @@ const DatosFiscalesForm = ({
             console.log("ITEM: ", toJS(item));
             setIsEditing(true);
             getColonies(item.cp);
-            // item.regimenFiscal = regimenFiscal
-            //   .find((x) => x.label === item.regimenFiscal)
-            //   ?.value?.toString();
-            form.setFieldsValue(item);
+            const regId = regimenFiscal
+              .find((x) => x.label === item.regimenFiscal)
+              ?.value?.toString();
+            form.setFieldsValue({ ...item, regimenFiscal: regId });
           }}
         />
       ),

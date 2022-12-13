@@ -6,7 +6,7 @@ import { InfoCircleTwoTone } from "@ant-design/icons";
 interface IProps {
   formProps: FormItemProps<any>;
   max?: number;
-  min: number;
+  min?: number;
   required?: boolean;
   prefix?: React.ReactNode;
   type?: "text" | "password" | "number";
@@ -73,33 +73,14 @@ const NumberInput = ({
       message: `El máximo es de ${max}`,
     });
   }
-  if (min) {
+
+  if (min != null) {
     rules.push({
       type: "number",
       min,
       message: `El mínimo es de ${min}`,
     });
   }
-  // if (max) {
-  //   rules.push({
-  //     validator: (_, value: string) => {
-  //       if (!value || value.length <= max) {
-  //         return Promise.resolve();
-  //       }
-  //       return Promise.reject(`La longitud máxima es de ${max}`);
-  //     },
-  //   });
-  // }
-  // if (min) {
-  //   rules.push({
-  //     validator: (_, value: string) => {
-  //       if (!value || value.length >= min) {
-  //         return Promise.resolve();
-  //       }
-  //       return Promise.reject(`La longitud minima es de ${min}`);
-  //     },
-  //   });
-  // }
 
   if (required) {
     rules.push({

@@ -282,6 +282,7 @@ export default class AppoinmentStore {
         aplicaDescuento: false,
         nuevo: true,
         asignado: true,
+        cancelado: false,
         estudios: price.estudios.map((x) => ({
           ...x,
           type: "study",
