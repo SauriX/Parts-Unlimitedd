@@ -162,10 +162,14 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   };
 
   useEffect(() => {
-    if (request) {
-      getStudies(request.expedienteId, request.solicitudId!);
-      getPayments(request.expedienteId, request.solicitudId!);
-    }
+    const readData = async () => {
+      if (request) {
+        await getStudies(request.expedienteId, request.solicitudId!);
+        await getPayments(request.expedienteId, request.solicitudId!);
+      }
+    };
+
+    readData();
   }, [getStudies, getPayments, request]);
 
   const operations = (

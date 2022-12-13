@@ -137,16 +137,16 @@ const RequestRegister = () => {
     }
   };
 
-  useEffect(() => {
-    const readPayments = async () => {
-      if (request) {
-        await getPayments(request.expedienteId, request.solicitudId!);
-      }
-    };
+  // useEffect(() => {
+  //   const readPayments = async () => {
+  //     if (request) {
+  //       await getPayments(request.expedienteId, request.solicitudId!);
+  //     }
+  //   };
 
-    readPayments();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  //   readPayments();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   useEffect(() => {
     const getNumber = async () => {
