@@ -931,60 +931,68 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   <Input.Group>
                     <Row gutter={8}>
                       <Col span={12}>
-                        <TextInput
+                        <MaskInput
                           formProps={{
                             name: "telefono",
                             label: "Teléfono",
-                            noStyle: true,
                           }}
-                          max={10}
-                          min={10}
-                          onChange={(e) => {
-                            let valu = e.target.value;
-                            if (!Number(valu)) {
-                              form.setFieldValue(
-                                "telefono",
-                                valu.substring(0, valu.length - 1)
-                              );
-
-                              return;
+                          mask={[
+                            /[0-9]/,
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                          ]}
+                          validator={(_, value: any) => {
+                            if (!value || value.indexOf("_") === -1) {
+                              return Promise.resolve();
                             }
-                            form.setFieldValue("telefono", valu);
+                            return Promise.reject(
+                              "El campo debe contener 10 dígitos"
+                            );
                           }}
-                          showLabel
-                          errors={
-                            errors.find((x) => x.name === "telefono")?.errors
-                          }
                           readonly={readonly}
                         />
                       </Col>
                       <Col span={12}>
-                        <TextInput
-                          formProps={{
-                            name: "celular",
-                            label: "Celular",
-                            noStyle: true,
-                          }}
-                          max={10}
-                          min={10}
-                          onChange={(e) => {
-                            let valu = e.target.value;
-                            if (!Number(valu)) {
-                              form.setFieldValue(
-                                "celular",
-                                valu.substring(0, valu.length - 1)
-                              );
-
-                              return;
-                            }
-                            form.setFieldValue("celular", valu);
-                          }}
-                          showLabel
-                          errors={
-                            errors.find((x) => x.name === "celular")?.errors
-                          }
-                          readonly={readonly}
-                        />
+                      <MaskInput
+                      formProps={{
+                        name: "celular",
+                        label: "Celular",
+                      }}
+                      mask={[
+                        /[0-9]/,
+                        /[0-9]/,
+                        /[0-9]/,
+                        "-",
+                        /[0-9]/,
+                        /[0-9]/,
+                        /[0-9]/,
+                        "-",
+                        /[0-9]/,
+                        /[0-9]/,
+                        "-",
+                        /[0-9]/,
+                        /[0-9]/,
+                      ]}
+                      validator={(_, value: any) => {
+                        if (!value || value.indexOf("_") === -1) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          "El campo debe contener 10 dígitos"
+                        );
+                      }}
+                      readonly={readonly}
+                    />
                       </Col>
                     </Row>
                   </Input.Group>

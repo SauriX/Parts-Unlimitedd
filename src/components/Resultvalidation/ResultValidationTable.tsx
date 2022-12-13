@@ -97,7 +97,8 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     studyCont,
     viewTicket,
     setSearch,
-    clearFilter
+    clearFilter,
+    search
   } = resultValidationStore;
   
     const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
@@ -106,7 +107,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   const [form] = Form.useForm<ISearchValidation>();
   const selectedDepartment = Form.useWatch("departament", form);
   let navigate = useNavigate();
-  const [values, setValues] = useState<ISearchValidation>(new searchValues());
+  const [values, setValues] = useState<ISearchValidation>(search);
   const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
   const [ids, setIds] = useState<number[]>([]);
   const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);

@@ -8,6 +8,7 @@ import {
   Form,
   Input,
   Row,
+  Spin,
   Table,
   Tag,
 } from "antd";
@@ -524,6 +525,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
 
   return (
     <Fragment>
+      <Spin spinning={loading } tip={printing ? "Imprimiendo" : ""}>
       <div style={{ marginBottom: "5px", marginLeft: "90%" }}>
       <Button
           key="filter"
@@ -788,9 +790,11 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
             visto,
             setvisto,
             updateData,
+            setLoading
           })}
         />
       </Fragment>
+      </Spin>
     </Fragment>
   );
 };

@@ -535,7 +535,10 @@ const PriceListForm: FC<PriceListFormProps> = ({
           x.clave.toUpperCase().includes(search.toUpperCase()) ||
           x.nombre.toUpperCase().includes(search.toUpperCase())
       );
-      console.log(lista);
+      if(estudios.length<=0){
+        estudios = [];
+      }
+      
       setValues((prev) => ({ ...prev, table: estudios }));
       return;
     }
@@ -1139,7 +1142,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
             columns={printing ? columnsEstudios.slice(0, 4) : columnsEstudios}
             pagination={false}
             dataSource={[...(values.table?.filter((x) => !x.paqute) ?? [])]}
-            scroll={{ y: "50vh", x: true }}
+            scroll={{ y: "50vh", x: [...(values.table?.filter((x) => !x.paqute) ?? [])].length>0?true:undefined }}
             components={VList({
               height: 500,
             })}
@@ -1151,7 +1154,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
             columns={printing ? columnsEstudiosP.slice(0, 4) : columnsEstudiosP}
             pagination={false}
             dataSource={[...(values.table?.filter((x) => x.paqute) ?? [])]}
-            scroll={{ y: "50vh", x: true }}
+            scroll={{ y: "50vh", x: [...(values.table?.filter((x) => x.paqute) ?? [])].length>0?true:undefined }}
             components={VList({
               height: 500,
             })}
