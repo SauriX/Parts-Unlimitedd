@@ -17,6 +17,7 @@ import {
 } from "../../../../app/models/Proceeding";
 import DateRangeInput from "../../../../app/common/form/proposal/DateRangeInput";
 import { moneyFormatter } from "../../../../app/util/utils";
+import MaskInput from "../../../../app/common/form/proposal/MaskInput";
 
 const { Link, Text } = Typography;
 
@@ -63,8 +64,8 @@ const QuotationAssignment = ({
     setRecords(records);
   };
 
-  const sharedOnCell = (_: IProceedingList, index: number | undefined) => {
-    if (index === 0) {
+  const sharedOnCell = (record: IProceedingList, index: number | undefined) => {
+    if (record.id === "") {
       return { colSpan: 0 };
     }
 
@@ -79,7 +80,7 @@ const QuotationAssignment = ({
         width: "10%",
       }),
       render: (value, record, index) =>
-        index === 0 ? (
+        record.id === "" ? (
           <Text type="secondary">Continuar sin expediente</Text>
         ) : (
           <Link
@@ -90,8 +91,8 @@ const QuotationAssignment = ({
             {value}
           </Link>
         ),
-      onCell: (_, index) => ({
-        colSpan: (index as number) === 0 ? 7 : 1,
+      onCell: (record, index) => ({
+        colSpan: record.id === "" ? 7 : 1,
       }),
     },
     {
@@ -176,12 +177,32 @@ const QuotationAssignment = ({
               />
             </Col>
             <Col span={5}>
-              <TextInput
+              <MaskInput
                 formProps={{
                   name: "telfono",
                   label: "Teléfono",
                 }}
-                max={10}
+                mask={[
+                  /[0-9]/,
+                  /[0-9]/,
+                  /[0-9]/,
+                  "-",
+                  /[0-9]/,
+                  /[0-9]/,
+                  /[0-9]/,
+                  "-",
+                  /[0-9]/,
+                  /[0-9]/,
+                  "-",
+                  /[0-9]/,
+                  /[0-9]/,
+                ]}
+                validator={(_, value: any) => {
+                  if (!value || value.indexOf("_") === -1) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject("El campo debe contener 10 dígitos");
+                }}
               />
             </Col>
             <Col span={4} style={{ textAlign: "right" }}>
