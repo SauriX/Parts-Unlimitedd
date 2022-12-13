@@ -185,7 +185,7 @@ export const ValidationStudyExpandable = ({
             </Checkbox>
           )}
            {updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id)||(cambio&&updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id))?"":""}
-          {record.estatus === 5 &&   (
+          {record.estatus === 5 && (activiti == "cancel") &&   (
             <Checkbox
               onChange={(e) => {{onChange(e, record.id, record.solicitudId); stcambio(!cambio);}}}
               checked={ updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id)||(cambio&&updateData.find(x=>x.solicitudId==record.solicitudId)?.estudioId.includes(record.id))}
