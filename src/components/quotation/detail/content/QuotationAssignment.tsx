@@ -179,7 +179,7 @@ const QuotationAssignment = ({
             <Col span={5}>
               <MaskInput
                 formProps={{
-                  name: "telfono",
+                  name: "telefono",
                   label: "Teléfono",
                 }}
                 mask={[
