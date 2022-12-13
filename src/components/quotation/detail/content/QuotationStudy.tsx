@@ -50,7 +50,9 @@ const QuotationStudy = () => {
     totals,
   } = quotationStore;
 
-  const [selectedStudies, setSelectedStudies] = useState<IQuotationStudy[]>([]);
+  const [selectedStudies, setSelectedStudies] = useState<
+    (IQuotationStudy | IQuotationPack)[]
+  >([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [options, setOptions] = useState<IOptions[]>([]);
   const [searchState, setSearchState] = useState<ISearch>({
@@ -160,6 +162,35 @@ const QuotationStudy = () => {
       }),
     },
     {
+      ...getDefaultColumnProps("promocionId", "Promoción", {
+        searchable: false,
+        width: 200,
+      }),
+      render: (value, item) =>
+        item.promociones && item.promociones.length > 0 ? (
+          <Select
+            options={item.promociones.map((x) => ({
+              value: x.promocionId,
+              label: `${x.promocion} (${x.descuentoPorcentaje}%)`,
+            }))}
+            value={value}
+            bordered={false}
+            style={{ width: "100%" }}
+            allowClear
+            placeholder="Seleccionar promoción"
+            onChange={(promoId?: number) => {
+              if (isStudy(item)) {
+                changeStudyPromotion(item, promoId);
+              } else {
+                changePackPromotion(item, promoId);
+              }
+            }}
+          />
+        ) : (
+          "Sin promociones disponibles"
+        ),
+    },
+    {
       ...getDefaultColumnProps("precioFinal", "Precio Final", {
         searchable: false,
         width: 120,
@@ -188,11 +219,16 @@ const QuotationStudy = () => {
     if (quotation) {
       alerts.confirm(
         "Canelar estudio",
-        `¿Desea cancelar los registros seleccionados?`,
+        `¿Desea remover los registros seleccionados?`,
         async () => {
           const data: IQuotationStudyUpdate = {
             cotizacionId: quotation.cotizacionId,
-            estudios: selectedStudies,
+            estudios: selectedStudies.filter(
+              (x) => x.type === "study"
+            ) as IQuotationStudy[],
+            paquetes: selectedStudies.filter(
+              (x) => x.type === "pack"
+            ) as IQuotationPack[],
           };
           const ok = await deleteStudies(data);
           if (ok) {
@@ -245,7 +281,7 @@ const QuotationStudy = () => {
                   .map((x) => x as IQuotationStudy),
                 ...c
                   .filter((x) => x.type === "pack")
-                  .flatMap((x) => (x as IQuotationPack).estudios),
+                  .map((x) => x as IQuotationPack),
               ];
               setSelectedStudies(studies);
               setSelectedRowKeys(

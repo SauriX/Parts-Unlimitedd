@@ -31,16 +31,21 @@ export default class RequestStore {
 
     reaction(
       () => this.studies.slice(),
-      (studies) => {
-        console.log(studies);
+      () => {
         this.calculateTotals();
       }
     );
 
     reaction(
       () => this.packs.slice(),
-      (packs) => {
-        console.log(packs);
+      () => {
+        this.calculateTotals();
+      }
+    );
+
+    reaction(
+      () => this.payments.slice(),
+      () => {
         this.calculateTotals();
       }
     );
@@ -109,65 +114,6 @@ export default class RequestStore {
   isStudy(obj: IRequestStudy | IRequestPack): obj is IRequestStudy {
     return obj.type === "study";
   }
-
-  calculateTotals = () => {
-    const total =
-      this.studies
-        .filter(
-          (x) => x.estatusId !== status.requestStudy.cancelado && x.asignado
-        )
-        .reduce((acc, obj) => acc + obj.precioFinal, 0) +
-      this.packs.reduce((acc, obj) => acc + obj.precioFinal, 0);
-
-    const desc =
-      this.totals.descuentoTipo === 1
-        ? ((this.studies
-            .filter((x) => x.asignado && x.aplicaDescuento)
-            .reduce((acc, obj) => acc + obj.precio, 0) +
-            this.packs
-              .filter((x) => x.aplicaDescuento)
-              .reduce((acc, obj) => acc + obj.precio, 0)) *
-            this.totals.descuento) /
-          100
-        : this.totals.descuento;
-
-    const char =
-      this.totals.cargoTipo === 1
-        ? ((this.studies
-            .filter((x) => x.asignado && x.aplicaCargo)
-            .reduce((acc, obj) => acc + obj.precio, 0) +
-            this.packs
-              .filter((x) => x.aplicaCargo)
-              .reduce((acc, obj) => acc + obj.precio, 0)) *
-            this.totals.cargo) /
-          100
-        : this.totals.cargo;
-
-    const cop =
-      this.totals.copagoTipo === 1
-        ? ((this.studies
-            .filter((x) => x.asignado && x.aplicaCopago)
-            .reduce((acc, obj) => acc + obj.precio, 0) +
-            this.packs
-              .filter((x) => x.aplicaCopago)
-              .reduce((acc, obj) => acc + obj.precio, 0)) *
-            this.totals.copago) /
-          100
-        : this.totals.copago;
-
-    const finalTotal = total - desc + char - cop;
-
-    this.totals = {
-      ...this.totals,
-      totalEstudios: total,
-      total: finalTotal,
-      saldo:
-        finalTotal -
-        this.payments
-          .filter((x) => x.estatusId !== status.requestPayment.cancelado)
-          .reduce((acc, p) => acc + p.cantidad, 0),
-    };
-  };
 
   setStudyFilter = (
     branchId?: string,
@@ -264,7 +210,7 @@ export default class RequestStore {
       }
       this.studies = data.estudios;
       this.totals = data.total ?? new RequestTotal();
-      this.calculateTotals();
+      // this.calculateTotals();
       return data;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -362,6 +308,7 @@ export default class RequestStore {
         aplicaCargo: false,
         aplicaCopago: false,
         aplicaDescuento: false,
+        cancelado: false,
         nuevo: true,
         asignado: true,
         estudios: price.estudios.map((x) => ({
@@ -517,7 +464,7 @@ export default class RequestStore {
         descuentoPorcentaje: promo?.descuentoPorcentaje,
         precioFinal: _study.precio - (promo?.descuento ?? 0),
       };
-      this.calculateTotals();
+      // this.calculateTotals();
     }
   };
 
@@ -536,7 +483,7 @@ export default class RequestStore {
         promocionDescuento: promo?.descuento,
         promocionDescuentoPorcentaje: promo?.descuentoPorcentaje,
       };
-      this.calculateTotals();
+      // this.calculateTotals();
     }
   };
 
@@ -741,6 +688,89 @@ export default class RequestStore {
       alerts.warning(getErrors(error));
       return [];
     }
+  };
+
+  private calculateTotals = () => {
+    const totalStudies =
+      this.studies
+        .filter(
+          (x) => x.estatusId !== status.requestStudy.cancelado && x.asignado
+        )
+        .reduce((acc, obj) => acc + obj.precioFinal, 0) +
+      this.packs
+        .filter((x) => !x.cancelado && x.asignado)
+        .reduce((acc, obj) => acc + obj.precioFinal, 0);
+
+    const desc =
+      this.totals.descuentoTipo === 1
+        ? ((this.studies
+            .filter(
+              (x) =>
+                x.estatusId !== status.requestStudy.cancelado &&
+                x.asignado &&
+                x.aplicaDescuento
+            )
+            .reduce((acc, obj) => acc + obj.precioFinal, 0) +
+            this.packs
+              .filter((x) => !x.cancelado && x.asignado && x.aplicaDescuento)
+              .reduce((acc, obj) => acc + obj.precioFinal, 0)) *
+            this.totals.descuento) /
+          100
+        : this.totals.descuento;
+
+    const char =
+      this.totals.cargoTipo === 1
+        ? ((this.studies
+            .filter(
+              (x) =>
+                x.estatusId !== status.requestStudy.cancelado &&
+                x.asignado &&
+                x.aplicaCargo
+            )
+            .reduce((acc, obj) => acc + obj.precioFinal, 0) +
+            this.packs
+              .filter((x) => !x.cancelado && x.asignado && x.aplicaCargo)
+              .reduce((acc, obj) => acc + obj.precioFinal, 0)) *
+            this.totals.cargo) /
+          100
+        : this.totals.cargo;
+
+    const cop =
+      this.totals.copagoTipo === 1
+        ? ((this.studies
+            .filter(
+              (x) =>
+                x.estatusId !== status.requestStudy.cancelado &&
+                x.asignado &&
+                x.aplicaCopago
+            )
+            .reduce((acc, obj) => acc + obj.precioFinal, 0) +
+            this.packs
+              .filter((x) => !x.cancelado && x.asignado && x.aplicaCopago)
+              .reduce((acc, obj) => acc + obj.precioFinal, 0)) *
+            this.totals.copago) /
+          100
+        : this.totals.copago;
+
+    const finalTotal = totalStudies - desc + char;
+    const finalTotalUser = cop > 0 ? cop : totalStudies - desc + char;
+
+    const balance =
+      finalTotal -
+      this.payments
+        .filter(
+          (x) =>
+            x.estatusId !== status.requestPayment.cancelado &&
+            x.estatusId !== status.requestPayment.facturaCancelada
+        )
+        .reduce((acc, p) => acc + p.cantidad, 0);
+
+    this.totals = {
+      ...this.totals,
+      totalEstudios: totalStudies,
+      total: finalTotalUser,
+      saldo: balance,
+    };
   };
 
   private updateStudiesStatus = (

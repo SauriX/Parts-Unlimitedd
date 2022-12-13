@@ -27,12 +27,12 @@ const RequestRegister = () => {
   const {
     request,
     payments,
+    totals,
     getPayments,
     getNextPaymentCode,
     printTicket,
     createPayment,
     cancelPayments,
-    calculateTotals,
   } = requestStore;
   const { openModal } = modalStore;
   const { printXML } = invoiceStore;
@@ -75,8 +75,11 @@ const RequestRegister = () => {
       ...getDefaultColumnProps("formaPago", "Forma de Pago", {
         searchState,
         setSearchState,
-        width: 275,
+        width: 225,
       }),
+      ellipsis: {
+        showTitle: false,
+      },
     },
     {
       ...getDefaultColumnProps("cantidad", "Cantidad", {
@@ -104,6 +107,16 @@ const RequestRegister = () => {
       }),
       render: (value) => moment(value).format("DD/MM/YYYY"),
     },
+    {
+      ...getDefaultColumnProps("facturaId", "Factura", {
+        searchState,
+        setSearchState,
+        width: 150,
+      }),
+      ellipsis: {
+        showTitle: false,
+      },
+    },
     Table.SELECTION_COLUMN,
   ];
 
@@ -124,16 +137,16 @@ const RequestRegister = () => {
     }
   };
 
-  useEffect(() => {
-    const readPayments = async () => {
-      if (request) {
-        await getPayments(request.expedienteId, request.solicitudId!);
-      }
-    };
+  // useEffect(() => {
+  //   const readPayments = async () => {
+  //     if (request) {
+  //       await getPayments(request.expedienteId, request.solicitudId!);
+  //     }
+  //   };
 
-    readPayments();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  //   readPayments();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   useEffect(() => {
     const getNumber = async () => {
@@ -220,6 +233,7 @@ const RequestRegister = () => {
             }}
             initialValues={{ cantidad: 0 }}
             size="small"
+            disabled={totals.saldo === 0}
           >
             <Row gutter={[8, 12]} align="bottom">
               <Col span={5}>
@@ -239,8 +253,8 @@ const RequestRegister = () => {
                     name: "cantidad",
                     label: "Cantidad",
                   }}
-                  min={0}
-                  max={999999}
+                  min={1}
+                  max={totals.saldo}
                   formatter={(value) => {
                     return `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                   }}
@@ -258,7 +272,7 @@ const RequestRegister = () => {
                     name: "numeroCuenta",
                     label: "Número de cuenta",
                   }}
-                  max={100}
+                  max={20}
                 />
               </Col>
               <Col span={2}>
@@ -280,7 +294,6 @@ const RequestRegister = () => {
                   placeholder="Número"
                   max={100}
                   readonly
-                  required
                   errors={errors.find((x) => x.name === "numero")?.errors}
                 />
               </Col>
@@ -311,7 +324,7 @@ const RequestRegister = () => {
               selectedRowKeys: selectedPayments.map((x) => x.id),
             }}
             sticky
-            scroll={{ x: "max-content" }}
+            scroll={{ x: "fit-content" }}
           />
         </Col>
         <Col span={24} style={{ textAlign: "right" }}>
@@ -386,7 +399,7 @@ const RequestRegister = () => {
               hideSelectAll: true,
             }}
             sticky
-            scroll={{ x: "max-content" }}
+            scroll={{ x: "fit-content" }}
           />
         </Col>
       </Row>

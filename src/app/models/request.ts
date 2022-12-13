@@ -288,6 +288,7 @@ export interface IRequestPack {
   listaPrecio: string;
   promocionId?: number;
   promocion?: string;
+  cancelado: boolean;
   aplicaDescuento: boolean;
   aplicaCargo: boolean;
   aplicaCopago: boolean;

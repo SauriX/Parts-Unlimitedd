@@ -1,4 +1,14 @@
-import { Button, Checkbox, Col, Form, Row, Space, Spin, Table } from "antd";
+import {
+  Button,
+  Checkbox,
+  Col,
+  Form,
+  Radio,
+  Row,
+  Space,
+  Spin,
+  Table,
+} from "antd";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import SelectInput from "../../../../../app/common/form/proposal/SelectInput";
@@ -8,7 +18,7 @@ import {
   IRequestCheckIn,
   IRequestPayment,
 } from "../../../../../app/models/request";
-import { IFormError } from "../../../../../app/models/shared";
+import { IFormError, IOptions } from "../../../../../app/models/shared";
 import { ITaxData } from "../../../../../app/models/taxdata";
 import { useStore } from "../../../../../app/stores/store";
 import alerts from "../../../../../app/util/alerts";
@@ -18,14 +28,15 @@ interface IFormInvoice {
   usoCfdi: number;
   cantidad: string;
   numeroCuenta: string;
-  configuracion: string[];
+  formaPago: string;
+  configuracion: "desglozado" | "simple" | "concepto";
   metodoEnvio: string[];
 }
 
 interface IDetailInvoice {
-  clave: string;
-  descripcion: string;
-  importe: string;
+  concepto: string;
+  cantidad: number;
+  precioFinal: number;
 }
 
 const formItemLayout = {
@@ -39,9 +50,10 @@ const sendOptions = [
   { label: "Ambos", value: "ambos" },
 ];
 
-const settingsOptions = [
-  { label: "Desglozado", value: "desglozado" },
-  { label: "Con Nombre", value: "nombre" },
+const settingsOptions: IOptions[] = [
+  { label: "Desglozado por estudio", value: "desglozado", disabled: true },
+  { label: "Simple", value: "simple" },
+  { label: "Por concepto", value: "concepto" },
 ];
 
 type RequestInvoiceDetailProps = {
@@ -65,29 +77,33 @@ const RequestInvoiceDetail = ({
 
   const [form] = Form.useForm<IFormInvoice>();
 
+  const configuration = Form.useWatch("configuracion", form);
+
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<IFormError[]>([]);
   const [detailData, setDetailData] = useState<IDetailInvoice[]>([]);
+  const [avDetailType, setAvDetailType] = useState(settingsOptions);
 
   const detailColumns: IColumns<IDetailInvoice> = [
     {
-      dataIndex: "clave",
-      key: "clave",
-      title: "Clave",
-      width: "30%",
+      dataIndex: "concepto",
+      key: "concepto",
+      title: "Concepto",
+      width: "60%",
     },
     {
-      dataIndex: "descripcion",
-      key: "descripcion",
-      title: "Descripción",
-      width: "50%",
+      dataIndex: "cantidad",
+      key: "cantidad",
+      title: "Cantidad",
+      width: "20%",
     },
     {
-      dataIndex: "importe",
-      key: "importe",
-      title: "Importe",
+      dataIndex: "precioFinal",
+      key: "precioFinal",
+      title: "Importe final",
       width: "20%",
       align: "right",
+      render: (value) => moneyFormatter.format(value),
     },
   ];
 
@@ -137,24 +153,58 @@ const RequestInvoiceDetail = ({
 
   useEffect(() => {
     const totalPayment = payments.reduce((acc, obj) => acc + obj.cantidad, 0);
+
     if (totalPayment === totals.total) {
+      setAvDetailType((prev) => [
+        { label: "Desglozado por estudio", value: "desglozado" },
+        ...prev.filter((x) => x.value !== "desglozado"),
+      ]);
+    }
+
+    const maxPayment = payments.reduce(
+      (p, c) => (p.cantidad > c.cantidad ? p : c),
+      payments[0]
+    );
+
+    form.setFieldsValue({
+      formaPago: maxPayment.formaPago,
+      numeroCuenta: payments
+        .map((x) => x.numeroCuenta)
+        .filter((o, i, a) => a.indexOf(o) === i)
+        .join(", "),
+      configuracion: totalPayment === totals.total ? "desglozado" : "simple",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (configuration === "desglozado") {
       setDetailData([
         ...studies.map((x) => ({
-          clave: x.clave,
-          descripcion: x.nombre,
-          importe: moneyFormatter.format(x.precioFinal),
+          concepto: x.nombre,
+          precioFinal: x.precioFinal,
+          cantidad: 1,
         })),
+      ]);
+    } else if (configuration === "simple") {
+      setDetailData([
+        {
+          concepto: "ANALISIS CLINICOS",
+          precioFinal: totals.total,
+          cantidad: 1,
+        },
       ]);
     } else {
       setDetailData([
         {
-          clave: taxData.rfc,
-          descripcion: `Pago por ${moneyFormatter.format(totalPayment)}`,
-          importe: moneyFormatter.format(totalPayment),
+          concepto: "",
+          precioFinal: totals.total,
+          cantidad: 1,
         },
       ]);
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configuration]);
 
   return (
     <Spin spinning={loading}>
@@ -177,12 +227,12 @@ const RequestInvoiceDetail = ({
             <Col span={12}>
               <SelectInput
                 formProps={{
-                  name: "usoCfdi",
-                  label: "Uso de CFDI",
+                  name: "serie",
+                  label: "Serie de Factura",
                 }}
-                options={cfdiOptions}
+                options={[{ value: "MT", label: "MT" }]}
                 required
-                errors={errors.find((x) => x.name === "usoCfdi")?.errors}
+                errors={errors.find((x) => x.name === "serie")?.errors}
               />
             </Col>
             <Col span={7}></Col>
@@ -198,21 +248,44 @@ const RequestInvoiceDetail = ({
               />
             </Col>
             <Col span={12}>
+              <SelectInput
+                formProps={{
+                  name: "usoCfdi",
+                  label: "Uso de CFDI",
+                }}
+                options={cfdiOptions}
+                required
+                errors={errors.find((x) => x.name === "usoCfdi")?.errors}
+              />
+            </Col>
+            <Col span={12}></Col>
+            <Col span={12}>
+              <SelectInput
+                formProps={{ name: "formaPago", label: "Forma de pago" }}
+                options={payments
+                  .map((x) => x.formaPago)
+                  .filter((o, i, a) => a.map((x) => x).indexOf(o) === i)
+                  .map((x) => ({
+                    value: x,
+                    label: x,
+                  }))}
+                required
+                errors={errors.find((x) => x.name === "formaPago")?.errors}
+              />
+            </Col>
+            <Col span={12}></Col>
+            <Col span={24}>
               <TextInput
                 formProps={{
                   name: "numeroCuenta",
                   label: "Número de cuenta",
+                  labelCol: { span: 4 },
+                  wrapperCol: { span: 20 },
                 }}
-                required
+                readonly
                 errors={errors.find((x) => x.name === "numeroCuenta")?.errors}
               />
             </Col>
-            {/* <Col span={9}>
-            <SelectInput
-              formProps={{ name: "serieCfdi", label: "Serie CFDI" }}
-              options={[]}
-            />
-          </Col> */}
             <Col span={24} style={{ textAlign: "start" }}>
               <Form.Item
                 noStyle
@@ -220,7 +293,7 @@ const RequestInvoiceDetail = ({
                 labelCol={{ span: 0 }}
                 wrapperCol={{ span: 24 }}
               >
-                <Checkbox.Group options={settingsOptions} />
+                <Radio.Group options={avDetailType} />
               </Form.Item>
             </Col>
             <Col span={18} style={{ textAlign: "start" }}>

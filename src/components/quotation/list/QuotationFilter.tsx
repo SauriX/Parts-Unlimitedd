@@ -4,10 +4,11 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
+import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import { IQuotationFilter } from "../../../app/models/quotation";
-import { IOptions } from "../../../app/models/shared";
+import { IFormError, IOptions } from "../../../app/models/shared";
 import { useStore } from "../../../app/stores/store";
 import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
@@ -21,6 +22,7 @@ const QuotationFilter = () => {
 
   const selectedCity = Form.useWatch("ciudad", form);
 
+  const [errors, setErrors] = useState<IFormError[]>([]);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
 
@@ -42,6 +44,7 @@ const QuotationFilter = () => {
   }, [branchCityOptions, form, selectedCity]);
 
   const onFinish = (values: IQuotationFilter) => {
+    setErrors([]);
     const filter = { ...values };
 
     if (filter.fechaAlta && filter.fechaAlta.length > 1) {
@@ -63,6 +66,13 @@ const QuotationFilter = () => {
         {...formItemLayout}
         form={form}
         onFinish={onFinish}
+        onFinishFailed={({ errorFields }) => {
+          const errors = errorFields.map((x) => ({
+            name: x.name[0].toString(),
+            errors: x.errors,
+          }));
+          setErrors(errors);
+        }}
         size="small"
         initialValues={{ fechaAlta: [moment(), moment()] }}
       >
@@ -91,7 +101,42 @@ const QuotationFilter = () => {
           </Col>
           <Col span={8}>
             <TextInput
-              formProps={{ name: "correoTelefono", label: "Teleéfono/Correo" }}
+              formProps={{
+                name: "correo",
+                label: "Correo",
+              }}
+              type="email"
+              errors={errors.find((x) => x.name === "correo")?.errors}
+            />
+          </Col>
+          <Col span={8}>
+            <MaskInput
+              formProps={{
+                name: "telefono",
+                label: "Teléfono",
+              }}
+              mask={[
+                /[0-9]/,
+                /[0-9]/,
+                /[0-9]/,
+                "-",
+                /[0-9]/,
+                /[0-9]/,
+                /[0-9]/,
+                "-",
+                /[0-9]/,
+                /[0-9]/,
+                "-",
+                /[0-9]/,
+                /[0-9]/,
+              ]}
+              validator={(_, value: any) => {
+                if (!value || value.indexOf("_") === -1) {
+                  return Promise.resolve();
+                }
+                return Promise.reject("El campo debe contener 10 dígitos");
+              }}
+              errors={errors.find((x) => x.name === "telefono")?.errors}
             />
           </Col>
           <Col span={8}>
@@ -123,7 +168,7 @@ const QuotationFilter = () => {
               </Input.Group>
             </Form.Item>
           </Col>
-          <Col span={8} style={{ textAlign: "right" }}>
+          <Col span={24} style={{ textAlign: "right" }}>
             <Button
               key="clean"
               onClick={() => {

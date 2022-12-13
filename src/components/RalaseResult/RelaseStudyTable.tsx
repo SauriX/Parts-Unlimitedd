@@ -32,6 +32,7 @@ type expandableProps = {
   visto: checked[];
   setvisto: React.Dispatch<React.SetStateAction<checked[]>>;
   updateData: IUpdate[];
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>
   //cambiar: boolean
 };
 
@@ -146,6 +147,7 @@ export const ValidationStudyExpandable = ({
   visto,
   setvisto,
   updateData,
+  setLoading
 }: // cambiar
 expandableProps) => {
   const [ver, setver] = useState<boolean>(false);
@@ -166,7 +168,7 @@ expandableProps) => {
     {
       key: "registro",
       dataIndex: "Registro",
-      title: "registro",
+      title: "Registro",
       align: "center",
       width: "10%",
       render: (_value, record) => (
@@ -229,7 +231,7 @@ expandableProps) => {
               ?.estudioId.includes(record.id))
             ? ""
             : ""}
-          {record.estatus === 6 && (
+          {record.estatus === 6 && (activiti == "cancel") && (
             <Checkbox
               onChange={(e) => {
                 {
@@ -255,6 +257,7 @@ expandableProps) => {
               style={{ marginLeft: "20%" }}
               key="imprimir"
               onClick={async () => {
+                setLoading(true);
                 const sendFiles = {
                   mediosEnvio: ["selectSendMethods"],
                   estudios: [
@@ -273,6 +276,7 @@ expandableProps) => {
                 await viewTicket(sendFiles);
                 setvisto(vistos);
                 setver(!ver);
+                setLoading(false);
               }}
             />
           )}
