@@ -32,6 +32,7 @@ import SwitchInput from "../../../app/common/form/SwitchInput";
 import TextInput from "../../../app/common/form/TextInput";
 import { toJS } from "mobx";
 import { uniqueId } from "lodash";
+import views from "../../../app/util/view";
 
 type TrackingOrderTableProps = {
   // componentRef: React.MutableRefObject<any>;
@@ -107,11 +108,9 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
         <Button
           type="link"
           onClick={() => {
+            
             navigate(
-              `/request/${
-                value.map((x: any) => x.solicitud)[0] //TODO: chage form solicitud id and url solicitud
-                // user.id
-              }`
+              `/${views.request}/${value.map((x: any) => x.expedienteId)[0] }/${value.map((x: any) => x.solicitudId)[0]}` 
             );
           }}
         >

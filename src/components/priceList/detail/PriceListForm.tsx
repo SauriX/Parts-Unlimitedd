@@ -559,10 +559,10 @@ const PriceListForm: FC<PriceListFormProps> = ({
       (x: ISucMedComList) => x.activo == true
     );
 
-    priceList.estudios = priceList.table!.filter(
+    priceList.estudios = lista2.filter(
       (x) => x.activo === true && (x.paqute === false || !x.paqute)
     );
-    priceList.paquete = priceList.table!.filter(
+    priceList.paquete = lista2.filter(
       (x) => x.activo && x.paqute === true
     );
     var countFailPricesE = 0;

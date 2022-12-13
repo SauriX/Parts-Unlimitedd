@@ -19,6 +19,7 @@ export interface IRequestedStudyList {
 export interface IRequestedStudy {
   id: number;
   nombre: string;
+  solicitudEstudioId: number;
   area: string;
   estatus: number;
   registro: string;
@@ -67,7 +68,7 @@ export class RequestedStudyFormValues implements IRequestedStudyForm {
   compañiaId = [];
   fecha = [
     moment(Date.now()).utcOffset(0, true),
-    moment(Date.now()).utcOffset(0, true).add(1, "day"),
+    moment(Date.now()).utcOffset(0, true),
   ];
   buscar = "";
   procedencia = [];

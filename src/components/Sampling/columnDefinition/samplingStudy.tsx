@@ -10,12 +10,13 @@ import {
   ISearch,
   getDefaultColumnProps,
 } from "../../../app/common/table/utils";
-import { ISamplingList, IStudySampling } from "../../../app/models/sampling";
+import { ISamplingList, IStudySampling, IUpdate } from "../../../app/models/sampling";
 const { Link, Text } = Typography;
 
 type expandableProps = {
   activity: string;
   onChange: (e: CheckboxChangeEvent, id: number, solicitud: string) => void;
+  updateForm: IUpdate[];
 };
 
 type tableProps = {
@@ -120,7 +121,11 @@ const SamplingStudyColumns = ({ printOrder }: tableProps) => {
 export const SamplingStudyExpandable = ({
   activity: activity,
   onChange,
+  updateForm
 }: expandableProps) => {
+
+  console.log(updateForm)
+
   const nestedColumns: IColumns<IStudySampling> = [
     {
       ...getDefaultColumnProps("clave", "Estudio", {
@@ -197,12 +202,14 @@ export const SamplingStudyExpandable = ({
           {record.estatus === 1 && (
             <Checkbox
               onChange={(e) => onChange(e, record.solicitudEstudioId, record.solicitudId)}
+              checked={updateForm.find(x => x.estudioId.includes(record.solicitudEstudioId)) != null}
               disabled={!(activity == "register")}
             ></Checkbox>
           )}
           {record.estatus === 2 && (
             <Checkbox
               onChange={(e) => onChange(e, record.solicitudEstudioId, record.solicitudId)}
+              checked={updateForm.find(x => x.estudioId.includes(record.solicitudEstudioId)) != null}
               disabled={!(activity == "cancel")}
             ></Checkbox>
           )}
