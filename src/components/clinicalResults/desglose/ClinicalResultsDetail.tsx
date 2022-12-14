@@ -746,6 +746,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                                     : x.opcion!,
                                               })
                                             )}
+                                            allowClear
                                             style={{
                                               width: "80%",
                                               marginBottom: "7px",
@@ -782,49 +783,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                       ? "-"
                                       : fieldValue.ultimoResultado}
                                   </Col>
-                                  {/* {valuesByColumn ? (
-                                    <>
-                                              <Col span={2}>
-                                      {fieldValue.tipoValorId == "11"
-                                        ? fieldValue.tipoValores!.map((x) => (
-                                            <>
-                                                {x.primeraColumna}
-                                            </>
-                                              </Col>
-                                          ))
-                                        : fieldValue.tipoValorId == "12"
-                                        ? fieldValue.tipoValores!.map((x) =>
-                                            referenceValues(
-                                              fieldValue.tipoValorId,
-                                              x.primeraColumna,
-                                              x.segundaColumna,
-                                              x.terceraColumna
-                                            )
-                                          )
-                                        : fieldValue.tipoValorId == "13"
-                                        ? fieldValue.tipoValores!.map((x) =>
-                                            referenceValues(
-                                              fieldValue.tipoValorId,
-                                              x.primeraColumna,
-                                              x.segundaColumna,
-                                              x.terceraColumna,
-                                              x.cuartaColumna
-                                            )
-                                          )
-                                        : fieldValue.tipoValorId == "14"
-                                        ? fieldValue.tipoValores!.map((x) =>
-                                            referenceValues(
-                                              fieldValue.tipoValorId,
-                                              x.primeraColumna,
-                                              x.segundaColumna,
-                                              x.terceraColumna,
-                                              x.cuartaColumna,
-                                              x.quintaColumna
-                                            )
-                                          )
-                                        : "-"}
-                                    </>
-                                  ) : ( */}
                                   {fieldValue.tipoValorId === "11" ? (
                                     <Fragment>
                                       <Col span={4}>
@@ -867,8 +825,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   ) : (
                                     ""
                                   )}
-
-                                  {/* )} */}
                                 </>
                               )}
                             </Row>
