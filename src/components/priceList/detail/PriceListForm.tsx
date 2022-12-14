@@ -13,6 +13,7 @@ import {
   Checkbox,
   Select,
   InputNumber,
+  Tabs,
 } from "antd";
 import { VList } from "virtual-table-ant-design";
 import React, { FC, useEffect, useState } from "react";
@@ -43,6 +44,7 @@ import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import StudyTable from "./StudyTable";
 import { IPackEstudioList } from "../../../app/models/packet";
 import PackTable from "./PackTable";
+import TabPane from "rc-tabs/lib/TabPanelList/TabPane";
 
 const { Search } = Input;
 
@@ -1092,11 +1094,11 @@ const PriceListForm: FC<PriceListFormProps> = ({
             </Col>
           </Row>
 
-          <Divider orientation="left">Estudios</Divider>
+          <Divider orientation="left">ESTUDIOS Y PAQUETE</Divider>
           <Row justify="space-between" align="middle">
             <Col span={6}>
               <Search
-                key="search"
+                key="search" 
                 placeholder="Buscar"
                 onSearch={(value) => {
                   filterBySearch(value);
@@ -1137,7 +1139,10 @@ const PriceListForm: FC<PriceListFormProps> = ({
             </Col>
           </Row>
           <br />
-          <Table<IPriceListEstudioList>
+
+          <Tabs defaultActiveKey="1" >
+            <TabPane tab="Pendientes de enviar" key="1">
+            <Table<IPriceListEstudioList>
             size="large"
             columns={printing ? columnsEstudios.slice(0, 4) : columnsEstudios}
             pagination={false}
@@ -1147,9 +1152,9 @@ const PriceListForm: FC<PriceListFormProps> = ({
               height: 500,
             })}
           />
-          <br />
-          <Divider orientation="left">Paquetes</Divider>
-          <Table<IPriceListEstudioList>
+            </TabPane>
+            <TabPane tab="Pendientes de recibir" key="2">
+            <Table<IPriceListEstudioList>
             size="large"
             columns={printing ? columnsEstudiosP.slice(0, 4) : columnsEstudiosP}
             pagination={false}
@@ -1159,6 +1164,10 @@ const PriceListForm: FC<PriceListFormProps> = ({
               height: 500,
             })}
           />
+            </TabPane>
+        </Tabs>
+
+
         </div>
       </div>
     </Spin>
