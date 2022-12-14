@@ -19,7 +19,7 @@ const RequestedStudyHeader: FC<UserHeaderProps> = ({ handleList }) => {
       ghost={false}
       title={
         <HeaderTitle
-          title={`Registrar Solicitud de Estudio`}
+          title={`Solicitar Estudio`}
           image="sitio-web"
         />
       }

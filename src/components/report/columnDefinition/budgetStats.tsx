@@ -23,6 +23,7 @@ const getBudgetRequestColumns = (
         setSearchState,
         width: "35%",
       }),
+      render: (value) => value == null ? "-" : value
     },
     {
       ...getDefaultColumnProps("nombreMedico", "Nombre del Médico", {
