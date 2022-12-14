@@ -29,6 +29,7 @@ import moment from "moment";
 import { ObservationModal } from "./ObservationModal";
 import { DownloadOutlined } from "@ant-design/icons";
 const { TextArea } = Input;
+const { Text } = Typography;
 
 type ClinicalResultsDetailProps = {
   estudio: IRequestStudy;
@@ -46,6 +47,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   estudio,
   estudioId,
   claveMedico,
+  paciente,
   isMarked,
   solicitud,
   showHeaderTable,
@@ -88,7 +90,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       if (isMarked) {
         addSelectedStudy({ id: currentStudy.id!, tipo: "LABORATORY" });
       } else {
-        removeSelectedStudy({ id: currentStudy.id!, tipo: "LABORATORY" });
+        removeSelectedStudy({
+          id: currentStudy.id!,
+          tipo: "LABORATORY",
+        });
       }
     }
   }, [isMarked]);
@@ -207,7 +212,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
             disabled={currentStudy.estatusId < status.requestStudy.capturado}
             onChange={(value) => {
               if (value.target.checked) {
-                addSelectedStudy({ id: currentStudy.id!, tipo: "LABORATORY" });
+                addSelectedStudy({
+                  id: currentStudy.id!,
+                  tipo: "LABORATORY",
+                });
                 setCheckedPrint(true);
               } else {
                 removeSelectedStudy({
@@ -234,7 +242,16 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                   ""
                 ) : (
                   <>
-                    <Col span={currentStudy.estudioId == 631 ? 8 : currentStudy.estatusId == status.requestStudy.liberado ? 6 : 12}>
+                    <Col
+                      span={
+                        currentStudy.estudioId == 631
+                          ? 8
+                          : currentStudy.estatusId ==
+                            status.requestStudy.liberado
+                          ? 6
+                          : 12
+                      }
+                    >
                       <Button
                         type="default"
                         htmlType="submit"
@@ -263,7 +280,15 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                     </Col>
                   </>
                 )}
-                <Col span={currentStudy.estudioId == 631 ? 8 : currentStudy.estatusId == status.requestStudy.liberado ? 6 : 12}>
+                <Col
+                  span={
+                    currentStudy.estudioId == 631
+                      ? 8
+                      : currentStudy.estatusId == status.requestStudy.liberado
+                      ? 6
+                      : 12
+                  }
+                >
                   <Button
                     type="primary"
                     htmlType="submit"
@@ -288,11 +313,18 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                   </Button>
                 </Col>
                 {currentStudy.estatusId === status.requestStudy.liberado ? (
-                  <Col span={currentStudy.estudioId == 631 ? 8 : currentStudy.estatusId == status.requestStudy.liberado ? 6 : 12}>
+                  <Col
+                    span={
+                      currentStudy.estudioId == 631
+                        ? 8
+                        : currentStudy.estatusId == status.requestStudy.liberado
+                        ? 6
+                        : 12
+                    }
+                  >
                     <Button
                       type="primary"
                       htmlType="submit"
-                      // disabled={disabled}
                       onClick={() => {
                         setEnvioManual(true);
                         form.submit();
@@ -311,7 +343,15 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                 )}
                 {currentStudy.estudioId == 631 &&
                 currentStudy.estatusId >= 5 ? (
-                  <Col span={currentStudy.estudioId == 631 ? 8 : currentStudy.estatusId == status.requestStudy.liberado ? 6 : 12}>
+                  <Col
+                    span={
+                      currentStudy.estudioId == 631
+                        ? 8
+                        : currentStudy.estatusId == status.requestStudy.liberado
+                        ? 6
+                        : 12
+                    }
+                  >
                     <Button
                       type="primary"
                       icon={<DownloadOutlined />}
@@ -418,7 +458,12 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const referenceValues = (
     tipoValor: string,
     valorInicial?: string,
-    valorFinal?: string
+    valorFinal?: string,
+    primeraColumna?: string,
+    segundaColumna?: string,
+    terceraColumna?: string,
+    cuartaColumna?: string,
+    quintaColumna?: string
   ) => {
     if (
       tipoValor == "1" ||
@@ -429,6 +474,14 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       return valorInicial + " - " + valorFinal;
     } else if (tipoValor == "7" || tipoValor == "8" || tipoValor == "10") {
       return valorInicial + "";
+    } else if (tipoValor == "11") {
+      return primeraColumna + " - " + segundaColumna + "\n";
+    } else if (tipoValor == "12") {
+      return `${primeraColumna} \t ${segundaColumna} \t ${terceraColumna}`;
+    } else if (tipoValor == "13") {
+      return `${primeraColumna} \t ${segundaColumna} \t ${terceraColumna} \t ${cuartaColumna}`;
+    } else if (tipoValor == "14") {
+      return `${primeraColumna} \t ${segundaColumna} \t ${terceraColumna} \t ${cuartaColumna} \t ${quintaColumna}`;
     }
   };
 
@@ -567,21 +620,29 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                               parseFloat(fieldValue.valorFinal);
 
                           let valuesByColumn =
-                            fieldValue.tipoValorId == "6" ||
                             fieldValue.tipoValorId == "11" ||
                             fieldValue.tipoValorId == "12" ||
                             fieldValue.tipoValorId == "13" ||
                             fieldValue.tipoValorId == "14";
+
+                          console.log(
+                            fieldValue.tipoValores?.map((x) => x.primeraColumna)
+                          );
 
                           return (
                             <Row
                               key={field.key}
                               justify="space-between"
                               gutter={[0, 24]}
-                              style={{ textAlign: "center", marginBottom: 5 }}
+                              style={{
+                                textAlign: "center",
+                                marginBottom: 5,
+                              }}
                               align="middle"
                             >
-                              {fieldValue.tipoValorId == "9" ? (
+                              {fieldValue.tipoValorId == "9" ||
+                              (fieldValue.clave === "_OB_CTG" &&
+                                paciente.sexo === "M") ? (
                                 fieldValue.nombre != null ? (
                                   <Col span={4}>
                                     <strong>{fieldValue.nombre}</strong>
@@ -596,7 +657,11 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   <Col span={4}>
                                     <h4>{fieldValue.nombre}</h4>
                                     {"\n"}
-                                    <h5 style={{ color: "red" }}>
+                                    <h5
+                                      style={{
+                                        color: "red",
+                                      }}
+                                    >
                                       {fieldValue.rango
                                         ? fieldValue.resultado
                                         : null}
@@ -657,7 +722,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                         noStyle
                                       >
                                         {fieldValue.tipoValorId == "5" ||
-                                        fieldValue.tipoValorId == "6" ? (
+                                        (fieldValue.tipoValorId == "6" &&
+                                          fieldValue.clave !== "_OB_CTG") ? (
                                           <Select
                                             options={fieldValue.tipoValores!.map(
                                               (x) => ({
@@ -666,14 +732,16 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                                   fieldValue.tipoValorId == "5"
                                                     ? x.opcion!
                                                     : fieldValue.tipoValorId ==
-                                                      "6"
+                                                        "6" &&
+                                                      currentStudy.id !== 631
                                                     ? x.primeraColumna
                                                     : x.opcion!,
                                                 label:
                                                   fieldValue.tipoValorId == "5"
                                                     ? x.opcion!
                                                     : fieldValue.tipoValorId ==
-                                                      "6"
+                                                        "6" &&
+                                                      currentStudy.id !== 631
                                                     ? x.primeraColumna
                                                     : x.opcion!,
                                               })
@@ -714,20 +782,93 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                       ? "-"
                                       : fieldValue.ultimoResultado}
                                   </Col>
-                                  <Col span={4}>
-                                    {fieldValue.unidadNombre == null
-                                      ? "-"
-                                      : fieldValue.unidadNombre}
-                                  </Col>
-                                  <Col span={4}>
-                                    {fieldValue.valorInicial == null
-                                      ? "-"
-                                      : referenceValues(
-                                          fieldValue.tipoValorId,
-                                          fieldValue.valorInicial,
-                                          fieldValue.valorFinal
-                                        )}
-                                  </Col>
+                                  {/* {valuesByColumn ? (
+                                    <>
+                                              <Col span={2}>
+                                      {fieldValue.tipoValorId == "11"
+                                        ? fieldValue.tipoValores!.map((x) => (
+                                            <>
+                                                {x.primeraColumna}
+                                            </>
+                                              </Col>
+                                          ))
+                                        : fieldValue.tipoValorId == "12"
+                                        ? fieldValue.tipoValores!.map((x) =>
+                                            referenceValues(
+                                              fieldValue.tipoValorId,
+                                              x.primeraColumna,
+                                              x.segundaColumna,
+                                              x.terceraColumna
+                                            )
+                                          )
+                                        : fieldValue.tipoValorId == "13"
+                                        ? fieldValue.tipoValores!.map((x) =>
+                                            referenceValues(
+                                              fieldValue.tipoValorId,
+                                              x.primeraColumna,
+                                              x.segundaColumna,
+                                              x.terceraColumna,
+                                              x.cuartaColumna
+                                            )
+                                          )
+                                        : fieldValue.tipoValorId == "14"
+                                        ? fieldValue.tipoValores!.map((x) =>
+                                            referenceValues(
+                                              fieldValue.tipoValorId,
+                                              x.primeraColumna,
+                                              x.segundaColumna,
+                                              x.terceraColumna,
+                                              x.cuartaColumna,
+                                              x.quintaColumna
+                                            )
+                                          )
+                                        : "-"}
+                                    </>
+                                  ) : ( */}
+                                  {fieldValue.tipoValorId === "11" ? (
+                                    <Fragment>
+                                      <Col span={4}>
+                                        {fieldValue.tipoValores!.map((x) => (
+                                          <Fragment>
+                                            <Text>{x.primeraColumna}</Text>
+                                            <br />
+                                          </Fragment>
+                                        ))}
+                                      </Col>
+                                      <Col span={4}>
+                                        {fieldValue.tipoValores!.map((x) => (
+                                          <Fragment>
+                                            <Text>{x.segundaColumna}</Text>
+                                            <br />
+                                          </Fragment>
+                                        ))}
+                                      </Col>
+                                    </Fragment>
+                                  ) : (
+                                    ""
+                                  )}
+                                  {!valuesByColumn ? (
+                                    <>
+                                      <Col span={4}>
+                                        {fieldValue.unidadNombre == null
+                                          ? "-"
+                                          : fieldValue.unidadNombre}
+                                      </Col>
+                                      <Col span={4}>
+                                        {fieldValue.valorInicial == null
+                                          ? "-"
+                                          : referenceValues(
+                                              fieldValue.tipoValorId,
+                                              fieldValue.valorInicial,
+                                              fieldValue.valorFinal
+                                            )}
+                                      </Col>
+                                    </>
+                                  ) : (
+                                    ""
+                                  )}
+
+                                  {/* )} */}
                                 </>
                               )}
                             </Row>
