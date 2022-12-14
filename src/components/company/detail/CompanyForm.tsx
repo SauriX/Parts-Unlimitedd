@@ -167,6 +167,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
       await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
     };
+
     readCompany();
   }, [getAll, searchParams]);
 
@@ -184,7 +185,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     }
 
     if (success) {
-      navigate(`/companies?search=${searchParams.get("search") || "all"}`);
+      // navigate(`/companies?search=${searchParams.get("search") || "all"}`);
     }
   };
   const actualcompany = () => {
