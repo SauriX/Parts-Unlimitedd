@@ -55,7 +55,7 @@ const ValidationStudyColumns = ({ printTicket }: tableProps) => {
           <Link
             onClick={() => {
               navigate(
-                `/clinicResultsDetails/${record?.order}/${record?.id}`
+                `/clinicResultsDetails/${record?.order}/${record?.id}?return=validation`
               );
 /*               navigate(
                 `/requests/${record.order}/${record.id}`
