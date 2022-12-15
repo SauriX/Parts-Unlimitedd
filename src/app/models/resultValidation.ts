@@ -1,7 +1,7 @@
 import moment, { Moment } from "moment";
 
 export interface ISearchValidation{
-    fecha: moment.Moment[],
+    fecha?: moment.Moment[],
     search:string,
     departament?:number,
     area?:number,
