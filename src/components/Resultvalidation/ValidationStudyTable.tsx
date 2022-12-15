@@ -33,26 +33,26 @@ type tableProps = {
 };
 
 const ValidationStudyColumns = ({ printTicket }: tableProps) => {
-    const [searchState, setSearchState] = useState<ISearch>({
-        searchedText: "",
-        searchedColumn: "",
-    });
-    const navigate = useNavigate();
-    const columns: IColumns<Ivalidationlist> = [
-        {
-            ...getDefaultColumnProps("solicitud", "Clave", {
-                searchState,
-                setSearchState,
-                width: "15%",
-            }),
-            render: (_value, record) => (
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                    <Link
-                        onClick={() => {
-                            navigate(
-                                `/clinicResultsDetails/${record?.order}/${record?.id}`
-                            );
-                            /*               navigate(
+  const [searchState, setSearchState] = useState<ISearch>({
+    searchedText: "",
+    searchedColumn: "",
+  });
+  const navigate = useNavigate();
+  const columns: IColumns<Ivalidationlist> = [
+    {
+      ...getDefaultColumnProps("solicitud", "Clave", {
+        searchState,
+        setSearchState,
+        width: "15%",
+      }),
+      render: (_value, record) => (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Link
+            onClick={() => {
+              navigate(
+                `/clinicResultsDetails/${record?.order}/${record?.id}?return=validation`
+              );
+/*               navigate(
                 `/requests/${record.order}/${record.id}`
               ); */
                         }}
@@ -170,7 +170,7 @@ expandableProps) => {
             width: "10%",
             render: (_value, record) => (
                 <>
-                    {((record.estatus === 4 &&
+                    {((record.estatus === 4 && (activiti == "register") &&
                         visto.find(
                             (x) =>
                                 x.idSolicitud == record.solicitudId &&
@@ -182,7 +182,7 @@ expandableProps) => {
                                     x.idSolicitud == record.solicitudId &&
                                     x.idstudio == record.id
                             ) != undefined &&
-                            record.estatus === 4)) && (
+                            record.estatus === 4)&& (activiti == "cancel") ) && (
                         <Checkbox
                             onChange={(e) => {
                                 onChange(e, record.id, record.solicitudId);
@@ -216,7 +216,7 @@ expandableProps) => {
                             ?.estudioId.includes(record.id))
                         ? ""
                         : ""}
-                    {record.estatus === 5 && (
+                    {record.estatus === 5 && (activiti == "cancel") &&(
                         <Checkbox
                             onChange={(e) => {
                                 {
