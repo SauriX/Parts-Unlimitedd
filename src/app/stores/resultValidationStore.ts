@@ -28,6 +28,8 @@ export default class ResultValidationStore {
     new searchValues();
     this.studys = [];
     this.clear = !this.clear
+    this.studyCont = 0;
+    this.soliCont=0;
   }
 
   exportList = async (search:  ISearchValidation) => {

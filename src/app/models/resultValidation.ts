@@ -5,6 +5,7 @@ export interface ISearchValidation{
     search:string,
     departament?:number,
     area?:number,
+    ciudad?:number,
     estudio:number[],
     medico:string[],
     tipoSoli:number[],
