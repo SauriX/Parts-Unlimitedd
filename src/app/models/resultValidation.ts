@@ -23,6 +23,7 @@ export interface IvalidationStudyList {
     entrega:string,
     estatus :number
     solicitudId:string,
+    tipo:boolean
 }
 export interface Ivalidationlist{
     id:string;
