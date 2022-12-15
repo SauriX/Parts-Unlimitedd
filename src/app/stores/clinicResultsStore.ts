@@ -44,20 +44,21 @@ export default class ClinicResultsStores {
   clearStudy = () => {
     this.data = [];
   };
+
   addSelectedStudy = (estudio: IPrintTypes) => {
     this.studiesSelectedToPrint.push(estudio);
-    console.log("estudies", this.studiesSelectedToPrint.length);
-    console.log("estudies", toJS(this.studiesSelectedToPrint));
   };
+
   clearSelectedStudies = () => {
     this.studiesSelectedToPrint = [];
   };
+
   removeSelectedStudy = (estudio: IPrintTypes) => {
     this.studiesSelectedToPrint = this.studiesSelectedToPrint.filter(
       (item) => item.id !== estudio.id
     );
-    console.log("estudies", this.studiesSelectedToPrint.length);
   };
+
   setFormValues = (newFormValues: IClinicResultForm) => {
     this.formValues = newFormValues;
   };
