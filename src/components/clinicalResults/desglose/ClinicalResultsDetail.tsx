@@ -746,6 +746,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                                     : x.opcion!,
                                               })
                                             )}
+                                            allowClear
                                             style={{
                                               width: "80%",
                                               marginBottom: "7px",
@@ -777,72 +778,83 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                       </Form.Item>
                                     )}
                                   </Col>
-                                  <Col span={4}>
-                                    {fieldValue.ultimoResultado == null
-                                      ? "-"
-                                      : fieldValue.ultimoResultado}
-                                  </Col>
-                                  {/* {valuesByColumn ? (
-                                    <>
-                                              <Col span={2}>
-                                      {fieldValue.tipoValorId == "11"
-                                        ? fieldValue.tipoValores!.map((x) => (
-                                            <>
-                                                {x.primeraColumna}
-                                            </>
-                                              </Col>
-                                          ))
-                                        : fieldValue.tipoValorId == "12"
-                                        ? fieldValue.tipoValores!.map((x) =>
-                                            referenceValues(
-                                              fieldValue.tipoValorId,
-                                              x.primeraColumna,
-                                              x.segundaColumna,
-                                              x.terceraColumna
-                                            )
-                                          )
-                                        : fieldValue.tipoValorId == "13"
-                                        ? fieldValue.tipoValores!.map((x) =>
-                                            referenceValues(
-                                              fieldValue.tipoValorId,
-                                              x.primeraColumna,
-                                              x.segundaColumna,
-                                              x.terceraColumna,
-                                              x.cuartaColumna
-                                            )
-                                          )
-                                        : fieldValue.tipoValorId == "14"
-                                        ? fieldValue.tipoValores!.map((x) =>
-                                            referenceValues(
-                                              fieldValue.tipoValorId,
-                                              x.primeraColumna,
-                                              x.segundaColumna,
-                                              x.terceraColumna,
-                                              x.cuartaColumna,
-                                              x.quintaColumna
-                                            )
-                                          )
-                                        : "-"}
-                                    </>
-                                  ) : ( */}
-                                  {fieldValue.tipoValorId === "11" ? (
+                                  {parseInt(fieldValue.tipoValorId) < 12 ? (
+                                    <Col span={4}>
+                                      {fieldValue.ultimoResultado == null
+                                        ? "-"
+                                        : fieldValue.ultimoResultado}
+                                    </Col>
+                                  ) : (
                                     <Fragment>
-                                      <Col span={4}>
+                                      <Col span={fieldValue.tipoValorId === "12" ? 3 : 4}>
                                         {fieldValue.tipoValores!.map((x) => (
                                           <Fragment>
-                                            <Text>{x.primeraColumna}</Text>
+                                            <Text>
+                                              {x.primeraColumna}
+                                            </Text>
                                             <br />
                                           </Fragment>
                                         ))}
                                       </Col>
-                                      <Col span={4}>
+                                      {parseInt(fieldValue.tipoValorId) >=
+                                      13 ? (
+                                        <Col span={fieldValue.tipoValorId === "12" ? 3 : 4}>
+                                          {fieldValue.tipoValores!.map((x) => (
+                                            <Fragment>
+                                              <Text>{x.segundaColumna}</Text>
+                                              <br />
+                                            </Fragment>
+                                          ))}
+                                        </Col>
+                                      ) : (
+                                        ""
+                                      )}
+                                    </Fragment>
+                                  )}
+                                  {parseInt(fieldValue.tipoValorId) >= 11 ? (
+                                    <Fragment>
+                                      <Col span={fieldValue.tipoValorId === "12" ? 3 : 4}>
                                         {fieldValue.tipoValores!.map((x) => (
                                           <Fragment>
-                                            <Text>{x.segundaColumna}</Text>
+                                            <Text>
+                                              {fieldValue.tipoValorId === "12"
+                                                ? x.segundaColumna
+                                                : fieldValue.tipoValorId ===
+                                                  "13"
+                                                ? x.terceraColumna
+                                                : x.primeraColumna}
+                                            </Text>
                                             <br />
                                           </Fragment>
                                         ))}
                                       </Col>
+                                      <Col span={fieldValue.tipoValorId === "12" ? 3 : fieldValue.tipoValorId === "14" ? 1.5 : 4}>
+                                        {fieldValue.tipoValores!.map((x) => (
+                                          <Fragment>
+                                            <Text>
+                                              {fieldValue.tipoValorId === "12"
+                                                ? x.terceraColumna
+                                                : fieldValue.tipoValorId ===
+                                                  "13"
+                                                ? x.cuartaColumna
+                                                : x.segundaColumna}
+                                            </Text>
+                                            <br />
+                                          </Fragment>
+                                        ))}
+                                      </Col>
+                                      {fieldValue.tipoValorId === "14" ? (
+                                        <Col span={1.5}>
+                                          {fieldValue.tipoValores!.map((x) => (
+                                            <Fragment>
+                                              <Text>{x.quintaColumna}</Text>
+                                              <br />
+                                            </Fragment>
+                                          ))}
+                                        </Col>
+                                      ) : (
+                                        ""
+                                      )}
                                     </Fragment>
                                   ) : (
                                     ""
@@ -867,8 +879,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   ) : (
                                     ""
                                   )}
-
-                                  {/* )} */}
                                 </>
                               )}
                             </Row>
