@@ -521,8 +521,7 @@ const  getrutes = (id:string ) =>{
                     name: "temperatura",
                     label: "Temperatura",
                   }}
-                  max={100}
-                  min={-100}
+
                   required
                   readonly={false}
                 />
@@ -562,7 +561,7 @@ const  getrutes = (id:string ) =>{
                 <Button
                   type="primary"
                   htmlType="submit"
-                  disabled={disabled}
+                  
                   onClick={async (e) => {
                     let noEscaneados = trackingOrder.some(
                       (order) => !order.escaneado
