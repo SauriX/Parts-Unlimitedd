@@ -353,9 +353,10 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   useEffect(() => {
     console.log("here");
     const readPriceList = async () => {
+      console.log(expedientes.length, "config");
       setLoading(true);
       let studios = [];
-      var datas = await getAll(values!);
+      var datas = await getAll(search!);
 
       console.log(datas, "daata");
       setSoliCont(datas?.length!);
@@ -370,9 +371,10 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     };
 
     if (expedientes.length === 0) {
+      console.log(expedientes.length, "config");
       readPriceList();
     }
-    console.log(expandableStudyConfig, "config");
+   
     setExpandable(expandableStudyConfig);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
@@ -578,7 +580,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                     options={[
                      
                       { value: 5, label: "Validado" },
-                      { value: 6, label: "Liberado" },
+                      { value: 4, label: "Capturado" },
                       { value: 7, label: "Enviado" },
                     ]}
                   ></SelectInput>
