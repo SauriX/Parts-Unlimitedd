@@ -151,11 +151,19 @@ expandableProps) => {
             render: (_value, record) => record.status,
         },
         {
-            ...getDefaultColumnProps("registro", "Registro", {
-                width: "20%",
-            }),
-            render: (_value, record) => record.registro,
-        },
+            key: "registro",
+            dataIndex: "Registro",
+            title: "Registro",
+            align: "center",
+            width: "10%",
+            render: (_value, record) => (
+              <Typography>
+                <Text style={!record.tipo ? { color: "red" } : {}}>
+                  {record.registro}
+                </Text>
+              </Typography>
+            ),
+          },
         {
             ...getDefaultColumnProps("entrega", "Entrega", {
                 width: "20%",

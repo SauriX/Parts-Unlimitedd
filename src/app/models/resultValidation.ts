@@ -5,6 +5,7 @@ export interface ISearchValidation{
     search:string,
     departament?:number,
     area?:number,
+    ciudad?:number,
     estudio:number[],
     medico:string[],
     tipoSoli:number[],
@@ -22,6 +23,7 @@ export interface IvalidationStudyList {
     entrega:string,
     estatus :number
     solicitudId:string,
+    tipo:boolean
 }
 export interface Ivalidationlist{
     id:string;

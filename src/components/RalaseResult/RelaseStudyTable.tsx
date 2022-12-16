@@ -232,7 +232,7 @@ expandableProps) => {
             ? ""
             : ""}
           {record.estatus === 6 && (activiti == "cancel") && (
-            <Checkbox
+            <Checkbox style={{ marginLeft:50}}
               onChange={(e) => {
                 {
                   onChange(e, record.id, record.solicitudId);
