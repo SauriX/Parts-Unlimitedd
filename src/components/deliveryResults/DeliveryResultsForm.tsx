@@ -235,6 +235,11 @@ const DeliveryResultsForm = () => {
                 }}
               />
             </Col>
+            <Col span={8}>
+              <TextInput
+                formProps={{ name: "clave", label: "Clave/Paciente" }}
+              />
+            </Col>
           </Row>
         </Form>
       </div>

@@ -864,6 +864,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   type="email"
                   max={100}
                   errors={errors.find((x) => x.name === "correo")?.errors}
+                  readonly={readonly}
                 />
               </Col>
               <Col span={4}>
@@ -963,36 +964,36 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                         />
                       </Col>
                       <Col span={12}>
-                      <MaskInput
-                      formProps={{
-                        name: "celular",
-                        label: "Celular",
-                      }}
-                      mask={[
-                        /[0-9]/,
-                        /[0-9]/,
-                        /[0-9]/,
-                        "-",
-                        /[0-9]/,
-                        /[0-9]/,
-                        /[0-9]/,
-                        "-",
-                        /[0-9]/,
-                        /[0-9]/,
-                        "-",
-                        /[0-9]/,
-                        /[0-9]/,
-                      ]}
-                      validator={(_, value: any) => {
-                        if (!value || value.indexOf("_") === -1) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(
-                          "El campo debe contener 10 dígitos"
-                        );
-                      }}
-                      readonly={readonly}
-                    />
+                        <MaskInput
+                          formProps={{
+                            name: "celular",
+                            label: "Celular",
+                          }}
+                          mask={[
+                            /[0-9]/,
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                          ]}
+                          validator={(_, value: any) => {
+                            if (!value || value.indexOf("_") === -1) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              "El campo debe contener 10 dígitos"
+                            );
+                          }}
+                          readonly={readonly}
+                        />
                       </Col>
                     </Row>
                   </Input.Group>
