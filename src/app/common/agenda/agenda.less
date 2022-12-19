@@ -171,12 +171,13 @@
 }
 
 .agenda-calendar-day:hover {
-  color: #fff;
+  color: @light-primary;
   cursor: pointer;
 }
 
 .agenda-calendar-day.selected-day {
   color: #fff;
+  background: @light-primary;
 }
 
 .agenda-calendar-day.today:not(.agenda-calendar-day.selected-day) {
@@ -205,11 +206,11 @@
   }
 }
 
-[data-theme="yellow"] .agenda-table table {
+[data-theme="yellow"] {
   .agenda-calendar-day:hover,
   .agenda-calendar-day.selected-day {
     background: @yellow-primary;
-  }
+  } 
 
   .agenda-calendar-day.today:not(.agenda-calendar-day.selected-day) {
     border: 1px solid @yellow-primary;

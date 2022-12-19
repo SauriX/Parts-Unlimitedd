@@ -1,9 +1,10 @@
 import { Button, Col, Form, Row } from "antd";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import { useEffect, useState } from "react";
-import DateRangeInput from "../../app/common/form/DateRangeInput";
+import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
-import TextInput from "../../app/common/form/TextInput";
+import TextInput from "../../app/common/form/proposal/TextInput";
 import { IMassSearch } from "../../app/models/massResultSearch";
 import { IOptions } from "../../app/models/shared";
 import { useStore } from "../../app/stores/store";
@@ -64,7 +65,6 @@ const MassSearchForm = () => {
           >
             Limpiar
           </Button>
-          ,
           <Button
             key="filter"
             type="primary"
@@ -78,13 +78,24 @@ const MassSearchForm = () => {
         </Col>
       </Row>
       <div className="status-container">
-        <Form<IMassSearch> {...formItemLayout} form={form} onFinish={onFinish}>
+        <Form<IMassSearch>
+          {...formItemLayout}
+          form={form}
+          onFinish={onFinish}
+          initialValues={{
+            fechas: [
+              moment(Date.now()).utcOffset(0, true),
+              moment(Date.now()).utcOffset(0, true),
+            ],
+          }}
+        >
           <Row>
             <Col span={24}>
               <Row justify="space-between" gutter={[12, 12]}>
                 <Col span={8}>
                   <DateRangeInput
                     formProps={{ label: "Fecha", name: "fechas" }}
+                    disableAfterDates
                   />
                 </Col>
                 <Col span={8}>
@@ -120,7 +131,6 @@ const MassSearchForm = () => {
                     options={studiesFilteredByArea}
                   />
                 </Col>
-                <Col span={8} style={{ paddingLeft: "140px" }}></Col>
               </Row>
             </Col>
           </Row>

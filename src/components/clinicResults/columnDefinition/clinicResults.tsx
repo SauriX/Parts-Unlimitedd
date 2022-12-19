@@ -1,4 +1,4 @@
-import { Descriptions, Table, TableColumnsType, Typography } from "antd";
+import { Table, Typography } from "antd";
 import { useState } from "react";
 import {
   IColumns,
@@ -10,7 +10,6 @@ import {
   IClinicStudy,
 } from "../../../app/models/clinicResults";
 import { useNavigate } from "react-router-dom";
-import moment from "moment";
 
 const { Link, Text } = Typography;
 
