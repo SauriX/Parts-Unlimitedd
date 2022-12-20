@@ -77,6 +77,7 @@ import RequestWee from "../../components/request/list/RequestWee";
 import RequestTokenValidation from "../../components/request/detail/RequestTokenValidation";
 import DeliveryResults from "../../views/DeliveryResults";
 import Invoice from "../../views/Invoice";
+import InvoiceCompanyCreate from "../../components/invoice/invoiceCompany/InvoiceCompanyCreate/InvoiceCompanyCreate";
 import Notifications from "../../views/Notifications";
 import NotificationsDetail from "../../components/notifications/NotificationsDetail";
 import Relaseresult from "../../views/Relaseresult";
@@ -160,6 +161,7 @@ function App() {
             <Route path="indications" element={<Indication />} />
             <Route path="indications/:id" element={<IndicationDetail />} />
             <Route path="invoice" element={<Invoice />} />
+            <Route path="invoice/create" element={<InvoiceCompanyCreate />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="notifications/:id" element={<NotificationsDetail />} />
             <Route path="roles/new-role" element={<NewRole />} />

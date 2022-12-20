@@ -1,88 +1,293 @@
-import { Checkbox, Table } from "antd";
+import { useNavigate } from "react-router-dom";
+import { Button, Checkbox, Table, Typography } from "antd";
 import { observer } from "mobx-react-lite";
-import { IColumns } from "../../../app/common/table/utils";
+import {
+  getDefaultColumnProps,
+  IColumns,
+  ISearch,
+} from "../../../app/common/table/utils";
 import InvoiceCompanyStudyTable from "./InvoiceCompanyStudyTable";
+import { useStore } from "../../../app/stores/store";
+import { useEffect, useState } from "react";
+import { toJS } from "mobx";
+import { moneyFormatter } from "../../../app/util/utils";
+const { Link, Text } = Typography;
 
 const InvoiceCompanyTable = () => {
+  const navigate = useNavigate();
+  const [searchState, setSearchState] = useState<ISearch>({
+    searchedText: "",
+    searchedColumn: "",
+  });
   const columns: IColumns = [
     {
-      key: "id",
-      dataIndex: "id",
-      title: "Id",
-      align: "center",
+      ...getDefaultColumnProps("clave", "Clave", {
+        // searchState,
+        // setSearchState,
+        width: 10,
+      }),
+      render(value, record: any, index) {
+        return (
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <Link
+              onClick={() => {
+                navigate(`#`);
+              }}
+            >
+              {record.clave}
+            </Link>
+            <small>
+              <Text type="secondary">
+                <Text strong>{record?.clavePatologica}</Text>
+              </Text>
+            </small>
+          </div>
+        );
+      },
     },
     {
-      key: "nombre",
-      dataIndex: "nombre",
-      title: "Nombre",
-      align: "center",
-    },
-
-    {
-      key: "cargo",
-      dataIndex: "cargo",
-      title: "Cargo",
-      align: "center",
+      ...getDefaultColumnProps("nombre", "Nombre", {
+        // searchState,
+        // setSearchState,
+        width: 300,
+      }),
     },
     {
-      key: "descuento",
-      dataIndex: "descuento",
-      title: "Descuento",
-      align: "center",
-    },
-
-    {
-      key: "monto",
-      dataIndex: "monto",
-      title: "Monto",
-      align: "center",
+      ...getDefaultColumnProps("cargo", "Cargo", {
+        // searchState,
+        // setSearchState,
+        width: 10,
+      }),
+      render(value, record, index) {
+        return moneyFormatter.format(+value);
+      },
     },
     {
-      key: "factura",
-      dataIndex: "factura",
-      title: "Factura",
-      align: "center",
+      ...getDefaultColumnProps("descuento", "Descuento", {
+        // searchState,
+        // setSearchState,
+        width: 10,
+      }),
+      render(value, record, index) {
+        return moneyFormatter.format(+value);
+      },
     },
     {
-      key: "sucursal",
-      dataIndex: "sucursal",
-      title: "RFC",
-      align: "center",
+      ...getDefaultColumnProps("monto", "Monto", {
+        // searchState,
+        // setSearchState,
+        width: 10,
+      }),
+      render(value, record, index) {
+        return moneyFormatter.format(+value);
+      },
     },
     {
-      key: "compañia",
-      dataIndex: "compañia",
-      title: "Compañia",
-      align: "center",
+      ...getDefaultColumnProps("facturas", "Facturas", {
+        // searchState,
+        // setSearchState,
+        width: 10,
+      }),
+      render(value, record: any, index) {
+        return (
+          <>
+            {value.map((factura: any) => {
+              return (
+                <>
+                  <div style={{ display: "flex", flexDirection: "row" }}>
+                    <Link
+                      onClick={() => {
+                        navigate(`#`);
+                      }}
+                    >
+                      {/* {factura.facturaId} */}
+                      {"111111111111"}
+                    </Link>
+                    <span>
+                      <small>
+                        <Text type="secondary">
+                          <Text strong>{factura.estatus}</Text>
+                        </Text>
+                      </small>
+                    </span>
+                  </div>
+                </>
+              );
+            })}
+          </>
+        );
+      },
     },
     {
-      key: "seleccionar",
-      dataIndex: "seleccionar",
-      title: "Seleccionar",
-      align: "center",
-      width: 1,
-      render: () => <Checkbox />,
+      ...getDefaultColumnProps("sucursal", "Sucursal", {
+        // searchState,
+        // setSearchState,
+        width: 10,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("compania", "Compañia", {
+        // searchState,
+        // setSearchState,
+        width: 10,
+      }),
     },
   ];
+  
+  const { invoiceCompanyStore } = useStore();
+  const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
+  const [openRows, setOpenRows] = useState<boolean>(false);
+  const { invoices } = invoiceCompanyStore;
+  useEffect(() => {
+    setExpandedRowKeys(invoices.solicitudes?.map((x: any) => x.solicitudId));
+    setOpenRows(true);
+  }, [invoices]);
+  const onExpand = (isExpanded: boolean, record: any) => {
+    let expandRows: string[] = expandedRowKeys;
+    if (isExpanded) {
+      expandRows.push(record.solicitudId);
+    } else {
+      const index = expandRows.findIndex((x) => x === record.solicitudId);
+      if (index > -1) {
+        expandRows.splice(index, 1);
+      }
+    }
+    setExpandedRowKeys(expandRows);
+  };
+  const toggleRow = () => {
+    if (openRows) {
+      setOpenRows(false);
+      setExpandedRowKeys([]);
+    } else {
+      setOpenRows(true);
+      setExpandedRowKeys(invoices.solicitudes?.map((x: any) => x.solicitudId));
+    }
+  };
   return (
     <>
+      {invoices.solicitudes?.length > 0 && (
+        <div style={{ textAlign: "right", marginBottom: 10 }}>
+          <Button
+            type="primary"
+            onClick={toggleRow}
+            style={{ marginRight: 10 }}
+          >
+            {!openRows ? "Abrir tabla" : "Cerrar tabla"}
+          </Button>
+        </div>
+      )}
       <Table<any>
         size="small"
         bordered
-        rowClassName="row-search"
-        columns={columns}
+        rowKey={(record) => record.solicitudId}
+        columns={[...columns]}
+        pagination={false}
+        dataSource={invoices.solicitudes ?? []}
+        rowClassName={"row-search"}
+        className="header-expandable-table"
+        rowSelection={{
+          type: "checkbox",
+        }}
+        // scroll={{ y: 450 }}
         expandable={{
-          onExpand: () => {},
-          expandedRowKeys: [],
+          onExpand: onExpand,
+          expandedRowKeys: expandedRowKeys,
+          rowExpandable: () => true,
+          defaultExpandAllRows: true,
           expandedRowRender: (data, index) => {
             return (
               <>
-                <InvoiceCompanyStudyTable />
+                <InvoiceCompanyStudyTable
+                  studies={data.estudios ?? []}
+                  indice={index ?? 0}
+                />
               </>
             );
           },
         }}
-      ></Table>
+        footer={() => (
+          <>
+            {!!invoices.solicitudes?.length && (
+              <Table
+                size="small"
+                bordered
+                columns={[
+                  {
+                    key: "resumen",
+                    dataIndex: "resumen",
+                    title: "resumen",
+                    align: "center",
+                    render(value, record, index) {
+                      return (
+                        <>
+                          <div
+                            style={{ display: "flex", flexDirection: "column" }}
+                          >
+                            <Text>
+                              Total de solicitudes {record.totalSolicitudes}
+                            </Text>
+                            <Text>
+                              Total de estudios {record.totalEstudios}
+                            </Text>
+                          </div>
+                        </>
+                      );
+                    },
+                  },
+                  {
+                    key: "total",
+                    dataIndex: "total",
+                    title: "Compañia",
+                    align: "center",
+                    render() {
+                      return "Gran Total";
+                    },
+                  },
+                  {
+                    key: "totalPrecio",
+                    dataIndex: "totalPrecio",
+                    title: "totalPrecio",
+                    align: "center",
+                    render(value, record, index) {
+                      return moneyFormatter.format(value);
+                    },
+                  },
+                  {
+                    key: "totalD",
+                    dataIndex: "totalD",
+                    title: "totalD",
+                    align: "center",
+                    render(value, record, index) {
+                      return moneyFormatter.format(value);
+                    },
+                  },
+                  {
+                    key: "totalC",
+                    dataIndex: "totalC",
+                    title: "totalC",
+                    align: "center",
+                    render(value, record, index) {
+                      return moneyFormatter.format(value);
+                    },
+                  },
+                  {
+                    key: "total",
+                    dataIndex: "total",
+                    title: "total",
+                    align: "center",
+                    render(value, record, index) {
+                      return moneyFormatter.format(value);
+                    },
+                  },
+                ]}
+                showHeader={false}
+                pagination={false}
+                dataSource={[invoices]}
+              />
+            )}
+          </>
+        )}
+      />
     </>
   );
 };

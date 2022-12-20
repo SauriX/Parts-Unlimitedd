@@ -1,3 +1,4 @@
+import { InvoiceCompanyStore } from "./invoiceCompanyStore";
 import { configure } from "mobx";
 import { createContext, useContext } from "react";
 import ProfileStore from "./profileStore";
@@ -89,9 +90,10 @@ interface Store {
   shipmentTracking: shipmentTackingStore;
   workListStore: WorkListStore;
   massResultSearchStore: MassResultSearchStore;
-  resultValidationStore:  ResultValidationStore;
-  relaseResultStore:RelaseResultStore;
+  resultValidationStore: ResultValidationStore;
+  relaseResultStore: RelaseResultStore;
   invoiceStore: InvoiceStore;
+  invoiceCompanyStore: InvoiceCompanyStore;
 }
 
 export const store: Store = {
@@ -135,9 +137,10 @@ export const store: Store = {
   shipmentTracking: new shipmentTackingStore(),
   workListStore: new WorkListStore(),
   massResultSearchStore: new MassResultSearchStore(),
-  resultValidationStore:new   ResultValidationStore(),
+  resultValidationStore: new ResultValidationStore(),
   relaseResultStore: new RelaseResultStore(),
   invoiceStore: new InvoiceStore(),
+  invoiceCompanyStore: new InvoiceCompanyStore(),
 };
 
 export const StoreContext = createContext(store);
