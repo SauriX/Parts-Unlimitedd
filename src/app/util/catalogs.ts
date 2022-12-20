@@ -89,6 +89,7 @@ export const regimenFiscal: IOptions[] = [
 
 export const reports: IOptionsReport[] = [
   { value: "corte_caja", label: "Corte de caja", type: "corte_caja" },
+  { value: "indicadores", label: "Indicadores", type: "indicadores" },
   { value: "expediente", label: "Expediente", type: "expediente" },
   { value: "estadistica", label: "Estadística Pacientes", type: "estadistica" },
   { value: "medicos", label: "Sol. Médico Condensado", type: "medicos" },

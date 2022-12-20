@@ -24,7 +24,7 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
     getByChart,
     clearFilter,
   } = reportStore;
-  const {clearFilter: clearCash} = cashRegisterStore;
+  const { clearFilter: clearCash } = cashRegisterStore;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -66,7 +66,24 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
       <>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title={currentReport == "corte_caja" ? "Corte de caja" : "Reportes"} image={currentReport == "corte_caja" ? "registradora" : "grafico"} />}
+          title={
+            <HeaderTitle
+              title={
+                currentReport == "corte_caja"
+                  ? "Corte de caja"
+                  : currentReport == "indicadores"
+                  ? "Indicadores"
+                  : "Reportes"
+              }
+              image={
+                currentReport == "corte_caja"
+                  ? "registradora"
+                  : currentReport == "indicadores"
+                  ? "indicadores"
+                  : "grafico"
+              }
+            />
+          }
           className="header-container"
           extra={[
             currentReport && (

@@ -41,6 +41,7 @@ export type reportType =
   | "maquila_interna"
   | "maquila_externa"
   | "corte_caja"
+  | "indicadores"
   | undefined;
 
 export const getInputs = (

@@ -44,6 +44,7 @@ import MassResultSearchStore from "./massResultSearch";
 import ResultValidationStore from "./resultValidationStore";
 import RelaseResultStore from "./RelaseResultStore";
 import InvoiceStore from "./invoiceStore";
+import IndicatorStore from "./indicatorStore";
 configure({
   enforceActions: "never",
 });
@@ -77,6 +78,7 @@ interface Store {
   quotationStore: QuotationStore;
   reportStore: ReportStore;
   cashRegisterStore: CashRegisterStore;
+  indicatorsStore: IndicatorStore;
   requestStore: RequestStore;
   appointmentStore: AppointmentStore;
   notificationStore: NotificationStore;
@@ -123,6 +125,7 @@ export const store: Store = {
   quotationStore: new QuotationStore(),
   reportStore: new ReportStore(),
   cashRegisterStore: new CashRegisterStore(),
+  indicatorsStore: new IndicatorStore(),
   requestStore: new RequestStore(),
   appointmentStore: new AppointmentStore(),
   notificationStore: new NotificationStore(),
