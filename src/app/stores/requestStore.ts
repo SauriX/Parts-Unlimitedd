@@ -381,12 +381,15 @@ export default class RequestStore {
 
   createPayment = async (request: IRequestPayment) => {
     try {
+      this.loadingTabContentCount++;
       const payment = await Request.createPayment(request);
       this.payments.push(payment);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
+    } finally {
+      this.loadingTabContentCount--;
     }
   };
 
@@ -532,6 +535,7 @@ export default class RequestStore {
     payments: IRequestPayment[]
   ) => {
     try {
+      this.loadingTabContentCount++;
       const cancelled = await Request.cancelPayments(
         recordId,
         requestId,
@@ -547,6 +551,8 @@ export default class RequestStore {
     } catch (error) {
       alerts.warning(getErrors(error));
       return [];
+    } finally {
+      this.loadingTabContentCount--;
     }
   };
 
