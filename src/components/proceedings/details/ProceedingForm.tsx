@@ -936,6 +936,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           formProps={{
                             name: "telefono",
                             label: "Teléfono",
+                            noStyle: true,
                           }}
                           mask={[
                             /[0-9]/,

@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { PageHeader, Pagination, Typography } from "antd";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import { FC, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { toJS } from "mobx";
 
@@ -16,7 +16,8 @@ const ClinicalResultsHeader: FC<ClinicalFormProps> = ({ printing }) => {
   const { requestStore, clinicResultsStore } = useStore();
   const { request, getById } = requestStore;
   const { data } = clinicResultsStore;
-
+  const [searchParams] = useSearchParams();
+  const [returnV, setReturnV] = useState(searchParams.get("return") === "validation");
   let navigate = useNavigate();
   const getPage = (id: string) => {
     const index = data.findIndex((x) => x.id === id) + 1;
@@ -34,7 +35,7 @@ const ClinicalResultsHeader: FC<ClinicalFormProps> = ({ printing }) => {
     <PageHeader
       ghost={false}
       title={<HeaderTitle title={`Solicitud: ${request?.clave}`} />}
-      onBack={() => navigate(`/clinicResults`)}
+      onBack={() => {if(returnV){navigate(`/ResultValidation`)}else{navigate(`/clinicResults`)}}}
       subTitle={`Registro: ${request?.registro}`}
       className="header-container"
       extra={[

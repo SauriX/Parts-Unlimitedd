@@ -60,7 +60,10 @@ const DeliveryResultsForm = () => {
   ]);
 
   useEffect(() => {
-    getAllCaptureResults(form.getFieldsValue() as IDeliverResultsForm);
+    const formValues = form.getFieldsValue();
+    formValues.fechaInicial = formValues.fechas[0].utcOffset(0, true);
+    formValues.fechaFinal = formValues.fechas[1].utcOffset(0, true);
+    getAllCaptureResults(formValues);
   }, []);
 
   const onFinish = async (newFormValues: any) => {

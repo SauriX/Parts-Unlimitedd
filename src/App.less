@@ -2,7 +2,9 @@
 
 // Mover
 .ant-form-item-label
-  > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
+  > label.ant-form-item-required:not(
+    .ant-form-item-required-mark-optional
+  )::before {
   line-height: 0;
 }
 // Mover
@@ -457,4 +459,9 @@ tr.ant-table-row.custom-selected-row:hover > td.ant-table-cell-row-hover {
     display: block;
     margin-right: 0;
   }
+}
+
+.ant-table-footer {
+  border-bottom-width: 0;
+  padding: 0 !important;
 }
