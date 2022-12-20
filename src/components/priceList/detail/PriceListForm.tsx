@@ -222,7 +222,9 @@ const PriceListForm: FC<PriceListFormProps> = ({
     );
     var list = lista;
     item.activo = active;
-
+      if(!active){
+        item.precio=0;
+      }
     console.log(item.precio, "precio");
     list[index] = item;
     setLista(list);
@@ -265,7 +267,13 @@ const PriceListForm: FC<PriceListFormProps> = ({
       (x) => x.id === item.id && x.paqute === typePAck
     );
     var list = lista;
+    //here
     item.precio = newprecio;
+
+    if(newprecio==0){
+      item.activo=false;
+
+    }
     list[index] = item;
     var indexVal = values.table!.findIndex(
       (x) => x.id === item.id && x.paqute === typePAck
@@ -463,6 +471,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
         <Checkbox
           name="activo"
           checked={item.activo}
+          disabled={readonly}
           onChange={(value) => {
             console.log(item, "here check sucmedcom");
             console.log(value.target.checked);
@@ -470,6 +479,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
             if (value.target.checked) {
               active = true;
             }
+           
             setSucMedCom(active, item);
           }}
         />
@@ -530,8 +540,8 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const filterBySearch = (search: string) => {
     console.log(search);
     console.log(lista);
-    if (search != null) {
-      console.log("if");
+    if (search != null && search !="") {
+      
       var estudios = lista2.filter(
         (x) =>
           x.clave.toUpperCase().includes(search.toUpperCase()) ||
@@ -543,8 +553,11 @@ const PriceListForm: FC<PriceListFormProps> = ({
       
       setValues((prev) => ({ ...prev, table: estudios }));
       return;
+    }else{
+      lista2?.filter((x) => x.paqute)
+      setValues((prev) => ({ ...prev, table: lista2 }));
     }
-    setValues((prev) => ({ ...prev, table: lista2 }));
+    
   };
 
   const onFinish = async (newValues: IPriceListForm) => {
@@ -728,6 +741,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       render: (value, item) => (
         <Checkbox
           name="activo"
+          disabled={readonly}
           checked={item.activo}
           onChange={(value1) => {
             console.log(item, "item");
@@ -1141,7 +1155,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
           <br />
 
           <Tabs defaultActiveKey="1" >
-            <TabPane tab="Pendientes de enviar" key="1">
+            <TabPane tab="Estudios" key="1">
             <Table<IPriceListEstudioList>
             size="large"
             columns={printing ? columnsEstudios.slice(0, 4) : columnsEstudios}
@@ -1153,7 +1167,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
             })}
           />
             </TabPane>
-            <TabPane tab="Pendientes de recibir" key="2">
+            <TabPane tab="Paquetes" key="2">
             <Table<IPriceListEstudioList>
             size="large"
             columns={printing ? columnsEstudiosP.slice(0, 4) : columnsEstudiosP}
