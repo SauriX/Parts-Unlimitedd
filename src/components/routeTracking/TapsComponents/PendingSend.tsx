@@ -35,6 +35,7 @@ import ImageButton from "../../../app/common/button/ImageButton";
 import { getExpandableConfig } from "../../report/utils";
 import {
   IRouteList,
+  IstudyRoute,
   SearchTracking,
   TrackingFormValues,
 } from "../../../app/models/routeTracking";
@@ -43,27 +44,42 @@ import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../../app/util/alerts";
 import PrintIcon from "../../../app/common/icons/PrintIcon";
 import { formItemLayout } from "../../../app/util/utils";
+import { toJS } from "mobx";
 
 const PendingSend = () => {
-  const { procedingStore, optionStore, locationStore, samplingStudyStore: samplig,routeTrackingStore,profileStore } = useStore();
-  const { getAll, studys, printTicket, update,exportForm,setventana } = routeTrackingStore;
-  const { branchCityOptions,getBranchCityOptions } = optionStore;
-  const {profile}= profileStore;
-  const [values, setValues] = useState<SearchTracking>(new TrackingFormValues());
+  const {
+    procedingStore,
+    optionStore,
+    locationStore,
+    samplingStudyStore: samplig,
+    routeTrackingStore,
+    profileStore,
+  } = useStore();
+  const { getAll, studys, printTicket, update, exportForm, setventana } =
+    routeTrackingStore;
+  const { branchCityOptions, getBranchCityOptions } = optionStore;
+  const { profile } = profileStore;
+  const [values, setValues] = useState<SearchTracking>(
+    new TrackingFormValues()
+  );
   const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
-const [ids, setIds] = useState<number[]>([]);
-const [form] = Form.useForm<SearchTracking>();
-const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
-const [activiti, setActiviti] = useState<string>("");
-const [expandedRowKeys,setexpandedRowKeys]= useState<string[]>([]);
-const [openRows,setOpenRows]=useState<boolean>(false);
-const [expandable, setExpandable] =useState<ExpandableConfig<IRouteList>>();
-let navigate = useNavigate();
-useEffect(()=>{
-  setexpandedRowKeys(studys!.map((x)=>x.id));
-  setOpenRows(true);
-  form.setFieldsValue({sucursal:profile?.sucursal!});
-},[studys]);
+  const [ids, setIds] = useState<number[]>([]);
+  const [form] = Form.useForm<SearchTracking>();
+  const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
+  const [activiti, setActiviti] = useState<string>("");
+  const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
+  const [openRows, setOpenRows] = useState<boolean>(false);
+  const [expandable, setExpandable] = useState<ExpandableConfig<IRouteList>>();
+  const [selectedStudies, setSelectedStudies] = useState<any[]>([
+    // { solicitudId: "", estudiosId: [{ estudioId: "", tipo: 3 }] },
+  ]);
+  const [selectedRowKeysCheck, setSelectedRowKeysCheck] = useState<any[]>([]);
+  let navigate = useNavigate();
+  useEffect(() => {
+    setexpandedRowKeys(studys!.map((x) => x.id));
+    setOpenRows(true);
+    form.setFieldsValue({ sucursal: profile?.sucursal! });
+  }, [studys]);
   useEffect(() => {
     const readPriceList = async () => {
       let studios = [];
@@ -85,19 +101,28 @@ useEffect(()=>{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
   const updatedata = async () => {
-    var succes = await update(updateData!);
-    if (succes) {
+    let estudios = 0;
+    let solicitudes =0;
+    updateData.forEach(element => {
+        estudios+=element.estudioId.length;
+    });
+    solicitudes = updateData.length;
+    
+
       alerts.confirm(
         "",
-        `Se han enviado ${ids.length} estudios de ${solicitudesData.length} solicitud a estatus pendiente de manera exitosa `,
+        `Se han enviado ${estudios} estudios de ${solicitudes} solicitud a estatus en ruta de manera exitosa `,
         async () => {
-          await getAll(values);
+          var succes = await update(updateData!);
+          if(succes){
+           // await getAll(values);
+            form.submit();
+          }
+          setUpdateDate([]);
         }
       );
-      setIds([]);
-      SetSolicitudesData([]);
-    } else {
-    }
+
+    
   };
   const onExpand = (isExpanded: boolean, record: IRouteList) => {
     let expandRows: string[] = expandedRowKeys;
@@ -146,6 +171,44 @@ useEffect(()=>{
     };
     setUpdateDate((prev) => [...prev!, datos]);
   };
+  const columnsStudy: IColumns<IstudyRoute> = [
+    {
+      ...getDefaultColumnProps("clave", "Solicitud", {
+        width: "20%",
+        minWidth: 150,
+      }),
+      render: (value, route) => (
+        <Button
+          type="link"
+          onClick={() => {
+            navigate(`/ShipmentTracking/${route.id}`);
+          }}
+        >
+          {value}
+        </Button>
+      ),
+    },
+    {
+      ...getDefaultColumnProps("nombre", "Estudio", {
+        width: "15%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("nombreEstatus", "Estatus", {
+        width: "15%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("registro", "Registro", {
+        width: "15%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("entrega", "Entrega", {
+        width: "15%",
+      }),
+    },
+  ];
   const expandableStudyConfig = {
     expandedRowRender: (item: IRouteList) => (
       <div>
@@ -161,76 +224,10 @@ useEffect(()=>{
                 column={6}
               >
                 <Descriptions.Item
-                  label="Clave"
-                  className="description-content"
-                  style={{ maxWidth: 30 }}
-                >
-                  {x.clave}
-                </Descriptions.Item>
-                <Descriptions.Item
-                  label="Estudio"
-                  className="description-content"
-                  style={{ maxWidth: 30 }}
-                >
-                  {x.nombre}
-                </Descriptions.Item>
-                <Descriptions.Item
-                  label="Estatus"
-                  className="description-content"
-                  style={{ maxWidth: 30 }}
-                >
-                  {x.status == 1 ? "Pendiente" : "Toma de muestra"}
-                </Descriptions.Item>
-                <Descriptions.Item
-                  label="Registro"
-                  className="description-content"
-                  style={{ maxWidth: 30 }}
-                >
-                  {x.registro}
-                </Descriptions.Item>
-                <Descriptions.Item
-                  label="Entrega"
-                  className="description-content"
-                  style={{ maxWidth: 30 }}
-                >
-                  {x.entrega}
-                </Descriptions.Item>
-                <Descriptions.Item
                   label=""
                   className="description-content"
                   style={{ maxWidth: 30 }}
                 >
-                  {x.status == 1 && (
-                    <Checkbox
-                      onChange={(e) => {
-                        onChange(e, x.id, item.id);
-                      }}
-                    >
-                      Selecciona
-                    </Checkbox>
-                  )}
-                  {x.status == 2 && (
-                    <Checkbox
-                      onChange={(e) => {
-                        onChange(e, x.id, item.id);
-                      }}
-                    >
-                      Selecciona
-                    </Checkbox>
-                  )}
-                  {x.status == 3 && (
-                    <Checkbox
-                      onChange={(e) =>   onChange(e, x.id, item.id) }
-                    >
-                      Selecciona
-                    </Checkbox>
-                  )}
-                  <PrintIcon
-                    key="print"
-                    onClick={() => {
-                      printTicket(x.expedienteid, x.solicitudid);
-                    }}
-                  />
                   {/* <ImageButton
                     title="Imprimir"
                     image="print"
@@ -249,9 +246,11 @@ useEffect(()=>{
   };
   const register = () => {
     setActiviti("register");
+    setUpdateDate([]);
   };
   const cancel = () => {
     setActiviti("cancel");
+    setUpdateDate([]);
   };
 
   const [searchState, setSearchState] = useState<ISearch>({
@@ -260,88 +259,91 @@ useEffect(()=>{
   });
   const hasFooterRow = true;
 
-    const columns: IColumns<IRouteList> = [
-      {
-        ...getDefaultColumnProps("seguimiento", "# De seguimiento", {
-          searchState,
-          setSearchState,
-          width: "20%",
-          minWidth: 150,
-        }),
-        render: (value, route) => (
-          <Button
-            type="link"
-            onClick={() => {
-              navigate(`/ShipmentTracking/${route.id}`);
-            }}
-          >
-            {value}
-          </Button>
-        ),
-      },
-        {
-          ...getDefaultColumnProps("clave", "Clave de ruta", {
-            searchState,
-            setSearchState,
-            width: "15%",
-          }),
-        },
-        {
-          ...getDefaultColumnProps("sucursal", "Sucursal", {
-            searchState,
-            setSearchState,
-            width: "20%",
-          }),
-        },
-        {
-          ...getDefaultColumnProps("fecha", " Fecha de entrega", {
-            searchState,
-            setSearchState,
-            width: "15%",
-          }),
-        },
-        {
-          key: "editar",
-          dataIndex: "id",
-          title: "Estatus",
-          align: "center",
-          width:  "10%",
-          render: (value) => (value ? "Activo" : "Inactivo"),
-        },
-    
-        {
-          key: "editar",
-          dataIndex: "id",
-          title: "Editar",
-          align: "center",
-          width:  "10%",
-          render: (value) => (
-            <IconButton
-              title="Editar ruta"
-              icon={<EditOutlined />}
-              onClick={() => {
-                navigate(`/trackingOrder/${value}`);
-              }}
-            />
-          ),
-        },
-    
-        {
-          key: "editar",
-          dataIndex: "id",
-          title: "Impresión",
-          align: "center",
-          width:  "10%",
-          render: (value,item) => (
-            <PrintIcon  
-                    key="print"
-                    onClick={() => {
-                      printTicket(item.estudios[0].expedienteid, item.estudios[0].solicitudid);
-                    }}
-            />
-          ),
-        },
-       /*  {
+  const columns: IColumns<IRouteList> = [
+    {
+      ...getDefaultColumnProps("seguimiento", "# De seguimiento", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+      }),
+      render: (value, route) => (
+        <Button
+          type="link"
+          onClick={() => {
+            navigate(`/ShipmentTracking/${route.id}`);
+          }}
+        >
+          {value}
+        </Button>
+      ),
+    },
+    {
+      ...getDefaultColumnProps("clave", "Clave de ruta", {
+        searchState,
+        setSearchState,
+        width: "15%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("sucursal", "Sucursal", {
+        searchState,
+        setSearchState,
+        width: "20%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("fecha", " Fecha de entrega", {
+        searchState,
+        setSearchState,
+        width: "15%",
+      }),
+    },
+    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Estatus",
+      align: "center",
+      width: "10%",
+      render: (value) => (value ? "Activo" : "Inactivo"),
+    },
+
+    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Editar",
+      align: "center",
+      width: "10%",
+      render: (value) => (
+        <IconButton
+          title="Editar ruta"
+          icon={<EditOutlined />}
+          onClick={() => {
+            navigate(`/trackingOrder/${value}`);
+          }}
+        />
+      ),
+    },
+
+    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Impresión",
+      align: "center",
+      width: "10%",
+      render: (value, item) => (
+        <PrintIcon
+          key="print"
+          onClick={() => {
+            printTicket(
+              item.estudios[0].expedienteid,
+              item.estudios[0].solicitudid
+            );
+          }}
+        />
+      ),
+    },
+    /*  {
           key: "editar",
           dataIndex: "id",
           title: "Seleccionar",
@@ -353,144 +355,415 @@ useEffect(()=>{
           </Checkbox>
           ),
         }, */
-      ];
-      const onFinish = async (newValues: SearchTracking) => {
-        // setLoading(true);
-     console.log("onfinish");
-         const reagent = { ...values, ...newValues };
+  ];
+  const onFinish = async (newValues: SearchTracking) => {
+    // setLoading(true);
+    console.log("onfinish");
+    const reagent = { ...values, ...newValues };
 
+    var search = reagent;
 
-          var search= reagent;
+    let studios = [];
+    var datas = await getAll(search!);
+    // console.log(datas, "daata");
+    //setSoliCont(datas?.length!);
+    datas?.forEach((x: any) => studios.push(x.pendings));
+    // setStudyCont(studios.length);
+    //setLoading(false);
+    setExpandable(expandableStudyConfig);
+    console.log(reagent, "en el onfish");
+    console.log(reagent);
+    let success = false;
 
-           let studios = [];
-           var datas = await getAll(search!);
-          // console.log(datas, "daata");
-           //setSoliCont(datas?.length!);
-           datas?.forEach((x:any) => studios.push(x.pendings));
-          // setStudyCont(studios.length);
-           //setLoading(false);
-           setExpandable(expandableStudyConfig);
-         console.log(reagent,"en el onfish")
-         console.log(reagent);
-         let success = false;
-     
+    // setLoading(false);
+  };
+  return (
+    <Fragment>
+      <Form<SearchTracking>
+        {...formItemLayout}
+        form={form}
+        name="reagent"
+        initialValues={values}
+        onFinish={onFinish}
+        scrollToFirstError
+      >
+        <Row gutter={[0, 12]}>
+          <Col span={6}>
+            <DateRangeInput
+              formProps={{ name: "fechas", label: "Fecha" }}
+            ></DateRangeInput>
+          </Col>
+          <Col span={1}></Col>
+          <Col span={4}>
+            <SelectInput
+              options={branchCityOptions}
+              formProps={{ name: "sucursal", label: "Sucursal" }}
+              style={{ marginLeft: "10px" }}
+            ></SelectInput>
+          </Col>
+          <Col span={1}></Col>
+          <Col span={4}>
+            <TextInput
+              formProps={{
+                name: "buscar",
+                label: "Buscar",
+                labelCol: { span: 5 },
+              }}
+            ></TextInput>
+          </Col>
+          <Col span={4}>
+            <Button
+              style={{ marginLeft: "5%" }}
+              onClick={() => {
+                form.submit();
+              }}
+              type="primary"
+            >
+              Buscar
+            </Button>
+          </Col>
+          <Col>
+            {" "}
+            <Button
+              style={{ backgroundColor: " #18AC50" }}
+              onClick={() => {
+                navigate(`/trackingOrder/new`);
+              }}
+              type="primary"
+            >
+              Crear orden de seguimiento
+            </Button>
+          </Col>
+        </Row>
+      </Form>
+      <Row style={{ marginBottom: "1%", marginTop:"2%" }}>
+        <Col span={8}>
+          <Button
+            
+            type={activiti == "register" ? "primary" : "ghost"}
+            onClick={register}
+          >
+            Enviar ruta
+          </Button>
+          <Button
+            
+            type={activiti == "cancel" ? "primary" : "ghost"}
+            onClick={cancel}
+          >
+            Cancelar envío
+          </Button>
+        </Col>
+        <Col span={8}></Col>
+        <Col span={8}>
+        <div style={{ textAlign: "right", marginBottom: 10 }}>
+          {activiti == "register" ? (
+            <Button
 
-     
-        // setLoading(false);
-     
+              type="primary"
+              disabled={updateData.length <= 0}
+              onClick={() => {
+                updatedata();
+              }}
+            >
+              Enviar
+            </Button>
+          ) : (
+            ""
+          )}
+          {activiti == "cancel" ? (
+            <Button
 
-       };
-    return (
-        <Fragment>
-           
-            <Form<SearchTracking>
-                {...formItemLayout}
-                form={form}
-                name="reagent"
-                initialValues={values}
-                onFinish={onFinish}
-                scrollToFirstError
-              >
-                <Row gutter={[0, 12]}>
-                    <Col span={6}>
-                        <DateRangeInput formProps={{ name: "fechas", label: "Fecha" }} ></DateRangeInput>
-                    </Col>
-                    <Col span={1}></Col>
-                    <Col span={4}>
-                        <SelectInput options={branchCityOptions} formProps={{ name: "sucursal", label: "Sucursal" }} style={{marginLeft:"10px"}}></SelectInput>  
-                    </Col>
-                    <Col span={1}></Col>
-                    <Col span={4}>
-                        <TextInput formProps={{ name: "buscar", label: "Buscar" ,labelCol:{span:5}}} ></TextInput>
-                    </Col>
-                    <Col span={4}>
-                    <Button style={{marginLeft:"5%"}} onClick={()=>{form.submit()}} type="primary">Buscar</Button>
-                    </Col>
-                    <Col> <Button style={{backgroundColor:" #18AC50"}} onClick={()=>{navigate(`/trackingOrder/new`);}} type="primary" >Crear orden  de seguimiento</Button></Col>
-                </Row>
-            </Form>
-            <Row style={{marginLeft:"20%",marginBottom:"2%"}}>
-                <Col span={8}>
-                    <Button style={{marginTop:"8%",marginLeft:"2%"}}         type={activiti == "register" ? "primary" : "ghost"}
-        onClick={register} >Enviar ruta</Button>
-                    <Button style={{marginTop:"8%",marginLeft:"2%"}}  type={activiti == "cancel" ? "primary" : "ghost"}
-        onClick={cancel} >Cancelar envío</Button>
-                </Col>
-                <Col span={8}></Col>
-                <Col span={8}>
-                {activiti == "register" ? (
-        <Button
-          style={{ marginTop: "8%", marginBottom: "10px", marginLeft: "70%" }}
-          type="primary"
-          disabled={ids.length <= 0}
-          onClick={() => {
-            updatedata();
+              type="primary"
+              disabled={updateData.length <= 0}
+              onClick={() => {
+                updatedata();
+              }}
+            >
+              Cancelar Registro
+            </Button>
+          ) : (
+            ""
+          )}
+          </div>
+        </Col>
+      </Row>
+      <Fragment>
+        {studys.length > 0 && (
+          <div style={{ textAlign: "right", marginBottom: 10 }}>
+            <Button
+              type="primary"
+              onClick={togleRows}
+              style={{ marginRight: 10 }}
+            >
+              {!openRows ? "Abrir tabla" : "Cerrar tabla"}
+            </Button>
+          </div>
+        )}
+        <Table<IRouteList>
+          size="small"
+          rowKey={(record) => record.id}
+          columns={columns}
+          dataSource={[...studys]}
+          rowClassName="row-search"
+          // pagination={false}
+          // scroll={{ x: 450 }}
+
+          expandable={{
+            onExpand: onExpand,
+            expandedRowKeys: expandedRowKeys,
+            rowExpandable: () => true,
+            defaultExpandAllRows: true,
+
+            expandedRowRender: (data: IRouteList, index: number) => (
+              <>
+                {console.log(data.estudios)}
+                <Table
+                  size="small"
+                  rowKey={(record) => record.id}
+                  columns={columnsStudy}
+                  dataSource={[...data.estudios]}
+                  bordered
+                  style={{}}
+                  className="header-expandable-table"
+                  pagination={false}
+                  showHeader={index === 0}
+                  rowSelection={{
+                    type: "checkbox",
+                    getCheckboxProps: (record: any) => ({
+                      disabled:
+                        (activiti != "register" && activiti != "cancel") ||
+                        (activiti == "register" && record.status != 2) ||
+                        (activiti == "cancel" && record.status != 8),
+                    }),
+                    onSelect: (selectedRow, isSelected, a: any) => {
+                      
+                      let existingStudy = null;
+                      if (updateData.length > 0) {
+                        console.log(updateData,"onSelect");
+                        existingStudy = updateData.find(
+                          (study) => study.solicitudId === data.id
+                        );
+                        
+                        var studiinlist = existingStudy!.estudioId.filter(
+                          (x) => x == selectedRow.id
+                        );
+                        
+                        if (!studiinlist.includes(selectedRow.id)) {
+                          
+                          if (isSelected) {
+                            let studylist: number[] = [];
+                            if (!existingStudy) {
+                              studylist.push(selectedRow.id);
+                              var datatoupdate: IUpdate = {
+                                solicitudId: data.id,
+                                estudioId: studylist,
+                              };
+                              setUpdateDate((prev) => [...prev, datatoupdate]);
+                            } else {
+                              console.log(updateData,"onSelect");
+                              var studiinlist = existingStudy.estudioId.filter(
+                                (x) => x == selectedRow.id
+                              );
+                              if (!studiinlist.includes(selectedRow.id)) {
+                                existingStudy.estudioId.push(selectedRow.id);
+                                let existingStudyIndex = updateData.findIndex(
+                                  (study) => study.solicitudId === data.id
+                                );
+                                let updatdedlist = updateData;
+                                updatdedlist[existingStudyIndex] =
+                                  existingStudy;
+                                setUpdateDate(updatdedlist);
+                              } else {
+                                const newStudies =
+                                  existingStudy.estudioId.filter(
+                                    (x) => x != selectedRow.id
+                                  );
+
+                                existingStudy.estudioId = newStudies;
+                                if (newStudies.length > 0) {
+                                  let existingStudyIndex = updateData.findIndex(
+                                    (study) => study.solicitudId === data.id
+                                  );
+                                  let updatdedlist = updateData;
+                                  updatdedlist[existingStudyIndex] =
+                                    existingStudy;
+
+                                  setUpdateDate(updatdedlist);
+                                } else {
+                                  let updatdedlist = updateData;
+                                  updatdedlist = updatdedlist.filter(
+                                    (x) => x.solicitudId === data.id
+                                  );
+
+                                  setUpdateDate(updatdedlist);
+                                }
+                              }
+                            }
+                          } else {
+                            if (existingStudy) {
+                              const newStudies = existingStudy.estudioId.filter(
+                                (x) => x != selectedRow.id
+                              );
+
+                              existingStudy.estudioId = newStudies;
+                              if (newStudies.length > 0) {
+                                let existingStudyIndex = updateData.findIndex(
+                                  (study) => study.solicitudId === data.id
+                                );
+                                let updatdedlist = updateData;
+                                updatdedlist[existingStudyIndex] =
+                                  existingStudy;
+
+                                setUpdateDate(updatdedlist);
+                              } else {
+                                let updatdedlist = updateData;
+                                updatdedlist = updatdedlist.filter(
+                                  (x) => x.solicitudId === data.id
+                                );
+
+                                setUpdateDate(updatdedlist);
+                              }
+                            }
+                          }
+                        }else{
+                          
+                          if (existingStudy) {
+                            const newStudies = existingStudy.estudioId.filter(
+                              (x) => x != selectedRow.id
+                            );
+
+                            existingStudy.estudioId = newStudies;
+                            if (newStudies.length > 0) {
+                              
+                              let existingStudyIndex = updateData.findIndex(
+                                (study) => study.solicitudId === data.id
+                              );
+                              let updatdedlist = updateData;
+                              updatdedlist[existingStudyIndex] =
+                                existingStudy;
+
+                              setUpdateDate(updatdedlist);
+                            } else {
+                              
+                              let updatdedlist = updateData;
+                              updatdedlist = updatdedlist.filter(
+                                (x) => x.solicitudId != data.id
+                              );
+                              console.log(updatdedlist,"onSelect");
+                              setUpdateDate(updatdedlist);
+                            }
+                          }
+                        }
+                      }else{
+                        let studylist: number[] = [];
+                        studylist.push(selectedRow.id);
+                        var datatoupdate: IUpdate = {
+                          solicitudId: data.id,
+                          estudioId: studylist,
+                        };
+                        setUpdateDate((prev) => [...prev, datatoupdate]);
+                        console.log(updateData,"datas");
+                      }
+                    },
+                    onChange: (
+                      selectedRowKeys: React.Key[],
+                      selectedRows: any,
+                      rowSelectedMethod: any
+                    ) => {
+                      console.log("a", toJS(rowSelectedMethod));
+                      if (rowSelectedMethod.type === "all") {
+                        if (selectedRowKeys.length > 0) {
+                          console.log(
+                            "selected row keys",
+                            toJS(selectedRowKeys)
+                          );
+                          console.log("a", toJS(rowSelectedMethod));
+                          let existingStudy = null;
+                          if (updateData.length > 0) {
+                            setUpdateDate([]);
+                          } else {
+                            var listuopdate: IUpdate[] = [];
+                            
+                            console.log(studys);
+                            studys.forEach(datas=>{
+                              let studylist: number[] = [];
+                              datas.estudios.forEach((study) => {
+                                
+                                if (
+                                  (activiti == "register" && study.status == 2) ||
+                                  (activiti == "cancel" && study.status == 8)
+                                ) {
+  
+                                  studylist.push(study.id);
+                                }
+                              });
+                              var datatoupdate: IUpdate = {
+                                solicitudId: datas.id,
+                                estudioId: studylist,
+                              };
+                              listuopdate.push(datatoupdate);
+                            })
+                            console.log(listuopdate,"lista");
+                            setUpdateDate(listuopdate);
+                          }
+                        }else{
+                          setUpdateDate([]);
+                        }
+                      }
+                      /*                      
+                      setSelectedRowKeysCheck(selectedRowKeys);
+                      console.log("selectedt rows", toJS(selectedRows));
+                      console.log("a", toJS(rowSelectedMethod));
+                      let newStudies: any[] = [];
+                      
+                        if (selectedRowKeys.length > 0) {
+                          let existRequest = null;
+
+                          let newResquestStudies = {
+                            solicitudId: data.id,
+                            estudiosId: [] as any[],
+                          };
+                           selectedRowKeys.forEach((key) => {
+                            existRequest = selectedStudies.find(
+                              (study) => study.routeId === data.id
+                            );
+                            if (!existRequest) {
+                              const newStudy: any = {
+                                estudioId: key,
+                                tipo: selectedRows[0].isPathological ? 30 : -1,
+                              };
+                              newResquestStudies.estudiosId.push(newStudy);
+                            }
+                          });
+                          if (!existRequest) {
+                            newStudies.push(newResquestStudies);
+                          }
+                          setSelectedStudies([
+                            ...selectedStudies,
+                            ...newStudies,
+                          ]); 
+                      } else {
+                           const newStudies = selectedStudies.filter(
+                            (study) => study.routeId !== data.id
+                          ); 
+
+                           setSelectedStudies(newStudies); 
+                        }
+                      } */
+                      
+                    },
+                    selectedRowKeys: updateData.find(
+                      (x) => x.solicitudId == data.id
+                    )?.estudioId,
+                  }}
+                ></Table>
+              </>
+            ),
           }}
-        >
-          Enviar
-        </Button>
-      ) : (
-        ""
-      )}
-{activiti == "cancel" ? (
-        <Button
-          style={{  marginTop: "8%", marginBottom: "10px", marginLeft: "70%"  }}
-          type="primary"
-          disabled={ids.length <= 0}
-          onClick={() => {
-            updatedata();
-          }}
-        >
-          Cancelar Registro
-        </Button>
-      ) : (
-        ""
-      )}
-                </Col>
-            </Row>
-            <Fragment >
-            {studys.length > 0 &&
-
-(
-
-  <div style={{ textAlign: "right", marginBottom: 10 }}>
-
-    <Button
-
-      type="primary"
-
-      onClick={togleRows}
-
-      style={{ marginRight: 10 }}
-
-    >
-
-      {!openRows ? "Abrir tabla" : "Cerrar tabla"}
-
-    </Button>
-
-  </div>
-
-)}
-                <Table<IRouteList>
-                loading={false}
-                size="small"
-                rowKey={(record) => record.id}
-                columns={columns}
-                pagination={false}
-                dataSource={[...studys]}
-                scroll={{ y: 500 }}
-                //(rowClassName={(item) => (item.claveMedico == "Total" || item.paciente === "Total" ? "Resumen Total" : "")}
-                expandable={{...expandable,onExpand:onExpand,expandedRowKeys:expandedRowKeys}}
-                />
-                <div style={{ textAlign: "right", marginTop: 10 }}>
-                <Tag color="lime">
-                    {!hasFooterRow ? 3 : Math.max(studys.length, 0)}{" "}
-                    Registros
-                </Tag>
-                </div>
-            </Fragment>
-        </Fragment>
-    );
-}
+          bordered
+        ></Table>
+      </Fragment>
+    </Fragment>
+  );
+};
 export default observer(PendingSend);
