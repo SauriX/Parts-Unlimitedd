@@ -22,7 +22,7 @@ import ClinicalResultsForm from "./observaciones/ClinicalResultsForm";
 import ClinicalResultsDetails from "./desglose/ClinicalResultsDetail";
 import { useNavigate } from "react-router";
 import ClinicalResultsHeader from "./ClinicalResultsHeader";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { toJS } from "mobx";
 import { IRequest, IRequestStudy } from "../../app/models/request";
@@ -58,7 +58,7 @@ const ClinicalResultsInfo = () => {
     getStudies: getStudiesParams,
     clearSelectedStudies,
   } = clinicResultsStore;
-
+ 
   const [printing, setPrinting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [markAll, setMarkAll] = useState(false);

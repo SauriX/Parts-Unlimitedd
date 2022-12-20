@@ -90,6 +90,12 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
             onChange={(value) => {
               updateDate(item, value);
             }}
+            disabledDate={(current: moment.Moment) =>
+              current.isBefore(moment(), "day")
+            }
+            disabledTime={() => ({
+              disabledHours: () => [],
+            })}
           />
         );
       },

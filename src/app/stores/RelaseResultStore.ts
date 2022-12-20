@@ -40,9 +40,13 @@ export default class RelaseResultStore {
   clearScopes = () => {
     this.scopes = undefined;
   };
+  clear: boolean = false;
 
   clearStudy = () => {
     this.studys = [];
+    this.clear = !this.clear
+    this.studyCont = 0;
+    this.soliCont=0;
   };
 
   access = async () => {

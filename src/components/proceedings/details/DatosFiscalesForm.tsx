@@ -314,6 +314,10 @@ const DatosFiscalesForm = ({
                     labelCol: { span: 8 },
                     wrapperCol: { span: 16 },
                   }}
+                  onChange={(e) => {
+                    e.preventDefault();
+                    form.setFieldValue("rfc", e.target.value.toUpperCase());
+                  }}
                   max={13}
                   required
                   errors={errors.find((x) => x.name === "rfc")?.errors}

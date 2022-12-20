@@ -712,7 +712,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
               }}
             >
               {activar ? "" : " "}
-              Aceptar Registro
+              Aceptar Validación
             </Button>
           ) : (
             ""
@@ -731,7 +731,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
               }}
             >
               {activar ? "" : " "}
-              Cancelar Registro
+              Cancelar Validación
             </Button>
           ) : (
             ""

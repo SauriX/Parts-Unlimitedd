@@ -1049,7 +1049,7 @@ useEffect(()=>{
         )}
       />
       </div>
-     } <Divider orientation="left">Estudios</Divider>
+     } <Divider orientation="left">ESTUDIOS Y PAQUETES</Divider>
       <Row justify="space-between" align="middle">
             <Col span={6}>
               <Search
