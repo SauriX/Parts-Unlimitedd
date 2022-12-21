@@ -27,13 +27,16 @@ export default class TrackingOrdertStore {
   trackingOrder: IEstudiosList[] = [];
   trackingOrderStudies: ITrackingOrderList[] = [];
   estudios: IEstudiosList[] = [];
-
+  temperatura:number = 0;
   TranckingOrderSend: ITrackingOrderForm = new TrackingOrderFormValues();
-
   setSendData = (tranckingOrderSend: ITrackingOrderForm) => {
     this.TranckingOrderSend = tranckingOrderSend;
   };
+  setTemperatura=(temepratura:number)=>{
 
+
+    this.temperatura=temepratura;
+  };
   confirmarRecoleccionSend = async () => {
     try {
       await TrackingOrder.confirmarRecoleccion(this.OrderId);
@@ -51,12 +54,17 @@ export default class TrackingOrdertStore {
       alerts.warning(getErrors(error));
     }
   };
-  setEscaneado = (escaneado: boolean, id: string) => {
+  setEscaneado = (escaneado: boolean, id: string,) => {
     try {
       const estudios = this.trackingOrder.map((estudio) => {
         let a = new TrackingOrderListValues(estudio);
         if (a.id === id) {
           a.escaneado = escaneado;
+          if(!escaneado){
+            a.temperatura=0;
+          }else{
+            a.temperatura = this.temperatura!
+          }
         }
         return a;
       });
@@ -77,8 +85,10 @@ export default class TrackingOrdertStore {
           };
         }
       } else {
+        
         const estudios = this.trackingOrder.map((estudio) => {
-          estudio.temperatura = temperature;
+          if(estudio.escaneado){estudio.temperatura = temperature;}
+          
           return estudio;
         });
         this.trackingOrder = estudios;
