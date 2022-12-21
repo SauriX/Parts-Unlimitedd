@@ -11,10 +11,10 @@ export interface IRouteList {
     seguimiento: string;
     clave: string;
     sucursal: string;
-    fecha: moment.Moment;
+    fecha: string;
     status: string;
     estudios: IstudyRoute[];
-
+   
   }
   export interface IstudyRoute {
     id: number;
@@ -27,6 +27,8 @@ export interface IRouteList {
     clave: string;
     expedienteid:string;
     solicitudid:string;
+    nombreEstatus:string
+    routeId:string
   }
 
   export class TrackingFormValues implements SearchTracking {

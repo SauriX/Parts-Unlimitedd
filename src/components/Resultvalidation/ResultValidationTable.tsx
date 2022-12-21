@@ -153,7 +153,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     readStudy();
   }, [getStudiesOptions]);
   useEffect(() => {
-    console.log(studiesOptions, "estudios");
+
   }, [studiesOptions]);
   const togleRows = () => {
     if (openRows) {
@@ -170,7 +170,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   }, [studys]);
 
   const onChange = (e: CheckboxChangeEvent, id: number, solicitud: string) => {
-    console.log("onchange");
+
     var data = ids;
     var solis = solicitudesData;
     var dataid: number[] = [];
@@ -228,12 +228,12 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
         }
       }
     }
-    console.log(dataupdate.length, "onchange");
+
     if (dataupdate.length <= 0) {
-      console.log("if");
+
       setActivar(false);
     } else {
-      console.log("else");
+
       setActivar(true);
     }
 
@@ -331,7 +331,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   };
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
-  console.log("Table");
+
   useEffect(() => {
     const readData = async () => {
       await getBranchCityOptions();
@@ -351,13 +351,14 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     readData();
   }, [getCity]);
   useEffect(() => {
-    console.log("here");
+
     const readPriceList = async () => {
+   
       setLoading(true);
       let studios = [];
-      var datas = await getAll(values!);
+      var datas = await getAll(search!);
 
-      console.log(datas, "daata");
+
       setSoliCont(datas?.length!);
       datas?.forEach((x) =>
         x.estudios.forEach((x: any) => {
@@ -370,9 +371,10 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     };
 
     if (expedientes.length === 0) {
+
       readPriceList();
     }
-    console.log(expandableStudyConfig, "config");
+   
     setExpandable(expandableStudyConfig);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
@@ -401,7 +403,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     setexpandedRowKeys(expandRows);
   };
   useEffect(() => {
-    console.log(activiti, "useffect");
+
     setExpandable(expandableStudyConfig);
   }, [activiti]);
   const onFinish = async (newValues: ISearchValidation) => {
@@ -412,7 +414,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     setSearch(reagent);
     var data = await getAll(reagent);
     let studios = [];
-    console.log(data, "daata");
+
     setSoliCont(data?.length!);
     data?.forEach((x) =>
       x.estudios.forEach((x: any) => {
@@ -578,7 +580,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                     options={[
                      
                       { value: 5, label: "Validado" },
-                      { value: 6, label: "Liberado" },
+                      { value: 4, label: "Capturado" },
                       { value: 7, label: "Enviado" },
                     ]}
                   ></SelectInput>
