@@ -100,16 +100,6 @@ const MassSearchTable = () => {
                 </Link>
               </Col>
             </Row>
-            {/* <Row>
-              <Col>
-                <strong>{row.paciente}</strong>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                {row.edad} años -<span> Genero: {row.genero}</span>
-              </Col>
-            </Row> */}
             <Row>
               <Col>
                 <strong>Estudio: </strong>
