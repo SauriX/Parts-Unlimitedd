@@ -741,22 +741,27 @@ export default class RequestStore {
           100
         : this.totals.cargo;
 
-    const cop =
-      this.totals.copagoTipo === 1
-        ? ((this.studies
-            .filter(
-              (x) =>
-                x.estatusId !== status.requestStudy.cancelado &&
-                x.asignado &&
-                x.aplicaCopago
-            )
-            .reduce((acc, obj) => acc + obj.precioFinal, 0) +
-            this.packs
-              .filter((x) => !x.cancelado && x.asignado && x.aplicaCopago)
-              .reduce((acc, obj) => acc + obj.precioFinal, 0)) *
-            this.totals.copago) /
-          100
-        : this.totals.copago;
+    const cop = this.request?.esWeeClinic
+      ? this.studies
+          .filter(
+            (x) => x.estatusId !== status.requestStudy.cancelado && x.asignado
+          )
+          .reduce((acc, obj) => acc + (obj.copago ?? 0), 0)
+      : this.totals.copagoTipo === 1
+      ? ((this.studies
+          .filter(
+            (x) =>
+              x.estatusId !== status.requestStudy.cancelado &&
+              x.asignado &&
+              x.aplicaCopago
+          )
+          .reduce((acc, obj) => acc + obj.precioFinal, 0) +
+          this.packs
+            .filter((x) => !x.cancelado && x.asignado && x.aplicaCopago)
+            .reduce((acc, obj) => acc + obj.precioFinal, 0)) *
+          this.totals.copago) /
+        100
+      : this.totals.copago;
 
     const finalTotal = totalStudies - desc + char;
     const finalTotalUser = cop > 0 ? cop : totalStudies - desc + char;
