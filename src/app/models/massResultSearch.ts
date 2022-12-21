@@ -30,6 +30,7 @@ export interface IResultList {
 }
 
 export interface IDeliverResultsForm {
+  clave?: string;
   companias: string[];
   departamentos: number[];
   fechaInicial: moment.Moment;

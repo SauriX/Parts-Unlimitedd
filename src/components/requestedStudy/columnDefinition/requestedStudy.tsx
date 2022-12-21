@@ -120,7 +120,7 @@ const RequestedStudyColumns = ({ printOrder }: tableProps) => {
 export const RequestedStudyExpandable = ({
   activity,
   onChange,
-  updateForm
+  updateForm,
 }: expandableProps) => {
   const nestedColumns: IColumns<IRequestedStudy> = [
     {
@@ -172,15 +172,27 @@ export const RequestedStudyExpandable = ({
         <>
           {record.estatus === status.requestStudy.tomaDeMuestra && (
             <Checkbox
-              onChange={(e) => onChange(e, record.solicitudEstudioId, record.solicitudId)}
-              checked={updateForm.find(x => x.estudioId.includes(record.solicitudEstudioId)) != null}
+              onChange={(e) =>
+                onChange(e, record.solicitudEstudioId, record.solicitudId)
+              }
+              checked={
+                updateForm.find((x) =>
+                  x.estudioId.includes(record.solicitudEstudioId)
+                ) != null
+              }
               disabled={!(activity == "register")}
             ></Checkbox>
           )}
           {record.estatus === status.requestStudy.solicitado && (
             <Checkbox
-              onChange={(e) => onChange(e, record.solicitudEstudioId, record.solicitudId)}
-              checked={updateForm.find(x => x.estudioId.includes(record.solicitudEstudioId)) != null}
+              onChange={(e) =>
+                onChange(e, record.solicitudEstudioId, record.solicitudId)
+              }
+              checked={
+                updateForm.find((x) =>
+                  x.estudioId.includes(record.solicitudEstudioId)
+                ) != null
+              }
               disabled={!(activity == "cancel")}
             ></Checkbox>
           )}

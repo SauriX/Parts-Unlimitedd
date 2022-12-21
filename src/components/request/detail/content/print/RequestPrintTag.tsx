@@ -21,8 +21,8 @@ const RequestPrintTag = () => {
       const index = group.findIndex((x) => x.taponClave === study.taponClave);
       if (index === -1) {
         group.push({
-          taponClave: study.taponClave,
-          taponNombre: study.taponNombre,
+          taponClave: study.taponClave ?? "",
+          taponNombre: study.taponNombre ?? "",
           cantidad: 1,
           estudios: study.clave,
         });

@@ -24,7 +24,6 @@ const ClinicResultsBody = ({ printing, formValues }: CRDefaultProps) => {
   return (
     <Fragment>
       <ClinicResultsFilter />
-      {/* <Divider orientation="left">{formValues.fecha[0].format('DD-MMM-YYYY')} - {formValues.fecha[1].format('DD-MMM-YYYY')}</Divider> */}
       <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
         <ClinicResultsTable
           data={data}

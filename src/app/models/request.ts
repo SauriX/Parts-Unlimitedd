@@ -187,10 +187,10 @@ export interface IRequestStudy {
   estudioId: number;
   clave: string;
   nombre: string;
-  taponId: number;
-  taponColor: string;
-  taponClave: string;
-  taponNombre: string;
+  taponId?: number;
+  taponColor?: string;
+  taponClave?: string;
+  taponNombre?: string;
   paqueteId?: number;
   paquete?: string;
   listaPrecioId: string;

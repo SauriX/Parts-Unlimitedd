@@ -96,10 +96,10 @@ export interface IPriceListInfoStudy {
   estudioId: number;
   clave: string;
   nombre: string;
-  taponId: number;
-  taponColor: string;
-  taponClave: string;
-  taponNombre: string;
+  taponId?: number;
+  taponColor?: string;
+  taponClave?: string;
+  taponNombre?: string;
   departamentoId: number;
   areaId: number;
   dias: number;

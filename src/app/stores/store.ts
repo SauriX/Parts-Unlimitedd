@@ -1,3 +1,4 @@
+import { InvoiceCompanyStore } from "./invoiceCompanyStore";
 import { configure } from "mobx";
 import { createContext, useContext } from "react";
 import ProfileStore from "./profileStore";
@@ -44,6 +45,7 @@ import MassResultSearchStore from "./massResultSearch";
 import ResultValidationStore from "./resultValidationStore";
 import RelaseResultStore from "./RelaseResultStore";
 import InvoiceStore from "./invoiceStore";
+import IndicatorStore from "./indicatorStore";
 configure({
   enforceActions: "never",
 });
@@ -77,6 +79,7 @@ interface Store {
   quotationStore: QuotationStore;
   reportStore: ReportStore;
   cashRegisterStore: CashRegisterStore;
+  indicatorsStore: IndicatorStore;
   requestStore: RequestStore;
   appointmentStore: AppointmentStore;
   notificationStore: NotificationStore;
@@ -89,9 +92,10 @@ interface Store {
   shipmentTracking: shipmentTackingStore;
   workListStore: WorkListStore;
   massResultSearchStore: MassResultSearchStore;
-  resultValidationStore:  ResultValidationStore;
-  relaseResultStore:RelaseResultStore;
+  resultValidationStore: ResultValidationStore;
+  relaseResultStore: RelaseResultStore;
   invoiceStore: InvoiceStore;
+  invoiceCompanyStore: InvoiceCompanyStore;
 }
 
 export const store: Store = {
@@ -123,6 +127,7 @@ export const store: Store = {
   quotationStore: new QuotationStore(),
   reportStore: new ReportStore(),
   cashRegisterStore: new CashRegisterStore(),
+  indicatorsStore: new IndicatorStore(),
   requestStore: new RequestStore(),
   appointmentStore: new AppointmentStore(),
   notificationStore: new NotificationStore(),
@@ -135,9 +140,10 @@ export const store: Store = {
   shipmentTracking: new shipmentTackingStore(),
   workListStore: new WorkListStore(),
   massResultSearchStore: new MassResultSearchStore(),
-  resultValidationStore:new   ResultValidationStore(),
+  resultValidationStore: new ResultValidationStore(),
   relaseResultStore: new RelaseResultStore(),
   invoiceStore: new InvoiceStore(),
+  invoiceCompanyStore: new InvoiceCompanyStore(),
 };
 
 export const StoreContext = createContext(store);

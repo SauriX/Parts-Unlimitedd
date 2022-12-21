@@ -1,15 +1,7 @@
 import { Form, Row, Col, Button, Typography, Table } from "antd";
-import React, { Fragment, useEffect, useState } from "react";
-import TextInput from "../../../app/common/form/TextInput";
-import {
-  ExclamationCircleOutlined,
-  SearchOutlined,
-  PlusCircleOutlined,
-} from "@ant-design/icons";
-import { IReagentList } from "../../../app/models/reagent";
-import { IObservations, ItipoValorForm } from "../../../app/models/parameter";
-import { store, useStore } from "../../../app/stores/store";
-import { useSearchParams } from "react-router-dom";
+import { Fragment, useEffect, useState } from "react";
+import { PlusCircleOutlined } from "@ant-design/icons";
+import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import {
   ISearch,
@@ -27,7 +19,7 @@ type Props = {
   tipo: string;
 };
 
-const ParameterReagent = ({ getResult, id, tipo }: Props) => {
+const Observations = ({ getResult, id, tipo }: Props) => {
   const [form] = Form.useForm<any>();
   const [selectedObservation, setSelectedObservation] = useState<string>();
   const { width: windowWidth } = useWindowDimensions();
@@ -55,8 +47,14 @@ const ParameterReagent = ({ getResult, id, tipo }: Props) => {
     },
   ];
 
-  const onSelectChange = (item: IOptions, checked: boolean, selectedRows: IOptions[]) => {
-    setSelectedObservation(selectedRows.map(x => x.label?.toString()).join("\r\n"));
+  const onSelectChange = (
+    item: IOptions,
+    checked: boolean,
+    selectedRows: IOptions[]
+  ) => {
+    setSelectedObservation(
+      selectedRows.map((x) => x.label?.toString()).join("\r\n")
+    );
   };
 
   const rowSelection = {
@@ -106,4 +104,4 @@ const ParameterReagent = ({ getResult, id, tipo }: Props) => {
   );
 };
 
-export default observer(ParameterReagent);
+export default observer(Observations);
