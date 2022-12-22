@@ -81,6 +81,7 @@ import InvoiceCompanyCreate from "../../components/invoice/invoiceCompany/Invoic
 import Notifications from "../../views/Notifications";
 import NotificationsDetail from "../../components/notifications/NotificationsDetail";
 import Relaseresult from "../../views/Relaseresult";
+import Test1 from "../../Test1";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -116,10 +117,12 @@ function App() {
       <ModalComponent />
       <DrawerComponent />
       <Routes>
+      <Route path="test1" element={<Test1 />} />
         <Route path="login" element={<Login />} />
         <Route element={<PrivateRoute />}>
           <Route element={<LayoutComponent />}>
             <Route path="" element={<Home />} />
+            
             <Route path="users" element={<User />} />
             <Route path="users/:id" element={<UserDetail />} />
             <Route path="new-user" element={<NewUser />} />
