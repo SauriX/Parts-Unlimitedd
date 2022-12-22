@@ -122,7 +122,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
         setCurrentKey("studies");
         return;
       } else {
-        await modificarSaldo();
+        // await modificarSaldo();
       }
     } else if (currentKey === "request") {
       const ok = await updateStudies(studyUpdate, autoSave);
