@@ -11,6 +11,7 @@ import { IReportIndicators } from "../../../app/models/indicators";
 import { useStore } from "../../../app/stores/store";
 import moment from "moment";
 import { IResult } from "../../../app/models/massResultSearch";
+import React from "react";
 
 const { Link, Text } = Typography;
 
