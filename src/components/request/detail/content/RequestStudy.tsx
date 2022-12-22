@@ -113,7 +113,7 @@ const RequestStudy = () => {
       render: (value, item) => {
         let content = "";
         if (isStudy(item)) {
-          content = `${value} (${item.parametros
+          content = `${value} (${(item.parametros ?? [])
             .map((x) => x.clave)
             .join(", ")})`;
         } else {

@@ -381,12 +381,15 @@ export default class RequestStore {
 
   createPayment = async (request: IRequestPayment) => {
     try {
+      this.loadingTabContentCount++;
       const payment = await Request.createPayment(request);
       this.payments.push(payment);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
+    } finally {
+      this.loadingTabContentCount--;
     }
   };
 
@@ -532,6 +535,7 @@ export default class RequestStore {
     payments: IRequestPayment[]
   ) => {
     try {
+      this.loadingTabContentCount++;
       const cancelled = await Request.cancelPayments(
         recordId,
         requestId,
@@ -547,6 +551,8 @@ export default class RequestStore {
     } catch (error) {
       alerts.warning(getErrors(error));
       return [];
+    } finally {
+      this.loadingTabContentCount--;
     }
   };
 
@@ -735,22 +741,27 @@ export default class RequestStore {
           100
         : this.totals.cargo;
 
-    const cop =
-      this.totals.copagoTipo === 1
-        ? ((this.studies
-            .filter(
-              (x) =>
-                x.estatusId !== status.requestStudy.cancelado &&
-                x.asignado &&
-                x.aplicaCopago
-            )
-            .reduce((acc, obj) => acc + obj.precioFinal, 0) +
-            this.packs
-              .filter((x) => !x.cancelado && x.asignado && x.aplicaCopago)
-              .reduce((acc, obj) => acc + obj.precioFinal, 0)) *
-            this.totals.copago) /
-          100
-        : this.totals.copago;
+    const cop = this.request?.esWeeClinic
+      ? this.studies
+          .filter(
+            (x) => x.estatusId !== status.requestStudy.cancelado && x.asignado
+          )
+          .reduce((acc, obj) => acc + (obj.copago ?? 0), 0)
+      : this.totals.copagoTipo === 1
+      ? ((this.studies
+          .filter(
+            (x) =>
+              x.estatusId !== status.requestStudy.cancelado &&
+              x.asignado &&
+              x.aplicaCopago
+          )
+          .reduce((acc, obj) => acc + obj.precioFinal, 0) +
+          this.packs
+            .filter((x) => !x.cancelado && x.asignado && x.aplicaCopago)
+            .reduce((acc, obj) => acc + obj.precioFinal, 0)) *
+          this.totals.copago) /
+        100
+      : this.totals.copago;
 
     const finalTotal = totalStudies - desc + char;
     const finalTotalUser = cop > 0 ? cop : totalStudies - desc + char;
@@ -770,6 +781,9 @@ export default class RequestStore {
       totalEstudios: totalStudies,
       total: finalTotalUser,
       saldo: balance,
+      copago: cop,
+      cargo: char,
+      descuento: desc,
     };
   };
 

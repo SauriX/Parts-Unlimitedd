@@ -75,6 +75,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     confirmarRecoleccionSend,
     cancelarRecoleccionSend,
     setSendData,
+    setTemperatura
   } = trackingOrderStore;
 
   const navigate = useNavigate();
@@ -445,6 +446,8 @@ const  getrutes = (id:string ) =>{
             onValuesChange={(changes_values: any) => {
               const propertyForm = Object.keys(changes_values)[0];
               if (propertyForm == "temperatura") {
+             
+                setTemperatura(changes_values[propertyForm]);
                 setTemperature(changes_values[propertyForm]);
               }
               setDisabled(
@@ -521,8 +524,7 @@ const  getrutes = (id:string ) =>{
                     name: "temperatura",
                     label: "Temperatura",
                   }}
-                  max={100}
-                  min={-100}
+
                   required
                   readonly={false}
                 />
@@ -562,7 +564,7 @@ const  getrutes = (id:string ) =>{
                 <Button
                   type="primary"
                   htmlType="submit"
-                  disabled={disabled}
+                  
                   onClick={async (e) => {
                     let noEscaneados = trackingOrder.some(
                       (order) => !order.escaneado
