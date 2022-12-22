@@ -781,6 +781,9 @@ export default class RequestStore {
       totalEstudios: totalStudies,
       total: finalTotalUser,
       saldo: balance,
+      copago: cop,
+      cargo: char,
+      descuento: desc,
     };
   };
 

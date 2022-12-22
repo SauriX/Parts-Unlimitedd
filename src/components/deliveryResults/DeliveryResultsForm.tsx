@@ -4,7 +4,7 @@ import moment from "moment";
 import { useEffect } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
-import TextInput from "../../app/common/form/TextInput";
+import TextInput from "../../app/common/form/proposal/TextInput";
 import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 import {
@@ -131,16 +131,15 @@ const DeliveryResultsForm = () => {
               />
             </Col>
             <Col span={8}>
-              <DateRangeInput formProps={{ label: "Fechas", name: "fechas" }} />
+              <DateRangeInput
+                formProps={{ label: "Fechas", name: "fechas" }}
+                disableAfterDates
+              />
             </Col>
+
             <Col span={8}>
-              <SelectInput
-                multiple
-                formProps={{ label: "Procedencias", name: "procedencias" }}
-                options={originOptions}
-                onChange={(value: any, option: any) => {
-                  console.log("areas", value, option);
-                }}
+              <TextInput
+                formProps={{ name: "clave", label: "Clave/Paciente" }}
               />
             </Col>
             <Col span={8}>
@@ -239,8 +238,13 @@ const DeliveryResultsForm = () => {
               />
             </Col>
             <Col span={8}>
-              <TextInput
-                formProps={{ name: "clave", label: "Clave/Paciente" }}
+              <SelectInput
+                multiple
+                formProps={{ label: "Procedencias", name: "procedencias" }}
+                options={originOptions}
+                onChange={(value: any, option: any) => {
+                  console.log("areas", value, option);
+                }}
               />
             </Col>
           </Row>

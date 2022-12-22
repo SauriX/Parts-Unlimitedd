@@ -107,7 +107,6 @@ const QuotationTable = () => {
         setSearchState,
         width: "10%",
       }),
-      render: (value) => moment(value).format("DD/MM/YYYY HH:mm"),
     },
     {
       key: "activo",
