@@ -70,6 +70,8 @@ const Indicators = () => {
     }
   ]
 
+  
+
   return <div>indicators</div>;
 };
 
