@@ -11,6 +11,7 @@ import {
   Input,
   Tooltip,
   Card,
+  Tag,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout, moneyFormatter } from "../../../app/util/utils";
@@ -465,11 +466,23 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       }),
     },
     {
-      ...getDefaultColumnProps("correo", "Estudios", {
+      ...getDefaultColumnProps("estudios", "Estudios", {
         width: 150,
         minWidth: 150,
         windowSize: windowWidth,
       }),
+      render: (value, record, index) => (
+        <Row align="middle">
+          {value.map((x: any, i: any) => (
+            <Col
+              key={x.clave + "-" + x.id}
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              <ContainerBadge color={"grey"} text={x.clave} />
+            </Col>
+          ))}
+        </Row>
+      ),
     },
     {
       ...getDefaultColumnProps("correo", "Email", {
@@ -1257,6 +1270,10 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       </div>
     </Spin>
   );
+};
+
+const ContainerBadge = ({ color, text }: { color: string; text?: string }) => {
+  return <Tag color={color}>{text}</Tag>;
 };
 
 export default observer(ProceedingForm);
