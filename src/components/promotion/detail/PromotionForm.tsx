@@ -755,7 +755,7 @@ useEffect(()=>{
   };
 
   return (
-    <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
+    <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
       <Row style={{ marginBottom: 24 }}>
         {id && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>

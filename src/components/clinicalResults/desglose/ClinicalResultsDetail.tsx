@@ -75,6 +75,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     cancelResults,
     addSelectedStudy,
     removeSelectedStudy,
+    observationsSelected,
+    setObservationsSelected
   } = clinicResultsStore;
 
   const { getMedicOptions, getUnitOptions } = optionStore;
@@ -698,7 +700,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                             const modal =
                                               await ObservationModal(
                                                 fieldValue.parametroId,
-                                                fieldValue.tipoValorId
+                                                fieldValue.tipoValorId,
                                               );
                                             form.setFieldValue(
                                               [

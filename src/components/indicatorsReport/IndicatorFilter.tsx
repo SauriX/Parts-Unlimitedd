@@ -70,19 +70,19 @@ const IndicatorFilter = ({ pickerType }: IndicatorProps) => {
     if (datePickerType === "week") {
       const newFilter: IReportIndicatorsFilter = {
         ...filter,
-        fechaInicial: moment(filter.fecha).startOf("week"),
-        fechaFinal: moment(filter.fecha).startOf("week"),
+        fechaInicial: moment(filter.fechaIndividual).startOf("week"),
+        fechaFinal: moment(filter.fechaIndividual).endOf("week"),
       };
       await getByFilter(newFilter);
       setFilter(newFilter);
     } else if (datePickerType === "month") {
       const newFilter: IReportIndicatorsFilter = {
         ...filter,
-        fechaInicial: moment(filter.fecha).startOf("month"),
+        fechaInicial: moment(filter.fechaIndividual).startOf("month"),
         fechaFinal:
-          moment(filter.fecha).month() === moment(Date.now()).month()
+          moment(filter.fechaIndividual).month() === moment(Date.now()).month()
             ? moment(Date.now()).utcOffset(0, true)
-            : moment(filter.fecha).endOf("month"),
+            : moment(filter.fechaIndividual).endOf("month"),
       };
       await getByFilter(newFilter);
       setFilter(newFilter);
@@ -101,7 +101,7 @@ const IndicatorFilter = ({ pickerType }: IndicatorProps) => {
         form={form}
         name="indicators"
         initialValues={{
-          fecha: 
+          fechaInvidual: 
             moment(Date.now()).utcOffset(0, true)
         }}
         onFinish={onFinish}

@@ -145,11 +145,10 @@ const SamplingStudyColumns = ({ printOrder }: tableProps) => {
 };
 
 export const SamplingStudyExpandable = ({
-  activity: activity,
+  activity,
   onChange,
   updateForm,
 }: expandableProps) => {
-  console.log(updateForm);
   console.log(updateForm);
 
   const nestedColumns: IColumns<IStudySampling> = [

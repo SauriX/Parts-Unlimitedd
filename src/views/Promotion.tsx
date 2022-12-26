@@ -9,7 +9,7 @@ import PromotionTable from "../components/promotion/PromotionTable";
 
 const Promotion = () => {
   const { promotionStore } = useStore();
-  const { scopes, access, clearScopes, exportList } =promotionStore ;
+  const { scopes, access, exportList } =promotionStore ;
 
   const [searchParams] = useSearchParams();
 

@@ -2,7 +2,7 @@ import { Space, Tag, Table } from "antd";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { IReportIndicators } from "../../../app/models/indicators";
-import CostoTomaColumns from "../columnDefinition/costotoma";
+import CostoTomaColumns from "../columnDefinition/costotoma"
 
 type CostosTomaProps = {
   data: IReportIndicators[];
