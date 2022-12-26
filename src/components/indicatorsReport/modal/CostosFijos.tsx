@@ -6,7 +6,7 @@ import { CostosFijosColumns, CostosFijosInvoice } from "../columnDefinition/cost
 
 type CostosFijosProps = {
   data: IReportIndicators[];
-  invoiceData: IModalInvoice;
+  invoiceData?: IModalInvoice;
   costoFijo: number;
   loading: boolean;
 };
@@ -34,7 +34,7 @@ const CostosFijos = ({ data, invoiceData, costoFijo, loading }: CostosFijosProps
         rowKey={uuid()}
         columns={CostosFijosInvoice()}
         pagination={false}
-        dataSource={[invoiceData]}
+        dataSource={[invoiceData!]}
         scroll={{ y: 500 }}
         bordered
         rowClassName={"row-search"}
