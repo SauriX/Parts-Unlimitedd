@@ -9,7 +9,7 @@ const RouteTracking = {
     getAll: (search: SearchTracking): Promise<IRouteList[]> => requests.post(`RouteTracking/all`,search),
     update: (update: IUpdate[]): Promise<void> => requests.put("RouteTracking", update),
     exportForm: (id: string): Promise<void> =>
-    requests.download(`RouteTracking/export/form/${id}`),
+    requests.print(`RouteTracking/exportOrder/${id}`,),
     getRecive: (search: ISearchPending): Promise<IRecibe[]> => requests.post(`RouteTracking/allrecive`,search),
     exportFormpending: (id: ISearchPending): Promise<void> =>
     requests.download(`RouteTracking/report`,id),
