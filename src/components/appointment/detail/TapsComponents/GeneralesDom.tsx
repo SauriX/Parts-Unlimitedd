@@ -144,7 +144,7 @@ const GeneralesDomForm:FC<GeneralesFormProps> = ({  printing,generales,data,bran
                                 name: "direccion",
                                 label: "Dirección",
                             }}
-                          required  
+                          //required  
                           errors={errors.find((x) => x.name === "direccion")?.errors}
                     ></TextInput>
                     </Col>

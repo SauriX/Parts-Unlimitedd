@@ -103,7 +103,9 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const [values, setValues] = useState<IPriceListForm>(
     new PriceListFormValues()
   );
-
+useEffect(()=>{
+  console.log("are id change",aeraSearch);
+},[areaId]);
   useEffect(() => {
     const readtabla = async () => {
       let estudiostabla = await getAllStudy();
@@ -492,7 +494,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
 
   const filterByDepartament = async (departament: number) => {
 
-    setAreaId(undefined);
+    
     if (departament) {
       var departamento = departmentOptions.filter(
         (x) => x.value === departament
@@ -510,7 +512,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       }
       setValues((prev) => ({ ...prev, table: estudios }));
     }
-
+    //setAreaId(undefined);
   };
   const filterByArea = (area?: number) => {
     if (area) {
@@ -1110,6 +1112,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
                   setAreaId(undefined);
                   setDepId(value);
                   filterByDepartament(value);
+                 
                 }}
                 value={depId}
                 placeholder={"Departamentos"}
@@ -1126,7 +1129,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
                   setAreaId(value);
                   filterByArea(value);
                 }}
-                value={areaId || undefined}
+                value={ areaId? areaId : undefined}
                 placeholder={"Área"}
                 formProps={{
                   name: "area",
