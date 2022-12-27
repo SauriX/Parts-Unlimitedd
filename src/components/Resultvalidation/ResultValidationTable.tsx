@@ -107,7 +107,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   const [form] = Form.useForm<ISearchValidation>();
   const selectedDepartment = Form.useWatch("departament", form);
   let navigate = useNavigate();
-  const [values, setValues] = useState<ISearchValidation>(search);
+
   const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
   const [ids, setIds] = useState<number[]>([]);
   const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
@@ -138,7 +138,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   useEffect(() => {
     setDepartmentOptions(
       departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
-    );
+    );;
   }, [departmentAreaOptions]);
   useEffect(() => {
     setAreaOptions(
@@ -253,7 +253,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
       async () => {
         var succes = await update(updateData!);
         if (succes) {
-          await getAll(values);
+          await getAll(search);
           setUpdateDate([]);
           setIds([]);
           setActivar(false);
@@ -409,13 +409,13 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   const onFinish = async (newValues: ISearchValidation) => {
     setLoading(true);
 
-    const reagent = { ...values, ...newValues };
-    setValues(reagent);
+    const reagent = { ...search, ...newValues };
     setSearch(reagent);
     var data = await getAll(reagent);
     let studios = [];
 
     setSoliCont(data?.length!);
+    console.log(data?.length!,"datalen");
     data?.forEach((x) =>
       x.estudios.forEach((x: any) => {
         studios.push(x);
@@ -498,7 +498,8 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
             key="clean"
             onClick={(e) => {
               clearFilter();
-              form.resetFields();
+            form.setFieldsValue(new searchValues())
+              
             }}
           >
             Limpiar
@@ -530,7 +531,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
           {...formItemLayout}
           form={form}
           name="sampling"
-          initialValues={values}
+          initialValues={search}
           onFinish={onFinish}
           scrollToFirstError
         >
