@@ -457,7 +457,8 @@ const PriceListForm: FC<PriceListFormProps> = ({
   };
 
   const filterByDepartament = async (departament: number) => {
-    setAreaId(undefined);
+
+    
     if (departament) {
       var departamento = departmentOptions.filter(
         (x) => x.value === departament

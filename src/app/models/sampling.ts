@@ -51,6 +51,7 @@ export interface IUpdate {
   solicitudId: string;
   estudioId: number[];
   observacion?: ISamplingComment[];
+  ruteOrder?:string;
 }
 
 export interface ISamplingComment {
