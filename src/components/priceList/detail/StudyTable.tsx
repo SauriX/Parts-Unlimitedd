@@ -38,10 +38,6 @@ const StudyTable: FC<PriceListTableProps> = ({ data,closeModal }) => {
     searchedColumn: "",
   });
 
-
-
-
-
   const columns: IColumns<IPriceListEstudioList> = [
     {
         ...getDefaultColumnProps("clave", "Clave", {
@@ -61,16 +57,12 @@ const StudyTable: FC<PriceListTableProps> = ({ data,closeModal }) => {
         windowSize: windowWidth,
       }),
     },
-
-
   ];
-
-
 
   return (
     <Fragment>
       <Table<IPriceListEstudioList>
-        loading={loading }
+        loading={loading}
         size="small"
         rowKey={(record) => record.id}
         columns={columns}
