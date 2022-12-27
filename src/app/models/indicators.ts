@@ -1,10 +1,5 @@
 import moment from "moment";
 
-export interface IIndicatorsData {
-  reporte: IReportIndicators[];
-  costosFijosInvoice: IModalInvoice;
-}
-
 export interface IReportIndicators {
   id: string;
   pacientes: number;
@@ -26,16 +21,18 @@ export interface IModalInvoice {
   totalDiario: number;
 }
 
-export interface ICosts {
+export interface IServicesCost {
   id: string;
+  nombre: string;
   sucursal: string;
+  fechaAlta: string;
 }
 
 export interface IReportIndicatorsFilter {
   sucursalId: string[];
   fechaInicial: moment.Moment;
   fechaFinal: moment.Moment;
-  fecha: moment.Moment;
+  fechaIndividual: moment.Moment;
 }
 
 export interface IModalIndicatorsFilter {
@@ -48,7 +45,7 @@ export class IndicatorFilterValues implements IReportIndicatorsFilter {
   sucursalId = [];
   fechaInicial = moment(Date.now()).utcOffset(0, true);
   fechaFinal = moment(Date.now()).utcOffset(0, true);
-  fecha = moment(Date.now()).utcOffset(0, true);
+  fechaIndividual = moment(Date.now()).utcOffset(0, true);
 
   constructor(init?: IReportIndicatorsFilter) {
     Object.assign(this, init);
@@ -66,13 +63,4 @@ export class ModalIndicatorFilterValues implements IModalIndicatorsFilter {
   constructor(init?: IModalIndicatorsFilter) {
     Object.assign(this, init);
   }
-}
-
-export class IndicatorsData implements IIndicatorsData {
-  reporte = [];
-  costosFijosInvoice = {
-    totalMensual: 0,
-    totalSemanal: 0,
-    totalDiario: 0,
-  };
 }

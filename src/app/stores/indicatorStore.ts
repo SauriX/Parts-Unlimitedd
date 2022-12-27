@@ -1,9 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import Indicators from "../api/indicators";
 import {
-  IIndicatorsData,
   IndicatorFilterValues,
-  IndicatorsData,
   IReportIndicators,
   IReportIndicatorsFilter,
 } from "../models/indicators";
@@ -20,7 +18,6 @@ export default class IndicatorStore {
   scopes?: IScopes;
   filter: IReportIndicatorsFilter = new IndicatorFilterValues();
   data: IReportIndicators[] = [];
-  indicatorsData: IIndicatorsData = new IndicatorsData()
 
   clearScopes = () => {
     this.scopes = undefined;

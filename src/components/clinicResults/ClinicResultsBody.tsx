@@ -1,7 +1,7 @@
 import { Button, Col, Divider, Row, Spin } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect } from "react";
 import { Fragment, useState } from "react";
 import { useStore } from "../../app/stores/store";
 import ClinicResultsColumns, {
@@ -18,8 +18,16 @@ type CRDefaultProps = {
 
 const ClinicResultsBody = ({ printing, formValues }: CRDefaultProps) => {
   const { clinicResultsStore } = useStore();
-  const { data } = clinicResultsStore;
+  const { data, getAll } = clinicResultsStore;
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const readRequests = async () => {
+      await getAll(formValues);
+    };
+
+    readRequests();
+  }, []);
 
   return (
     <Fragment>

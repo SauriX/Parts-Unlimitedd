@@ -9,10 +9,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import {
-  IRequestInfo,
-  IRequestStudyInfo,
-} from "../../../app/models/request";
+import { IRequestInfo, IRequestStudyInfo } from "../../../app/models/request";
 import { moneyFormatter } from "../../../app/util/utils";
 import views from "../../../app/util/view";
 import moment from "moment";

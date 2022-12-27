@@ -17,7 +17,7 @@ type Props = {
 
 const Indicators = ({ getResult }: Props) => {
   const { optionStore, indicatorsStore } = useStore();
-  const { data, indicatorsData } = indicatorsStore;
+  const { data } = indicatorsStore;
   const [loading, setLoading] = useState(false);
 
   const [modalTab, setModalTab] = useState("sample");
@@ -34,7 +34,7 @@ const Indicators = ({ getResult }: Props) => {
               <CostosToma data={data} costoToma={0} loading={loading} />
             )}
             {modalTab === "service" && (
-              <CostosFijos data={data} costoFijo={0} loading={loading} invoiceData={indicatorsData.costosFijosInvoice} />
+              <CostosFijos data={data} costoFijo={0} loading={loading}  />
             )}
           </Spin>
         </Fragment>

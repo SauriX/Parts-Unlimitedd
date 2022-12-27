@@ -1,6 +1,6 @@
 import { makeAutoObservable, toJS } from "mobx";
 import ClinicResults from "../api/clinicResults";
-import { IScopes } from "../models/shared";
+import { IOptions, IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import { getErrors } from "../util/utils";
@@ -28,6 +28,7 @@ export default class ClinicResultsStores {
   loadingStudies: boolean = false;
   clear: boolean = false;
   studiesSelectedToPrint: IPrintTypes[] = [];
+  observationsSelected: IOptions[] = [];
 
   printSelectedStudies = async (configuration: any) => {
     try {
@@ -36,6 +37,14 @@ export default class ClinicResultsStores {
       alerts.warning(getErrors(error));
     }
   };
+
+  setObservationsSelected = (observationsSelected: IOptions[]) => {
+    this.observationsSelected = observationsSelected;
+  }
+
+  getObservationsSelected = () => {
+    return this.observationsSelected;
+  }
 
   clearScopes = () => {
     this.scopes = undefined;

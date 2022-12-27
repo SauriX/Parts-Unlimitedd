@@ -169,6 +169,7 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
       dataIndex: "registro",
       title: "Registro",
       align: "center",
+      width: 200,
     },
   ];
   const options = [
