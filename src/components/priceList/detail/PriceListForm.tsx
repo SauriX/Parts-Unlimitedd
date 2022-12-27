@@ -3,22 +3,19 @@ import {
   Form,
   Row,
   Col,
-  Pagination,
   Button,
   PageHeader,
   Divider,
-  Radio,
   Table,
   Input,
   Checkbox,
-  Select,
   InputNumber,
   Tabs,
 } from "antd";
 import { VList } from "virtual-table-ant-design";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, Fragment, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
-import TextInput from "../../../app/common/form/TextInput";
+import TextInput from "../../../app/common/form/proposal/TextInput";
 import { useStore } from "../../../app/stores/store";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
@@ -31,7 +28,7 @@ import {
   ISucMedComList,
   PriceListFormValues,
 } from "../../../app/models/priceList";
-import SwitchInput from "../../../app/common/form/SwitchInput";
+import SwitchInput from "../../../app/common/form/proposal/SwitchInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
@@ -42,9 +39,9 @@ import {
 } from "../../../app/common/table/utils";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import StudyTable from "./StudyTable";
-import { IPackEstudioList } from "../../../app/models/packet";
 import PackTable from "./PackTable";
 import TabPane from "rc-tabs/lib/TabPanelList/TabPane";
+import { IOptions } from "../../../app/models/shared";
 
 const { Search } = Input;
 
@@ -53,12 +50,6 @@ type PriceListFormProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
-
-const radioOptions = [
-  { label: "Sucursales", value: "branch" },
-
-  { label: "Compañias", value: "company" },
-];
 
 const PriceListForm: FC<PriceListFormProps> = ({
   id,
@@ -88,7 +79,8 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const [radioValue, setRadioValue] = useState<any>();
   const [searchParams, setSearchParams] = useSearchParams();
   const [lista, setLista] = useState<IPriceListEstudioList[]>(studies);
-  const [listaofstudyspacks, setListaofstudyspacks] = useState<IPriceListEstudioList[]>(studies);
+  const [listaofstudyspacks, setListaofstudyspacks] =
+    useState<IPriceListEstudioList[]>(studies);
   const [listSMC, setListSCM] = useState(sucMedCom);
   const [listSucursal, setListSucursal] = useState<any>();
   const [listMedicos, setListMedicos] = useState<any>();
@@ -99,19 +91,25 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
+
+  const [activeKeyPane, setActiveKeyPane] = useState("1");
+  const [departments, setDepartments] = useState<IOptions[]>([]);
+  const [price, setPrice] = useState(0);
   const [aeraSearch, setAreaSearch] = useState(areas);
   const [values, setValues] = useState<IPriceListForm>(
     new PriceListFormValues()
   );
-useEffect(()=>{
-  console.log("are id change",aeraSearch);
-},[areaId]);
+
+  useEffect(() => {
+    departmentOptions.shift();
+    setDepartments([...departmentOptions]);
+  }, [departmentOptions]);
+
   useEffect(() => {
     const readtabla = async () => {
       let estudiostabla = await getAllStudy();
-     
+
       let paquetestabla = await getAllPack();
-      // paquetestabla = paquetestabla?.filter((x) => x.activo);
       let tabla = [...estudiostabla!, ...paquetestabla!];
 
       setValues((prev) => ({ ...prev, table: tabla }));
@@ -150,17 +148,6 @@ useEffect(()=>{
     readtable();
   }, [getAllBranch, getAllCompany, getAllMedics]);
 
-  const setSCMlist = async (listatype: string) => {
-    switch (listatype) {
-      case "sucursal":
-        setListSCM(listSucursal);
-        break;
-      case "compañia":
-        setListSCM(listCompañia);
-        break;
-    }
-
-  };
   const setStudy = (
     active: boolean,
     item: IPriceListEstudioList,
@@ -176,10 +163,8 @@ useEffect(()=>{
     let estudiosSinPrecio: IPriceListEstudioList[] = [];
 
     if (!first) {
-
       if (active) {
         if (typePAck) {
-
           let estudiosPaquete = item.pack;
           let estudiosValidar: IPriceListEstudioList[] = [];
 
@@ -222,9 +207,12 @@ useEffect(()=>{
     );
     var list = lista;
     item.activo = active;
-      if(!active){
-        item.precio=0;
-      }
+    if (!active) {
+      item.precio = 0;
+      item.precioFinal = 0;
+      item.descuenNum = 0;
+      item.descuento = 0;
+    }
 
     list[index] = item;
     setLista(list);
@@ -237,7 +225,6 @@ useEffect(()=>{
     val![indexVal] = item;
 
     setValues((prev) => ({ ...prev, table: val }));
-
   };
 
   const setSucMedCom = (active: boolean, item: ISucMedComList) => {
@@ -250,7 +237,6 @@ useEffect(()=>{
     var val = values.sucMedCom;
     val[indexVal] = item;
     setValues((prev) => ({ ...prev, sucMedCom: val }));
-
   };
 
   const setStudyPrice = (
@@ -269,9 +255,8 @@ useEffect(()=>{
     //here
     item.precio = newprecio;
 
-    if(newprecio==0){
-      item.activo=false;
-
+    if (newprecio == 0) {
+      item.activo = false;
     }
     list[index] = item;
     var indexVal = values.table!.findIndex(
@@ -293,6 +278,7 @@ useEffect(()=>{
     }
     setValues((prev) => ({ ...prev, table: val }));
   };
+
   // red user 146
   useEffect(() => {
     const readuser = async (idUser: string) => {
@@ -306,7 +292,6 @@ useEffect(()=>{
       // pcks = pcks?.filter((x) => x.activo);
 
       var tabla = [...studis!, ...pcks!];
-
 
       const branches = await getAllBranch();
       const Companies = await getAllCompany();
@@ -333,10 +318,8 @@ useEffect(()=>{
       setListCompañia(Companies);
       setListMedicos(medics);
 
-
       studys.forEach((x) => {
         setStudy(x.activo!, x, x.paqute!, true, user!);
-
       });
       user?.sucursales.map((x) => setSucursalesList(x.activo!, x, branches));
       user?.compañia.map((x) => setCompañiasList(x.activo!, x, Companies));
@@ -344,7 +327,6 @@ useEffect(()=>{
 
       setListSCM(user!.sucursales!.length <= 0 ? branches! : user!.sucursales);
       setRadioValue("branch");
-
 
       setLoading(false);
     };
@@ -374,23 +356,11 @@ useEffect(()=>{
     setReadonly(false);
   };
 
-  const getPage = (id: string) => {
-    return priceLists.findIndex((x) => x.id === id) + 1;
-  };
-
-  const setPage = (page: number) => {
-    const priceList = priceLists[page - 1];
-    setAreaId(undefined);
-    setDepId(undefined);
-    navigate(`/${views.price}/${priceList.id}?${searchParams}`);
-  };
-
   const setSucursalesList = (
     active: boolean,
     item: ISucMedComList,
     lists: ISucMedComList[]
   ) => {
-
     var index = lists.findIndex((x: ISucMedComList) => x.id === item.id);
     var list = lists;
     item.activo = active;
@@ -419,7 +389,6 @@ useEffect(()=>{
     list[index] = item;
     setListCompañia(list);
   };
-
 
   const { width: windowWidth } = useWindowDimensions();
   const [searchState, setSearchState] = useState<ISearch>({
@@ -466,12 +435,11 @@ useEffect(()=>{
           checked={item.activo}
           disabled={readonly}
           onChange={(value) => {
-
             var active = false;
             if (value.target.checked) {
               active = true;
             }
-           
+
             setSucMedCom(active, item);
           }}
         />
@@ -481,11 +449,7 @@ useEffect(()=>{
 
   const onValuesChange = async (changedValues: any) => {
     const field = Object.keys(changedValues)[0];
-
     if (field === "idDepartamento") {
-
-      const value = changedValues[field];
-
       form.setFieldsValue({ idArea: undefined });
     }
     if (field) {
@@ -501,7 +465,9 @@ useEffect(()=>{
       )[0].label;
       var areaSearch = await getareaOptions(departament);
 
-      var estudios = listaofstudyspacks.filter((x) => x.departamento === departamento);
+      var estudios = listaofstudyspacks.filter(
+        (x) => x.departamento === departamento
+      );
 
       setValues((prev) => ({ ...prev, table: estudios }));
       setAreaSearch(areaSearch!);
@@ -512,7 +478,6 @@ useEffect(()=>{
       }
       setValues((prev) => ({ ...prev, table: estudios }));
     }
-    //setAreaId(undefined);
   };
   const filterByArea = (area?: number) => {
     if (area) {
@@ -526,25 +491,22 @@ useEffect(()=>{
     }
   };
   const filterBySearch = (search: string) => {
-
-    if (search != null && search !="") {
-      
+    if (search != null && search != "") {
       var estudios = listaofstudyspacks.filter(
         (x) =>
           x.clave.toUpperCase().includes(search.toUpperCase()) ||
           x.nombre.toUpperCase().includes(search.toUpperCase())
       );
-      if(estudios.length<=0){
+      if (estudios.length <= 0) {
         estudios = [];
       }
-      
+
       setValues((prev) => ({ ...prev, table: estudios }));
       return;
-    }else{
-      listaofstudyspacks?.filter((x) => x.paqute)
+    } else {
+      listaofstudyspacks?.filter((x) => x.paqute);
       setValues((prev) => ({ ...prev, table: listaofstudyspacks }));
     }
-    
   };
 
   const onFinish = async (newValues: IPriceListForm) => {
@@ -625,11 +587,9 @@ useEffect(()=>{
         (element.descuento == 0 || element.descuento == undefined) &&
         element.paqute
       ) {
-
         paquetesSindescuento.push(element);
       }
     });
-
 
     if (paquetesSindescuento.length > 0) {
       openModal({
@@ -640,7 +600,6 @@ useEffect(()=>{
             data={paquetesSindescuento}
             closeModal={closeModal}
             handle={async () => {
-
               let success = false;
               if (!priceList.id) {
                 success = await create(priceList);
@@ -661,7 +620,6 @@ useEffect(()=>{
         },
       });
     } else {
-
       let success = false;
       if (!priceList.id) {
         success = await create(priceList);
@@ -706,8 +664,14 @@ useEffect(()=>{
       render: (value, item) => (
         <InputNumber
           type={"number"}
+          precision={2}
+          min={0}
+          disabled={readonly}
           value={item.precio}
-          onChange={(value) => setStudyPrice(value ?? 0, item, item.paqute!)}
+          onChange={(value) => {
+            setStudyPrice(value ?? 0, item, item.paqute!);
+            setPrice(value ?? 0);
+          }}
         ></InputNumber>
       ),
     },
@@ -731,11 +695,11 @@ useEffect(()=>{
           disabled={readonly}
           checked={item.activo}
           onChange={(value1) => {
-
             var active = false;
             if (value1.target.checked) {
-
               active = true;
+              console.log(value1.target.checked)
+              // setActiveStudy(active)
             }
 
             setStudy(active, item, item.paqute!, false, values!);
@@ -816,7 +780,7 @@ useEffect(()=>{
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: 0,
+        width: "10%",
         windowSize: windowWidth,
       }),
     },
@@ -824,7 +788,7 @@ useEffect(()=>{
       ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
-        width: 0,
+        width: "30%",
         windowSize: windowWidth,
       }),
     },
@@ -833,11 +797,13 @@ useEffect(()=>{
       dataIndex: "id",
       title: "Desc %",
       align: "center",
-      width: 0,
+      width: "10%",
       render: (value, item) => (
         <InputNumber
           type={"number"}
+          precision={2}
           readOnly={item.precio == 0}
+          disabled={readonly}
           min={0}
           value={item.descuento}
           onChange={(value) => setStudydiscunt(value ?? 0, item, item.paqute!)}
@@ -849,12 +815,15 @@ useEffect(()=>{
       dataIndex: "id",
       title: "Desc cantidad",
       align: "center",
-      width: 0,
+      width: "10%",
       render: (value, item) => (
         <InputNumber
           type={"number"}
+          precision={2}
           min={0}
+          max={price}
           readOnly={item.precio == 0}
+          disabled={readonly}
           value={item.descuenNum}
           onChange={(value) => setStudydiscuntc(value ?? 0, item, item.paqute!)}
         ></InputNumber>
@@ -865,13 +834,15 @@ useEffect(()=>{
       dataIndex: "id",
       title: "Precio final",
       align: "center",
-      width: 0,
+      width: "10%",
       render: (value, item) => (
         <InputNumber
           type={"number"}
+          precision={2}
           min={0}
           readOnly={true}
           value={item.precioFinal}
+          disabled={readonly}
           onChange={(value) =>
             setStudyPricefinal(value ?? 0, item, item.paqute!)
           }
@@ -882,14 +853,20 @@ useEffect(()=>{
       ...getDefaultColumnProps("precio", "Precio", {
         searchState,
         setSearchState,
-        width: 0,
+        width: "10%",
         windowSize: windowWidth,
       }),
       render: (value, item) => (
         <InputNumber
           type={"number"}
+          precision={2}
+          min={0}
           value={item.precio}
-          onChange={(value) => setStudyPrice(value ?? 0, item, item.paqute!)}
+          disabled={readonly}
+          onChange={(value) => {
+            setStudyPrice(value ?? 0, item, item.paqute!);
+            setPrice(value ?? 0);
+          }}
           readOnly={true}
         ></InputNumber>
       ),
@@ -898,7 +875,7 @@ useEffect(()=>{
       ...getDefaultColumnProps("area", "Área", {
         searchState,
         setSearchState,
-        width: 0,
+        width: "10%",
         windowSize: windowWidth,
       }),
     },
@@ -907,16 +884,15 @@ useEffect(()=>{
       dataIndex: "id",
       title: "Añadir",
       align: "center",
-      width: 0,
+      width: "10%",
       render: (value, item) => (
         <Checkbox
           name="activo"
           checked={item.activo}
+          disabled={readonly}
           onChange={(value1) => {
-
             var active = false;
             if (value1.target.checked) {
-
               active = true;
             }
 
@@ -927,7 +903,7 @@ useEffect(()=>{
     },
   ];
   return (
-    <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
+    <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
       <Row style={{ marginBottom: 24 }}>
         {!readonly && (
           <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
@@ -979,112 +955,81 @@ useEffect(()=>{
             onValuesChange={onValuesChange}
           >
             <Row>
-              <Col md={12} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "clave",
-                    label: "Clave",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <SwitchInput
-                  name="activo"
-                  onChange={(value) => {
-                    if (value) {
-                      alerts.info(messages.confirmations.enable);
-                    } else {
-                      alerts.info(messages.confirmations.disable);
-                    }
-                  }}
-                  label="Activo"
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "nombre",
-                    label: "Nombre",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <SwitchInput
-                  name="visibilidad"
-                  onChange={(value) => {
-                    if (value) {
-                      alerts.info(messages.confirmations.visible);
-                    } else {
-                      alerts.info(messages.confirmations.visibleweb);
-                    }
-                  }}
-                  label="Visible"
-                  readonly={readonly}
-                />
+              <Col span={24}>
+                <Row justify={printing ? "end" : "space-between"} gutter={[24, 24]}>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "clave",
+                        label: "Clave",
+                      }}
+                      max={100}
+                      required
+                      readonly={readonly}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <SwitchInput
+                      name="activo"
+                      onChange={(value) => {
+                        if (value) {
+                          alerts.info(messages.confirmations.enable);
+                        } else {
+                          alerts.info(messages.confirmations.disable);
+                        }
+                      }}
+                      label="Activo"
+                      readonly={readonly}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "nombre",
+                        label: "Nombre",
+                      }}
+                      max={100}
+                      required
+                      readonly={readonly}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <SwitchInput
+                      name="visibilidad"
+                      onChange={(value) => {
+                        if (value) {
+                          alerts.info(messages.confirmations.visible);
+                        } else {
+                          alerts.info(messages.confirmations.visibleweb);
+                        }
+                      }}
+                      label="Visible"
+                      readonly={readonly}
+                    />
+                  </Col>
+                </Row>
               </Col>
             </Row>
           </Form>
-          {/* <Row justify="end" gutter={[12, 24]}>
-            <Radio.Group
-              value={radioValue}
-              options={radioOptions}
-              onChange={async (e) => {
-                if (e.target.value === "branch") {
-                  setSCMlist("sucursal");
-                  setRadioValue("branch");
-                }
-                if (e.target.value === "company") {
-                  setSCMlist("compañia");
-                  setRadioValue("company");
-                }
-              }}
-              optionType="button"
-              buttonStyle="solid"
-              style={{ margin: "5px" }}
-            />
-          </Row>
-          <br />
-          <Table<ISucMedComList>
-            size="large"
-            rowKey={(record) => record.id}
-            columns={printing ? columns.slice(0, 4) : columns}
-            pagination={false}
-            dataSource={listSMC}
-            // dataSource={listCompañia}
-            scroll={{
-              x: windowWidth < resizeWidth ? "max-content" : "auto",
-            }}
-          /> */}
-          <Row justify="end" gutter={[12, 24]}>
-            <Col md={12} sm={24} xs={12}>
+          <Row justify={printing ? "center" : "end"} gutter={[12, 24]}>
+            <Col span={printing ? 24 : 12}>
               <Divider orientation="left">Compañias</Divider>
               <Table<ISucMedComList>
-                size="large"
+                size={printing ? "small" : "large"}
                 rowKey={(record) => record.id}
                 columns={printing ? columns.slice(0, 4) : columns}
-                // pagination={false}
-                // dataSource={listSMC}
                 dataSource={listCompañia}
                 scroll={{
                   x: windowWidth < resizeWidth ? "max-content" : "auto",
                 }}
               />
             </Col>
-            <Col md={12} sm={24} xs={12}>
+            <Col span={printing ? 24 : 12}>
               <Divider orientation="left">Sucursales</Divider>
               <Table<ISucMedComList>
-                size="large"
+                size={printing ? "small" : "large"}
                 rowKey={(record) => record.id}
                 columns={printing ? columns.slice(0, 4) : columns}
-                // pagination={false}
-                // dataSource={listSMC}
                 dataSource={listSucursal}
                 scroll={{
                   x: windowWidth < resizeWidth ? "max-content" : "auto",
@@ -1094,10 +1039,10 @@ useEffect(()=>{
           </Row>
 
           <Divider orientation="left">ESTUDIOS Y PAQUETE</Divider>
-          <Row justify="space-between" align="middle">
-            <Col span={6}>
+          <Row justify="space-between" align="middle" gutter={printing ? [24, 24] : 0}>
+            <Col span={printing ? 8 : 6}>
               <Search
-                key="search" 
+                key="search"
                 placeholder="Buscar"
                 onSearch={(value) => {
                   filterBySearch(value);
@@ -1105,69 +1050,95 @@ useEffect(()=>{
                 allowClear
               />
             </Col>
-            <Col span={6} offset={2}>
-              <SelectInput
-                options={departmentOptions}
-                onChange={(value) => {
-                  setAreaId(undefined);
-                  setDepId(value);
-                  filterByDepartament(value);
-                 
-                }}
-                value={depId}
-                placeholder={"Departamentos"}
-                formProps={{
-                  name: "departamentos",
-                  label: "Departamento",
-                }}
-              />
-            </Col>
-            <Col span={6} offset={2}>
-              <SelectInput
-                options={aeraSearch}
-                onChange={(value) => {
-                  setAreaId(value);
-                  filterByArea(value);
-                }}
-                value={ areaId? areaId : undefined}
-                placeholder={"Área"}
-                formProps={{
-                  name: "area",
-                  label: "Área",
-                }}
-              />
-            </Col>
+            {activeKeyPane === "1" ? (
+              <Fragment>
+                <Col span={printing ? 8 : 6} offset={printing ? 0 : 2}>
+                  <SelectInput
+                    options={departments}
+                    onChange={(value) => {
+                      setAreaId(undefined);
+                      setDepId(value);
+                      filterByDepartament(value);
+                    }}
+                    value={depId}
+                    placeholder={"Departamentos"}
+                    formProps={{
+                      name: "departamentos",
+                      label: "Departamento",
+                    }}
+                  />
+                </Col>
+                <Col span={printing ? 8 : 6} offset={printing ? 0 : 2}>
+                  <SelectInput
+                    options={aeraSearch}
+                    onChange={(value) => {
+                      setAreaId(value);
+                      filterByArea(value);
+                    }}
+                    value={areaId || undefined}
+                    placeholder={"Área"}
+                    formProps={{
+                      name: "area",
+                      label: "Área",
+                    }}
+                  />
+                </Col>
+              </Fragment>
+            ) : (
+              ""
+            )}
           </Row>
           <br />
 
-          <Tabs defaultActiveKey="1" >
+          <Tabs
+            defaultActiveKey="1"
+            onChange={(x) => {
+              setActiveKeyPane(x);
+            }}
+          >
             <TabPane tab="Estudios" key="1">
-            <Table<IPriceListEstudioList>
-            size="large"
-            columns={printing ? columnsEstudios.slice(0, 4) : columnsEstudios}
-            pagination={false}
-            dataSource={[...(values.table?.filter((x) => !x.paqute) ?? [])]}
-            scroll={{ y: "50vh", x: [...(values.table?.filter((x) => !x.paqute) ?? [])].length>0?true:undefined }}
-            components={VList({
-              height: 500,
-            })}
-          />
+              <Table<IPriceListEstudioList>
+                size="large"
+                columns={
+                  printing ? columnsEstudios.slice(0, 4) : columnsEstudios
+                }
+                pagination={false}
+                dataSource={[...(values.table?.filter((x) => !x.paqute) ?? [])]}
+                scroll={{
+                  y: "50vh",
+                  x:
+                    [...(values.table?.filter((x) => !x.paqute) ?? [])].length >
+                    0
+                      ? true
+                      : undefined,
+                }}
+                components={VList({
+                  height: 500,
+                })}
+              />
             </TabPane>
             <TabPane tab="Paquetes" key="2">
-            <Table<IPriceListEstudioList>
-            size="large"
-            columns={printing ? columnsEstudiosP.slice(0, 4) : columnsEstudiosP}
-            pagination={false}
-            dataSource={[...(values.table?.filter((x) => x.paqute) ?? [])]}
-            scroll={{ y: "50vh", x: [...(values.table?.filter((x) => x.paqute) ?? [])].length>0?true:undefined }}
-            components={VList({
-              height: 500,
-            })}
-          />
+              <Table<IPriceListEstudioList>
+                size="large"
+                columns={
+                  printing ? columnsEstudiosP.slice(0, 4) : columnsEstudiosP
+                }
+                pagination={false}
+                dataSource={[...(values.table?.filter((x) => x.paqute) ?? [])]}
+                scroll={{
+                  y: "50vh",
+                  x:
+                    [...(values.table?.filter((x) => x.paqute) ?? [])].length >
+                    0
+                      ? true
+                      : undefined,
+                }}
+                components={VList({
+                  height: 500,
+                })}
+              />
             </TabPane>
-        </Tabs>
-
-
+          </Tabs>
         </div>
       </div>
     </Spin>
