@@ -16,7 +16,7 @@ const PromotionDetail = () => {
   const { clearScopes, exportForm } = promotionStore; 
 
   const [printing, setPrinting] = useState(false);
-
+  const [download, setDownload] = useState(false);
   const { id } = useParams<UrlParams>();
   const reagentId = id;
 
@@ -39,9 +39,9 @@ const PromotionDetail = () => {
 
   const handleDownload = async () => {
     if (reagentId) {
-      setPrinting(true);
+      setDownload(true);
       await exportForm(reagentId);
-      setPrinting(false);
+      setDownload(false);
     }
   };
 
@@ -55,7 +55,7 @@ const PromotionDetail = () => {
     <Fragment>
       <PromotionFormHeader id={reagentId!} handlePrint={handlePrint} handleDownload={handleDownload} />
       <Divider className="header-divider" />
-      <PromotionForm id={reagentId!} componentRef={componentRef} printing={printing} />
+      <PromotionForm id={reagentId!} componentRef={componentRef} printing={printing} download={download}/>
     </Fragment>
   );
 };

@@ -49,18 +49,19 @@ type PriceListFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
+  download: boolean;
 };
 
 const PriceListForm: FC<PriceListFormProps> = ({
   id,
   componentRef,
   printing,
+  download
 }) => {
   const { priceListStore, optionStore, modalStore } = useStore();
   const {
     priceLists,
     getById,
-    getAll,
     create,
     update,
     getAllStudy,
@@ -119,7 +120,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
     if (!id) {
       readtabla();
     }
-  }, [getAllStudy, getAllPack, id]);
+  }, [getAllStudy, getAllPack]);
 
   useEffect(() => {
     getDepartmentOptions();
@@ -285,7 +286,6 @@ const PriceListForm: FC<PriceListFormProps> = ({
       setLoading(true);
       const user = await getById(idUser);
 
-      const all = await getAll("all");
 
       var studis = await getAllStudy();
       var pcks = await getAllPack();
@@ -334,10 +334,8 @@ const PriceListForm: FC<PriceListFormProps> = ({
       readuser(String(id));
     }
   }, [
-    form,
     getById,
     id,
-    getAll,
     getAllBranch,
     getAllCompany,
     getAllMedics,
@@ -903,7 +901,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
     },
   ];
   return (
-    <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
+    <Spin spinning={loading || printing || download} tip={printing?"Imprimiendo" :(download ? "descargando" : "")}>
       <Row style={{ marginBottom: 24 }}>
         {!readonly && (
           <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
