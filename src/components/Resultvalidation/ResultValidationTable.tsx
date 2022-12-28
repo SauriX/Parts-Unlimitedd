@@ -409,13 +409,12 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   const onFinish = async (newValues: ISearchValidation) => {
     setLoading(true);
 
-    const reagent = { ...search, ...newValues };
-    setSearch(reagent);
-    var data = await getAll(reagent);
+    const searchValidation = { ...search, ...newValues };
+    setSearch(searchValidation);
+    var data = await getAll(searchValidation);
     let studios = [];
 
     setSoliCont(data?.length!);
-    console.log(data?.length!,"datalen");
     data?.forEach((x) =>
       x.estudios.forEach((x: any) => {
         studios.push(x);
