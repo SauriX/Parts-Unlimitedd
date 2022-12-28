@@ -25,7 +25,7 @@ export default class ResultValidationStore {
   clear: boolean = false;
 
   clearFilter = () => {
-    new searchValues();
+    this.search =new searchValues();
     this.studys = [];
     this.clear = !this.clear
     this.studyCont = 0;
