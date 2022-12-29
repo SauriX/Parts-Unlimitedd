@@ -24,7 +24,7 @@ type RequestRequestProps = {
 };
 
 const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
-  const { requestStore, modalStore } = useStore();
+  const { requestStore } = useStore();
   const {
     request,
     allStudies,
@@ -42,14 +42,22 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
   });
 
   const updateDate = (item: IRequestStudy, value: moment.Moment | null) => {
-    if (value) {
-      setStudy({ ...item, fechaEntrega: value.utcOffset(0, true) });
-      const origin = formGeneral.getFieldValue("urgencia");
-      if (origin === catalog.urgency.normal) {
-        alerts.info("La solicitud se marcará como urgente");
-        formGeneral.setFieldValue("urgencia", catalog.urgency.urgente);
-        formGeneral.submit();
-      }
+    if (!value) {
+      alerts.warning("Por favor selecciona una fecha");
+      return;
+    }
+
+    if (value.isBefore(moment())) {
+      alerts.warning("No es posible seleccionar una fecha anterior");
+      return;
+    }
+
+    setStudy({ ...item, fechaEntrega: value.utcOffset(0, true) });
+    const origin = formGeneral.getFieldValue("urgencia");
+    if (origin === catalog.urgency.normal) {
+      alerts.info("La solicitud se marcará como urgente");
+      formGeneral.setFieldValue("urgencia", catalog.urgency.urgente);
+      formGeneral.submit();
     }
   };
 
@@ -98,6 +106,9 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
             onChange={(value) => {
               updateDate(item, value);
             }}
+            disabledDate={(current) =>
+              current.isBefore(moment())
+            }
           />
         );
       },
