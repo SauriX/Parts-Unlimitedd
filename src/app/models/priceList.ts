@@ -9,8 +9,8 @@ export interface IPriceListList {
   nombre: string;
   visibilidad: boolean;
   activo: boolean;
-  estudios: IPriceListEstudioList[];
-  compañia: ISucMedComList[];
+  estudios?: IPriceListEstudioList[];
+  compañia?: ISucMedComList[];
 }
 
 export interface IPriceListForm {

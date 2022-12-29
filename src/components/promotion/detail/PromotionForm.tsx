@@ -28,11 +28,12 @@ type ReagentFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
+  download: boolean;
 };
 const { Search } = Input;
 const { CheckableTag } = Tag;
 
-const PromotionForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
+const PromotionForm: FC<ReagentFormProps> = ({ id, componentRef, printing,download }) => {
   const { optionStore,promotionStore } = useStore();
   const { getPriceById, getById, getAll, create, update,promotionLists } =promotionStore;
 const {priceListOptions,getPriceListOptions, getDepartmentOptions, departmentOptions,getareaOptions,areas,getMedicOptions,medicOptions} = optionStore;
@@ -589,6 +590,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
       console.log("el promotion");
       console.log(reagent);
       const priceList = await getPriceById(reagent?.idListaPrecios!);
+      console.log(priceList,"pricelist");
       var sucursales:ISucMedComList[] = priceList!.sucursales;
        setSucursales(sucursales);
       var sucursalesOptions:IOptions[] = sucursales.map((x)=>({
@@ -767,7 +769,7 @@ useEffect(()=>{
   };
 
   return (
-    <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
+    <Spin spinning={loading || printing || download} tip={printing?"Imprimiendo" :(download ? "descargando" : "")}>
       <Row style={{ marginBottom: 24 }}>
         {id && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
