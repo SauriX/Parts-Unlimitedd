@@ -76,7 +76,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     addSelectedStudy,
     removeSelectedStudy,
     observationsSelected,
-    setObservationsSelected
+    setObservationsSelected,
   } = clinicResultsStore;
 
   const { getMedicOptions, getUnitOptions } = optionStore;
@@ -123,7 +123,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const loadInit = async () => {
     const cStudy = await getRequestStudyById(estudio.id!);
     setCurrentStudy(cStudy!);
-    console.log(cStudy);
 
     let captureResult = studies.find((x) => x.id == estudioId);
 
@@ -403,6 +402,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     );
     if (success) {
       setHideWhenCancel(false);
+      setObservationsSelected([]);
       await loadInit();
     }
 
@@ -627,10 +627,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                             fieldValue.tipoValorId == "13" ||
                             fieldValue.tipoValorId == "14";
 
-                          console.log(
-                            fieldValue.tipoValores?.map((x) => x.primeraColumna)
-                          );
-
                           return (
                             <Row
                               key={field.key}
@@ -701,15 +697,18 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                               await ObservationModal(
                                                 fieldValue.parametroId,
                                                 fieldValue.tipoValorId,
+                                                observationsSelected
                                               );
-                                            form.setFieldValue(
-                                              [
-                                                "parametros",
-                                                field.name,
-                                                "resultado",
-                                              ],
-                                              modal
-                                            );
+                                            if (modal) {
+                                              form.setFieldValue(
+                                                [
+                                                  "parametros",
+                                                  field.name,
+                                                  "resultado",
+                                                ],
+                                                modal
+                                              );
+                                            }
                                           }}
                                         >
                                           ...
@@ -788,19 +787,29 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                     </Col>
                                   ) : (
                                     <Fragment>
-                                      <Col span={fieldValue.tipoValorId === "12" ? 3 : 4}>
+                                      <Col
+                                        span={
+                                          fieldValue.tipoValorId === "12"
+                                            ? 3
+                                            : 4
+                                        }
+                                      >
                                         {fieldValue.tipoValores!.map((x) => (
                                           <Fragment>
-                                            <Text>
-                                              {x.primeraColumna}
-                                            </Text>
+                                            <Text>{x.primeraColumna}</Text>
                                             <br />
                                           </Fragment>
                                         ))}
                                       </Col>
                                       {parseInt(fieldValue.tipoValorId) >=
                                       13 ? (
-                                        <Col span={fieldValue.tipoValorId === "12" ? 3 : 4}>
+                                        <Col
+                                          span={
+                                            fieldValue.tipoValorId === "12"
+                                              ? 3
+                                              : 4
+                                          }
+                                        >
                                           {fieldValue.tipoValores!.map((x) => (
                                             <Fragment>
                                               <Text>{x.segundaColumna}</Text>
@@ -815,7 +824,13 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   )}
                                   {parseInt(fieldValue.tipoValorId) >= 11 ? (
                                     <Fragment>
-                                      <Col span={fieldValue.tipoValorId === "12" ? 3 : 4}>
+                                      <Col
+                                        span={
+                                          fieldValue.tipoValorId === "12"
+                                            ? 3
+                                            : 4
+                                        }
+                                      >
                                         {fieldValue.tipoValores!.map((x) => (
                                           <Fragment>
                                             <Text>
@@ -830,7 +845,15 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                           </Fragment>
                                         ))}
                                       </Col>
-                                      <Col span={fieldValue.tipoValorId === "12" ? 3 : fieldValue.tipoValorId === "14" ? 1.5 : 4}>
+                                      <Col
+                                        span={
+                                          fieldValue.tipoValorId === "12"
+                                            ? 3
+                                            : fieldValue.tipoValorId === "14"
+                                            ? 1.5
+                                            : 4
+                                        }
+                                      >
                                         {fieldValue.tipoValores!.map((x) => (
                                           <Fragment>
                                             <Text>

@@ -1,7 +1,8 @@
+import { IOptions } from "../../../app/models/shared";
 import { store } from "../../../app/stores/store";
 import Observations from "./Observations";
 
-export const ObservationModal = (id: string, tipo: string) => {
+export const ObservationModal = (id: string, tipo: string, selectedRowKeys: IOptions[]) => {
   const { openModal, closeModal } = store.modalStore;
 
   return new Promise((resolve) => {
@@ -12,10 +13,10 @@ export const ObservationModal = (id: string, tipo: string) => {
           getResult={(data) => {
             resolve(data);
             closeModal();
-          } } id={id} tipo={tipo}    />
+          } } id={id} tipo={tipo} selectedKeyObservation={selectedRowKeys}   />
       ),
       onClose: () => {
-        resolve(undefined);
+        resolve("");
       },
     });
   });
