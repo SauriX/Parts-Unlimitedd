@@ -1,4 +1,4 @@
-import { Table } from "antd";
+import { Input, Table } from "antd";
 import React, { useEffect, useState } from "react";
 import { IColumns } from "./app/common/table/utils";
 
@@ -15,6 +15,12 @@ const data = [
     NOG: 75,
     MTY: 150,
   },
+  {
+    Nombre: "Costo Reactivo",
+    U200: 200,
+    NOG: 75,
+    MTY: 150,
+  },
 ];
 
 const Test1 = () => {
@@ -26,7 +32,19 @@ const Test1 = () => {
         Object.keys(data[0]).map((x) => ({
           key: x,
           dataIndex: x,
-          title: x
+          title: x,
+          render: (value, record: any) => {
+            if (record.Nombre === "Costo Reactivo" && x !== "Nombre") {
+              return (
+                <Input
+                  onChange={(e) => {
+                    console.log(`${x} valor ${e.target.value}`);
+                  }}
+                />
+              );
+            }
+            return value;
+          },
         }))
       );
     }

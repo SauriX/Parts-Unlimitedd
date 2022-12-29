@@ -1,18 +1,26 @@
 import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "../app/stores/store";
 import MassSearchForm from "../components/massResultSearch/MassSearchForm";
 import MassSearchHeader from "../components/massResultSearch/MassSearchHeader";
 import MassSearchTable from "../components/massResultSearch/MassSearchTable";
 
-const handleDownload = async () => {};
 const MassResultSearch = () => {
   const { massResultSearchStore } = useStore();
-  const { results, area } = massResultSearchStore;
+  const { results, area, printPdf, search } = massResultSearchStore;
+  const [loading, setLoading] = useState(false);
+  
   useEffect(() => {
     console.log("Area info", area);
   }, [area]);
+
+  const handleDownload = async () => {
+    setLoading(true);
+    await printPdf(search);
+    setLoading(false);
+  };
+
   return (
     <>
       <MassSearchHeader handleDownload={handleDownload} />
@@ -23,7 +31,7 @@ const MassResultSearch = () => {
         solicitudes: {results.length}
       </Divider>
 
-      <MassSearchTable />
+      <MassSearchTable printing={loading} />
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { Col, Row, Table, Typography } from "antd";
+import { Col, Row, Spin, Table, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import CheckInput from "../../app/common/form/CheckInput";
@@ -23,10 +23,14 @@ import moment from "moment";
 
 const { Link } = Typography;
 
-const MassSearchTable = () => {
+type MSDefaultProps = {
+  printing: boolean;
+}
+
+const MassSearchTable = ({printing}: MSDefaultProps) => {
   const { width: windowWidth } = useWindowDimensions();
   const { massResultSearchStore } = useStore();
-  const { parameters, results } = massResultSearchStore;
+  const { parameters, results, loadingStudies} = massResultSearchStore;
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [searchState, setSearchState] = useState<ISearch>({
@@ -115,11 +119,11 @@ const MassSearchTable = () => {
     ...columnas,
   ];
   return (
-    <>
+    <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
       <Table
         key={uuid()}
         rowKey={uuid()}
-        loading={loading}
+        loading={loadingStudies}
         size="small"
         columns={columns}
         bordered
@@ -146,7 +150,7 @@ const MassSearchTable = () => {
         pagination={false}
         dataSource={results}
       ></Table>
-    </>
+    </Spin>
   );
 };
 export default observer(MassSearchTable);
