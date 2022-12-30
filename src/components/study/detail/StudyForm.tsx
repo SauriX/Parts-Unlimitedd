@@ -119,10 +119,13 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   const inputRef = useRef<InputRef>(null);
   const editInputRef = useRef<InputRef>(null);
 
-  const [parameterSelectedSource, setParameterSelectedSource] = useState(parameterSelected);
+  const [parameterSelectedSource, setParameterSelectedSource] =
+    useState(parameterSelected);
 
   useEffect(() => {
-    setParameterSelectedSource(parameterSelected.map((x, i) => ({ ...x, index: i })));
+    setParameterSelectedSource(
+      parameterSelected.map((x, i) => ({ ...x, index: i }))
+    );
   }, [parameterSelected]);
 
   useEffect(() => {
@@ -233,7 +236,9 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       }),
     },
   ];
-
+  useEffect(() => {
+    form.setFieldValue("activo", true);
+  }, []);
   useEffect(() => {
     const readuser = async (id: number) => {
       setLoading(true);
@@ -394,7 +399,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     );
     setParameterSelectedSource(filterList);
     setSelectedRowKeysp([]);
-    console.log("Parametros", parameterSelected)
+    console.log("Parametros", parameterSelected);
   };
 
   const deleteIndicacion = () => {
