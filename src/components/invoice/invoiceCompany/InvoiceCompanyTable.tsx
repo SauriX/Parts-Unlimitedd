@@ -11,6 +11,7 @@ import { useStore } from "../../../app/stores/store";
 import { useEffect, useState } from "react";
 import { toJS } from "mobx";
 import { moneyFormatter } from "../../../app/util/utils";
+import { status } from "../../../app/util/catalogs";
 const { Link, Text } = Typography;
 
 const InvoiceCompanyTable = () => {
@@ -19,6 +20,13 @@ const InvoiceCompanyTable = () => {
     searchedText: "",
     searchedColumn: "",
   });
+  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>();
+  const [selectedRequests, setSelectedRequests] = useState<any[]>();
+  const [isSameCommpany, setIsSameCompany] = useState<boolean>(false);
+  const { invoiceCompanyStore } = useStore();
+  const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
+  const [openRows, setOpenRows] = useState<boolean>(false);
+  const { invoices, setSelectedRows, isLoading } = invoiceCompanyStore;
   const columns: IColumns = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
@@ -53,6 +61,16 @@ const InvoiceCompanyTable = () => {
       }),
     },
     {
+      ...getDefaultColumnProps("monto", "Monto", {
+        // searchState,
+        // setSearchState,
+        width: 10,
+      }),
+      render(value, record, index) {
+        return moneyFormatter.format(+value);
+      },
+    },
+    {
       ...getDefaultColumnProps("cargo", "Cargo", {
         // searchState,
         // setSearchState,
@@ -64,16 +82,6 @@ const InvoiceCompanyTable = () => {
     },
     {
       ...getDefaultColumnProps("descuento", "Descuento", {
-        // searchState,
-        // setSearchState,
-        width: 10,
-      }),
-      render(value, record, index) {
-        return moneyFormatter.format(+value);
-      },
-    },
-    {
-      ...getDefaultColumnProps("monto", "Monto", {
         // searchState,
         // setSearchState,
         width: 10,
@@ -106,7 +114,17 @@ const InvoiceCompanyTable = () => {
                     <span>
                       <small>
                         <Text type="secondary">
-                          <Text strong>{factura.estatus}</Text>
+                          <Text
+                            strong
+                            type={
+                              factura.estatusId ===
+                              status.requestPayment.cancelado
+                                ? "danger"
+                                : "secondary"
+                            }
+                          >
+                            {`(${factura.estatus?.clave})`}
+                          </Text>
                         </Text>
                       </small>
                     </span>
@@ -133,11 +151,6 @@ const InvoiceCompanyTable = () => {
       }),
     },
   ];
-  
-  const { invoiceCompanyStore } = useStore();
-  const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
-  const [openRows, setOpenRows] = useState<boolean>(false);
-  const { invoices } = invoiceCompanyStore;
   useEffect(() => {
     setExpandedRowKeys(invoices.solicitudes?.map((x: any) => x.solicitudId));
     setOpenRows(true);
@@ -165,6 +178,13 @@ const InvoiceCompanyTable = () => {
   };
   return (
     <>
+      {/* <Button
+        onClick={() => {
+          console.log("selectedRowKeys", selectedRequests);
+        }}
+      >
+        AAA
+      </Button> */}
       {invoices.solicitudes?.length > 0 && (
         <div style={{ textAlign: "right", marginBottom: 10 }}>
           <Button
@@ -177,6 +197,7 @@ const InvoiceCompanyTable = () => {
         </div>
       )}
       <Table<any>
+        loading={isLoading}
         size="small"
         bordered
         rowKey={(record) => record.solicitudId}
@@ -187,6 +208,10 @@ const InvoiceCompanyTable = () => {
         className="header-expandable-table"
         rowSelection={{
           type: "checkbox",
+          selectedRowKeys,
+          onChange: (newSelectedRowKeys, selectedRows) => {
+            setSelectedRows([...selectedRows]);
+          },
         }}
         // scroll={{ y: 450 }}
         expandable={{

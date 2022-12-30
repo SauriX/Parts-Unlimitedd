@@ -25,44 +25,14 @@ const InvoiceCompanyStudyTable = ({
       align: "center",
     },
     {
-      key: "precio",
-      dataIndex: "precio",
+      key: "precioFinal",
+      dataIndex: "precioFinal",
       title: "Precio",
       align: "center",
       render(value, record, index) {
         return moneyFormatter.format(+value);
       },
     },
-    {
-      key: "estatus",
-      dataIndex: "estatus",
-      title: "Estatus",
-      align: "center",
-    },
-    // {
-    //   key: "fechaEntrega",
-    //   dataIndex: "fechaEntrega",
-    //   title: "Fecha de entrega",
-    //   align: "center",
-    // },
-    // {
-    //   key: "d",
-    //   dataIndex: "d",
-    //   title: "D",
-    //   align: "center",
-    // },
-    // {
-    //   key: "c",
-    //   dataIndex: "c",
-    //   title: "C",
-    //   align: "center",
-    // },
-    // {
-    //   key: "Total",
-    //   dataIndex: "total",
-    //   title: "Total",
-    //   align: "center",
-    // },
   ];
   return (
     <>
