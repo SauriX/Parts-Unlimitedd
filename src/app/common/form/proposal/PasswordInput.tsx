@@ -21,6 +21,7 @@ interface IProps {
   errors?: any[];
   onClick?: React.MouseEventHandler<HTMLInputElement> | undefined;
   onKeyUp?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
+  onPressEnter?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
 }
 
 const PasswordInput = ({
@@ -39,6 +40,7 @@ const PasswordInput = ({
   errors,
   onClick,
   onKeyUp,
+  onPressEnter
 }: IProps) => {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -116,6 +118,7 @@ const PasswordInput = ({
           placeholder={placeholder ?? itemProps.label?.toString()}
           onClick={onClick}
           onKeyUp={onKeyUp}
+          onPressEnter={onPressEnter}
           style={{
             paddingRight: paddingRight,
             width: width ?? "100%",
