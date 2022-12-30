@@ -490,7 +490,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   };
 
   return (
-    <Fragment>
+    <Fragment key={estudio.id}>
       {currentStudy.estatusId >= 3 && currentStudy.estatusId != 9 ? (
         <Spin spinning={loading}>
           <Row style={{ marginBottom: "20px" }}>
@@ -605,17 +605,19 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                       <h3>REFERENCIA</h3>
                     </Col>
                   </Row>
-                  <Form.List name="parametros">
+                  <Form.List name="parametros" key={uuid()}>
                     {(fields) => (
                       <>
-                        {fields.map((field) => {
+                        {fields.map((field, index) => {
                           let fieldValue = form.getFieldValue([
                             "parametros",
-                            field.name
+                            field.name,
                           ]) as IClinicResultCaptureForm;
                           let fieldResult = resultValue?.find(
                             (x) => x.id === fieldValue.id
                           )?.resultado as string;
+
+                          console.log(fieldValue.nombre, field.key, index);
 
                           let fieldRange =
                             parseFloat(fieldValue.valorInicial) >
@@ -631,7 +633,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
 
                           return (
                             <Row
-                              key={field.key}
+                              key={index ?? -1}
                               justify="space-between"
                               gutter={[0, 24]}
                               style={{
@@ -679,6 +681,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                             "onBlur",
                                           ]}
                                           noStyle
+                                          key={uuid()}
                                         >
                                           <TextArea
                                             placeholder="Resultado"
@@ -695,6 +698,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                           {...field}
                                           name={[field.name, "observacionesId"]}
                                           noStyle
+                                          key={uuid()}
                                         >
                                           <Input style={{ display: "none" }} />
                                         </Form.Item>
@@ -742,6 +746,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                         name={[field.name, "resultado"]}
                                         validateTrigger={["onChange", "onBlur"]}
                                         noStyle
+                                        key={uuid()}
                                       >
                                         {fieldValue.tipoValorId == "5" ||
                                         (fieldValue.tipoValorId == "6" &&
@@ -807,7 +812,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                         : fieldValue.ultimoResultado}
                                     </Col>
                                   ) : (
-                                    <Fragment>
+                                    <Fragment key={uuid()}>
                                       <Col
                                         span={
                                           fieldValue.tipoValorId === "12"
@@ -816,7 +821,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                         }
                                       >
                                         {fieldValue.tipoValores!.map((x) => (
-                                          <Fragment>
+                                          <Fragment key={uuid()}>
                                             <Text>{x.primeraColumna}</Text>
                                             <br />
                                           </Fragment>
@@ -832,7 +837,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                           }
                                         >
                                           {fieldValue.tipoValores!.map((x) => (
-                                            <Fragment>
+                                            <Fragment key={uuid()}>
                                               <Text>{x.segundaColumna}</Text>
                                               <br />
                                             </Fragment>
@@ -844,7 +849,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                     </Fragment>
                                   )}
                                   {parseInt(fieldValue.tipoValorId) >= 11 ? (
-                                    <Fragment>
+                                    <Fragment key={uuid()}>
                                       <Col
                                         span={
                                           fieldValue.tipoValorId === "12"
@@ -853,7 +858,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                         }
                                       >
                                         {fieldValue.tipoValores!.map((x) => (
-                                          <Fragment>
+                                          <Fragment key={uuid()}>
                                             <Text>
                                               {fieldValue.tipoValorId === "12"
                                                 ? x.segundaColumna
@@ -876,7 +881,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                         }
                                       >
                                         {fieldValue.tipoValores!.map((x) => (
-                                          <Fragment>
+                                          <Fragment key={uuid()}>
                                             <Text>
                                               {fieldValue.tipoValorId === "12"
                                                 ? x.terceraColumna
@@ -892,7 +897,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                       {fieldValue.tipoValorId === "14" ? (
                                         <Col span={1.5}>
                                           {fieldValue.tipoValores!.map((x) => (
-                                            <Fragment>
+                                            <Fragment key={uuid()}>
                                               <Text>{x.quintaColumna}</Text>
                                               <br />
                                             </Fragment>
@@ -930,6 +935,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                             </Row>
                           );
                         })}
+                        {console.log()}
                       </>
                     )}
                   </Form.List>

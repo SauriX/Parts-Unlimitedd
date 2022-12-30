@@ -291,6 +291,7 @@ export default class ClinicResultsStores {
           ultimoResultado: y.ultimoResultado,
           deltaCheck: y.deltaCheck,
           editable: y.editable,
+          observacionesId: y.observacionesId,
           orden: y.index!,
           clave: y.clave,
           rango:
