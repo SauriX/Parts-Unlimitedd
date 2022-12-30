@@ -15,7 +15,7 @@ type UrlParams = {
 const PriceListDetail = () => {
   const { priceListStore } = useStore();
   const { scopes, access, clearScopes, exportForm } = priceListStore;
-
+  const [download, setDownload] = useState(false);
   const navigate = useNavigate();
 
   const [printing, setPrinting] = useState(false);
@@ -42,9 +42,9 @@ const PriceListDetail = () => {
 
   const handleDownload = async () => {
     if (priceListId) {
-      setPrinting(true);
+      setDownload(true);
       await exportForm(priceListId);
-      setPrinting(false);
+      setDownload(false);
     }
   };
 
@@ -79,7 +79,7 @@ const PriceListDetail = () => {
     <Fragment>
       <PriceListFormHeader id={priceListId} handlePrint={handlePrint} handleDownload={handleDownload} />
       <Divider className="header-divider" />
-      <PriceListForm id={priceListId} componentRef={componentRef} printing={printing} />
+      <PriceListForm id={priceListId} componentRef={componentRef} printing={printing} download={download}/>
     </Fragment>
   );
 };

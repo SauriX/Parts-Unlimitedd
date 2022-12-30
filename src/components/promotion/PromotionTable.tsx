@@ -17,22 +17,7 @@ import { useReactToPrint } from "react-to-print";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import views from "../../app/util/view";
 import { IPromotionList } from "../../app/models/promotion";
-const promotions:IPromotionList[]=[
-    {
-        id:1,
-        nombre:"test",
-        clave:"test",
-        periodo:"test",
-        nombreListaPrecio:"test",
-        activo:true
-    },{
-        id:2,
-        nombre:"test1",
-        clave:"test1",
-        periodo:"test1",
-        nombreListaPrecio:"test1",
-        activo:true
-    }];
+
 type PromotionTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
@@ -157,7 +142,7 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
           rowKey={(record) => record.id}
           columns={columns.slice(0, 4)}
           pagination={false}
-          dataSource={[...promotions]}
+          dataSource={[...promotionLists]}
         />
       </div>
     );

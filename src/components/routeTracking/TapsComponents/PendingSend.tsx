@@ -167,7 +167,8 @@ const PendingSend = () => {
     }
     var datos: IUpdate = {
       estudioId: ids,
-      solicitudId: solicitud,
+      ruteOrder: solicitud,
+      solicitudId:solicitud
     };
     setUpdateDate((prev) => [...prev!, datos]);
   };
@@ -335,10 +336,8 @@ const PendingSend = () => {
         <PrintIcon
           key="print"
           onClick={() => {
-            printTicket(
-              item.estudios[0].expedienteid,
-              item.estudios[0].solicitudid
-            );
+            console.log(item.id);
+            exportForm(item.id);
           }}
         />
       ),
@@ -541,7 +540,7 @@ const PendingSend = () => {
                       if (updateData.length > 0) {
                         console.log(updateData,"onSelect");
                         existingStudy = updateData.find(
-                          (study) => study.solicitudId === data.id
+                          (study) => study.ruteOrder === data.id
                         );
                         
                         var studiinlist = existingStudy!.estudioId.filter(
@@ -555,8 +554,9 @@ const PendingSend = () => {
                             if (!existingStudy) {
                               studylist.push(selectedRow.id);
                               var datatoupdate: IUpdate = {
-                                solicitudId: data.id,
+                                ruteOrder: data.id,
                                 estudioId: studylist,
+                                solicitudId:data.id
                               };
                               setUpdateDate((prev) => [...prev, datatoupdate]);
                             } else {
@@ -567,7 +567,7 @@ const PendingSend = () => {
                               if (!studiinlist.includes(selectedRow.id)) {
                                 existingStudy.estudioId.push(selectedRow.id);
                                 let existingStudyIndex = updateData.findIndex(
-                                  (study) => study.solicitudId === data.id
+                                  (study) => study.ruteOrder === data.id
                                 );
                                 let updatdedlist = updateData;
                                 updatdedlist[existingStudyIndex] =
@@ -582,7 +582,7 @@ const PendingSend = () => {
                                 existingStudy.estudioId = newStudies;
                                 if (newStudies.length > 0) {
                                   let existingStudyIndex = updateData.findIndex(
-                                    (study) => study.solicitudId === data.id
+                                    (study) => study.ruteOrder=== data.id
                                   );
                                   let updatdedlist = updateData;
                                   updatdedlist[existingStudyIndex] =
@@ -592,7 +592,7 @@ const PendingSend = () => {
                                 } else {
                                   let updatdedlist = updateData;
                                   updatdedlist = updatdedlist.filter(
-                                    (x) => x.solicitudId === data.id
+                                    (x) => x.ruteOrder === data.id
                                   );
 
                                   setUpdateDate(updatdedlist);
@@ -608,7 +608,7 @@ const PendingSend = () => {
                               existingStudy.estudioId = newStudies;
                               if (newStudies.length > 0) {
                                 let existingStudyIndex = updateData.findIndex(
-                                  (study) => study.solicitudId === data.id
+                                  (study) => study.ruteOrder === data.id
                                 );
                                 let updatdedlist = updateData;
                                 updatdedlist[existingStudyIndex] =
@@ -618,7 +618,7 @@ const PendingSend = () => {
                               } else {
                                 let updatdedlist = updateData;
                                 updatdedlist = updatdedlist.filter(
-                                  (x) => x.solicitudId === data.id
+                                  (x) => x.ruteOrder === data.id
                                 );
 
                                 setUpdateDate(updatdedlist);
@@ -636,7 +636,7 @@ const PendingSend = () => {
                             if (newStudies.length > 0) {
                               
                               let existingStudyIndex = updateData.findIndex(
-                                (study) => study.solicitudId === data.id
+                                (study) => study.ruteOrder === data.id
                               );
                               let updatdedlist = updateData;
                               updatdedlist[existingStudyIndex] =
@@ -647,7 +647,7 @@ const PendingSend = () => {
                               
                               let updatdedlist = updateData;
                               updatdedlist = updatdedlist.filter(
-                                (x) => x.solicitudId != data.id
+                                (x) => x.ruteOrder!= data.id
                               );
                               console.log(updatdedlist,"onSelect");
                               setUpdateDate(updatdedlist);
@@ -658,8 +658,9 @@ const PendingSend = () => {
                         let studylist: number[] = [];
                         studylist.push(selectedRow.id);
                         var datatoupdate: IUpdate = {
-                          solicitudId: data.id,
+                          ruteOrder: data.id,
                           estudioId: studylist,
+                          solicitudId:data.id
                         };
                         setUpdateDate((prev) => [...prev, datatoupdate]);
                         console.log(updateData,"datas");
@@ -698,8 +699,9 @@ const PendingSend = () => {
                                 }
                               });
                               var datatoupdate: IUpdate = {
-                                solicitudId: datas.id,
+                                ruteOrder: data.id,
                                 estudioId: studylist,
+                                solicitudId:data.id
                               };
                               listuopdate.push(datatoupdate);
                             })
@@ -753,7 +755,7 @@ const PendingSend = () => {
                       
                     },
                     selectedRowKeys: updateData.find(
-                      (x) => x.solicitudId == data.id
+                      (x) => x.ruteOrder == data.id
                     )?.estudioId,
                   }}
                 ></Table>

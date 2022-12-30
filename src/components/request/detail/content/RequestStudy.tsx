@@ -1,4 +1,3 @@
-import { isFocusable } from "@testing-library/user-event/dist/utils";
 import {
   Button,
   Checkbox,
@@ -11,10 +10,9 @@ import {
 } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import IconButton from "../../../../app/common/button/IconButton";
 import {
-  defaultPaginationProperties,
   getDefaultColumnProps,
   IColumns,
   ISearch,
@@ -29,12 +27,11 @@ import { useStore } from "../../../../app/stores/store";
 import alerts from "../../../../app/util/alerts";
 import { moneyFormatter } from "../../../../app/util/utils";
 import { status } from "../../../../app/util/catalogs";
-import { toJS } from "mobx";
 
 const { Link } = Typography;
 
 const RequestStudy = () => {
-  const { requestStore, priceListStore, optionStore } = useStore();
+  const { requestStore, optionStore } = useStore();
   const { studyOptions, packOptions, getStudyOptions, getPackOptions } =
     optionStore;
   const {
@@ -122,6 +119,9 @@ const RequestStudy = () => {
             .map((x) => x.clave)
             .join(", ")})`;
         }
+
+        content = content.replace(" ()", "");
+
         return (
           <Tooltip placement="topLeft" title={content}>
             {content}

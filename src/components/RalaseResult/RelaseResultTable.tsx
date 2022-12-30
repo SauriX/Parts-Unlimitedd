@@ -533,8 +533,6 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
            
             form.setFieldsValue(new searchrelase() );
             setValues(new searchrelase());
-            e.stopPropagation();
-            form.resetFields();
           }}
           style={{ marginLeft: "10%" }}
         >

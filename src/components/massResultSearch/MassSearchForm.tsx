@@ -19,6 +19,7 @@ const MassSearchForm = () => {
 
   const [filteredAreas, setFilteredAreas] = useState<IOptions[]>([]);
   const [studiesFilteredByArea, setStudiesFilteredByArea] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const {
     branchCityOptions,
@@ -29,7 +30,8 @@ const MassSearchForm = () => {
     getStudiesOptions,
   } = optionStore;
 
-  const { setAreas, getRequestResults } = massResultSearchStore;
+  const { setAreas, getRequestResults, search, setFilter } =
+    massResultSearchStore;
 
   useEffect(() => {
     loadInit();
@@ -49,7 +51,13 @@ const MassSearchForm = () => {
   };
 
   const onFinish = async (values: IMassSearch) => {
-    await getRequestResults(values);
+    setLoading(true);
+    let nombreArea: string = filteredAreas.find((x) => x.value == values.area)
+      ?.label as string;
+    let newValues = { ...values, nombreArea };
+    setFilter(newValues);
+    await getRequestResults(newValues);
+    setLoading(false);
   };
 
   return (

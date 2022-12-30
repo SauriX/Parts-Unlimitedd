@@ -28,11 +28,12 @@ type ReagentFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
+  download: boolean;
 };
 const { Search } = Input;
 const { CheckableTag } = Tag;
 
-const PromotionForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
+const PromotionForm: FC<ReagentFormProps> = ({ id, componentRef, printing,download }) => {
   const { optionStore,promotionStore } = useStore();
   const { getPriceById, getById, getAll, create, update,promotionLists } =promotionStore;
 const {priceListOptions,getPriceListOptions, getDepartmentOptions, departmentOptions,getareaOptions,areas,getMedicOptions,medicOptions} = optionStore;
@@ -192,7 +193,11 @@ console.log(fecha.toDate(),"fecha");
     }
 
     if (field === "cantidad") {
-      const cantidad = changedValues[field] as number;
+      let cantidad = changedValues[field] as number;
+      if(cantidad>100 && values.tipoDescuento==="porcent"){
+        cantidad=100;
+        form.setFieldValue("cantidad",100);
+      }
        console.log("cambio la cantidad");
        console.log(values.tipoDescuento);
        setValues((prev) => ({ ...prev, cantidad: cantidad! }));
@@ -203,8 +208,8 @@ console.log(fecha.toDate(),"fecha");
           clave:x.clave,
           nombre:x.nombre,
           descuentoPorcentaje:(values.tipoDescuento==="porcent"? cantidad: ((cantidad*100)/x.precio)),
-          descuentoCantidad:(values.tipoDescuento!=="porcent"? cantidad:((cantidad*x.precio)/100)),
-          precioFinal:(values.tipoDescuento!=="porcent"? (x.precio-cantidad):x.precio-((cantidad*x.precio)/100)) ,
+          descuentoCantidad:(values.tipoDescuento!=="porcent" ? cantidad:((cantidad*x.precio)/100)),
+          precioFinal:  (values.tipoDescuento!=="porcent" && x.precio<cantidad?0:(values.tipoDescuento!=="porcent"? (x.precio-cantidad):x.precio-((cantidad*x.precio)/100))),
           fechaInicial: moment().toDate(),
           fechaFinal:moment().toDate(),
           activo:x.activo,
@@ -565,6 +570,9 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
     } else {
       const dep = departmentOptions.find((x) => x.value === depId)?.label;
       estudi = estudios.filter((x) => x.departamento === dep);
+      if(depId == undefined || depId==0){
+        estudi=estudios;
+      }
       setValues((prev) => ({ ...prev, estudio: estudi }));
     }
   };
@@ -582,6 +590,7 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
       console.log("el promotion");
       console.log(reagent);
       const priceList = await getPriceById(reagent?.idListaPrecios!);
+      console.log(priceList,"pricelist");
       var sucursales:ISucMedComList[] = priceList!.sucursales;
        setSucursales(sucursales);
       var sucursalesOptions:IOptions[] = sucursales.map((x)=>({
@@ -707,6 +716,11 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
       setLoading(false);
       return
     }
+    if(selectedTags==null ||selectedTags.length<=0){
+      alerts.warning("Se deben seleccionar días a aplicar");
+      setLoading(false);
+      return
+    }
     reagent.dias= selectedTags; 
     console.log(reagent,"en el onfish")
     console.log(reagent);
@@ -755,7 +769,7 @@ useEffect(()=>{
   };
 
   return (
-    <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
+    <Spin spinning={loading || printing || download} tip={printing?"Imprimiendo" :(download ? "descargando" : "")}>
       <Row style={{ marginBottom: 24 }}>
         {id && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
@@ -808,7 +822,7 @@ useEffect(()=>{
             scrollToFirstError
             onValuesChange={onValuesChange}
           >
-            <Row>
+            <Row gutter={[12,24]}>
               <Col md={12} sm={24} xs={12}>
                 <TextInput
                   formProps={{
@@ -905,8 +919,8 @@ useEffect(()=>{
               <Col md={12} sm={24} xs={12}>
               <div style={{marginLeft:"98px",marginBottom:"20px"}}>
                 Descuento entre: 
-                <DatePicker style={{marginLeft:"10px"}} value={moment(values.fechaInicial)} onChange={(value)=>{setFechaInicial(value!)}} />
-                <DatePicker style={{marginLeft:"10px"}} value={moment(values.fechaFinal)} onChange={(value)=>{setFechaFinal(value!)}} />
+                <DatePicker disabled={readonly} style={{marginLeft:"10px"}} value={moment(values.fechaInicial)} onChange={(value)=>{setFechaInicial(value!)}} />
+                <DatePicker disabled={readonly} style={{marginLeft:"10px"}} value={moment(values.fechaFinal)} onChange={(value)=>{setFechaFinal(value!)}} />
               </div>
               </Col>
               <Col md={12} sm={24} xs={12}>
@@ -916,7 +930,8 @@ useEffect(()=>{
                   <CheckableTag
                     key={tag.id}
                     checked={selectedTags.filter(x=>x.id===tag.id).length>0}
-                    onChange={checked => handleChange(tag, checked) }
+                    onChange={checked => {if(!readonly){handleChange(tag, checked)}}}
+                    
                   >
                     {tag.dia}
                   </CheckableTag>
@@ -1050,8 +1065,8 @@ useEffect(()=>{
       />
       </div>
      } <Divider orientation="left">ESTUDIOS Y PAQUETES</Divider>
-      <Row justify="space-between" align="middle">
-            <Col span={6}>
+      <Row justify="space-between" align="middle" >
+            <Col span={6} offset={2}>
               <Search
                 key="search"
                 placeholder="Buscar"
@@ -1059,6 +1074,7 @@ useEffect(()=>{
                   filterBySearch(value);
                 }}
                 allowClear
+                style={{marginBottom:19}}
               />
             </Col>
             <Col span={6} offset={2}>
@@ -1069,11 +1085,13 @@ useEffect(()=>{
                   setDepId(value);
                   filterByDepartament(value);
                 }}
+                
                 value={depId}
                 placeholder={"Departamentos"}
                 formProps={{
                   name: "departamentos",
                   label: "Departamento",
+                  
                 }}
               />
             </Col>

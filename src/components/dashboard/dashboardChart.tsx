@@ -15,15 +15,20 @@ const DashboardChart = <T extends unknown>({
   axisLabel,
 }: ReportChartProps<T>) => {
   const options = {
+    title: {
+      text: "Solicitudes activas",
+      subtext: "Estatus de estudios presentes",
+      left: "center",
+    },
     grid: {
       left: "3%",
       right: "4%",
-      bottom: "3%",
       width: "auto",
       containLabel: true,
     },
     legend: {
       data: series.map((x) => x.title),
+      top: "bottom",
     },
     xAxis: {
       type: "category",
@@ -47,12 +52,17 @@ const DashboardChart = <T extends unknown>({
             },
           };
         }
-        return obj
+        return obj;
       }),
       emphasis: {
         focus: "series",
+        itemStyle: {
+          shadowBlur: 10,
+          shadowOffsetX: 0,
+          shadowColor: "rgba(0, 0, 0, 0.5)",
+        },
+        label: { show: true },
       },
-      label: { show: true },
       type: "bar",
       smooth: true,
     })),
@@ -61,6 +71,6 @@ const DashboardChart = <T extends unknown>({
     },
   };
 
-  return <ReactECharts style={{ height: 500 }} option={options} notMerge />;
+  return <ReactECharts style={{ height: 450 }} option={options} notMerge />;
 };
 export default observer(DashboardChart);

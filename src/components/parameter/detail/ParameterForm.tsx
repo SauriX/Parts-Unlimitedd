@@ -176,38 +176,17 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     }
     return result;
   };
-  const actualParameter = () => {
-    if (id) {
-      const index = parameters.findIndex((x) => x.id === id);
-      return index + 1;
-      return 1;
-    }
-    return 0;
-  };
-  const siguienteParameter = (index: number) => {
-    console.log(id);
-    const parameter = parameters[index];
-
-    navigate(
-      `/parameters/${parameter?.id}?mode=${searchParams.get("mode")}&search=${
-        searchParams.get("search") ?? "all"
-      }`
-    );
-  };
+  
   const onFinish = async (newValues: IParameterForm) => {
     setLoading(true);
-    console.log("sumit");
-    console.log(newValues);
+
     const Parameter = { ...values, ...newValues };
     Parameter.reactivos = [...reagentsSelected];
-    console.log(Parameter);
     Parameter.tipoValor = Parameter.tipoValor.toString();
     let success = false;
     if (!Parameter.id) {
-      console.log("create");
       success = await create(Parameter);
     } else {
-      console.log("update");
       success = await update(Parameter);
     }
     setLoading(false);
@@ -216,6 +195,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
       navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
     }
   };
+
   const onValuesChange = async (changeValues: any, values: any) => {
     const fields = Object.keys(changeValues)[0];
     if (fields === "tipoValor") {
@@ -225,25 +205,24 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
       setValueType(value);
 
       setValues(prev => ({...prev, tipoValor: values.tipoValor}));
-      console.log("values");
-      console.log(values);
       setFlag(1);
     }
+
     if (fields === "departamentoId") {
       const value = changeValues[fields];
       await getareaOptions(value);
     }
+
     if (fields === "funciones") {
-      console.log("Formula");
       const value = changeValues[fields];
       const original = values.formula.split("");
+
       original.splice(cursorPosition, 0, value);
       const newString = original.join("");
       form.setFieldsValue({ formula: newString, funciones: undefined });
     }
 
     if (fields === "parametros") {
-      console.log("Formula");
       const value = changeValues[fields];
       const original = values.formula.split("");
       original.splice(cursorPosition, 0, value);
@@ -251,6 +230,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
       form.setFieldsValue({ formula: newString, parametros: undefined });
     }
   };
+  
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
