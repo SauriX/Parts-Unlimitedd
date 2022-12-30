@@ -85,6 +85,9 @@ const Login = () => {
                 placeholder={"Usuario"}
                 max={100}
                 required
+                onPressEnter={() => {
+                  form.submit();
+                }}
               />
             </Col>
             <Col md={24} sm={24} xs={24}>
@@ -97,6 +100,9 @@ const Login = () => {
                 max={8}
                 min={8}
                 required
+                onPressEnter={() => {
+                  form.submit();
+                }}
               />
             </Col>
           </Row>
