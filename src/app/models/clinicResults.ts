@@ -76,6 +76,7 @@ export interface IClinicResultCaptureForm {
   orden: number;
   editable?: boolean;
   clave: string;
+  observacionesId?: string;
   tipoValores?: ItipoValorForm[];
 }
 
@@ -163,6 +164,7 @@ export class ClinicResultsCaptureForm implements IClinicResultCaptureForm {
   parametroId = "";
   resultado = "";
   ultimoResultado = "";
+  observacionesId = "";
   formula = "";
   unidades = 0;
   solicitudEstudioId = 0;

@@ -14,10 +14,11 @@ import { IOptions } from "../../../app/models/shared";
 const { Paragraph } = Typography;
 
 type Props = {
-  getResult: (isAdmin: string) => any;
+  getResult: (isAdmin: string, value: string) => any;
   id: string;
   tipo: string;
   selectedKeyObservation: IOptions[];
+  modalValues: any;
 };
 
 const Observations = ({
@@ -25,14 +26,13 @@ const Observations = ({
   id,
   tipo,
   selectedKeyObservation,
+  modalValues,
 }: Props) => {
   const { clinicResultsStore } = useStore();
   const { setObservationsSelected } = clinicResultsStore;
-  const { openModal, closeModal } = store.modalStore;
   const [selectedObservation, setSelectedObservation] = useState<string>();
-  const [selectedKeys, setSelectedKeys] = useState<IOptions[]>(
-    selectedKeyObservation
-  );
+  const [selectedValues, setSelectedValues] = useState<string>("");
+  const [selectedKeys, setSelectedKeys] = useState<IOptions[]>([]);
   const { width: windowWidth } = useWindowDimensions();
   const [loading, setLoading] = useState(false);
   const { optionStore } = useStore();
@@ -44,6 +44,14 @@ const Observations = ({
 
   useEffect(() => {
     getTypeValues(id, tipo);
+  }, []);
+
+  useEffect(() => {
+    if (!!modalValues) {
+      const keys = modalValues.split(",");
+      const verifyKeys = typeValue.filter((x) => keys.includes(x.value));
+      setSelectedKeys(verifyKeys);
+    }
   }, [typeValue]);
 
   const columns: IColumns<IOptions> = [
@@ -82,13 +90,14 @@ const Observations = ({
     setSelectedObservation(
       selectedKeys.map((x) => x.label?.toString()).join("\r\n")
     );
+    setSelectedValues(selectedKeys.map((x) => x.value).join(","));
   }, [selectedKeys]);
 
   const acceptChanges = () => {
     if (selectedObservation) {
-      getResult(selectedObservation);
+      getResult(selectedObservation, selectedValues);
       setObservationsSelected(selectedKeys);
-      console.log(selectedKeys);
+      setSelectedKeys([]);
     }
   };
 

@@ -29,6 +29,7 @@ export default class ClinicResultsStores {
   clear: boolean = false;
   studiesSelectedToPrint: IPrintTypes[] = [];
   observationsSelected: IOptions[] = [];
+  observationText: string = "";
 
   printSelectedStudies = async (configuration: any) => {
     try {
@@ -42,8 +43,16 @@ export default class ClinicResultsStores {
     this.observationsSelected = observationsSelected;
   }
 
+  setObservationsText = (observationText: string) => {
+    this.observationText = observationText;
+  }
+
   getObservationsSelected = () => {
     return this.observationsSelected;
+  }
+
+  getObservationsText = () => {
+    return this.observationText;
   }
 
   clearScopes = () => {

@@ -28,6 +28,7 @@ import { IClinicResultCaptureForm } from "../../../app/models/clinicResults";
 import moment from "moment";
 import { ObservationModal } from "./ObservationModal";
 import { DownloadOutlined } from "@ant-design/icons";
+import { v4 as uuid } from "uuid";
 const { TextArea } = Input;
 const { Text } = Typography;
 
@@ -64,6 +65,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const [exportGlucoseData, setExportGlucoseData] =
     useState<IClinicResultCaptureForm>();
   const [resultParam, setResultParam] = useState<any[]>([]);
+  const [modalValues, setModalValues] = useState<any>();
   const { optionStore, clinicResultsStore } = useStore();
 
   const {
@@ -169,7 +171,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
 
   const columns: IColumns<any> = [
     {
-      key: "id",
+      key: uuid(),
       dataIndex: "clave",
       title: "Clave",
       align: "left",
@@ -179,7 +181,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       },
     },
     {
-      key: "id",
+      key: uuid(),
       dataIndex: "nombre",
       title: "Estudio",
       align: "left",
@@ -189,7 +191,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       },
     },
     {
-      key: "Orden",
+      key: uuid(),
       dataIndex: "orden",
       title: "Acciones",
       align: "left",
@@ -197,7 +199,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       render: () => renderUpdateStatus(),
     },
     {
-      key: "Seleccionar",
+      key: uuid(),
       dataIndex: "imprimir",
       title: "Seleccionar",
       align: "center",
@@ -558,7 +560,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
             <Col span={24}>
               <Table<any>
                 size="small"
-                rowKey={(record) => record.id}
+                rowKey={uuid()}
                 columns={columns}
                 pagination={false}
                 dataSource={[currentStudy]}
@@ -609,7 +611,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                         {fields.map((field) => {
                           let fieldValue = form.getFieldValue([
                             "parametros",
-                            field.name,
+                            field.name
                           ]) as IClinicResultCaptureForm;
                           let fieldResult = resultValue?.find(
                             (x) => x.id === fieldValue.id
@@ -672,7 +674,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                         <Form.Item
                                           {...field}
                                           name={[field.name, "resultado"]}
-                                          fieldKey={[field.key, "resultado"]}
                                           validateTrigger={[
                                             "onChange",
                                             "onBlur",
@@ -690,14 +691,26 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                             autoSize
                                           />
                                         </Form.Item>
+                                        <Form.Item
+                                          {...field}
+                                          name={[field.name, "observacionesId"]}
+                                          noStyle
+                                        >
+                                          <Input style={{ display: "none" }} />
+                                        </Form.Item>
                                         <Button
                                           type="primary"
                                           onClick={async () => {
-                                            const modal =
+                                            const modal: any =
                                               await ObservationModal(
                                                 fieldValue.parametroId,
                                                 fieldValue.tipoValorId,
-                                                observationsSelected
+                                                observationsSelected,
+                                                form.getFieldValue([
+                                                  "parametros",
+                                                  field.name,
+                                                  "observacionesId",
+                                                ])
                                               );
                                             if (modal) {
                                               form.setFieldValue(
@@ -706,8 +719,17 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                                   field.name,
                                                   "resultado",
                                                 ],
-                                                modal
+                                                modal.data
                                               );
+                                              form.setFieldValue(
+                                                [
+                                                  "parametros",
+                                                  field.name,
+                                                  "observacionesId",
+                                                ],
+                                                modal.value
+                                              );
+                                              setModalValues(modal);
                                             }
                                           }}
                                         >
@@ -718,7 +740,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                       <Form.Item
                                         {...field}
                                         name={[field.name, "resultado"]}
-                                        fieldKey={[field.key, "resultado"]}
                                         validateTrigger={["onChange", "onBlur"]}
                                         noStyle
                                       >
@@ -728,7 +749,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                           <Select
                                             options={fieldValue.tipoValores!.map(
                                               (x) => ({
-                                                key: x.id,
+                                                key: uuid(),
                                                 value:
                                                   fieldValue.tipoValorId == "5"
                                                     ? x.opcion!
