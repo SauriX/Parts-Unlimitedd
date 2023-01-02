@@ -12,7 +12,10 @@ type InvoiceCompanyInfoProps = {
   totalFinal: number;
   totalEstudios: number;
 };
-const InvoiceCompanyData = ({ company }: InvoiceCompanyInfoProps) => {
+const InvoiceCompanyData = ({
+  company,
+  totalEstudios,
+}: InvoiceCompanyInfoProps) => {
   const [form] = Form.useForm();
   const onFinish = () => {};
   useEffect(() => {
@@ -62,7 +65,7 @@ const InvoiceCompanyData = ({ company }: InvoiceCompanyInfoProps) => {
               style={{ textAlign: "center" }}
               mark
             >{`Cantidad Total: ${moneyFormatter.format(
-              0
+              totalEstudios
             )} (IVA incluido)`}</Text>
             <TextInput formProps={{ name: "bancoId", label: "Banco" }} />
             <TextInput
@@ -79,12 +82,16 @@ const InvoiceCompanyData = ({ company }: InvoiceCompanyInfoProps) => {
             <div>
               <Text
                 style={{ textAlign: "center" }}
-              >{`IVA 16%: ${moneyFormatter.format(0)}`}</Text>
+              >{`IVA 16%: ${moneyFormatter.format(
+                (totalEstudios / 100) * 16
+              )}`}</Text>
             </div>
             <div>
               <Text
                 style={{ textAlign: "center" }}
-              >{`Subtotal: ${moneyFormatter.format(0)} `}</Text>
+              >{`Subtotal: ${moneyFormatter.format(
+                totalEstudios - (totalEstudios / 100) * 16
+              )} `}</Text>
             </div>
           </Col>
         </Row>
