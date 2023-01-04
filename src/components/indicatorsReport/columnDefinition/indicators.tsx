@@ -24,7 +24,6 @@ const Indicators = () => {
     searchedColumn: "",
   });
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [fixedColumns, setFixedColumns] = useState<any>([]);
 
   useEffect(() => {
@@ -49,31 +48,6 @@ const Indicators = () => {
 
     setFixedColumns(cols);
   }, [data])
-
-  const columns: IColumns<IReportIndicators> = [
-    {
-        ...getDefaultColumnProps("sucursal",  `${moment().format("DD/MM/YYYY")}`, {
-            searchState,
-            setSearchState,
-            width: "20%",  
-        }),
-        align: "left",
-        key: uuid(),
-        render: (value, row) => {
-            return (
-              <Fragment>
-                
-              </Fragment>
-            );
-          },
-    
-          fixed: "left",
-    }
-  ]
-
-  
-
-  return <div>indicators</div>;
 };
 
 export const titleTab = [

@@ -13,10 +13,12 @@ type CostosFijosProps = {
 
 const CostosFijos = ({ data, invoiceData, costoFijo, loading }: CostosFijosProps) => {
   return (
-    <Space direction="vertical" size="middle">
-      <Tag color="blue" className="table-tag">
-        {costoFijo}
-      </Tag>
+    <Space direction="vertical" size="small">
+      <div style={{textAlign: "right", marginTop: 10}}>
+        <Tag color="blue" className="table-tag">
+          Costo Fijo actual: {costoFijo}
+        </Tag>
+      </div>
       <Table<IReportIndicators>
         loading={loading}
         size="small"

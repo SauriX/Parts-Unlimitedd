@@ -15,6 +15,13 @@ export interface IReportIndicators {
   costoFijo: number;
 }
 
+export interface IListIndicators {
+  id: string;
+  costoReactivo: number;
+  sucursalId: string;
+  fecha: string;
+}
+
 export interface IModalInvoice {
   totalMensual: number;
   totalSemanal: number;
@@ -48,6 +55,25 @@ export class IndicatorFilterValues implements IReportIndicatorsFilter {
   fechaIndividual = moment(Date.now()).utcOffset(0, true);
 
   constructor(init?: IReportIndicatorsFilter) {
+    Object.assign(this, init);
+  }
+}
+
+export class IndicatorsFormValues implements IReportIndicators {
+  id = "";
+  pacientes = 0;
+  ingresos = 0;
+  costoReactivo = 0;
+  costoTomaCalculado = 0;
+  fechaInicial = "";
+  fechaFinal = "";
+  fechaAlta = "";
+  utilidadOperacion = "";
+  sucursalId = "";
+  sucursal = "";
+  costoFijo = 0;
+
+  constructor(init?: IReportIndicators) {
     Object.assign(this, init);
   }
 }

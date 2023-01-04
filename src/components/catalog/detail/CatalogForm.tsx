@@ -32,7 +32,7 @@ const CatalogForm: FC<CatalogFormProps> = ({ id, catalog, componentRef, printing
     <CatalogAreaForm id={id} componentRef={componentRef} printing={printing} />
   ) : catalog.type === "dimension" ? (
     <CatalogDimensionForm id={id} componentRef={componentRef} printing={printing} />
-  ) : catalog.type === "budget" ? (
+  ) : catalog.type === "costofijo" ? (
     <CatalogBudgetForm id={id} componentRef={componentRef} printing={printing} />
   ) : null;
 };

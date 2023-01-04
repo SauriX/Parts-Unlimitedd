@@ -27,7 +27,7 @@ import { IOptions } from "../../../../app/models/shared";
 import { useStore } from "../../../../app/stores/store";
 import { formItemLayout } from "../../../../app/util/utils";
 
-const catalogName = "budget";
+const catalogName = "costofijo";
 
 type CatalogBudgetFormProps = {
   id: number;
@@ -186,7 +186,7 @@ const CatalogBudgetForm: FC<CatalogBudgetFormProps> = ({
               );
             }}
           >
-            <Row>
+            <Row gutter={[0, 16]}>
               <Col md={12} sm={24} xs={12}>
                 <TextInput
                   formProps={{
@@ -200,7 +200,7 @@ const CatalogBudgetForm: FC<CatalogBudgetFormProps> = ({
               </Col>
               <Col md={12} sm={24} xs={12}></Col>
               <Col md={12} sm={24} xs={12}>
-                <NumberInput
+                <TextInput
                   formProps={{
                     name: "nombreServicio",
                     label: "Nombre Servicio",
@@ -218,7 +218,6 @@ const CatalogBudgetForm: FC<CatalogBudgetFormProps> = ({
                     name: "costoFijo",
                     label: "Costo Fijo",
                   }}
-                  max={256}
                   min={0}
                   required
                   readonly={readonly}
@@ -246,7 +245,6 @@ const CatalogBudgetForm: FC<CatalogBudgetFormProps> = ({
                             label: "Sucursales",
                             noStyle: true,
                           }}
-                          multiple
                           options={branchOptions}
                         />
                       </Col>

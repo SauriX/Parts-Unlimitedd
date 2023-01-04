@@ -165,6 +165,9 @@ export const getReportConfig = (
   } else if (reportName === "corte_caja") {
     title = "Corte de Caja";
     image = "registradora";
+  } else if (reportName === "indicadores") {
+    title = "Indicadores";
+    image = "presupuestos";
   } else if (reportName === "presupuestos") {
     title = "Presupuestos por Sucursal";
     image = "presupuestos";

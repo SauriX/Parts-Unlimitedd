@@ -30,7 +30,7 @@ const CatalogTable: FC<CatalogTableProps> = ({ componentRef, printing, catalog }
     <CatalogAreaTable componentRef={componentRef} printing={printing} />
   ) : catalog.type === "dimension" ? (
     <CatalogDimensionTable componentRef={componentRef} printing={printing} />
-  ) : catalog.type === "budget" ? (
+  ) : catalog.type === "costofijo" ? (
     <CatalogBudgetTable componentRef={componentRef} printing={printing}/>
   ) : null;
 };

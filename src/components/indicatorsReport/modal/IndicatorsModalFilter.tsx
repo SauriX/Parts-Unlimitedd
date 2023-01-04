@@ -68,52 +68,54 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
         }}
         onFinish={onFinish}
       >
-        <Row>
-          <Col span={22}>
-            <Row justify="space-between" gutter={[12, 12]}>
-              <Col span={11}>
-                <Form.Item label="Sucursal" className="no-error-text" help="">
-                  <Input.Group>
-                    <Row gutter={8}>
-                      <Col span={12}>
-                        <SelectInput
-                          formProps={{
-                            name: "ciudad",
-                            label: "Ciudad",
-                            noStyle: true,
-                          }}
-                          options={cityOptions}
-                        />
-                      </Col>
-                      <Col span={12}>
-                        <SelectInput
-                          formProps={{
-                            name: "sucursalId",
-                            label: "Sucursales",
-                            noStyle: true,
-                          }}
-                          multiple
-                          options={branchOptions}
-                        />
-                      </Col>
-                    </Row>
-                  </Input.Group>
-                </Form.Item>
-              </Col>
-              <Col span={11}>
-                <DateRangeInput
-                  formProps={{ label: "Fecha", name: "fecha" }}
-                  required={true}
-                  disableAfterDates
-                />
-              </Col>
-              {modalTab === "service" ? (
-                <Col span={11}>
+        <Row gutter={[12, 12]}>
+          <Col span={10}>
+            <Form.Item label="Sucursal" className="no-error-text" help="">
+              <Input.Group>
+                <Row gutter={8}>
+                  <Col span={12}>
+                    <SelectInput
+                      formProps={{
+                        name: "ciudad",
+                        label: "Ciudad",
+                        noStyle: true,
+                      }}
+                      options={cityOptions}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <SelectInput
+                      formProps={{
+                        name: "sucursalId",
+                        label: "Sucursales",
+                        noStyle: true,
+                      }}
+                      multiple
+                      options={branchOptions}
+                    />
+                  </Col>
+                </Row>
+              </Input.Group>
+            </Form.Item>
+          </Col>
+          <Col span={10}>
+            <DateRangeInput
+              formProps={{ label: "Fecha", name: "fecha" }}
+              required={true}
+              disableAfterDates
+            />
+          </Col>
+          <Col span={4} style={{ textAlign: "right" }}>
+            <Button key="new" type="primary" htmlType="submit">
+              Filtrar
+            </Button>
+          </Col>
+          {modalTab === "service" ? (
+                <Col span={10}>
                   <SelectInput
                     formProps={{
                       name: "servicios",
                       label: "Servicio",
-                      noStyle: true,
                     }}
                     multiple
                     options={branchOptions}
@@ -122,33 +124,31 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
               ) : (
                 ""
               )}
-              <Col span={11}>
-                <Input.Group compact>
-                  <Row gutter={8}>
-                    <Col span={12}>
-                      <NumberInput
-                        formProps={{
-                          name: modalTab === "service" ? "fijo" : "toma",
-                          label:
-                            modalTab === "service"
-                              ? "Costo Fijo"
-                              : "Costo Toma",
-                        }}
-                        min={0}
-                      />
-                    </Col>
-                    <Col span={12}>
-                      <Button type="primary">Actualizar</Button>
-                    </Col>
-                  </Row>
-                </Input.Group>
-              </Col>
-            </Row>
-          </Col>
-          <Col span={2} style={{ textAlign: "right" }}>
-            <Button key="new" type="primary" htmlType="submit">
-              Filtrar
-            </Button>
+          <Col span={10}>
+            <Form.Item
+              label={modalTab === "service" ? "Costo Fijo" : "Costo Toma"}
+              className="no-error-text"
+              help=""
+            >
+              <Input.Group>
+                <Row gutter={8}>
+                  <Col span={16}>
+                    <NumberInput
+                      formProps={{
+                        name: modalTab === "service" ? "fijo" : "toma",
+                        label:
+                          modalTab === "service" ? "Costo Fijo" : "Costo Toma",
+                        noStyle: true,
+                      }}
+                      min={0}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <Button type="primary">Actualizar</Button>
+                  </Col>
+                </Row>
+              </Input.Group>
+            </Form.Item>
           </Col>
         </Row>
       </Form>
