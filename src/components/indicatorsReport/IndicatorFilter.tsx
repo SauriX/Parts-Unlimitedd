@@ -54,7 +54,7 @@ const IndicatorFilter = () => {
   useEffect(() => {
     setBranchOptions(
       branchCityOptions
-        .filter((x) => selectedCity.includes(x.value))
+        .filter((x) => selectedCity?.includes(x.value))
         .flatMap((x) => x.options ?? [])
     );
     form.setFieldValue("sucursalId", []);
@@ -108,7 +108,7 @@ const IndicatorFilter = () => {
         form={form}
         name="indicators"
         initialValues={{
-          fechaInvidual: moment(Date.now()).utcOffset(0, true),
+          fechaIndividual: moment(Date.now()).utcOffset(0, true),
         }}
         onFinish={onFinish}
       >
