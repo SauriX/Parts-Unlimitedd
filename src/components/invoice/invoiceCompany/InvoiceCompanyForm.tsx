@@ -9,6 +9,7 @@ import { IOptions } from "../../../app/models/shared";
 import { useStore } from "../../../app/stores/store";
 import { formItemLayout } from "../../../app/util/utils";
 import { useNavigate } from "react-router-dom";
+import alerts from "../../../app/util/alerts";
 
 const { Search } = Input;
 
@@ -20,13 +21,21 @@ const InvoiceComapnyForm = () => {
   const selectedCity = Form.useWatch("ciudad", form);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
+  const [serieOptions, setSerieOptions] = useState<IOptions[]>([]);
+  const [checkedValues, setCheckedValues] = useState<any[]>([]);
+  const [disabled, setDisabled] = useState<boolean>(true);
   const {
     branchCityOptions,
     getBranchCityOptions,
     companyOptions,
     getCompanyOptions,
   } = optionStore;
-  const { getInvoicesCompany } = invoiceCompanyStore;
+  const { getInvoicesCompany, isSameCommpany, selectedRows, setSerie } =
+    invoiceCompanyStore;
+
+  useEffect(() => {
+    // formCreate.setFieldValue("serie",); //TODO: validar la nueva tabla de series y como se relaciona
+  }, [isSameCommpany, selectedRows]);
   useEffect(() => {
     getBranchCityOptions();
     getCompanyOptions();
@@ -45,21 +54,42 @@ const InvoiceComapnyForm = () => {
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
-  const options = [
-    { label: "Solicitudes facturadas", value: 1 },
-    { label: "Facturas canceladas", value: 2 },
+  const facturasOptions: IOptions[] = [
+    { label: "Solicitudes facturadas", value: "facturadas" },
+    { label: "Solicitudes no facturadas", value: "noFacturadas" },
+    { label: "Facturas canceladas", value: "canceladas" },
+  ];
+  const desgloceOptions: IOptions[] = [
+    { label: "Simple", value: "simple" },
+    { label: "Detalle", value: "detalle" },
+    { label: "Concepto", value: "concepto" },
   ];
 
   const onFinish = async (newFormValues: any) => {
     const formValues = {
+      ...newFormValues,
+      tipoFactura: checkedValues,
       fechaFinal: newFormValues.fechas[1].utcOffset(0, true),
       fechaInicial: newFormValues.fechas[0].utcOffset(0, true),
     };
     getInvoicesCompany(formValues);
-    console.log("newFormValues", newFormValues);
   };
   const createInvoice = async (formValues: any) => {
-    console.log("CREATE", formValues);
+    if (!selectedRows.length) {
+      alerts.warning("No solicitudes seleccionadas");
+      return;
+    }
+    if (!isSameCommpany) {
+      alerts.warning(
+        "Las solicitudes seleccionadas no tienen la misma procedencia"
+      );
+      return;
+    }
+    if (formValues.isInvoice === "Factura") {
+      if (formValues.tipoDesglose === "detalle") {
+        navigate(`/invoice/create`);
+      }
+    }
   };
   return (
     <>
@@ -73,7 +103,6 @@ const InvoiceComapnyForm = () => {
             type="primary"
             onClick={(e) => {
               form.submit();
-              console.log("click1");
             }}
           >
             Filtrar
@@ -141,13 +170,16 @@ const InvoiceComapnyForm = () => {
             </Col>
             <Col span={4}>
               <Row justify="center">
-                <Form.Item className="no-error-text" help="">
-                  <Row gutter={8} justify="center">
-                    <Col span={12}>
-                      <Checkbox.Group options={options} />
-                    </Col>
-                  </Row>
-                </Form.Item>
+                <Row gutter={8} justify="center">
+                  <Col span={12}>
+                    <Checkbox.Group
+                      options={facturasOptions}
+                      onChange={(newChekedValues) => {
+                        setCheckedValues(newChekedValues);
+                      }}
+                    />
+                  </Col>
+                </Row>
               </Row>
             </Col>
           </Row>
@@ -160,17 +192,27 @@ const InvoiceComapnyForm = () => {
           onFinish={createInvoice}
           size="small"
           initialValues={{ fechas: [moment(), moment()] }}
+          onFieldsChange={() => {
+            setDisabled(
+              (!form.isFieldsTouched() ||
+                form.getFieldsError().filter(({ errors }) => errors.length)
+                  .length > 0) &&
+                isSameCommpany
+            );
+          }}
         >
           <Row justify="center">
             <Col span={20}>
               <Row gutter={[0, 12]} justify="center">
                 <Col span={8}>
-                  <Row justify="center">
-                    <Radio.Group>
-                      <Radio value={1}>Factura</Radio>
-                      <Radio value={2}>Recibo</Radio>
-                    </Radio.Group>
-                  </Row>
+                  <Form.Item name="isInvoice" required>
+                    <Row justify="center">
+                      <Radio.Group>
+                        <Radio value={"Factura"}>Factura</Radio>
+                        <Radio value={"Recibo"}>Recibo</Radio>
+                      </Radio.Group>
+                    </Row>
+                  </Form.Item>
                 </Col>
                 <Col span={8}>
                   <SelectInput
@@ -178,27 +220,32 @@ const InvoiceComapnyForm = () => {
                       label: "Desglose por",
                       name: "tipoDesglose",
                     }}
-                    options={[]}
-                    // required
+                    options={desgloceOptions}
+                    required
                   />
                 </Col>
                 <Col span={8}>
                   <SelectInput
                     formProps={{ label: "Serie", name: "serie" }}
-                    options={[]}
+                    options={[{ key: "MT", value: "MT", label: "MT" }]}
+                    onChange={(serie: any) => {
+                      console.log("sereie", serie);
+                      setSerie(serie);
+                    }}
+                    required
                   />
                 </Col>
               </Row>
             </Col>
           </Row>
         </Form>
-        <Row justify="end">
+        <Row justify="end" style={{ marginTop: 10 }}>
           <Col span={2}>
             <Button
               onClick={() => {
-                navigate(`/invoice/create`);
                 formCreate.submit();
               }}
+              disabled={disabled}
             >
               Generar
             </Button>

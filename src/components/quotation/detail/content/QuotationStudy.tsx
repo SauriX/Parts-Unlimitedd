@@ -113,6 +113,9 @@ const QuotationStudy = () => {
             .map((x) => x.clave)
             .join(", ")})`;
         }
+
+        content = content.replace(" ()", "");
+
         return (
           <Tooltip placement="topLeft" title={content}>
             {content}
