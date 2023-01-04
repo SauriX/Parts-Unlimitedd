@@ -132,7 +132,6 @@ const SamplingStudyFilter = () => {
                   <DateRangeInput
                     formProps={{ label: "Fecha", name: "fecha" }}
                     disableAfterDates={true}
-            
                   />
                 </Col>
                 <Col span={8}>

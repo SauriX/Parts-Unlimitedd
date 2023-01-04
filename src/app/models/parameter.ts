@@ -23,7 +23,11 @@ export interface IParameterList {
   resultadoId: string;
   resultado: string;
   ultimoResultado?: string;
+  ultimaSolicitud?: string;
+  ultimoExpedienteId?: string;
+  ultimaSolicitudId?: string;
   formula?: string;
+  observacionesId?: string;
   editable: boolean;
   index?: number;
   tipoValores?: ItipoValorForm[];
