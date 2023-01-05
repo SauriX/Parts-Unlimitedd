@@ -10,6 +10,7 @@ import {
   Select,
   Spin,
   Table,
+  Tooltip,
 } from "antd";
 import { observer } from "mobx-react-lite";
 import { Typography } from "antd";
@@ -29,10 +30,13 @@ import moment from "moment";
 import { ObservationModal } from "./ObservationModal";
 import { DownloadOutlined } from "@ant-design/icons";
 import { v4 as uuid } from "uuid";
+import { EyeOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+
 import alerts from "../../../app/util/alerts";
 import { toJS } from "mobx";
 const { TextArea } = Input;
-const { Text } = Typography;
+const { Text, Link } = Typography;
 
 type ClinicalResultsDetailProps = {
   estudio: IRequestStudy;
@@ -89,6 +93,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     "parametros",
     form
   ) as IClinicResultCaptureForm[];
+  const navigate = useNavigate();
 
   useEffect(() => {
     setCheckedPrint(isMarked);
@@ -610,16 +615,16 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                       <h3>RESULTADO</h3>
                     </Col>
                     <Col span={4}>
-                      <h3>PREVIO</h3>
-                    </Col>
-                    <Col span={4}>
                       <h3>UNIDADES</h3>
                     </Col>
                     <Col span={4}>
                       <h3>REFERENCIA</h3>
                     </Col>
+                    <Col span={4}>
+                      <h3>PREVIO</h3>
+                    </Col>
                   </Row>
-                  <Form.List name="parametros" key={uuid()}>
+                  <Form.List name="parametros">
                     {(fields) => (
                       <>
                         {fields.map((field, index) => {
@@ -630,8 +635,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                           let fieldResult = resultValue?.find(
                             (x) => x.id === fieldValue.id
                           )?.resultado as string;
-
-                          console.log(fieldValue.nombre, field.key, index);
 
                           let fieldRange =
                             parseFloat(fieldValue.valorInicial) >
@@ -647,7 +650,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
 
                           return (
                             <Row
-                              key={index ?? -1}
+                              key={field.key}
                               justify="space-between"
                               gutter={[0, 24]}
                               style={{
@@ -695,7 +698,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                             "onBlur",
                                           ]}
                                           noStyle
-                                          key={uuid()}
                                         >
                                           <TextArea
                                             placeholder="Resultado"
@@ -760,7 +762,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                         name={[field.name, "resultado"]}
                                         validateTrigger={["onChange", "onBlur"]}
                                         noStyle
-                                        key={uuid()}
+                                        key={"resultado"}
                                       >
                                         {fieldValue.tipoValorId == "5" ||
                                         (fieldValue.tipoValorId == "6" &&
@@ -821,9 +823,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   </Col>
                                   {parseInt(fieldValue.tipoValorId) < 12 ? (
                                     <Col span={4}>
-                                      {fieldValue.ultimoResultado == null
+                                      {fieldValue.unidadNombre == null
                                         ? "-"
-                                        : fieldValue.ultimoResultado}
+                                        : fieldValue.unidadNombre}
                                     </Col>
                                   ) : (
                                     <Fragment key={uuid()}>
@@ -927,11 +929,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   {!valuesByColumn ? (
                                     <>
                                       <Col span={4}>
-                                        {fieldValue.unidadNombre == null
-                                          ? "-"
-                                          : fieldValue.unidadNombre}
-                                      </Col>
-                                      <Col span={4}>
                                         {fieldValue.valorInicial == null
                                           ? "-"
                                           : referenceValues(
@@ -939,6 +936,36 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                               fieldValue.valorInicial,
                                               fieldValue.valorFinal
                                             )}
+                                      </Col>
+                                      <Col span={4}>
+                                        {fieldValue.ultimoResultado == null &&
+                                        fieldValue.ultimaSolicitud == null ? (
+                                          "-"
+                                        ) : (
+                                          <Tooltip
+                                            title={
+                                              <>
+                                                <Text>
+                                                  {fieldValue.ultimoResultado} -{" "}
+                                                  <Link
+                                                    onClick={() => {
+                                                      navigate(
+                                                        `/clinicResultsDetails/${fieldValue.ultimoExpedienteId}/${fieldValue.ultimaSolicitudId}`
+                                                      );
+                                                    }}
+                                                  >
+                                                    {fieldValue.ultimaSolicitud}
+                                                  </Link>
+                                                </Text>
+                                              </>
+                                            }
+                                            color="#ffffff"
+                                          >
+                                            <EyeOutlined
+                                              style={{ cursor: "pointer" }}
+                                            />
+                                          </Tooltip>
+                                        )}
                                       </Col>
                                     </>
                                   ) : (
@@ -949,7 +976,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                             </Row>
                           );
                         })}
-                        {console.log()}
                       </>
                     )}
                   </Form.List>
