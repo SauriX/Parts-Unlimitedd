@@ -92,7 +92,7 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
           <Button
             type="default"
             disabled={
-              !selectedStudies.some(
+              selectedStudies.length == 0 || !selectedStudies.every(
                 (x) => x.estatusId === status.requestStudy.tomaDeMuestra
               )
             }
@@ -103,7 +103,7 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
           <Button
             type="default"
             disabled={
-              !selectedStudies.some(
+              selectedStudies.length == 0 || !selectedStudies.every(
                 (x) => x.estatusId === status.requestStudy.pendiente
               )
             }

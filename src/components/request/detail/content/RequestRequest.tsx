@@ -158,7 +158,7 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
           <Button
             type="default"
             disabled={
-              !selectedStudies.some(
+              selectedStudies.length == 0 || !selectedStudies.every(
                 (x) => x.estatusId === status.requestStudy.solicitado
               )
             }
@@ -169,7 +169,7 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
           <Button
             type="default"
             disabled={
-              !selectedStudies.some(
+              selectedStudies.length == 0 || !selectedStudies.every(
                 (x) => x.estatusId === status.requestStudy.tomaDeMuestra
               )
             }
