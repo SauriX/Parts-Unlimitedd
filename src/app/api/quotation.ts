@@ -42,6 +42,11 @@ const Quotation = {
     requests.put("quotation/studies/cancel", quotation),
   printTicket: (quotationId: string): Promise<void> =>
     requests.print(`quotation/ticket/${quotationId}`),
+    getQuotePdfUrl: (id: string,): Promise<string> =>
+    requests.getFileUrl(
+      `quotation/quote/${id}`,
+      "application/pdf"
+    ),
 };
 
 export default Quotation;
