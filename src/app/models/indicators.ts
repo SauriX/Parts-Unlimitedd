@@ -1,25 +1,25 @@
 import moment from "moment";
 
 export interface IReportIndicators {
-  id: string;
-  pacientes: number;
-  ingresos: number;
+  id?: string;
+  pacientes?: number;
+  ingresos?: number;
   costoReactivo: number;
-  costoTomaCalculado: number;
-  fechaInicial: string;
-  fechaFinal: string;
-  fechaAlta: string;
-  utilidadOperacion: string;
+  costoTomaCalculado?: number;
+  fechaInicial?: string;
+  fechaFinal?: string;
+  fechaAlta: moment.Moment;
+  utilidadOperacion?: string;
   sucursalId: string;
-  sucursal: string;
-  costoFijo: number;
+  sucursal?: string;
+  costoFijo?: number;
 }
 
 export interface IListIndicators {
   id: string;
   costoReactivo: number;
   sucursalId: string;
-  fecha: string;
+  fechaAlta: string;
 }
 
 export interface IModalInvoice {
@@ -67,7 +67,7 @@ export class IndicatorsFormValues implements IReportIndicators {
   costoTomaCalculado = 0;
   fechaInicial = "";
   fechaFinal = "";
-  fechaAlta = "";
+  fechaAlta = moment(Date.now()).utcOffset(0, true);
   utilidadOperacion = "";
   sucursalId = "";
   sucursal = "";

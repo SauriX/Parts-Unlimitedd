@@ -9,21 +9,52 @@ import {
 } from "../../app/models/indicators";
 import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
+import alerts from "../../app/util/alerts";
+import { IOptions } from "../../app/models/shared";
+import moment from "moment";
 
 type IndicatorsProps = {
   data: IReportIndicators[];
 };
 
 const IndicatorsTable = ({ data }: IndicatorsProps) => {
-  const { indicatorsStore } = useStore();
-  const { create, update } = indicatorsStore;
+  const { indicatorsStore, optionStore } = useStore();
+  const { create, update, filter, getForm } = indicatorsStore;
+  const { branchCityOptions } = optionStore;
 
   const [values, setValues] = useState<IReportIndicators>(
     new IndicatorsFormValues()
   );
-  const [form] = Form.useForm<IReportIndicators>();
+
   const [columns, setColumns] = useState<IColumns>([]);
   const [loading, setLoading] = useState(false);
+  const [branches, setBranches] = useState<IOptions[]>([]);
+
+  useEffect(() => {
+    setBranches(branchCityOptions.flatMap((x) => x.options ?? []));
+  }, [branchCityOptions]);
+
+  const onFinish = async (branchName: string, budget: number) => {
+    setLoading(true);
+
+    const branchId = branches.find((x) => x.label === branchName)?.value;
+    if (!branchId) {
+      alerts.warning("Sucursal invalida");
+      return;
+    }
+
+    const indicator = {
+      sucursalId: branchId as string,
+      costoReactivo: budget,
+      fechaAlta: moment(filter.fechaIndividual).utcOffset(0, true),
+    };
+    if (indicator) {
+      getForm(indicator);
+    }
+    console.log(indicator);
+
+    setLoading(false);
+  };
 
   useEffect(() => {
     if (data.length > 0) {
@@ -34,48 +65,11 @@ const IndicatorsTable = ({ data }: IndicatorsProps) => {
           title: x,
           render: (value, record: any) => {
             if (record.Nombre === "COSTO REACTIVO" && x !== "Nombre") {
-              const onFinish = async (newValues: IReportIndicators) => {
-                setLoading(true);
-
-                const indicator = { ...values, ...newValues };
-                if (!indicator.id) {
-                  await create(indicator);
-                } else {
-                  await update(indicator);
-                }
-
-                setLoading(false);
-              };
-
               return (
-                <Form<IReportIndicators>
-                  {...formItemLayout}
-                  form={form}
-                  name="loyalty"
-                  initialValues={values}
-                  onFinish={onFinish}
-                  scrollToFirstError
-                >
-                  <Form.Item className="no-error-text" help="">
-                    <Input.Group compact>
-                      <InputNumber
-                        min={0}
-                        bordered={false}
-                        onPressEnter={() => {
-                          form.submit();
-                        }}
-                      />
-                      <Button
-                        type="primary"
-                        onClick={() => {
-                          form.submit();
-                        }}
-                      >
-                        <CheckOutlined style={{ color: "white" }} />
-                      </Button>
-                    </Input.Group>
-                  </Form.Item>
-                </Form>
+                <BudgetInput
+                  defaultValue={record[x]}
+                  onFinish={(budget) => onFinish(x, budget)}
+                />
               );
             }
             return value;
@@ -89,3 +83,37 @@ const IndicatorsTable = ({ data }: IndicatorsProps) => {
 };
 
 export default observer(IndicatorsTable);
+
+type BudgetInputProps = {
+  defaultValue: number;
+  onFinish: (budget: number) => void;
+};
+
+const BudgetInput = ({ defaultValue, onFinish }: BudgetInputProps) => {
+  const [form] = Form.useForm<IReportIndicators>();
+
+  return (
+    <Form<IReportIndicators>
+      {...formItemLayout}
+      form={form}
+      name="indicators"
+      initialValues={{ costoReactivo: defaultValue }}
+      onFinish={(values) => {
+        console.log(values);
+        onFinish(values.costoReactivo);
+      }}
+      scrollToFirstError
+    >
+      <Form.Item className="no-error-text" help="">
+        <Input.Group compact>
+          <Form.Item name={"costoReactivo"}>
+            <InputNumber min={0} bordered={false} />
+          </Form.Item>
+          <Button type="primary" htmlType="submit">
+            <CheckOutlined style={{ color: "white" }} />
+          </Button>
+        </Input.Group>
+      </Form.Item>
+    </Form>
+  );
+};

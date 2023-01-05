@@ -41,6 +41,7 @@ export default class IndicatorStore {
 
   getByFilter = async (filter: IReportIndicatorsFilter) => {
     try {
+      this.data = [];
       const data = await Indicators.getByFilter(filter);
       this.data = data;
     } catch (error: any) {
@@ -52,26 +53,38 @@ export default class IndicatorStore {
   create = async (indicators: IReportIndicators) => {
     try {
       await Indicators.create(indicators);
-      alerts.success(messages.created)
+      alerts.success(messages.created);
 
       return true;
-    } catch(error) {
-      alerts.warning(getErrors(error))
-      return false
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
     }
-  }
+  };
 
   update = async (indicators: IReportIndicators) => {
     try {
       await Indicators.update(indicators);
-      alerts.success(messages.created)
+      alerts.success(messages.created);
 
       return true;
-    } catch(error) {
-      alerts.warning(getErrors(error))
-      return false
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
     }
-  }
+  };
+
+  getForm = async (indicators: IReportIndicators) => {
+    try {
+      await Indicators.getForm(indicators);
+      alerts.success(messages.updated);
+
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
 
   getServicesCost = async (filter: IReportIndicatorsFilter) => {
     try {

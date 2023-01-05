@@ -22,7 +22,7 @@ const CostosFijos = ({ data, invoiceData, costoFijo, loading }: CostosFijosProps
       <Table<IReportIndicators>
         loading={loading}
         size="small"
-        rowKey={(record) => record.id}
+        rowKey={(record) => record.id!}
         columns={CostosFijosColumns()}
         pagination={false}
         dataSource={[...data]}

@@ -10,6 +10,8 @@ const Indicators = {
     requests.post(`report/indicadores`, indicators),
   update: (indicators: IReportIndicators): Promise<void> =>
     requests.put(`report/indicadores`, indicators),
+  getForm: (indicators: IReportIndicators): Promise<void> =>
+    requests.post(`report/indicadores/getForm`, indicators),
   getServicesCost: (filter: IReportIndicatorsFilter): Promise<IReportIndicators[]> =>
     requests.post(`report/indicadores/services/filter`, filter),
   exportList: (filter: IReportIndicatorsFilter): Promise<void> =>

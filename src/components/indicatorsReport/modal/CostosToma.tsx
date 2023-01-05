@@ -21,7 +21,7 @@ const CostosToma = ({ data, costoToma, loading }: CostosTomaProps) => {
       <Table<IReportIndicators>
         loading={loading}
         size="small"
-        rowKey={(record) => record.id}
+        rowKey={(record) => record.id!}
         columns={CostoTomaColumns()}
         pagination={false}
         dataSource={[...data]}
