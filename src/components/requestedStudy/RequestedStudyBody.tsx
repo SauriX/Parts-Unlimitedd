@@ -1,6 +1,7 @@
 import { Button, Col, Row, Spin } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import React, { useEffect } from "react";
 import { Fragment, useState } from "react";
 import { IUpdate } from "../../app/models/requestedStudy";
@@ -25,7 +26,12 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
 
   useEffect(() => {
     const readRequests = async () => {
-      await getAll(formValues);
+      await getAll({
+        fecha: [
+          moment(Date.now()).utcOffset(0, true),
+          moment(Date.now()).utcOffset(0, true),
+        ],
+      });
     };
 
     readRequests();
@@ -189,7 +195,7 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
           expandable={RequestedStudyExpandable({
             activity,
             onChange,
-            updateForm
+            updateForm,
           })}
         />
       </Spin>
