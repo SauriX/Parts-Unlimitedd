@@ -1,4 +1,4 @@
-import { Button, Form, Input, InputNumber, Table } from "antd";
+import { Button, Form, Input, InputNumber, Spin, Table } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { IColumns } from "../../app/common/table/utils";
@@ -19,12 +19,8 @@ type IndicatorsProps = {
 
 const IndicatorsTable = ({ data }: IndicatorsProps) => {
   const { indicatorsStore, optionStore } = useStore();
-  const { create, update, filter, getForm } = indicatorsStore;
+  const { filter, getForm } = indicatorsStore;
   const { branchCityOptions } = optionStore;
-
-  const [values, setValues] = useState<IReportIndicators>(
-    new IndicatorsFormValues()
-  );
 
   const [columns, setColumns] = useState<IColumns>([]);
   const [loading, setLoading] = useState(false);
@@ -67,6 +63,7 @@ const IndicatorsTable = ({ data }: IndicatorsProps) => {
             if (record.Nombre === "COSTO REACTIVO" && x !== "Nombre") {
               return (
                 <BudgetInput
+                  loading={loading}
                   defaultValue={record[x]}
                   onFinish={(budget) => onFinish(x, budget)}
                 />
@@ -87,33 +84,36 @@ export default observer(IndicatorsTable);
 type BudgetInputProps = {
   defaultValue: number;
   onFinish: (budget: number) => void;
+  loading: boolean;
 };
 
-const BudgetInput = ({ defaultValue, onFinish }: BudgetInputProps) => {
+const BudgetInput = ({ defaultValue, onFinish, loading }: BudgetInputProps) => {
   const [form] = Form.useForm<IReportIndicators>();
 
   return (
-    <Form<IReportIndicators>
-      {...formItemLayout}
-      form={form}
-      name="indicators"
-      initialValues={{ costoReactivo: defaultValue }}
-      onFinish={(values) => {
-        console.log(values);
-        onFinish(values.costoReactivo);
-      }}
-      scrollToFirstError
-    >
-      <Form.Item className="no-error-text" help="">
-        <Input.Group compact>
-          <Form.Item name={"costoReactivo"}>
-            <InputNumber min={0} bordered={false} />
-          </Form.Item>
-          <Button type="primary" htmlType="submit">
-            <CheckOutlined style={{ color: "white" }} />
-          </Button>
-        </Input.Group>
-      </Form.Item>
-    </Form>
+    <Spin spinning={loading}>
+      <Form<IReportIndicators>
+        {...formItemLayout}
+        form={form}
+        name="indicators"
+        initialValues={{ costoReactivo: defaultValue }}
+        onFinish={(values) => {
+          console.log(values);
+          onFinish(values.costoReactivo);
+        }}
+        scrollToFirstError
+      >
+        <Form.Item className="no-error-text" help="">
+          <Input.Group compact>
+            <Form.Item name={"costoReactivo"} className="no-error-text">
+              <InputNumber min={0} bordered={false} />
+            </Form.Item>
+            <Button type="primary" htmlType="submit">
+              <CheckOutlined style={{ color: "white" }} />
+            </Button>
+          </Input.Group>
+        </Form.Item>
+      </Form>
+    </Spin>
   );
 };
