@@ -62,6 +62,7 @@ const PendingSend = () => {
   const [values, setValues] = useState<SearchTracking>(
     new TrackingFormValues()
   );
+  const [cambio, stcambio] = useState<boolean>(false);
   const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
   const [ids, setIds] = useState<number[]>([]);
   const [form] = Form.useForm<SearchTracking>();
@@ -102,27 +103,24 @@ const PendingSend = () => {
   }, [getAll]);
   const updatedata = async () => {
     let estudios = 0;
-    let solicitudes =0;
-    updateData.forEach(element => {
-        estudios+=element.estudioId.length;
+    let solicitudes = 0;
+    updateData.forEach((element) => {
+      estudios += element.estudioId.length;
     });
     solicitudes = updateData.length;
-    
 
-      alerts.confirm(
-        "",
-        `Se han enviado ${estudios} estudios de ${solicitudes} solicitud a estatus en ruta de manera exitosa `,
-        async () => {
-          var succes = await update(updateData!);
-          if(succes){
-           // await getAll(values);
-            form.submit();
-          }
-          setUpdateDate([]);
+    alerts.confirm(
+      "",
+      `Se han enviado ${estudios} estudios de ${solicitudes} solicitud a estatus en ruta de manera exitosa `,
+      async () => {
+        var succes = await update(updateData!);
+        if (succes) {
+           await getAll(values);
+          form.submit();
         }
-      );
-
-    
+        setUpdateDate([]);
+      }
+    );
   };
   const onExpand = (isExpanded: boolean, record: IRouteList) => {
     let expandRows: string[] = expandedRowKeys;
@@ -149,10 +147,33 @@ const PendingSend = () => {
   const onChange = (e: CheckboxChangeEvent, id: number, solicitud: string) => {
     var data = ids;
     var solis = solicitudesData;
+    var dataid: number[] = [];
+    var dataupdate = updateData;
     if (e.target.checked) {
       data.push(id);
+      dataid.push(id);
       setIds(data);
       let temp = solicitudesData.filter((x) => x == solicitud);
+      let temp2 = dataupdate!.filter((x) => x.solicitudId == solicitud);
+      if (temp2.length <= 0) {
+        let datatoupdate: IUpdate = {
+          solicitudId: solicitud,
+          estudioId: dataid,
+        };
+        dataupdate?.push(datatoupdate);
+      } else {
+        let solicitudtoupdate = dataupdate?.filter(
+          (x) => x.solicitudId == solicitud
+        )[0];
+        let count = solicitudtoupdate?.estudioId!.filter((x) => x == id);
+        if (count!.length <= 0) {
+          solicitudtoupdate?.estudioId.push(id);
+          let indexsoli = dataupdate?.findIndex(
+            (x) => x.solicitudId == solicitud
+          );
+          dataupdate[indexsoli!] = solicitudtoupdate;
+        }
+      }
       if (temp.length <= 0) {
         solis.push(solicitud);
         SetSolicitudesData(solis);
@@ -164,15 +185,74 @@ const PendingSend = () => {
         setIds(temp);
         //SetSolicitudesData();
       }
+      let solicitudtoupdate = dataupdate?.filter(
+        (x) => x.solicitudId == solicitud
+      )[0];
+      if (solicitudtoupdate.estudioId.length == 1) {
+        dataupdate = dataupdate.filter((x) => x.solicitudId != solicitud);
+      } else {
+        let count = solicitudtoupdate?.estudioId!.filter((x) => x == id);
+        if (count!.length > 0) {
+          let estudios = solicitudtoupdate?.estudioId.filter((x) => x != id);
+          solicitudtoupdate.estudioId = estudios;
+          let indexsoli = dataupdate?.findIndex(
+            (x) => x.solicitudId == solicitud
+          );
+          dataupdate[indexsoli!] = solicitudtoupdate;
+        }
+      }
     }
-    var datos: IUpdate = {
-      estudioId: ids,
-      ruteOrder: solicitud,
-      solicitudId:solicitud
-    };
-    setUpdateDate((prev) => [...prev!, datos]);
+
+    /*     if (dataupdate.length <= 0) {
+
+      setActivar(false);
+    } else {
+
+      setActivar(true);
+    } */
+
+    setUpdateDate(dataupdate);
   };
   const columnsStudy: IColumns<IstudyRoute> = [
+    {
+      key: "Seleccionar",
+      dataIndex: "seleccionar",
+      title: "Seleccionar",
+      align: "center",
+      width: "10%",
+      render: (_value, record) => (
+        <>
+          {record.status === 2 && (
+            <Checkbox
+              onChange={(e) => {
+                onChange(e, record.id, record.solicitudid);
+              }}
+              disabled={!(activiti == "register")}
+            ></Checkbox>
+          )}
+          {updateData
+            .find((x) => x.solicitudId == record.solicitudid)
+            ?.estudioId.includes(record.id) ||
+          (cambio &&
+            updateData
+              .find((x) => x.solicitudId == record.solicitudid)
+              ?.estudioId.includes(record.id))
+            ? ""
+            : ""}
+          {record.status === 8 && (
+            <Checkbox
+              onChange={(e) => {
+                {
+                  onChange(e, record.id, record.solicitudid);
+                  stcambio(!cambio);
+                }
+              }}
+              disabled={!(activiti == "cancel")}
+            ></Checkbox>
+          )}
+        </>
+      ),
+    },
     {
       ...getDefaultColumnProps("clave", "Solicitud", {
         width: "20%",
@@ -182,7 +262,7 @@ const PendingSend = () => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/ShipmentTracking/${route.id}`);
+            navigate(`/ShipmentTracking/${route.routeId}`);
           }}
         >
           {value}
@@ -251,7 +331,7 @@ const PendingSend = () => {
   };
   const cancel = () => {
     setActiviti("cancel");
-    setUpdateDate([]);  
+    setUpdateDate([]);
   };
 
   const [searchState, setSearchState] = useState<ISearch>({
@@ -294,7 +374,7 @@ const PendingSend = () => {
       }),
     },
     {
-      ...getDefaultColumnProps("fecha", " Fecha de entrega", {
+      ...getDefaultColumnProps("fecha", " Fecha de entrega estimada", {
         searchState,
         setSearchState,
         width: "15%",
@@ -435,17 +515,15 @@ const PendingSend = () => {
           </Col>
         </Row>
       </Form>
-      <Row style={{ marginBottom: "1%", marginTop:"2%" }}>
+      <Row style={{ marginBottom: "1%", marginTop: "2%" }}>
         <Col span={8}>
           <Button
-            
             type={activiti == "register" ? "primary" : "ghost"}
             onClick={register}
           >
             Enviar ruta
           </Button>
           <Button
-            
             type={activiti == "cancel" ? "primary" : "ghost"}
             onClick={cancel}
           >
@@ -454,35 +532,33 @@ const PendingSend = () => {
         </Col>
         <Col span={8}></Col>
         <Col span={8}>
-        <div style={{ textAlign: "right", marginBottom: 10 }}>
-          {activiti == "register" ? (
-            <Button
-
-              type="primary"
-              disabled={updateData.length <= 0}
-              onClick={() => {
-                updatedata();
-              }}
-            >
-              Enviar
-            </Button>
-          ) : (
-            ""
-          )}
-          {activiti == "cancel" ? (
-            <Button
-
-              type="primary"
-              disabled={updateData.length <= 0}
-              onClick={() => {
-                updatedata();
-              }}
-            >
-              Cancelar Registro
-            </Button>
-          ) : (
-            ""
-          )}
+          <div style={{ textAlign: "right", marginBottom: 10 }}>
+            {activiti == "register" ? (
+              <Button
+                type="primary"
+                disabled={updateData.length <= 0}
+                onClick={() => {
+                  updatedata();
+                }}
+              >
+                Enviar
+              </Button>
+            ) : (
+              ""
+            )}
+            {activiti == "cancel" ? (
+              <Button
+                type="primary"
+                disabled={updateData.length <= 0}
+                onClick={() => {
+                  updatedata();
+                }}
+              >
+                Cancelar Registro
+              </Button>
+            ) : (
+              ""
+            )}
           </div>
         </Col>
       </Row>
@@ -515,7 +591,6 @@ const PendingSend = () => {
 
             expandedRowRender: (datos: IRouteList, index: number) => (
               <>
-               
                 <Table
                   size="small"
                   rowKey={(record) => record.id}
@@ -526,169 +601,6 @@ const PendingSend = () => {
                   className="header-expandable-table"
                   pagination={false}
                   showHeader={index === 0}
-                  rowSelection={{
-                    type: "checkbox",
-                    getCheckboxProps: (record: any) => ({
-                      disabled:
-                        (activiti != "register" && activiti != "cancel") ||
-                        (activiti == "register" && record.status != 2) ||
-                        (activiti == "cancel" && record.status != 8),
-                    }),
-                    onSelect: (selectedRow, isSelected, a: any) => {
-                      
-                      var data = ids;
-                      var solis = solicitudesData;
-                      var dataid: number[] = [];
-                      var dataupdate = updateData;
-                      if (isSelected) {
-                        data.push(selectedRow.id);
-                        dataid.push(selectedRow.id);
-                        setIds(data);
-                        let temp = solicitudesData.filter((x) => x == selectedRow.solicitudid );
-                        let temp2 = dataupdate!.filter((x) => x.solicitudId ==selectedRow.solicitudid);
-                        if (temp2.length <= 0) {
-                          let datatoupdate: IUpdate = {
-                            solicitudId: selectedRow.solicitudid,
-                            estudioId: dataid,
-                          };
-                          dataupdate?.push(datatoupdate);
-                        } else {
-                          let solicitudtoupdate = dataupdate?.filter(
-                            (x) => x.solicitudId == selectedRow.solicitudid
-                          )[0];
-                          let count = solicitudtoupdate?.estudioId!.filter((x) => x == selectedRow.id);
-                          if (count!.length <= 0) {
-                            solicitudtoupdate?.estudioId.push(selectedRow.id);
-                            let indexsoli = dataupdate?.findIndex(
-                              (x) => x.solicitudId == selectedRow.solicitudid
-                            );
-                            dataupdate[indexsoli!] = solicitudtoupdate;
-                          }
-                        }
-                        if (temp.length <= 0) {
-                          solis.push(selectedRow.solicitudid);
-                          SetSolicitudesData(solis);
-                        }
-                      } else {
-                        if (data.length > 0) {
-                          var temp = data.filter((x) => x != selectedRow.id);
-                          var temps = solis.filter((x) => x != selectedRow.solicitudid);
-                          setIds(temp);
-                          //SetSolicitudesData();
-                        }
-                        let solicitudtoupdate = dataupdate?.filter(
-                          (x) => x.solicitudId == selectedRow.solicitudid
-                        )[0];
-                        if (solicitudtoupdate.estudioId.length == 1) {
-                          dataupdate = dataupdate.filter((x) => x.solicitudId != selectedRow.solicitudid);
-                        } else {
-                          let count = solicitudtoupdate?.estudioId!.filter((x) => x == selectedRow.id);
-                          if (count!.length > 0) {
-                            let estudios = solicitudtoupdate?.estudioId.filter((x) => x !=selectedRow.id);
-                            solicitudtoupdate.estudioId = estudios;
-                            let indexsoli = dataupdate?.findIndex(
-                              (x) => x.solicitudId == selectedRow.solicitudid
-                            );
-                            dataupdate[indexsoli!] = solicitudtoupdate;
-                          }
-                        }
-                      }
-                  
-                      setUpdateDate(dataupdate);
-    
-                    },
-                    onChange: (
-                      selectedRowKeys: React.Key[],
-                      selectedRows: any,
-                      rowSelectedMethod: any
-                    ) => {
-                      console.log("a", toJS(rowSelectedMethod));
-                      if (rowSelectedMethod.type === "all") {
-                        if (selectedRowKeys.length > 0) {
-                          console.log(
-                            "selected row keys",
-                            toJS(selectedRowKeys)
-                          );
-                          console.log("a", toJS(rowSelectedMethod));
-                          let existingStudy = null;
-                          if (updateData.length > 0) {
-                            setUpdateDate([]);
-                          } else {
-                            var listuopdate: IUpdate[] = [];
-                            
-                            console.log(studys);
-                            studys.forEach(datas=>{
-                              let studylist: number[] = [];
-                              datas.estudios.forEach((study) => {
-                                
-                                if (
-                                  (activiti == "register" && study.status == 2) ||
-                                  (activiti == "cancel" && study.status == 8)
-                                ) {
-  
-                                  studylist.push(study.id);
-                                }
-                              });
-                              var datatoupdate: IUpdate = {
-                                ruteOrder: datos.id,
-                                estudioId: studylist,
-                                solicitudId:datos.id
-                              };
-                              listuopdate.push(datatoupdate);
-                            })
-                            console.log(listuopdate,"lista");
-                            setUpdateDate(listuopdate);
-                          }
-                        }else{
-                          setUpdateDate([]);
-                        }
-                      }
-                      /*                      
-                      setSelectedRowKeysCheck(selectedRowKeys);
-                      console.log("selectedt rows", toJS(selectedRows));
-                      console.log("a", toJS(rowSelectedMethod));
-                      let newStudies: any[] = [];
-                      
-                        if (selectedRowKeys.length > 0) {
-                          let existRequest = null;
-
-                          let newResquestStudies = {
-                            solicitudId: data.id,
-                            estudiosId: [] as any[],
-                          };
-                           selectedRowKeys.forEach((key) => {
-                            existRequest = selectedStudies.find(
-                              (study) => study.routeId === data.id
-                            );
-                            if (!existRequest) {
-                              const newStudy: any = {
-                                estudioId: key,
-                                tipo: selectedRows[0].isPathological ? 30 : -1,
-                              };
-                              newResquestStudies.estudiosId.push(newStudy);
-                            }
-                          });
-                          if (!existRequest) {
-                            newStudies.push(newResquestStudies);
-                          }
-                          setSelectedStudies([
-                            ...selectedStudies,
-                            ...newStudies,
-                          ]); 
-                      } else {
-                           const newStudies = selectedStudies.filter(
-                            (study) => study.routeId !== data.id
-                          ); 
-
-                           setSelectedStudies(newStudies); 
-                        }
-                      } */
-                      
-                    },
-                    selectedRowKeys: updateData.find(
-                      (x) => x.ruteOrder == datos.id
-                    )?.estudioId,
-                  }}
                 ></Table>
               </>
             ),

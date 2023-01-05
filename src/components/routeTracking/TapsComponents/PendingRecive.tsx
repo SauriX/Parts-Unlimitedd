@@ -396,7 +396,7 @@ import { formItemLayout } from "../../../app/util/utils";
           {
             key: "editar",
             dataIndex: "fecha",
-            title: "Fecha de entrega",
+            title: "Fecha de entrega estimada",
             align: "center",
             width:  "10%",
             render: (value) => (moment(value).format('MMMM D, YYYY')),
