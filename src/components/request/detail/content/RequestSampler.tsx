@@ -33,18 +33,6 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
     searchedColumn: "",
   });
 
-  const updateDate = (item: IRequestStudy, value: moment.Moment | null) => {
-    if (value) {
-      setStudy({ ...item, fechaEntrega: value.utcOffset(0, true) });
-      const origin = formGeneral.getFieldValue("urgencia");
-      if (origin === catalog.urgency.normal) {
-        alerts.info("La solicitud se marcará como urgente");
-        formGeneral.setFieldValue("urgencia", catalog.urgency.urgente);
-        formGeneral.submit();
-      }
-    }
-  };
-
   const columns: IColumns<IRequestStudy> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
@@ -78,27 +66,7 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
         searchable: false,
         width: "25%",
       }),
-      render: (value, item) => {
-        return (
-          <DatePicker
-            bordered={false}
-            value={value ? (isMoment(value) ? value : moment(value)) : moment()}
-            format="DD/MM/YYYY HH:mm"
-            minuteStep={5}
-            showTime
-            allowClear={false}
-            onChange={(value) => {
-              updateDate(item, value);
-            }}
-            disabledDate={(current: moment.Moment) =>
-              current.isBefore(moment(), "day")
-            }
-            disabledTime={() => ({
-              disabledHours: () => [],
-            })}
-          />
-        );
-      },
+      render: (value) => moment(value).format("DD/MM/YYYY HH:mm"),
     },
     Table.SELECTION_COLUMN,
   ];
@@ -125,6 +93,17 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
             type="default"
             disabled={
               !selectedStudies.some(
+                (x) => x.estatusId === status.requestStudy.tomaDeMuestra
+              )
+            }
+            onClick={updateStudies}
+          >
+            Cancelar
+          </Button>
+          <Button
+            type="default"
+            disabled={
+              !selectedStudies.some(
                 (x) => x.estatusId === status.requestStudy.pendiente
               )
             }
@@ -147,7 +126,7 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
               },
               getCheckboxProps: (record) => ({
                 disabled:
-                  record.estatusId !== status.requestStudy.pendiente ||
+                  record.estatusId !== status.requestStudy.pendiente && record.estatusId !== status.requestStudy.tomaDeMuestra ||
                   !record.asignado,
               }),
               selectedRowKeys: selectedStudies.map(
