@@ -9,6 +9,7 @@ import QuotationGeneral from "./content/QuotationGeneral";
 import QuotationIndication from "./content/QuotationIndication";
 import QuotationStudy from "./content/QuotationStudy";
 import QuotationInvoice from "./QuotationInvoice";
+import QuotationPrint from "./QuotationPrint";
 import { onSubmitGeneral, submitGeneral } from "./utils";
 
 const { TabPane } = Tabs;
@@ -128,6 +129,10 @@ const QuotationTab = ({
       component = (
         <QuotationAssignment recordId={recordId} setRecordId={setRecordId} />
       );
+    } else if (tabName === "report") {
+      component = (
+        <QuotationPrint />
+      );
     }
 
     return (
@@ -164,6 +169,11 @@ const QuotationTab = ({
       key: "assignment",
       label: "Expediente",
       children: tabRender("assignment"),
+    },
+    {
+      key: "report",
+      label: "Recibo",
+      children: tabRender("report"),
     },
   ];
 

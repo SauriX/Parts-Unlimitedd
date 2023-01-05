@@ -251,7 +251,7 @@ const PendingSend = () => {
   };
   const cancel = () => {
     setActiviti("cancel");
-    setUpdateDate([]);
+    setUpdateDate([]);  
   };
 
   const [searchState, setSearchState] = useState<ISearch>({
@@ -513,14 +513,14 @@ const PendingSend = () => {
             rowExpandable: () => true,
             defaultExpandAllRows: true,
 
-            expandedRowRender: (data: IRouteList, index: number) => (
+            expandedRowRender: (datos: IRouteList, index: number) => (
               <>
-                {console.log(data.estudios)}
+               
                 <Table
                   size="small"
                   rowKey={(record) => record.id}
                   columns={columnsStudy}
-                  dataSource={[...data.estudios]}
+                  dataSource={[...datos.estudios]}
                   bordered
                   style={{}}
                   className="header-expandable-table"
@@ -536,135 +536,66 @@ const PendingSend = () => {
                     }),
                     onSelect: (selectedRow, isSelected, a: any) => {
                       
-                      let existingStudy = null;
-                      if (updateData.length > 0) {
-                        console.log(updateData,"onSelect");
-                        existingStudy = updateData.find(
-                          (study) => study.ruteOrder === data.id
-                        );
-                        
-                        var studiinlist = existingStudy!.estudioId.filter(
-                          (x) => x == selectedRow.id
-                        );
-                        
-                        if (!studiinlist.includes(selectedRow.id)) {
-                          
-                          if (isSelected) {
-                            let studylist: number[] = [];
-                            if (!existingStudy) {
-                              studylist.push(selectedRow.id);
-                              var datatoupdate: IUpdate = {
-                                ruteOrder: data.id,
-                                estudioId: studylist,
-                                solicitudId:data.id
-                              };
-                              setUpdateDate((prev) => [...prev, datatoupdate]);
-                            } else {
-                              console.log(updateData,"onSelect");
-                              var studiinlist = existingStudy.estudioId.filter(
-                                (x) => x == selectedRow.id
-                              );
-                              if (!studiinlist.includes(selectedRow.id)) {
-                                existingStudy.estudioId.push(selectedRow.id);
-                                let existingStudyIndex = updateData.findIndex(
-                                  (study) => study.ruteOrder === data.id
-                                );
-                                let updatdedlist = updateData;
-                                updatdedlist[existingStudyIndex] =
-                                  existingStudy;
-                                setUpdateDate(updatdedlist);
-                              } else {
-                                const newStudies =
-                                  existingStudy.estudioId.filter(
-                                    (x) => x != selectedRow.id
-                                  );
-
-                                existingStudy.estudioId = newStudies;
-                                if (newStudies.length > 0) {
-                                  let existingStudyIndex = updateData.findIndex(
-                                    (study) => study.ruteOrder=== data.id
-                                  );
-                                  let updatdedlist = updateData;
-                                  updatdedlist[existingStudyIndex] =
-                                    existingStudy;
-
-                                  setUpdateDate(updatdedlist);
-                                } else {
-                                  let updatdedlist = updateData;
-                                  updatdedlist = updatdedlist.filter(
-                                    (x) => x.ruteOrder === data.id
-                                  );
-
-                                  setUpdateDate(updatdedlist);
-                                }
-                              }
-                            }
-                          } else {
-                            if (existingStudy) {
-                              const newStudies = existingStudy.estudioId.filter(
-                                (x) => x != selectedRow.id
-                              );
-
-                              existingStudy.estudioId = newStudies;
-                              if (newStudies.length > 0) {
-                                let existingStudyIndex = updateData.findIndex(
-                                  (study) => study.ruteOrder === data.id
-                                );
-                                let updatdedlist = updateData;
-                                updatdedlist[existingStudyIndex] =
-                                  existingStudy;
-
-                                setUpdateDate(updatdedlist);
-                              } else {
-                                let updatdedlist = updateData;
-                                updatdedlist = updatdedlist.filter(
-                                  (x) => x.ruteOrder === data.id
-                                );
-
-                                setUpdateDate(updatdedlist);
-                              }
-                            }
-                          }
-                        }else{
-                          
-                          if (existingStudy) {
-                            const newStudies = existingStudy.estudioId.filter(
-                              (x) => x != selectedRow.id
+                      var data = ids;
+                      var solis = solicitudesData;
+                      var dataid: number[] = [];
+                      var dataupdate = updateData;
+                      if (isSelected) {
+                        data.push(selectedRow.id);
+                        dataid.push(selectedRow.id);
+                        setIds(data);
+                        let temp = solicitudesData.filter((x) => x == selectedRow.solicitudid );
+                        let temp2 = dataupdate!.filter((x) => x.solicitudId ==selectedRow.solicitudid);
+                        if (temp2.length <= 0) {
+                          let datatoupdate: IUpdate = {
+                            solicitudId: selectedRow.solicitudid,
+                            estudioId: dataid,
+                          };
+                          dataupdate?.push(datatoupdate);
+                        } else {
+                          let solicitudtoupdate = dataupdate?.filter(
+                            (x) => x.solicitudId == selectedRow.solicitudid
+                          )[0];
+                          let count = solicitudtoupdate?.estudioId!.filter((x) => x == selectedRow.id);
+                          if (count!.length <= 0) {
+                            solicitudtoupdate?.estudioId.push(selectedRow.id);
+                            let indexsoli = dataupdate?.findIndex(
+                              (x) => x.solicitudId == selectedRow.solicitudid
                             );
-
-                            existingStudy.estudioId = newStudies;
-                            if (newStudies.length > 0) {
-                              
-                              let existingStudyIndex = updateData.findIndex(
-                                (study) => study.ruteOrder === data.id
-                              );
-                              let updatdedlist = updateData;
-                              updatdedlist[existingStudyIndex] =
-                                existingStudy;
-
-                              setUpdateDate(updatdedlist);
-                            } else {
-                              
-                              let updatdedlist = updateData;
-                              updatdedlist = updatdedlist.filter(
-                                (x) => x.ruteOrder!= data.id
-                              );
-                              console.log(updatdedlist,"onSelect");
-                              setUpdateDate(updatdedlist);
-                            }
+                            dataupdate[indexsoli!] = solicitudtoupdate;
                           }
                         }
-                      }else{
-                        let studylist: number[] = [];
-                        studylist.push(selectedRow.id);
-                        var datatoupdate: IUpdate = {
-                          ruteOrder: data.id,
-                          estudioId: studylist,
-                          solicitudId:data.id
-                        };
-                        setUpdateDate((prev) => [...prev, datatoupdate]);
-                        console.log(updateData,"datas");
+                        if (temp.length <= 0) {
+                          solis.push(selectedRow.solicitudid);
+                          SetSolicitudesData(solis);
+                        }
+                      } else {
+                        if (data.length > 0) {
+                          var temp = data.filter((x) => x != selectedRow.id);
+                          var temps = solis.filter((x) => x != selectedRow.solicitudid);
+                          setIds(temp);
+                          //SetSolicitudesData();
+                        }
+                        let solicitudtoupdate = dataupdate?.filter(
+                          (x) => x.solicitudId == selectedRow.solicitudid
+                        )[0];
+                        if (solicitudtoupdate.estudioId.length == 1) {
+                          dataupdate = dataupdate.filter((x) => x.solicitudId != selectedRow.solicitudid);
+                        } else {
+                          let count = solicitudtoupdate?.estudioId!.filter((x) => x == selectedRow.id);
+                          if (count!.length > 0) {
+                            let estudios = solicitudtoupdate?.estudioId.filter((x) => x !=selectedRow.id);
+                            solicitudtoupdate.estudioId = estudios;
+                            let indexsoli = dataupdate?.findIndex(
+                              (x) => x.solicitudId == selectedRow.solicitudid
+                            );
+                            dataupdate[indexsoli!] = solicitudtoupdate;
+                          }
+                        }
                       }
+                  
+                      setUpdateDate(dataupdate);
+    
                     },
                     onChange: (
                       selectedRowKeys: React.Key[],
@@ -699,9 +630,9 @@ const PendingSend = () => {
                                 }
                               });
                               var datatoupdate: IUpdate = {
-                                ruteOrder: data.id,
+                                ruteOrder: datos.id,
                                 estudioId: studylist,
-                                solicitudId:data.id
+                                solicitudId:datos.id
                               };
                               listuopdate.push(datatoupdate);
                             })
@@ -755,7 +686,7 @@ const PendingSend = () => {
                       
                     },
                     selectedRowKeys: updateData.find(
-                      (x) => x.ruteOrder == data.id
+                      (x) => x.ruteOrder == datos.id
                     )?.estudioId,
                   }}
                 ></Table>
