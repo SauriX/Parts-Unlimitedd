@@ -89,5 +89,5 @@ export default class MassResultSearchStore {
     } catch(error: any){
       alerts.warning(getErrors(error));
     }
-  };
+  }
 }
