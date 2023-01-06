@@ -6,6 +6,7 @@ import DateRangeInput from "../../../../app/common/form/proposal/DateRangeInput"
 import SelectInput from "../../../../app/common/form/proposal/SelectInput";
 import TextAreaInput from "../../../../app/common/form/proposal/TextAreaInput";
 import TextInput from "../../../../app/common/form/proposal/TextInput";
+import { IOptions } from "../../../../app/models/shared";
 import optionStore from "../../../../app/stores/optionStore";
 import { useStore } from "../../../../app/stores/store";
 import { formItemLayout } from "../../../../app/util/utils";
@@ -20,7 +21,24 @@ const InvoiceCompanyInfo = ({ company }: InvoiceCompanyInfoProps) => {
   useEffect(() => {
     form.setFieldsValue(company);
   }, [company]);
-
+  const reasonCancelation: IOptions[] = [
+    {
+      label: "01 Comprobantes emitidos con errores con relación.",
+      value: "01 Comprobantes emitidos con errores con relación.",
+    },
+    {
+      label: "02 Comprobantes emitidos con errores sin relación",
+      value: "02 Comprobantes emitidos con errores sin relación",
+    },
+    {
+      label: "03 No se llevó a cabo la operación.",
+      value: "03 No se llevó a cabo la operación.",
+    },
+    {
+      label: "04 Operación nominativa relacionada en una factura global.",
+      value: "04 Operación nominativa relacionada en una factura global.",
+    },
+  ];
   return (
     <>
       <Row justify="end" gutter={[24, 12]} className="filter-buttons">
@@ -47,7 +65,7 @@ const InvoiceCompanyInfo = ({ company }: InvoiceCompanyInfoProps) => {
                   <SelectInput
                     multiple
                     formProps={{ label: "Selecciona motivo", name: "motivo" }}
-                    options={[]}
+                    options={reasonCancelation}
                   />
                 </Col>
 
