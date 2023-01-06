@@ -4,11 +4,8 @@ import {
   Col,
   Descriptions,
   Form,
-  Input,
-  PageHeader,
   Row,
   Table,
-  Tag,
 } from "antd";
 import { FC, Fragment, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -20,10 +17,7 @@ import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import {
-  ISamplingForm,
-  ISamplingList,
   IUpdate,
-  SamplingFormValues,
 } from "../../../app/models/sampling";
 import {
   getDefaultColumnProps,
@@ -31,8 +25,6 @@ import {
   ISearch,
 } from "../../../app/common/table/utils";
 import { ExpandableConfig } from "antd/lib/table/interface";
-import ImageButton from "../../../app/common/button/ImageButton";
-import { getExpandableConfig } from "../../report/utils";
 import {
   IRouteList,
   IstudyRoute,
@@ -44,14 +36,9 @@ import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../../app/util/alerts";
 import PrintIcon from "../../../app/common/icons/PrintIcon";
 import { formItemLayout } from "../../../app/util/utils";
-import { toJS } from "mobx";
-
 const PendingSend = () => {
   const {
-    procedingStore,
     optionStore,
-    locationStore,
-    samplingStudyStore: samplig,
     routeTrackingStore,
     profileStore,
   } = useStore();
@@ -71,10 +58,6 @@ const PendingSend = () => {
   const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
   const [openRows, setOpenRows] = useState<boolean>(false);
   const [expandable, setExpandable] = useState<ExpandableConfig<IRouteList>>();
-  const [selectedStudies, setSelectedStudies] = useState<any[]>([
-    // { solicitudId: "", estudiosId: [{ estudioId: "", tipo: 3 }] },
-  ]);
-  const [selectedRowKeysCheck, setSelectedRowKeysCheck] = useState<any[]>([]);
   let navigate = useNavigate();
   useEffect(() => {
     setexpandedRowKeys(studys!.map((x) => x.id));
@@ -86,27 +69,20 @@ const PendingSend = () => {
       let studios = [];
       var datas = await getAll(values!);
       getBranchCityOptions();
-      console.log(datas, "daata");
       setventana("enviar");
-      //setSoliCont(datas?.length!);
       datas?.forEach((x: any) => studios.push(x.studys));
-      //setStudyCont(studios.length);
-      //setLoading(false);
     };
 
     if (studys.length === 0) {
       readPriceList();
     }
-    console.log(getExpandableConfig("estudios"), "config");
     setExpandable(expandableStudyConfig);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
   const updatedata = async () => {
-    let estudios = 0;
+    const estudios = updateData.flatMap((x) => x.estudioId).length;
     let solicitudes = 0;
-    updateData.forEach((element) => {
-      estudios += element.estudioId.length;
-    });
+
     solicitudes = updateData.length;
 
     alerts.confirm(
@@ -115,7 +91,6 @@ const PendingSend = () => {
       async () => {
         var succes = await update(updateData!);
         if (succes) {
-           await getAll(values);
           form.submit();
         }
         setUpdateDate([]);
@@ -162,9 +137,9 @@ const PendingSend = () => {
         };
         dataupdate?.push(datatoupdate);
       } else {
-        let solicitudtoupdate = dataupdate?.filter(
+        let solicitudtoupdate = dataupdate?.find(
           (x) => x.solicitudId == solicitud
-        )[0];
+        )!;
         let count = solicitudtoupdate?.estudioId!.filter((x) => x == id);
         if (count!.length <= 0) {
           solicitudtoupdate?.estudioId.push(id);
@@ -183,12 +158,11 @@ const PendingSend = () => {
         var temp = data.filter((x) => x != id);
         var temps = solis.filter((x) => x != solicitud);
         setIds(temp);
-        //SetSolicitudesData();
       }
-      let solicitudtoupdate = dataupdate?.filter(
+      let solicitudtoupdate = dataupdate.find(
         (x) => x.solicitudId == solicitud
-      )[0];
-      if (solicitudtoupdate.estudioId.length == 1) {
+      )!;
+      if (solicitudtoupdate?.estudioId.length == 1) {
         dataupdate = dataupdate.filter((x) => x.solicitudId != solicitud);
       } else {
         let count = solicitudtoupdate?.estudioId!.filter((x) => x == id);
@@ -231,12 +205,10 @@ const PendingSend = () => {
             ></Checkbox>
           )}
           {updateData
-            .find((x) => x.solicitudId == record.solicitudid)
-            ?.estudioId.includes(record.id) ||
+            .find((x) => x.solicitudId == record.solicitudid)!.estudioId.includes(record.id) ||
           (cambio &&
             updateData
-              .find((x) => x.solicitudId == record.solicitudid)
-              ?.estudioId.includes(record.id))
+              .find((x) => x.solicitudId == record.solicitudid)!.estudioId.includes(record.id))
             ? ""
             : ""}
           {record.status === 8 && (
@@ -309,13 +281,7 @@ const PendingSend = () => {
                   className="description-content"
                   style={{ maxWidth: 30 }}
                 >
-                  {/* <ImageButton
-                    title="Imprimir"
-                    image="print"
-                    onClick={() => {
-                      //printTicket(item.order, item.id);
-                    }}
-                  ></ImageButton> */}
+
                 </Descriptions.Item>
               </Descriptions>
             </>
@@ -416,45 +382,19 @@ const PendingSend = () => {
         <PrintIcon
           key="print"
           onClick={() => {
-            console.log(item.id);
             exportForm(item.id);
           }}
         />
       ),
     },
-    /*  {
-          key: "editar",
-          dataIndex: "id",
-          title: "Seleccionar",
-          align: "center",
-          width:  "10%",
-          render: (value,item) => (
-            <Checkbox  onChange={(e)=>{onChange(e,x=item.estudios.map(x=>x.),value) }} >
-          
-          </Checkbox>
-          ),
-        }, */
   ];
   const onFinish = async (newValues: SearchTracking) => {
-    // setLoading(true);
-    console.log("onfinish");
-    const reagent = { ...values, ...newValues };
-
-    var search = reagent;
-
+    const search = { ...values, ...newValues };
     let studios = [];
     var datas = await getAll(search!);
-    // console.log(datas, "daata");
-    //setSoliCont(datas?.length!);
     datas?.forEach((x: any) => studios.push(x.pendings));
-    // setStudyCont(studios.length);
-    //setLoading(false);
     setExpandable(expandableStudyConfig);
-    console.log(reagent, "en el onfish");
-    console.log(reagent);
     let success = false;
-
-    // setLoading(false);
   };
   return (
     <Fragment>
@@ -477,7 +417,6 @@ const PendingSend = () => {
             <SelectInput
               options={branchCityOptions}
               formProps={{ name: "sucursal", label: "Sucursal" }}
-              style={{ marginLeft: "10px" }}
             ></SelectInput>
           </Col>
           <Col span={1}></Col>
@@ -492,7 +431,6 @@ const PendingSend = () => {
           </Col>
           <Col span={4}>
             <Button
-              style={{ marginLeft: "5%" }}
               onClick={() => {
                 form.submit();
               }}
@@ -502,7 +440,6 @@ const PendingSend = () => {
             </Button>
           </Col>
           <Col>
-            {" "}
             <Button
               style={{ backgroundColor: " #18AC50" }}
               onClick={() => {
@@ -580,9 +517,6 @@ const PendingSend = () => {
           columns={columns}
           dataSource={[...studys]}
           rowClassName="row-search"
-          // pagination={false}
-          // scroll={{ x: 450 }}
-
           expandable={{
             onExpand: onExpand,
             expandedRowKeys: expandedRowKeys,
