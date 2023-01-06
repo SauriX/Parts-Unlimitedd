@@ -8,8 +8,6 @@ import {
   Form,
   Input,
   Row,
-  Table,
-  Tag,
 } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {
@@ -22,10 +20,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import {
-  ISamplingForm,
-  ISamplingList,
   IUpdate,
-  SamplingFormValues,
 } from "../../app/models/sampling";
 import { formItemLayout } from "../../app/util/utils";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
@@ -586,14 +581,6 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
-                  {/* <SelectInput
-                    formProps={{
-                      name: "departamento",
-                      label: "Departamento",
-                    }}
-                    multiple
-                    options={departmentAreaOptions}
-                  ></SelectInput> */}
                   <Form.Item label="Áreas" className="no-error-text" help="">
                     <Input.Group>
                       <Row gutter={8}>
