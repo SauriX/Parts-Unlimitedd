@@ -68,4 +68,14 @@ export class InvoiceCompanyStore {
       alerts.warning(getErrors(error));
     }
   };
+
+  checkIn = async (invoiceData: any) => {
+    try {
+      const invoiceInfo = await InvoiceCompany.checkIn(invoiceData);
+      console.log("conse", invoiceInfo);
+      return invoiceInfo;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
 }

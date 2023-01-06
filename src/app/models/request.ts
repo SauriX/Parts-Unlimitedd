@@ -25,6 +25,7 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   esWeeClinic: boolean;
   tokenValidado: boolean;
   servicios?: string[];
+  saldoPendiente?: boolean;
   estudios?: IRequestStudyInfo[];
 }
 

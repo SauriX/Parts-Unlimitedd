@@ -36,6 +36,7 @@ import { IResultPathological } from "../../../app/models/clinicResults";
 import { objectToFormData, toolBarOptions } from "../../../app/util/utils";
 import { RcFile } from "antd/lib/upload";
 import { uniqueId, values } from "lodash";
+import alerts from "../../../app/util/alerts";
 const { Text, Title } = Typography;
 type ClinicalResultsFormProps = {
   estudio: IRequestStudy;
@@ -78,7 +79,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
   );
   const [currentResult, setCurrentResult] = useState<IResultPathological>();
   const [checkedPrint, setCheckedPrint] = useState(false);
-  const { optionStore, clinicResultsStore } = useStore();
+  const { optionStore, clinicResultsStore, requestStore } = useStore();
   const {
     createResultPathological,
     updateResultPathological,
@@ -88,6 +89,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     addSelectedStudy,
     removeSelectedStudy,
   } = clinicResultsStore;
+  const { request } = requestStore;
   const { medicOptions, getMedicOptions } = optionStore;
   const [form] = Form.useForm();
   useEffect(() => {
@@ -298,7 +300,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                     htmlType="submit"
                     // disabled={disabled}
                     onClick={() => {
-                      setEnvioManual(false)
+                      setEnvioManual(false);
                       form.submit();
                     }}
                     style={{
@@ -318,25 +320,41 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                   </Button>
                 </Col>
                 {currentStudy.estatusId === status.requestStudy.liberado ? (
-                <Col span={8}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    // disabled={disabled}
-                    onClick={() => {
-                      setEnvioManual(true);
-                      form.submit();
-                    }}
-                    style={{
-                      backgroundColor: "#6EAA46",
-                      color: "white",
-                      borderColor: "#6EAA46",
-                    }}
-                  >
-                    Envio Manual
-                  </Button>
-                </Col>
-                ): ""}
+                  <Col span={8}>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      // disabled={disabled}
+                      onClick={() => {
+                        if (request?.saldoPendiente) {
+                          alerts.confirm(
+                            "Solicitud con saldo pendiente",
+                            "¿Esta seguro que desea enviar el resultado?",
+                            async () => {
+                              setEnvioManual(true);
+                              form.submit();
+                            },
+                            () => console.log("do nothing")
+                          );
+                        } else {
+                          setEnvioManual(true);
+                          form.submit();
+                        }
+                        // setEnvioManual(true);
+                        // form.submit();
+                      }}
+                      style={{
+                        backgroundColor: "#6EAA46",
+                        color: "white",
+                        borderColor: "#6EAA46",
+                      }}
+                    >
+                      Envio Manual
+                    </Button>
+                  </Col>
+                ) : (
+                  ""
+                )}
               </Row>
             </Col>
           </Row>
@@ -369,7 +387,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       departamentoEstudio:
         estudio.areaId === 30 ? "HISTOPATOLÓGICO" : "CITOLÓGICO",
     };
-    
+
     const formData = objectToFormData(reporteClinico);
 
     console.log("resultado actual", toJS(currentResult));
@@ -452,7 +470,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
         </Col>
         <Col span={8}>
           <p>
-            IMP - 
+            IMP -
             {currentStudy.estatusId >= 8 && (
               <strong>{`${moment(currentStudy.fechaValidacion).format(
                 "DD/MM/YYYY HH:mm"
@@ -465,7 +483,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
         </Col>
         <Col span={8}>
           <p>
-            VAL - {" "}
+            VAL -{" "}
             {currentStudy.estatusId >= 5 && (
               <strong>{`${moment(currentStudy.fechaValidacion).format(
                 "DD/MM/YYYY HH:mm"
@@ -475,7 +493,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
         </Col>
         <Col span={8}>
           <p>
-            ENV - {" "}
+            ENV -{" "}
             {currentStudy.estatusId >= 7 && (
               <strong>{`${moment(currentStudy.fechaValidacion).format(
                 "DD/MM/YYYY HH:mm"
@@ -485,7 +503,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
         </Col>
         <Col span={8}>
           <p>
-            ENT - {" "}
+            ENT -{" "}
             {currentStudy.estatusId >= 8 && (
               <strong>{`${moment(currentStudy.fechaValidacion).format(
                 "DD/MM/YYYY HH:mm"

@@ -8,11 +8,16 @@ import { formItemLayout, moneyFormatter } from "../../../../app/util/utils";
 
 const { Title, Text } = Typography;
 type InvoiceCompanyInfoProps = {
-  company: string;
+  company: any;
   totalFinal: number;
   totalEstudios: number;
+  createInvoice: any;
 };
-const InvoiceCompanyData = ({ company }: InvoiceCompanyInfoProps) => {
+const InvoiceCompanyData = ({
+  company,
+  totalEstudios,
+  createInvoice,
+}: InvoiceCompanyInfoProps) => {
   const [form] = Form.useForm();
   const onFinish = () => {};
   useEffect(() => {
@@ -35,7 +40,7 @@ const InvoiceCompanyData = ({ company }: InvoiceCompanyInfoProps) => {
           </Col>
         </Row>
         <Row>
-          <Col span={12}>
+          <Col span={10}>
             <SelectInput
               formProps={{ name: "formaDePagoId", label: "Forma de pago" }}
               options={[]}
@@ -57,12 +62,12 @@ const InvoiceCompanyData = ({ company }: InvoiceCompanyInfoProps) => {
               style={{ marginTop: 10 }}
             />
           </Col>
-          <Col span={12} style={{ paddingLeft: 10, textAlign: "end" }}>
+          <Col span={10} style={{ paddingLeft: 10, textAlign: "end" }}>
             <Text
               style={{ textAlign: "center" }}
               mark
             >{`Cantidad Total: ${moneyFormatter.format(
-              0
+              totalEstudios
             )} (IVA incluido)`}</Text>
             <TextInput formProps={{ name: "bancoId", label: "Banco" }} />
             <TextInput
@@ -79,19 +84,43 @@ const InvoiceCompanyData = ({ company }: InvoiceCompanyInfoProps) => {
             <div>
               <Text
                 style={{ textAlign: "center" }}
-              >{`IVA 16%: ${moneyFormatter.format(0)}`}</Text>
+              >{`IVA 16%: ${moneyFormatter.format(
+                (totalEstudios / 100) * 16
+              )}`}</Text>
             </div>
             <div>
               <Text
                 style={{ textAlign: "center" }}
-              >{`Subtotal: ${moneyFormatter.format(0)} `}</Text>
+              >{`Subtotal: ${moneyFormatter.format(
+                totalEstudios - (totalEstudios / 100) * 16
+              )} `}</Text>
             </div>
+          </Col>
+          <Col span={4} style={{ paddingLeft: 10, paddingTop: 10 }}>
+            <Row style={{ justifyContent: "center" }}>
+              <Button type="primary" onClick={createInvoice}>
+                Registrar Factura
+              </Button>
+            </Row>
+            <Row style={{ justifyContent: "center", paddingTop: 10 }}>
+              <Button type="primary" onClick={() => {}}>
+                Descargar
+              </Button>
+            </Row>
+            <Row style={{ justifyContent: "center", paddingTop: 10 }}>
+              <Button type="primary" onClick={() => {}}>
+                Imprimir
+              </Button>
+            </Row>
+            <Row style={{ justifyContent: "center", paddingTop: 10 }}>
+              <Button type="primary" onClick={() => {}}>
+                Configurar envió
+              </Button>
+            </Row>
           </Col>
         </Row>
         <Row justify="end">
-          <Col span={4}>
-            <Button onClick={() => {}}>Registrar Factura</Button>
-          </Col>
+          <Col span={4}></Col>
         </Row>
       </Form>
       {/* </div> */}
