@@ -30,7 +30,7 @@ type MSDefaultProps = {
 const MassSearchTable = ({printing}: MSDefaultProps) => {
   const { width: windowWidth } = useWindowDimensions();
   const { massResultSearchStore } = useStore();
-  const { parameters, results, loadingStudies,printOrder} = massResultSearchStore;
+  const { parameters, results, loadingStudies} = massResultSearchStore;
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [searchState, setSearchState] = useState<ISearch>({
@@ -133,11 +133,11 @@ const MassSearchTable = ({printing}: MSDefaultProps) => {
 
           onChange: () => {},
 
-          renderCell: (cel,request:IResult) => {
+          renderCell: () => {
             return (
               <>
                 <CheckInput style={{ marginBottom: 0, paddingBottom: 0 }} />
-                <PrintIcon key="doc" onClick={() => {printOrder(request.expedienteId,request.id)}} />
+                <PrintIcon key="doc" onClick={() => {}} />
               </>
             );
           },

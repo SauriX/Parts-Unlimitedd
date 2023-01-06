@@ -90,12 +90,4 @@ export default class MassResultSearchStore {
       alerts.warning(getErrors(error));
     }
   };
-
-  printOrder= async (recordId: string, requestId: string) => {
-    try {
-      await MassResultSearch.getOrderPdf(recordId, requestId);
-    } catch (error: any) {
-      alerts.warning(getErrors(error));
-    }
-  };
 }

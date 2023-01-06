@@ -19,8 +19,6 @@ const MassResultSearch = {
     requests.download("MassSearch/list", search),
   printPdf: (search: IMassSearch): Promise<void> =>
     requests.download(`MassSearch/download/pdf`, search),
-    getOrderPdf: (recordId: string, requestId: string): Promise<void> =>
-    requests.print(`MassSearch/order/${recordId}/${requestId}`),
 };
 
 export default MassResultSearch;
