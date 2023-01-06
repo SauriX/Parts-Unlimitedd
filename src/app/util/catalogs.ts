@@ -15,7 +15,7 @@ export const catalogs: IOptionsCatalog[] = [
   { value: "paymentMethod", label: "Métodos de pago", type: "normal" },
   { value: "sampleType", label: "Tipos de Muestra", type: "normal" },
   { value: "useOfCFDI", label: "Uso de CFDI", type: "description" },
-  { value: "budget", label: "Serv. Costos Fijos", type: "budget" },
+  { value: "costofijo", label: "Serv. Costos Fijos", type: "costofijo" },
 ];
 
 export const regimenFiscal: IOptions[] = [

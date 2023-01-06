@@ -14,47 +14,47 @@ type CashDefaultProps = {
 
 const CashBody: FC<CashDefaultProps> = ({ printing }) => {
   const [loading, setLoading] = useState(false);
-  const {cashRegisterStore} = useStore();
-  const {cashRegisterData} = cashRegisterStore;
+  const { cashRegisterStore } = useStore();
+  const { cashRegisterData } = cashRegisterStore;
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
-        <Col span={24}>
-          <CashFilter />
-        </Col>
-        <Col span={24}>
-          <PageHeader
-            ghost={false}
-            title={<HeaderTitle title="PACIENTES DEL DÍA" />}
-            className="header-container"
-          />
-        </Col>
-        <Col span={24}>
-          <CashTable data={cashRegisterData.perDay} loading={loading} />
-        </Col>
-        <Col span={24}>
-          <PageHeader
-            ghost={false}
-            title={<HeaderTitle title="CANCELACIONES DEL DÍA" />}
-            className="header-container"
-          />
-        </Col>
-        <Col span={24}>
-          <CashTable data={cashRegisterData.canceled} loading={loading} />
-        </Col>
-        <Col span={24}>
-          <PageHeader
-            ghost={false}
-            title={<HeaderTitle title="PAGOS DE OTROS DÍAS" />}
-            className="header-container"
-          />
-        </Col>
-        <Col span={24}>
-          <CashTable data={cashRegisterData.otherDay} loading={loading} />
-        </Col>
-        <Col span={24}>
-          <InvoiceTable data={cashRegisterData.cashTotal} loading={loading} />
-        </Col>
+      <Col span={24}>
+        <CashFilter />
+      </Col>
+      <Col span={24}>
+        <PageHeader
+          ghost={false}
+          title={<HeaderTitle title="PACIENTES DEL DÍA" />}
+          className="header-container"
+        />
+      </Col>
+      <Col span={24}>
+        <CashTable data={cashRegisterData.perDay} loading={loading} />
+      </Col>
+      <Col span={24}>
+        <PageHeader
+          ghost={false}
+          title={<HeaderTitle title="CANCELACIONES DEL DÍA" />}
+          className="header-container"
+        />
+      </Col>
+      <Col span={24}>
+        <CashTable data={cashRegisterData.canceled} loading={loading} />
+      </Col>
+      <Col span={24}>
+        <PageHeader
+          ghost={false}
+          title={<HeaderTitle title="PAGOS DE OTROS DÍAS" />}
+          className="header-container"
+        />
+      </Col>
+      <Col span={24}>
+        <CashTable data={cashRegisterData.otherDay} loading={loading} />
+      </Col>
+      <Col span={24}>
+        <InvoiceTable data={cashRegisterData.cashTotal} loading={loading} />
+      </Col>
     </Spin>
   );
 };

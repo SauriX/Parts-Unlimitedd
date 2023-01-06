@@ -85,6 +85,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     removeSelectedStudy,
     observationsSelected,
     setObservationsSelected,
+    clearSelectedStudies
   } = clinicResultsStore;
   const { request } = requestStore;
   const { getMedicOptions, getUnitOptions } = optionStore;
@@ -94,6 +95,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     form
   ) as IClinicResultCaptureForm[];
   const navigate = useNavigate();
+
+  useEffect(() => {
+    clearSelectedStudies()
+  }, [])
 
   useEffect(() => {
     setCheckedPrint(isMarked);
@@ -244,7 +249,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const renderUpdateStatus = () => {
     return (
       <>
-        {currentStudy.estatusId >= status.requestStudy.solicitado ? (
+        {currentStudy.estatusId >= status.requestStudy.solicitado && currentStudy.estatusId <= status.requestStudy.liberado ? (
           <Row>
             <Col span={24}>
               <Row justify="space-between" gutter={[12, 24]}>

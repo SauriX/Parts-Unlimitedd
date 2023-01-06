@@ -88,10 +88,16 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     updateStatusStudy,
     addSelectedStudy,
     removeSelectedStudy,
+    clearSelectedStudies
   } = clinicResultsStore;
   const { request } = requestStore;
   const { medicOptions, getMedicOptions } = optionStore;
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    clearSelectedStudies()
+  }, [])
+
   useEffect(() => {
     const loadOptions = async () => {
       await getMedicOptions();
@@ -111,6 +117,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       }
     }
   }, [isMarked]);
+
   const loadInit = async () => {
     const resultPathological = await getResultPathological(estudio.id!);
     let archivos: RcFile[] = [];
@@ -173,12 +180,6 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     console.log("CURRENT STUDY", toJS(currentStudy));
   }, [estudio, currentStudy]);
 
-  const changeStatus = () => {
-    if (estudio.estatusId === status.requestStudy.solicitado) {
-    }
-  };
-
-  const { width: windowWidth } = useWindowDimensions();
   const columns: IColumns<any> = [
     {
       key: "id",
@@ -261,7 +262,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
   const renderUpdateStatus = () => {
     return (
       <>
-        {currentStudy.estatusId >= status.requestStudy.solicitado ? (
+        {currentStudy.estatusId >= status.requestStudy.solicitado && currentStudy.estatusId <= status.requestStudy.liberado ? (
           <Row>
             <Col span={24}>
               <Row justify="space-between" gutter={[12, 24]}>
