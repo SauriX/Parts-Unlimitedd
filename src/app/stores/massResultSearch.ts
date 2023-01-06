@@ -7,6 +7,7 @@ import {
   IParameter,
   IResult,
   IResultList,
+  MassSearchValues,
 } from "../models/massResultSearch";
 import alerts from "../util/alerts";
 import { getErrors } from "../util/utils";
@@ -20,14 +21,21 @@ export default class MassResultSearchStore {
   area: string = "";
   results: IResult[] = [];
   parameters: IParameter[] = [];
+  search: IMassSearch = new MassSearchValues();
+  loadingStudies: boolean = false;
 
   setAreas = (area: string) => {
     this.area = area;
     console.log("area store", this.area);
   };
 
+  setFilter = (search: IMassSearch) => {
+    this.search = search;
+  };
+
   getRequestResults = async (search: IMassSearch) => {
     try {
+      this.loadingStudies = true;
       const result = await MassResultSearch.getRequestResults(search);
       this.parameters = result.parameters;
       if (result.parameters.length < 8) {
@@ -40,6 +48,8 @@ export default class MassResultSearchStore {
       console.log("RESULT", result);
     } catch (error: any) {
       alerts.warning(getErrors(error));
+    }finally {
+      this.loadingStudies = false;
     }
   };
 
@@ -72,4 +82,12 @@ export default class MassResultSearchStore {
       alerts.warning(getErrors(error));
     }
   };
+
+  printPdf = async (search: IMassSearch) => {
+    try{
+      await MassResultSearch.printPdf(search);
+    } catch(error: any){
+      alerts.warning(getErrors(error));
+    }
+  }
 }

@@ -482,4 +482,12 @@ export default class QuotationStore {
       alerts.warning(getErrors(error));
     }
   };
+  getQuotePdfUrl = async (id: string) => {
+    try {
+      const url = await Quotation.getQuotePdfUrl(id);;
+      return url;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
 }

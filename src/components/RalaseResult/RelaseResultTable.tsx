@@ -528,6 +528,17 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
       <Spin spinning={loading } tip={printing ? "Imprimiendo" : ""}>
       <div style={{ marginBottom: "5px", marginLeft: "90%" }}>
       <Button
+          key="clean"
+          onClick={(e) => {
+           
+            form.setFieldsValue(new searchrelase() );
+            setValues(new searchrelase());
+          }}
+          style={{ marginLeft: "10%" }}
+        >
+          Limpiar
+        </Button>
+      <Button
           key="filter"
           type="primary"
           onClick={(e) => {
@@ -538,19 +549,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
         >
           Filtrar
         </Button>
-        <Button
-          key="clean"
-          onClick={(e) => {
-           
-            form.setFieldsValue(new searchrelase() );
-            setValues(new searchrelase());
-            e.stopPropagation();
-            form.resetFields();
-          }}
-          style={{ marginLeft: "10%" }}
-        >
-          Limpiar
-        </Button>
+
 
       </div>
       <div

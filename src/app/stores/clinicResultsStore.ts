@@ -1,6 +1,6 @@
 import { makeAutoObservable, toJS } from "mobx";
 import ClinicResults from "../api/clinicResults";
-import { IScopes } from "../models/shared";
+import { IOptions, IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import { getErrors } from "../util/utils";
@@ -28,6 +28,8 @@ export default class ClinicResultsStores {
   loadingStudies: boolean = false;
   clear: boolean = false;
   studiesSelectedToPrint: IPrintTypes[] = [];
+  observationsSelected: IOptions[] = [];
+  observationText: string = "";
 
   printSelectedStudies = async (configuration: any) => {
     try {
@@ -37,6 +39,22 @@ export default class ClinicResultsStores {
     }
   };
 
+  setObservationsSelected = (observationsSelected: IOptions[]) => {
+    this.observationsSelected = observationsSelected;
+  }
+
+  setObservationsText = (observationText: string) => {
+    this.observationText = observationText;
+  }
+
+  getObservationsSelected = () => {
+    return this.observationsSelected;
+  }
+
+  getObservationsText = () => {
+    return this.observationText;
+  }
+
   clearScopes = () => {
     this.scopes = undefined;
   };
@@ -44,20 +62,21 @@ export default class ClinicResultsStores {
   clearStudy = () => {
     this.data = [];
   };
+
   addSelectedStudy = (estudio: IPrintTypes) => {
     this.studiesSelectedToPrint.push(estudio);
-    console.log("estudies", this.studiesSelectedToPrint.length);
-    console.log("estudies", toJS(this.studiesSelectedToPrint));
   };
+
   clearSelectedStudies = () => {
     this.studiesSelectedToPrint = [];
   };
+
   removeSelectedStudy = (estudio: IPrintTypes) => {
     this.studiesSelectedToPrint = this.studiesSelectedToPrint.filter(
       (item) => item.id !== estudio.id
     );
-    console.log("estudies", this.studiesSelectedToPrint.length);
   };
+
   setFormValues = (newFormValues: IClinicResultForm) => {
     this.formValues = newFormValues;
   };
@@ -270,8 +289,12 @@ export default class ClinicResultsStores {
           criticoMinimo: y.criticoMinimo,
           criticoMaximo: y.criticoMaximo,
           ultimoResultado: y.ultimoResultado,
+          ultimaSolicitud: y.ultimaSolicitud,
+          ultimaSolicitudId: y.ultimaSolicitudId,
+          ultimoExpedienteId: y.ultimoExpedienteId,
           deltaCheck: y.deltaCheck,
           editable: y.editable,
+          observacionesId: y.observacionesId,
           orden: y.index!,
           clave: y.clave,
           rango:

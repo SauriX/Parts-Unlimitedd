@@ -25,6 +25,7 @@ export interface ISamplingList {
   sexo: string;
   compañia: string;
   seleccion: boolean;
+  observacion: string;
   estudios: IStudySampling[];
 }
 export interface IStudySampling {
@@ -50,6 +51,7 @@ export interface IUpdate {
   solicitudId: string;
   estudioId: number[];
   observacion?: ISamplingComment[];
+  ruteOrder?:string;
 }
 
 export interface ISamplingComment {

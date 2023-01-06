@@ -20,7 +20,7 @@ const CreationTrackingOrderHeader: FC<CreationTrackingOrderHeaderProps> = ({
 }) => {
   const navigate = useNavigate();
   const { trackingOrderStore } = useStore();
-  const { exportList, TranckingOrderSend, OrderId } = trackingOrderStore;
+  const { exportList, TranckingOrderSend, OrderId,clearTrackingOrders } = trackingOrderStore;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -42,6 +42,8 @@ const CreationTrackingOrderHeader: FC<CreationTrackingOrderHeaderProps> = ({
         <GoBackIcon
           key="back"
           onClick={() => {
+            clearTrackingOrders()
+            
             navigate(`/segRutas`);
           }}
         />,

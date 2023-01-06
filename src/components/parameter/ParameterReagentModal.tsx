@@ -4,6 +4,7 @@ import ParameterReagent from "./detail/ParameterReagent";
 
 export const ParameterReagentModal = (selectedRowKeys: IReagentList[]) => {
   const { openModal, closeModal } = store.modalStore;
+  console.log(selectedRowKeys)
 
   return new Promise((resolve) => {
     openModal({

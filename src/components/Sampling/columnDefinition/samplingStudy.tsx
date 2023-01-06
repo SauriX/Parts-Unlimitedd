@@ -1,16 +1,21 @@
-import { Checkbox, Input, Table, Typography } from "antd";
+import { Checkbox, Input, Table, Tooltip, Typography } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import TextArea from "antd/lib/input/TextArea";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
 import PrintIcon from "../../../app/common/icons/PrintIcon";
+import { EyeOutlined } from "@ant-design/icons";
 import {
   IColumns,
   ISearch,
   getDefaultColumnProps,
 } from "../../../app/common/table/utils";
-import { ISamplingList, IStudySampling, IUpdate } from "../../../app/models/sampling";
+import {
+  ISamplingList,
+  IStudySampling,
+  IUpdate,
+} from "../../../app/models/sampling";
+import alerts from "../../../app/util/alerts";
 const { Link, Text } = Typography;
 
 type expandableProps = {
@@ -29,6 +34,7 @@ const SamplingStudyColumns = ({ printOrder }: tableProps) => {
     searchedText: "",
     searchedColumn: "",
   });
+
   const columns: IColumns<ISamplingList> = [
     {
       ...getDefaultColumnProps("solicitud", "Clave", {
@@ -94,15 +100,35 @@ const SamplingStudyColumns = ({ printOrder }: tableProps) => {
       ...getDefaultColumnProps("compañia", "Compañía", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "10%",
       }),
+    },
+    {
+      key: "observacion",
+      dataIndex: "observacion",
+      title: "Observación",
+      align: "center",
+      width: "10%",
+      render: (_value, record) => {
+        return (
+          <>
+            {record.observacion != null ? (
+              <Tooltip title={record.observacion} color="#108ee9">
+                <EyeOutlined style={{ cursor: "pointer" }} />
+              </Tooltip>
+            ) : (
+              "-"
+            )}
+          </>
+        );
+      },
     },
     {
       key: "imprimir",
       dataIndex: "imprimir",
       title: "Imprimir orden",
       align: "center",
-      width: "10%",
+      width: "5%",
       render: (_value, record) => {
         return (
           <PrintIcon
@@ -119,12 +145,11 @@ const SamplingStudyColumns = ({ printOrder }: tableProps) => {
 };
 
 export const SamplingStudyExpandable = ({
-  activity: activity,
+  activity,
   onChange,
-  updateForm
+  updateForm,
 }: expandableProps) => {
-
-  console.log(updateForm)
+  console.log(updateForm);
 
   const nestedColumns: IColumns<IStudySampling> = [
     {
@@ -167,31 +192,6 @@ export const SamplingStudyExpandable = ({
       ),
     },
     {
-      key: "observacion",
-      dataIndex: "observacion",
-      title: "Observación",
-      align: "center",
-      width: "15%",
-      render: (_value, record) => {
-        return (
-          <>
-            {record.estatus == 1 ? (
-              <TextAreaInput
-                formProps={{ name: record.solicitudEstudioId }}
-                rows={4}
-                autoSize
-                readonly={!(activity == "register")}
-              />
-            ) : (
-              <Text>
-                {record.observacion == null ? "-" : record.observacion}
-              </Text>
-            )}
-          </>
-        );
-      },
-    },
-    {
       key: "Seleccionar",
       dataIndex: "seleccionar",
       title: "Seleccionar",
@@ -201,15 +201,27 @@ export const SamplingStudyExpandable = ({
         <>
           {record.estatus === 1 && (
             <Checkbox
-              onChange={(e) => onChange(e, record.solicitudEstudioId, record.solicitudId)}
-              checked={updateForm.find(x => x.estudioId.includes(record.solicitudEstudioId)) != null}
+              onChange={(e) =>
+                onChange(e, record.solicitudEstudioId, record.solicitudId)
+              }
+              checked={
+                updateForm.find((x) =>
+                  x.estudioId.includes(record.solicitudEstudioId)
+                ) != null
+              }
               disabled={!(activity == "register")}
             ></Checkbox>
           )}
           {record.estatus === 2 && (
             <Checkbox
-              onChange={(e) => onChange(e, record.solicitudEstudioId, record.solicitudId)}
-              checked={updateForm.find(x => x.estudioId.includes(record.solicitudEstudioId)) != null}
+              onChange={(e) =>
+                onChange(e, record.solicitudEstudioId, record.solicitudId)
+              }
+              checked={
+                updateForm.find((x) =>
+                  x.estudioId.includes(record.solicitudEstudioId)
+                ) != null
+              }
               disabled={!(activity == "cancel")}
             ></Checkbox>
           )}
@@ -218,6 +230,19 @@ export const SamplingStudyExpandable = ({
     },
   ];
 
+  return {
+    expandedRowRender: (item: ISamplingList, index: any) => (
+      <Table
+        columns={nestedColumns}
+        dataSource={item.estudios}
+        pagination={false}
+        className="header-expandable-table"
+        showHeader={index === 0}
+      />
+    ),
+    rowExpandable: () => true,
+    defaultExpandAllRows: true,
+  };
   return {
     expandedRowRender: (item: ISamplingList, index: any) => (
       <Table

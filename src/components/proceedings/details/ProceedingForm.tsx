@@ -11,6 +11,7 @@ import {
   Input,
   Tooltip,
   Card,
+  Tag,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout, moneyFormatter } from "../../../app/util/utils";
@@ -465,11 +466,23 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       }),
     },
     {
-      ...getDefaultColumnProps("correo", "Estudios", {
+      ...getDefaultColumnProps("estudios", "Estudios", {
         width: 150,
         minWidth: 150,
         windowSize: windowWidth,
       }),
+      render: (value, record, index) => (
+        <Row align="middle">
+          {value.map((x: any, i: any) => (
+            <Col
+              key={x.clave + "-" + x.id}
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              <ContainerBadge color={"grey"} text={x.clave} />
+            </Col>
+          ))}
+        </Row>
+      ),
     },
     {
       ...getDefaultColumnProps("correo", "Email", {
@@ -864,6 +877,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   type="email"
                   max={100}
                   errors={errors.find((x) => x.name === "correo")?.errors}
+                  readonly={readonly}
                 />
               </Col>
               <Col span={4}>
@@ -935,6 +949,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           formProps={{
                             name: "telefono",
                             label: "Teléfono",
+                            noStyle: true,
                           }}
                           mask={[
                             /[0-9]/,
@@ -963,36 +978,36 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                         />
                       </Col>
                       <Col span={12}>
-                      <MaskInput
-                      formProps={{
-                        name: "celular",
-                        label: "Celular",
-                      }}
-                      mask={[
-                        /[0-9]/,
-                        /[0-9]/,
-                        /[0-9]/,
-                        "-",
-                        /[0-9]/,
-                        /[0-9]/,
-                        /[0-9]/,
-                        "-",
-                        /[0-9]/,
-                        /[0-9]/,
-                        "-",
-                        /[0-9]/,
-                        /[0-9]/,
-                      ]}
-                      validator={(_, value: any) => {
-                        if (!value || value.indexOf("_") === -1) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(
-                          "El campo debe contener 10 dígitos"
-                        );
-                      }}
-                      readonly={readonly}
-                    />
+                        <MaskInput
+                          formProps={{
+                            name: "celular",
+                            label: "Celular",
+                          }}
+                          mask={[
+                            /[0-9]/,
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                            "-",
+                            /[0-9]/,
+                            /[0-9]/,
+                          ]}
+                          validator={(_, value: any) => {
+                            if (!value || value.indexOf("_") === -1) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              "El campo debe contener 10 dígitos"
+                            );
+                          }}
+                          readonly={readonly}
+                        />
                       </Col>
                     </Row>
                   </Input.Group>
@@ -1255,6 +1270,10 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       </div>
     </Spin>
   );
+};
+
+const ContainerBadge = ({ color, text }: { color: string; text?: string }) => {
+  return <Tag color={color}>{text}</Tag>;
 };
 
 export default observer(ProceedingForm);

@@ -187,10 +187,10 @@ export interface IRequestStudy {
   estudioId: number;
   clave: string;
   nombre: string;
-  taponId: number;
-  taponColor: string;
-  taponClave: string;
-  taponNombre: string;
+  taponId?: number;
+  taponColor?: string;
+  taponClave?: string;
+  taponNombre?: string;
   paqueteId?: number;
   paquete?: string;
   listaPrecioId: string;
@@ -210,6 +210,7 @@ export interface IRequestStudy {
   precio: number;
   descuento?: number;
   descuentoPorcentaje?: number;
+  copago?: number;
   precioFinal: number;
   nuevo: boolean;
   asignado: boolean;
@@ -263,6 +264,7 @@ export class RequestStudyValues implements IRequestStudy {
   precio = 0;
   descuento = 0;
   descuentoPorcentaje = 0;
+  copago = 0;
   precioFinal = 0;
   nuevo = false;
   asignado = true;

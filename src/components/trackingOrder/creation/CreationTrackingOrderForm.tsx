@@ -75,6 +75,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     confirmarRecoleccionSend,
     cancelarRecoleccionSend,
     setSendData,
+    setTemperatura,
   } = trackingOrderStore;
 
   const navigate = useNavigate();
@@ -157,10 +158,10 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     { id: 6, dia: "S" },
     { id: 7, dia: "D" },
   ];
-  const [routeFoundOptions,setRouteFoundOptions] = useState<IOptions[]>([]);
-  const selecteddestino  = Form.useWatch("sucursalDestinoId", form);
-  const   routesoptions:IOptions[] = foundRoutes.map((route) => {
-    var data :IOptions = {
+  const [routeFoundOptions, setRouteFoundOptions] = useState<IOptions[]>([]);
+  const selecteddestino = Form.useWatch("sucursalDestinoId", form);
+  const routesoptions: IOptions[] = foundRoutes.map((route) => {
+    var data: IOptions = {
       value: route.id,
       label: route.nombre,
     };
@@ -168,62 +169,51 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     return data;
   });
 
-const  getrutes = (id:string ) =>{
+  const getrutes = (id: string) => {
+    const findedRoutes = [...foundRoutes];
+    let filterRoutes: IRouteForm[] = [];
+    findedRoutes.forEach((x) => {
+      if (x.sucursalDestinoId == id || x.maquiladorId == id) {
+        filterRoutes.push(x);
+      }
+    });
+    console.log(filterRoutes);
+    const routesfilteredoptions: IOptions[] = filterRoutes!.map((route) => {
+      var data: IOptions = {
+        value: route.id,
+        label: route.nombre,
+      };
 
-  const findedRoutes = [... foundRoutes];
-  let filterRoutes:IRouteForm[]= []; 
-  findedRoutes.forEach(x=>{
-    if( x.sucursalDestinoId == id || x.maquiladorId == id){
-      filterRoutes.push(x);
-    }
-  });
-  console.log(filterRoutes);
-  const   routesfilteredoptions:IOptions[] = filterRoutes!.map((route) => {
-    var data :IOptions = {
-      value: route.id,
-      label: route.nombre,
-    };
-
-    return data;
-  });
-  setRouteFoundOptions(routesfilteredoptions);
-  form.setFieldValue("rutaId", undefined);
-}
-  useEffect(()=>{
+      return data;
+    });
+    setRouteFoundOptions(routesfilteredoptions);
+    form.setFieldValue("rutaId", undefined);
+  };
+  useEffect(() => {
     getrutes(selecteddestino);
-  },[selecteddestino]);
-
-  const initialSerachRoutes = async (initial = true) => {
+  }, [selecteddestino]);
+  useEffect(() => {
+    getrutes(selecteddestino);
+  }, [foundRoutes]);
+  const initialSerachRoutes = async (
+    initial = true,
+    hora = moment().hours() + 1
+  ) => {
     let formValues = form.getFieldsValue();
     formValues = { ...formValues };
     console.log("Tracking order: ", formValues);
     let routeForms: IRouteForm = new RouteFormValues();
-    routeForms.horaDeRecoleccion = moment().hours() + 1;
+    routeForms.horaDeRecoleccion = hora;
     routeForms.sucursalOrigenId = formValues.sucursalOrigenId!;
     const parent = treeData.find((x) =>
       x.children.map((x) => x.value).includes(formValues.sucursalDestinoId!)
     );
-    if (!initial) {
-      if (parent?.title === "Sucursales") {
-        console.log("sucursal");
-        routeForms.sucursalDestinoId =
-          formValues.sucursalDestinoId! === "sucursalDestinoId" ||
-          formValues.sucursalDestinoId! === "maquiladorId"
-            ? ""
-            : formValues.sucursalDestinoId!;
-      } else {
-        console.log("maquilador");
-        routeForms.maquiladorId =
-          formValues.sucursalDestinoId! === "sucursalDestinoId" ||
-          formValues.sucursalDestinoId! === "maquiladorId"
-            ? ""
-            : formValues.sucursalDestinoId!;
-      }
-    }
+
     routeForms.dias = dias.filter((x) => x.id === moment().day());
     console.log("formulario de envio", routeForms);
 
-    await find(routeForms);
+    var rutes = await find(routeForms);
+    return rutes;
   };
 
   useEffect(() => {
@@ -236,11 +226,16 @@ const  getrutes = (id:string ) =>{
   }, [getAll, searchParams]);
 
   const onFinish = async (newValues: ITrackingOrderForm) => {
-  
     console.log("values", values);
     console.log("newValues", newValues);
     const trackingOrderSend = { ...newTrackingOrder, ...newValues };
-
+    if (
+      trackingOrderSend.id === "" ||
+      trackingOrderSend === null ||
+      trackingOrderSend === undefined
+    ) {
+      trackingOrderSend.id = "00000000-0000-0000-0000-000000000000";
+    }
     const parent = treeData.find((x) =>
       x.children
         .map((x) => x.value)
@@ -296,6 +291,10 @@ const  getrutes = (id:string ) =>{
     console.log("trackingOrderSend", trackingOrderSend);
 
     setSendData(trackingOrderSend);
+    if(trackingOrderSend.estudios.length<=0){
+      alerts.error("La orden de seguimiento debe Contener al menos un estudio");
+      return
+    }
     if (confirmCreationOrder) {
       setLoading(true);
       if (id) {
@@ -440,9 +439,10 @@ const  getrutes = (id:string ) =>{
             onFinish={onFinish}
             scrollToFirstError
             labelWrap
-            onValuesChange={(changes_values: any) => {
+            onValuesChange={async (changes_values: any) => {
               const propertyForm = Object.keys(changes_values)[0];
               if (propertyForm == "temperatura") {
+                setTemperatura(changes_values[propertyForm]);
                 setTemperature(changes_values[propertyForm]);
               }
               setDisabled(
@@ -450,6 +450,16 @@ const  getrutes = (id:string ) =>{
                   form.getFieldsError().filter(({ errors }) => errors.length)
                     .length > 0
               );
+
+              if (propertyForm === "fecha") {
+                var date = changes_values[propertyForm];
+                setRouteFoundOptions([]);
+                if (moment().diff(date) < 0) {
+                  await initialSerachRoutes(true, 0);
+                } else {
+                  await initialSerachRoutes(true);
+                }
+              }
             }}
           >
             <Row>
@@ -510,7 +520,6 @@ const  getrutes = (id:string ) =>{
                   max={100}
                   readonly={readonly}
                 />
- 
               </Col>
 
               <Col md={6} sm={12} style={{ textAlign: "left" }}>
@@ -519,8 +528,6 @@ const  getrutes = (id:string ) =>{
                     name: "temperatura",
                     label: "Temperatura",
                   }}
-                  max={100}
-                  min={-100}
                   required
                   readonly={false}
                 />
@@ -536,7 +543,7 @@ const  getrutes = (id:string ) =>{
                 />
               </Col>
               <Col md={3} sm={12} style={{ textAlign: "left" }}>
-              <SwitchInput
+                <SwitchInput
                   name="activo"
                   onChange={(value) => {
                     if (value) {
@@ -560,7 +567,6 @@ const  getrutes = (id:string ) =>{
                 <Button
                   type="primary"
                   htmlType="submit"
-                  disabled={disabled}
                   onClick={async (e) => {
                     let noEscaneados = trackingOrder.some(
                       (order) => !order.escaneado

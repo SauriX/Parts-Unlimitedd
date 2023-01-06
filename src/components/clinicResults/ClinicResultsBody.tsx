@@ -1,7 +1,7 @@
 import { Button, Col, Divider, Row, Spin } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { observer } from "mobx-react-lite";
-import React from "react";
+import React, { useEffect } from "react";
 import { Fragment, useState } from "react";
 import { useStore } from "../../app/stores/store";
 import ClinicResultsColumns, {
@@ -10,6 +10,7 @@ import ClinicResultsColumns, {
 import ClinicResultsFilter from "./ClinicResultsFilter";
 import ClinicResultsTable from "./ClinicResultsTable";
 import { IClinicResultForm } from "../../app/models/clinicResults";
+import moment from "moment";
 
 type CRDefaultProps = {
   printing: boolean;
@@ -18,13 +19,25 @@ type CRDefaultProps = {
 
 const ClinicResultsBody = ({ printing, formValues }: CRDefaultProps) => {
   const { clinicResultsStore } = useStore();
-  const { data } = clinicResultsStore;
+  const { data, getAll } = clinicResultsStore;
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const readRequests = async () => {
+      await getAll({
+        fecha: [
+          moment(Date.now()).utcOffset(0, true),
+          moment(Date.now()).utcOffset(0, true),
+        ],
+      });
+    };
+
+    readRequests();
+  }, []);
 
   return (
     <Fragment>
       <ClinicResultsFilter />
-      {/* <Divider orientation="left">{formValues.fecha[0].format('DD-MMM-YYYY')} - {formValues.fecha[1].format('DD-MMM-YYYY')}</Divider> */}
       <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
         <ClinicResultsTable
           data={data}

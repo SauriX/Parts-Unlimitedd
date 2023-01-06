@@ -1,14 +1,22 @@
 import { Checkbox, Table } from "antd";
 import { observer } from "mobx-react-lite";
 import { IColumns } from "../../../app/common/table/utils";
-
-const InvoiceCompanyStudyTable = () => {
+import { moneyFormatter } from "../../../app/util/utils";
+type InvoiceCompanyStudyTableProps = {
+  studies: any[];
+  indice: number;
+};
+const InvoiceCompanyStudyTable = ({
+  studies,
+  indice,
+}: InvoiceCompanyStudyTableProps) => {
   const columns: IColumns = [
     {
       key: "estudio",
       dataIndex: "estudio",
       title: "Estudio",
       align: "center",
+      width: 600,
     },
     {
       key: "area",
@@ -17,49 +25,26 @@ const InvoiceCompanyStudyTable = () => {
       align: "center",
     },
     {
-      key: "precio",
-      dataIndex: "precio",
+      key: "precioFinal",
+      dataIndex: "precioFinal",
       title: "Precio",
       align: "center",
-    },
-    {
-      key: "estatus",
-      dataIndex: "estatus",
-      title: "Estatus",
-      align: "center",
-    },
-    {
-      key: "fechaEntrega",
-      dataIndex: "fechaEntrega",
-      title: "Fecha de entrega",
-      align: "center",
-    },
-    {
-      key: "d",
-      dataIndex: "d",
-      title: "D",
-      align: "center",
-    },
-    {
-      key: "c",
-      dataIndex: "c",
-      title: "C",
-      align: "center",
-    },
-    {
-      key: "Total",
-      dataIndex: "total",
-      title: "Total",
-      align: "center",
+      render(value, record, index) {
+        return moneyFormatter.format(+value);
+      },
     },
   ];
   return (
     <>
       <Table<any>
+        rowKey={(record) => record.solicitudEstudioId}
         size="small"
         className="header-expandable-table"
         bordered
         columns={columns}
+        dataSource={studies}
+        pagination={false}
+        showHeader={indice === 0}
       />
     </>
   );

@@ -77,9 +77,11 @@ import RequestWee from "../../components/request/list/RequestWee";
 import RequestTokenValidation from "../../components/request/detail/RequestTokenValidation";
 import DeliveryResults from "../../views/DeliveryResults";
 import Invoice from "../../views/Invoice";
+import InvoiceCompanyCreate from "../../components/invoice/invoiceCompany/InvoiceCompanyCreate/InvoiceCompanyCreate";
 import Notifications from "../../views/Notifications";
 import NotificationsDetail from "../../components/notifications/NotificationsDetail";
 import Relaseresult from "../../views/Relaseresult";
+import Test1 from "../../Test1";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -115,10 +117,12 @@ function App() {
       <ModalComponent />
       <DrawerComponent />
       <Routes>
+      <Route path="test1" element={<Test1 />} />
         <Route path="login" element={<Login />} />
         <Route element={<PrivateRoute />}>
           <Route element={<LayoutComponent />}>
             <Route path="" element={<Home />} />
+            
             <Route path="users" element={<User />} />
             <Route path="users/:id" element={<UserDetail />} />
             <Route path="new-user" element={<NewUser />} />
@@ -160,6 +164,7 @@ function App() {
             <Route path="indications" element={<Indication />} />
             <Route path="indications/:id" element={<IndicationDetail />} />
             <Route path="invoice" element={<Invoice />} />
+            <Route path="invoice/create" element={<InvoiceCompanyCreate />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="notifications/:id" element={<NotificationsDetail />} />
             <Route path="roles/new-role" element={<NewRole />} />

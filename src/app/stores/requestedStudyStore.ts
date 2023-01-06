@@ -25,7 +25,6 @@ export default class RequestedStudyStore {
   studies: IRequestedStudy[] = [];
   formValues: IRequestedStudyForm = new RequestedStudyFormValues();
   loadingStudies: boolean = false;
-  clear: boolean = false;
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -37,27 +36,6 @@ export default class RequestedStudyStore {
 
   setFormValues = (newFormValues: IRequestedStudyForm) => {
     this.formValues = newFormValues;
-  };
-
-  clearFilter = () => {
-    const emptyFilter: IRequestedStudyForm = {
-      sucursalId: [],
-      medicoId: [],
-      compañiaId: [],
-      fecha: [
-        moment(Date.now()).utcOffset(0, true),
-        moment(Date.now()).utcOffset(0, true).add(1, "day"),
-      ],
-      buscar: "",
-      procedencia: [],
-      departamento: [],
-      tipoSolicitud: [],
-      area: [],
-      estatus: [],
-    };
-    this.data = [];
-    this.formValues = emptyFilter;
-    this.clear = !this.clear;
   };
 
   access = async () => {

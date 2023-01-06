@@ -10,6 +10,7 @@ import {
   Select,
   Spin,
   Table,
+  Tooltip,
 } from "antd";
 import { observer } from "mobx-react-lite";
 import { Typography } from "antd";
@@ -28,7 +29,12 @@ import { IClinicResultCaptureForm } from "../../../app/models/clinicResults";
 import moment from "moment";
 import { ObservationModal } from "./ObservationModal";
 import { DownloadOutlined } from "@ant-design/icons";
+import { v4 as uuid } from "uuid";
+import { EyeOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+
 const { TextArea } = Input;
+const { Text, Link } = Typography;
 
 type ClinicalResultsDetailProps = {
   estudio: IRequestStudy;
@@ -46,6 +52,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   estudio,
   estudioId,
   claveMedico,
+  paciente,
   isMarked,
   solicitud,
   showHeaderTable,
@@ -62,6 +69,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const [exportGlucoseData, setExportGlucoseData] =
     useState<IClinicResultCaptureForm>();
   const [resultParam, setResultParam] = useState<any[]>([]);
+  const [modalValues, setModalValues] = useState<any>();
   const { optionStore, clinicResultsStore } = useStore();
 
   const {
@@ -73,6 +81,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     cancelResults,
     addSelectedStudy,
     removeSelectedStudy,
+    observationsSelected,
+    setObservationsSelected,
   } = clinicResultsStore;
 
   const { getMedicOptions, getUnitOptions } = optionStore;
@@ -81,6 +91,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     "parametros",
     form
   ) as IClinicResultCaptureForm[];
+  const navigate = useNavigate();
 
   useEffect(() => {
     setCheckedPrint(isMarked);
@@ -88,7 +99,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       if (isMarked) {
         addSelectedStudy({ id: currentStudy.id!, tipo: "LABORATORY" });
       } else {
-        removeSelectedStudy({ id: currentStudy.id!, tipo: "LABORATORY" });
+        removeSelectedStudy({
+          id: currentStudy.id!,
+          tipo: "LABORATORY",
+        });
       }
     }
   }, [isMarked]);
@@ -116,7 +130,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const loadInit = async () => {
     const cStudy = await getRequestStudyById(estudio.id!);
     setCurrentStudy(cStudy!);
-    console.log(cStudy);
 
     let captureResult = studies.find((x) => x.id == estudioId);
 
@@ -163,7 +176,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
 
   const columns: IColumns<any> = [
     {
-      key: "id",
+      key: uuid(),
       dataIndex: "clave",
       title: "Clave",
       align: "left",
@@ -173,7 +186,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       },
     },
     {
-      key: "id",
+      key: uuid(),
       dataIndex: "nombre",
       title: "Estudio",
       align: "left",
@@ -183,7 +196,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       },
     },
     {
-      key: "Orden",
+      key: uuid(),
       dataIndex: "orden",
       title: "Acciones",
       align: "left",
@@ -191,7 +204,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       render: () => renderUpdateStatus(),
     },
     {
-      key: "Seleccionar",
+      key: uuid(),
       dataIndex: "imprimir",
       title: "Seleccionar",
       align: "center",
@@ -207,7 +220,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
             disabled={currentStudy.estatusId < status.requestStudy.capturado}
             onChange={(value) => {
               if (value.target.checked) {
-                addSelectedStudy({ id: currentStudy.id!, tipo: "LABORATORY" });
+                addSelectedStudy({
+                  id: currentStudy.id!,
+                  tipo: "LABORATORY",
+                });
                 setCheckedPrint(true);
               } else {
                 removeSelectedStudy({
@@ -234,7 +250,16 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                   ""
                 ) : (
                   <>
-                    <Col span={currentStudy.estudioId == 631 ? 8 : currentStudy.estatusId == status.requestStudy.liberado ? 6 : 12}>
+                    <Col
+                      span={
+                        currentStudy.estudioId == 631
+                          ? 8
+                          : currentStudy.estatusId ==
+                            status.requestStudy.liberado
+                          ? 6
+                          : 12
+                      }
+                    >
                       <Button
                         type="default"
                         htmlType="submit"
@@ -263,7 +288,15 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                     </Col>
                   </>
                 )}
-                <Col span={currentStudy.estudioId == 631 ? 8 : currentStudy.estatusId == status.requestStudy.liberado ? 6 : 12}>
+                <Col
+                  span={
+                    currentStudy.estudioId == 631
+                      ? 8
+                      : currentStudy.estatusId == status.requestStudy.liberado
+                      ? 6
+                      : 12
+                  }
+                >
                   <Button
                     type="primary"
                     htmlType="submit"
@@ -288,11 +321,18 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                   </Button>
                 </Col>
                 {currentStudy.estatusId === status.requestStudy.liberado ? (
-                  <Col span={currentStudy.estudioId == 631 ? 8 : currentStudy.estatusId == status.requestStudy.liberado ? 6 : 12}>
+                  <Col
+                    span={
+                      currentStudy.estudioId == 631
+                        ? 8
+                        : currentStudy.estatusId == status.requestStudy.liberado
+                        ? 6
+                        : 12
+                    }
+                  >
                     <Button
                       type="primary"
                       htmlType="submit"
-                      // disabled={disabled}
                       onClick={() => {
                         setEnvioManual(true);
                         form.submit();
@@ -311,7 +351,15 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                 )}
                 {currentStudy.estudioId == 631 &&
                 currentStudy.estatusId >= 5 ? (
-                  <Col span={currentStudy.estudioId == 631 ? 8 : currentStudy.estatusId == status.requestStudy.liberado ? 6 : 12}>
+                  <Col
+                    span={
+                      currentStudy.estudioId == 631
+                        ? 8
+                        : currentStudy.estatusId == status.requestStudy.liberado
+                        ? 6
+                        : 12
+                    }
+                  >
                     <Button
                       type="primary"
                       icon={<DownloadOutlined />}
@@ -361,6 +409,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     );
     if (success) {
       setHideWhenCancel(false);
+      setObservationsSelected([]);
       await loadInit();
     }
 
@@ -418,7 +467,12 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const referenceValues = (
     tipoValor: string,
     valorInicial?: string,
-    valorFinal?: string
+    valorFinal?: string,
+    primeraColumna?: string,
+    segundaColumna?: string,
+    terceraColumna?: string,
+    cuartaColumna?: string,
+    quintaColumna?: string
   ) => {
     if (
       tipoValor == "1" ||
@@ -429,11 +483,19 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       return valorInicial + " - " + valorFinal;
     } else if (tipoValor == "7" || tipoValor == "8" || tipoValor == "10") {
       return valorInicial + "";
+    } else if (tipoValor == "11") {
+      return primeraColumna + " - " + segundaColumna + "\n";
+    } else if (tipoValor == "12") {
+      return `${primeraColumna} \t ${segundaColumna} \t ${terceraColumna}`;
+    } else if (tipoValor == "13") {
+      return `${primeraColumna} \t ${segundaColumna} \t ${terceraColumna} \t ${cuartaColumna}`;
+    } else if (tipoValor == "14") {
+      return `${primeraColumna} \t ${segundaColumna} \t ${terceraColumna} \t ${cuartaColumna} \t ${quintaColumna}`;
     }
   };
 
   return (
-    <Fragment>
+    <Fragment key={estudio.id}>
       {currentStudy.estatusId >= 3 && currentStudy.estatusId != 9 ? (
         <Spin spinning={loading}>
           <Row style={{ marginBottom: "20px" }}>
@@ -503,7 +565,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
             <Col span={24}>
               <Table<any>
                 size="small"
-                rowKey={(record) => record.id}
+                rowKey={uuid()}
                 columns={columns}
                 pagination={false}
                 dataSource={[currentStudy]}
@@ -539,19 +601,19 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                       <h3>RESULTADO</h3>
                     </Col>
                     <Col span={4}>
-                      <h3>PREVIO</h3>
-                    </Col>
-                    <Col span={4}>
                       <h3>UNIDADES</h3>
                     </Col>
                     <Col span={4}>
                       <h3>REFERENCIA</h3>
                     </Col>
+                    <Col span={4}>
+                      <h3>PREVIO</h3>
+                    </Col>
                   </Row>
                   <Form.List name="parametros">
                     {(fields) => (
                       <>
-                        {fields.map((field) => {
+                        {fields.map((field, index) => {
                           let fieldValue = form.getFieldValue([
                             "parametros",
                             field.name,
@@ -567,7 +629,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                               parseFloat(fieldValue.valorFinal);
 
                           let valuesByColumn =
-                            fieldValue.tipoValorId == "6" ||
                             fieldValue.tipoValorId == "11" ||
                             fieldValue.tipoValorId == "12" ||
                             fieldValue.tipoValorId == "13" ||
@@ -578,10 +639,15 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                               key={field.key}
                               justify="space-between"
                               gutter={[0, 24]}
-                              style={{ textAlign: "center", marginBottom: 5 }}
+                              style={{
+                                textAlign: "center",
+                                marginBottom: 5,
+                              }}
                               align="middle"
                             >
-                              {fieldValue.tipoValorId == "9" ? (
+                              {fieldValue.tipoValorId == "9" ||
+                              (fieldValue.clave === "_OB_CTG" &&
+                                paciente.sexo === "M") ? (
                                 fieldValue.nombre != null ? (
                                   <Col span={4}>
                                     <strong>{fieldValue.nombre}</strong>
@@ -596,7 +662,11 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   <Col span={4}>
                                     <h4>{fieldValue.nombre}</h4>
                                     {"\n"}
-                                    <h5 style={{ color: "red" }}>
+                                    <h5
+                                      style={{
+                                        color: "red",
+                                      }}
+                                    >
                                       {fieldValue.rango
                                         ? fieldValue.resultado
                                         : null}
@@ -609,7 +679,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                         <Form.Item
                                           {...field}
                                           name={[field.name, "resultado"]}
-                                          fieldKey={[field.key, "resultado"]}
                                           validateTrigger={[
                                             "onChange",
                                             "onBlur",
@@ -627,22 +696,47 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                             autoSize
                                           />
                                         </Form.Item>
+                                        <Form.Item
+                                          {...field}
+                                          name={[field.name, "observacionesId"]}
+                                          noStyle
+                                          key={uuid()}
+                                        >
+                                          <Input style={{ display: "none" }} />
+                                        </Form.Item>
                                         <Button
                                           type="primary"
                                           onClick={async () => {
-                                            const modal =
+                                            const modal: any =
                                               await ObservationModal(
                                                 fieldValue.parametroId,
-                                                fieldValue.tipoValorId
+                                                fieldValue.tipoValorId,
+                                                observationsSelected,
+                                                form.getFieldValue([
+                                                  "parametros",
+                                                  field.name,
+                                                  "observacionesId",
+                                                ])
                                               );
-                                            form.setFieldValue(
-                                              [
-                                                "parametros",
-                                                field.name,
-                                                "resultado",
-                                              ],
-                                              modal
-                                            );
+                                            if (modal) {
+                                              form.setFieldValue(
+                                                [
+                                                  "parametros",
+                                                  field.name,
+                                                  "resultado",
+                                                ],
+                                                modal.data
+                                              );
+                                              form.setFieldValue(
+                                                [
+                                                  "parametros",
+                                                  field.name,
+                                                  "observacionesId",
+                                                ],
+                                                modal.value
+                                              );
+                                              setModalValues(modal);
+                                            }
                                           }}
                                         >
                                           ...
@@ -652,32 +746,36 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                       <Form.Item
                                         {...field}
                                         name={[field.name, "resultado"]}
-                                        fieldKey={[field.key, "resultado"]}
                                         validateTrigger={["onChange", "onBlur"]}
                                         noStyle
+                                        key={"resultado"}
                                       >
                                         {fieldValue.tipoValorId == "5" ||
-                                        fieldValue.tipoValorId == "6" ? (
+                                        (fieldValue.tipoValorId == "6" &&
+                                          fieldValue.clave !== "_OB_CTG") ? (
                                           <Select
                                             options={fieldValue.tipoValores!.map(
                                               (x) => ({
-                                                key: x.id,
+                                                key: uuid(),
                                                 value:
                                                   fieldValue.tipoValorId == "5"
                                                     ? x.opcion!
                                                     : fieldValue.tipoValorId ==
-                                                      "6"
+                                                        "6" &&
+                                                      currentStudy.id !== 631
                                                     ? x.primeraColumna
                                                     : x.opcion!,
                                                 label:
                                                   fieldValue.tipoValorId == "5"
                                                     ? x.opcion!
                                                     : fieldValue.tipoValorId ==
-                                                      "6"
+                                                        "6" &&
+                                                      currentStudy.id !== 631
                                                     ? x.primeraColumna
                                                     : x.opcion!,
                                               })
                                             )}
+                                            allowClear
                                             style={{
                                               width: "80%",
                                               marginBottom: "7px",
@@ -709,25 +807,156 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                       </Form.Item>
                                     )}
                                   </Col>
-                                  <Col span={4}>
-                                    {fieldValue.ultimoResultado == null
-                                      ? "-"
-                                      : fieldValue.ultimoResultado}
-                                  </Col>
-                                  <Col span={4}>
-                                    {fieldValue.unidadNombre == null
-                                      ? "-"
-                                      : fieldValue.unidadNombre}
-                                  </Col>
-                                  <Col span={4}>
-                                    {fieldValue.valorInicial == null
-                                      ? "-"
-                                      : referenceValues(
-                                          fieldValue.tipoValorId,
-                                          fieldValue.valorInicial,
-                                          fieldValue.valorFinal
+                                  {parseInt(fieldValue.tipoValorId) < 12 ? (
+                                    <Col span={4}>
+                                      {fieldValue.unidadNombre == null
+                                        ? "-"
+                                        : fieldValue.unidadNombre}
+                                    </Col>
+                                  ) : (
+                                    <Fragment key={uuid()}>
+                                      <Col
+                                        span={
+                                          fieldValue.tipoValorId === "12"
+                                            ? 3
+                                            : 4
+                                        }
+                                      >
+                                        {fieldValue.tipoValores!.map((x) => (
+                                          <Fragment key={uuid()}>
+                                            <Text>{x.primeraColumna}</Text>
+                                            <br />
+                                          </Fragment>
+                                        ))}
+                                      </Col>
+                                      {parseInt(fieldValue.tipoValorId) >=
+                                      13 ? (
+                                        <Col
+                                          span={
+                                            fieldValue.tipoValorId === "12"
+                                              ? 3
+                                              : 4
+                                          }
+                                        >
+                                          {fieldValue.tipoValores!.map((x) => (
+                                            <Fragment key={uuid()}>
+                                              <Text>{x.segundaColumna}</Text>
+                                              <br />
+                                            </Fragment>
+                                          ))}
+                                        </Col>
+                                      ) : (
+                                        ""
+                                      )}
+                                    </Fragment>
+                                  )}
+                                  {parseInt(fieldValue.tipoValorId) >= 11 ? (
+                                    <Fragment key={uuid()}>
+                                      <Col
+                                        span={
+                                          fieldValue.tipoValorId === "12"
+                                            ? 3
+                                            : 4
+                                        }
+                                      >
+                                        {fieldValue.tipoValores!.map((x) => (
+                                          <Fragment key={uuid()}>
+                                            <Text>
+                                              {fieldValue.tipoValorId === "12"
+                                                ? x.segundaColumna
+                                                : fieldValue.tipoValorId ===
+                                                  "13"
+                                                ? x.terceraColumna
+                                                : x.primeraColumna}
+                                            </Text>
+                                            <br />
+                                          </Fragment>
+                                        ))}
+                                      </Col>
+                                      <Col
+                                        span={
+                                          fieldValue.tipoValorId === "12"
+                                            ? 3
+                                            : fieldValue.tipoValorId === "14"
+                                            ? 1.5
+                                            : 4
+                                        }
+                                      >
+                                        {fieldValue.tipoValores!.map((x) => (
+                                          <Fragment key={uuid()}>
+                                            <Text>
+                                              {fieldValue.tipoValorId === "12"
+                                                ? x.terceraColumna
+                                                : fieldValue.tipoValorId ===
+                                                  "13"
+                                                ? x.cuartaColumna
+                                                : x.segundaColumna}
+                                            </Text>
+                                            <br />
+                                          </Fragment>
+                                        ))}
+                                      </Col>
+                                      {fieldValue.tipoValorId === "14" ? (
+                                        <Col span={1.5}>
+                                          {fieldValue.tipoValores!.map((x) => (
+                                            <Fragment key={uuid()}>
+                                              <Text>{x.quintaColumna}</Text>
+                                              <br />
+                                            </Fragment>
+                                          ))}
+                                        </Col>
+                                      ) : (
+                                        ""
+                                      )}
+                                    </Fragment>
+                                  ) : (
+                                    ""
+                                  )}
+                                  {!valuesByColumn ? (
+                                    <>
+                                      <Col span={4}>
+                                        {fieldValue.valorInicial == null
+                                          ? "-"
+                                          : referenceValues(
+                                              fieldValue.tipoValorId,
+                                              fieldValue.valorInicial,
+                                              fieldValue.valorFinal
+                                            )}
+                                      </Col>
+                                      <Col span={4}>
+                                        {fieldValue.ultimoResultado == null &&
+                                        fieldValue.ultimaSolicitud == null ? (
+                                          "-"
+                                        ) : (
+                                          <Tooltip
+                                            title={
+                                              <>
+                                                <Text>
+                                                  {fieldValue.ultimoResultado} -{" "}
+                                                  <Link
+                                                    onClick={() => {
+                                                      navigate(
+                                                        `/clinicResultsDetails/${fieldValue.ultimoExpedienteId}/${fieldValue.ultimaSolicitudId}`
+                                                      );
+                                                    }}
+                                                  >
+                                                    {fieldValue.ultimaSolicitud}
+                                                  </Link>
+                                                </Text>
+                                              </>
+                                            }
+                                            color="#ffffff"
+                                          >
+                                            <EyeOutlined
+                                              style={{ cursor: "pointer" }}
+                                            />
+                                          </Tooltip>
                                         )}
-                                  </Col>
+                                      </Col>
+                                    </>
+                                  ) : (
+                                    ""
+                                  )}
                                 </>
                               )}
                             </Row>

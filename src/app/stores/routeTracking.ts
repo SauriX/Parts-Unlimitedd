@@ -88,6 +88,7 @@ setventana=(ventana:string)=>{
     }
   };
   exportForm = async (id: string) => {
+    console.log(id);
     try {
       await RouteTracking.exportForm(id);
     } catch (error: any) {

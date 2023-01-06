@@ -1,7 +1,10 @@
+import moment from "moment";
+
 export interface IMassSearch {
   //formulario
   fechas: moment.Moment[];
   area: number;
+  nombreArea: string;
   busqueda: string;
   estudios: string[];
   sucursales: string[];
@@ -30,6 +33,7 @@ export interface IResultList {
 }
 
 export interface IDeliverResultsForm {
+  clave?: string;
   companias: string[];
   departamentos: number[];
   fechaInicial: moment.Moment;
@@ -41,4 +45,17 @@ export interface IDeliverResultsForm {
   sucursales: string[];
   tipoFecha: number;
   tipoSolicitud: number[];
+}
+
+export class MassSearchValues implements IMassSearch {
+  fechas = [moment(Date.now()).utcOffset(0, true), moment(Date.now()).utcOffset(0, true)];
+  area = 0;
+  nombreArea = "";
+  busqueda = "";
+  estudios = [];
+  sucursales = [];
+
+  constructor(init?: IMassSearch) {
+    Object.assign(this, init);
+  }
 }

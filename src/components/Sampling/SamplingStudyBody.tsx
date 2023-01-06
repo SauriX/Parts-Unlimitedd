@@ -30,7 +30,12 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
 
   useEffect(() => {
     const readRequests = async () => {
-      await getAll(formValues);
+      await getAll({
+        fecha: [
+          moment(Date.now()).utcOffset(0, true),
+          moment(Date.now()).utcOffset(0, true),
+        ],
+      });
     };
 
     readRequests();
@@ -74,16 +79,20 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
     const obs = form.getFieldsValue();
     console.log(obs);
 
-    let observaciones: ISamplingComment[] = Object.keys(obs).map(x => ({id: parseInt(x), observacion: obs[x]}));
+    let observaciones: ISamplingComment[] = Object.keys(obs).map((x) => ({
+      id: parseInt(x),
+      observacion: obs[x],
+    }));
 
-    let studyWithComments: IUpdate[] = updateForm.map(x => {
+    let studyWithComments: IUpdate[] = updateForm.map((x) => {
       return {
-        ...x, observacion: observaciones.filter(y => x.estudioId.includes(y.id))
-      }
-    })
+        ...x,
+        observacion: observaciones.filter((y) => x.estudioId.includes(y.id)),
+      };
+    });
 
-    setUpdateForm(studyWithComments)
-    console.log(studyWithComments)
+    setUpdateForm(studyWithComments);
+    console.log(studyWithComments);
 
     setLoading(true);
     if (activity == "register") {
@@ -178,7 +187,7 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
                       updateData();
                     }}
                   >
-                    Aceptar Registro
+                    Aceptar Toma
                   </Button>
                 </Col>
               ) : (
@@ -209,7 +218,7 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
             expandable={SamplingStudyExpandable({
               activity,
               onChange,
-              updateForm
+              updateForm,
             })}
           />
         </Form>

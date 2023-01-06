@@ -54,6 +54,7 @@ export type imagesType =
   | "expediente"
   | "grafico"
   | "indicacion"
+  | "indicadores"
   | "laboratorio"
   | "lealtad"
   | "maquilador"

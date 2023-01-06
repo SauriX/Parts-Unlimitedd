@@ -120,7 +120,9 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
 
       if (medics) {
         form.setFieldsValue(medics);
-        getLocation(medics.codigoPostal!.toString());
+        if (medics.codigoPostal) {
+          getLocation(medics.codigoPostal.toString());
+        }
         setValues(medics);
       }
 
@@ -365,7 +367,6 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                         name: "especialidadId",
                         label: "Especialidad",
                       }}
-                      required
                       readonly={readonly}
                       options={fieldOptions}
                     />
@@ -377,7 +378,6 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                         label: "Calle",
                       }}
                       max={100}
-                      required
                       readonly={readonly}
                     />
                     <br />
@@ -387,7 +387,6 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                         label: "Número Exterior",
                       }}
                       max={9999}
-                      required
                       readonly={readonly}
                     />
                     <br />
@@ -440,7 +439,6 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
                         name: "coloniaId",
                         label: "Colonia",
                       }}
-                      required
                       readonly={readonly}
                       options={colonies}
                     />
