@@ -226,8 +226,6 @@ const PendingRecive = () => {
       var datas = await getAllRecive(search!);
       setSearchi(search);
       datas?.forEach((x: any) => studios.push(x.pendings));
-      // setStudyCont(studios.length);
-
       setventana("recive");
       await getBranchCityOptions();
     };
