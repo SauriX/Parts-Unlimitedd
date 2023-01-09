@@ -18,8 +18,12 @@ type InvoiceCompanyInfoProps = {
 const InvoiceCompanyInfo = ({ company }: InvoiceCompanyInfoProps) => {
   const [form] = Form.useForm();
   const onFinish = () => {};
+  // const
   useEffect(() => {
-    form.setFieldsValue(company);
+    if (company) {
+      company.direccionFiscal = `${company.estado} ${company.ciudad} ${company.codigoPostal} ${company.colonia} `;
+      form.setFieldsValue(company);
+    }
   }, [company]);
   const reasonCancelation: IOptions[] = [
     {

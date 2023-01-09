@@ -10,26 +10,15 @@ import InvoiceCompanyDetail from "./InvoiceCompanyDetail";
 import InvoiceCompanyInfo from "./InvoiceCompanyInfo";
 
 const InvoiceCompanyCreate = () => {
-  const { invoiceCompanyStore, optionStore } = useStore();
-  const {
-    bankOptions,
-    paymentMethodOptions,
-    cfdiOptions,
-    getbankOptions,
-    getpaymentMethodOptions,
-    getcfdiOptions,
-  } = optionStore;
+  const { invoiceCompanyStore } = useStore();
   const { selectedRows, getCompanyById, checkIn } = invoiceCompanyStore;
   const [company, setCompany] = useState<ICompanyForm>();
   const [totalFinalEstudios, setTotalFinalEstudios] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
   const [saldo, setSaldo] = useState<number>(0);
   const [estudios, setEstudios] = useState<any[]>([]);
-  useEffect(() => {
-    getbankOptions();
-    getpaymentMethodOptions();
-    getcfdiOptions();
-  }, []);
+  const [currentPaymentMethod, setCurrenPaymentMethod] = useState<any>();
+
   useEffect(() => {
     const estuiosTotal = selectedRows.flatMap(
       (solicitud) => solicitud.estudios
@@ -70,25 +59,25 @@ const InvoiceCompanyCreate = () => {
       solicitudesId: selectedRows.map((row: any) => row.solicitudId),
       estudios: estudios,
       formaPago: "" + company?.formaDePagoId,
-      tipo: "",
+      tipo: "PUE",
       claveExterna: company?.clave,
-      usoCFDI: "",
+      usoCFDI: company?.cfdiId,
       cliente: {
         razonSocial: company?.razonSocial,
         RFC: company?.razonSocial,
-        regimenFiscal: "",
-        correo: "",
-        telefono: "",
+        regimenFiscal: company?.regimenFiscal,
+        correo: company?.emailEmpresarial,
+        telefono: "1234567890",
         domicilio: {
           codigoPostal: company?.codigoPostal,
-          calle: "",
-          numeroExterior: "",
+          calle: "example street",
+          numeroExterior: "100",
           numeroInterior: "",
-          colonia: "",
+          colonia: company?.colonia,
           ciudad: company?.ciudad,
-          municipio: "",
+          municipio: company?.ciudad,
           estado: company?.estado,
-          pais: "",
+          pais: "México",
         },
       },
     };

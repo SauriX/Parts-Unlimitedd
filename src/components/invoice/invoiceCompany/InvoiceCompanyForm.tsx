@@ -125,6 +125,7 @@ const InvoiceComapnyForm = () => {
                 <Col span={8}>
                   <DateRangeInput
                     formProps={{ label: "Fechas", name: "fechas" }}
+                    disableAfterDates
                   />
                 </Col>
                 <Col span={8}>
@@ -245,7 +246,7 @@ const InvoiceComapnyForm = () => {
               onClick={() => {
                 formCreate.submit();
               }}
-              disabled={disabled}
+              // disabled={disabled}
             >
               Generar
             </Button>

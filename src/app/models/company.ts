@@ -24,6 +24,9 @@ export interface ICompanyForm {
   estado: string;
   ciudad: string;
   razonSocial: string;
+  coloniaId: number;
+  colonia: string | null | undefined;
+  regimenFiscal: string;
   metodoDePagoId?: number;
   formaDePagoId?: number;
   limiteDeCredito: string;
@@ -57,6 +60,9 @@ export class CompanyFormValues implements ICompanyForm {
   bancoId = undefined;
   activo = true;
   contacts: IContactForm[] = [];
+  coloniaId = 0;
+  colonia = "";
+  regimenFiscal = "";
 
   constructor(init?: ICompanyForm) {
     Object.assign(this, init);

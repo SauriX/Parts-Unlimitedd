@@ -27,6 +27,7 @@ import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
+import { regimenFiscal } from "../../../app/util/catalogs";
 import {
   getDefaultColumnProps,
   IColumns,
@@ -127,6 +128,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
       console.log(company);
       if (company) {
         form.setFieldsValue(company);
+        company.regimenFiscal = company.regimenFiscal.slice(0, 3);
         setValues(company);
         setContacts(company.contacts);
         setFilteredContacts(company.contacts);
@@ -174,6 +176,8 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
   const onFinish = async (newValues: ICompanyForm) => {
     const company = { ...values, ...newValues };
     company.contacts = contacts;
+    const colonia = colonies.find((x) => x.value === company.coloniaId);
+    company.colonia = "" + colonia?.label;
 
     let success = false;
 
@@ -646,12 +650,13 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                 />
               </Col>
               <Col md={8} sm={24}>
-                <TextInput
+                <SelectInput
                   formProps={{
                     name: "regimenFiscal",
                     label: "Regimen fiscal: ",
                   }}
-                  max={100}
+                  // max={100}
+                  options={[...regimenFiscal]}
                   readonly={readonly}
                 />
               </Col>
