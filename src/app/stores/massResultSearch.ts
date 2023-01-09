@@ -6,7 +6,6 @@ import {
   IMassSearch,
   IParameter,
   IResult,
-  IResultList,
   MassSearchValues,
 } from "../models/massResultSearch";
 import alerts from "../util/alerts";
@@ -15,7 +14,6 @@ import { getErrors } from "../util/utils";
 export default class MassResultSearchStore {
   constructor() {
     makeAutoObservable(this);
-    // set: (newFormValues: IMassSearch) => {};
   }
 
   area: string = "";
