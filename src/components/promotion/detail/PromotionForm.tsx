@@ -617,13 +617,13 @@ const setStudydiscunt = (decuento:number,item:IPromotionEstudioList,type:boolean
       setDiscunt("porcent");
       setValues((prev)=>({...prev,tipoDescuento:"porcent"}))
     }
-  }, [form, getById, id]);
+  }, [ getById, id]);
  
    useEffect(() => {
-    if (promotionLists.length === 0) {
+
       getAll(searchParams.get("search") ?? "all");
-    }
-  }, [getAll, promotionLists.length, searchParams]); 
+
+  }, [getAll]); 
   const deleteClinic = (id: string) => {
      const clinics = values.branchs.filter((x) => x.id !== id);
 

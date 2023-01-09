@@ -17,6 +17,8 @@ const MassResultSearch = {
     requests.post("MassSearch/GetAllCaptureResults", search),
   exportListDeliverResult: (search: any): Promise<void> =>
     requests.download("MassSearch/list", search),
+  printPdf: (search: IMassSearch): Promise<void> =>
+    requests.download(`MassSearch/download/pdf`, search),
 };
 
 export default MassResultSearch;

@@ -134,15 +134,13 @@ export default class OptionStore {
 
   areas: IOptions[] = [];
   getareaOptions = async (id?: number) => {
-    console.log(id);
     try {
       let ruta = `area/department/${id}`;
       if (id == 0) {
         ruta = "area";
       }
       const area = await Catalog.getActive<ICatalogNormalList>(ruta);
-      console.log("el depaAreas");
-      console.log(area);
+
       var areas = area.map((x) => ({
         value: x.id,
         label: x.nombre,

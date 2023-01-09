@@ -22,6 +22,7 @@ interface IProps {
   onClick?: React.MouseEventHandler<HTMLInputElement> | undefined;
   onKeyUp?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
   onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
+  onPressEnter?: React.KeyboardEventHandler<HTMLInputElement> | undefined
 }
 
 const TextInput = ({
@@ -41,6 +42,7 @@ const TextInput = ({
   onClick,
   onKeyUp,
   onChange,
+  onPressEnter
 }: // onChange,
 IProps) => {
   let ref = useRef<HTMLDivElement>(null);
@@ -119,6 +121,7 @@ IProps) => {
           onClick={onClick}
           onKeyUp={onKeyUp}
           onChange={onChange}
+          onPressEnter={onPressEnter}
           maxLength={max ?? undefined}
           minLength={min ?? undefined}
           style={{

@@ -29,6 +29,7 @@ export default class ClinicResultsStores {
   clear: boolean = false;
   studiesSelectedToPrint: IPrintTypes[] = [];
   observationsSelected: IOptions[] = [];
+  observationText: string = "";
 
   printSelectedStudies = async (configuration: any) => {
     try {
@@ -42,8 +43,16 @@ export default class ClinicResultsStores {
     this.observationsSelected = observationsSelected;
   }
 
+  setObservationsText = (observationText: string) => {
+    this.observationText = observationText;
+  }
+
   getObservationsSelected = () => {
     return this.observationsSelected;
+  }
+
+  getObservationsText = () => {
+    return this.observationText;
   }
 
   clearScopes = () => {
@@ -280,8 +289,12 @@ export default class ClinicResultsStores {
           criticoMinimo: y.criticoMinimo,
           criticoMaximo: y.criticoMaximo,
           ultimoResultado: y.ultimoResultado,
+          ultimaSolicitud: y.ultimaSolicitud,
+          ultimaSolicitudId: y.ultimaSolicitudId,
+          ultimoExpedienteId: y.ultimoExpedienteId,
           deltaCheck: y.deltaCheck,
           editable: y.editable,
+          observacionesId: y.observacionesId,
           orden: y.index!,
           clave: y.clave,
           rango:

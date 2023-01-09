@@ -30,7 +30,12 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
 
   useEffect(() => {
     const readRequests = async () => {
-      await getAll(formValues);
+      await getAll({
+        fecha: [
+          moment(Date.now()).utcOffset(0, true),
+          moment(Date.now()).utcOffset(0, true),
+        ],
+      });
     };
 
     readRequests();

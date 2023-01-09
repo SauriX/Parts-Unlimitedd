@@ -10,6 +10,7 @@ import ClinicResultsColumns, {
 import ClinicResultsFilter from "./ClinicResultsFilter";
 import ClinicResultsTable from "./ClinicResultsTable";
 import { IClinicResultForm } from "../../app/models/clinicResults";
+import moment from "moment";
 
 type CRDefaultProps = {
   printing: boolean;
@@ -23,7 +24,12 @@ const ClinicResultsBody = ({ printing, formValues }: CRDefaultProps) => {
 
   useEffect(() => {
     const readRequests = async () => {
-      await getAll(formValues);
+      await getAll({
+        fecha: [
+          moment(Date.now()).utcOffset(0, true),
+          moment(Date.now()).utcOffset(0, true),
+        ],
+      });
     };
 
     readRequests();
