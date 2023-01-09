@@ -16,6 +16,7 @@ import ReportTable from "./ReportTable";
 import ReportChartSelector from "./ReportChartSelector";
 import { ExpandableConfig } from "antd/lib/table/interface";
 import CashBody from "../cashRegister/CashBody";
+import IndicatorsBody from "../indicatorsReport/IndicatorsBody";
 
 type ReportDefaultProps = {
   printing: boolean;
@@ -73,6 +74,7 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
     if (currentReport) {
       setColumns(getColumns(currentReport, searchState, setSearchState));
       setExpandable(getExpandableConfig(currentReport));
+      console.log(currentReport);
     } else {
       setColumns([]);
       setExpandable(undefined);
@@ -105,8 +107,12 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
     <Fragment>
       <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
         <Row gutter={[12, 12]}>
-          {currentReport == "corte_caja" ? (
+          {currentReport === "corte_caja" ? (
             <CashBody printing={loading} />
+          ) : currentReport === "indicadores" ? (
+            <Col span={24}>
+              <IndicatorsBody printing={loading} />
+            </Col>
           ) : (
             <>
               <Col span={24}>

@@ -19,7 +19,9 @@ import { IColumns } from "../../app/common/table/utils";
 import { useStore } from "../../app/stores/store";
 import type { CheckboxValueType } from "antd/es/checkbox/Group";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
+import alerts from "../../app/util/alerts";
 import { useNavigate } from "react-router-dom";
+import { moneyFormatter } from "../../app/util/utils";
 const { Link, Text } = Typography;
 type DeliveryResultsTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -145,31 +147,35 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
       dataIndex: "estudio",
       title: "Estudio",
       align: "center",
+      width: 400,
     },
     {
       key: "estudioId",
       dataIndex: "medioSolicitado",
       title: "Medio Solicitado",
       align: "center",
+      width: 300,
     },
     {
       key: "estudioId",
       dataIndex: "fechaEntrega",
       title: "Fecha de Entrega",
       align: "center",
+      width: 200,
     },
     {
       key: "estudioId",
       dataIndex: "estatus",
       title: "Estatus",
       align: "center",
+      width: 200,
     },
     {
       key: "estudioId",
       dataIndex: "registro",
       title: "Registro",
       align: "center",
-      width: 200,
+      width: 300,
     },
   ];
   const options = [
@@ -245,20 +251,127 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
         <Col>
           <Button
             onClick={async () => {
-              const sendFiles = {
-                mediosEnvio: selectSendMethods,
-                estudios: selectedStudies,
-              };
-              // console.log("selectedStudies", sendFiles);
-              console.log("selectedStudies", selectedStudies);
+              const solicitudesId = selectedStudies.map(
+                (study) => study.solicitudId
+              );
 
-              setLoading(true);
-              await sendResultFile(sendFiles);
-              setSelectSendMethods([]);
-              setSelectedStudies([]);
-              setSelectedRowKeysCheck([]);
-              await getAllCaptureResults(formDeliverResult);
-              setLoading(false);
+              let saldosPendientes: any[] = [];
+              let solicitudesSinMedios: any[] = [];
+              requests
+                .filter((x) => solicitudesId.includes(x.solicitudId))
+                .forEach((request) => {
+                  if (request.saldoPendiente) {
+                    saldosPendientes.push({
+                      clave: request.solicitud,
+                      saldo: moneyFormatter.format(request.saldo ?? 0),
+                    });
+                  }
+                  if (
+                    selectSendMethods.includes("Correo") &&
+                    !request.envioCorreo
+                  ) {
+                    // if (!request.envioWhatsapp) {
+                    solicitudesSinMedios.push({
+                      clave: request.solicitud,
+                      medio: `${
+                        !request.envioWhatsapp && !request.envioCorreo
+                          ? "WhatsApp/Correo"
+                          : !request.envioWhatsapp
+                          ? "WhatsApp"
+                          : !request.envioCorreo
+                          ? "Correo"
+                          : ""
+                      }`,
+                    });
+                    // }
+                  }
+                  if (
+                    selectSendMethods.includes("Whatsapp") &&
+                    !request.envioWhatsapp
+                  ) {
+                    // if (!request.envioCorreo) {
+                    solicitudesSinMedios.push({
+                      clave: request.solicitud,
+                      medio: `${
+                        !request.envioWhatsapp && !request.envioCorreo
+                          ? "WhatsApp/Correo"
+                          : !request.envioWhatsapp
+                          ? "WhatsApp"
+                          : !request.envioCorreo
+                          ? "Correo"
+                          : ""
+                      }`,
+                    });
+                    // }
+                  }
+                });
+              console.log("medios", selectSendMethods);
+              console.log("solicitudessinmedios", solicitudesSinMedios);
+              if (!!solicitudesSinMedios.length) {
+                alerts.confirmInfo(
+                  "Datos faltantes",
+                  <>
+                    <Col>
+                      <div>Solicitudes con datos faltantes</div>
+                      {solicitudesSinMedios.map((solicitudSinMedio) => {
+                        return (
+                          <div>
+                            {solicitudSinMedio?.clave} -{" "}
+                            {solicitudSinMedio?.medio}
+                          </div>
+                        );
+                      })}
+                    </Col>
+                  </>,
+                  async () => console.log("si")
+                );
+                return;
+              }
+              if (!!saldosPendientes.length) {
+                alerts.confirm(
+                  "Solicitudes con saldo pendiente",
+                  <>
+                    <Col>
+                      <div>Solicitudes con saldo pendiente</div>
+                      {saldosPendientes.map((saldoPendiente) => {
+                        return (
+                          <div>
+                            {saldoPendiente?.clave} - {saldoPendiente?.saldo}
+                          </div>
+                        );
+                      })}
+                    </Col>
+                  </>,
+                  async () => {
+                    setLoading(true);
+                    const sendFiles = {
+                      mediosEnvio: selectSendMethods,
+                      estudios: selectedStudies,
+                    };
+
+                    await sendResultFile(sendFiles);
+                    setSelectSendMethods([]);
+                    setSelectedStudies([]);
+                    setSelectedRowKeysCheck([]);
+                    await getAllCaptureResults(formDeliverResult);
+                    setLoading(false);
+                  },
+                  () => true
+                );
+              } else {
+                setLoading(true);
+                const sendFiles = {
+                  mediosEnvio: selectSendMethods,
+                  estudios: selectedStudies,
+                };
+
+                await sendResultFile(sendFiles);
+                setSelectSendMethods([]);
+                setSelectedStudies([]);
+                setSelectedRowKeysCheck([]);
+                await getAllCaptureResults(formDeliverResult);
+                setLoading(false);
+              }
             }}
             disabled={!selectedStudies.length || !selectSendMethods.length}
             type="primary"
