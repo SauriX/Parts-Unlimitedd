@@ -1,4 +1,4 @@
-import { Col, Row, Spin, Table, Typography } from "antd";
+import { Checkbox, Col, Row, Spin, Table, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import CheckInput from "../../app/common/form/CheckInput";
@@ -20,17 +20,19 @@ import { ppid } from "process";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import moment from "moment";
+import { toJS } from "mobx";
 
 const { Link } = Typography;
 
 type MSDefaultProps = {
   printing: boolean;
-}
+};
 
-const MassSearchTable = ({printing}: MSDefaultProps) => {
+const MassSearchTable = ({ printing }: MSDefaultProps) => {
   const { width: windowWidth } = useWindowDimensions();
   const { massResultSearchStore } = useStore();
-  const { parameters, results, loadingStudies} = massResultSearchStore;
+  const { parameters, results, loadingStudies, printOrder } =
+    massResultSearchStore;
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [searchState, setSearchState] = useState<ISearch>({
@@ -38,6 +40,8 @@ const MassSearchTable = ({printing}: MSDefaultProps) => {
     searchedColumn: "",
   });
   const [columnas, setColumnas] = useState<any>([]);
+  const [selected, setSelected] = useState<any[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
 
   useEffect(() => {
     const cols = parameters.map((parameter: IParameter) => {
@@ -51,7 +55,7 @@ const MassSearchTable = ({printing}: MSDefaultProps) => {
         key: uuid(),
         render: (clave: any, row: IResult) => {
           let param = row.parameters.find(
-            (p: IParameter) => p.nombre === parameter.nombre
+            (p: IParameter) => p.tipoValorId === parameter.tipoValorId
           );
           return {
             props: {
@@ -64,7 +68,9 @@ const MassSearchTable = ({printing}: MSDefaultProps) => {
           return (
             <>
               <Row>
-                <Col>{parameter.nombre}</Col>
+                <Col>
+                  {!!parameter.nombre ? parameter.nombre : parameter.clave}
+                </Col>
               </Row>
               <Row>
                 <Col>
@@ -122,22 +128,50 @@ const MassSearchTable = ({printing}: MSDefaultProps) => {
     <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
       <Table
         key={uuid()}
-        rowKey={uuid()}
+        rowKey={(row) => row.reuqestStudyId}
         loading={loadingStudies}
         size="small"
         columns={columns}
         bordered
         rowSelection={{
+          selectedRowKeys,
           type: "checkbox",
           columnWidth: 40,
 
-          onChange: () => {},
-
-          renderCell: () => {
+          onChange: (selectedRow) => {
+            setSelectedRowKeys([...selectedRow]);
+          },
+          onSelect: () => {
+            console.log("hola mundo");
+          },
+          renderCell: (cel, request: IResult) => {
             return (
               <>
-                <CheckInput style={{ marginBottom: 0, paddingBottom: 0 }} />
-                <PrintIcon key="doc" onClick={() => {}} />
+                <Col>
+                  <div>
+                    <Checkbox
+                      style={{ marginBottom: 0, paddingBottom: 0 }}
+                      checked={selectedRowKeys.includes(request.reuqestStudyId)}
+                      onClick={(e) => {
+                        if (selectedRowKeys.includes(request.reuqestStudyId)) {
+                          setSelectedRowKeys((current) =>
+                            current.filter(
+                              (row) => row.id !== request.reuqestStudyId
+                            )
+                          );
+                        } else {
+                          selectedRowKeys.push(request.reuqestStudyId);
+                        }
+                      }}
+                    />
+                  </div>
+                  <PrintIcon
+                    key="doc"
+                    onClick={() => {
+                      printOrder(request.expedienteId, request.id);
+                    }}
+                  />
+                </Col>
               </>
             );
           },
