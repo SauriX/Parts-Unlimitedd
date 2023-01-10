@@ -244,6 +244,12 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
           form={form}
           onFinish={onfinish}
           size="small"
+          initialValues={new SearchMedicalFormValues()}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              form.submit();
+            }
+          }}
           onFinishFailed={({ errorFields }) => {
             const errors = errorFields.map((x) => ({
               name: x.name[0].toString(),
@@ -308,12 +314,14 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
             <Col span={8}>
               <SelectInput
                 formProps={{ name: "ciudad", label: "Ciudad" }}
+                placeholder="Ciudad"
                 options={cityOptions}
               />
             </Col>
             <Col span={8}>
               <SelectInput
                 formProps={{ name: "sucursal", label: "Sucursal" }}
+                placeholder="Sucursal"
                 options={BranchOptions}
               />
             </Col>
