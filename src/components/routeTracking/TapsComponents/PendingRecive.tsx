@@ -530,6 +530,7 @@ const PendingRecive = () => {
           <Col span={2}></Col>
           <Col span={4}>
             <SelectInput
+            form={form}
               formProps={{
                 name: "sucursal",
                 label: "Sucursales de donde recibir",
