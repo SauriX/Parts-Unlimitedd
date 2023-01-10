@@ -155,6 +155,7 @@ const QuotationFilter = () => {
                   </Col>
                   <Col span={12}>
                     <SelectInput
+                      form={form}
                       formProps={{
                         name: "sucursales",
                         label: "Sucursales",

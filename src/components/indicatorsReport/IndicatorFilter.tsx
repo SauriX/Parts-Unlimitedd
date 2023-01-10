@@ -156,6 +156,7 @@ const IndicatorFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
+                      form={form}
                       formProps={{
                         name: "ciudad",
                         label: "Ciudad",
@@ -167,6 +168,7 @@ const IndicatorFilter = () => {
                   </Col>
                   <Col span={12}>
                     <SelectInput
+                      form={form}
                       formProps={{
                         name: "sucursalId",
                         label: "Sucursales",

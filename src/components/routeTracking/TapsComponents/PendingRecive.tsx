@@ -239,7 +239,7 @@ const PendingRecive = () => {
   }, [getAllRecive]);
 
   const onExpand = (isExpanded: boolean, record: IRecibe) => {
-    let expandRows: string[] =[ ...expandedRowKeys];
+    let expandRows: string[] = [...expandedRowKeys];
     if (isExpanded) {
       expandRows.push(record.id);
     } else {
@@ -507,8 +507,6 @@ const PendingRecive = () => {
     console.log(reagent, "en el onfish");
     console.log(reagent);
     let success = false;
-
-
   };
   return (
     <Fragment>
@@ -530,6 +528,7 @@ const PendingRecive = () => {
           <Col span={2}></Col>
           <Col span={4}>
             <SelectInput
+              form={form}
               formProps={{ name: "sucursal", label: "Sucursales" }}
               multiple
               options={branchCityOptions}

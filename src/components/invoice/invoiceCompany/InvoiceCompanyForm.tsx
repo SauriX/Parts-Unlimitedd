@@ -132,6 +132,7 @@ const InvoiceComapnyForm = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     multiple
                     formProps={{ label: "Compañias", name: "companias" }}
                     options={companyOptions}
@@ -153,6 +154,7 @@ const InvoiceComapnyForm = () => {
                         </Col>
                         <Col span={12}>
                           <SelectInput
+                            form={form}
                             formProps={{
                               name: "sucursalId",
                               label: "Sucursales",

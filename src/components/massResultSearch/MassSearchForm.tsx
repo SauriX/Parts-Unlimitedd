@@ -136,6 +136,7 @@ const MassSearchForm = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{ label: "Sucursal", name: "sucursales" }}
                     multiple
                     options={branchCityOptions}
@@ -143,6 +144,7 @@ const MassSearchForm = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{ label: "Estudio", name: "estudios" }}
                     multiple
                     options={studiesFilteredByArea}

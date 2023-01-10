@@ -85,6 +85,7 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
                   </Col>
                   <Col span={12}>
                     <SelectInput
+                      form={form}
                       formProps={{
                         name: "sucursalId",
                         label: "Sucursales",
@@ -111,19 +112,20 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
             </Button>
           </Col>
           {modalTab === "service" ? (
-                <Col span={10}>
-                  <SelectInput
-                    formProps={{
-                      name: "servicios",
-                      label: "Servicio",
-                    }}
-                    multiple
-                    options={branchOptions}
-                  />
-                </Col>
-              ) : (
-                ""
-              )}
+            <Col span={10}>
+              <SelectInput
+                form={form}
+                formProps={{
+                  name: "servicios",
+                  label: "Servicio",
+                }}
+                multiple
+                options={branchOptions}
+              />
+            </Col>
+          ) : (
+            ""
+          )}
           <Col span={10}>
             <Form.Item
               label={modalTab === "service" ? "Costo Fijo" : "Costo Toma"}

@@ -145,6 +145,7 @@ const SamplingStudyFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "procedencia",
                       label: "Procedencia",
@@ -155,6 +156,7 @@ const SamplingStudyFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "tipoSolicitud",
                       label: "Tipo solicitud",
@@ -165,6 +167,7 @@ const SamplingStudyFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "estatus",
                       label: "Estatus",
@@ -189,6 +192,7 @@ const SamplingStudyFilter = () => {
                         </Col>
                         <Col span={12}>
                           <SelectInput
+                            form={form}
                             formProps={{
                               name: "area",
                               label: "Área",
@@ -204,6 +208,7 @@ const SamplingStudyFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "medicoId",
                       label: "Médico",
@@ -228,6 +233,7 @@ const SamplingStudyFilter = () => {
                         </Col>
                         <Col span={12}>
                           <SelectInput
+                            form={form}
                             formProps={{
                               name: "sucursalId",
                               label: "Sucursales",
@@ -243,6 +249,7 @@ const SamplingStudyFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "compañiaId",
                       label: "Compañía",

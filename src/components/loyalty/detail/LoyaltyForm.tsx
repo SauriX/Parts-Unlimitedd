@@ -277,6 +277,7 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
                   required
                 />
                 <SelectInput
+                  form={form}
                   formProps={{
                     name: "precioLista",
                     label: "Lista de precios",
