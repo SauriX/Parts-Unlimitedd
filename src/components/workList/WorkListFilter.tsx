@@ -59,6 +59,7 @@ const WorkListFilter = () => {
           </Col>
           <Col span={9}>
             <SelectInput
+              form={form}
               formProps={{
                 name: "sucursales",
                 label: "Sucursales",

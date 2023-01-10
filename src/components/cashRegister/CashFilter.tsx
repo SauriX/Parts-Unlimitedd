@@ -22,12 +22,7 @@ const typeCompanyOptions: IOptions[] = [
 
 const CashRegisterFilter = () => {
   const { cashRegisterStore, optionStore } = useStore();
-  const {
-    filter,
-    setFilter,
-    getByFilter,
-    clear,
-  } = cashRegisterStore;
+  const { filter, setFilter, getByFilter, clear } = cashRegisterStore;
   const {
     branchCityOptions,
     getBranchCityOptions,
@@ -83,6 +78,7 @@ const CashRegisterFilter = () => {
               </Col>
               <Col span={8}>
                 <SelectInput
+                  form={form}
                   formProps={{ name: "sucursalId", label: "Sucursales" }}
                   multiple
                   options={branchCityOptions}
@@ -90,6 +86,7 @@ const CashRegisterFilter = () => {
               </Col>
               <Col span={8}>
                 <SelectInput
+                  form={form}
                   formProps={{ name: "tipoCompañia", label: "Convenio" }}
                   multiple
                   options={typeCompanyOptions}

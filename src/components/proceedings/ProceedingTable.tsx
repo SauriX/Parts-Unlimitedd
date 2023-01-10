@@ -216,34 +216,13 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
 
   return (
     <Fragment>
-      <Row justify="end" gutter={[24, 12]} className="filter-buttons">
-        <Col span={24}>
-          <Button
-            key="clean"
-            onClick={(e) => {
-              form.resetFields();
-            }}
-          >
-            Limpiar
-          </Button>
-          <Button
-            key="filter"
-            type="primary"
-            onClick={(e) => {
-              e.stopPropagation();
-              form.submit();
-            }}
-          >
-            Buscar
-          </Button>
-        </Col>
-      </Row>
       <div className="status-container">
         <Form<ISearchMedical>
           {...formItemLayout}
           form={form}
           onFinish={onfinish}
           size="small"
+          initialValues={new SearchMedicalFormValues()}
           onFinishFailed={({ errorFields }) => {
             const errors = errorFields.map((x) => ({
               name: x.name[0].toString(),
@@ -308,20 +287,29 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
             <Col span={8}>
               <SelectInput
                 formProps={{ name: "ciudad", label: "Ciudad" }}
+                placeholder="Ciudad"
                 options={cityOptions}
               />
             </Col>
             <Col span={8}>
               <SelectInput
                 formProps={{ name: "sucursal", label: "Sucursal" }}
+                placeholder="Sucursal"
                 options={BranchOptions}
               />
+            </Col>
+            <Col span={24} style={{ textAlign: "right" }}>
+              <Button key="clean" htmlType="reset">
+                Limpiar
+              </Button>
+              <Button key="filter" type="primary" htmlType="submit">
+                Filtrar
+              </Button>
             </Col>
           </Row>
         </Form>
       </div>
       <br />
-
       <Table<IProceedingList>
         loading={loading || printing}
         size="small"

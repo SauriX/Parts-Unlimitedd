@@ -86,7 +86,8 @@ const ClinicResultsFilter = () => {
 
   useEffect(() => {
     setAreaOptions(
-      departmentAreaOptions.find((x) => x.value === selectedDepartment)?.options ?? []
+      departmentAreaOptions.find((x) => x.value === selectedDepartment)
+        ?.options ?? []
     );
     form.setFieldValue("area", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
@@ -157,6 +158,7 @@ const ClinicResultsFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "procedencia",
                       label: "Procedencia",
@@ -167,6 +169,7 @@ const ClinicResultsFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "tipoSolicitud",
                       label: "Tipo solicitud",
@@ -177,6 +180,7 @@ const ClinicResultsFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "estatus",
                       label: "Estatus",
@@ -201,6 +205,7 @@ const ClinicResultsFilter = () => {
                         </Col>
                         <Col span={12}>
                           <SelectInput
+                            form={form}
                             formProps={{
                               name: "area",
                               label: "Área",
@@ -216,6 +221,7 @@ const ClinicResultsFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "estudio",
                       label: "Estudio",
@@ -226,6 +232,7 @@ const ClinicResultsFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "medicoId",
                       label: "Médico",
@@ -235,7 +242,7 @@ const ClinicResultsFilter = () => {
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
-                <Form.Item label="Sucursal" className="no-error-text" help="">
+                  <Form.Item label="Sucursal" className="no-error-text" help="">
                     <Input.Group>
                       <Row gutter={8}>
                         <Col span={12}>
@@ -250,6 +257,7 @@ const ClinicResultsFilter = () => {
                         </Col>
                         <Col span={12}>
                           <SelectInput
+                            form={form}
                             formProps={{
                               name: "sucursalId",
                               label: "Sucursales",
@@ -265,6 +273,7 @@ const ClinicResultsFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "compañiaId",
                       label: "Compañía",
