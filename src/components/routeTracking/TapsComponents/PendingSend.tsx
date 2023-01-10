@@ -119,11 +119,12 @@ const PendingSend = () => {
       setexpandedRowKeys(studys!.map((x) => x.id));
     }
   };
-  const onChange = (e: CheckboxChangeEvent, id: number, solicitud: string) => {
-    var data = ids;
-    var solis = solicitudesData;
-    var dataid: number[] = [];
-    var dataupdate = updateData;
+  const onChange = (e: CheckboxChangeEvent, id: number, solicitud: string,order:string) => {
+
+    let data = ids;
+    let solis = solicitudesData;
+    let dataid: number[] = [];
+    let dataupdate = [...updateData];
     if (e.target.checked) {
       data.push(id);
       dataid.push(id);
@@ -134,6 +135,7 @@ const PendingSend = () => {
         let datatoupdate: IUpdate = {
           solicitudId: solicitud,
           estudioId: dataid,
+          ruteOrder: order,
         };
         dataupdate?.push(datatoupdate);
       } else {
@@ -153,10 +155,10 @@ const PendingSend = () => {
         solis.push(solicitud);
         SetSolicitudesData(solis);
       }
+
     } else {
       if (data.length > 0) {
-        var temp = data.filter((x) => x != id);
-        var temps = solis.filter((x) => x != solicitud);
+        let temp = data.filter((x) => x != id);
         setIds(temp);
       }
       let solicitudtoupdate = dataupdate.find(
@@ -175,21 +177,16 @@ const PendingSend = () => {
           dataupdate[indexsoli!] = solicitudtoupdate;
         }
       }
+     
     }
-
-    /*     if (dataupdate.length <= 0) {
-
-      setActivar(false);
-    } else {
-
-      setActivar(true);
-    } */
-
+    console.log(dataupdate);
     setUpdateDate(dataupdate);
+    
   };
+
   const columnsStudy: IColumns<IstudyRoute> = [
     {
-      key: "Seleccionar",
+      key: "seleccionar",
       dataIndex: "seleccionar",
       title: "Seleccionar",
       align: "center",
@@ -199,27 +196,53 @@ const PendingSend = () => {
           {record.status === 2 && (
             <Checkbox
               onChange={(e) => {
-                onChange(e, record.id, record.solicitudid);
+                onChange(e, record.id, record.solicitudid,record.routeId);
+                stcambio(!cambio);
               }}
               disabled={!(activiti == "register")}
+              checked={
+                updateData
+                    .find(
+                        (x) =>
+                            x.solicitudId == record.solicitudid && record.routeId == x.ruteOrder
+                    )
+                    ?.estudioId.includes(record.id) ||
+                (cambio &&
+                    updateData
+                        .find(
+                            (x) =>
+                                x.solicitudId ==
+                                record.solicitudid && record.routeId == x.ruteOrder
+                        )
+                        ?.estudioId.includes(record.id))
+            }
             ></Checkbox>
           )}
-          {updateData
-            .find((x) => x.solicitudId == record.solicitudid)!.estudioId.includes(record.id) ||
-          (cambio &&
-            updateData
-              .find((x) => x.solicitudId == record.solicitudid)!.estudioId.includes(record.id))
-            ? ""
-            : ""}
           {record.status === 8 && (
             <Checkbox
               onChange={(e) => {
                 {
-                  onChange(e, record.id, record.solicitudid);
+                  onChange(e, record.id, record.solicitudid,record.routeId);
                   stcambio(!cambio);
                 }
               }}
               disabled={!(activiti == "cancel")}
+              checked={
+                updateData
+                    .find(
+                        (x) =>
+                            x.solicitudId == record.solicitudid && record.routeId == x.ruteOrder
+                    )
+                    ?.estudioId.includes(record.id) ||
+                (cambio &&
+                    updateData
+                        .find(
+                            (x) =>
+                                x.solicitudId ==
+                                record.solicitudid && record.routeId == x.ruteOrder
+                        )
+                        ?.estudioId.includes(record.id))
+            }
             ></Checkbox>
           )}
         </>
@@ -416,7 +439,8 @@ const PendingSend = () => {
           <Col span={4}>
             <SelectInput
               options={branchCityOptions}
-              formProps={{ name: "sucursal", label: "Sucursal" }}
+              formProps={{ name: "sucursal", label: "Sucursal a donde enviar",        labelCol: { span: 12 },
+              wrapperCol: { span: 12 }, }}
             ></SelectInput>
           </Col>
           <Col span={1}></Col>
@@ -526,7 +550,7 @@ const PendingSend = () => {
             expandedRowRender: (datos: IRouteList, index: number) => (
               <>
                 <Table
-                  size="small"
+                  size="small"  
                   rowKey={(record) => record.id}
                   columns={columnsStudy}
                   dataSource={[...datos.estudios]}
