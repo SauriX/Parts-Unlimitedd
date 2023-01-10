@@ -19,9 +19,7 @@ import useWindowDimensions from "../../app/util/window";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import {
-  IUpdate,
-} from "../../app/models/sampling";
+import { IUpdate } from "../../app/models/sampling";
 import { formItemLayout } from "../../app/util/utils";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
@@ -93,10 +91,10 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     viewTicket,
     setSearch,
     clearFilter,
-    search
+    search,
   } = resultValidationStore;
-  
-    const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
+
+  const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
   const { getCity } = locationStore;
   const [searchParams] = useSearchParams();
   const [form] = Form.useForm<ISearchValidation>();
@@ -123,21 +121,18 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     searchedColumn: "",
   });
   useEffect(() => {
-
     getDepartmentAreaOptions();
-  }, [
-
-    getDepartmentAreaOptions,
-  ]);
+  }, [getDepartmentAreaOptions]);
   const selectedCity = Form.useWatch("ciudad", form);
   useEffect(() => {
     setDepartmentOptions(
       departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
-    );;
+    );
   }, [departmentAreaOptions]);
   useEffect(() => {
     setAreaOptions(
-      departmentAreaOptions.find((x) => x.value === selectedDepartment)?.options ?? []
+      departmentAreaOptions.find((x) => x.value === selectedDepartment)
+        ?.options ?? []
     );
     form.setFieldValue("sucursalId", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
@@ -147,9 +142,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     };
     readStudy();
   }, [getStudiesOptions]);
-  useEffect(() => {
-
-  }, [studiesOptions]);
+  useEffect(() => {}, [studiesOptions]);
   const togleRows = () => {
     if (openRows) {
       setOpenRows(false);
@@ -165,7 +158,6 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   }, [studys]);
 
   const onChange = (e: CheckboxChangeEvent, id: number, solicitud: string) => {
-
     var data = ids;
     var solis = solicitudesData;
     var dataid: number[] = [];
@@ -225,10 +217,8 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     }
 
     if (dataupdate.length <= 0) {
-
       setActivar(false);
     } else {
-
       setActivar(true);
     }
 
@@ -346,13 +336,10 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     readData();
   }, [getCity]);
   useEffect(() => {
-
     const readPriceList = async () => {
-   
       setLoading(true);
       let studios = [];
       var datas = await getAll(search!);
-
 
       setSoliCont(datas?.length!);
       datas?.forEach((x) =>
@@ -366,10 +353,9 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     };
 
     if (expedientes.length === 0) {
-
       readPriceList();
     }
-   
+
     setExpandable(expandableStudyConfig);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
@@ -398,7 +384,6 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     setexpandedRowKeys(expandRows);
   };
   useEffect(() => {
-
     setExpandable(expandableStudyConfig);
   }, [activiti]);
   const onFinish = async (newValues: ISearchValidation) => {
@@ -492,8 +477,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
             key="clean"
             onClick={(e) => {
               clearFilter();
-            form.setFieldsValue(new searchValues())
-              
+              form.setFieldsValue(new searchValues());
             }}
           >
             Limpiar
@@ -521,7 +505,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
           padding: "10px",
         }}
       >
-       <Form<ISearchValidation>
+        <Form<ISearchValidation>
           {...formItemLayout}
           form={form}
           name="sampling"
@@ -547,6 +531,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "tipoSoli",
                       label: "Tipo solicitud",
@@ -557,6 +542,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "estudio",
                       label: "Estudios",
@@ -567,13 +553,13 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "estatus",
                       label: "Estatus",
                     }}
                     multiple
                     options={[
-                     
                       { value: 5, label: "Validado" },
                       { value: 4, label: "Capturado" },
                       { value: 7, label: "Enviado" },
@@ -601,7 +587,6 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                               label: "Área",
                               noStyle: true,
                             }}
-                            
                             options={areaOptions}
                           />
                         </Col>
@@ -611,6 +596,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "medico",
                       label: "Médico",
@@ -635,6 +621,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                         </Col>
                         <Col span={12}>
                           <SelectInput
+                            form={form}
                             formProps={{
                               name: "sucursal",
                               label: "Sucursales",
@@ -650,6 +637,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "compañia",
                       label: "Compañía",

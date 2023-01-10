@@ -104,6 +104,7 @@ const RequestFilter = () => {
           </Col>
           <Col span={8}>
             <SelectInput
+              form={form}
               formProps={{ name: "procedencias", label: "Procedencia" }}
               multiple
               options={originOptions}
@@ -111,6 +112,7 @@ const RequestFilter = () => {
           </Col>
           <Col span={8}>
             <SelectInput
+              form={form}
               formProps={{ name: "urgencias", label: "Tipo solicitud" }}
               multiple
               options={urgencyOptions}
@@ -118,6 +120,7 @@ const RequestFilter = () => {
           </Col>
           <Col span={8}>
             <SelectInput
+              form={form}
               formProps={{ name: "estatus", label: "Estatus" }}
               multiple
               options={studyStatusOptions}
@@ -125,6 +128,7 @@ const RequestFilter = () => {
           </Col>
           <Col span={8}>
             <SelectInput
+              form={form}
               formProps={{ name: "departamentos", label: "Departamento" }}
               multiple
               options={departmentOptions}
@@ -146,6 +150,7 @@ const RequestFilter = () => {
                   </Col>
                   <Col span={12}>
                     <SelectInput
+                      form={form}
                       formProps={{
                         name: "sucursales",
                         label: "Sucursales",
@@ -161,6 +166,7 @@ const RequestFilter = () => {
           </Col>
           <Col span={8}>
             <SelectInput
+              form={form}
               formProps={{ name: "compañias", label: "Compañia" }}
               multiple
               options={companyOptions}
@@ -168,6 +174,7 @@ const RequestFilter = () => {
           </Col>
           <Col span={8}>
             <SelectInput
+              form={form}
               formProps={{ name: "medicos", label: "Médico" }}
               multiple
               options={medicOptions}
