@@ -216,28 +216,6 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
 
   return (
     <Fragment>
-      <Row justify="end" gutter={[24, 12]} className="filter-buttons">
-        <Col span={24}>
-          <Button
-            key="clean"
-            onClick={(e) => {
-              form.resetFields();
-            }}
-          >
-            Limpiar
-          </Button>
-          <Button
-            key="filter"
-            type="primary"
-            onClick={(e) => {
-              e.stopPropagation();
-              form.submit();
-            }}
-          >
-            Buscar
-          </Button>
-        </Col>
-      </Row>
       <div className="status-container">
         <Form<ISearchMedical>
           {...formItemLayout}
@@ -245,11 +223,6 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
           onFinish={onfinish}
           size="small"
           initialValues={new SearchMedicalFormValues()}
-          onKeyPress={(e) => {
-            if (e.key === "Enter") {
-              form.submit();
-            }
-          }}
           onFinishFailed={({ errorFields }) => {
             const errors = errorFields.map((x) => ({
               name: x.name[0].toString(),
@@ -325,11 +298,18 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
                 options={BranchOptions}
               />
             </Col>
+            <Col span={24} style={{ textAlign: "right" }}>
+              <Button key="clean" htmlType="reset">
+                Limpiar
+              </Button>
+              <Button key="filter" type="primary" htmlType="submit">
+                Filtrar
+              </Button>
+            </Col>
           </Row>
         </Form>
       </div>
       <br />
-
       <Table<IProceedingList>
         loading={loading || printing}
         size="small"

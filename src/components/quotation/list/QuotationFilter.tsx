@@ -170,21 +170,10 @@ const QuotationFilter = () => {
             </Form.Item>
           </Col>
           <Col span={24} style={{ textAlign: "right" }}>
-            <Button
-              key="clean"
-              onClick={() => {
-                form.resetFields();
-              }}
-            >
+            <Button key="clean" htmlType="reset">
               Limpiar
             </Button>
-            <Button
-              key="filter"
-              type="primary"
-              onClick={() => {
-                form.submit();
-              }}
-            >
+            <Button key="filter" type="primary" htmlType="submit">
               Filtrar
             </Button>
           </Col>
