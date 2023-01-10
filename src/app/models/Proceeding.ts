@@ -50,8 +50,8 @@ export class SearchMedicalFormValues implements ISearchMedical {
   expediente = "";
   telefono = "";
   fechaAlta = [moment(), moment()];
-  ciudad = "";
-  sucursal = "";
+  ciudad = undefined;
+  sucursal = undefined;
 
   constructor(init?: ISearchMedical) {
     Object.assign(this, init);
