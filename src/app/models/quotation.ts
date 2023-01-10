@@ -1,4 +1,4 @@
-import moment, { Moment } from "moment";
+import moment from "moment";
 import { IIndicationList } from "./indication";
 import { IParameterList } from "./parameter";
 import { IPriceListInfoPromo } from "./priceList";
@@ -12,11 +12,11 @@ export interface IQuotationFilter {
   fechaAlta?: moment.Moment[];
   fechaAInicial?: moment.Moment;
   fechaAFinal?: moment.Moment;
-  ciudad?: number;
+  ciudad?: string;
   sucursales?: string[];
   correo?: string;
   telefono?: string;
-  fechaNacimiento?: moment.Moment[];
+  fechaNacimiento?: moment.Moment;
   fechaNInicial?: moment.Moment;
   fechaNFinal?: moment.Moment;
   expediente?: string;
