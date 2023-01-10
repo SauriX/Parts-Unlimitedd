@@ -22,11 +22,7 @@ import useWindowDimensions from "../../app/util/window";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import {
-
-  IUpdate,
-
-} from "../../app/models/sampling";
+import { IUpdate } from "../../app/models/sampling";
 import { formItemLayout } from "../../app/util/utils";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
@@ -45,7 +41,12 @@ import ValidationStudyColumns, {
   ValidationStudyExpandable,
 } from "./RelaseStudyTable";
 import { IOptions } from "../../app/models/shared";
-import { checked, Irelacelist, ISearchRelase, searchrelase } from "../../app/models/relaseresult";
+import {
+  checked,
+  Irelacelist,
+  ISearchRelase,
+  searchrelase,
+} from "../../app/models/relaseresult";
 import RelaseTableStudy from "./RelaseTableStudy";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
@@ -83,7 +84,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     optionStore,
     locationStore,
     resultValidationStore,
-    relaseResultStore
+    relaseResultStore,
   } = useStore();
   const { expedientes, getnow } = procedingStore;
   const {
@@ -116,7 +117,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     setSearch,
   } = relaseResultStore;
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
-  const { getCity,  } = locationStore;
+  const { getCity } = locationStore;
   const [searchParams] = useSearchParams();
   const [form] = Form.useForm<ISearchRelase>();
   let navigate = useNavigate();
@@ -125,8 +126,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   const [ids, setIds] = useState<number[]>([]);
   const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
   const { width: windowWidth } = useWindowDimensions();
-  const [expandable, setExpandable] =
-    useState<ExpandableConfig<Irelacelist>>();
+  const [expandable, setExpandable] = useState<ExpandableConfig<Irelacelist>>();
   const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
   const [visto, setvisto] = useState<checked[]>([]);
   const hasFooterRow = true;
@@ -141,12 +141,8 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     searchedColumn: "",
   });
   useEffect(() => {
-
     getDepartmentAreaOptions();
-  }, [
-
-    getDepartmentAreaOptions,
-  ]);
+  }, [getDepartmentAreaOptions]);
   const selectedCity = Form.useWatch("ciudad", form);
   useEffect(() => {
     const readStudy = async () => {
@@ -243,19 +239,18 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   };
   const updatedata = async () => {
     setLoading(true);
-    
-    
-      setLoading(false);
-      alerts.confirm(
-        "",
-        `Se ha(n) enviado ${ids.length} estudio(s) de ${
-          solicitudesData.length
-        } solicitud(es) a estatus ${
-          activiti == "register" ? "liberado" : "validado"
-        } de manera exitosa `,
-        async () => {
-          var succes = await update(updateData!);
-          if (succes) {
+
+    setLoading(false);
+    alerts.confirm(
+      "",
+      `Se ha(n) enviado ${ids.length} estudio(s) de ${
+        solicitudesData.length
+      } solicitud(es) a estatus ${
+        activiti == "register" ? "liberado" : "validado"
+      } de manera exitosa `,
+      async () => {
+        var succes = await update(updateData!);
+        if (succes) {
           await getAll(values);
           setUpdateDate([]);
           setIds([]);
@@ -264,14 +259,13 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
         } else {
           setLoading(false);
         }
-        },
-        ()=>{
-          setLoading(false);
-        }
-      );
-      setIds([]);
-      SetSolicitudesData([]);
-
+      },
+      () => {
+        setLoading(false);
+      }
+    );
+    setIds([]);
+    SetSolicitudesData([]);
   };
 
   const expandableStudyConfig = {
@@ -393,7 +387,8 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   }, [branchCityOptions]);
   useEffect(() => {
     setAreaOptions(
-      departmentAreaOptions.find((x) => x.value === selectedDepartment)?.options ?? []
+      departmentAreaOptions.find((x) => x.value === selectedDepartment)
+        ?.options ?? []
     );
     form.setFieldValue("sucursalId", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
@@ -525,106 +520,105 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
 
   return (
     <Fragment>
-      <Spin spinning={loading } tip={printing ? "Imprimiendo" : ""}>
-      <div style={{ marginBottom: "5px", marginLeft: "90%" }}>
-      <Button
-          key="clean"
-          onClick={(e) => {
-           
-            form.setFieldsValue(new searchrelase() );
-            setValues(new searchrelase());
+      <Spin spinning={loading} tip={printing ? "Imprimiendo" : ""}>
+        <div style={{ marginBottom: "5px", marginLeft: "90%" }}>
+          <Button
+            key="clean"
+            onClick={(e) => {
+              form.setFieldsValue(new searchrelase());
+              setValues(new searchrelase());
+            }}
+            style={{ marginLeft: "10%" }}
+          >
+            Limpiar
+          </Button>
+          <Button
+            key="filter"
+            type="primary"
+            onClick={(e) => {
+              e.stopPropagation();
+              form.submit();
+            }}
+            style={{ marginLeft: "10%" }}
+          >
+            Filtrar
+          </Button>
+        </div>
+        <div
+          className="status-container"
+          style={{
+            // backgroundColor: "#F2F2F2",
+            height: "auto",
+            borderStyle: "solid",
+            borderColor: "#CBC9C9",
+            borderWidth: "1px",
+            borderRadius: "10px",
+            padding: "10px",
           }}
-          style={{ marginLeft: "10%" }}
         >
-          Limpiar
-        </Button>
-      <Button
-          key="filter"
-          type="primary"
-          onClick={(e) => {
-            e.stopPropagation();
-            form.submit();
-          }}
-          style={{ marginLeft: "10%" }}
-        >
-          Filtrar
-        </Button>
-
-
-      </div>
-      <div
-        className="status-container"
-        style={{
-          // backgroundColor: "#F2F2F2",
-          height: "auto",
-          borderStyle: "solid",
-          borderColor: "#CBC9C9",
-          borderWidth: "1px",
-          borderRadius: "10px",
-          padding: "10px",
-        }}
-      >
-<Form<ISearchRelase>
-          {...formItemLayout}
-          form={form}
-          name="sampling"
-          initialValues={values}
-          onFinish={onFinish}
-          scrollToFirstError
-        >
-          <Row>
-            <Col span={24}>
-              <Row justify="space-between" gutter={[12, 12]}>
-                <Col span={8}>
-                  <DateRangeInput
-                    formProps={{ label: "Fecha", name: "fecha" }}
-                  />
-                </Col>
-                <Col span={8}>
-                  <TextInput
-                    formProps={{
-                      name: "search",
-                      label: "Buscar",
-                    }}
-                  />
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{
-                      name: "tipoSoli",
-                      label: "Tipo solicitud",
-                    }}
-                    multiple
-                    options={urgencyOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{
-                      name: "estudio",
-                      label: "Estudios",
-                    }}
-                    multiple
-                    options={studiesOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{
-                      name: "estatus",
-                      label: "Estatus",
-                    }}
-                    multiple
-                    options={[
-                     
-                      { value: 5, label: "Validado" },
-                      { value: 6, label: "Liberado" },
-                      { value: 7, label: "Enviado" },
-                    ]}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  {/* <SelectInput
+          <Form<ISearchRelase>
+            {...formItemLayout}
+            form={form}
+            name="sampling"
+            initialValues={values}
+            onFinish={onFinish}
+            scrollToFirstError
+          >
+            <Row>
+              <Col span={24}>
+                <Row justify="space-between" gutter={[12, 12]}>
+                  <Col span={8}>
+                    <DateRangeInput
+                      formProps={{ label: "Fecha", name: "fecha" }}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <TextInput
+                      formProps={{
+                        name: "search",
+                        label: "Buscar",
+                      }}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "tipoSoli",
+                        label: "Tipo solicitud",
+                      }}
+                      multiple
+                      options={urgencyOptions}
+                    ></SelectInput>
+                  </Col>
+                  <Col span={8}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "estudio",
+                        label: "Estudios",
+                      }}
+                      multiple
+                      options={studiesOptions}
+                    ></SelectInput>
+                  </Col>
+                  <Col span={8}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "estatus",
+                        label: "Estatus",
+                      }}
+                      multiple
+                      options={[
+                        { value: 5, label: "Validado" },
+                        { value: 6, label: "Liberado" },
+                        { value: 7, label: "Enviado" },
+                      ]}
+                    ></SelectInput>
+                  </Col>
+                  <Col span={8}>
+                    {/* <SelectInput
                     formProps={{
                       name: "departamento",
                       label: "Departamento",
@@ -632,167 +626,173 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
                     multiple
                     options={departmentAreaOptions}
                   ></SelectInput> */}
-                  <Form.Item label="Áreas" className="no-error-text" help="">
-                    <Input.Group>
-                      <Row gutter={8}>
-                        <Col span={12}>
-                          <SelectInput
-                            formProps={{
-                              name: "departament",
-                              label: "Departamento",
-                              noStyle: true,
-                            }}
-                            options={departmentOptions}
-                          />
-                        </Col>
-                        <Col span={12}>
-                          <SelectInput
-                            formProps={{
-                              name: "area",
-                              label: "Área",
-                              noStyle: true,
-                            }}
-                            
-                            options={areaOptions}
-                          />
-                        </Col>
-                      </Row>
-                    </Input.Group>
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{
-                      name: "medico",
-                      label: "Médico",
-                    }}
-                    multiple
-                    options={medicOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <Form.Item label="Sucursal" className="no-error-text" help="">
-                    <Input.Group>
-                      <Row gutter={8}>
-                        <Col span={12}>
-                          <SelectInput
-                            formProps={{
-                              name: "ciudad",
-                              label: "Ciudad",
-                              noStyle: true,
-                            }}
-                            options={cityOptions}
-                          />
-                        </Col>
-                        <Col span={12}>
-                          <SelectInput
-                            formProps={{
-                              name: "sucursal",
-                              label: "Sucursales",
-                              noStyle: true,
-                            }}
-                            multiple
-                            options={branchOptions}
-                          />
-                        </Col>
-                      </Row>
-                    </Input.Group>
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{
-                      name: "compañia",
-                      label: "Compañía",
-                    }}
-                    multiple
-                    options={companyOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}></Col>
-              </Row>
-            </Col>
-          </Row>
-        </Form>
-      </div>
-      <Row>
-        <Col md={8}>
-          <Button
-            style={{ marginTop: "10px", marginBottom: "10px" }}
-            type={activiti == "register" ? "primary" : "ghost"}
-            onClick={register}
-          >
-            Registrar Liberación  
-          </Button>
-          <Button
-            style={{
-              marginTop: "10px",
-              marginBottom: "10px",
-              marginLeft: "10px",
-            }}
-            type={activiti == "cancel" ? "primary" : "ghost"}
-            onClick={cancel}
-          >
-            Cancelar Liberación  
-          </Button>
-        </Col>
-        <Col md={13}></Col>
-        <Col md={3}>
-          {activiti == "register" ? (
+                    <Form.Item label="Áreas" className="no-error-text" help="">
+                      <Input.Group>
+                        <Row gutter={8}>
+                          <Col span={12}>
+                            <SelectInput
+                              formProps={{
+                                name: "departament",
+                                label: "Departamento",
+                                noStyle: true,
+                              }}
+                              options={departmentOptions}
+                            />
+                          </Col>
+                          <Col span={12}>
+                            <SelectInput
+                              formProps={{
+                                name: "area",
+                                label: "Área",
+                                noStyle: true,
+                              }}
+                              options={areaOptions}
+                            />
+                          </Col>
+                        </Row>
+                      </Input.Group>
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "medico",
+                        label: "Médico",
+                      }}
+                      multiple
+                      options={medicOptions}
+                    ></SelectInput>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      label="Sucursal"
+                      className="no-error-text"
+                      help=""
+                    >
+                      <Input.Group>
+                        <Row gutter={8}>
+                          <Col span={12}>
+                            <SelectInput
+                              formProps={{
+                                name: "ciudad",
+                                label: "Ciudad",
+                                noStyle: true,
+                              }}
+                              options={cityOptions}
+                            />
+                          </Col>
+                          <Col span={12}>
+                            <SelectInput
+                              form={form}
+                              formProps={{
+                                name: "sucursal",
+                                label: "Sucursales",
+                                noStyle: true,
+                              }}
+                              multiple
+                              options={branchOptions}
+                            />
+                          </Col>
+                        </Row>
+                      </Input.Group>
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "compañia",
+                        label: "Compañía",
+                      }}
+                      multiple
+                      options={companyOptions}
+                    ></SelectInput>
+                  </Col>
+                  <Col span={8}></Col>
+                </Row>
+              </Col>
+            </Row>
+          </Form>
+        </div>
+        <Row>
+          <Col md={8}>
+            <Button
+              style={{ marginTop: "10px", marginBottom: "10px" }}
+              type={activiti == "register" ? "primary" : "ghost"}
+              onClick={register}
+            >
+              Registrar Liberación
+            </Button>
             <Button
               style={{
                 marginTop: "10px",
                 marginBottom: "10px",
-                marginLeft: "34%",
+                marginLeft: "10px",
               }}
-              type="primary"
-              disabled={!activar}
-              onClick={() => {
-                updatedata();
-              }}
+              type={activiti == "cancel" ? "primary" : "ghost"}
+              onClick={cancel}
             >
-              {activar ? "" : " "}
-              Aceptar Liberación  
+              Cancelar Liberación
             </Button>
-          ) : (
-            ""
-          )}
-          {activiti == "cancel" ? (
-            <Button
-              style={{
-                marginTop: "10px",
-                marginBottom: "10px",
-                marginLeft: "30%",
-              }}
-              type="primary"
-              disabled={!activar}
-              onClick={() => {
-                updatedata();
-              }}
-            >
-              {activar ? "" : " "}
-              Cancelar Liberación  
-            </Button>
-          ) : (
-            ""
-          )}
-        </Col>
-      </Row>
-      <Fragment>
-        <RelaseTableStudy
-          data={studys}
-          columns={ValidationStudyColumns({ printTicket })}
-          expandable={ValidationStudyExpandable({
-            activiti,
-            onChange,
-            viewTicket,
-            visto,
-            setvisto,
-            updateData,
-            setLoading
-          })}
-        />
-      </Fragment>
+          </Col>
+          <Col md={13}></Col>
+          <Col md={3}>
+            {activiti == "register" ? (
+              <Button
+                style={{
+                  marginTop: "10px",
+                  marginBottom: "10px",
+                  marginLeft: "34%",
+                }}
+                type="primary"
+                disabled={!activar}
+                onClick={() => {
+                  updatedata();
+                }}
+              >
+                {activar ? "" : " "}
+                Aceptar Liberación
+              </Button>
+            ) : (
+              ""
+            )}
+            {activiti == "cancel" ? (
+              <Button
+                style={{
+                  marginTop: "10px",
+                  marginBottom: "10px",
+                  marginLeft: "30%",
+                }}
+                type="primary"
+                disabled={!activar}
+                onClick={() => {
+                  updatedata();
+                }}
+              >
+                {activar ? "" : " "}
+                Cancelar Liberación
+              </Button>
+            ) : (
+              ""
+            )}
+          </Col>
+        </Row>
+        <Fragment>
+          <RelaseTableStudy
+            data={studys}
+            columns={ValidationStudyColumns({ printTicket })}
+            expandable={ValidationStudyExpandable({
+              activiti,
+              onChange,
+              viewTicket,
+              visto,
+              setvisto,
+              updateData,
+              setLoading,
+            })}
+          />
+        </Fragment>
       </Spin>
     </Fragment>
   );

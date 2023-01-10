@@ -1152,7 +1152,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     type="primary"
                     disabled={readonly}
                   >
-                    {" "}
                     Agregar solicitud
                   </Button>
                 </Col>
@@ -1169,7 +1168,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     type="primary"
                     disabled={readonly}
                   >
-                    {" "}
                     Agregar cotización
                   </Button>
                 </Col>
@@ -1186,7 +1184,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     type="primary"
                     disabled={readonly}
                   >
-                    {" "}
                     Agregar cita
                   </Button>
                 </Col>
@@ -1225,10 +1222,10 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 </Col>
               </Row>
               <Divider orientation="left">Solicitud</Divider>
-              <Table<any>
+              <Table<IRequestInfo>
+                rowKey={(record) => record.solicitudId}
                 loading={loading || printing}
                 size="small"
-                rowKey={(record) => record.id}
                 columns={columns}
                 dataSource={[...requests]}
                 /*    pagination={defaultPaginationProperties} */

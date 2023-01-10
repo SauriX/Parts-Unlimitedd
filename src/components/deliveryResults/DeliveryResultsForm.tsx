@@ -179,6 +179,7 @@ const DeliveryResultsForm = () => {
             </Col>
             <Col span={8}>
               <SelectInput
+                form={form}
                 multiple
                 formProps={{ label: "Compañias", name: "companias" }}
                 options={companyOptions}
@@ -186,6 +187,7 @@ const DeliveryResultsForm = () => {
             </Col>
             <Col span={8}>
               <SelectInput
+                form={form}
                 multiple
                 formProps={{
                   label: "Medios de entrega",
@@ -203,6 +205,7 @@ const DeliveryResultsForm = () => {
             </Col>
             <Col span={8}>
               <SelectInput
+                form={form}
                 multiple
                 formProps={{
                   label: "Tipo de solicitud",
@@ -216,6 +219,7 @@ const DeliveryResultsForm = () => {
             </Col>
             <Col span={8}>
               <SelectInput
+                form={form}
                 multiple
                 formProps={{ label: "Estatus", name: "estatus" }}
                 options={studyStatusOptions}
@@ -226,6 +230,7 @@ const DeliveryResultsForm = () => {
             </Col>
             <Col span={8}>
               <SelectInput
+                form={form}
                 multiple
                 formProps={{ label: "Médicos", name: "medicos" }}
                 options={medicOptions}
@@ -251,6 +256,7 @@ const DeliveryResultsForm = () => {
                     </Col>
                     <Col span={12}>
                       <SelectInput
+                        form={form}
                         formProps={{
                           name: "sucursalId",
                           label: "Sucursales",
@@ -280,6 +286,7 @@ const DeliveryResultsForm = () => {
                     </Col>
                     <Col span={12}>
                       <SelectInput
+                        form={form}
                         formProps={{
                           name: "area",
                           label: "Área",
@@ -295,6 +302,7 @@ const DeliveryResultsForm = () => {
             </Col>
             <Col span={8}>
               <SelectInput
+                form={form}
                 multiple
                 formProps={{ label: "Procedencias", name: "procedencias" }}
                 options={originOptions}

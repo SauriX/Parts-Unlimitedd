@@ -6,7 +6,6 @@ import {
   IMassSearch,
   IParameter,
   IResult,
-  IResultList,
   MassSearchValues,
 } from "../models/massResultSearch";
 import alerts from "../util/alerts";
@@ -15,7 +14,6 @@ import { getErrors } from "../util/utils";
 export default class MassResultSearchStore {
   constructor() {
     makeAutoObservable(this);
-    // set: (newFormValues: IMassSearch) => {};
   }
 
   area: string = "";
@@ -38,17 +36,17 @@ export default class MassResultSearchStore {
       this.loadingStudies = true;
       const result = await MassResultSearch.getRequestResults(search);
       this.parameters = result.parameters;
-      if (result.parameters.length < 8) {
-        let faltantes = 8 - result.parameters.length;
-        for (let i = 0; i < faltantes; i++) {
-          this.parameters.push({ nombre: "", etiqueta: "", unidades: "" });
-        }
-      }
+      // if (result.parameters.length < 8) {
+      //   let faltantes = 8 - result.parameters.length;
+      //   for (let i = 0; i < faltantes; i++) {
+      //     this.parameters.push({ nombre: "", etiqueta: "", unidades: "" });
+      //   }
+      // }
       this.results = result.results;
       console.log("RESULT", result);
     } catch (error: any) {
       alerts.warning(getErrors(error));
-    }finally {
+    } finally {
       this.loadingStudies = false;
     }
   };
@@ -84,10 +82,18 @@ export default class MassResultSearchStore {
   };
 
   printPdf = async (search: IMassSearch) => {
-    try{
+    try {
       await MassResultSearch.printPdf(search);
-    } catch(error: any){
+    } catch (error: any) {
       alerts.warning(getErrors(error));
     }
-  }
+  };
+
+  printOrder = async (recordId: string, requestId: string) => {
+    try {
+      await MassResultSearch.getOrderPdf(recordId, requestId);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
 }

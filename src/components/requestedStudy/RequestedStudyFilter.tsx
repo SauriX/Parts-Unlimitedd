@@ -19,8 +19,7 @@ import { IOptions } from "../../app/models/shared";
 
 const RequestedStudyFilter = () => {
   const { optionStore, requestedStudyStore } = useStore();
-  const { getAll, setFormValues } =
-    requestedStudyStore;
+  const { getAll, setFormValues } = requestedStudyStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -75,7 +74,8 @@ const RequestedStudyFilter = () => {
 
   useEffect(() => {
     setAreaOptions(
-      departmentAreaOptions.find((x) => x.value === selectedDepartment)?.options ?? []
+      departmentAreaOptions.find((x) => x.value === selectedDepartment)
+        ?.options ?? []
     );
     form.setFieldValue("area", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
@@ -145,6 +145,7 @@ const RequestedStudyFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "procedencia",
                       label: "Procedencia",
@@ -155,6 +156,7 @@ const RequestedStudyFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "tipoSolicitud",
                       label: "Tipo solicitud",
@@ -165,6 +167,7 @@ const RequestedStudyFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "estatus",
                       label: "Estatus",
@@ -189,6 +192,7 @@ const RequestedStudyFilter = () => {
                         </Col>
                         <Col span={12}>
                           <SelectInput
+                            form={form}
                             formProps={{
                               name: "area",
                               label: "Área",
@@ -204,6 +208,7 @@ const RequestedStudyFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "medicoId",
                       label: "Médico",
@@ -228,6 +233,7 @@ const RequestedStudyFilter = () => {
                         </Col>
                         <Col span={12}>
                           <SelectInput
+                            form={form}
                             formProps={{
                               name: "sucursalId",
                               label: "Sucursales",
@@ -243,6 +249,7 @@ const RequestedStudyFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "compañiaId",
                       label: "Compañía",

@@ -241,6 +241,7 @@ const PendingRecive = () => {
 
   const onExpand = (isExpanded: boolean, record: IRecibe) => {
     let expandRows: string[] = [...expandedRowKeys];
+
     if (isExpanded) {
       expandRows.push(record.id);
     } else {
