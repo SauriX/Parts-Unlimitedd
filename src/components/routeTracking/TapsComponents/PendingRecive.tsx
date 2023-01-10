@@ -52,6 +52,7 @@ import {
   IStatus,
   searchValues,
   ISearchPending,
+  IReciveStudy,
 } from "../../../app/models/pendingRecive";
 import { formItemLayout } from "../../../app/util/utils";
 /* const pendings:IRecibe[] = [{
@@ -239,7 +240,7 @@ const PendingRecive = () => {
   }, [getAllRecive]);
 
   const onExpand = (isExpanded: boolean, record: IRecibe) => {
-    let expandRows: string[] =[ ...expandedRowKeys];
+    let expandRows: string[] = [...expandedRowKeys];
     if (isExpanded) {
       expandRows.push(record.id);
     } else {
@@ -284,44 +285,43 @@ const PendingRecive = () => {
     };
     setUpdateDate((prev) => [...prev!, datos]);
   };
+  const columnsStudy: IColumns<IReciveStudy> = [
+    {
+      ...getDefaultColumnProps("estudio", "Estudio", {
+        width: "15%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("solicitud", "Solicitud", {
+        width: "15%",
+      }),
+    },
+    {
+      key: "editar",
+      dataIndex: "horarecoleccion",
+      title: "Hora de recolección",
+      align: "center",
+      width: "10%",
+      render: (value) => moment(value).utc().format("MMMM D YYYY  h:mmA"),
+    },
+  ];
   const expandableStudyConfig = {
-    expandedRowRender: (item: IRecibe) => (
+    expandedRowRender: (item: IRecibe, index: number) => (
       <div>
         <h4>Estudios</h4>
-        {item.study.map((x) => {
-          return (
-            <>
-              <Descriptions
-                size="small"
-                bordered
-                layout="vertical"
-                style={{ marginBottom: 5 }}
-              >
-                <Descriptions.Item
-                  label="Estudio"
-                  className="description-content"
-                  style={{ maxWidth: 30 }}
-                >
-                  {x.estudio}
-                </Descriptions.Item>
-                <Descriptions.Item
-                  label="Solicitud"
-                  className="description-content"
-                  style={{ maxWidth: 30 }}
-                >
-                  {x.solicitud}
-                </Descriptions.Item>
-                <Descriptions.Item
-                  label="Hora de recolección"
-                  className="description-content"
-                  style={{ maxWidth: 30 }}
-                >
-                  {moment(x.horarecoleccion).utc().format("h:mmA")}
-                </Descriptions.Item>
-              </Descriptions>
-            </>
-          );
-        })}
+        <>
+          <Table
+            size="small"
+            rowKey={(record) => record.id}
+            columns={columnsStudy}
+            dataSource={[...item.study]}
+            bordered
+            style={{}}
+            className="header-expandable-table"
+            pagination={false}
+            showHeader={index === 0}
+          ></Table>
+        </>
         <br />
 
         <h4>Muestras incluidas por recibir:</h4>
@@ -431,6 +431,7 @@ const PendingRecive = () => {
           onClick={() => {
             setEstatus(value);
           }}
+          
         />
       ),
     },
@@ -444,15 +445,15 @@ const PendingRecive = () => {
     },
     {
       key: "editar",
-      dataIndex: "fecha",
+      dataIndex: "fechaen",
       title: "Fecha de entrega estimada",
       align: "center",
       width: "10%",
-      render: (value) => moment(value).format("MMMM D, YYYY"),
+      render: (value) => moment(value).format("MMMM D YYYY"),
     },
     {
       key: "editar",
-      dataIndex: "fecha",
+      dataIndex: "fechaen",
       title: "Hora de entrega estimada",
       align: "center",
       width: "15%",
@@ -469,7 +470,7 @@ const PendingRecive = () => {
         <div>
           {moment(value).utc().format("h:mmA")}
           <br />
-          {moment(value).format("MMMM D, YYYY")}
+          {moment(value).format("MMMM D YYYY")}
         </div>
       ),
     },
@@ -507,8 +508,6 @@ const PendingRecive = () => {
     console.log(reagent, "en el onfish");
     console.log(reagent);
     let success = false;
-
-
   };
   return (
     <Fragment>
@@ -530,7 +529,12 @@ const PendingRecive = () => {
           <Col span={2}></Col>
           <Col span={4}>
             <SelectInput
-              formProps={{ name: "sucursal", label: "Sucursales" }}
+              formProps={{
+                name: "sucursal",
+                label: "Sucursales de donde recibir",
+                labelCol: { span: 12 },
+                wrapperCol: { span: 12 },
+              }}
               multiple
               options={branchCityOptions}
             />
