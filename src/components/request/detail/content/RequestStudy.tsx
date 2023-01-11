@@ -305,7 +305,7 @@ const RequestStudy = () => {
   const cancel = () => {
     if (request) {
       alerts.confirm(
-        "Canelar estudio",
+        "Canelar estudios",
         `¿Desea cancelar los registros seleccionados?`,
         async () => {
           const data: IRequestStudyUpdate = {

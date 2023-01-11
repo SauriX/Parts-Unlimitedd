@@ -1,20 +1,18 @@
-import { Form, Row, Col, Checkbox, Input, Button, Spin } from "antd";
+import { Form, Row, Col, Checkbox, Input, Button } from "antd";
 import { FormInstance } from "antd/es/form/Form";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import { createSemanticDiagnosticsBuilderProgram } from "typescript";
 import MaskInput from "../../../../app/common/form/proposal/MaskInput";
 import SelectInput from "../../../../app/common/form/proposal/SelectInput";
 import TextAreaInput from "../../../../app/common/form/proposal/TextAreaInput";
 import TextInput from "../../../../app/common/form/proposal/TextInput";
-import { IRequestGeneral, IRequestStudy } from "../../../../app/models/request";
+import { IRequestGeneral } from "../../../../app/models/request";
 import { IFormError, IOptions } from "../../../../app/models/shared";
 import {
   originOptions,
   urgencyOptions,
 } from "../../../../app/stores/optionStore";
 import { useStore } from "../../../../app/stores/store";
-import alerts from "../../../../app/util/alerts";
 import { catalog } from "../../../../app/util/catalogs";
 import { validateEmail } from "../../../../app/util/utils";
 
@@ -46,7 +44,6 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
     getMedicOptions,
   } = optionStore;
   const {
-    loadingTabContent,
     request,
     setStudyFilter,
     getGeneral,

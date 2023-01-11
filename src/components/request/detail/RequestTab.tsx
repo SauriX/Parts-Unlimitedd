@@ -34,6 +34,7 @@ type keys =
 
 const showAutoSaveMessage = () => {
   notification.info({
+    key: "auto-not",
     message: `Guardado automatico`,
     placement: "bottomRight",
     icon: "",
@@ -121,8 +122,6 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       if (!ok) {
         setCurrentKey("studies");
         return;
-      } else {
-        // await modificarSaldo();
       }
     } else if (currentKey === "request") {
       const ok = await updateStudies(studyUpdate, autoSave);
