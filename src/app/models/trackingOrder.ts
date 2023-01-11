@@ -3,7 +3,7 @@ import moment from "moment";
 
 export interface IEstudiosList {
   taponNombre: string;
-  estudios: ITrackingOrderList[];
+  estudio?: ITrackingOrderList;
   escaneado: boolean;
   temperatura: number;
   solicitud: string;
@@ -52,7 +52,6 @@ export interface ITrackingOrderForm {
 }
 export class TrackingOrderListValues implements IEstudiosList {
   taponNombre = "";
-  estudios = [];
   escaneado = false;
   temperatura = 0;
   solicitud = "";

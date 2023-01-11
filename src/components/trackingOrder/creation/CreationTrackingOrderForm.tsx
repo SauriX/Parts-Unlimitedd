@@ -268,7 +268,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     let estudiosFiltrados = trackingOrder
       .filter((order) => order.escaneado)
       .map((order) => {
-        return order.estudios.map((estudio) => {
+          let estudio = order.estudio!;
           return {
             clave: estudio.clave,
             estudio: estudio.estudio,
@@ -280,7 +280,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
             temperatura: order.temperatura,
             estudioId: estudio.estudioId,
           };
-        });
+   
       });
     trackingOrderSend.estudios = _.flatten(estudiosFiltrados);
     trackingOrderSend.clave = sucursalesClave.find(
