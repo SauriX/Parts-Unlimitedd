@@ -10,10 +10,11 @@ export interface IRouteList {
     id: string;
     seguimiento: string;
     clave: string;
+    solicitud:string;
+    Estudio:string;
+    status: string;
     sucursal: string;
     fecha: string;
-    status: string;
-    estudios: IstudyRoute[];
    
   }
   export interface IstudyRoute {

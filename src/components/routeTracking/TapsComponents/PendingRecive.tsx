@@ -527,8 +527,7 @@ const PendingRecive = () => {
               formProps={{ name: "fecha", label: "Fecha" }}
             ></DateInput>
           </Col>
-          <Col span={2}></Col>
-          <Col span={4}>
+          <Col span={6}>
             <SelectInput
             form={form}
               formProps={{

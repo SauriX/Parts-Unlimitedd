@@ -76,7 +76,6 @@ const PendingSend = () => {
     if (studys.length === 0) {
       readPriceList();
     }
-    setExpandable(expandableStudyConfig);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
   const updatedata = async () => {
@@ -184,136 +183,6 @@ const PendingSend = () => {
     
   };
 
-  const columnsStudy: IColumns<IstudyRoute> = [
-    {
-      key: "seleccionar",
-      dataIndex: "seleccionar",
-      title: "Seleccionar",
-      align: "center",
-      width: "10%",
-      render: (_value, record) => (
-        <>
-          {record.status === 2 && (
-            <Checkbox
-              onChange={(e) => {
-                onChange(e, record.id, record.solicitudid,record.routeId);
-                stcambio(!cambio);
-              }}
-              disabled={!(activiti == "register")}
-              checked={
-                updateData
-                    .find(
-                        (x) =>
-                            x.solicitudId == record.solicitudid && record.routeId == x.ruteOrder
-                    )
-                    ?.estudioId.includes(record.id) ||
-                (cambio &&
-                    updateData
-                        .find(
-                            (x) =>
-                                x.solicitudId ==
-                                record.solicitudid && record.routeId == x.ruteOrder
-                        )
-                        ?.estudioId.includes(record.id))
-            }
-            ></Checkbox>
-          )}
-          {record.status === 8 && (
-            <Checkbox
-              onChange={(e) => {
-                {
-                  onChange(e, record.id, record.solicitudid,record.routeId);
-                  stcambio(!cambio);
-                }
-              }}
-              disabled={!(activiti == "cancel")}
-              checked={
-                updateData
-                    .find(
-                        (x) =>
-                            x.solicitudId == record.solicitudid && record.routeId == x.ruteOrder
-                    )
-                    ?.estudioId.includes(record.id) ||
-                (cambio &&
-                    updateData
-                        .find(
-                            (x) =>
-                                x.solicitudId ==
-                                record.solicitudid && record.routeId == x.ruteOrder
-                        )
-                        ?.estudioId.includes(record.id))
-            }
-            ></Checkbox>
-          )}
-        </>
-      ),
-    },
-    {
-      ...getDefaultColumnProps("clave", "Solicitud", {
-        width: "20%",
-        minWidth: 150,
-      }),
-      render: (value, route) => (
-        <Button
-          type="link"
-          onClick={() => {
-            navigate(`/ShipmentTracking/${route.routeId}`);
-          }}
-        >
-          {value}
-        </Button>
-      ),
-    },
-    {
-      ...getDefaultColumnProps("nombre", "Estudio", {
-        width: "15%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("nombreEstatus", "Estatus", {
-        width: "15%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("registro", "Registro", {
-        width: "15%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("entrega", "Entrega", {
-        width: "15%",
-      }),
-    },
-  ];
-  const expandableStudyConfig = {
-    expandedRowRender: (item: IRouteList) => (
-      <div>
-        <h4>Estudios</h4>
-        {item.estudios.map((x) => {
-          return (
-            <>
-              <Descriptions
-                size="small"
-                bordered
-                layout="vertical"
-                style={{ marginBottom: 5 }}
-                column={6}
-              >
-                <Descriptions.Item
-                  label=""
-                  className="description-content"
-                  style={{ maxWidth: 30 }}
-                >
-
-                </Descriptions.Item>
-              </Descriptions>
-            </>
-          );
-        })}
-      </div>
-    ),
-    rowExpandable: () => true,
-  };
   const register = () => {
     setActiviti("register");
     setUpdateDate([]);
@@ -356,14 +225,37 @@ const PendingSend = () => {
       }),
     },
     {
-      ...getDefaultColumnProps("sucursal", "Sucursal", {
+      ...getDefaultColumnProps("solicitud", "Solicitud", {
         searchState,
         setSearchState,
         width: "20%",
       }),
     },
     {
-      ...getDefaultColumnProps("fecha", " Fecha de entrega estimada", {
+      key: "editar",
+      dataIndex: "id",
+      title: "Estatus",
+      align: "center",
+      width: "10%",
+      render: (value) => (value ? "Activo" : "Inactivo"),
+    },
+    {
+      ...getDefaultColumnProps("estudio", "Estudio", {
+        searchState,
+        setSearchState,
+        width: "20%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("sucursal", "Sucursal", {
+        searchState,
+        setSearchState,
+        width: "20%",
+      }),
+    },
+    
+    {
+      ...getDefaultColumnProps("fecha", " Fecha de entrega", {
         searchState,
         setSearchState,
         width: "15%",
@@ -416,7 +308,6 @@ const PendingSend = () => {
     let studios = [];
     var datas = await getAll(search!);
     datas?.forEach((x: any) => studios.push(x.pendings));
-    setExpandable(expandableStudyConfig);
     let success = false;
   };
   return (
@@ -435,12 +326,11 @@ const PendingSend = () => {
               formProps={{ name: "fechas", label: "Fecha" }}
             ></DateRangeInput>
           </Col>
-          <Col span={1}></Col>
-          <Col span={4}>
+          <Col span={5}>
             <SelectInput
               options={branchCityOptions}
               formProps={{ name: "sucursal", label: "Sucursal a donde enviar",        labelCol: { span: 12 },
-              wrapperCol: { span: 12 }, }}
+              wrapperCol: { span: 14 }, }}
             ></SelectInput>
           </Col>
           <Col span={1}></Col>
@@ -541,28 +431,6 @@ const PendingSend = () => {
           columns={columns}
           dataSource={[...studys]}
           rowClassName="row-search"
-          expandable={{
-            onExpand: onExpand,
-            expandedRowKeys: expandedRowKeys,
-            rowExpandable: () => true,
-            defaultExpandAllRows: true,
-
-            expandedRowRender: (datos: IRouteList, index: number) => (
-              <>
-                <Table
-                  size="small"  
-                  rowKey={(record) => record.id}
-                  columns={columnsStudy}
-                  dataSource={[...datos.estudios]}
-                  bordered
-                  style={{}}
-                  className="header-expandable-table"
-                  pagination={false}
-                  showHeader={index === 0}
-                ></Table>
-              </>
-            ),
-          }}
           bordered
         ></Table>
       </Fragment>
