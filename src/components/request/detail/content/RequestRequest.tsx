@@ -32,6 +32,7 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
     setPartiality,
     addPartiality,
     sendStudiesToRequest,
+    getStudies,
   } = requestStore;
 
   const [selectedStudies, setSelectedStudies] = useState<IRequestStudy[]>([]);
@@ -80,7 +81,7 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
       ...getDefaultColumnProps("estatus", "Estatus", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "10%",
       }),
     },
     {
@@ -90,10 +91,17 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
       }),
     },
     {
-      ...getDefaultColumnProps("fechaEntrega", "Fecha", {
+      ...getDefaultColumnProps("fechaSolicitado", "Fecha solicitado", {
         searchable: false,
-        width: "25%",
+        width: "15%",
       }),
+    },
+    {
+      ...getDefaultColumnProps("fechaEntrega", "Fecha de entrega", {
+        searchable: false,
+        width: "15%",
+      }),
+      className: "no-padding-cell",
       render: (value, item) => {
         return (
           <DatePicker
@@ -106,9 +114,7 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
             onChange={(value) => {
               updateDate(item, value);
             }}
-            disabledDate={(current) =>
-              current.isBefore(moment())
-            }
+            disabledDate={(current) => current.isBefore(moment())}
           />
         );
       },
@@ -125,7 +131,10 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
       };
       setLoading(true);
       const ok = await sendStudiesToRequest(data);
-      if (ok) setSelectedStudies([]);
+      if (ok) {
+        setSelectedStudies([]);
+        getStudies(request.expedienteId, request.solicitudId!);
+      }
       setLoading(false);
     }
   };
@@ -158,7 +167,8 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
           <Button
             type="default"
             disabled={
-              selectedStudies.length == 0 || !selectedStudies.every(
+              selectedStudies.length === 0 ||
+              !selectedStudies.every(
                 (x) => x.estatusId === status.requestStudy.solicitado
               )
             }
@@ -169,7 +179,8 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
           <Button
             type="default"
             disabled={
-              selectedStudies.length == 0 || !selectedStudies.every(
+              selectedStudies.length === 0 ||
+              !selectedStudies.every(
                 (x) => x.estatusId === status.requestStudy.tomaDeMuestra
               )
             }
@@ -187,12 +198,13 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
             pagination={false}
             rowSelection={{
               fixed: "right",
-              onChange(selectedRowKeys, selectedRows, info) {
+              onChange(_selectedRowKeys, selectedRows, _info) {
                 setSelectedStudies(toJS(selectedRows));
               },
               getCheckboxProps: (record) => ({
                 disabled:
-                  record.estatusId !== status.requestStudy.tomaDeMuestra && record.estatusId !== status.requestStudy.solicitado,
+                  record.estatusId !== status.requestStudy.tomaDeMuestra &&
+                  record.estatusId !== status.requestStudy.solicitado,
               }),
               selectedRowKeys: selectedStudies.map(
                 (x) => x.id ?? x.identificador!

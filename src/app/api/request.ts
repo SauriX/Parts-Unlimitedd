@@ -67,6 +67,8 @@ const Request = {
     requests.post("request/studies", request),
   cancelRequest: (recordId: string, requestId: string): Promise<void> =>
     requests.put(`request/cancel/${recordId}/${requestId}`, {}),
+  deleteRequest: (recordId: string, requestId: string): Promise<void> =>
+    requests.delete(`request/delete/${recordId}/${requestId}`),
   cancelStudies: (request: IRequestStudyUpdate): Promise<void> =>
     requests.put("request/studies/cancel", request),
   cancelPayments: (

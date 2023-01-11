@@ -90,7 +90,8 @@ export interface IClinicResultForm {
   fecha?: moment.Moment[];
   buscar?: string;
   procedencia?: number[];
-  departamento?: number[];
+  departamento?: string[];
+  ciudad?: string[];
   area?: number[];
   tipoSolicitud?: string[];
   estatus?: number[];
@@ -143,6 +144,7 @@ export class ClinicResultsFormValues implements IClinicResultForm {
   buscar = "";
   procedencia = [];
   departamento = [];
+  ciudad = [];
   tipoSolicitud = [];
   area = [];
   estatus = [];

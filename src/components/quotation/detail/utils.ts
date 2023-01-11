@@ -3,10 +3,12 @@ import { IQuotationGeneral } from "../../../app/models/quotation";
 import alerts from "../../../app/util/alerts";
 
 export const submitGeneral = async (
-  formGeneral: FormInstance<IQuotationGeneral>
+  formGeneral: FormInstance<IQuotationGeneral>,
+  autoSave: boolean
 ) => {
   try {
     await formGeneral.validateFields();
+    formGeneral.setFieldValue("guardadoAutomatico", autoSave);
     formGeneral.submit();
     return true;
   } catch (error: any) {
@@ -21,7 +23,11 @@ export const submitGeneral = async (
 
 export const onSubmitGeneral = (
   general: IQuotationGeneral,
-  updateGeneral: (quotation: IQuotationGeneral) => Promise<boolean>
+  showLoader: boolean,
+  updateGeneral: (
+    quotation: IQuotationGeneral,
+    showResult: boolean
+  ) => Promise<boolean>
 ) => {
-  return updateGeneral(general);
+  return updateGeneral(general, showLoader);
 };

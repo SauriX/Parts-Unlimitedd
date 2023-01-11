@@ -70,7 +70,7 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
 
   const columns: IColumns<IEstudiosList> = [
     {
-      ...getDefaultColumnProps("estudios", "Clave Estudio", {
+      ...getDefaultColumnProps("clave", "Clave Estudio", {
         searchState,
         setSearchState,
         width: "15%",
@@ -79,7 +79,7 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
       }),
       align: "center",
       render: (text, record) => {
-        return text.map((x: any) => x.clave).join(", ");
+        return record.estudio?.clave;
       },
     },
     {
@@ -91,11 +91,11 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
         windowSize: windowWidth,
       }),
       render: (text, record) => {
-        return text.map((x: any) => x.estudio).join(", ");
+        return record.estudio?.estudio;
       },
     },
     {
-      ...getDefaultColumnProps("estudios", "Solicitud", {
+      ...getDefaultColumnProps("solicitud", "Solicitud", {
         searchState,
         setSearchState,
         width: "15%",
@@ -104,30 +104,30 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
       }),
       align: "center",
 
-      render: (value, user) => (
+      render: (value, record) => (
         <Button
           type="link"
           onClick={() => {
             
             navigate(
-              `/${views.request}/${value.map((x: any) => x.expedienteId)[0] }/${value.map((x: any) => x.solicitudId)[0]}` 
+              `/${views.request}/${record.estudio?.expedienteId }/${ record.estudio?.solicitudId}` 
             );
           }}
         >
-          {value.map((x: any) => x.solicitud)[0]}
+          {record.estudio?.solicitud}
         </Button>
       ),
     },
 
     {
       key: "nombrePaciente",
-      dataIndex: "estudios",
+      dataIndex: "nombrePaciente",
       title: "Paciente",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => {
-        return value[0].nombrePaciente;
-      },
+      render: (value,record) => (
+        <>{record.estudio?.nombrePaciente}</>)
+      ,
     },
     {
       key: "escaneado",

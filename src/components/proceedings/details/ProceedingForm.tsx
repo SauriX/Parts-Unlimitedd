@@ -91,7 +91,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     appointmentStore,
     quotationStore,
   } = useStore();
-  const { getQuotations, quotations, convertToRequest, deactivateQuotation } =
+  const { getQuotations, quotations, convertToRequest, cancelQuotation } =
     quotationStore;
   const {
     getAllDom,

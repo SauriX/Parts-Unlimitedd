@@ -27,7 +27,7 @@ const ProceedingQuotations = ({
   const { width: windowWidth } = useWindowDimensions();
   const navigate = useNavigate();
   const { requestStore, quotationStore } = useStore();
-  const { getQuotations, quotations, convertToRequest, deactivateQuotation } =
+  const { getQuotations, quotations, convertToRequest, cancelQuotation } =
     quotationStore;
   const { getRequests: getByFilter } = requestStore;
   const columnsP: IColumns<IQuotationInfo> = [
@@ -137,7 +137,7 @@ const ProceedingQuotations = ({
           title=""
           onClick={async () => {
             await convertToRequest(item.cotizacionId);
-            await deactivateQuotation(item.cotizacionId);
+            await cancelQuotation(item.cotizacionId);
             await getByFilter({
               expediente: item?.expediente,
             });

@@ -1,17 +1,17 @@
 import { Button, Col, Form, Input, Row, Spin } from "antd";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
-import {
-  IModalIndicatorsFilter,
-  IReportIndicatorsFilter,
-} from "../../../app/models/indicators";
+import { IReportIndicatorsFilter } from "../../../app/models/indicators";
 import { IOptions } from "../../../app/models/shared";
 import { useStore } from "../../../app/stores/store";
 import { formItemLayout } from "../../../app/util/utils";
+
+import { PlusCircleTwoTone } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 type ModalProps = {
   modalTab: string;
@@ -25,9 +25,11 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
     getMedicOptions,
     getCompanyOptions,
   } = optionStore;
+  const { getSamplesCostsByFilter, getServicesCost: getServicesCostsByFilter } = indicatorsStore;
 
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [form] = Form.useForm<IModalIndicatorsFilter>();
+  const [form] = Form.useForm<IReportIndicatorsFilter>();
 
   const selectedCity = Form.useWatch("ciudad", form);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
@@ -52,11 +54,18 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
-  const onFinish = async (filter: IModalIndicatorsFilter) => {};
+  const onFinish = async (filter: IReportIndicatorsFilter) => {
+    setLoading(true);
+    if (modalTab === "sample") {
+      await getSamplesCostsByFilter(filter);
+    } else if (modalTab === "service") {
+      await getServicesCostsByFilter(filter);
+    }
+  };
 
   return (
     <Spin spinning={loading}>
-      <Form<IModalIndicatorsFilter>
+      <Form<IReportIndicatorsFilter>
         {...formItemLayout}
         form={form}
         name="indicators"
@@ -121,6 +130,11 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
                 }}
                 multiple
                 options={branchOptions}
+              />
+              <PlusCircleTwoTone
+                onClick={() => {
+                  navigate(`/catalogs?catalog=costofijo`);
+                }}
               />
             </Col>
           ) : (

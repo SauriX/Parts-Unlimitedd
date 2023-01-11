@@ -24,7 +24,7 @@ import Location from "../api/location";
 import { IWorkList } from "../models/workList";
 
 export const originOptions = [
-  { label: "COMPAÑIÍA", value: 1 },
+  { label: "COMPAÑÍA", value: 1 },
   { label: "PARTICULAR", value: 2 },
 ];
 
@@ -653,6 +653,24 @@ export default class OptionStore {
       }));
     } catch (error) {
       this.typeValue = [];
+    }
+  };
+
+  areaByDeparmentOptions: IOptions[] = [];
+  getAreaByDeparmentOptions = async () => {
+    try {
+      const areas = await Catalog.getAreaByDeparment();
+      this.areaByDeparmentOptions = areas.map((x) => ({
+        value: x.departamentoId,
+        label: x.departamento,
+        disabled: true,
+        options: x.areas.map((a) => ({
+          value: a.id,
+          label: a.nombre,
+        })),
+      }));
+    } catch (error) {
+      this.areaByDeparmentOptions = [];
     }
   };
 }
