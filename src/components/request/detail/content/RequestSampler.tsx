@@ -1,4 +1,4 @@
-import { Table, Spin, Row, Col, Button, FormInstance } from "antd";
+import { Table, Spin, Row, Col, Button } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
@@ -9,7 +9,6 @@ import {
   getDefaultColumnProps,
 } from "../../../../app/common/table/utils";
 import {
-  IRequestGeneral,
   IRequestStudy,
   IRequestStudyUpdate,
 } from "../../../../app/models/request";
@@ -79,7 +78,7 @@ const RequestSampler = () => {
         solicitudId: request.solicitudId!,
         estudios: selectedStudies,
       };
-      console.log("update");
+
       setLoading(true);
       const ok = await sendStudiesToSampling(data);
       if (ok) {

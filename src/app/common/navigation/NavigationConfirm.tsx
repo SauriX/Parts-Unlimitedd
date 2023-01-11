@@ -24,7 +24,7 @@ const NavigationConfirm = ({
       okText="Seguir editando"
       okType="primary"
       onCancel={confirmNavigation}
-      cancelText="Eliminar cotización"
+      cancelText="Eliminar"
       closable={false}
       maskClosable={false}
     >
