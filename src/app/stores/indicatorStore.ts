@@ -4,6 +4,7 @@ import {
   IndicatorFilterValues,
   IReportIndicators,
   IReportIndicatorsFilter,
+  ISamplesCost,
 } from "../models/indicators";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -19,6 +20,8 @@ export default class IndicatorStore {
   scopes?: IScopes;
   filter: IReportIndicatorsFilter = new IndicatorFilterValues();
   data: IReportIndicators[] = [];
+  samples: ISamplesCost[] = [];
+  loadingReport: boolean = false;
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -41,14 +44,31 @@ export default class IndicatorStore {
 
   getByFilter = async (filter: IReportIndicatorsFilter) => {
     try {
+      this.loadingReport = true;
       this.data = [];
       const data = await Indicators.getByFilter(filter);
       this.data = data;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       this.data = [];
+    } finally {
+      this.loadingReport = false;
     }
   };
+
+  getSamplesCostsByFilter = async (filter: IReportIndicatorsFilter) => {
+    try{
+      this.loadingReport = true;
+      this.data = [];
+      const data = await Indicators.getSamplesCostsByFilter(filter);
+      this.data = data;
+    } catch (error: any){
+      alerts.warning(getErrors(error));
+      this.data = [];
+    } finally {
+      this.loadingReport = false;
+    }
+  }
 
   create = async (indicators: IReportIndicators) => {
     try {
@@ -65,6 +85,18 @@ export default class IndicatorStore {
   update = async (indicators: IReportIndicators) => {
     try {
       await Indicators.update(indicators);
+      alerts.success(messages.created);
+
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
+  updateSample = async (samples: ISamplesCost) => {
+    try {
+      await Indicators.updateSampleCost(samples);
       alerts.success(messages.created);
 
       return true;

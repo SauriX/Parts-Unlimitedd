@@ -35,6 +35,14 @@ export interface IServicesCost {
   fechaAlta: string;
 }
 
+export interface ISamplesCost {
+  id?: string;
+  costoToma: number;
+  sucursal: string;
+  sucursalId: string;
+  fechaAlta: moment.Moment;
+}
+
 export interface IReportIndicatorsFilter {
   sucursalId: string[];
   fechaInicial: moment.Moment;
@@ -45,7 +53,7 @@ export interface IReportIndicatorsFilter {
 export interface IModalIndicatorsFilter {
   sucursalId: string[];
   fecha: moment.Moment[];
-  servicio: string[];
+  servicio?: string[];
 }
 
 export class IndicatorFilterValues implements IReportIndicatorsFilter {

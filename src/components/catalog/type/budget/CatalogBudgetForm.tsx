@@ -22,6 +22,7 @@ import HeaderTitle from "../../../../app/common/header/HeaderTitle";
 import {
   ICatalogBudgetForm,
   CatalogBudgetFormValues,
+  IBranchList,
 } from "../../../../app/models/catalog";
 import { IOptions } from "../../../../app/models/shared";
 import { useStore } from "../../../../app/stores/store";
@@ -55,6 +56,7 @@ const CatalogBudgetForm: FC<CatalogBudgetFormProps> = ({
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
+
   const [values, setValues] = useState<ICatalogBudgetForm>(
     new CatalogBudgetFormValues()
   );
@@ -64,11 +66,30 @@ const CatalogBudgetForm: FC<CatalogBudgetFormProps> = ({
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
-    const update = async () => {
-      getBranchCityOptions();
-    };
-    update();
+    getBranchCityOptions();
   }, [getBranchCityOptions]);
+
+  useEffect(() => {
+    let citiesId: string[] = [];
+    let branchesId: string[] = [];
+
+    values.sucursales?.forEach((x: any) => {
+      citiesId.push(x.ciudad!);
+      branchesId.push(x.sucursalId);
+    });
+
+    citiesId = deleteRepeated(citiesId);
+    branchesId = deleteRepeated(branchesId);
+
+    form.setFieldValue("ciudad", citiesId);
+    form.setFieldValue("sucursales", branchesId);
+  }, [values]);
+
+  const deleteRepeated = (array: any[]) => {
+    return array.filter((item, index) => {
+      return array.indexOf(item) === index;
+    });
+  };
 
   useEffect(() => {
     setCityOptions(
@@ -78,9 +99,10 @@ const CatalogBudgetForm: FC<CatalogBudgetFormProps> = ({
 
   useEffect(() => {
     setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+      branchCityOptions
+        .filter((x) => selectedCity?.includes(x.value as string))
+        .flatMap((x) => x.options ?? [])
     );
-    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
@@ -100,6 +122,21 @@ const CatalogBudgetForm: FC<CatalogBudgetFormProps> = ({
   const onFinish = async (newValues: ICatalogBudgetForm) => {
     setLoading(true);
     const catalog = { ...values, ...newValues };
+
+    let branchCityBudgetList: any[] = [];
+    catalog.sucursales?.forEach((x) => {
+      branchCityOptions.forEach((y) => {
+        if (y.options?.find((option) => option.value === x)) {
+          branchCityBudgetList.push({
+            sucursalId: x,
+            ciudad: "" + y.value,
+          });
+        }
+      });
+    });
+
+    catalog.sucursales = branchCityBudgetList;
+    console.log(catalog);
 
     let success = false;
 
@@ -236,16 +273,18 @@ const CatalogBudgetForm: FC<CatalogBudgetFormProps> = ({
                             noStyle: true,
                           }}
                           options={cityOptions}
+                          multiple
                         />
                       </Col>
                       <Col span={12}>
                         <SelectInput
                           formProps={{
-                            name: "sucursalId",
+                            name: "sucursales",
                             label: "Sucursales",
                             noStyle: true,
                           }}
                           options={branchOptions}
+                          multiple
                         />
                       </Col>
                     </Row>
