@@ -660,7 +660,7 @@ export default class OptionStore {
   getAreaByDeparmentOptions = async () => {
     try {
       const areas = await Catalog.getAreaByDeparment();
-      this.areaByDeparmentOptions = (await areas).map((x) => ({
+      this.areaByDeparmentOptions = areas.map((x) => ({
         value: x.departamentoId,
         label: x.departamento,
         disabled: true,

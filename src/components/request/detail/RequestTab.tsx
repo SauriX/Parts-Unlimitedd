@@ -248,7 +248,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     },
     {
       key: "sampler",
-      label: "Tomador de muestra",
+      label: "Toma de muestra",
       children: tabRender("sampler"),
     },
     {
