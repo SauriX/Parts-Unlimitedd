@@ -7,6 +7,7 @@ import {
   Button,
   PageHeader,
   Divider,
+  Input,
   Table,
 } from "antd";
 import React, { FC, Fragment, useCallback, useEffect, useState } from "react";
@@ -588,15 +589,35 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   options={originOptions}
                 />
               </Col>
-              <Col md={8} sm={24}>
-                <SelectInput
-                  formProps={{
-                    name: "coloniaId",
-                    label: "Colonia",
-                  }}
-                  readonly={readonly}
-                  options={colonies}
-                />
+              <Col span={8}>
+                <Form.Item
+                  label="Calle y Número"
+                  className="no-error-text"
+                  help=""
+                >
+                  <Input.Group>
+                    <Row gutter={8}>
+                      <Col span={16}>
+                        <TextInput
+                          formProps={{
+                            name: "calle",
+                            label: "Calle",
+                            noStyle: true,
+                          }}
+                        />
+                      </Col>
+                      <Col span={8}>
+                        <TextInput
+                          formProps={{
+                            name: "numero",
+                            label: "Número",
+                            noStyle: true,
+                          }}
+                        />
+                      </Col>
+                    </Row>
+                  </Input.Group>
+                </Form.Item>
               </Col>
               <Col md={8} sm={24}>
                 <SelectInput
@@ -618,17 +639,17 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                   options={priceListOptions}
                 />
               </Col>
-
               <Col md={8} sm={24}>
-                <TextInput
+                <SelectInput
                   formProps={{
-                    name: "razonSocial",
-                    label: "Razón social: ",
+                    name: "coloniaId",
+                    label: "Colonia",
                   }}
-                  max={100}
                   readonly={readonly}
+                  options={colonies}
                 />
               </Col>
+
               <Col md={8} sm={24}>
                 <TextInput
                   formProps={{
@@ -681,6 +702,16 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
                     }
                   }}
                   label="Activo"
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "razonSocial",
+                    label: "Razón social: ",
+                  }}
+                  max={100}
                   readonly={readonly}
                 />
               </Col>

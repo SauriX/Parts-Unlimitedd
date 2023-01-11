@@ -19,6 +19,8 @@ export interface ICompanyForm {
   procedenciaId?: number;
   precioListaId: string | null | undefined;
   promocionesId?: number;
+  calle: string;
+  numero: string;
   rfc: string;
   codigoPostal: string;
   estado: string;
@@ -62,6 +64,8 @@ export class CompanyFormValues implements ICompanyForm {
   contacts: IContactForm[] = [];
   coloniaId = 0;
   colonia = "";
+  calle = "";
+  numero = "";
   regimenFiscal = "";
 
   constructor(init?: ICompanyForm) {

@@ -10,7 +10,15 @@ import InvoiceCompanyDetail from "./InvoiceCompanyDetail";
 import InvoiceCompanyInfo from "./InvoiceCompanyInfo";
 
 const InvoiceCompanyCreate = () => {
-  const { invoiceCompanyStore } = useStore();
+  const { invoiceCompanyStore, optionStore } = useStore();
+  const {
+    getcfdiOptions,
+    cfdiOptions,
+    getpaymentMethodOptions,
+    getPaymentOptions,
+    paymentOptions,
+    paymentMethodOptions,
+  } = optionStore;
   const { selectedRows, getCompanyById, checkIn } = invoiceCompanyStore;
   const [company, setCompany] = useState<ICompanyForm>();
   const [totalFinalEstudios, setTotalFinalEstudios] = useState<number>(0);
@@ -20,11 +28,18 @@ const InvoiceCompanyCreate = () => {
   const [currentPaymentMethod, setCurrenPaymentMethod] = useState<any>();
 
   useEffect(() => {
+    getcfdiOptions();
+    getpaymentMethodOptions();
+    getPaymentOptions();
+  }, []);
+
+  useEffect(() => {
     const estuiosTotal = selectedRows.flatMap(
       (solicitud) => solicitud.estudios
     );
     setEstudios(estuiosTotal);
   }, [selectedRows]);
+
   useEffect(() => {
     let totalEstudiosSeleccionados = 0;
     let totalFinalEstudiosSeleccionados = 0;
@@ -50,28 +65,35 @@ const InvoiceCompanyCreate = () => {
     };
     loadCompany();
   }, [selectedRows]);
+
   const createInvoice = async () => {
     console.log("creating invoice...");
     console.log("company", toJS(company));
     console.log("totalrow", toJS(selectedRows));
-    const invoiceData = {
-      companyId: selectedRows[0]?.companiaId,
-      solicitudesId: selectedRows.map((row: any) => row.solicitudId),
-      estudios: estudios,
-      formaPago: "" + company?.formaDePagoId,
-      tipo: "PUE",
-      claveExterna: company?.clave,
-      usoCFDI: company?.cfdiId,
-      cliente: {
-        razonSocial: company?.razonSocial,
-        RFC: company?.razonSocial,
-        regimenFiscal: company?.regimenFiscal,
-        correo: company?.emailEmpresarial,
-        telefono: "1234567890",
-        domicilio: {
+    if (company) {
+      const use = cfdiOptions.find((x) => x.value === company.cfdiId);
+      const method = paymentOptions.find(
+        (x) => x.value === company.formaDePagoId
+      )?.label;
+      console.log("method", toJS(method));
+      const invoiceData = {
+        companyId: selectedRows[0]?.companiaId,
+        solicitudesId: selectedRows.map((row: any) => row.solicitudId),
+        estudios: estudios,
+        // formaPago: "" + company?.formaDePagoId,
+        formaPago: method,
+        tipo: "PUE",
+        claveExterna: company?.clave,
+        usoCFDI: use?.label,
+        cliente: {
+          razonSocial: company?.razonSocial,
+          RFC: company?.rfc,
+          regimenFiscal: company?.regimenFiscal,
+          correo: company?.emailEmpresarial,
+          telefono: "1234567890",
           codigoPostal: company?.codigoPostal,
-          calle: "example street",
-          numeroExterior: "100",
+          calle: company?.calle,
+          numeroExterior: company?.numero,
           numeroInterior: "",
           colonia: company?.colonia,
           ciudad: company?.ciudad,
@@ -79,10 +101,10 @@ const InvoiceCompanyCreate = () => {
           estado: company?.estado,
           pais: "México",
         },
-      },
-    };
-    console.log("invoice", invoiceData);
-    const invoiceInfo = await checkIn(invoiceData);
+      };
+      console.log("invoice", invoiceData);
+      const invoiceInfo = await checkIn(invoiceData);
+    }
   };
   return (
     <>
