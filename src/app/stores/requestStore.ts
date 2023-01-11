@@ -562,12 +562,23 @@ export default class RequestStore {
       alerts.success(messages.updated);
 
       const ids = request.estudios.map((x) => x.id!);
+      const statusId = request.estudios
+        .map((x) => x.estatusId!)
+        .includes(status.requestStudy.pendiente);
 
-      this.updateStudiesStatus(
-        ids,
-        status.requestStudy.tomaDeMuestra,
-        statusName.requestStudy.tomaDeMuestra
-      );
+      if (statusId) {
+        this.updateStudiesStatus(
+          ids,
+          status.requestStudy.tomaDeMuestra,
+          statusName.requestStudy.tomaDeMuestra
+        );
+      } else {
+        this.updateStudiesStatus(
+          ids,
+          status.requestStudy.pendiente,
+          statusName.requestStudy.pendiente
+        );
+      }
 
       return true;
     } catch (error: any) {
@@ -582,12 +593,23 @@ export default class RequestStore {
       alerts.success(messages.updated);
 
       const ids = request.estudios.map((x) => x.id!);
+      const statusId = request.estudios
+        .map((x) => x.estatusId!)
+        .includes(status.requestStudy.tomaDeMuestra);
 
-      this.updateStudiesStatus(
-        ids,
-        status.requestStudy.solicitado,
-        statusName.requestStudy.solicitado
-      );
+      if (statusId) {
+        this.updateStudiesStatus(
+          ids,
+          status.requestStudy.solicitado,
+          statusName.requestStudy.solicitado
+        );
+      } else {
+        this.updateStudiesStatus(
+          ids,
+          status.requestStudy.tomaDeMuestra,
+          statusName.requestStudy.tomaDeMuestra
+        );
+      }
 
       return true;
     } catch (error: any) {

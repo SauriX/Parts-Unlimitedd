@@ -33,6 +33,8 @@ import { v4 as uuid } from "uuid";
 import { EyeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
+import alerts from "../../../app/util/alerts";
+import { toJS } from "mobx";
 const { TextArea } = Input;
 const { Text, Link } = Typography;
 
@@ -70,7 +72,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     useState<IClinicResultCaptureForm>();
   const [resultParam, setResultParam] = useState<any[]>([]);
   const [modalValues, setModalValues] = useState<any>();
-  const { optionStore, clinicResultsStore } = useStore();
+  const { optionStore, clinicResultsStore, requestStore } = useStore();
 
   const {
     getRequestStudyById,
@@ -85,7 +87,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     setObservationsSelected,
     clearSelectedStudies
   } = clinicResultsStore;
-
+  const { request } = requestStore;
   const { getMedicOptions, getUnitOptions } = optionStore;
   const [form] = Form.useForm();
   const resultValue = Form.useWatch(
@@ -338,9 +340,21 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                     <Button
                       type="primary"
                       htmlType="submit"
-                      onClick={() => {
-                        setEnvioManual(true);
-                        form.submit();
+                      onClick={async () => {
+                        if (request?.saldoPendiente) {
+                          alerts.confirm(
+                            "Solicitud con saldo pendiente",
+                            "¿Esta seguro que desea enviar el resultado?",
+                            async () => {
+                              setEnvioManual(true);
+                              form.submit();
+                            },
+                            () => console.log("do nothing")
+                          );
+                        } else {
+                          setEnvioManual(true);
+                          form.submit();
+                        }
                       }}
                       style={{
                         backgroundColor: "#6EAA46",

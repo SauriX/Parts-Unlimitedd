@@ -5,7 +5,10 @@ import { useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
-import { IMassSearch } from "../../app/models/massResultSearch";
+import {
+  IMassSearch,
+  MassSearchValues,
+} from "../../app/models/massResultSearch";
 import { IOptions } from "../../app/models/shared";
 import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
@@ -34,6 +37,12 @@ const MassSearchForm = () => {
     massResultSearchStore;
 
   useEffect(() => {
+    getRequestResults({
+      fechas: [
+        moment(Date.now()).utcOffset(0, true),
+        moment(Date.now()).utcOffset(0, true),
+      ],
+    });
     loadInit();
   }, []);
 
@@ -69,6 +78,7 @@ const MassSearchForm = () => {
             onClick={(e) => {
               e.stopPropagation();
               form.resetFields();
+              setAreas("Sin seleccionar");
             }}
           >
             Limpiar
@@ -111,7 +121,6 @@ const MassSearchForm = () => {
                     formProps={{ label: "Área", name: "area" }}
                     options={filteredAreas}
                     onChange={(value: any, option: any) => {
-                      console.log("areas", value, option);
                       setStudiesFilteredByArea(
                         studiesOptions.filter((s) => s.area === +value)
                       );
@@ -127,6 +136,7 @@ const MassSearchForm = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{ label: "Sucursal", name: "sucursales" }}
                     multiple
                     options={branchCityOptions}
@@ -134,6 +144,7 @@ const MassSearchForm = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{ label: "Estudio", name: "estudios" }}
                     multiple
                     options={studiesFilteredByArea}

@@ -158,7 +158,18 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
           <Button
             type="default"
             disabled={
-              !selectedStudies.some(
+              selectedStudies.length == 0 || !selectedStudies.every(
+                (x) => x.estatusId === status.requestStudy.solicitado
+              )
+            }
+            onClick={updateStudies}
+          >
+            Cancelar
+          </Button>
+          <Button
+            type="default"
+            disabled={
+              selectedStudies.length == 0 || !selectedStudies.every(
                 (x) => x.estatusId === status.requestStudy.tomaDeMuestra
               )
             }
@@ -181,7 +192,7 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
               },
               getCheckboxProps: (record) => ({
                 disabled:
-                  record.estatusId !== status.requestStudy.tomaDeMuestra,
+                  record.estatusId !== status.requestStudy.tomaDeMuestra && record.estatusId !== status.requestStudy.solicitado,
               }),
               selectedRowKeys: selectedStudies.map(
                 (x) => x.id ?? x.identificador!

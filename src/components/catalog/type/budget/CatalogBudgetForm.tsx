@@ -267,6 +267,7 @@ const CatalogBudgetForm: FC<CatalogBudgetFormProps> = ({
                     <Row gutter={8}>
                       <Col span={12}>
                         <SelectInput
+                          form={form}
                           formProps={{
                             name: "ciudad",
                             label: "Ciudad",
@@ -278,6 +279,7 @@ const CatalogBudgetForm: FC<CatalogBudgetFormProps> = ({
                       </Col>
                       <Col span={12}>
                         <SelectInput
+                          form={form}
                           formProps={{
                             name: "sucursales",
                             label: "Sucursales",
