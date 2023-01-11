@@ -27,9 +27,9 @@ type keys =
   | "studies"
   | "indications"
   | "register"
-  | "request"
-  | "print"
   | "sampler"
+  | "print"
+  | "request"
   | "images";
 
 const showAutoSaveMessage = () => {
@@ -123,16 +123,16 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
         setCurrentKey("studies");
         return;
       }
-    } else if (currentKey === "request") {
-      const ok = await updateStudies(studyUpdate, autoSave);
-      if (!ok) {
-        setCurrentKey("request");
-        return;
-      }
     } else if (currentKey === "sampler") {
       const ok = await updateStudies(studyUpdate, autoSave);
       if (!ok) {
         setCurrentKey("sampler");
+        return;
+      }
+    } else if (currentKey === "request") {
+      const ok = await updateStudies(studyUpdate, autoSave);
+      if (!ok) {
+        setCurrentKey("request");
         return;
       }
     }
@@ -201,12 +201,12 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       component = <RequestIndication />;
     } else if (tabName === "register") {
       component = <RequestRegister />;
-    } else if (tabName === "request") {
-      component = <RequestRequest formGeneral={formGeneral} />;
-    } else if (tabName === "print") {
-      component = <RequestPrint />;
     } else if (tabName === "sampler") {
       component = <RequestSampler formGeneral={formGeneral} />;
+    } else if (tabName === "print") {
+      component = <RequestPrint />;
+    } else if (tabName === "request") {
+      component = <RequestRequest formGeneral={formGeneral} />;
     } else if (tabName === "images") {
       component = <RequestImage />;
     }
@@ -247,9 +247,9 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       children: tabRender("register"),
     },
     {
-      key: "request",
-      label: "Solicitar Estudio",
-      children: tabRender("request"),
+      key: "sampler",
+      label: "Tomador de muestra",
+      children: tabRender("sampler"),
     },
     {
       key: "print",
@@ -257,9 +257,9 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       children: tabRender("print"),
     },
     {
-      key: "sampler",
-      label: "Tomador de muestra",
-      children: tabRender("sampler"),
+      key: "request",
+      label: "Solicitar Estudio",
+      children: tabRender("request"),
     },
     {
       key: "images",
