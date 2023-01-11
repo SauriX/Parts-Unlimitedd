@@ -146,3 +146,9 @@ export class ProcedenciaFormValues implements IProcedenciaForm {
   }
 }
 
+export interface IAreaDeparment {
+  departamentoId: number;
+  departamento: string;
+  areas: ICatalogAreaList[];
+}
+

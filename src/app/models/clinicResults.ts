@@ -91,6 +91,7 @@ export interface IClinicResultForm {
   buscar?: string;
   procedencia?: number[];
   departamento?: string[];
+  ciudad?: string[];
   area?: number[];
   tipoSolicitud?: string[];
   estatus?: number[];
@@ -143,6 +144,7 @@ export class ClinicResultsFormValues implements IClinicResultForm {
   buscar = "";
   procedencia = [];
   departamento = [];
+  ciudad = [];
   tipoSolicitud = [];
   area = [];
   estatus = [];

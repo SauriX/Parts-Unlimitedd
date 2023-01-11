@@ -34,6 +34,8 @@ const ClinicResultsFilter = () => {
     getMedicOptions,
     getCompanyOptions,
     getStudiesOptions,
+    areaByDeparmentOptions,
+    getAreaByDeparmentOptions
   } = optionStore;
 
   const [form] = useForm();
@@ -52,7 +54,7 @@ const ClinicResultsFilter = () => {
       getBranchCityOptions();
       getMedicOptions();
       getCompanyOptions();
-      getDepartmentAreaOptions();
+      getAreaByDeparmentOptions();
       await getStudiesOptions();
       setStudyFilter(studiesOptions);
     };
@@ -61,8 +63,8 @@ const ClinicResultsFilter = () => {
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
-    getDepartmentAreaOptions,
     getStudiesOptions,
+    getAreaByDeparmentOptions,
   ]);
 
   useEffect(() => {
@@ -82,31 +84,22 @@ const ClinicResultsFilter = () => {
 
   useEffect(() => {
     setDepartmentOptions(
-      departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
+      areaByDeparmentOptions.map((x) => ({ value: x.value, label: x.label }))
     );
-  }, [departmentAreaOptions]);
+    
+  }, [areaByDeparmentOptions]);
 
   useEffect(() => {
     setAreaOptions(
-      departmentAreaOptions
+      areaByDeparmentOptions
         .filter((x) => selectedDepartment?.includes(x.value as string))
         .flatMap((x) => x.options ?? [])
     );
     form.setFieldValue("area", []);
-  }, [departmentAreaOptions, form, selectedDepartment]);
+  }, [areaByDeparmentOptions, form, selectedDepartment]);
 
   const onFinish = async (newFormValues: IClinicResultForm) => {
     setLoading(true);
-
-    let departmentList: string[] = [];
-    newFormValues.departamento?.forEach((x) => {
-      const department = departmentAreaOptions.find(
-        (y) => y.value === x
-      )?.options;
-      if (department) {
-        department.forEach((z) => departmentList.push(z.value as string));
-      }
-    });
 
     // const department = departmentAreaOptions.filter(
     //   (x) => newFormValues.departamento?.includes(x.value as string)
@@ -174,6 +167,7 @@ const ClinicResultsFilter = () => {
                       name: "buscar",
                       label: "Buscar",
                     }}
+                    onPressEnter={() => onFinish}
                   />
                 </Col>
                 <Col span={8}>
