@@ -104,17 +104,17 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
       }),
       align: "center",
 
-      render: (value, user) => (
+      render: (value, record) => (
         <Button
           type="link"
           onClick={() => {
             
             navigate(
-              `/${views.request}/${user.estudio?.expedienteId }/${ user.estudio?.solicitudId}` 
+              `/${views.request}/${record.estudio?.expedienteId }/${ record.estudio?.solicitudId}` 
             );
           }}
         >
-          {user.estudio?.solicitud}
+          {record.estudio?.solicitud}
         </Button>
       ),
     },
@@ -125,8 +125,8 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
       title: "Paciente",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value,user) => (
-        <>{user.estudio?.nombrePaciente}</>)
+      render: (value,record) => (
+        <>{record.estudio?.nombrePaciente}</>)
       ,
     },
     {
