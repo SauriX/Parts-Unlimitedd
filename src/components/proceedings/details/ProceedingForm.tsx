@@ -12,6 +12,7 @@ import {
   Tooltip,
   Card,
   Tag,
+  Tabs,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout, moneyFormatter } from "../../../app/util/utils";
@@ -62,6 +63,9 @@ import {
   IQuotationInfo,
 } from "../../../app/models/quotation";
 import { toJS } from "mobx";
+import ProceedingRequests from "./ProceedingRequests";
+import ProceedingQuotations from "./ProceedingQuotations";
+import ProceedingAppointments from "./ProceedingAppointments";
 
 type ProceedingFormProps = {
   id: string;
@@ -432,330 +436,9 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
         success = await update(reagent);
       }
       setLoading(false);
-      if (success) {
-        goBack();
-      }
     }
   };
 
-  const columnsP: IColumns<IQuotationInfo> = [
-    {
-      ...getDefaultColumnProps("clave", "Clave", {
-        width: 200,
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-      render: (value, cotizacion) => (
-        <Button
-          type="link"
-          onClick={() => {
-            navigate(
-              `/${views.quotation}/${cotizacion.cotizacionId}?${searchParams}&mode=readonly`
-            );
-          }}
-        >
-          {value}
-        </Button>
-      ),
-    },
-    {
-      ...getDefaultColumnProps("paciente", "Nombre del paciente", {
-        width: 200,
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-    },
-    {
-      ...getDefaultColumnProps("estudios", "Estudios", {
-        width: 150,
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-      render: (value, record, index) => (
-        <Row align="middle">
-          {value.map((x: any, i: any) => (
-            <Col
-              key={x.clave + "-" + x.id}
-              style={{ display: "flex", alignItems: "center" }}
-            >
-              <ContainerBadge color={"grey"} text={x.clave} />
-            </Col>
-          ))}
-        </Row>
-      ),
-    },
-    {
-      ...getDefaultColumnProps("correo", "Email", {
-        width: 150,
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-    },
-    {
-      ...getDefaultColumnProps("whatsapp", "Whatsapp", {
-        width: 100,
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-    },
-    {
-      ...getDefaultColumnProps("fecha", "Fecha", {
-        width: 200,
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-    },
-
-    {
-      ...getDefaultColumnProps("expediente", "Expediente", {
-        width: 100,
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-    },
-
-    {
-      key: "editar",
-      dataIndex: "id",
-      title: "Editar",
-      align: "center",
-      width: 200,
-      render: (_value, cotizacion) => (
-        <IconButton
-          disabled={readonly}
-          title="Editar Expediente"
-          icon={<EditOutlined />}
-          onClick={() => {
-            navigate(
-              `/${views.quotation}/${cotizacion.cotizacionId}?${searchParams}&mode=edit`
-            );
-          }}
-        />
-      ),
-    },
-    {
-      key: "convertir",
-      dataIndex: "id",
-      title: "Convertir",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (_value, item) => (
-        <Button
-          type="primary"
-          title=""
-          onClick={async () => {
-            console.log("item", toJS(item));
-            await convertToRequest(item.cotizacionId);
-            await deactivateQuotation(item.cotizacionId);
-            await getByFilter({
-              expediente: item?.expediente,
-            });
-            await getQuotations({
-              expediente: item?.expediente,
-            });
-          }}
-          disabled={!item?.activo}
-        >
-          Convertir a solicitud
-        </Button>
-      ),
-    },
-  ];
-
-  const columns: IColumns<IRequestInfo> = [
-    {
-      ...getDefaultColumnProps("clave", "Clave", {
-        width: 150,
-      }),
-      render: (value, item) => (
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <Button
-            type="link"
-            onClick={() => {
-              navigate(
-                `/${views.request}/${item.expedienteId}/${item.solicitudId}`
-              );
-            }}
-          >
-            {value}
-          </Button>
-
-          <small>{item.clavePatologica}</small>
-        </div>
-      ),
-    },
-    {
-      ...getDefaultColumnProps("afiliacion", "Afiliación", {
-        width: 180,
-      }),
-    },
-    {
-      ...getDefaultColumnProps("paciente", "Paciente", {
-        width: 240,
-      }),
-      ellipsis: {
-        showTitle: false,
-      },
-    },
-    {
-      ...getDefaultColumnProps("compañia", "Compañia", {
-        width: 180,
-      }),
-      ellipsis: {
-        showTitle: false,
-      },
-    },
-    {
-      ...getDefaultColumnProps("procedencia", "Procedencia", {
-        width: 180,
-      }),
-      ellipsis: {
-        showTitle: false,
-      },
-    },
-    {
-      ...getDefaultColumnProps("importe", "Importe", {
-        width: 120,
-      }),
-      align: "right",
-      render: (value) => moneyFormatter.format(value),
-    },
-    {
-      ...getDefaultColumnProps("descuento", "Descuento", {
-        width: 120,
-      }),
-      align: "right",
-      render: (value) => moneyFormatter.format(value),
-    },
-    {
-      ...getDefaultColumnProps("total", "Total", {
-        width: 120,
-      }),
-      align: "right",
-      render: (value) => moneyFormatter.format(value),
-    },
-    {
-      ...getDefaultColumnProps("saldo", "Saldo", {
-        width: 120,
-      }),
-      align: "right",
-      render: (value) => moneyFormatter.format(value),
-    },
-  ];
-  const columnsC: IColumns<any> = [
-    {
-      ...getDefaultColumnProps("noSolicitud", "Solicitud de cita", {
-        width: "15%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-      render: (_value, _item) => (
-        <div></div>
-        /*         <Link
-                  draggable
-          onDragStart={() => {
-            SetCita(item);
-          }} 
-        >
-          {value}
-        </Link> */
-      ),
-    },
-    {
-      ...getDefaultColumnProps("expediente", "Expediente", {
-        width: "10%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-    },
-    {
-      ...getDefaultColumnProps("fecha", "Fecha", {
-        width: "15%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-      render: (value) => moment(value).format("DD/MM/YYYY HH:mm"),
-    },
-    {
-      ...getDefaultColumnProps("direccion", "Dirección", {
-        width: "20%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-      render: (value) => <Tooltip title={value}>{value}</Tooltip>,
-    },
-    {
-      ...getDefaultColumnProps("nombre", "Nombre", {
-        width: "20%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-    },
-    {
-      ...getDefaultColumnProps("info", "Datos", {
-        width: "15%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-      render: (_, data) => (
-        <div>{`${data.edad} años, ${data.sexo.substring(0, 1)}`}</div>
-      ),
-    },
-    {
-      key: "editar",
-      dataIndex: "id",
-      title: "Editar",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value, item) => (
-        <IconButton
-          title="Editar cita"
-          icon={<EditOutlined />}
-          disabled={readonly}
-          onClick={() => {
-            navigate(
-              `/${views.appointment}/${value}?type=${item.type}&mode=edit`
-            );
-          }}
-        />
-      ),
-    },
-    {
-      key: "editar",
-      dataIndex: "id",
-      title: "Editar",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (_value, item) => (
-        <Button
-          type="primary"
-          title=""
-          disabled={readonly}
-          onClick={async () => {
-            if (item.type == "laboratorio") {
-              // const convert: IConvertToRequest = {
-              //   id: item.id,
-              //   type: "Laboratorio",
-              // };
-              // convertirASolicitud(convert);
-              var citas = await getByIdLab(item.id);
-              convertSolicitud(citas!);
-            } else {
-              // const convert: IConvertToRequest = {
-              //   id: item.id,
-              //   type: "Dom",
-              // };
-              // convertirASolicitud(convert);
-              var citas = await getByIdDom(item.id);
-              convertSolicitud(citas!);
-            }
-          }}
-        >
-          Convertir a solicitud
-        </Button>
-      ),
-    },
-  ];
   const spinnerText = () => {
     return isPrinting ? "Imprimiendo..." : "Cargando...";
   };
@@ -1101,7 +784,52 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   </Input.Group>
                 </Form.Item>
               </Col>
-              <Col span={16} style={{ textAlign: "end" }}>
+
+              <Col span={2} style={{ textAlign: "center" }}>
+                <Button
+                  onClick={() => {
+                    navigate(`/requests/${id}`);
+                  }}
+                  type="primary"
+                >
+                  Agregar solicitud
+                </Button>
+              </Col>
+              <Col span={2} style={{ textAlign: "center" }}>
+                <Button
+                  onClick={() => {
+                    navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
+                  }}
+                  type="primary"
+                >
+                  Agregar cotización
+                </Button>
+              </Col>
+              <Col span={2} style={{ textAlign: "center" }}>
+                <Button
+                  onClick={() => {
+                    navigate(`/appointments`);
+                  }}
+                  type="primary"
+                >
+                  Agregar cita
+                </Button>
+              </Col>
+              <Col
+                span={2}
+                style={{ textAlign: "center", marginLeft: 0, paddingLeft: 0 }}
+              >
+                <Button
+                  onClick={() => {
+                    activarMonedero();
+                  }}
+                  type="primary"
+                  disabled={values.hasWallet}
+                >
+                  Activar monedero
+                </Button>
+              </Col>
+              <Col span={7} style={{ textAlign: "end" }}>
                 <Button
                   onClick={() =>
                     openModal({
@@ -1137,63 +865,16 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           </Form>
           {searchParams.get("mode") === "edit" ||
           searchParams.get("mode") === "readonly" ? (
-            <div>
-              <Row>
-                <Col span={6}>
-                  <Button
-                    style={{
-                      marginTop: "20px",
-                      marginLeft: "70%",
-                      marginBottom: "20px",
-                    }}
-                    onClick={() => {
-                      navigate(`/requests/${id}`);
-                    }}
-                    type="primary"
-                    disabled={readonly}
-                  >
-                    Agregar solicitud
-                  </Button>
-                </Col>
-                <Col span={6}>
-                  <Button
-                    style={{
-                      marginTop: "20px",
-                      marginLeft: "70%",
-                      marginBottom: "20px",
-                    }}
-                    onClick={() => {
-                      navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
-                    }}
-                    type="primary"
-                    disabled={readonly}
-                  >
-                    Agregar cotización
-                  </Button>
-                </Col>
-                <Col span={6}>
-                  <Button
-                    style={{
-                      marginTop: "20px",
-                      marginLeft: "70%",
-                      marginBottom: "20px",
-                    }}
-                    onClick={() => {
-                      navigate(`/appointments`);
-                    }}
-                    type="primary"
-                    disabled={readonly}
-                  >
-                    Agregar cita
-                  </Button>
-                </Col>
-                <Col span={6}>
+            <>
+              <Row justify="end">
+                <Col span={4}>
                   {values.hasWallet ? (
                     <Card
                       style={{
                         marginTop: "20px",
                         marginLeft: "10%",
                         marginBottom: "20px",
+                        width: "150px",
                       }}
                       bodyStyle={{
                         backgroundColor: "rgba(255, 255, 0, 1)",
@@ -1205,61 +886,51 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   ) : (
                     ""
                   )}
-                  <Button
-                    style={{
-                      marginTop: "20px",
-                      marginLeft: "30%",
-                      marginBottom: "20px",
-                    }}
-                    onClick={() => {
-                      activarMonedero();
-                    }}
-                    type="primary"
-                    disabled={values.hasWallet || readonly}
-                  >
-                    Activar monedero
-                  </Button>
                 </Col>
               </Row>
-              <Divider orientation="left">Solicitud</Divider>
-              <Table<IRequestInfo>
-                rowKey={(record) => record.solicitudId}
-                loading={loading || printing}
-                size="small"
-                columns={columns}
-                dataSource={[...requests]}
-                /*    pagination={defaultPaginationProperties} */
-                sticky
-                scroll={{
-                  x: windowWidth < resizeWidth ? "max-content" : "auto",
-                }}
-              />
-              <Divider orientation="left">Presupuestos</Divider>
-              <Table<IQuotationInfo>
-                loading={loading || printing}
-                size="small"
-                rowKey={(record) => record.clave}
-                columns={columnsP}
-                dataSource={quotations}
-                /*    pagination={defaultPaginationProperties} */
-                sticky
-                scroll={{
-                  x: windowWidth < resizeWidth ? "max-content" : "auto",
-                }}
-              />
-              <Divider orientation="left">Cita</Divider>
-              <Table<any>
-                loading={loading || printing}
-                size="small"
-                rowKey={(record) => record.id}
-                columns={columnsC}
-                dataSource={citas}
-                sticky
-                scroll={{
-                  x: windowWidth < resizeWidth ? "max-content" : "auto",
-                }}
-              />
-            </div>
+              <Row style={{ paddingTop: 10 }}>
+                <Tabs
+                  items={[
+                    {
+                      label: "Solicitudes",
+                      key: "1",
+                      children: (
+                        <ProceedingRequests
+                          loading={loading}
+                          printing={printing}
+                          requests={requests}
+                        />
+                      ),
+                    },
+                    {
+                      label: "Presupuestos",
+                      key: "2",
+                      children: (
+                        <ProceedingQuotations
+                          loading={loading}
+                          printing={printing}
+                          readonly={readonly}
+                          searchParams={searchParams}
+                        />
+                      ),
+                    },
+                    {
+                      label: "Citas",
+                      key: "3",
+                      children: (
+                        <ProceedingAppointments
+                          loading={loading}
+                          printing={printing}
+                          readonly={readonly}
+                          citas={citas}
+                          convertSolicitud={convertSolicitud}
+                        />
+                      ),
+                    },
+                  ]}
+                />
+              </Row>
+            </>
           ) : (
             ""
           )}
