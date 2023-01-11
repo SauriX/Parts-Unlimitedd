@@ -32,7 +32,7 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
     setPartiality,
     addPartiality,
     sendStudiesToRequest,
-    getStudies
+    getStudies,
   } = requestStore;
 
   const [selectedStudies, setSelectedStudies] = useState<IRequestStudy[]>([]);
@@ -91,18 +91,17 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
       }),
     },
     {
-      ...getDefaultColumnProps("fechaSolicitado", "Fecha actualización", {
+      ...getDefaultColumnProps("fechaSolicitado", "Fecha solicitado", {
         searchable: false,
         width: "15%",
       }),
-      render: (value, record) =>
-        record.fechaActualizacion == null ? " - " : record.fechaActualizacion,
     },
     {
       ...getDefaultColumnProps("fechaEntrega", "Fecha de entrega", {
         searchable: false,
         width: "15%",
       }),
+      className: "no-padding-cell",
       render: (value, item) => {
         return (
           <DatePicker
@@ -168,7 +167,7 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
           <Button
             type="default"
             disabled={
-              selectedStudies.length == 0 ||
+              selectedStudies.length === 0 ||
               !selectedStudies.every(
                 (x) => x.estatusId === status.requestStudy.solicitado
               )
@@ -180,7 +179,7 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
           <Button
             type="default"
             disabled={
-              selectedStudies.length == 0 ||
+              selectedStudies.length === 0 ||
               !selectedStudies.every(
                 (x) => x.estatusId === status.requestStudy.tomaDeMuestra
               )
@@ -199,7 +198,7 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
             pagination={false}
             rowSelection={{
               fixed: "right",
-              onChange(selectedRowKeys, selectedRows, info) {
+              onChange(_selectedRowKeys, selectedRows, _info) {
                 setSelectedStudies(toJS(selectedRows));
               },
               getCheckboxProps: (record) => ({
