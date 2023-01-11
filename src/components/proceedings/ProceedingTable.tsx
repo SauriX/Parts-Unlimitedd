@@ -35,7 +35,7 @@ import TextInput from "../../app/common/form/proposal/TextInput";
 import { formItemLayout } from "../../app/util/utils";
 import { useForm } from "antd/lib/form/Form";
 import DateInput from "../../app/common/form/proposal/DateInput";
-import { IFormError } from "../../app/models/shared";
+import { IFormError, IOptions } from "../../app/models/shared";
 import MaskInput from "../../app/common/form/proposal/MaskInput";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
@@ -49,11 +49,13 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
 }) => {
   const { procedingStore, optionStore, locationStore } = useStore();
   const { expedientes, getAll, getnow, setSearch, search } = procedingStore;
-  const { BranchOptions, getBranchOptions, cityOptions } = optionStore;
+  const { branchCityOptions,getBranchCityOptions } = optionStore;
   const { getCity } = locationStore;
   const [searchParams] = useSearchParams();
   const [errors, setErrors] = useState<IFormError[]>([]);
   let navigate = useNavigate();
+  const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
+  const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
 
   const { width: windowWidth } = useWindowDimensions();
   const [form] = useForm();
@@ -63,17 +65,23 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
     searchedText: "",
     searchedColumn: "",
   });
+  const selectedCity = Form.useWatch("ciudad", form);
+  useEffect(() => {
+    setCityOptions(
+      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [branchCityOptions]);
 
+  useEffect(() => {
+    setBranchOptions(
+      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+    );
+    form.setFieldValue("sucursales", []);
+  }, [branchCityOptions, form, selectedCity]);
   console.log("Table");
   useEffect(() => {
-    const readData = async (search: ISearchMedical) => {
-      await getBranchOptions();
-      await getnow(search!);
-      form.setFieldsValue(search);
-    };
-
-    readData(search);
-  }, [getBranchOptions]);
+    getBranchCityOptions();
+  }, [getBranchCityOptions]);
   useEffect(() => {
     const readData = async () => {
       await getCity();
@@ -295,7 +303,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
               <SelectInput
                 formProps={{ name: "sucursal", label: "Sucursal" }}
                 placeholder="Sucursal"
-                options={BranchOptions}
+                options={branchOptions}
               />
             </Col>
             <Col span={24} style={{ textAlign: "right" }}>
