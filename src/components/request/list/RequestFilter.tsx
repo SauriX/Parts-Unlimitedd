@@ -97,7 +97,10 @@ const RequestFilter = () => {
             />
           </Col>
           <Col span={8}>
-            <DateRangeInput formProps={{ name: "fechas", label: "Fechas" }} />
+            <DateRangeInput
+              formProps={{ name: "fechas", label: "Fechas" }}
+              disableAfterDates
+            />
           </Col>
           <Col span={8}>
             <TextInput formProps={{ name: "clave", label: "Clave/Paciente" }} />

@@ -1,4 +1,4 @@
-import { Form, Row, Col, Checkbox, Input, Button, Spin } from "antd";
+import { Form, Row, Col, Checkbox, Input, Button } from "antd";
 import { FormInstance } from "antd/es/form/Form";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
@@ -8,12 +8,10 @@ import TextAreaInput from "../../../../app/common/form/proposal/TextAreaInput";
 import TextInput from "../../../../app/common/form/proposal/TextInput";
 import { IQuotationGeneral } from "../../../../app/models/quotation";
 import { IFormError, IOptions } from "../../../../app/models/shared";
-import {
-  originOptions,
-  urgencyOptions,
-} from "../../../../app/stores/optionStore";
+import { originOptions } from "../../../../app/stores/optionStore";
 import { useStore } from "../../../../app/stores/store";
 import { catalog } from "../../../../app/util/catalogs";
+import { validateEmail } from "../../../../app/util/utils";
 
 const formItemLayout = {
   labelCol: { span: 4 },
@@ -31,7 +29,7 @@ const sendOptions = [
 type QuotationGeneralProps = {
   branchId: string | undefined;
   form: FormInstance<IQuotationGeneral>;
-  onSubmit: (general: IQuotationGeneral) => void;
+  onSubmit: (general: IQuotationGeneral, showLoader: boolean) => void;
 };
 
 const QuotationGeneral = ({
@@ -47,7 +45,6 @@ const QuotationGeneral = ({
     getMedicOptions,
   } = optionStore;
   const {
-    loadingTabContent,
     quotation,
     setStudyFilter,
     getGeneral,
@@ -65,6 +62,8 @@ const QuotationGeneral = ({
   const [errors, setErrors] = useState<IFormError[]>([]);
   const [previousSendings, setPreviousSendings] = useState<string[]>([]);
   const [quotationGeneral, setQuotationGeneral] = useState<IQuotationGeneral>();
+  const [isValidEmail, setIsValidEmail] = useState(false);
+  const [isValidWhatsapp, setIsValidWhatsapp] = useState(false);
 
   useEffect(() => {
     getCompanyOptions();
@@ -89,6 +88,13 @@ const QuotationGeneral = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quotation]);
+
+  useEffect(() => {
+    setIsValidEmail(validateEmail(email));
+    setIsValidWhatsapp(
+      (whatsapp ?? "").replaceAll("-", "").replaceAll("_", "").length === 10
+    );
+  }, [email, whatsapp]);
 
   const onValuesChange = (changedValues: any) => {
     const path = Object.keys(changedValues)[0];
@@ -124,9 +130,11 @@ const QuotationGeneral = ({
   };
 
   const onFinish = (values: IQuotationGeneral) => {
+    setErrors([]);
     const quotation = { ...quotationGeneral, ...values };
+    const autoSave = form.getFieldValue("guardadoAutomatico");
 
-    onSubmit(quotation);
+    onSubmit(quotation, autoSave);
   };
 
   const sendEmail = async () => {
@@ -235,7 +243,7 @@ const QuotationGeneral = ({
                 <Col span={12}>
                   <Button
                     type="primary"
-                    disabled={!sendings?.includes("correo")}
+                    disabled={!sendings?.includes("correo") || !isValidEmail}
                     onClick={sendEmail}
                   >
                     Prueba
@@ -289,7 +297,7 @@ const QuotationGeneral = ({
               />
               <Button
                 type="primary"
-                disabled={!sendings?.includes("whatsapp")}
+                disabled={!sendings?.includes("whatsapp") || !isValidWhatsapp}
                 onClick={sendWhatsapp}
               >
                 Prueba

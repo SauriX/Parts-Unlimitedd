@@ -1,16 +1,16 @@
 import { Space, Tag, Table } from "antd";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import { IReportIndicators } from "../../../app/models/indicators";
+import { IReportIndicators, ISamplesCost } from "../../../app/models/indicators";
 import CostoTomaColumns from "../columnDefinition/costotoma"
 
 type CostosTomaProps = {
-  data: IReportIndicators[];
+  samples: ISamplesCost[];
   costoToma: number;
   loading: boolean;
 };
 
-const CostosToma = ({ data, costoToma, loading }: CostosTomaProps) => {
+const CostosToma = ({ samples, costoToma, loading }: CostosTomaProps) => {
   return (
     <Space direction="vertical" size="small">
       <div style={{textAlign: "right", marginTop: 10}}>
@@ -18,13 +18,13 @@ const CostosToma = ({ data, costoToma, loading }: CostosTomaProps) => {
           Costo Toma actual: {costoToma}
         </Tag>
       </div>
-      <Table<IReportIndicators>
+      <Table<ISamplesCost>
         loading={loading}
         size="small"
         rowKey={(record) => record.id!}
         columns={CostoTomaColumns()}
         pagination={false}
-        dataSource={[...data]}
+        dataSource={[...samples]}
         scroll={{ y: 500 }}
         bordered
         rowClassName={"row-search"}

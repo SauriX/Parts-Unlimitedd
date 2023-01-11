@@ -8,10 +8,11 @@ import ReportHeader from "../components/report/ReportHeader";
 import { reportType } from "../components/report/utils";
 
 const Report = () => {
-  const { reportStore, cashRegisterStore } = useStore();
+  const { reportStore, cashRegisterStore, indicatorsStore } = useStore();
   const { scopes, filter, printPdf, setCurrentReport, clearScopes, access } =
     reportStore;
-  const {printPdf: cashPdf, filter: cashFilter} = cashRegisterStore;
+  const { printPdf: cashPdf, filter: cashFilter } = cashRegisterStore;
+  const { exportList, filter: indicatorFilter } = indicatorsStore;
 
   const [searchParams] = useSearchParams();
 
@@ -22,8 +23,10 @@ const Report = () => {
     const report = searchParams.get("report");
     if (report == "corte_caja") {
       await cashPdf(cashFilter);
-    } else if (report) {
-      await printPdf(report, filter);
+    } else if (report == "indicadores") {
+      await exportList(indicatorFilter);
+    } else {
+      await printPdf(report!, filter);
     }
     setLoading(false);
   };

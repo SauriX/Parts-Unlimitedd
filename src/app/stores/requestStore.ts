@@ -266,8 +266,6 @@ export default class RequestStore {
         asignado: true,
       };
 
-      console.log(study);
-
       const repeated = this.studies.filter(function (item) {
         return (
           item.parametros

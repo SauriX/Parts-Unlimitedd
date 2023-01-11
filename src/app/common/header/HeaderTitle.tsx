@@ -44,6 +44,7 @@ export type imagesType =
   | "catalogo"
   | "cita"
   | "compañia"
+  | "configuracion"
   | "contacto"
   | "descuento"
   | "doctor"

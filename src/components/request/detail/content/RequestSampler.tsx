@@ -24,7 +24,7 @@ type RequestSamplerProps = {
 
 const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
   const { requestStore, modalStore } = useStore();
-  const { request, allStudies, setStudy, sendStudiesToSampling } = requestStore;
+  const { request, allStudies, setStudy, sendStudiesToSampling, getStudies } = requestStore;
 
   const [selectedStudies, setSelectedStudies] = useState<IRequestStudy[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -62,7 +62,15 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
       }),
     },
     {
-      ...getDefaultColumnProps("fechaEntrega", "Fecha", {
+      ...getDefaultColumnProps("fechaTomaMuestra", "Fecha actualización", {
+        searchable: false,
+        width: "15%",
+      }),
+      render: (value, record) =>
+        record.fechaActualizacion == null ? " - " : record.fechaActualizacion,
+    },
+    {
+      ...getDefaultColumnProps("fechaEntrega", "Fecha de entrega", {
         searchable: false,
         width: "25%",
       }),
@@ -78,9 +86,13 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
         solicitudId: request.solicitudId!,
         estudios: selectedStudies,
       };
+      console.log("update");
       setLoading(true);
       const ok = await sendStudiesToSampling(data);
-      if (ok) setSelectedStudies([]);
+      if (ok) {
+        setSelectedStudies([]);
+        getStudies(request.expedienteId, request.solicitudId!);
+      }
       setLoading(false);
     }
   };
@@ -92,7 +104,8 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
           <Button
             type="default"
             disabled={
-              selectedStudies.length == 0 || !selectedStudies.every(
+              selectedStudies.length == 0 ||
+              !selectedStudies.every(
                 (x) => x.estatusId === status.requestStudy.tomaDeMuestra
               )
             }
@@ -103,7 +116,8 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
           <Button
             type="default"
             disabled={
-              selectedStudies.length == 0 || !selectedStudies.every(
+              selectedStudies.length == 0 ||
+              !selectedStudies.every(
                 (x) => x.estatusId === status.requestStudy.pendiente
               )
             }
@@ -126,7 +140,8 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
               },
               getCheckboxProps: (record) => ({
                 disabled:
-                  record.estatusId !== status.requestStudy.pendiente && record.estatusId !== status.requestStudy.tomaDeMuestra ||
+                  (record.estatusId !== status.requestStudy.pendiente &&
+                    record.estatusId !== status.requestStudy.tomaDeMuestra) ||
                   !record.asignado,
               }),
               selectedRowKeys: selectedStudies.map(
