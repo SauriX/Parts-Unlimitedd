@@ -65,7 +65,14 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   const [currentKey, setCurrentKey] = useState<keys>("general");
 
   const onChangeTab = async (key: string) => {
-    submit(true);
+    if (
+      currentKey === "general" ||
+      currentKey === "studies" ||
+      currentKey === "request"
+    ) {
+      submit(true);
+    }
+
     setCurrentKey(key as keys);
   };
 
@@ -121,12 +128,6 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       const ok = await updateStudies(studyUpdate, autoSave);
       if (!ok) {
         setCurrentKey("studies");
-        return;
-      }
-    } else if (currentKey === "sampler") {
-      const ok = await updateStudies(studyUpdate, autoSave);
-      if (!ok) {
-        setCurrentKey("sampler");
         return;
       }
     } else if (currentKey === "request") {
@@ -202,7 +203,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     } else if (tabName === "register") {
       component = <RequestRegister />;
     } else if (tabName === "sampler") {
-      component = <RequestSampler formGeneral={formGeneral} />;
+      component = <RequestSampler />;
     } else if (tabName === "print") {
       component = <RequestPrint />;
     } else if (tabName === "request") {
@@ -248,7 +249,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     },
     {
       key: "sampler",
-      label: "Tomador de muestra",
+      label: "Registro de toma",
       children: tabRender("sampler"),
     },
     {

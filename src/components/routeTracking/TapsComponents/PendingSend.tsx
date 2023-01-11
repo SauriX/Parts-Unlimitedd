@@ -435,12 +435,12 @@ const PendingSend = () => {
               formProps={{ name: "fechas", label: "Fecha" }}
             ></DateRangeInput>
           </Col>
-          <Col span={1}></Col>
-          <Col span={4}>
+
+          <Col span={5}>
             <SelectInput
               options={branchCityOptions}
               formProps={{ name: "sucursal", label: "Sucursal a donde enviar",        labelCol: { span: 12 },
-              wrapperCol: { span: 12 }, }}
+              wrapperCol: { span: 14 }, }}
             ></SelectInput>
           </Col>
           <Col span={1}></Col>
