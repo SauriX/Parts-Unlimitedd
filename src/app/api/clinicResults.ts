@@ -2,14 +2,9 @@ import {
   IClinicResultCaptureForm,
   IClinicResultForm,
   IClinicResultList,
-  IClinicStudy,
   IResultPathological,
 } from "../models/clinicResults";
-import {
-  IRequestStudy,
-  IRequestStudyInfo,
-  IRequestStudyUpdate,
-} from "../models/request";
+import { IRequestStudyUpdate } from "../models/request";
 import { IScopes } from "../models/shared";
 import requests from "./agent";
 
