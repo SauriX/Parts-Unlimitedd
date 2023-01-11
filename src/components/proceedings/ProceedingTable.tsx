@@ -4,6 +4,7 @@ import {
   Collapse,
   Divider,
   Form,
+  Input,
   PageHeader,
   Row,
   Table,
@@ -76,7 +77,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
     setBranchOptions(
       branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
     );
-    form.setFieldValue("sucursales", []);
+    form.setFieldValue("sucursal", []);
   }, [branchCityOptions, form, selectedCity]);
   console.log("Table");
   useEffect(() => {
@@ -293,19 +294,34 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
               />
             </Col>
             <Col span={8}>
-              <SelectInput
-                formProps={{ name: "ciudad", label: "Ciudad" }}
-                placeholder="Ciudad"
-                options={cityOptions}
-              />
-            </Col>
-            <Col span={8}>
-              <SelectInput
-                formProps={{ name: "sucursal", label: "Sucursal" }}
-                placeholder="Sucursal"
-                options={branchOptions}
-              />
-            </Col>
+            <Form.Item label="Sucursales" className="no-error-text" help="">
+              <Input.Group>
+                <Row gutter={8}>
+                  <Col span={12}>
+                    <SelectInput
+                      formProps={{
+                        name: "ciudad",
+                        label: "Ciudad",
+                        noStyle: true,
+                      }}
+                      options={cityOptions}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "sucursal",
+                        label: "Sucursales",
+                        noStyle: true,
+                      }}
+                      options={branchOptions}
+                    />
+                  </Col>
+                </Row>
+              </Input.Group>
+            </Form.Item>
+          </Col>
             <Col span={24} style={{ textAlign: "right" }}>
               <Button key="clean" htmlType="reset">
                 Limpiar
