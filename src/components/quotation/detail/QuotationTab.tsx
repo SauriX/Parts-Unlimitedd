@@ -1,4 +1,4 @@
-import { Button, Col, Form, Row, Space, Spin, Tabs } from "antd";
+import { Button, Col, Form, notification, Row, Space, Spin, Tabs } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { IQuotationGeneral } from "../../../app/models/quotation";
@@ -12,15 +12,22 @@ import QuotationInvoice from "./QuotationInvoice";
 import QuotationPrint from "./QuotationPrint";
 import { onSubmitGeneral, submitGeneral } from "./utils";
 
-const { TabPane } = Tabs;
-
 type QuotationTabProps = {
   branchId: string | undefined;
   recordId: string | undefined;
   setRecordId: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
-type keys = "general" | "studies" | "indications" | "assignment";
+type keys = "general" | "studies" | "indications" | "assignment" | "report";
+
+const showAutoSaveMessage = () => {
+  notification.info({
+    key: "auto-not",
+    message: `Guardado automatico`,
+    placement: "bottomRight",
+    icon: "",
+  });
+};
 
 const QuotationTab = ({
   branchId,
@@ -31,6 +38,7 @@ const QuotationTab = ({
   const {
     quotation,
     studyUpdate,
+    loadingTabContent,
     getStudies,
     updateGeneral,
     updateStudies,
@@ -43,26 +51,41 @@ const QuotationTab = ({
   const [currentKey, setCurrentKey] = useState<keys>("general");
 
   const onChangeTab = async (key: string) => {
-    const ok = await submit();
-
-    if (ok) {
-      setCurrentKey(key as keys);
+    if (currentKey !== "indications" && currentKey !== "report") {
+      submit(true);
     }
+
+    setCurrentKey(key as keys);
   };
 
-  const submit = async () => {
-    let ok = true;
-
-    if (currentKey === "general" && quotation?.activo) {
-      ok = await submitGeneral(formGeneral);
-    } else if (currentKey === "studies" && quotation?.activo) {
-      ok = await updateStudies(studyUpdate);
-    } else if (currentKey === "assignment" && quotation?.activo) {
-      console.log(recordId);
-      ok = await assignRecord(quotation!.cotizacionId, recordId);
+  const submit = async (autoSave: boolean = false) => {
+    if (currentKey === "general") {
+      const ok = await submitGeneral(formGeneral, autoSave);
+      if (!ok) {
+        setCurrentKey("general");
+        return;
+      }
+    } else if (currentKey === "studies") {
+      const ok = await updateStudies(studyUpdate, autoSave);
+      if (!ok) {
+        setCurrentKey("studies");
+        return;
+      }
+    } else if (currentKey === "assignment") {
+      const ok = await assignRecord(
+        quotation!.cotizacionId,
+        autoSave,
+        recordId
+      );
+      if (!ok) {
+        setCurrentKey("assignment");
+        return;
+      }
     }
 
-    return ok;
+    if (autoSave) {
+      showAutoSaveMessage();
+    }
   };
 
   const cancel = () => {
@@ -78,31 +101,22 @@ const QuotationTab = ({
   };
 
   useEffect(() => {
-    if (quotation) {
-      setRecordId(quotation.expedienteId);
-      getStudies(quotation.cotizacionId);
-    }
+    const readData = () => {
+      if (quotation) {
+        setRecordId(quotation.expedienteId);
+        getStudies(quotation.cotizacionId);
+      }
+    };
+
+    readData();
   }, [getStudies, quotation, setRecordId]);
 
   const operations = (
     <Space>
-      <Button
-        key="cancel"
-        size="small"
-        ghost
-        danger
-        onClick={cancel}
-        disabled={!quotation?.activo}
-      >
+      <Button key="cancel" size="small" ghost danger onClick={cancel}>
         Cancelar
       </Button>
-      <Button
-        key="save"
-        size="small"
-        type="primary"
-        onClick={submit}
-        disabled={!quotation?.activo}
-      >
+      <Button key="save" size="small" type="primary" onClick={() => submit()}>
         Guardar
       </Button>
     </Space>
@@ -113,8 +127,8 @@ const QuotationTab = ({
       <QuotationGeneral
         branchId={branchId}
         form={formGeneral}
-        onSubmit={(quotation) => {
-          onSubmitGeneral(quotation, updateGeneral).then((ok) => {
+        onSubmit={(quotation, showLoader) => {
+          onSubmitGeneral(quotation, showLoader, updateGeneral).then((ok) => {
             if (!ok) setCurrentKey("general");
           });
         }}
@@ -130,9 +144,7 @@ const QuotationTab = ({
         <QuotationAssignment recordId={recordId} setRecordId={setRecordId} />
       );
     } else if (tabName === "report") {
-      component = (
-        <QuotationPrint />
-      );
+      component = <QuotationPrint />;
     }
 
     return (
@@ -178,7 +190,7 @@ const QuotationTab = ({
   ];
 
   return (
-    <Spin spinning={false}>
+    <Spin spinning={loadingTabContent}>
       <Tabs
         activeKey={currentKey}
         tabBarExtraContent={operations}

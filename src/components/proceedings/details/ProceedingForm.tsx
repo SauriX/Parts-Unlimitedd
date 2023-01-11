@@ -87,7 +87,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     appointmentStore,
     quotationStore,
   } = useStore();
-  const { getQuotations, quotations, convertToRequest, deactivateQuotation } =
+  const { getQuotations, quotations, convertToRequest, cancelQuotation } =
     quotationStore;
   const {
     getAllDom,
@@ -546,7 +546,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           onClick={async () => {
             console.log("item", toJS(item));
             await convertToRequest(item.cotizacionId);
-            await deactivateQuotation(item.cotizacionId);
+            await cancelQuotation(item.cotizacionId);
             await getByFilter({
               expediente: item?.expediente,
             });

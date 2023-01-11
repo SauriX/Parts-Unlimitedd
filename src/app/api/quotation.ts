@@ -26,27 +26,26 @@ const Quotation = {
     requests.post("quotation", quotation),
   convertToRequest: (quotationId: string): Promise<string> =>
     requests.post(`quotation/convert/${quotationId}`, {}),
-  deactivateQuotation: (quotationId: string): Promise<string> =>
-    requests.post(`quotation/deactivate/${quotationId}`, {}),
   updateGeneral: (quotation: IQuotationGeneral): Promise<void> =>
     requests.put("quotation/general", quotation),
   assignRecord: (quotationId: string, recordId?: string) =>
     requests.put(`quotation/assign/${quotationId}/${recordId ?? ""}`, {}),
   updateTotals: (quotation: IQuotationTotal): Promise<void> =>
     requests.put("quotation/totals", quotation),
-  updateStudies: (quotation: IQuotationStudyUpdate): Promise<void> =>
+  updateStudies: (
+    quotation: IQuotationStudyUpdate
+  ): Promise<IQuotationStudyUpdate> =>
     requests.post("quotation/studies", quotation),
   cancelQuotation: (quotationId: string): Promise<void> =>
     requests.put(`quotation/cancel/${quotationId}`, {}),
+  deleteQuotation: (quotationId: string): Promise<void> =>
+    requests.delete(`quotation/delete/${quotationId}`),
   deleteStudies: (quotation: IQuotationStudyUpdate): Promise<void> =>
     requests.put("quotation/studies/cancel", quotation),
   printTicket: (quotationId: string): Promise<void> =>
     requests.print(`quotation/ticket/${quotationId}`),
-    getQuotePdfUrl: (id: string,): Promise<string> =>
-    requests.getFileUrl(
-      `quotation/quote/${id}`,
-      "application/pdf"
-    ),
+  getQuotePdfUrl: (id: string): Promise<string> =>
+    requests.getFileUrl(`quotation/quote/${id}`, "application/pdf"),
 };
 
 export default Quotation;

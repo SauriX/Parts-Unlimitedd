@@ -24,7 +24,7 @@ import Location from "../api/location";
 import { IWorkList } from "../models/workList";
 
 export const originOptions = [
-  { label: "COMPAÑIÍA", value: 1 },
+  { label: "COMPAÑÍA", value: 1 },
   { label: "PARTICULAR", value: 2 },
 ];
 
