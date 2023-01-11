@@ -1,7 +1,7 @@
 import { Form, FormItemProps, Input, Space, Tooltip } from "antd";
 import { Rule } from "antd/lib/form";
 import { RuleType } from "rc-field-form/lib/interface";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { InfoCircleTwoTone } from "@ant-design/icons";
 import "./index.less";
 
@@ -22,7 +22,7 @@ interface IProps {
   onClick?: React.MouseEventHandler<HTMLInputElement> | undefined;
   onKeyUp?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
   onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
-  onPressEnter?: React.KeyboardEventHandler<HTMLInputElement> | undefined
+  onPressEnter?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
 }
 
 const TextInput = ({
@@ -42,7 +42,7 @@ const TextInput = ({
   onClick,
   onKeyUp,
   onChange,
-  onPressEnter
+  onPressEnter,
 }: // onChange,
 IProps) => {
   let ref = useRef<HTMLDivElement>(null);

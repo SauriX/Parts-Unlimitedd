@@ -4,14 +4,13 @@ import {
   Divider,
   Form,
   FormItemProps,
-  Input,
   Row,
   Select,
   Space,
   Tooltip,
 } from "antd";
 import { FormInstance, Rule } from "antd/lib/form";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import { IOptions } from "../../../models/shared";
 import { InfoCircleTwoTone } from "@ant-design/icons";
 
@@ -71,6 +70,8 @@ const SelectInput = ({
   value,
   showArrow,
 }: IProps) => {
+  let ref = useRef<HTMLDivElement>(null);
+
   let rules: Rule[] = [];
 
   if (required) {
@@ -115,7 +116,11 @@ const SelectInput = ({
               ? undefined
               : (menu) => (
                   <>
-                    <Row style={{ padding: "5px 12px" }} gutter={[12, 12]}>
+                    <Row
+                      ref={ref}
+                      style={{ padding: "5px 12px" }}
+                      gutter={[12, 12]}
+                    >
                       <Col span={12}>
                         <Button
                           style={{ width: "100%" }}
@@ -126,7 +131,9 @@ const SelectInput = ({
                             );
                           }}
                         >
-                          Seleccionar todos
+                          {ref.current && ref.current.clientWidth < 250
+                            ? "+"
+                            : "Seleccionar todos"}
                         </Button>
                       </Col>
                       <Col span={12}>
@@ -136,7 +143,9 @@ const SelectInput = ({
                             form.setFieldValue(itemProps.name!, []);
                           }}
                         >
-                          Quitar todos
+                          {ref.current && ref.current.clientWidth < 250
+                            ? "-"
+                            : "Quitar todos"}
                         </Button>
                       </Col>
                     </Row>
