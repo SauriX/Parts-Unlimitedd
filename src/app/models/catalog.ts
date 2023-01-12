@@ -36,7 +36,7 @@ export interface ICatalogDimensionForm extends ICatalogForm {
 
 export interface ICatalogBudgetList extends ICatalogList {
   clave: string;
-  nombreServicio: string;
+  nombre: string;
   activo: boolean;
 }
 
