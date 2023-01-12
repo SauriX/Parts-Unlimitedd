@@ -10,6 +10,7 @@ export interface IEstudiosList {
   nombrePaciente: string;
   id?: string;
   solicitudId: string;
+  IsInRute?: boolean;
 }
 
 export interface ITrackingOrderList {
@@ -26,7 +27,7 @@ export interface ITrackingOrderList {
 }
 
 export interface ITrackingOrderForm {
-  id?:  string;
+  id?: string;
   sucursalOrigenId?: string;
   SucursalDestinoNombre: string;
   sucursalDestinoId: string;
@@ -39,10 +40,10 @@ export interface ITrackingOrderForm {
   temperatura: number;
   activo: boolean;
   clave: string;
+  isInRute: boolean;
   estudiosAgrupados?: IEstudiosList[];
   estudios: ITrackingOrderList[];
   horaDeRecoleccion: number | undefined;
-
   fecha: moment.Moment;
   solicitudId: string;
   claveEstudio: string;
@@ -63,7 +64,6 @@ export class TrackingOrderListValues implements IEstudiosList {
   }
 }
 export class TrackingOrderFormValues implements ITrackingOrderForm {
- 
   fecha = moment();
   rutaId = "";
   RutaNombre = "";
@@ -84,7 +84,7 @@ export class TrackingOrderFormValues implements ITrackingOrderForm {
   maquiladorId = 0;
   horaDeRecoleccion = 0;
   clave = "";
-
+  isInRute = false;
   constructor(init?: ITrackingOrderForm) {
     Object.assign(this, init);
   }

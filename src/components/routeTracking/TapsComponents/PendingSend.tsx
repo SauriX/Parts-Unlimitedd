@@ -1,29 +1,23 @@
-import { Button, Checkbox, Col, Descriptions, Form, Row, Table } from "antd";
-import { FC, Fragment, useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Button,  Col,  Form, Row, Table } from "antd";
+import {  Fragment, useEffect, useState } from "react";
+import { useNavigate,  } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
-import { PlusOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
 import { EditOutlined } from "@ant-design/icons";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
-import { IUpdate } from "../../../app/models/sampling";
 import {
   getDefaultColumnProps,
   IColumns,
   ISearch,
 } from "../../../app/common/table/utils";
-import { ExpandableConfig } from "antd/lib/table/interface";
 import {
   IRouteList,
-  IstudyRoute,
   SearchTracking,
   TrackingFormValues,
 } from "../../../app/models/routeTracking";
 import IconButton from "../../../app/common/button/IconButton";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import alerts from "../../../app/util/alerts";
 import PrintIcon from "../../../app/common/icons/PrintIcon";
 import { formItemLayout } from "../../../app/util/utils";
 const PendingSend = () => {
@@ -35,19 +29,11 @@ const PendingSend = () => {
   const [values, setValues] = useState<SearchTracking>(
     new TrackingFormValues()
   );
-  const [cambio, stcambio] = useState<boolean>(false);
-  const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
-  const [ids, setIds] = useState<number[]>([]);
+
   const [form] = Form.useForm<SearchTracking>();
-  const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
-  const [activiti, setActiviti] = useState<string>("");
-  const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
-  const [openRows, setOpenRows] = useState<boolean>(false);
-  const [expandable, setExpandable] = useState<ExpandableConfig<IRouteList>>();
+
   let navigate = useNavigate();
   useEffect(() => {
-    setexpandedRowKeys(studys!.map((x) => x.id));
-    setOpenRows(true);
     form.setFieldsValue({ sucursal: profile?.sucursal! });
   }, [studys]);
   useEffect(() => {
@@ -64,126 +50,16 @@ const PendingSend = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
-  const updatedata = async () => {
-    const estudios = updateData.flatMap((x) => x.estudioId).length;
-    let solicitudes = 0;
 
-    solicitudes = updateData.length;
 
-    alerts.confirm(
-      "",
-      `Se han enviado ${estudios} estudios de ${solicitudes} solicitud a estatus en ruta de manera exitosa `,
-      async () => {
-        var succes = await update(updateData!);
-        if (succes) {
-          form.submit();
-        }
-        setUpdateDate([]);
-      }
-    );
-  };
-  const onExpand = (isExpanded: boolean, record: IRouteList) => {
-    let expandRows: string[] = expandedRowKeys;
-    if (isExpanded) {
-      expandRows.push(record.id);
-    } else {
-      const index = expandRows.findIndex((x) => x === record.id);
-      if (index > -1) {
-        expandRows.splice(index, 1);
-      }
-    }
-    setexpandedRowKeys(expandRows);
-  };
 
-  const togleRows = () => {
-    if (openRows) {
-      setOpenRows(false);
-      setexpandedRowKeys([]);
-    } else {
-      setOpenRows(true);
-      setexpandedRowKeys(studys!.map((x) => x.id));
-    }
-  };
-  const onChange = (
-    e: CheckboxChangeEvent,
-    id: number,
-    solicitud: string,
-    order: string
-  ) => {
-    let data = ids;
-    let solis = solicitudesData;
-    let dataid: number[] = [];
-    let dataupdate = [...updateData];
-    if (e.target.checked) {
-      data.push(id);
-      dataid.push(id);
-      setIds(data);
-      let temp = solicitudesData.filter((x) => x == solicitud);
-      let temp2 = dataupdate!.filter((x) => x.solicitudId == solicitud);
-      if (temp2.length <= 0) {
-        let datatoupdate: IUpdate = {
-          solicitudId: solicitud,
-          estudioId: dataid,
-          ruteOrder: order,
-        };
-        dataupdate?.push(datatoupdate);
-      } else {
-        let solicitudtoupdate = dataupdate?.find(
-          (x) => x.solicitudId == solicitud
-        )!;
-        let count = solicitudtoupdate?.estudioId!.filter((x) => x == id);
-        if (count!.length <= 0) {
-          solicitudtoupdate?.estudioId.push(id);
-          let indexsoli = dataupdate?.findIndex(
-            (x) => x.solicitudId == solicitud
-          );
-          dataupdate[indexsoli!] = solicitudtoupdate;
-        }
-      }
-      if (temp.length <= 0) {
-        solis.push(solicitud);
-        SetSolicitudesData(solis);
-      }
-    } else {
-      if (data.length > 0) {
-        let temp = data.filter((x) => x != id);
-        setIds(temp);
-      }
-      let solicitudtoupdate = dataupdate.find(
-        (x) => x.solicitudId == solicitud
-      )!;
-      if (solicitudtoupdate?.estudioId.length == 1) {
-        dataupdate = dataupdate.filter((x) => x.solicitudId != solicitud);
-      } else {
-        let count = solicitudtoupdate?.estudioId!.filter((x) => x == id);
-        if (count!.length > 0) {
-          let estudios = solicitudtoupdate?.estudioId.filter((x) => x != id);
-          solicitudtoupdate.estudioId = estudios;
-          let indexsoli = dataupdate?.findIndex(
-            (x) => x.solicitudId == solicitud
-          );
-          dataupdate[indexsoli!] = solicitudtoupdate;
-        }
-      }
-    }
-    console.log(dataupdate);
-    setUpdateDate(dataupdate);
-  };
 
-  const register = () => {
-    setActiviti("register");
-    setUpdateDate([]);
-  };
-  const cancel = () => {
-    setActiviti("cancel");
-    setUpdateDate([]);
-  };
 
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-  const hasFooterRow = true;
+
 
   const columns: IColumns<IRouteList> = [
     {
@@ -220,11 +96,11 @@ const PendingSend = () => {
     },
     {
       key: "editar",
-      dataIndex: "id",
+      dataIndex: "status",
       title: "Estatus",
       align: "center",
       width: "10%",
-      render: (value) => (value ? "Activo" : "Inactivo"),
+      render: (value) => (value),
     },
     {
       ...getDefaultColumnProps("estudio", "Estudio", {
@@ -247,14 +123,6 @@ const PendingSend = () => {
         setSearchState,
         width: "15%",
       }),
-    },
-    {
-      key: "editar",
-      dataIndex: "id",
-      title: "Estatus",
-      align: "center",
-      width: "10%",
-      render: (value) => (value ? "Activo" : "Inactivo"),
     },
 
     {
