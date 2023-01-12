@@ -22,6 +22,16 @@ export interface IQuotationFilter {
   expediente?: string;
 }
 
+export class QuotationFilterForm implements IQuotationFilter {
+  fechaAlta = [moment(), moment()];
+  fechaAInicial = moment().utcOffset(0, true);
+  fechaAFinal = moment().utcOffset(0, true);
+
+  constructor(init?: IQuotationFilter) {
+    Object.assign(this, init);
+  }
+}
+
 export interface IQuotation extends Omit<IQuotationBase, "cotizacionId"> {
   cotizacionId: string;
   nombreMedico?: string;

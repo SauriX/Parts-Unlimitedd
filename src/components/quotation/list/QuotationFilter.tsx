@@ -1,7 +1,6 @@
 import { Button, Col, Form, Input, Row } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import { useEffect, useState } from "react";
 import DateInput from "../../../app/common/form/proposal/DateInput";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
@@ -17,7 +16,7 @@ import "./css/index.css";
 const QuotationFilter = () => {
   const { quotationStore, optionStore } = useStore();
   const { branchCityOptions, getBranchCityOptions } = optionStore;
-  const { getQuotations } = quotationStore;
+  const { filter, setFilter, getQuotations } = quotationStore;
 
   const [form] = useForm<IQuotationFilter>();
 
@@ -57,6 +56,7 @@ const QuotationFilter = () => {
       filter.fechaNInicial = filter.fechaNacimiento.utcOffset(0, true);
     }
 
+    setFilter(filter);
     getQuotations(filter);
   };
 
@@ -74,7 +74,7 @@ const QuotationFilter = () => {
           setErrors(errors);
         }}
         size="small"
-        initialValues={{ fechaAlta: [moment(), moment()] }}
+        initialValues={filter}
       >
         <Row gutter={[0, 12]}>
           <Col span={8}>
