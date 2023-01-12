@@ -36,7 +36,7 @@ import TextInput from "../../app/common/form/proposal/TextInput";
 import { formItemLayout } from "../../app/util/utils";
 import { useForm } from "antd/lib/form/Form";
 import DateInput from "../../app/common/form/proposal/DateInput";
-import { IFormError, IOptions } from "../../app/models/shared";
+import {  IOptions } from "../../app/models/shared";
 import MaskInput from "../../app/common/form/proposal/MaskInput";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
@@ -50,10 +50,9 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
 }) => {
   const { procedingStore, optionStore, locationStore } = useStore();
   const { expedientes, getAll, getnow, setSearch, search } = procedingStore;
-  const { branchCityOptions,getBranchCityOptions } = optionStore;
+  const { branchCityOptions, getBranchCityOptions } = optionStore;
   const { getCity } = locationStore;
   const [searchParams] = useSearchParams();
-  const [errors, setErrors] = useState<IFormError[]>([]);
   let navigate = useNavigate();
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
@@ -61,7 +60,6 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
   const { width: windowWidth } = useWindowDimensions();
   const [form] = useForm();
   const [loading, setLoading] = useState(false);
-  //const [searchFilter,SetSearchFilter] = useState<ISearchMedical>(new SearchMedicalFormValues())
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -232,13 +230,6 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
           onFinish={onfinish}
           size="small"
           initialValues={new SearchMedicalFormValues()}
-          onFinishFailed={({ errorFields }) => {
-            const errors = errorFields.map((x) => ({
-              name: x.name[0].toString(),
-              errors: x.errors,
-            }));
-            setErrors(errors);
-          }}
         >
           <Row justify="space-between" gutter={[0, 12]}>
             <Col span={8}>
@@ -294,35 +285,35 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
               />
             </Col>
             <Col span={8}>
-            <Form.Item label="Sucursales" className="no-error-text" help="">
-              <Input.Group>
-                <Row gutter={8}>
-                  <Col span={12}>
-                    <SelectInput
-                      formProps={{
-                        name: "ciudad",
-                        label: "Ciudad",
-                        noStyle: true,
-                      }}
-                      options={cityOptions}
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <SelectInput
-                      form={form}
-                      formProps={{
-                        name: "sucursal",
-                        label: "Sucursales",
-                        noStyle: true,
-                      }}
-                      multiple
-                      options={branchOptions}
-                    />
-                  </Col>
-                </Row>
-              </Input.Group>
-            </Form.Item>
-          </Col>
+              <Form.Item label="Sucursales" className="no-error-text" help="">
+                <Input.Group>
+                  <Row gutter={8}>
+                    <Col span={12}>
+                      <SelectInput
+                        formProps={{
+                          name: "ciudad",
+                          label: "Ciudad",
+                          noStyle: true,
+                        }}
+                        options={cityOptions}
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <SelectInput
+                        form={form}
+                        formProps={{
+                          name: "sucursal",
+                          label: "Sucursales",
+                          noStyle: true,
+                        }}
+                        multiple
+                        options={branchOptions}
+                      />
+                    </Col>
+                  </Row>
+                </Input.Group>
+              </Form.Item>
+            </Col>
             <Col span={24} style={{ textAlign: "right" }}>
               <Button key="clean" htmlType="reset">
                 Limpiar
