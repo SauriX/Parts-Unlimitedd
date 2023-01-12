@@ -101,6 +101,9 @@ export default class RequestStore {
 
   clearDetailData = () => {
     this.request = undefined;
+    this.studies = [];
+    this.packs = [];
+    this.totals = new RequestTotal();
   };
 
   setOriginalTotal = (totals: IRequestTotal) => {
@@ -501,6 +504,23 @@ export default class RequestStore {
       await Request.cancelRequest(recordId, requestId);
       if (this.request) this.request.estatusId = status.request.cancelado;
       return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
+  deleteCurrentRequest = async () => {
+    try {
+      if (this.request?.expedienteId && this.request?.solicitudId) {
+        await Request.deleteRequest(
+          this.request.expedienteId,
+          this.request.solicitudId
+        );
+        return true;
+      }
+      alerts.warning("No hay solicitud por eliminar");
+      return false;
     } catch (error) {
       alerts.warning(getErrors(error));
       return false;

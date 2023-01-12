@@ -1,8 +1,7 @@
-import { Table, Spin, Row, Col, Button, DatePicker, FormInstance } from "antd";
+import { Table, Spin, Row, Col, Button } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import { isMoment } from "moment";
 import { useState } from "react";
 import {
   ISearch,
@@ -10,21 +9,16 @@ import {
   getDefaultColumnProps,
 } from "../../../../app/common/table/utils";
 import {
-  IRequestGeneral,
   IRequestStudy,
   IRequestStudyUpdate,
 } from "../../../../app/models/request";
 import { useStore } from "../../../../app/stores/store";
-import alerts from "../../../../app/util/alerts";
-import { catalog, status } from "../../../../app/util/catalogs";
+import { status } from "../../../../app/util/catalogs";
 
-type RequestSamplerProps = {
-  formGeneral: FormInstance<IRequestGeneral>;
-};
-
-const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
-  const { requestStore, modalStore } = useStore();
-  const { request, allStudies, setStudy, sendStudiesToSampling, getStudies } = requestStore;
+const RequestSampler = () => {
+  const { requestStore } = useStore();
+  const { request, allStudies, sendStudiesToSampling, getStudies } =
+    requestStore;
 
   const [selectedStudies, setSelectedStudies] = useState<IRequestStudy[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -52,7 +46,7 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
       ...getDefaultColumnProps("estatus", "Estatus", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "10%",
       }),
     },
     {
@@ -62,17 +56,15 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
       }),
     },
     {
-      ...getDefaultColumnProps("fechaTomaMuestra", "Fecha actualización", {
+      ...getDefaultColumnProps("fechaTomaMuestra", "Fecha toma", {
         searchable: false,
         width: "15%",
       }),
-      render: (value, record) =>
-        record.fechaActualizacion == null ? " - " : record.fechaActualizacion,
     },
     {
       ...getDefaultColumnProps("fechaEntrega", "Fecha de entrega", {
         searchable: false,
-        width: "25%",
+        width: "15%",
       }),
       render: (value) => moment(value).format("DD/MM/YYYY HH:mm"),
     },
@@ -86,7 +78,7 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
         solicitudId: request.solicitudId!,
         estudios: selectedStudies,
       };
-      console.log("update");
+
       setLoading(true);
       const ok = await sendStudiesToSampling(data);
       if (ok) {
@@ -104,7 +96,7 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
           <Button
             type="default"
             disabled={
-              selectedStudies.length == 0 ||
+              selectedStudies.length === 0 ||
               !selectedStudies.every(
                 (x) => x.estatusId === status.requestStudy.tomaDeMuestra
               )
@@ -116,7 +108,7 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
           <Button
             type="default"
             disabled={
-              selectedStudies.length == 0 ||
+              selectedStudies.length === 0 ||
               !selectedStudies.every(
                 (x) => x.estatusId === status.requestStudy.pendiente
               )
@@ -135,7 +127,7 @@ const RequestSampler = ({ formGeneral }: RequestSamplerProps) => {
             pagination={false}
             rowSelection={{
               fixed: "right",
-              onChange(selectedRowKeys, selectedRows, info) {
+              onChange(_selectedRowKeys, selectedRows, _info) {
                 setSelectedStudies(toJS(selectedRows));
               },
               getCheckboxProps: (record) => ({

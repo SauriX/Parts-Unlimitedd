@@ -34,6 +34,8 @@ const ClinicResultsFilter = () => {
     getMedicOptions,
     getCompanyOptions,
     getStudiesOptions,
+    areaByDeparmentOptions,
+    getAreaByDeparmentOptions
   } = optionStore;
 
   const [form] = useForm();
@@ -52,7 +54,7 @@ const ClinicResultsFilter = () => {
       getBranchCityOptions();
       getMedicOptions();
       getCompanyOptions();
-      getDepartmentAreaOptions();
+      getAreaByDeparmentOptions();
       await getStudiesOptions();
       setStudyFilter(studiesOptions);
     };
@@ -61,8 +63,8 @@ const ClinicResultsFilter = () => {
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
-    getDepartmentAreaOptions,
     getStudiesOptions,
+    getAreaByDeparmentOptions,
   ]);
 
   useEffect(() => {
@@ -73,27 +75,38 @@ const ClinicResultsFilter = () => {
 
   useEffect(() => {
     setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+      branchCityOptions
+        .filter((x) => selectedCity?.includes(x.value as string))
+        .flatMap((x) => x.options ?? [])
     );
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
     setDepartmentOptions(
-      departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
+      areaByDeparmentOptions.map((x) => ({ value: x.value, label: x.label }))
     );
-  }, [departmentAreaOptions]);
+    
+  }, [areaByDeparmentOptions]);
 
   useEffect(() => {
     setAreaOptions(
-      departmentAreaOptions.find((x) => x.value === selectedDepartment)
-        ?.options ?? []
+      areaByDeparmentOptions
+        .filter((x) => selectedDepartment?.includes(x.value as string))
+        .flatMap((x) => x.options ?? [])
     );
     form.setFieldValue("area", []);
-  }, [departmentAreaOptions, form, selectedDepartment]);
+  }, [areaByDeparmentOptions, form, selectedDepartment]);
 
   const onFinish = async (newFormValues: IClinicResultForm) => {
     setLoading(true);
+
+    // const department = departmentAreaOptions.filter(
+    //   (x) => newFormValues.departamento?.includes(x.value as string)
+    // );
+
+    console.log(newFormValues.departamento);
+
     const filter = { ...newFormValues };
     setFormValues(newFormValues);
     getAll(filter);
@@ -154,6 +167,7 @@ const ClinicResultsFilter = () => {
                       name: "buscar",
                       label: "Buscar",
                     }}
+                    onPressEnter={() => onFinish}
                   />
                 </Col>
                 <Col span={8}>
@@ -195,11 +209,13 @@ const ClinicResultsFilter = () => {
                       <Row gutter={8}>
                         <Col span={12}>
                           <SelectInput
+                            form={form}
                             formProps={{
-                              name: "departament",
+                              name: "departamento",
                               label: "Departamento",
                               noStyle: true,
                             }}
+                            multiple
                             options={departmentOptions}
                           />
                         </Col>
@@ -247,11 +263,13 @@ const ClinicResultsFilter = () => {
                       <Row gutter={8}>
                         <Col span={12}>
                           <SelectInput
+                            form={form}
                             formProps={{
                               name: "ciudad",
                               label: "Ciudad",
                               noStyle: true,
                             }}
+                            multiple
                             options={cityOptions}
                           />
                         </Col>

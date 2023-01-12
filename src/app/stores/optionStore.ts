@@ -655,4 +655,22 @@ export default class OptionStore {
       this.typeValue = [];
     }
   };
+
+  areaByDeparmentOptions: IOptions[] = [];
+  getAreaByDeparmentOptions = async () => {
+    try {
+      const areas = await Catalog.getAreaByDeparment();
+      this.areaByDeparmentOptions = areas.map((x) => ({
+        value: x.departamentoId,
+        label: x.departamento,
+        disabled: true,
+        options: x.areas.map((a) => ({
+          value: a.id,
+          label: a.nombre,
+        })),
+      }));
+    } catch (error) {
+      this.areaByDeparmentOptions = [];
+    }
+  };
 }

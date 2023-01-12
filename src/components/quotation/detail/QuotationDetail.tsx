@@ -23,7 +23,7 @@ const QuotationDetail = () => {
     clearDetailData,
     getById,
     create,
-    deleteCurrentQuotation: deleteQuotation,
+    deleteCurrentQuotation,
   } = quotationStore;
 
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const QuotationDetail = () => {
 
   const [showPrompt, confirmNavigation, cancelNavigation] = useCallbackPrompt(
     showDialog,
-    deleteQuotation
+    deleteCurrentQuotation
   );
 
   useEffect(() => {
