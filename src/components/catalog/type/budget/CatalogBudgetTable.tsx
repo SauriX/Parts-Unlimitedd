@@ -14,6 +14,7 @@ import { ICatalogList } from "../../../../app/models/catalog";
 import { useStore } from "../../../../app/stores/store";
 import useWindowDimensions, { resizeWidth } from "../../../../app/util/window";
 import HeaderTitle from "../../../../app/common/header/HeaderTitle";
+import moment from "moment";
 
 type CatalogBudgetTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -75,6 +76,14 @@ const CatalogBudgetTable: FC<CatalogBudgetTableProps> = ({
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (value ? "Sí" : "No"),
+    },
+    {
+      key: "fechaAlta",
+      dataIndex: "fechaAlta",
+      title: "Fecha de Alta",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "15%",
+      render: (value) => (moment(value).format("DD/MM/YYYY")),
     },
     {
       key: "editar",

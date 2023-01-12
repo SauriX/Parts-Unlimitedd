@@ -60,7 +60,7 @@ const CostoTomaColumns = () => {
       ...getDefaultColumnProps("costoToma", "Costo Toma", {
         searchState,
         setSearchState,
-        width: `${widthColumns}%`,
+        width: "25%",
       }),
       render: (text: string, record: any) => {
         return (
@@ -76,14 +76,14 @@ const CostoTomaColumns = () => {
       ...getDefaultColumnProps("sucursal", "Sucursal", {
         searchState,
         setSearchState,
-        width: `${widthColumns}%`,
+        width: "25%",
       }),
     },
     {
       ...getDefaultColumnProps("fechaAlta", "Fecha Alta", {
         searchState,
         setSearchState,
-        width: `${widthColumns}%`,
+        width: "25%",
       }),
     },
   ];

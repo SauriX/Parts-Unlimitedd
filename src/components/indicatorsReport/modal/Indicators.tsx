@@ -1,8 +1,7 @@
-import { Form, Typography, Spin, Tabs, Divider } from "antd";
-import { Fragment, useEffect, useState } from "react";
+import { Typography, Spin, Tabs, Divider } from "antd";
+import { Fragment, useState } from "react";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import { ISearch } from "../../../app/common/table/utils";
 import "../css/indicators.less";
 import IndicatorsModalFilter from "./IndicatorsModalFilter";
 import CostosToma from "./CostosToma";
@@ -18,13 +17,14 @@ type Props = {
 
 const Indicators = ({ getResult }: Props) => {
   const { indicatorsStore } = useStore();
-  const { data, samples, exportSamplingList, exportServiceList, filter } =
+  const { samples, services, exportSamplingList, exportServiceList, filter } =
     indicatorsStore;
   const [loading, setLoading] = useState(false);
 
   const [modalTab, setModalTab] = useState("sample");
 
-  let defaultSampleCost = samples[0].costoToma;
+  // let defaultSampleCost = samples[0].costoToma;
+  // let defaultServiceCost = services[0].costoFijo;
 
   const items = titleTab.map((x) => {
     return {
@@ -37,12 +37,16 @@ const Indicators = ({ getResult }: Props) => {
             {modalTab === "sample" && (
               <CostosToma
                 samples={samples}
-                costoToma={defaultSampleCost}
+                costoToma={0}
                 loading={loading}
               />
             )}
             {modalTab === "service" && (
-              <CostosFijos data={data} costoFijo={0} loading={loading} />
+              <CostosFijos
+                data={services}
+                costoFijo={0}
+                loading={loading}
+              />
             )}
           </Spin>
         </Fragment>

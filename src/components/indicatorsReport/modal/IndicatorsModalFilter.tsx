@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
-import { IReportIndicatorsFilter } from "../../../app/models/indicators";
+import { IModalIndicatorsFilter } from "../../../app/models/indicators";
 import { IOptions } from "../../../app/models/shared";
 import { useStore } from "../../../app/stores/store";
 import { formItemLayout } from "../../../app/util/utils";
@@ -22,24 +22,24 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
   const {
     branchCityOptions,
     getBranchCityOptions,
-    getMedicOptions,
-    getCompanyOptions,
+    servicesOptions,
+    getServicesOptions
   } = optionStore;
   const { getSamplesCostsByFilter, getServicesCost: getServicesCostsByFilter } = indicatorsStore;
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [form] = Form.useForm<IReportIndicatorsFilter>();
+  const [form] = Form.useForm<IModalIndicatorsFilter>();
 
   const selectedCity = Form.useWatch("ciudad", form);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
+  const [serviceOptions, setServiceOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
     getBranchCityOptions();
-    getMedicOptions();
-    getCompanyOptions();
-  }, [getBranchCityOptions, getMedicOptions, getCompanyOptions]);
+    getServicesOptions();
+  }, [getBranchCityOptions, servicesOptions]);
 
   useEffect(() => {
     setCityOptions(
@@ -48,13 +48,21 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
   }, [branchCityOptions]);
 
   useEffect(() => {
+    setServiceOptions(
+      serviceOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [serviceOptions]);
+
+  useEffect(() => {
     setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+      branchCityOptions
+        .filter((x) => selectedCity?.includes(x.value as string))
+        .flatMap((x) => x.options ?? [])
     );
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
-  const onFinish = async (filter: IReportIndicatorsFilter) => {
+  const onFinish = async (filter: IModalIndicatorsFilter) => {
     setLoading(true);
     if (modalTab === "sample") {
       await getSamplesCostsByFilter(filter);
@@ -65,7 +73,7 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
 
   return (
     <Spin spinning={loading}>
-      <Form<IReportIndicatorsFilter>
+      <Form<IModalIndicatorsFilter>
         {...formItemLayout}
         form={form}
         name="indicators"
@@ -129,7 +137,7 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
                   label: "Servicio",
                 }}
                 multiple
-                options={branchOptions}
+                options={serviceOptions}
               />
               <PlusCircleTwoTone
                 onClick={() => {
@@ -140,32 +148,6 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
           ) : (
             ""
           )}
-          <Col span={10}>
-            <Form.Item
-              label={modalTab === "service" ? "Costo Fijo" : "Costo Toma"}
-              className="no-error-text"
-              help=""
-            >
-              <Input.Group>
-                <Row gutter={8}>
-                  <Col span={16}>
-                    <NumberInput
-                      formProps={{
-                        name: modalTab === "service" ? "fijo" : "toma",
-                        label:
-                          modalTab === "service" ? "Costo Fijo" : "Costo Toma",
-                        noStyle: true,
-                      }}
-                      min={0}
-                    />
-                  </Col>
-                  <Col span={8}>
-                    <Button type="primary">Actualizar</Button>
-                  </Col>
-                </Row>
-              </Input.Group>
-            </Form.Item>
-          </Col>
         </Row>
       </Form>
     </Spin>

@@ -23,16 +23,10 @@ export interface IListIndicators {
 }
 
 export interface IModalInvoice {
+  key: string;
   totalMensual: number;
   totalSemanal: number;
   totalDiario: number;
-}
-
-export interface IServicesCost {
-  id: string;
-  nombre: string;
-  sucursal: string;
-  fechaAlta: string;
 }
 
 export interface ISamplesCost {
@@ -40,6 +34,12 @@ export interface ISamplesCost {
   costoToma: number;
   sucursal: string;
   sucursalId: string;
+  fechaAlta: moment.Moment;
+}
+
+export interface IServicesCost {
+  id?: number;
+  costoFijo: number;
   fechaAlta: moment.Moment;
 }
 
@@ -53,7 +53,8 @@ export interface IReportIndicatorsFilter {
 export interface IModalIndicatorsFilter {
   sucursalId: string[];
   fecha: moment.Moment[];
-  servicio?: string[];
+  servicios?: number[];
+  ciudad?: string[];
 }
 
 export class IndicatorFilterValues implements IReportIndicatorsFilter {
@@ -93,6 +94,7 @@ export class ModalIndicatorFilterValues implements IModalIndicatorsFilter {
     moment(Date.now()).utcOffset(0, true),
   ];
   servicio = [];
+  ciudad = [];
 
   constructor(init?: IModalIndicatorsFilter) {
     Object.assign(this, init);

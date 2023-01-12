@@ -20,8 +20,6 @@ const IndicatorFilter = () => {
   const {
     branchCityOptions,
     getBranchCityOptions,
-    getMedicOptions,
-    getCompanyOptions,
   } = optionStore;
 
   const [loading, setLoading] = useState(false);
@@ -42,9 +40,7 @@ const IndicatorFilter = () => {
 
   useEffect(() => {
     getBranchCityOptions();
-    getMedicOptions();
-    getCompanyOptions();
-  }, [getBranchCityOptions, getMedicOptions, getCompanyOptions]);
+  }, [getBranchCityOptions]);
 
   useEffect(() => {
     setCityOptions(

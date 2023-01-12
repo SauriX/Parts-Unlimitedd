@@ -1,10 +1,12 @@
 import { makeAutoObservable } from "mobx";
 import Indicators from "../api/indicators";
 import {
+  IModalIndicatorsFilter,
   IndicatorFilterValues,
   IReportIndicators,
   IReportIndicatorsFilter,
   ISamplesCost,
+  IServicesCost,
 } from "../models/indicators";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -21,6 +23,7 @@ export default class IndicatorStore {
   filter: IReportIndicatorsFilter = new IndicatorFilterValues();
   data: IReportIndicators[] = [];
   samples: ISamplesCost[] = [];
+  services: IServicesCost[] = [];
   loadingReport: boolean = false;
 
   clearScopes = () => {
@@ -56,7 +59,7 @@ export default class IndicatorStore {
     }
   };
 
-  getSamplesCostsByFilter = async (filter: IReportIndicatorsFilter) => {
+  getSamplesCostsByFilter = async (filter: IModalIndicatorsFilter) => {
     try{
       this.loadingReport = true;
       this.data = [];
@@ -106,6 +109,18 @@ export default class IndicatorStore {
     }
   };
 
+  updateService = async (services: IServicesCost) => {
+    try {
+      await Indicators.updateServiceCost(services);
+      alerts.success(messages.created);
+
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
   getForm = async (indicators: IReportIndicators) => {
     try {
       await Indicators.getForm(indicators);
@@ -118,7 +133,7 @@ export default class IndicatorStore {
     }
   };
 
-  getServicesCost = async (filter: IReportIndicatorsFilter) => {
+  getServicesCost = async (filter: IModalIndicatorsFilter) => {
     try {
       const data = await Indicators.getServicesCost(filter);
       this.data = data;
