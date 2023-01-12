@@ -315,6 +315,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
                         label: "Sucursales",
                         noStyle: true,
                       }}
+                      multiple
                       options={branchOptions}
                     />
                   </Col>
