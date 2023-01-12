@@ -13,6 +13,7 @@ import {
   IQuotationStudy,
   IQuotationStudyUpdate,
   IQuotationTotal,
+  QuotationFilterForm,
   QuotationStudyUpdate,
   QuotationTotal,
 } from "../models/quotation";
@@ -41,6 +42,7 @@ export default class QuotationStore {
     );
   }
 
+  filter: IQuotationFilter = new QuotationFilterForm();
   studyFilter: IPriceListInfoFilter = {};
   quotations: IQuotationInfo[] = [];
   quotation?: IQuotation;
@@ -126,6 +128,10 @@ export default class QuotationStore {
       totalEstudios: total,
       total: finalTotal,
     };
+  };
+
+  setFilter = (filter: IQuotationFilter) => {
+    this.filter = { ...filter };
   };
 
   setStudyFilter = (
@@ -472,6 +478,9 @@ export default class QuotationStore {
     try {
       if (this.quotation?.cotizacionId) {
         await Quotation.deleteQuotation(this.quotation.cotizacionId);
+        this.quotations = this.quotations.filter(
+          (x) => x.cotizacionId !== this.quotation?.cotizacionId
+        );
         return true;
       }
       alerts.warning("No hay cotización por eliminar");

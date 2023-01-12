@@ -27,6 +27,7 @@ const QuotationDetail = () => {
   } = quotationStore;
 
   const navigate = useNavigate();
+  
   const { quotationId } = useParams();
   const [searchParams] = useSearchParams();
 
