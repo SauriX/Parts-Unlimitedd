@@ -26,7 +26,7 @@ const ApointmenHeader: FC<UserHeaderProps> = ({
       ghost={false}
       title={
         (tipo == "laboratorio" && (
-          <HeaderTitle title={`Cita laboratorio`} image="cita" />
+          <HeaderTitle title={`Imagenología`} image="cita" />
         )) || <HeaderTitle title={`Cita domicilio`} image="domicilio" />
       }
       className="header-container"
