@@ -27,20 +27,18 @@ export default class TrackingOrdertStore {
   trackingOrder: IEstudiosList[] = [];
   trackingOrderStudies: ITrackingOrderList[] = [];
   estudios: IEstudiosList[] = [];
-  temperatura:number = 0;
+  temperatura: number = 0;
   TranckingOrderSend: ITrackingOrderForm = new TrackingOrderFormValues();
   setSendData = (tranckingOrderSend: ITrackingOrderForm) => {
     this.TranckingOrderSend = tranckingOrderSend;
   };
-  setTemperatura=(temepratura:number)=>{
-
-
-    this.temperatura=temepratura;
+  setTemperatura = (temepratura: number) => {
+    this.temperatura = temepratura;
   };
   confirmarRecoleccionSend = async () => {
     try {
       await TrackingOrder.confirmarRecoleccion(this.OrderId);
-
+      await this.getById(this.OrderId);
       alerts.success("Se confirmo exitosmente la orden: " + this.OrderCreated);
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -49,21 +47,22 @@ export default class TrackingOrdertStore {
   cancelarRecoleccionSend = async () => {
     try {
       await TrackingOrder.cancelarRecoleccion(this.OrderId);
+      await this.getById(this.OrderId);
       alerts.success("Se cancelo exitosmente la orden: " + this.OrderCreated);
     } catch (error) {
       alerts.warning(getErrors(error));
     }
   };
-  setEscaneado = (escaneado: boolean, id: string,) => {
+  setEscaneado = (escaneado: boolean, id: string) => {
     try {
       const estudios = this.trackingOrder.map((estudio) => {
         let a = new TrackingOrderListValues(estudio);
         if (a.id === id) {
           a.escaneado = escaneado;
-          if(!escaneado){
-            a.temperatura=0;
-          }else{
-            a.temperatura = this.temperatura!
+          if (!escaneado) {
+            a.temperatura = 0;
+          } else {
+            a.temperatura = this.temperatura!;
           }
         }
         return a;
@@ -85,10 +84,11 @@ export default class TrackingOrdertStore {
           };
         }
       } else {
-        
         const estudios = this.trackingOrder.map((estudio) => {
-          if(estudio.escaneado){estudio.temperatura = temperature;}
-          
+          if (estudio.escaneado) {
+            estudio.temperatura = temperature;
+          }
+
           return estudio;
         });
         this.trackingOrder = estudios;
@@ -143,16 +143,14 @@ export default class TrackingOrdertStore {
   getById = async (id: string) => {
     try {
       const trackingOrder = await TrackingOrder.getById(id);
-      // this.trackingOrderStudies = trackingOrder.estudios;
+      this.OrderId = trackingOrder.id!;
       this.trackingOrder = trackingOrder.estudiosAgrupados!.map((x: any) => {
         let a = new TrackingOrderListValues(x);
-
+        a.escaneado = true;
         return a;
       });
-      console.log(this.trackingOrderStudies);
       return trackingOrder;
     } catch (error) {
-      console.log(error);
       alerts.warning(getErrors(error));
     }
   };
@@ -162,9 +160,7 @@ export default class TrackingOrdertStore {
     try {
       const orderCreated = await TrackingOrder.create(trackingOrder);
       this.OrderCreated = orderCreated.clave;
-      console.log("OrderCreated", this.OrderCreated);
       this.OrderId = orderCreated.id;
-      console.log("OrderId", this.OrderId);
       alerts.success("Se creo exitosmente la orden: " + this.OrderCreated);
       return true;
     } catch (error) {
@@ -186,7 +182,6 @@ export default class TrackingOrdertStore {
 
   exportList = async () => {
     try {
-      console.log("export this.OrderId", this.OrderId);
       if (!!this.OrderId) {
         await TrackingOrder.exportList(this.TranckingOrderSend);
       }

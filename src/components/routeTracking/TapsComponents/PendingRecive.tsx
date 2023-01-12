@@ -55,107 +55,6 @@ import {
   IReciveStudy,
 } from "../../../app/models/pendingRecive";
 import { formItemLayout } from "../../../app/util/utils";
-/* const pendings:IRecibe[] = [{
-  id:"1",
-  nseguimiento:"1234456",
-  claveroute:"R01",
-  sucursal:"Monterrey",
-  fechaen:moment(moment.now()),
-  horaen:moment(moment.now()),
-  fechareal:moment(moment.now()),
-  study :[{
-    id:"1234",
-    estudio:"QSP,TRI",
-    solicitud:"123123123",
-    horarecoleccion:moment(moment.now()),
-    check:moment(moment.now()),
-  },{
-    id:"45678",
-    estudio:"GLU,UREA",
-    solicitud:"123123123",
-    horarecoleccion:moment(moment.now()),
-    check:moment(moment.now()),
-  }],
-  extra:[{
-    id:"1",
-    clave:"EGO",
-    estudio:"Examen General de orina",
-    solicitud:"23123",
-    paciente:"Andre Ruiz Montalvo",
-    escaneado:false
-  },{
-    id:"2",
-    clave:"VH",
-    estudio:"Citologia ematica",
-    solicitud:"23123",
-    paciente:"Andre Ruiz Montalvo",
-    escaneado:true
-  },{
-    id:"1",
-    clave:"CA",
-    estudio:"Calcio serico",
-    solicitud:"23123",
-    paciente:"Andre Ruiz Montalvo",
-    escaneado:true
-  }],
-  status:{
-    created:true,
-    smpling:true,
-    route:true,
-    entregado:false,
-  }
-},
-{
-  id:"1",
-  nseguimiento:"1234456",
-  claveroute:"R01",
-  sucursal:"Monterrey",
-  fechaen:moment(moment.now()),
-  horaen:moment(moment.now()),
-  fechareal:moment(moment.now()),
-  study :[{
-    id:"1234",
-    estudio:"QSP,TRI",
-    solicitud:"123123123",
-    horarecoleccion:moment(moment.now()),
-    check:moment(moment.now()),
-  },{
-    id:"45678",
-    estudio:"GLU,UREA",
-    solicitud:"123123123",
-    horarecoleccion:moment(moment.now()),
-    check:moment(moment.now()),
-  }],
-  extra:[{
-    id:"1",
-    clave:"EGO",
-    estudio:"Examen General de orina",
-    solicitud:"23123",
-    paciente:"Andre Ruiz Montalvo",
-    escaneado:false
-  },{
-    id:"2",
-    clave:"VH",
-    estudio:"Citologia ematica",
-    solicitud:"23123",
-    paciente:"Andre Ruiz Montalvo",
-    escaneado:true
-  },{
-    id:"1",
-    clave:"CA",
-    estudio:"Calcio serico",
-    solicitud:"23123",
-    paciente:"Andre Ruiz Montalvo",
-    escaneado:true
-  }],
-  status:{
-    created:true,
-    smpling:true,
-    route:true,
-    entregado:true,
-  }
-},
-] */
 const PendingRecive = () => {
   const {
     procedingStore,
@@ -527,7 +426,6 @@ const PendingRecive = () => {
               formProps={{ name: "fecha", label: "Fecha" }}
             ></DateInput>
           </Col>
-
           <Col span={6}>
             <SelectInput
             form={form}

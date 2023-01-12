@@ -137,7 +137,7 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
       width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value, fullrow) => (
         <Switch
-          checked={value}
+          checked={fullrow.escaneado}
           onChange={(value) => {
             console.log("escaneado", value, fullrow);
             setEscaneado(value, fullrow.id!);
