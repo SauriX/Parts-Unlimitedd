@@ -43,7 +43,7 @@ const ClinicResultsFilter = () => {
   const [studyFilter, setStudyFilter] = useState<any[]>(studiesOptions);
 
   const selectedCity = Form.useWatch("ciudad", form);
-  const selectedDepartment = Form.useWatch("departament", form);
+  const selectedDepartment = Form.useWatch("departamento", form);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
@@ -74,6 +74,12 @@ const ClinicResultsFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
+    setCityOptions(
+      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [branchCityOptions]);
+
+  useEffect(() => {
     setBranchOptions(
       branchCityOptions
         .filter((x) => selectedCity?.includes(x.value as string))
@@ -92,20 +98,15 @@ const ClinicResultsFilter = () => {
   useEffect(() => {
     setAreaOptions(
       areaByDeparmentOptions
-        .filter((x) => selectedDepartment?.includes(x.value as string))
+        .filter((x) => selectedDepartment?.includes(x.value as number))
         .flatMap((x) => x.options ?? [])
     );
     form.setFieldValue("area", []);
+    console.log("areaByDeparmentOptions", areaByDeparmentOptions)
   }, [areaByDeparmentOptions, form, selectedDepartment]);
 
   const onFinish = async (newFormValues: IClinicResultForm) => {
     setLoading(true);
-
-    // const department = departmentAreaOptions.filter(
-    //   (x) => newFormValues.departamento?.includes(x.value as string)
-    // );
-
-    console.log(newFormValues.departamento);
 
     const filter = { ...newFormValues };
     setFormValues(newFormValues);
