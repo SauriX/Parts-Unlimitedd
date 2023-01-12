@@ -1,12 +1,4 @@
-import {
-  Button,
-  Checkbox,
-  Col,
-  Descriptions,
-  Form,
-  Row,
-  Table,
-} from "antd";
+import { Button, Checkbox, Col, Descriptions, Form, Row, Table } from "antd";
 import { FC, Fragment, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
@@ -16,9 +8,7 @@ import { EditOutlined } from "@ant-design/icons";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
-import {
-  IUpdate,
-} from "../../../app/models/sampling";
+import { IUpdate } from "../../../app/models/sampling";
 import {
   getDefaultColumnProps,
   IColumns,
@@ -37,11 +27,7 @@ import alerts from "../../../app/util/alerts";
 import PrintIcon from "../../../app/common/icons/PrintIcon";
 import { formItemLayout } from "../../../app/util/utils";
 const PendingSend = () => {
-  const {
-    optionStore,
-    routeTrackingStore,
-    profileStore,
-  } = useStore();
+  const { optionStore, routeTrackingStore, profileStore } = useStore();
   const { getAll, studys, printTicket, update, exportForm, setventana } =
     routeTrackingStore;
   const { branchCityOptions, getBranchCityOptions } = optionStore;
@@ -118,8 +104,12 @@ const PendingSend = () => {
       setexpandedRowKeys(studys!.map((x) => x.id));
     }
   };
-  const onChange = (e: CheckboxChangeEvent, id: number, solicitud: string,order:string) => {
-
+  const onChange = (
+    e: CheckboxChangeEvent,
+    id: number,
+    solicitud: string,
+    order: string
+  ) => {
     let data = ids;
     let solis = solicitudesData;
     let dataid: number[] = [];
@@ -154,7 +144,6 @@ const PendingSend = () => {
         solis.push(solicitud);
         SetSolicitudesData(solis);
       }
-
     } else {
       if (data.length > 0) {
         let temp = data.filter((x) => x != id);
@@ -176,11 +165,9 @@ const PendingSend = () => {
           dataupdate[indexsoli!] = solicitudtoupdate;
         }
       }
-     
     }
     console.log(dataupdate);
     setUpdateDate(dataupdate);
-    
   };
 
   const register = () => {
@@ -203,7 +190,7 @@ const PendingSend = () => {
       ...getDefaultColumnProps("seguimiento", "# De seguimiento", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "10%",
         minWidth: 150,
       }),
       render: (value, route) => (
@@ -221,14 +208,14 @@ const PendingSend = () => {
       ...getDefaultColumnProps("clave", "Clave de ruta", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "10%",
       }),
     },
     {
       ...getDefaultColumnProps("solicitud", "Solicitud", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "15%",
       }),
     },
     {
@@ -243,17 +230,17 @@ const PendingSend = () => {
       ...getDefaultColumnProps("estudio", "Estudio", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "15%",
       }),
     },
     {
       ...getDefaultColumnProps("sucursal", "Sucursal", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "15%",
       }),
     },
-    
+
     {
       ...getDefaultColumnProps("fecha", " Fecha de entrega", {
         searchState,
@@ -329,8 +316,12 @@ const PendingSend = () => {
           <Col span={5}>
             <SelectInput
               options={branchCityOptions}
-              formProps={{ name: "sucursal", label: "Sucursal a donde enviar",        labelCol: { span: 12 },
-              wrapperCol: { span: 14 }, }}
+              formProps={{
+                name: "sucursal",
+                label: "Sucursal a donde enviar",
+                labelCol: { span: 12 },
+                wrapperCol: { span: 14 },
+              }}
             ></SelectInput>
           </Col>
           <Col span={1}></Col>
@@ -366,74 +357,16 @@ const PendingSend = () => {
           </Col>
         </Row>
       </Form>
-      <Row style={{ marginBottom: "1%", marginTop: "2%" }}>
-        <Col span={8}>
-          <Button
-            type={activiti == "register" ? "primary" : "ghost"}
-            onClick={register}
-          >
-            Enviar ruta
-          </Button>
-          <Button
-            type={activiti == "cancel" ? "primary" : "ghost"}
-            onClick={cancel}
-          >
-            Cancelar envío
-          </Button>
-        </Col>
-        <Col span={8}></Col>
-        <Col span={8}>
-          <div style={{ textAlign: "right", marginBottom: 10 }}>
-            {activiti == "register" ? (
-              <Button
-                type="primary"
-                disabled={updateData.length <= 0}
-                onClick={() => {
-                  updatedata();
-                }}
-              >
-                Enviar
-              </Button>
-            ) : (
-              ""
-            )}
-            {activiti == "cancel" ? (
-              <Button
-                type="primary"
-                disabled={updateData.length <= 0}
-                onClick={() => {
-                  updatedata();
-                }}
-              >
-                Cancelar Registro
-              </Button>
-            ) : (
-              ""
-            )}
-          </div>
-        </Col>
-      </Row>
-      <Fragment>
-        {studys.length > 0 && (
-          <div style={{ textAlign: "right", marginBottom: 10 }}>
-            <Button
-              type="primary"
-              onClick={togleRows}
-              style={{ marginRight: 10 }}
-            >
-              {!openRows ? "Abrir tabla" : "Cerrar tabla"}
-            </Button>
-          </div>
-        )}
+
+      <div style={{ marginTop: "2%" }}>
         <Table<IRouteList>
           size="small"
           rowKey={(record) => record.id}
           columns={columns}
           dataSource={[...studys]}
-          rowClassName="row-search"
           bordered
         ></Table>
-      </Fragment>
+      </div>
     </Fragment>
   );
 };

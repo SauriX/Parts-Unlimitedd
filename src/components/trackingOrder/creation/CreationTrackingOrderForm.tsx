@@ -138,9 +138,15 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
       console.log("ENTRA A BUSCAR LA ORDEN DE ESTUDIOS");
       setLoading(true);
       const trackingOrder = await getById(id);
-      // form.setFieldsValue(trackingOrder!);
+      console.log(trackingOrder,"order");
+       form.setFieldsValue(trackingOrder!);
       setValues(trackingOrder!);
       setLoading(false);
+/*       if(trackingOrder?.escaneado){
+        setCancelarRecoleccion(false);
+      }else{
+        setConfirmarRecoleccion(false);
+      } */
     };
 
     if (id) {
@@ -534,7 +540,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
               </Col>
               <Col md={8} sm={12} style={{ textAlign: "left" }}>
                 <SwitchInput
-                  name="escaneado"
+                  name="escaneoCodigoBarras"
                   label="Escaneo por código de barras"
                   readonly={readonly}
                   style={{
