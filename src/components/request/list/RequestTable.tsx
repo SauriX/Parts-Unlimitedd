@@ -12,7 +12,6 @@ import { observer } from "mobx-react-lite";
 import { IRequestInfo, IRequestStudyInfo } from "../../../app/models/request";
 import { moneyFormatter } from "../../../app/util/utils";
 import views from "../../../app/util/view";
-import moment from "moment";
 
 const { Link, Text } = Typography;
 
@@ -20,7 +19,7 @@ const logoWee = `/${process.env.REACT_APP_NAME}/admin/assets/logos/weeclinic.png
 
 const RequestTable = () => {
   const { requestStore } = useStore();
-  const { loadingRequests, requests, getRequests: getByFilter } = requestStore;
+  const { loadingRequests, filter, requests, getRequests } = requestStore;
 
   let navigate = useNavigate();
 
@@ -31,11 +30,7 @@ const RequestTable = () => {
 
   useEffect(() => {
     const readRequests = async () => {
-      await getByFilter({
-        tipoFecha: 1,
-        fechaInicial: moment().utcOffset(0, true),
-        fechaFinal: moment().utcOffset(0, true),
-      });
+      await getRequests(filter);
     };
 
     readRequests();

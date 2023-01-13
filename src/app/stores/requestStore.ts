@@ -18,6 +18,7 @@ import {
   IRequestPayment,
   IRequestToken,
   IRequestCheckIn,
+  RequestFilterForm,
 } from "../models/request";
 import alerts from "../util/alerts";
 import { status, statusName } from "../util/catalogs";
@@ -51,6 +52,7 @@ export default class RequestStore {
     );
   }
 
+  filter: IRequestFilter = new RequestFilterForm();
   studyFilter: IPriceListInfoFilter = {};
   requests: IRequestInfo[] = [];
   request?: IRequest;
@@ -117,6 +119,10 @@ export default class RequestStore {
   isStudy(obj: IRequestStudy | IRequestPack): obj is IRequestStudy {
     return obj.type === "study";
   }
+
+  setFilter = (filter: IRequestFilter) => {
+    this.filter = { ...filter };
+  };
 
   setStudyFilter = (
     branchId?: string,
@@ -516,6 +522,11 @@ export default class RequestStore {
         await Request.deleteRequest(
           this.request.expedienteId,
           this.request.solicitudId
+        );
+        this.requests = this.requests.filter(
+          (x) =>
+            x.expedienteId !== this.request?.expedienteId &&
+            x.solicitudId !== this.request?.solicitudId
         );
         return true;
       }

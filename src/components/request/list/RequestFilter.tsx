@@ -1,7 +1,6 @@
 import { Button, Col, Form, Input, Row } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import { useEffect, useState } from "react";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
@@ -29,7 +28,7 @@ const RequestFilter = () => {
     getCompanyOptions,
     getDepartmentOptions,
   } = optionStore;
-  const { getRequests } = requestStore;
+  const { filter, setFilter, getRequests } = requestStore;
 
   const [form] = useForm<IRequestFilter>();
 
@@ -71,6 +70,7 @@ const RequestFilter = () => {
       filter.fechaFinal = filter.fechas[1].utcOffset(0, true);
     }
 
+    setFilter(filter);
     getRequests(filter);
   };
 
@@ -81,7 +81,7 @@ const RequestFilter = () => {
         form={form}
         onFinish={onFinish}
         size="small"
-        initialValues={{ tipoFecha: 1, fechas: [moment(), moment()] }}
+        initialValues={filter}
       >
         <Row gutter={[0, 12]}>
           <Col span={8}>

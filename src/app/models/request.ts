@@ -46,6 +46,17 @@ export interface IRequestFilter {
   expediente?: string;
 }
 
+export class RequestFilterForm implements IRequestFilter {
+  tipoFecha = 1;
+  fechas = [moment(), moment()];
+  fechaInicial = moment().utcOffset(0, true);
+  fechaFinal = moment().utcOffset(0, true);
+
+  constructor(init?: IRequestFilter) {
+    Object.assign(this, init);
+  }
+}
+
 export interface IRequestInfo extends IRequestBase {
   clave: string;
   clavePatologica: string;
