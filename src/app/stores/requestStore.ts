@@ -268,9 +268,6 @@ export default class RequestStore {
         type: "study",
         estatusId: status.requestStudy.pendiente,
         estatus: statusName.requestStudy.pendiente,
-        aplicaCargo: false,
-        aplicaCopago: false,
-        aplicaDescuento: false,
         nuevo: true,
         asignado: true,
       };
@@ -312,9 +309,6 @@ export default class RequestStore {
       const pack: IRequestPack = {
         ...price,
         type: "pack",
-        aplicaCargo: false,
-        aplicaCopago: false,
-        aplicaDescuento: false,
         cancelado: false,
         nuevo: true,
         asignado: true,
@@ -323,9 +317,6 @@ export default class RequestStore {
           type: "study",
           estatusId: status.requestStudy.pendiente,
           estatus: statusName.requestStudy.pendiente,
-          aplicaCargo: false,
-          aplicaCopago: false,
-          aplicaDescuento: false,
           nuevo: true,
           asignado: true,
         })),
@@ -758,64 +749,8 @@ export default class RequestStore {
         .filter((x) => !x.cancelado && x.asignado)
         .reduce((acc, obj) => acc + obj.precioFinal, 0);
 
-    const desc =
-      this.totals.descuentoTipo === 1
-        ? ((this.studies
-            .filter(
-              (x) =>
-                x.estatusId !== status.requestStudy.cancelado &&
-                x.asignado &&
-                x.aplicaDescuento
-            )
-            .reduce((acc, obj) => acc + obj.precioFinal, 0) +
-            this.packs
-              .filter((x) => !x.cancelado && x.asignado && x.aplicaDescuento)
-              .reduce((acc, obj) => acc + obj.precioFinal, 0)) *
-            this.totals.descuento) /
-          100
-        : this.totals.descuento;
-
-    const char =
-      this.totals.cargoTipo === 1
-        ? ((this.studies
-            .filter(
-              (x) =>
-                x.estatusId !== status.requestStudy.cancelado &&
-                x.asignado &&
-                x.aplicaCargo
-            )
-            .reduce((acc, obj) => acc + obj.precioFinal, 0) +
-            this.packs
-              .filter((x) => !x.cancelado && x.asignado && x.aplicaCargo)
-              .reduce((acc, obj) => acc + obj.precioFinal, 0)) *
-            this.totals.cargo) /
-          100
-        : this.totals.cargo;
-
-    const cop = this.request?.esWeeClinic
-      ? this.studies
-          .filter(
-            (x) => x.estatusId !== status.requestStudy.cancelado && x.asignado
-          )
-          .reduce((acc, obj) => acc + (obj.copago ?? 0), 0)
-      : this.totals.copagoTipo === 1
-      ? ((this.studies
-          .filter(
-            (x) =>
-              x.estatusId !== status.requestStudy.cancelado &&
-              x.asignado &&
-              x.aplicaCopago
-          )
-          .reduce((acc, obj) => acc + obj.precioFinal, 0) +
-          this.packs
-            .filter((x) => !x.cancelado && x.asignado && x.aplicaCopago)
-            .reduce((acc, obj) => acc + obj.precioFinal, 0)) *
-          this.totals.copago) /
-        100
-      : this.totals.copago;
-
-    const finalTotal = totalStudies - desc + char;
-    const finalTotalUser = cop > 0 ? cop : totalStudies - desc + char;
+    const finalTotal = totalStudies - 0 + 0;
+    const finalTotalUser = 0 > 0 ? 0 : totalStudies - 0 + 0;
 
     const balance =
       finalTotal -
@@ -832,9 +767,9 @@ export default class RequestStore {
       totalEstudios: totalStudies,
       total: finalTotalUser,
       saldo: balance,
-      copago: cop,
-      cargo: char,
-      descuento: desc,
+      copago: 0,
+      cargo: 0,
+      descuento: 0,
     };
   };
 
