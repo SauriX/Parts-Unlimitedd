@@ -14,13 +14,13 @@ import {
   IQuotationInfo,
   IQuotationStudyInfo,
 } from "../../../app/models/quotation";
-import moment from "moment";
 
 const { Link, Text } = Typography;
 
 const QuotationTable = () => {
   const { quotationStore } = useStore();
-  const { loadingQuotations, quotations, getQuotations } = quotationStore;
+  const { loadingQuotations, filter, quotations, getQuotations } =
+    quotationStore;
 
   let navigate = useNavigate();
 
@@ -31,10 +31,7 @@ const QuotationTable = () => {
 
   useEffect(() => {
     const readQuotations = async () => {
-      await getQuotations({
-        fechaAInicial: moment().utcOffset(0, true),
-        fechaAFinal: moment().utcOffset(0, true),
-      });
+      await getQuotations(filter);
     };
 
     readQuotations();

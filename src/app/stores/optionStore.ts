@@ -3,6 +3,7 @@ import Catalog from "../api/catalog";
 import Role from "../api/role";
 import {
   ICatalogAreaList,
+  ICatalogBudgetList,
   ICatalogDescriptionList,
   ICatalogNormalList,
 } from "../models/catalog";
@@ -671,6 +672,20 @@ export default class OptionStore {
       }));
     } catch (error) {
       this.areaByDeparmentOptions = [];
+    }
+  };
+
+  servicesOptions: any[] = [];
+  getServicesOptions = async () => {
+    try {
+      const service = await Catalog.getActive<ICatalogBudgetList>("costofijo");
+      this.servicesOptions = service.map((x) => ({
+        key: x.id,
+        value: x.id,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.servicesOptions = [];
     }
   };
 }

@@ -14,6 +14,7 @@ import {
 import {
   IProceedingList,
   ISearchMedical,
+  SearchMedicalFormValues,
 } from "../../../../app/models/Proceeding";
 import DateRangeInput from "../../../../app/common/form/proposal/DateRangeInput";
 import { moneyFormatter } from "../../../../app/util/utils";
@@ -45,7 +46,7 @@ const QuotationAssignment = ({
 
   useEffect(() => {
     const readRecords = async () => {
-      const records = await getRecords({});
+      const records = await getRecords(new SearchMedicalFormValues());
       setRecords(records);
     };
 
@@ -146,7 +147,12 @@ const QuotationAssignment = ({
   return (
     <Row gutter={[8, 12]}>
       <Col span={24}>
-        <Form<ISearchMedical> layout="vertical" form={form} onFinish={onFinish}>
+        <Form<ISearchMedical>
+          layout="vertical"
+          initialValues={new SearchMedicalFormValues()}
+          form={form}
+          onFinish={onFinish}
+        >
           <Row gutter={[8, 12]} align="bottom">
             <Col span={5}>
               <TextInput
