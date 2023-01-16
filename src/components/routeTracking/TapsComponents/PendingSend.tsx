@@ -34,9 +34,6 @@ const PendingSend = () => {
 
   let navigate = useNavigate();
   useEffect(() => {
-    form.setFieldsValue({ sucursal: profile?.sucursal! });
-  }, [studys]);
-  useEffect(() => {
     const readPriceList = async () => {
       let studios = [];
       var datas = await getAll(values!);
@@ -88,11 +85,12 @@ const PendingSend = () => {
       }),
     },
     {
-      ...getDefaultColumnProps("solicitud", "Solicitud", {
-        searchState,
-        setSearchState,
-        width: "15%",
-      }),
+      key: "Solicitud",
+      dataIndex: "solicitud",
+      title: "Solicitud",
+      align: "center",
+      width: "10%",
+      render: (value) => (value),
     },
     {
       key: "editar",
@@ -116,15 +114,14 @@ const PendingSend = () => {
         width: "15%",
       }),
     },
-
     {
-      ...getDefaultColumnProps("fecha", " Fecha de entrega", {
-        searchState,
-        setSearchState,
-        width: "15%",
-      }),
+      key: "fecha",
+      dataIndex: "fecha",
+      title: "Fecha de entrega",
+      align: "center",
+      width: "10%",
+      render: (value) => (value),
     },
-
     {
       key: "editar",
       dataIndex: "id",

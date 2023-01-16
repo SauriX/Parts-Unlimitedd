@@ -159,7 +159,7 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
         <Input
           max={100}
           required
-          value={value}
+          value={fullrow.estudio?.temperatura}
           type={"number"}
           onChange={(newValue) => {
             setTemperature(+newValue.target.value, fullrow.id);
