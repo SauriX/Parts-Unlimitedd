@@ -7,6 +7,9 @@ import {
   IReportIndicatorsFilter,
   ISamplesCost,
   IServicesCost,
+  IServicesInvoice,
+  ModalIndicatorFilterValues,
+  ServiceInvoice,
 } from "../models/indicators";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -21,9 +24,10 @@ export default class IndicatorStore {
 
   scopes?: IScopes;
   filter: IReportIndicatorsFilter = new IndicatorFilterValues();
+  modalFilter: IModalIndicatorsFilter = new ModalIndicatorFilterValues();
   data: IReportIndicators[] = [];
   samples: ISamplesCost[] = [];
-  services: IServicesCost[] = [];
+  services: IServicesInvoice = new ServiceInvoice();
   loadingReport: boolean = false;
 
   clearScopes = () => {
@@ -32,6 +36,10 @@ export default class IndicatorStore {
 
   setFilter = (filter: IReportIndicatorsFilter) => {
     this.filter = filter;
+  };
+
+  setModalFilter = (modalFilter: IModalIndicatorsFilter) => {
+    this.modalFilter = modalFilter;
   };
 
   access = async () => {
@@ -60,18 +68,18 @@ export default class IndicatorStore {
   };
 
   getSamplesCostsByFilter = async (filter: IModalIndicatorsFilter) => {
-    try{
+    try {
       this.loadingReport = true;
-      this.data = [];
-      const data = await Indicators.getSamplesCostsByFilter(filter);
-      this.data = data;
-    } catch (error: any){
+      this.samples = [];
+      const samples = await Indicators.getSamplesCostsByFilter(filter);
+      this.samples = samples;
+    } catch (error: any) {
       alerts.warning(getErrors(error));
-      this.data = [];
+      this.samples = [];
     } finally {
       this.loadingReport = false;
     }
-  }
+  };
 
   create = async (indicators: IReportIndicators) => {
     try {
@@ -135,11 +143,23 @@ export default class IndicatorStore {
 
   getServicesCost = async (filter: IModalIndicatorsFilter) => {
     try {
-      const data = await Indicators.getServicesCost(filter);
-      this.data = data;
+      this.loadingReport = true;
+      const services = await Indicators.getServicesCost(filter);
+      this.services = services;
     } catch (error: any) {
       alerts.warning(getErrors(error));
-      this.data = [];
+    } finally {
+      this.loadingReport = false;
+    }
+  };
+
+  saveFile = async (file: FormData) => {
+    try {
+      var fileName = await Indicators.saveFile(file);
+      alerts.success(messages.created);
+      return fileName;
+    } catch (error) {
+      alerts.warning(getErrors(error));
     }
   };
 
@@ -151,7 +171,7 @@ export default class IndicatorStore {
     }
   };
 
-  exportSamplingList = async (filter: IReportIndicatorsFilter) => {
+  exportSamplingList = async (filter: IModalIndicatorsFilter) => {
     try {
       await Indicators.exportSamplingList(filter);
     } catch (error: any) {
@@ -159,9 +179,17 @@ export default class IndicatorStore {
     }
   };
 
-  exportServiceList = async (filter: IReportIndicatorsFilter) => {
+  exportServiceList = async (filter: IModalIndicatorsFilter) => {
     try {
       await Indicators.exportServiceList(filter);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  exportServiceListExample = async () => {
+    try {
+      await Indicators.exportServiceListExample();
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }

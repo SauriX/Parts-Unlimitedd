@@ -9,6 +9,7 @@ import {
   IModalInvoice,
   IReportIndicators,
   IServicesCost,
+  IServicesInvoice,
 } from "../../../app/models/indicators";
 import { CheckOutlined } from "@ant-design/icons";
 import { formItemLayout, moneyFormatter } from "../../../app/util/utils";
@@ -17,8 +18,6 @@ import { useStore } from "../../../app/stores/store";
 import alerts from "../../../app/util/alerts";
 import moment from "moment";
 
-let widthColumns = 100 / 3;
-
 const CostosFijosColumns = () => {
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
@@ -26,7 +25,7 @@ const CostosFijosColumns = () => {
   });
 
   const { indicatorsStore, optionStore } = useStore();
-  const { filter, updateService, loadingReport } = indicatorsStore;
+  const { modalFilter, updateService, getServicesCost,  } = indicatorsStore;
   const { branchCityOptions } = optionStore;
 
   const [loading, setLoading] = useState(false);
@@ -36,24 +35,18 @@ const CostosFijosColumns = () => {
     setBranches(branchCityOptions.flatMap((x) => x.options ?? []));
   }, [branchCityOptions]);
 
-  const onFinish = async (serviceId: number, serviceCost: number) => {
+  const onFinish = async (service: IServicesCost) => {
     setLoading(true);
 
-    if (!serviceId) {
+    if (!service) {
       alerts.warning("Servicio invalido");
+      setLoading(false);
       return;
     }
 
-    const service = {
-      id: serviceId,
-      costoFijo: serviceCost,
-      fechaAlta: moment(filter.fechaIndividual).utcOffset(0, true),
-    };
-    
-    if (service) {
-      updateService(service);
-    }
-    
+    await updateService(service);
+    await getServicesCost(modalFilter);
+
     setLoading(false);
   };
 
@@ -64,18 +57,18 @@ const CostosFijosColumns = () => {
         setSearchState,
         width: "25%",
       }),
-      render: (text: string, record: any) => {
+      render: (text: string, record: IServicesCost) => {
         return (
           <ServiceCostInput
             loading={loading}
-            defaultValue={record.costoToma}
-            onFinish={(id, service) => onFinish(id, service)}
+            defaultValue={record}
+            onFinish={(service) => onFinish(service)}
           />
         );
       },
     },
     {
-      ...getDefaultColumnProps("servicio", "Servicio", {
+      ...getDefaultColumnProps("nombre", "Servicio", {
         searchState,
         setSearchState,
         width: "25%",
@@ -94,13 +87,14 @@ const CostosFijosColumns = () => {
         setSearchState,
         width: "25%",
       }),
+      render: (value) => moment(value).format("DD/MM/YYYY"),
     },
   ];
   return columns;
 };
 
-const CostosFijosInvoice = () => {
-  const invoiceColumns: IColumns<IModalInvoice> = [
+export const CostosFijosInvoice = () => {
+  const invoiceColumns: IColumns<IServicesInvoice> = [
     {
       ...getDefaultColumnProps("totalMensual", "Total Mensual", {
         width: "33%",
@@ -120,15 +114,15 @@ const CostosFijosInvoice = () => {
       render: (value) => moneyFormatter.format(value),
     },
   ];
-  
-  return invoiceColumns
+
+  return invoiceColumns;
 };
 
-export {CostosFijosColumns, CostosFijosInvoice};
+export default CostosFijosColumns;
 
 type ServiceCostInputProps = {
-  defaultValue: number;
-  onFinish: (id: number, service: number) => void;
+  defaultValue: IServicesCost;
+  onFinish: (service: IServicesCost) => void;
   loading: boolean;
 };
 
@@ -144,11 +138,11 @@ const ServiceCostInput = ({
       <Form<IServicesCost>
         {...formItemLayout}
         form={form}
-        name="samples"
-        initialValues={{ costoFijo: defaultValue }}
+        name="service"
+        initialValues={defaultValue}
         onFinish={(values) => {
           console.log(values);
-          onFinish(values.id!, values.costoFijo);
+          onFinish({ ...defaultValue, costoFijo: values.costoFijo });
         }}
         scrollToFirstError
       >
