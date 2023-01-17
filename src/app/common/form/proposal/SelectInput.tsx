@@ -1,28 +1,59 @@
-import { Form, FormItemProps, Select, Space, Tooltip } from "antd";
-import { Rule } from "antd/lib/form";
-import React, { useEffect, useRef, useState } from "react";
+import {
+  Button,
+  Col,
+  Divider,
+  Form,
+  FormItemProps,
+  Row,
+  Select,
+  Space,
+  Tooltip,
+} from "antd";
+import { FormInstance, Rule } from "antd/lib/form";
+import React, { useRef } from "react";
 import { IOptions } from "../../../models/shared";
 import { InfoCircleTwoTone } from "@ant-design/icons";
 
-interface IProps {
-  formProps: FormItemProps<any>;
-  required?: boolean;
-  placeholder?: string;
-  options: IOptions[];
-  readonly?: boolean;
-  width?: string | number;
-  multiple?: boolean;
-  suffix?: React.ReactNode;
-  style?: React.CSSProperties;
-  showLabel?: boolean;
-  errors?: any[];
-  onChange?: (value: any, option: IOptions | IOptions[]) => void;
-  defaultValue?: any;
-  value?: any;
-  showArrow?: boolean;
-}
+type IProps =
+  | {
+      form: FormInstance<any>;
+      formProps: FormItemProps<any>;
+      required?: boolean;
+      placeholder?: string;
+      options: IOptions[];
+      readonly?: boolean;
+      width?: string | number;
+      multiple: boolean;
+      suffix?: React.ReactNode;
+      style?: React.CSSProperties;
+      showLabel?: boolean;
+      errors?: any[];
+      onChange?: (value: any, option: IOptions | IOptions[]) => void;
+      defaultValue?: any;
+      value?: any;
+      showArrow?: boolean;
+    }
+  | {
+      form?: FormInstance<any>;
+      formProps: FormItemProps<any>;
+      required?: boolean;
+      placeholder?: string;
+      options: IOptions[];
+      readonly?: boolean;
+      width?: string | number;
+      multiple?: false;
+      suffix?: React.ReactNode;
+      style?: React.CSSProperties;
+      showLabel?: boolean;
+      errors?: any[];
+      onChange?: (value: any, option: IOptions | IOptions[]) => void;
+      defaultValue?: any;
+      value?: any;
+      showArrow?: boolean;
+    };
 
 const SelectInput = ({
+  form,
   formProps: itemProps,
   required,
   placeholder,
@@ -39,10 +70,17 @@ const SelectInput = ({
   value,
   showArrow,
 }: IProps) => {
+  let ref = useRef<HTMLDivElement>(null);
+
   let rules: Rule[] = [];
 
   if (required) {
     rules.push({ required: true, message: "El campo es requerido" });
+  }
+
+  if (multiple && !form) {
+    console.error.apply("La instancia de form es requerida en select multiple");
+    throw new Error("La instancia de form es requerida en select multiple");
   }
 
   return (
@@ -73,6 +111,49 @@ const SelectInput = ({
           style={{ width: width ?? "100%" }}
           defaultValue={defaultValue}
           value={value}
+          dropdownRender={
+            !multiple || !form
+              ? undefined
+              : (menu) => (
+                  <>
+                    <Row
+                      ref={ref}
+                      style={{ padding: "5px 12px" }}
+                      gutter={[12, 12]}
+                    >
+                      <Col span={12}>
+                        <Button
+                          style={{ width: "100%" }}
+                          onClick={() => {
+                            form.setFieldValue(
+                              itemProps.name!,
+                              options.map((x) => x.value)
+                            );
+                          }}
+                        >
+                          {ref.current && ref.current.clientWidth > 300
+                            ? "Seleccionar todos"
+                            : "+"}
+                        </Button>
+                      </Col>
+                      <Col span={12}>
+                        <Button
+                          style={{ width: "100%" }}
+                          onClick={() => {
+                            form.setFieldValue(itemProps.name!, []);
+                          }}
+                        >
+                          {ref.current && ref.current.clientWidth > 300
+                            ? "Quitar todos"
+                            : "-"}
+                        </Button>
+                      </Col>
+                    </Row>
+                    <Divider style={{ margin: "8px 0" }} />
+                    {menu}
+                  </>
+                )
+          }
         ></Select>
       </Form.Item>
       {/* {(!!suffix || isGroup || !!errors) && ( */}

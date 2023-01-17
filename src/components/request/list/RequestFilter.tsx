@@ -1,7 +1,6 @@
 import { Button, Col, Form, Input, Row } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import { useEffect, useState } from "react";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
@@ -29,7 +28,7 @@ const RequestFilter = () => {
     getCompanyOptions,
     getDepartmentOptions,
   } = optionStore;
-  const { getRequests } = requestStore;
+  const { filter, setFilter, getRequests } = requestStore;
 
   const [form] = useForm<IRequestFilter>();
 
@@ -71,6 +70,7 @@ const RequestFilter = () => {
       filter.fechaFinal = filter.fechas[1].utcOffset(0, true);
     }
 
+    setFilter(filter);
     getRequests(filter);
   };
 
@@ -81,7 +81,7 @@ const RequestFilter = () => {
         form={form}
         onFinish={onFinish}
         size="small"
-        initialValues={{ tipoFecha: 1, fechas: [moment(), moment()] }}
+        initialValues={filter}
       >
         <Row gutter={[0, 12]}>
           <Col span={8}>
@@ -97,13 +97,17 @@ const RequestFilter = () => {
             />
           </Col>
           <Col span={8}>
-            <DateRangeInput formProps={{ name: "fechas", label: "Fechas" }} />
+            <DateRangeInput
+              formProps={{ name: "fechas", label: "Fechas" }}
+              disableAfterDates
+            />
           </Col>
           <Col span={8}>
             <TextInput formProps={{ name: "clave", label: "Clave/Paciente" }} />
           </Col>
           <Col span={8}>
             <SelectInput
+              form={form}
               formProps={{ name: "procedencias", label: "Procedencia" }}
               multiple
               options={originOptions}
@@ -111,6 +115,7 @@ const RequestFilter = () => {
           </Col>
           <Col span={8}>
             <SelectInput
+              form={form}
               formProps={{ name: "urgencias", label: "Tipo solicitud" }}
               multiple
               options={urgencyOptions}
@@ -118,6 +123,7 @@ const RequestFilter = () => {
           </Col>
           <Col span={8}>
             <SelectInput
+              form={form}
               formProps={{ name: "estatus", label: "Estatus" }}
               multiple
               options={studyStatusOptions}
@@ -125,6 +131,7 @@ const RequestFilter = () => {
           </Col>
           <Col span={8}>
             <SelectInput
+              form={form}
               formProps={{ name: "departamentos", label: "Departamento" }}
               multiple
               options={departmentOptions}
@@ -146,6 +153,7 @@ const RequestFilter = () => {
                   </Col>
                   <Col span={12}>
                     <SelectInput
+                      form={form}
                       formProps={{
                         name: "sucursales",
                         label: "Sucursales",
@@ -161,6 +169,7 @@ const RequestFilter = () => {
           </Col>
           <Col span={8}>
             <SelectInput
+              form={form}
               formProps={{ name: "compañias", label: "Compañia" }}
               multiple
               options={companyOptions}
@@ -168,27 +177,17 @@ const RequestFilter = () => {
           </Col>
           <Col span={8}>
             <SelectInput
+              form={form}
               formProps={{ name: "medicos", label: "Médico" }}
               multiple
               options={medicOptions}
             />
           </Col>
           <Col span={16} style={{ textAlign: "right" }}>
-            <Button
-              key="clean"
-              onClick={() => {
-                form.resetFields();
-              }}
-            >
+            <Button key="clean" htmlType="reset">
               Limpiar
             </Button>
-            <Button
-              key="filter"
-              type="primary"
-              onClick={() => {
-                form.submit();
-              }}
-            >
+            <Button key="filter" type="primary" htmlType="submit">
               Filtrar
             </Button>
           </Col>

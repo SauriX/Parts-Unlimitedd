@@ -28,7 +28,7 @@ import {
 const { Link } = Typography;
 
 const QuotationStudy = () => {
-  const { quotationStore, priceListStore, optionStore } = useStore();
+  const { quotationStore, optionStore } = useStore();
   const { studyOptions, packOptions, getStudyOptions, getPackOptions } =
     optionStore;
   const {
@@ -37,17 +37,13 @@ const QuotationStudy = () => {
     studies,
     packs,
     studyFilter,
-    calculateTotals,
     setStudy,
     setPack,
     getPriceStudy,
     getPricePack,
-    deleteStudy,
-    deletePack,
     deleteStudies,
     changeStudyPromotion,
     changePackPromotion,
-    totals,
   } = quotationStore;
 
   const [selectedStudies, setSelectedStudies] = useState<
@@ -129,7 +125,7 @@ const QuotationStudy = () => {
       title: "",
       align: "center",
       width: 30,
-      render: (value) => "N",
+      render: () => "N",
     },
     {
       ...getDefaultColumnProps("precio", "Precio", {
@@ -221,7 +217,7 @@ const QuotationStudy = () => {
   const cancel = () => {
     if (quotation) {
       alerts.confirm(
-        "Canelar estudio",
+        "Remover estudios",
         `¿Desea remover los registros seleccionados?`,
         async () => {
           const data: IQuotationStudyUpdate = {
@@ -241,6 +237,23 @@ const QuotationStudy = () => {
         }
       );
     }
+  };
+
+  const selectRowCheckbox = (
+    selectedRows: (IQuotationStudy | IQuotationPack)[]
+  ) => {
+    const studies = [
+      ...selectedRows
+        .filter((x) => x.type === "study")
+        .map((x) => x as IQuotationStudy),
+      ...selectedRows
+        .filter((x) => x.type === "pack")
+        .map((x) => x as IQuotationPack),
+    ];
+    setSelectedStudies(studies);
+    setSelectedRowKeys(
+      selectedRows.map((x) => x.type + "-" + (x.id ?? x.identificador!))
+    );
   };
 
   return (
@@ -263,12 +276,12 @@ const QuotationStudy = () => {
         />
       </Col>
       <Col span={6} style={{ textAlign: "end" }}>
-        <Button danger onClick={cancel}>
+        <Button danger onClick={cancel} disabled={selectedStudies.length === 0}>
           Remover estudios
         </Button>
       </Col>
       <Col span={24}>
-        <Table<any>
+        <Table<IQuotationStudy | IQuotationPack>
           size="small"
           rowKey={(record) =>
             record.type + "-" + (record.id ?? record.identificador!)
@@ -277,21 +290,13 @@ const QuotationStudy = () => {
           dataSource={[...studies, ...packs]}
           pagination={false}
           rowSelection={{
-            onSelect: (_item, selected, c) => {
-              const studies = [
-                ...c
-                  .filter((x) => x.type === "study")
-                  .map((x) => x as IQuotationStudy),
-                ...c
-                  .filter((x) => x.type === "pack")
-                  .map((x) => x as IQuotationPack),
-              ];
-              setSelectedStudies(studies);
-              setSelectedRowKeys(
-                c.map((x) => x.type + "-" + (x.id ?? x.identificador!))
-              );
+            onSelect: (_item, _selected, selectedRows) => {
+              selectRowCheckbox(selectedRows);
             },
-            getCheckboxProps: (item) => ({
+            onSelectAll: (_selected, selectedRows) => {
+              selectRowCheckbox(selectedRows);
+            },
+            getCheckboxProps: () => ({
               disabled: false,
             }),
             selectedRowKeys: selectedRowKeys,

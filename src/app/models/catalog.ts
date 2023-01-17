@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export interface ICatalogForm {
   id: number;
 }
@@ -34,7 +36,7 @@ export interface ICatalogDimensionForm extends ICatalogForm {
 
 export interface ICatalogBudgetList extends ICatalogList {
   clave: string;
-  nombreServicio: string;
+  nombre: string;
   activo: boolean;
 }
 
@@ -42,8 +44,14 @@ export interface ICatalogBudgetForm extends ICatalogForm {
   clave: string;
   nombre: string;
   costoFijo: number;
-  sucursalId: string;
+  sucursales: IBranchList[] | string[];
   activo: boolean;
+  fecha: moment.Moment;
+}
+
+export interface IBranchList {
+  sucursalId: string;
+  ciudad?: string;
 }
 
 export interface ICatalogDescriptionList extends ICatalogNormalList {
@@ -100,8 +108,9 @@ export class CatalogBudgetFormValues implements ICatalogBudgetForm {
   clave = "";
   nombre = "";
   costoFijo = 0;
-  sucursalId = "";
+  sucursales = [];
   activo = true;
+  fecha = moment(Date.now()).utcOffset(0, true)
 
   constructor(init?: ICatalogNormalForm) {
     Object.assign(this, init);
@@ -144,5 +153,11 @@ export class ProcedenciaFormValues implements IProcedenciaForm {
   constructor(init?: IProcedenciaForm) {
     Object.assign(this, init);
   }
+}
+
+export interface IAreaDeparment {
+  departamentoId: number;
+  departamento: string;
+  areas: ICatalogAreaList[];
 }
 

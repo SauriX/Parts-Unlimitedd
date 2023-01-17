@@ -67,6 +67,7 @@ const InvoiceCompanyInfo = ({ company }: InvoiceCompanyInfoProps) => {
                 </Col>
                 <Col span={12}>
                   <SelectInput
+                    form={form}
                     multiple
                     formProps={{ label: "Selecciona motivo", name: "motivo" }}
                     options={reasonCancelation}

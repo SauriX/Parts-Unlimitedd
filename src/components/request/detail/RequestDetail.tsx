@@ -18,6 +18,8 @@ import moment from "moment";
 import views from "../../../app/util/view";
 import Center from "../../../app/layout/Center";
 import RequestTokenValidation from "./RequestTokenValidation";
+import { useCallbackPrompt } from "../../../app/hooks/useCallbackPrompt";
+import NavigationConfirm from "../../../app/common/navigation/NavigationConfirm";
 
 const { Link } = Typography;
 
@@ -31,9 +33,12 @@ const RequestDetail = () => {
   } = useStore();
   const { profile } = profileStore;
   const {
+    studies,
+    packs,
     clearDetailData,
     getById,
     create,
+    deleteCurrentRequest,
     totals,
     setOriginalTotal,
     studyFilter,
@@ -48,14 +53,20 @@ const RequestDetail = () => {
   const { recordId, requestId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
   const [branchId, setBranchId] = useState<string | undefined>(
     profile!.sucursal
   );
+  const [showDialog, setShowDialog] = useState<boolean>(false);
+
+  const [showPrompt, confirmNavigation, cancelNavigation] = useCallbackPrompt(
+    showDialog,
+    deleteCurrentRequest
+  );
 
   useEffect(() => {
     setOriginalTotal(totals);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const modificarSaldo = async () => {
@@ -120,9 +131,7 @@ const RequestDetail = () => {
     };
 
     const getRequestById = async () => {
-      setLoading(true);
       await getById(recordId!, requestId!);
-      setLoading(false);
     };
 
     if (recordId && !requestId) {
@@ -132,6 +141,14 @@ const RequestDetail = () => {
     }
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recordId, requestId]);
+
+  useEffect(() => {
+    setShowDialog(
+      studies.filter((x) => x.id !== 0).length === 0 &&
+        packs.filter((x) => x.id !== 0).length === 0 &&
+        requestId != null
+    );
+  }, [packs, requestId, studies]);
 
   useEffect(() => {
     if (request && request.esWeeClinic && !request.tokenValidado) {
@@ -187,6 +204,13 @@ const RequestDetail = () => {
 
   return (
     <Fragment>
+      <NavigationConfirm
+        title="Cancelar solicitud"
+        body="La solicitud no contiene estudios ni paquetes, asegurate de agregar almenos uno, en caso de continuar la solicitud será eliminada"
+        showDialog={showPrompt}
+        confirmNavigation={confirmNavigation}
+        cancelNavigation={cancelNavigation}
+      />
       <RequestHeader />
       <Divider className="header-divider" />
       <RequestRecord

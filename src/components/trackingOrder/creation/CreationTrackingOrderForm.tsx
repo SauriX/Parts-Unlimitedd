@@ -78,14 +78,12 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     setTemperatura,
   } = trackingOrderStore;
 
-  const navigate = useNavigate();
-
   const [searchParams] = useSearchParams();
 
   const [form] = Form.useForm<ITrackingOrderForm>();
 
   const [loading, setLoading] = useState(false);
-  const [disabled, setDisabled] = useState(true);
+
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
@@ -135,18 +133,22 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
 
   useEffect(() => {
     const readTrackingOrder = async (id: string) => {
-      console.log("ENTRA A BUSCAR LA ORDEN DE ESTUDIOS");
       setLoading(true);
       const trackingOrder = await getById(id);
-      // form.setFieldsValue(trackingOrder!);
+      form.setFieldsValue(trackingOrder!);
       setValues(trackingOrder!);
+
+      if (trackingOrder?.isInRute) {
+        setCancelarRecoleccion(false);
+      } else {
+        setConfirmarRecoleccion(false);
+      }
       setLoading(false);
     };
 
     if (id) {
       readTrackingOrder(id);
     }
-    // }, [form, getById, id]);
   }, [id]);
 
   const dias: IDias[] = [
@@ -177,7 +179,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
         filterRoutes.push(x);
       }
     });
-    console.log(filterRoutes);
+
     const routesfilteredoptions: IOptions[] = filterRoutes!.map((route) => {
       var data: IOptions = {
         value: route.id,
@@ -201,7 +203,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   ) => {
     let formValues = form.getFieldsValue();
     formValues = { ...formValues };
-    console.log("Tracking order: ", formValues);
+
     let routeForms: IRouteForm = new RouteFormValues();
     routeForms.horaDeRecoleccion = hora;
     routeForms.sucursalOrigenId = formValues.sucursalOrigenId!;
@@ -210,7 +212,6 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     );
 
     routeForms.dias = dias.filter((x) => x.id === moment().day());
-    console.log("formulario de envio", routeForms);
 
     var rutes = await find(routeForms);
     return rutes;
@@ -226,8 +227,6 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   }, [getAll, searchParams]);
 
   const onFinish = async (newValues: ITrackingOrderForm) => {
-    console.log("values", values);
-    console.log("newValues", newValues);
     const trackingOrderSend = { ...newTrackingOrder, ...newValues };
     if (
       trackingOrderSend.id === "" ||
@@ -268,19 +267,18 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     let estudiosFiltrados = trackingOrder
       .filter((order) => order.escaneado)
       .map((order) => {
-        return order.estudios.map((estudio) => {
-          return {
-            clave: estudio.clave,
-            estudio: estudio.estudio,
-            solicitud: estudio.solicitud,
-            solicitudId: estudio.solicitudId,
-            nombrePaciente: estudio.nombrePaciente,
-            expedienteId: estudio.expedienteId,
-            escaneado: order.escaneado,
-            temperatura: order.temperatura,
-            estudioId: estudio.estudioId,
-          };
-        });
+        let estudio = order.estudio!;
+        return {
+          clave: estudio.clave,
+          estudio: estudio.estudio,
+          solicitud: estudio.solicitud,
+          solicitudId: estudio.solicitudId,
+          nombrePaciente: estudio.nombrePaciente,
+          expedienteId: estudio.expedienteId,
+          escaneado: order.escaneado,
+          temperatura: order.temperatura,
+          estudioId: estudio.estudioId,
+        };
       });
     trackingOrderSend.estudios = _.flatten(estudiosFiltrados);
     trackingOrderSend.clave = sucursalesClave.find(
@@ -288,12 +286,11 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     ).clave;
 
     trackingOrderSend.RutaNombre = rutaSeleccionada.nombre;
-    console.log("trackingOrderSend", trackingOrderSend);
 
     setSendData(trackingOrderSend);
-    if(trackingOrderSend.estudios.length<=0){
+    if (trackingOrderSend.estudios.length <= 0) {
       alerts.error("La orden de seguimiento debe Contener al menos un estudio");
-      return
+      return;
     }
     if (confirmCreationOrder) {
       setLoading(true);
@@ -305,18 +302,6 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
         success = await create(trackingOrderSend);
       }
       setLoading(false);
-    }
-    // if (!trackingOrderSend.id) {
-    //   success = await create(trackingOrderSend);
-    // } else {
-    //   success = await update(trackingOrderSend);
-    // }
-
-    if (success) {
-      console.log("guardado");
-
-      setConfirmarRecoleccion(false);
-      // navigate(`/trackingOrder?search=${searchParams.get("search") ?? "all"}`);
     }
   };
 
@@ -380,20 +365,22 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
               type="primary"
               htmlType="submit"
               disabled={confirmarRecoleccion}
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.preventDefault();
+                await confirmarRecoleccionSend();
                 setCancelarRecoleccion(false);
-                confirmarRecoleccionSend();
+                setConfirmarRecoleccion(true);
               }}
             >
               Confirmar recolección
             </Button>
             <Button
               disabled={cancelarRecoleccion}
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.preventDefault();
-                cancelarRecoleccionSend(); //
-                // navigate("#");
+                cancelarRecoleccionSend();
+                setCancelarRecoleccion(true);
+                setConfirmarRecoleccion(false);
               }}
             >
               Cancelar
@@ -445,12 +432,6 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                 setTemperatura(changes_values[propertyForm]);
                 setTemperature(changes_values[propertyForm]);
               }
-              setDisabled(
-                !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length)
-                    .length > 0
-              );
-
               if (propertyForm === "fecha") {
                 var date = changes_values[propertyForm];
                 setRouteFoundOptions([]);
@@ -534,11 +515,11 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
               </Col>
               <Col md={8} sm={12} style={{ textAlign: "left" }}>
                 <SwitchInput
-                  name="escaneado"
+                  name="escaneoCodigoBarras"
                   label="Escaneo por código de barras"
                   readonly={readonly}
                   style={{
-                    marginLeft: 96,
+                    marginLeft: 90,
                   }}
                 />
               </Col>
@@ -554,9 +535,6 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                   }}
                   label="Activo"
                   readonly={readonly}
-                  style={{
-                    marginRight: 100,
-                  }}
                 />
               </Col>
             </Row>
@@ -601,11 +579,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
               sm={12}
               style={{ marginRight: 20, textAlign: "center" }}
             >
-              <CreationTrackingOrderTable
-                // componentRef={componentRef}
-                id={id}
-                printing={printing}
-              />
+              <CreationTrackingOrderTable id={id} printing={printing} />
             </Col>
           </Row>
         </div>

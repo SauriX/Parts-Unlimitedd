@@ -13,11 +13,12 @@ import {
   IQuotationStudy,
   IQuotationStudyUpdate,
   IQuotationTotal,
+  QuotationFilterForm,
   QuotationStudyUpdate,
   QuotationTotal,
 } from "../models/quotation";
 import alerts from "../util/alerts";
-import { status, statusName } from "../util/catalogs";
+import { status } from "../util/catalogs";
 import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
@@ -29,7 +30,6 @@ export default class QuotationStore {
     reaction(
       () => this.studies.slice(),
       (studies) => {
-        console.log(studies);
         this.calculateTotals();
       }
     );
@@ -37,12 +37,12 @@ export default class QuotationStore {
     reaction(
       () => this.packs.slice(),
       (packs) => {
-        console.log(packs);
         this.calculateTotals();
       }
     );
   }
 
+  filter: IQuotationFilter = new QuotationFilterForm();
   studyFilter: IPriceListInfoFilter = {};
   quotations: IQuotationInfo[] = [];
   quotation?: IQuotation;
@@ -91,6 +91,9 @@ export default class QuotationStore {
 
   clearDetailData = () => {
     this.quotation = undefined;
+    this.studies = [];
+    this.packs = [];
+    this.totals = new QuotationTotal();
   };
 
   isPack(obj: IQuotationStudy | IQuotationPack): obj is IQuotationPack {
@@ -125,6 +128,10 @@ export default class QuotationStore {
       totalEstudios: total,
       total: finalTotal,
     };
+  };
+
+  setFilter = (filter: IQuotationFilter) => {
+    this.filter = { ...filter };
   };
 
   setStudyFilter = (
@@ -238,12 +245,13 @@ export default class QuotationStore {
         aplicaCargo: false,
       };
 
-      console.log(study);
-
       const repeated = this.studies.filter(function (item) {
-        return item.parametros
-          .map((x) => x.id)
-          .filter((x) => study.parametros.map((y) => y.id).indexOf(x) !== -1);
+        return (
+          item.parametros
+            .map((x) => x.id)
+            .filter((x) => study.parametros.map((y) => y.id).indexOf(x) !== -1)
+            .length > 0
+        );
       });
 
       if (repeated && repeated.length > 0) {
@@ -282,7 +290,6 @@ export default class QuotationStore {
         })),
       };
 
-      console.log(pack);
       this.packs.unshift(pack);
       return true;
     } catch (error) {
@@ -342,39 +349,36 @@ export default class QuotationStore {
       alerts.warning(getErrors(error));
     }
   };
-  deactivateQuotation = async (quotationId: string) => {
-    try {
-      await Quotation.deactivateQuotation(quotationId);
-    } catch (error: any) {
-      alerts.warning(getErrors(error));
-    }
-  };
 
-  updateGeneral = async (quotation: IQuotationGeneral) => {
+  updateGeneral = async (quotation: IQuotationGeneral, autoSave: boolean) => {
     try {
-      this.loadingTabContentCount++;
+      if (!autoSave) this.loadingTabContentCount++;
       await Quotation.updateGeneral(quotation);
-      alerts.success(messages.updated);
+      if (!autoSave) alerts.success(messages.updated);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
     } finally {
-      this.loadingTabContentCount--;
+      if (!autoSave) this.loadingTabContentCount--;
     }
   };
 
-  assignRecord = async (quotationId: string, recordId?: string) => {
+  assignRecord = async (
+    quotationId: string,
+    autoSave: boolean,
+    recordId?: string
+  ) => {
     try {
-      this.loadingTabContentCount++;
+      if (!autoSave) this.loadingTabContentCount++;
       await Quotation.assignRecord(quotationId, recordId);
-      alerts.success(messages.updated);
+      if (!autoSave) alerts.success(messages.updated);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
     } finally {
-      this.loadingTabContentCount--;
+      if (!autoSave) this.loadingTabContentCount--;
     }
   };
 
@@ -389,19 +393,22 @@ export default class QuotationStore {
     }
   };
 
-  updateStudies = async (quotation: IQuotationStudyUpdate) => {
+  updateStudies = async (
+    quotation: IQuotationStudyUpdate,
+    autoSave: boolean
+  ) => {
     try {
-      this.loadingTabContentCount++;
-      await Quotation.updateStudies(quotation);
-      this.studies = this.studies.map((x) => ({ ...x }));
-      this.packs = this.packs.map((x) => ({ ...x }));
-      alerts.success(messages.updated);
+      if (!autoSave) this.loadingTabContentCount++;
+      const response = await Quotation.updateStudies(quotation);
+      this.packs = response.paquetes ?? [];
+      this.studies = response.estudios;
+      if (!autoSave) alerts.success(messages.updated);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
     } finally {
-      this.loadingTabContentCount--;
+      if (!autoSave) this.loadingTabContentCount--;
     }
   };
 
@@ -456,8 +463,28 @@ export default class QuotationStore {
   cancelQuotation = async (quotationId: string) => {
     try {
       await Quotation.cancelQuotation(quotationId);
-      if (this.quotation) this.quotation.estatusId = status.quotation.cancelado;
+      if (this.quotation) {
+        this.quotation.estatusId = status.quotation.cancelado;
+        this.quotation.activo = false;
+      }
       return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
+  deleteCurrentQuotation = async () => {
+    try {
+      if (this.quotation?.cotizacionId) {
+        await Quotation.deleteQuotation(this.quotation.cotizacionId);
+        this.quotations = this.quotations.filter(
+          (x) => x.cotizacionId !== this.quotation?.cotizacionId
+        );
+        return true;
+      }
+      alerts.warning("No hay cotización por eliminar");
+      return false;
     } catch (error) {
       alerts.warning(getErrors(error));
       return false;
@@ -468,6 +495,23 @@ export default class QuotationStore {
     try {
       await Quotation.deleteStudies(quotation);
       alerts.success(messages.updated);
+
+      this.studies = this.studies.filter((x) => {
+        const exists = quotation.estudios.find(
+          (s) => s.id === x.id && s.identificador === x.identificador
+        );
+        if (exists) return false;
+        return true;
+      });
+
+      this.packs = this.packs.filter((x) => {
+        const exists = quotation.paquetes?.find(
+          (s) => s.id === x.id && s.identificador === x.identificador
+        );
+        if (exists) return false;
+        return true;
+      });
+
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -484,7 +528,7 @@ export default class QuotationStore {
   };
   getQuotePdfUrl = async (id: string) => {
     try {
-      const url = await Quotation.getQuotePdfUrl(id);;
+      const url = await Quotation.getQuotePdfUrl(id);
       return url;
     } catch (error: any) {
       alerts.warning(getErrors(error));

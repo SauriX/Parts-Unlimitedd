@@ -14,6 +14,8 @@ import { ICatalogList } from "../../../../app/models/catalog";
 import { useStore } from "../../../../app/stores/store";
 import useWindowDimensions, { resizeWidth } from "../../../../app/util/window";
 import HeaderTitle from "../../../../app/common/header/HeaderTitle";
+import moment from "moment";
+import { observer } from "mobx-react-lite";
 
 type CatalogBudgetTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -77,6 +79,14 @@ const CatalogBudgetTable: FC<CatalogBudgetTableProps> = ({
       render: (value) => (value ? "Sí" : "No"),
     },
     {
+      key: "fechaAlta",
+      dataIndex: "fechaAlta",
+      title: "Fecha de Alta",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "15%",
+      render: (value) => (moment(value).format("DD/MM/YYYY")),
+    },
+    {
       key: "editar",
       dataIndex: "id",
       title: "Editar",
@@ -131,4 +141,4 @@ const CatalogBudgetTable: FC<CatalogBudgetTableProps> = ({
   );
 };
 
-export default CatalogBudgetTable;
+export default observer(CatalogBudgetTable);

@@ -18,6 +18,7 @@ import {
   IRequestPayment,
   IRequestToken,
   IRequestCheckIn,
+  RequestFilterForm,
 } from "../models/request";
 import alerts from "../util/alerts";
 import { status, statusName } from "../util/catalogs";
@@ -51,6 +52,7 @@ export default class RequestStore {
     );
   }
 
+  filter: IRequestFilter = new RequestFilterForm();
   studyFilter: IPriceListInfoFilter = {};
   requests: IRequestInfo[] = [];
   request?: IRequest;
@@ -101,6 +103,9 @@ export default class RequestStore {
 
   clearDetailData = () => {
     this.request = undefined;
+    this.studies = [];
+    this.packs = [];
+    this.totals = new RequestTotal();
   };
 
   setOriginalTotal = (totals: IRequestTotal) => {
@@ -114,6 +119,10 @@ export default class RequestStore {
   isStudy(obj: IRequestStudy | IRequestPack): obj is IRequestStudy {
     return obj.type === "study";
   }
+
+  setFilter = (filter: IRequestFilter) => {
+    this.filter = { ...filter };
+  };
 
   setStudyFilter = (
     branchId?: string,
@@ -265,8 +274,6 @@ export default class RequestStore {
         nuevo: true,
         asignado: true,
       };
-
-      console.log(study);
 
       const repeated = this.studies.filter(function (item) {
         return (
@@ -503,6 +510,28 @@ export default class RequestStore {
       await Request.cancelRequest(recordId, requestId);
       if (this.request) this.request.estatusId = status.request.cancelado;
       return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
+  deleteCurrentRequest = async () => {
+    try {
+      if (this.request?.expedienteId && this.request?.solicitudId) {
+        await Request.deleteRequest(
+          this.request.expedienteId,
+          this.request.solicitudId
+        );
+        this.requests = this.requests.filter(
+          (x) =>
+            x.expedienteId !== this.request?.expedienteId &&
+            x.solicitudId !== this.request?.solicitudId
+        );
+        return true;
+      }
+      alerts.warning("No hay solicitud por eliminar");
+      return false;
     } catch (error) {
       alerts.warning(getErrors(error));
       return false;

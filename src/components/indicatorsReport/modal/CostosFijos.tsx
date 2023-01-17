@@ -1,47 +1,73 @@
-import { Space, Table, Tag } from "antd";
+import { Col, Row, Space, Table, Tag } from "antd";
+import { dataTool } from "echarts";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
+import { useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
-import { IModalInvoice, IReportIndicators } from "../../../app/models/indicators";
-import { CostosFijosColumns, CostosFijosInvoice } from "../columnDefinition/costofijo";
+import {
+  IModalInvoice,
+  IServicesCost,
+  IServicesInvoice,
+} from "../../../app/models/indicators";
+import { useStore } from "../../../app/stores/store";
+import CostosFijosColumns, {
+  CostosFijosInvoice,
+} from "../columnDefinition/costofijo";
 
 type CostosFijosProps = {
-  data: IReportIndicators[];
-  invoiceData?: IModalInvoice;
-  costoFijo: number;
+  data: IServicesInvoice;
   loading: boolean;
 };
 
-const CostosFijos = ({ data, invoiceData, costoFijo, loading }: CostosFijosProps) => {
+const CostosFijos = ({ data, loading }: CostosFijosProps) => {
+  const convertToServiceInvoiceArray = (data: IServicesInvoice) => {
+    let array: IServicesInvoice[] = [
+      {
+        totalMensual: data.totalMensual,
+        totalSemanal: data.totalSemanal,
+        totalDiario: data.totalDiario,
+      },
+    ];
+
+    return array;
+  };
+
   return (
-    <Space direction="vertical" size="small">
-      <div style={{textAlign: "right", marginTop: 10}}>
-        <Tag color="blue" className="table-tag">
-          Costo Fijo actual: {costoFijo}
-        </Tag>
-      </div>
-      <Table<IReportIndicators>
-        loading={loading}
-        size="small"
-        rowKey={(record) => record.id!}
-        columns={CostosFijosColumns()}
-        pagination={false}
-        dataSource={[...data]}
-        scroll={{ y: 500 }}
-        bordered
-        rowClassName={"row-search"}
-      />
-      <Table<IModalInvoice>
-        loading={loading}
-        size="small"
-        rowKey={uuid()}
-        columns={CostosFijosInvoice()}
-        pagination={false}
-        dataSource={[invoiceData!]}
-        scroll={{ y: 500 }}
-        bordered
-        rowClassName={"row-search"}
-      />
-    </Space>
+    <Row gutter={[0, 24]}>
+      <Col span={24}>
+        <div style={{ textAlign: "right", marginTop: 10 }}>
+          <Tag color="blue" className="table-tag">
+            Costo Fijo actual: {data.totalMensual}
+          </Tag>
+        </div>
+      </Col>
+      <Col span={24}>
+        <Table<IServicesCost>
+          loading={loading}
+          size="small"
+          rowKey={uuid()}
+          columns={CostosFijosColumns()}
+          pagination={false}
+          dataSource={[...data.servicios!]}
+          scroll={{ y: 500 }}
+          bordered
+          rowClassName={"row-search"}
+        />
+      </Col>
+      <Col span={24}>
+        <Table<IServicesInvoice>
+          loading={loading}
+          size="small"
+          rowKey={uuid()}
+          columns={CostosFijosInvoice()}
+          pagination={false}
+          dataSource={convertToServiceInvoiceArray(data)}
+          scroll={{ y: 500 }}
+          bordered
+          rowClassName={"row-search"}
+        />
+      </Col>
+    </Row>
   );
 };
 

@@ -39,10 +39,22 @@ export interface IRequestFilter {
   estatus?: number[];
   urgencias?: number[];
   departamentos?: number[];
+  ciudad?: string;
   sucursales?: string[];
   compañias?: string[];
   medicos?: string[];
   expediente?: string;
+}
+
+export class RequestFilterForm implements IRequestFilter {
+  tipoFecha = 1;
+  fechas = [moment(), moment()];
+  fechaInicial = moment().utcOffset(0, true);
+  fechaFinal = moment().utcOffset(0, true);
+
+  constructor(init?: IRequestFilter) {
+    Object.assign(this, init);
+  }
 }
 
 export interface IRequestInfo extends IRequestBase {

@@ -3,10 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { IColumns } from "../../app/common/table/utils";
 import { CheckOutlined } from "@ant-design/icons";
-import {
-  IReportIndicators,
-  IndicatorsFormValues,
-} from "../../app/models/indicators";
+import { IReportIndicators } from "../../app/models/indicators";
 import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 import alerts from "../../app/util/alerts";
@@ -19,7 +16,7 @@ type IndicatorsProps = {
 
 const IndicatorsTable = ({ data }: IndicatorsProps) => {
   const { indicatorsStore, optionStore } = useStore();
-  const { filter, getForm } = indicatorsStore;
+  const { filter, getForm, loadingReport } = indicatorsStore;
   const { branchCityOptions } = optionStore;
 
   const [columns, setColumns] = useState<IColumns>([]);
@@ -47,8 +44,7 @@ const IndicatorsTable = ({ data }: IndicatorsProps) => {
     if (indicator) {
       getForm(indicator);
     }
-    console.log(indicator);
-
+    
     setLoading(false);
   };
 
@@ -76,7 +72,9 @@ const IndicatorsTable = ({ data }: IndicatorsProps) => {
     }
   }, [data]);
 
-  return <Table<any> columns={columns} dataSource={data} />;
+  return (
+    <Table<any> columns={columns} dataSource={data} loading={loadingReport} rowClassName={(item) => item.x === "UTILIDAD DE OPERACIÓN" ? "Resumen Total" : ""} />
+  );
 };
 
 export default observer(IndicatorsTable);

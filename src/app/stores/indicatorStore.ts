@@ -1,9 +1,15 @@
 import { makeAutoObservable } from "mobx";
 import Indicators from "../api/indicators";
 import {
+  IModalIndicatorsFilter,
   IndicatorFilterValues,
   IReportIndicators,
   IReportIndicatorsFilter,
+  ISamplesCost,
+  IServicesCost,
+  IServicesInvoice,
+  ModalIndicatorFilterValues,
+  ServiceInvoice,
 } from "../models/indicators";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -18,7 +24,11 @@ export default class IndicatorStore {
 
   scopes?: IScopes;
   filter: IReportIndicatorsFilter = new IndicatorFilterValues();
+  modalFilter: IModalIndicatorsFilter = new ModalIndicatorFilterValues();
   data: IReportIndicators[] = [];
+  samples: ISamplesCost[] = [];
+  services: IServicesInvoice = new ServiceInvoice();
+  loadingReport: boolean = false;
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -26,6 +36,10 @@ export default class IndicatorStore {
 
   setFilter = (filter: IReportIndicatorsFilter) => {
     this.filter = filter;
+  };
+
+  setModalFilter = (modalFilter: IModalIndicatorsFilter) => {
+    this.modalFilter = modalFilter;
   };
 
   access = async () => {
@@ -41,12 +55,29 @@ export default class IndicatorStore {
 
   getByFilter = async (filter: IReportIndicatorsFilter) => {
     try {
+      this.loadingReport = true;
       this.data = [];
       const data = await Indicators.getByFilter(filter);
       this.data = data;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       this.data = [];
+    } finally {
+      this.loadingReport = false;
+    }
+  };
+
+  getSamplesCostsByFilter = async (filter: IModalIndicatorsFilter) => {
+    try {
+      this.loadingReport = true;
+      this.samples = [];
+      const samples = await Indicators.getSamplesCostsByFilter(filter);
+      this.samples = samples;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      this.samples = [];
+    } finally {
+      this.loadingReport = false;
     }
   };
 
@@ -74,6 +105,30 @@ export default class IndicatorStore {
     }
   };
 
+  updateSample = async (samples: ISamplesCost) => {
+    try {
+      await Indicators.updateSampleCost(samples);
+      alerts.success(messages.created);
+
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
+  updateService = async (services: IServicesCost) => {
+    try {
+      await Indicators.updateServiceCost(services);
+      alerts.success(messages.created);
+
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
   getForm = async (indicators: IReportIndicators) => {
     try {
       await Indicators.getForm(indicators);
@@ -86,13 +141,25 @@ export default class IndicatorStore {
     }
   };
 
-  getServicesCost = async (filter: IReportIndicatorsFilter) => {
+  getServicesCost = async (filter: IModalIndicatorsFilter) => {
     try {
-      const data = await Indicators.getServicesCost(filter);
-      this.data = data;
+      this.loadingReport = true;
+      const services = await Indicators.getServicesCost(filter);
+      this.services = services;
     } catch (error: any) {
       alerts.warning(getErrors(error));
-      this.data = [];
+    } finally {
+      this.loadingReport = false;
+    }
+  };
+
+  saveFile = async (file: FormData) => {
+    try {
+      var fileName = await Indicators.saveFile(file);
+      alerts.success(messages.created);
+      return fileName;
+    } catch (error) {
+      alerts.warning(getErrors(error));
     }
   };
 
@@ -104,7 +171,7 @@ export default class IndicatorStore {
     }
   };
 
-  exportSamplingList = async (filter: IReportIndicatorsFilter) => {
+  exportSamplingList = async (filter: IModalIndicatorsFilter) => {
     try {
       await Indicators.exportSamplingList(filter);
     } catch (error: any) {
@@ -112,9 +179,17 @@ export default class IndicatorStore {
     }
   };
 
-  exportServiceList = async (filter: IReportIndicatorsFilter) => {
+  exportServiceList = async (filter: IModalIndicatorsFilter) => {
     try {
       await Indicators.exportServiceList(filter);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  exportServiceListExample = async () => {
+    try {
+      await Indicators.exportServiceListExample();
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }

@@ -20,8 +20,6 @@ const IndicatorFilter = () => {
   const {
     branchCityOptions,
     getBranchCityOptions,
-    getMedicOptions,
-    getCompanyOptions,
   } = optionStore;
 
   const [loading, setLoading] = useState(false);
@@ -42,9 +40,7 @@ const IndicatorFilter = () => {
 
   useEffect(() => {
     getBranchCityOptions();
-    getMedicOptions();
-    getCompanyOptions();
-  }, [getBranchCityOptions, getMedicOptions, getCompanyOptions]);
+  }, [getBranchCityOptions]);
 
   useEffect(() => {
     setCityOptions(
@@ -156,6 +152,7 @@ const IndicatorFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
+                      form={form}
                       formProps={{
                         name: "ciudad",
                         label: "Ciudad",
@@ -167,6 +164,7 @@ const IndicatorFilter = () => {
                   </Col>
                   <Col span={12}>
                     <SelectInput
+                      form={form}
                       formProps={{
                         name: "sucursalId",
                         label: "Sucursales",

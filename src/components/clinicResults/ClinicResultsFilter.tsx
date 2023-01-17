@@ -18,22 +18,20 @@ import {
 import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 
-const { Panel } = Collapse;
-
 const ClinicResultsFilter = () => {
   const { optionStore, clinicResultsStore } = useStore();
-  const { formValues, getAll, setFormValues, clearFilter } = clinicResultsStore;
+  const { getAll, setFormValues, clearFilter } = clinicResultsStore;
   const {
     branchCityOptions,
     medicOptions,
     companyOptions,
     studiesOptions,
-    departmentAreaOptions,
-    getDepartmentAreaOptions,
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
     getStudiesOptions,
+    areaByDeparmentOptions,
+    getAreaByDeparmentOptions
   } = optionStore;
 
   const [form] = useForm();
@@ -41,7 +39,7 @@ const ClinicResultsFilter = () => {
   const [studyFilter, setStudyFilter] = useState<any[]>(studiesOptions);
 
   const selectedCity = Form.useWatch("ciudad", form);
-  const selectedDepartment = Form.useWatch("departament", form);
+  const selectedDepartment = Form.useWatch("departamento", form);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
@@ -52,7 +50,7 @@ const ClinicResultsFilter = () => {
       getBranchCityOptions();
       getMedicOptions();
       getCompanyOptions();
-      getDepartmentAreaOptions();
+      getAreaByDeparmentOptions();
       await getStudiesOptions();
       setStudyFilter(studiesOptions);
     };
@@ -61,8 +59,8 @@ const ClinicResultsFilter = () => {
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
-    getDepartmentAreaOptions,
     getStudiesOptions,
+    getAreaByDeparmentOptions,
   ]);
 
   useEffect(() => {
@@ -72,27 +70,40 @@ const ClinicResultsFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
+    setCityOptions(
+      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [branchCityOptions]);
+
+  useEffect(() => {
     setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+      branchCityOptions
+        .filter((x) => selectedCity?.includes(x.value as string))
+        .flatMap((x) => x.options ?? [])
     );
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
     setDepartmentOptions(
-      departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
+      areaByDeparmentOptions.map((x) => ({ value: x.value, label: x.label }))
     );
-  }, [departmentAreaOptions]);
+    
+  }, [areaByDeparmentOptions]);
 
   useEffect(() => {
     setAreaOptions(
-      departmentAreaOptions.find((x) => x.value === selectedDepartment)?.options ?? []
+      areaByDeparmentOptions
+        .filter((x) => selectedDepartment?.includes(x.value as number))
+        .flatMap((x) => x.options ?? [])
     );
     form.setFieldValue("area", []);
-  }, [departmentAreaOptions, form, selectedDepartment]);
+    console.log("areaByDeparmentOptions", areaByDeparmentOptions)
+  }, [areaByDeparmentOptions, form, selectedDepartment]);
 
   const onFinish = async (newFormValues: IClinicResultForm) => {
     setLoading(true);
+
     const filter = { ...newFormValues };
     setFormValues(newFormValues);
     getAll(filter);
@@ -153,10 +164,12 @@ const ClinicResultsFilter = () => {
                       name: "buscar",
                       label: "Buscar",
                     }}
+                    onPressEnter={() => onFinish}
                   />
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "procedencia",
                       label: "Procedencia",
@@ -167,6 +180,7 @@ const ClinicResultsFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "tipoSolicitud",
                       label: "Tipo solicitud",
@@ -177,6 +191,7 @@ const ClinicResultsFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "estatus",
                       label: "Estatus",
@@ -191,16 +206,19 @@ const ClinicResultsFilter = () => {
                       <Row gutter={8}>
                         <Col span={12}>
                           <SelectInput
+                            form={form}
                             formProps={{
-                              name: "departament",
+                              name: "departamento",
                               label: "Departamento",
                               noStyle: true,
                             }}
+                            multiple
                             options={departmentOptions}
                           />
                         </Col>
                         <Col span={12}>
                           <SelectInput
+                            form={form}
                             formProps={{
                               name: "area",
                               label: "Área",
@@ -216,6 +234,7 @@ const ClinicResultsFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "estudio",
                       label: "Estudio",
@@ -226,6 +245,7 @@ const ClinicResultsFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "medicoId",
                       label: "Médico",
@@ -235,21 +255,24 @@ const ClinicResultsFilter = () => {
                   ></SelectInput>
                 </Col>
                 <Col span={8}>
-                <Form.Item label="Sucursal" className="no-error-text" help="">
+                  <Form.Item label="Sucursal" className="no-error-text" help="">
                     <Input.Group>
                       <Row gutter={8}>
                         <Col span={12}>
                           <SelectInput
+                            form={form}
                             formProps={{
                               name: "ciudad",
                               label: "Ciudad",
                               noStyle: true,
                             }}
+                            multiple
                             options={cityOptions}
                           />
                         </Col>
                         <Col span={12}>
                           <SelectInput
+                            form={form}
                             formProps={{
                               name: "sucursalId",
                               label: "Sucursales",
@@ -265,6 +288,7 @@ const ClinicResultsFilter = () => {
                 </Col>
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{
                       name: "compañiaId",
                       label: "Compañía",

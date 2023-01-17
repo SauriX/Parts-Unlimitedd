@@ -8,6 +8,7 @@ import {
   Row,
   Spin,
   Table,
+  Tag,
   Typography,
 } from "antd";
 import { toJS } from "mobx";
@@ -22,11 +23,19 @@ import HeaderTitle from "../../app/common/header/HeaderTitle";
 import alerts from "../../app/util/alerts";
 import { useNavigate } from "react-router-dom";
 import { moneyFormatter } from "../../app/util/utils";
+import {
+  WhatsAppOutlined,
+  MailOutlined,
+  FolderOpenOutlined,
+} from "@ant-design/icons";
+
 const { Link, Text } = Typography;
+
 type DeliveryResultsTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
+
 const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
   componentRef,
 }) => {
@@ -141,48 +150,103 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
       },
     },
   ];
-  const columnsStudy: any = [
-    {
-      key: "estudioId",
-      dataIndex: "estudio",
-      title: "Estudio",
-      align: "center",
-      width: 400,
-    },
-    {
-      key: "estudioId",
-      dataIndex: "medioSolicitado",
-      title: "Medio Solicitado",
-      align: "center",
-      width: 300,
-    },
-    {
-      key: "estudioId",
-      dataIndex: "fechaEntrega",
-      title: "Fecha de Entrega",
-      align: "center",
-      width: 200,
-    },
-    {
-      key: "estudioId",
-      dataIndex: "estatus",
-      title: "Estatus",
-      align: "center",
-      width: 200,
-    },
-    {
-      key: "estudioId",
-      dataIndex: "registro",
-      title: "Registro",
-      align: "center",
-      width: 300,
-    },
-  ];
+
   const options = [
     { label: "Correo", value: "Correo" },
     { label: "Whatsapp", value: "Whatsapp" },
     { label: "Fisico", value: "Fisico" },
   ];
+  const columnsStudyState = (estudios: any) => {
+    const columnsStudy: any = [
+      {
+        key: "estudioId",
+        dataIndex: "estudio",
+        title: "Estudio",
+        align: "center",
+        width: 400,
+      },
+      {
+        key: "estudioId",
+        dataIndex: "medioSolicitado",
+        title: "Medio Disponibles/Enviados",
+        align: "center",
+        width: 150,
+        render: (value: any, b: any, c: any) => {
+          const elements: any[] = [];
+          if (!!estudios.envioCorreo) {
+            if (!!value && value.split(",").includes("Correo")) {
+              elements.push(
+                <>
+                  <MailOutlined style={{ color: "#d11717" }} />
+                </>
+              );
+            } else {
+              elements.push(
+                <>
+                  <MailOutlined />
+                </>
+              );
+            }
+          }
+          if (!!estudios.envioWhatsapp) {
+            if (!!value && value.split(",").includes("Whatsapp")) {
+              elements.push(
+                <>
+                  <WhatsAppOutlined
+                    style={{ color: "#17d120", paddingLeft: 10 }}
+                  />
+                </>
+              );
+            } else {
+              elements.push(
+                <>
+                  <WhatsAppOutlined style={{ paddingLeft: 10 }} />
+                </>
+              );
+            }
+          }
+          if (!!value && value.split(",").includes("Fisico")) {
+            elements.push(
+              <>
+                <FolderOpenOutlined
+                  style={{ color: "#1774d1", paddingLeft: 10 }}
+                />
+              </>
+            );
+          } else {
+            elements.push(
+              <>
+                <FolderOpenOutlined style={{ paddingLeft: 10 }} />
+              </>
+            );
+          }
+          return <>{elements}</>;
+        },
+      },
+      {
+        key: "estudioId",
+        dataIndex: "fechaEntrega",
+        title: "Fecha de Entrega",
+        align: "center",
+        width: 200,
+      },
+      {
+        key: "estudioId",
+        dataIndex: "estatus",
+        title: "Estatus",
+        align: "center",
+        width: 200,
+      },
+      {
+        key: "estudioId",
+        dataIndex: "registro",
+        title: "Registro",
+        align: "center",
+        width: 300,
+      },
+    ];
+    return columnsStudy;
+  };
   const onChange = (checkedValues: CheckboxValueType[]) => {
     console.log("checked = ", checkedValues);
     setSelectSendMethods(checkedValues);
@@ -407,10 +471,10 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
                 expandedRowRender: (data: any, index: number) => (
                   <>
                     {/* {console.log("no se que data", toJS(data.estudios))} */}
-                    <Table
+                    <Table<any>
                       size="small"
                       rowKey={(record) => record.estudioId}
-                      columns={columnsStudy}
+                      columns={columnsStudyState(data)}
                       dataSource={[...data.estudios]}
                       bordered
                       style={{}}

@@ -23,12 +23,7 @@ const DeliveryResultsHeader: FC<DeliveryResultsHeaderProps> = ({
     <>
       <PageHeader
         ghost={false}
-        title={
-          <HeaderTitle
-            title="Búsqueda y envío de captura de resultados"
-            image="enviar-datos"
-          />
-        }
+        title={<HeaderTitle title="Envío de resultados" image="enviar-datos" />}
         className="header-container"
         extra={[
           <Text key="request">

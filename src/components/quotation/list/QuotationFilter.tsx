@@ -1,8 +1,8 @@
 import { Button, Col, Form, Input, Row } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { observer } from "mobx-react-lite";
-import moment from "moment";
 import { useEffect, useState } from "react";
+import DateInput from "../../../app/common/form/proposal/DateInput";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
@@ -16,7 +16,7 @@ import "./css/index.css";
 const QuotationFilter = () => {
   const { quotationStore, optionStore } = useStore();
   const { branchCityOptions, getBranchCityOptions } = optionStore;
-  const { getQuotations } = quotationStore;
+  const { filter, setFilter, getQuotations } = quotationStore;
 
   const [form] = useForm<IQuotationFilter>();
 
@@ -52,11 +52,11 @@ const QuotationFilter = () => {
       filter.fechaAFinal = filter.fechaAlta[1].utcOffset(0, true);
     }
 
-    if (filter.fechaNacimiento && filter.fechaNacimiento.length > 1) {
-      filter.fechaNInicial = filter.fechaNacimiento[0].utcOffset(0, true);
-      filter.fechaNFinal = filter.fechaNacimiento[1].utcOffset(0, true);
+    if (filter.fechaNacimiento) {
+      filter.fechaNInicial = filter.fechaNacimiento.utcOffset(0, true);
     }
 
+    setFilter(filter);
     getQuotations(filter);
   };
 
@@ -74,7 +74,7 @@ const QuotationFilter = () => {
           setErrors(errors);
         }}
         size="small"
-        initialValues={{ fechaAlta: [moment(), moment()] }}
+        initialValues={filter}
       >
         <Row gutter={[0, 12]}>
           <Col span={8}>
@@ -92,7 +92,7 @@ const QuotationFilter = () => {
             />
           </Col>
           <Col span={8}>
-            <DateRangeInput
+            <DateInput
               formProps={{
                 name: "fechaNacimiento",
                 label: "Fecha nacimiento",
@@ -155,6 +155,7 @@ const QuotationFilter = () => {
                   </Col>
                   <Col span={12}>
                     <SelectInput
+                      form={form}
                       formProps={{
                         name: "sucursales",
                         label: "Sucursales",
@@ -169,21 +170,10 @@ const QuotationFilter = () => {
             </Form.Item>
           </Col>
           <Col span={24} style={{ textAlign: "right" }}>
-            <Button
-              key="clean"
-              onClick={() => {
-                form.resetFields();
-              }}
-            >
+            <Button key="clean" htmlType="reset">
               Limpiar
             </Button>
-            <Button
-              key="filter"
-              type="primary"
-              onClick={() => {
-                form.submit();
-              }}
-            >
+            <Button key="filter" type="primary" htmlType="submit">
               Filtrar
             </Button>
           </Col>

@@ -174,6 +174,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
                         </Col>
                         <Col span={12}>
                           <SelectInput
+                            form={form}
                             formProps={{
                               name: "sucursalId",
                               label: "Sucursales",
@@ -191,6 +192,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
               {input.includes("medico") && (
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{ name: "medicoId", label: "Médico" }}
                     multiple
                     options={medicOptions}
@@ -200,6 +202,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
               {input.includes("compañia") && (
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{ name: "compañiaId", label: "Compañía" }}
                     multiple
                     options={companyOptions}
@@ -209,6 +212,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
               {input.includes("metodoEnvio") && (
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{ name: "metodoEnvio", label: "Medio de envío" }}
                     multiple
                     options={sendMethodOptions}
@@ -218,6 +222,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
               {input.includes("urgencia") && (
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{ name: "urgencia", label: "Tipo de Urgencia" }}
                     multiple
                     options={urgentOptions}
@@ -227,6 +232,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
               {input.includes("tipoCompañia") && (
                 <Col span={8}>
                   <SelectInput
+                    form={form}
                     formProps={{ name: "tipoCompañia", label: "Convenio" }}
                     multiple
                     options={typeCompanyOptions}
