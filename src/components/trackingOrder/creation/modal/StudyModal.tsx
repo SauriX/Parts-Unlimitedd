@@ -8,7 +8,7 @@ export const StudyModal = (selectedRowKeys: IEstudiosList[],solicitud:string) =>
 
   return new Promise((resolve) => {
     openModal({
-      title: "Agregar parámetros",
+      title: "Estudios de la solicitud",
       body: (
         <StudyTable
           getResult={(data) => {
@@ -20,6 +20,7 @@ export const StudyModal = (selectedRowKeys: IEstudiosList[],solicitud:string) =>
       onClose: () => {
         resolve(false);
       },
+      width:"60%"
     });
   });
 };
