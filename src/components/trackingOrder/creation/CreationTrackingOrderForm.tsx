@@ -523,7 +523,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                   label="Escaneo por código de barras"
                   readonly={readonly}
                   style={{
-                    marginLeft: 96,
+                    marginLeft: 90,
                   }}
                 />
               </Col>
@@ -539,9 +539,6 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                   }}
                   label="Activo"
                   readonly={readonly}
-                  style={{
-                    marginRight: 100,
-                  }}
                 />
               </Col>
             </Row>
