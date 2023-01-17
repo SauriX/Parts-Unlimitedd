@@ -131,9 +131,9 @@ const SelectInput = ({
                             );
                           }}
                         >
-                          {ref.current && ref.current.clientWidth < 250
-                            ? "+"
-                            : "Seleccionar todos"}
+                          {ref.current && ref.current.clientWidth > 300
+                            ? "Seleccionar todos"
+                            : "+"}
                         </Button>
                       </Col>
                       <Col span={12}>
@@ -143,9 +143,9 @@ const SelectInput = ({
                             form.setFieldValue(itemProps.name!, []);
                           }}
                         >
-                          {ref.current && ref.current.clientWidth < 250
-                            ? "-"
-                            : "Quitar todos"}
+                          {ref.current && ref.current.clientWidth > 300
+                            ? "Quitar todos"
+                            : "-"}
                         </Button>
                       </Col>
                     </Row>

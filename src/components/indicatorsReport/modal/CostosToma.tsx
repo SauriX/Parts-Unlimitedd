@@ -1,35 +1,38 @@
-import { Space, Tag, Table } from "antd";
+import { Space, Tag, Table, Col, Row } from "antd";
 import { observer } from "mobx-react-lite";
-import React from "react";
-import { IReportIndicators, ISamplesCost } from "../../../app/models/indicators";
-import CostoTomaColumns from "../columnDefinition/costotoma"
+import { v4 as uuid } from "uuid";
+import { ISamplesCost } from "../../../app/models/indicators";
+import CostoTomaColumns from "../columnDefinition/costotoma";
 
 type CostosTomaProps = {
   samples: ISamplesCost[];
-  costoToma: number;
   loading: boolean;
 };
 
-const CostosToma = ({ samples, costoToma, loading }: CostosTomaProps) => {
+const CostosToma = ({ samples, loading }: CostosTomaProps) => {
   return (
-    <Space direction="vertical" size="small">
-      <div style={{textAlign: "right", marginTop: 10}}>
-        <Tag color="blue" className="table-tag">
-          Costo Toma actual: {costoToma}
-        </Tag>
-      </div>
-      <Table<ISamplesCost>
-        loading={loading}
-        size="small"
-        rowKey={(record) => record.id!}
-        columns={CostoTomaColumns()}
-        pagination={false}
-        dataSource={[...samples]}
-        scroll={{ y: 500 }}
-        bordered
-        rowClassName={"row-search"}
-      />
-    </Space>
+    <Row gutter={[0, 24]}>
+      <Col span={24}>
+        <div style={{ textAlign: "right", marginTop: 10 }}>
+          <Tag color="blue" className="table-tag">
+            Costo Toma actual: {samples[0].costoToma}
+          </Tag>
+        </div>
+      </Col>
+      <Col span={24}>
+        <Table<ISamplesCost>
+          loading={loading}
+          size="small"
+          rowKey={(record) => uuid()}
+          columns={CostoTomaColumns()}
+          pagination={false}
+          dataSource={[...samples]}
+          scroll={{ y: 500 }}
+          bordered
+          rowClassName={"row-search"}
+        />
+      </Col>
+    </Row>
   );
 };
 
