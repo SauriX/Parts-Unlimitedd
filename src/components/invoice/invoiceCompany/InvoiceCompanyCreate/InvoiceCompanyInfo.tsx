@@ -18,8 +18,12 @@ type InvoiceCompanyInfoProps = {
 const InvoiceCompanyInfo = ({ company }: InvoiceCompanyInfoProps) => {
   const [form] = Form.useForm();
   const onFinish = () => {};
+  // const
   useEffect(() => {
-    form.setFieldsValue(company);
+    if (company) {
+      company.direccionFiscal = `${company.estado} ${company.ciudad} ${company.codigoPostal} ${company.colonia} `;
+      form.setFieldsValue(company);
+    }
   }, [company]);
   const reasonCancelation: IOptions[] = [
     {
@@ -74,24 +78,32 @@ const InvoiceCompanyInfo = ({ company }: InvoiceCompanyInfoProps) => {
                   <TextInput
                     formProps={{ name: "clave", label: "Clave" }}
                     style={{ marginBottom: 10 }}
+                    readonly
                   />
-                  <TextInput formProps={{ name: "nombre", label: "Nombre" }} />
+                  <TextInput
+                    formProps={{ name: "nombre", label: "Nombre" }}
+                    readonly
+                  />
                 </Col>
                 <Col span={6}>
                   <TextInput
                     formProps={{ name: "rfc", label: "RFC" }}
                     style={{ marginBottom: 10 }}
+                    readonly
                   />
+
                   <TextAreaInput
                     formProps={{
                       name: "direccionFiscal",
                       label: "Dirección fiscal",
                     }}
                     rows={3}
+                    readonly
                   />
                   <TextInput
                     formProps={{ name: "razonSocial", label: "Razón social" }}
                     style={{ marginTop: 10 }}
+                    readonly
                   />
                 </Col>
                 <Col span={12}>
@@ -100,6 +112,7 @@ const InvoiceCompanyInfo = ({ company }: InvoiceCompanyInfoProps) => {
                       label: "Periodo de búsqueda de solicitudes:",
                       name: "fechas",
                     }}
+                    readonly
                   />
                 </Col>
               </Row>
