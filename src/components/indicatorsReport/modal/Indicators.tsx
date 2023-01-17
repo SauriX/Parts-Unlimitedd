@@ -1,5 +1,5 @@
 import { Typography, Spin, Tabs, Divider } from "antd";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import "../css/indicators.less";
@@ -8,8 +8,7 @@ import CostosToma from "./CostosToma";
 import { titleTab } from "../columnDefinition/indicators";
 import CostosFijos from "./CostosFijos";
 import IndicatorModalHeader from "./IndicatorModalHeader";
-
-const { Paragraph } = Typography;
+import moment from "moment";
 
 type Props = {
   getResult: (isAdmin: string) => any;
@@ -17,16 +16,21 @@ type Props = {
 
 const Indicators = ({ getResult }: Props) => {
   const { indicatorsStore } = useStore();
-  const { samples, services, exportSamplingList, exportServiceList, filter } =
-    indicatorsStore;
+  const {
+    samples,
+    services,
+    exportSamplingList,
+    exportServiceList,
+    modalFilter,
+    getSamplesCostsByFilter,
+    getServicesCost,
+    loadingReport
+  } = indicatorsStore;
   const [loading, setLoading] = useState(false);
 
   const [modalTab, setModalTab] = useState("sample");
 
-  // let defaultSampleCost = samples[0].costoToma;
-  // let defaultServiceCost = services[0].costoFijo;
-
-  const items = titleTab.map((x) => {
+  const items = titleTab.map((x, i) => {
     return {
       label: x.label,
       key: x.name,
@@ -35,24 +39,34 @@ const Indicators = ({ getResult }: Props) => {
           <IndicatorsModalFilter modalTab={modalTab} />
           <Spin spinning={loading}>
             {modalTab === "sample" && (
-              <CostosToma
-                samples={samples}
-                costoToma={0}
-                loading={loading}
-              />
+              <CostosToma samples={samples} loading={loadingReport} />
             )}
             {modalTab === "service" && (
-              <CostosFijos
-                data={services}
-                costoFijo={0}
-                loading={loading}
-              />
+              <CostosFijos data={services} loading={loadingReport} />
             )}
           </Spin>
         </Fragment>
       ),
     };
   });
+
+  useEffect(() => {
+    if (modalTab === "sample") {
+      getSamplesCostsByFilter({
+        fecha: [
+          moment(Date.now()).utcOffset(0, true),
+          moment(Date.now()).utcOffset(0, true),
+        ],
+      });
+    } else if (modalTab === "service") {
+      getServicesCost({
+        fecha: [
+          moment(Date.now()).utcOffset(0, true),
+          moment(Date.now()).utcOffset(0, true),
+        ],
+      });
+    }
+  }, [modalTab]);
 
   const onChange = (key: string) => {
     if (key === "sample") {
@@ -65,9 +79,9 @@ const Indicators = ({ getResult }: Props) => {
   const handleList = async () => {
     setLoading(true);
     if (modalTab === "sample") {
-      await exportSamplingList(filter);
+      await exportSamplingList(modalFilter);
     } else if (modalTab === "service") {
-      await exportServiceList(filter);
+      await exportServiceList(modalFilter);
     }
     setLoading(false);
   };

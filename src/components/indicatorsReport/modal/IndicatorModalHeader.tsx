@@ -15,6 +15,7 @@ const IndicatorModalHeader: FC<UserHeaderProps> = ({ handleList }) => {
   return (
     <PageHeader
       ghost={false}
+      style={{ marginTop: 15 }}
       title={
         <HeaderTitle title={`Configuración de parámetros`} image="configuracion" />
       }

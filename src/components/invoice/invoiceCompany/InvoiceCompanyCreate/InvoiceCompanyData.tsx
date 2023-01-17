@@ -4,6 +4,7 @@ import moment from "moment";
 import { useEffect } from "react";
 import SelectInput from "../../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../../app/common/form/proposal/TextInput";
+import { useStore } from "../../../../app/stores/store";
 import { formItemLayout, moneyFormatter } from "../../../../app/util/utils";
 
 const { Title, Text } = Typography;
@@ -12,13 +13,34 @@ type InvoiceCompanyInfoProps = {
   totalFinal: number;
   totalEstudios: number;
   createInvoice: any;
+
+  invoice: string;
 };
 const InvoiceCompanyData = ({
   company,
   totalEstudios,
   createInvoice,
+  invoice,
 }: InvoiceCompanyInfoProps) => {
+  const { optionStore } = useStore();
+  const {
+    bankOptions,
+    paymentOptions,
+    paymentMethodOptions,
+    cfdiOptions,
+    getbankOptions,
+    getpaymentMethodOptions,
+    getcfdiOptions,
+    getPaymentOptions,
+  } = optionStore;
   const [form] = Form.useForm();
+  useEffect(() => {
+    getbankOptions();
+    getpaymentMethodOptions();
+    getcfdiOptions();
+    getPaymentOptions();
+  }, []);
+
   const onFinish = () => {};
   useEffect(() => {
     form.setFieldsValue(company);
@@ -43,7 +65,7 @@ const InvoiceCompanyData = ({
           <Col span={10}>
             <SelectInput
               formProps={{ name: "formaDePagoId", label: "Forma de pago" }}
-              options={[]}
+              options={paymentOptions}
             />
             <TextInput
               formProps={{ name: "numeroDeCuenta", label: "Número de cuenta" }}
@@ -57,9 +79,10 @@ const InvoiceCompanyData = ({
               formProps={{ name: "diasCredito", label: "Días de crédito" }}
               style={{ marginTop: 10 }}
             />
-            <TextInput
+            <SelectInput
               formProps={{ name: "metodoDePagoId", label: "Método de pago" }}
               style={{ marginTop: 10 }}
+              options={paymentMethodOptions}
             />
           </Col>
           <Col span={10} style={{ paddingLeft: 10, textAlign: "end" }}>
@@ -69,10 +92,14 @@ const InvoiceCompanyData = ({
             >{`Cantidad Total: ${moneyFormatter.format(
               totalEstudios
             )} (IVA incluido)`}</Text>
-            <TextInput formProps={{ name: "bancoId", label: "Banco" }} />
-            <TextInput
+            <SelectInput
+              formProps={{ name: "bancoId", label: "Banco" }}
+              options={bankOptions}
+            />
+            <SelectInput
               formProps={{ name: "cfdiId", label: "Uso de CFDI" }}
               style={{ marginTop: 10 }}
+              options={cfdiOptions}
             />
             <TextInput
               formProps={{
@@ -98,7 +125,11 @@ const InvoiceCompanyData = ({
           </Col>
           <Col span={4} style={{ paddingLeft: 10, paddingTop: 10 }}>
             <Row style={{ justifyContent: "center" }}>
-              <Button type="primary" onClick={createInvoice}>
+              <Button
+                type="primary"
+                onClick={createInvoice}
+                disabled={invoice !== "new"}
+              >
                 Registrar Factura
               </Button>
             </Row>
