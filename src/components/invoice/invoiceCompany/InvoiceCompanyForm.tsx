@@ -10,6 +10,7 @@ import { useStore } from "../../../app/stores/store";
 import { formItemLayout } from "../../../app/util/utils";
 import { useNavigate } from "react-router-dom";
 import alerts from "../../../app/util/alerts";
+import { toJS } from "mobx";
 
 const { Search } = Input;
 
@@ -85,9 +86,48 @@ const InvoiceComapnyForm = () => {
       );
       return;
     }
-    if (formValues.isInvoice === "Factura") {
-      if (formValues.tipoDesglose === "detalle") {
-        navigate(`/invoice/create`);
+    console.log("rowsSelected", toJS(selectedRows));
+    let requestsWithInvoiceCompany: any[] = [];
+    selectedRows.forEach((request) => {
+      if (
+        request.facturas.some((invoice: any) => invoice.tipo === "Compañia")
+      ) {
+        console.log("entro", request.clave);
+        requestsWithInvoiceCompany.push(request);
+      }
+    });
+
+    if (!!requestsWithInvoiceCompany.length) {
+      alerts.confirmInfo(
+        "Solicitudes facturadas",
+        <>
+          <Col>
+            <div>
+              Alguna de las solicitudes seleccionadas ya se encuentran
+              procesadas en una factura:
+            </div>
+            {requestsWithInvoiceCompany.map((request) => {
+              return (
+                <div>
+                  {request?.clave} -{" "}
+                  {
+                    request?.facturas.find(
+                      (invoice: any) => invoice.tipo === "Compañia"
+                    )?.facturapiId
+                  }
+                </div>
+              );
+            })}
+          </Col>
+        </>,
+        async () => {}
+      );
+    }
+    if (!requestsWithInvoiceCompany.length) {
+      if (formValues.isInvoice === "Factura") {
+        if (formValues.tipoDesglose === "detalle") {
+          navigate(`/invoice/create/new`);
+        }
       }
     }
   };

@@ -8,8 +8,15 @@ import InvoiceCompanyHeader from "../InvoiceCompanyHeader";
 import InvoiceCompanyData from "./InvoiceCompanyData";
 import InvoiceCompanyDetail from "./InvoiceCompanyDetail";
 import InvoiceCompanyInfo from "./InvoiceCompanyInfo";
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+type UrlParams = {
+  id: string;
+};
 
 const InvoiceCompanyCreate = () => {
+  const navigate = useNavigate();
   const { invoiceCompanyStore, optionStore } = useStore();
   const {
     getcfdiOptions,
@@ -19,26 +26,55 @@ const InvoiceCompanyCreate = () => {
     paymentOptions,
     paymentMethodOptions,
   } = optionStore;
-  const { selectedRows, getCompanyById, checkIn } = invoiceCompanyStore;
+
+  const { selectedRows, getCompanyById, checkIn, invoices } =
+    invoiceCompanyStore;
   const [company, setCompany] = useState<ICompanyForm>();
   const [totalFinalEstudios, setTotalFinalEstudios] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
   const [saldo, setSaldo] = useState<number>(0);
   const [estudios, setEstudios] = useState<any[]>([]);
   const [currentPaymentMethod, setCurrenPaymentMethod] = useState<any>();
-
+  const [selectRequests, setSelectedRequests] = useState<any>();
+  let { id } = useParams<UrlParams>();
   useEffect(() => {
     getcfdiOptions();
     getpaymentMethodOptions();
     getPaymentOptions();
-  }, []);
+    if (id !== "new") {
+      console.log("ID", id);
+      let selectedRequestInvoice = invoices.solicitudes
+        .find((invoice: any) => invoice.solicitudId === id)
+        .facturas.find(
+          (invoice: any) => invoice.tipo === "Compañia"
+        )?.solicitudesId;
+
+      // console.log("solicitudes", toJS(invoices.solicitudes));
+      // console.log("selectedRequestInvoice", toJS(selectedRequestInvoice));
+      let filterRequests = invoices.solicitudes.filter((invoice: any) =>
+        selectedRequestInvoice.includes(invoice.solicitudId)
+      );
+      console.log("filterrequest", toJS(filterRequests));
+      setSelectedRequests([...filterRequests]);
+    }
+  }, [id]);
 
   useEffect(() => {
-    const estuiosTotal = selectedRows.flatMap(
-      (solicitud) => solicitud.estudios
-    );
-    setEstudios(estuiosTotal);
-  }, [selectedRows]);
+    if (id === "new") {
+      const estuiosTotal = selectedRows.flatMap(
+        (solicitud) => solicitud.estudios
+      );
+      setEstudios(estuiosTotal);
+    } else {
+      if (!!selectRequests) {
+        const estuiosTotal = selectRequests.flatMap(
+          (solicitud: any) => solicitud.estudios
+        );
+        console.log("estudios", estudios);
+        setEstudios(estuiosTotal);
+      }
+    }
+  }, [selectedRows, selectRequests]);
 
   useEffect(() => {
     let totalEstudiosSeleccionados = 0;
@@ -58,13 +94,21 @@ const InvoiceCompanyCreate = () => {
 
   useEffect(() => {
     const loadCompany = async () => {
-      const branchId = selectedRows[0]?.companiaId;
-      const companyResult = await getCompanyById(branchId);
+      let companyResult;
+      if (id === "new") {
+        const branchId = selectedRows[0]?.companiaId;
+        companyResult = await getCompanyById(branchId);
+      } else {
+        if (!!selectRequests) {
+          const branchId = selectRequests[0]?.companiaId;
+          companyResult = await getCompanyById(branchId);
+        }
+      }
 
       setCompany(companyResult);
     };
     loadCompany();
-  }, [selectedRows]);
+  }, [selectedRows, selectRequests]);
 
   const createInvoice = async () => {
     console.log("creating invoice...");
@@ -103,7 +147,10 @@ const InvoiceCompanyCreate = () => {
         },
       };
       console.log("invoice", invoiceData);
+
       const invoiceInfo = await checkIn(invoiceData);
+
+      navigate(`/invoice`);
     }
   };
   return (
@@ -116,6 +163,7 @@ const InvoiceCompanyCreate = () => {
         totalEstudios={total}
         totalFinal={totalFinalEstudios}
         createInvoice={createInvoice}
+        invoice={id!}
       />
       <InvoiceCompanyDetail
         estudios={estudios}

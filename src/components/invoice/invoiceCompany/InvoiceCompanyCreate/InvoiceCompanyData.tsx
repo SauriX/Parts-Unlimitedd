@@ -13,11 +13,14 @@ type InvoiceCompanyInfoProps = {
   totalFinal: number;
   totalEstudios: number;
   createInvoice: any;
+
+  invoice: string;
 };
 const InvoiceCompanyData = ({
   company,
   totalEstudios,
   createInvoice,
+  invoice,
 }: InvoiceCompanyInfoProps) => {
   const { optionStore } = useStore();
   const {
@@ -122,7 +125,11 @@ const InvoiceCompanyData = ({
           </Col>
           <Col span={4} style={{ paddingLeft: 10, paddingTop: 10 }}>
             <Row style={{ justifyContent: "center" }}>
-              <Button type="primary" onClick={createInvoice}>
+              <Button
+                type="primary"
+                onClick={createInvoice}
+                disabled={invoice !== "new"}
+              >
                 Registrar Factura
               </Button>
             </Row>

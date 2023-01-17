@@ -6,7 +6,7 @@ const InvoiceCompany = {
   getConsecutiveBySerie: (serie: string): Promise<any> =>
     requests.get(`invoiceCompany/getConsecutiveBySerie/${serie}`),
   checkIn: (invoiceData: any): Promise<any> =>
-    requests.post(`invoiceCompany/checkin`, invoiceData),
+    requests.post(`invoiceCompany/checkin/company`, invoiceData),
 };
 
 export default InvoiceCompany;
