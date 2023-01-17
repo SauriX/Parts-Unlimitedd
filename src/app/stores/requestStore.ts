@@ -21,7 +21,7 @@ import {
   RequestFilterForm,
 } from "../models/request";
 import alerts from "../util/alerts";
-import { status, statusName } from "../util/catalogs";
+import { catalog, status, statusName } from "../util/catalogs";
 import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
@@ -46,6 +46,20 @@ export default class RequestStore {
 
     reaction(
       () => this.payments.slice(),
+      () => {
+        this.calculateTotals();
+      }
+    );
+
+    reaction(
+      () => this.request?.urgencia,
+      () => {
+        this.calculateTotals();
+      }
+    );
+
+    reaction(
+      () => this.request?.procedencia,
       () => {
         this.calculateTotals();
       }
@@ -166,11 +180,6 @@ export default class RequestStore {
     }
   };
 
-  setTotals = (totals: IRequestTotal) => {
-    this.totals = totals;
-    this.calculateTotals();
-  };
-
   getById = async (recordId: string, requestId: string) => {
     try {
       const request = await Request.getById(recordId, requestId);
@@ -219,7 +228,6 @@ export default class RequestStore {
       }
       this.studies = data.estudios;
       this.totals = data.total ?? new RequestTotal();
-      // this.calculateTotals();
       return data;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -412,6 +420,10 @@ export default class RequestStore {
       if (!autoSave) this.loadingTabContentCount++;
       await Request.updateGeneral(request);
       if (!autoSave) alerts.success(messages.updated);
+      if (this.request) {
+        this.request.urgencia = request.urgencia;
+        this.request.procedencia = request.procedencia;
+      }
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -738,38 +750,39 @@ export default class RequestStore {
     }
   };
 
+  // prettier-ignore
   private calculateTotals = () => {
-    const totalStudies =
-      this.studies
-        .filter(
-          (x) => x.estatusId !== status.requestStudy.cancelado && x.asignado
-        )
-        .reduce((acc, obj) => acc + obj.precioFinal, 0) +
-      this.packs
-        .filter((x) => !x.cancelado && x.asignado)
-        .reduce((acc, obj) => acc + obj.precioFinal, 0);
+    const studies = this.studies.filter((x) => x.estatusId !== status.requestStudy.cancelado && x.asignado);
+    const packs = this.packs.filter((x) => !x.cancelado && x.asignado);
+    const payments = this.payments.filter((x) =>
+        x.estatusId === status.requestPayment.pagado ||
+        x.estatusId === status.requestPayment.facturado
+    );
+    
+    const studyAndPack = studies.map((x) => ({ descuento: x.descuento ?? 0, precio: x.precio, precioFinal: x.precioFinal, copago: x.copago ?? 0 }))
+      .concat(packs.map((x) => ({ descuento: x.descuento, precio: x.precio, precioFinal: x.precioFinal, copago: 0 })));
 
-    const finalTotal = totalStudies - 0 + 0;
-    const finalTotalUser = 0 > 0 ? 0 : totalStudies - 0 + 0;
+    const totalStudies = studyAndPack.reduce((acc, obj) => acc + obj.precioFinal, 0);
 
-    const balance =
-      finalTotal -
-      this.payments
-        .filter(
-          (x) =>
-            x.estatusId !== status.requestPayment.cancelado &&
-            x.estatusId !== status.requestPayment.facturaCancelada
-        )
-        .reduce((acc, p) => acc + p.cantidad, 0);
+    const discount = totalStudies === 0 ? 0 : studyAndPack.reduce((acc, obj) => acc + obj.descuento, 0);
+    const charge = totalStudies === 0 ? 0
+        : this.request?.urgencia === catalog.urgency.urgenteCargo ? totalStudies * 0.1
+        : 0;
+    const cup = totalStudies === 0 ? 0 : this.request?.esWeeClinic ? studyAndPack.reduce((acc, obj) => acc + obj.copago, 0) 
+        : this.request?.procedencia === catalog.origin.convenio ? payments.reduce((acc,obj) => acc + obj.cantidad, 0) : 0;
+
+    const finalTotal = totalStudies - discount + charge;
+    const userTotal = cup > 0 ? cup : finalTotal;
+    const balance =  finalTotal -  payments.reduce((acc,obj) => acc + obj.cantidad, 0);
 
     this.totals = {
       ...this.totals,
       totalEstudios: totalStudies,
-      total: finalTotalUser,
+      descuento: discount,
+      cargo: charge,
+      copago: cup,
+      total: userTotal,
       saldo: balance,
-      copago: 0,
-      cargo: 0,
-      descuento: 0,
     };
   };
 
