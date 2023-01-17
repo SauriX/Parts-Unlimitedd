@@ -35,12 +35,22 @@ export interface ISamplesCost {
   sucursal: string;
   sucursalId: string;
   fechaAlta: moment.Moment;
+  aplica: string;
 }
 
 export interface IServicesCost {
   id?: number;
   costoFijo: number;
+  nombre?: string;
+  sucursal?: string;
   fechaAlta: moment.Moment;
+}
+
+export interface IServicesInvoice {
+  servicios?: IServicesCost[];
+  totalMensual: number;
+  totalSemanal: number;
+  totalDiario: number;
 }
 
 export interface IReportIndicatorsFilter {
@@ -51,10 +61,14 @@ export interface IReportIndicatorsFilter {
 }
 
 export interface IModalIndicatorsFilter {
-  sucursalId: string[];
+  sucursalId?: string[];
   fecha: moment.Moment[];
-  servicios?: number[];
+  servicios?: string[];
   ciudad?: string[];
+}
+
+export interface IServiceFile {
+  archivo?: File | Blob;
 }
 
 export class IndicatorFilterValues implements IReportIndicatorsFilter {
@@ -64,6 +78,18 @@ export class IndicatorFilterValues implements IReportIndicatorsFilter {
   fechaIndividual = moment(Date.now()).utcOffset(0, true);
 
   constructor(init?: IReportIndicatorsFilter) {
+    Object.assign(this, init);
+  }
+}
+
+export class ServiceInvoice implements IServicesInvoice {
+  servicios = [];
+  totalMensual = 0;
+  totalSemanal = 0;
+  totalDiario = 0;
+  
+
+  constructor(init?: IServicesInvoice) {
     Object.assign(this, init);
   }
 }

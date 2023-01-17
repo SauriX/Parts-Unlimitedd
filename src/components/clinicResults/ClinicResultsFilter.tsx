@@ -18,18 +18,14 @@ import {
 import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 
-const { Panel } = Collapse;
-
 const ClinicResultsFilter = () => {
   const { optionStore, clinicResultsStore } = useStore();
-  const { formValues, getAll, setFormValues, clearFilter } = clinicResultsStore;
+  const { getAll, setFormValues, clearFilter } = clinicResultsStore;
   const {
     branchCityOptions,
     medicOptions,
     companyOptions,
     studiesOptions,
-    departmentAreaOptions,
-    getDepartmentAreaOptions,
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,

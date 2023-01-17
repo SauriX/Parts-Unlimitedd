@@ -73,7 +73,7 @@ const IndicatorsTable = ({ data }: IndicatorsProps) => {
   }, [data]);
 
   return (
-    <Table<any> columns={columns} dataSource={data} loading={loadingReport} />
+    <Table<any> columns={columns} dataSource={data} loading={loadingReport} rowClassName={(item) => item.x === "UTILIDAD DE OPERACIÓN" ? "Resumen Total" : ""} />
   );
 };
 

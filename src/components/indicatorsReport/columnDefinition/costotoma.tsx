@@ -18,9 +18,10 @@ const CostoTomaColumns = () => {
     searchedText: "",
     searchedColumn: "",
   });
-  
+
   const { indicatorsStore, optionStore } = useStore();
-  const { filter, updateSample, loadingReport } = indicatorsStore;
+  const { updateSample, modalFilter, getSamplesCostsByFilter, getByFilter, filter } =
+    indicatorsStore;
   const { branchCityOptions } = optionStore;
 
   const [loading, setLoading] = useState(false);
@@ -30,30 +31,21 @@ const CostoTomaColumns = () => {
     setBranches(branchCityOptions.flatMap((x) => x.options ?? []));
   }, [branchCityOptions]);
 
-  const onFinish = async (branchName: string, sampleCost: number) => {
+  const onFinish = async (sample: ISamplesCost) => {
     setLoading(true);
 
-    const branchId = branches.find((x) => x.label === branchName)?.value;
-    if (!branchId) {
+    if (!sample) {
       alerts.warning("Sucursal invalida");
+      setLoading(false);
       return;
     }
 
-    const sample = {
-      sucursalId: branchId as string,
-      sucursal: branchName,
-      costoToma: sampleCost,
-      fechaAlta: moment(filter.fechaIndividual).utcOffset(0, true),
-    };
-    
-    if (sample) {
-      updateSample(sample);
-    }
-    
+    await updateSample(sample);
+    await getSamplesCostsByFilter(modalFilter);
+    await getByFilter(filter);
+
     setLoading(false);
   };
-
-  let widthColumns = 100 / 3;
 
   const columns: IColumns<ISamplesCost> = [
     {
@@ -62,12 +54,12 @@ const CostoTomaColumns = () => {
         setSearchState,
         width: "25%",
       }),
-      render: (text: string, record: any) => {
+      render: (text: string, record: ISamplesCost) => {
         return (
           <SampleCostInput
             loading={loading}
-            defaultValue={record.costoToma}
-            onFinish={(branch, sample) => onFinish(branch, sample)}
+            defaultValue={record}
+            onFinish={(sample) => onFinish(sample)}
           />
         );
       },
@@ -85,6 +77,20 @@ const CostoTomaColumns = () => {
         setSearchState,
         width: "25%",
       }),
+      render: (text: string, record: any) => {
+        return moment(record.fechaAlta).format("DD/MM/YYYY");
+      },
+    },
+    {
+      ...getDefaultColumnProps("aplica", "Aplica para", {
+        searchState,
+        setSearchState,
+        width: "25%",
+      }),
+      render: (text: string, record: ISamplesCost) => {
+        let aplicaText = record.aplica.slice(1);
+        return `${record.aplica.charAt(0).toUpperCase()}${aplicaText}`;
+      },
     },
   ];
   return columns;
@@ -93,8 +99,8 @@ const CostoTomaColumns = () => {
 export default CostoTomaColumns;
 
 type SampleCostInputProps = {
-  defaultValue: number;
-  onFinish: (branch:string, sample: number) => void;
+  defaultValue: ISamplesCost;
+  onFinish: (sample: ISamplesCost) => void;
   loading: boolean;
 };
 
@@ -111,10 +117,10 @@ const SampleCostInput = ({
         {...formItemLayout}
         form={form}
         name="samples"
-        initialValues={{ costoToma: defaultValue }}
+        initialValues={defaultValue}
         onFinish={(values) => {
           console.log(values);
-          onFinish(values.sucursal, values.costoToma);
+          onFinish({ ...defaultValue, costoToma: values.costoToma });
         }}
         scrollToFirstError
       >
