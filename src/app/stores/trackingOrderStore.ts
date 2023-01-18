@@ -39,7 +39,7 @@ export default class TrackingOrdertStore {
     try {
       await TrackingOrder.confirmarRecoleccion(this.OrderId);
       await this.getById(this.OrderId);
-      alerts.success("Se confirmo exitosmente la orden: " + this.OrderCreated);
+      alerts.success("Se confirmo exitosmente la orden");
     } catch (error) {
       alerts.warning(getErrors(error));
     }
@@ -48,7 +48,7 @@ export default class TrackingOrdertStore {
     try {
       await TrackingOrder.cancelarRecoleccion(this.OrderId);
       await this.getById(this.OrderId);
-      alerts.success("Se cancelo exitosmente la orden: " + this.OrderCreated);
+      alerts.success("Se cancelo exitosmente la orden");
     } catch (error) {
       alerts.warning(getErrors(error));
     }
