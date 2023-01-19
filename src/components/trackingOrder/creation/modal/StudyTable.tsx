@@ -11,44 +11,44 @@ import {
 } from "../../../../app/common/table/utils";
 import useWindowDimensions from "../../../../app/util/window";
 import { VList } from "virtual-table-ant-design";
-import { IEstudiosList } from "../../../../app/models/trackingOrder";
+import { IEstudiosList, IRequestStudyOrder, searchstudies } from "../../../../app/models/trackingOrder";
 
 const { Paragraph } = Typography;
 
 type Props = {
   getResult: (isAdmin: boolean) => any;
-  selectedStudys: IEstudiosList[];
+  selectedStudys: IRequestStudyOrder[];
+  solicitud:string;
 };
 
-const StudyTable = ({ getResult, selectedStudys }: Props) => {
-  const { studyStore } = useStore();
-  const [selectedRowKeysCheck, setSelectedRowKeysCheck] = useState<any[]>([]);
+const StudyTable = ({ getResult, selectedStudys,solicitud }: Props) => {
+  const { trackingOrderStore } = useStore();
+
+  const {RequestStudi,getStudiesByRequest}= trackingOrderStore;
+  const [selectedRowKeysCheck, setSelectedRowKeysCheck] = useState<number[]>([]);
+  const [data, setData]= useState<IRequestStudyOrder[]>([]);
   const { openModal, closeModal } = store.modalStore;
-  const [form] = Form.useForm<any>();
   const { width: windowWidth } = useWindowDimensions();
   const [loading, setLoading] = useState(false);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-  const [selectedParameterKeys, setSelectedParameterKeys] =
-    useState<IEstudiosList[]>(selectedStudys);
 
   useEffect(() => {
     const readReagents = async () => {
       setLoading(true);
-      //  await getAll("all");
+  
+      let studies=  await RequestStudi(solicitud);
+        setData(studies!);
+        console.log(studies);
       setLoading(false);
     };
     readReagents();
-  }, []);
+  }, [RequestStudi]);
 
-  const search = async (search: string | undefined) => {
-    search = search === "" ? undefined : search;
-    // await getAll(form.getFieldValue("search") ?? "all");
-  };
 
-  const columns: IColumns<IEstudiosList> = [
+  const columns: IColumns<IRequestStudyOrder> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
@@ -96,29 +96,16 @@ const StudyTable = ({ getResult, selectedStudys }: Props) => {
     },
   ];
 
-  const onSelectKeys = (item: IEstudiosList, checked: boolean) => {
-    const index = selectedParameterKeys.findIndex((x) => x.id === item.id);
-    if (checked && index === -1) {
-      setSelectedParameterKeys((prev) => [...prev, item]);
-    } else if (!checked && index > -1) {
-      const newSelectedParameterKeys = [...selectedParameterKeys];
-      newSelectedParameterKeys.splice(index, 1);
-      setSelectedParameterKeys(newSelectedParameterKeys);
-    }
-  };
 
-  const rowSelection = {
-    type: "checkbox",
-    selectedRowKeys: selectedParameterKeys.map((x) => x.id),
-    onSelect: onSelectKeys,
-  };
 
-  useEffect(() => {
-    console.log(selectedParameterKeys);
-  }, [selectedParameterKeys]);
 
-  const acceptChanges = () => {
-    //setStudyselected(selectedParameterKeys);
+  const acceptChanges = async () => {
+
+     let search:searchstudies = {
+      estudios: selectedRowKeysCheck,
+      solicitud:solicitud
+     }
+    await getStudiesByRequest(search);
     closeModal();
   };
 
@@ -133,7 +120,7 @@ const StudyTable = ({ getResult, selectedStudys }: Props) => {
         size="small"
         rowKey={(record) => record.id!}
         columns={columns}
-        dataSource={[]}
+        dataSource={[...data]}
         sticky
         className="header-expandable-table"
         scroll={{ y: "30vh", x: true }}
@@ -142,18 +129,46 @@ const StudyTable = ({ getResult, selectedStudys }: Props) => {
         })}
         rowSelection={{
           type: "checkbox",
-/*           getCheckboxProps: (record: any) => ({
-            disabled: !record.isActiveCheckbox,
-          }), */
-          onSelect: (selectedRow, isSelected, a: any) => {
+          getCheckboxProps: (record: IRequestStudyOrder) => ({
+            //disabled: record.estatusId != 8,
+          }),
+          onSelect: (selectedRow:IRequestStudyOrder, isSelected, a: any) => {
+            let lista = [...selectedRowKeysCheck] 
            
+            let study = lista.find(x=> x==selectedRow.id);
+            if(study==undefined){
+              lista.push(selectedRow.id);
+              setSelectedRowKeysCheck(lista);
+              
+            }else{
+              let listafitered=lista.filter(x=>x != selectedRow.id );
+              setSelectedRowKeysCheck(listafitered);
+            }
+           
+            
           },
           onChange: (
             selectedRowKeys: React.Key[],
             selectedRows: any,
             rowSelectedMethod: any
           ) => {
-            
+            if(rowSelectedMethod.type=="all"){
+              
+              let lista = [...selectedRowKeysCheck] 
+              selectedRows.forEach((x:IRequestStudyOrder)=>{
+
+                let study = lista.find(y=> y==x.id);
+                if(study==undefined){
+                  lista.push(x.id);
+                  setSelectedRowKeysCheck(lista);
+                  
+                }
+              });
+
+              if(selectedRowKeys.length ==0){
+                setSelectedRowKeysCheck([])
+              }
+            }
           },
           selectedRowKeys: selectedRowKeysCheck,
         }}

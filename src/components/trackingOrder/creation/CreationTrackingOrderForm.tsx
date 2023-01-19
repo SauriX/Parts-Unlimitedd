@@ -20,6 +20,7 @@ import {
   TrackingOrderFormValues,
   ITrackingOrderList,
   IEstudiosList,
+  IRequestStudyOrder,
 } from "../../../app/models/trackingOrder";
 
 import ImageButton from "../../../app/common/button/ImageButton";
@@ -81,7 +82,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   } = trackingOrderStore;
 
   const [searchParams] = useSearchParams();
-  const [StudySelected,setStudySelected]=useState<IEstudiosList[]>([]); 
+  const [StudySelected,setStudySelected]=useState<IRequestStudyOrder[]>([]); 
   const [form] = Form.useForm<ITrackingOrderForm>();
 
   const [loading, setLoading] = useState(false);
@@ -102,7 +103,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   const [newTrackingOrder, setNewTrackingOrder] = useState<ITrackingOrderForm>(
     new TrackingOrderFormValues()
   );
-  const [solicitud,setSolicitud]= useState<string>("");
+
   const treeData = [
     {
       title: "Sucursales",
@@ -165,6 +166,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   ];
   const [routeFoundOptions, setRouteFoundOptions] = useState<IOptions[]>([]);
   const selecteddestino = Form.useWatch("sucursalDestinoId", form);
+  const solicitud = Form.useWatch("muestraId", form);
   const routesoptions: IOptions[] = foundRoutes.map((route) => {
     var data: IOptions = {
       value: route.id,
@@ -501,6 +503,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                     name: "muestraId",
                     label: "Muestra",
                   }}
+                 
                   onKeyUp={async (e)=>{if(e.code==="Enter"){ await StudyModal(StudySelected,solicitud);}}}
                   max={100}
                   readonly={readonly}

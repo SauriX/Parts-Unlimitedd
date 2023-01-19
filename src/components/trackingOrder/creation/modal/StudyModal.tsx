@@ -1,9 +1,9 @@
 import StudyTable from "./StudyTable";
 import { store, useStore } from "../../../../app/stores/store";
-import { IEstudiosList } from "../../../../app/models/trackingOrder";
+import { IEstudiosList, IRequestStudyOrder } from "../../../../app/models/trackingOrder";
 
 
-export const StudyModal = (selectedRowKeys: IEstudiosList[],solicitud:string) => {
+export const StudyModal = (selectedRowKeys: IRequestStudyOrder[],solicitud:string) => {
   const { openModal, closeModal } = store.modalStore;
 
   return new Promise((resolve) => {
@@ -15,6 +15,7 @@ export const StudyModal = (selectedRowKeys: IEstudiosList[],solicitud:string) =>
             resolve(true);
           }}
           selectedStudys={selectedRowKeys}
+          solicitud={solicitud}
         />
       ),
       onClose: () => {

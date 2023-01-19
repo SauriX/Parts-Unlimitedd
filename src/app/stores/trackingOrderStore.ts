@@ -1,4 +1,5 @@
 import {
+  searchstudies,
   TrackingOrderFormValues,
   TrackingOrderListValues,
 } from "./../models/trackingOrder";
@@ -199,6 +200,39 @@ export default class TrackingOrdertStore {
       } else {
         alerts.warning(getErrors(error));
       }
+    }
+  };
+  RequestStudi = async (solicitud: string) => {
+    try {
+      console.log(solicitud);
+      let studies =await TrackingOrder.findRequestStudies(solicitud);
+      return studies
+    } catch (error: any) {
+
+        alerts.warning(getErrors(error));
+      
+    }
+  };
+  getStudiesByRequest = async (study: searchstudies) => {
+    try {
+
+      const studies = await TrackingOrder.findStudiesAll(study);
+
+      let studiesR = studies.map((x) => {
+        let a = new TrackingOrderListValues(x);
+
+        return a;
+      });
+      if(this.trackingOrder.length<=0){
+        this.trackingOrder = studiesR;
+      }else{
+         let studiescopi = [... this.trackingOrder];
+         studies.concat(studiesR);
+         this.trackingOrder = studiescopi;
+      }
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      this.trackingOrder = [];
     }
   };
 }

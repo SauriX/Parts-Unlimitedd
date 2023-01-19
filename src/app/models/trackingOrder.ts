@@ -13,6 +13,20 @@ export interface IEstudiosList {
   IsInRute?: boolean;
 }
 
+export interface searchstudies {
+
+estudios:number[];
+solicitud :string;
+}
+export interface IRequestStudyOrder {
+  id:number;
+  clave:string;
+  estudio:string;
+  estatus:string;
+  dias:string;
+  fecha:string;
+  estatusId:number;
+}
 export interface ITrackingOrderList {
   id?: number;
   clave: string;
