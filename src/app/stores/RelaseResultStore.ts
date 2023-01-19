@@ -20,6 +20,13 @@ export default class RelaseResultStore {
   studyCont:number=0;
   soliCont:number=0;
   search:ISearchRelase = new searchrelase();
+  activeTab: boolean = false;
+
+  setActiveTab = (active: boolean) => {
+    console.log(active)
+    this.activeTab = active;
+  };
+
   setSearch=(search:  ISearchRelase)=>{
     this.search = search;
   };

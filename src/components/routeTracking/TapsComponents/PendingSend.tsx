@@ -22,13 +22,11 @@ import PrintIcon from "../../../app/common/icons/PrintIcon";
 import { formItemLayout } from "../../../app/util/utils";
 const PendingSend = () => {
   const { optionStore, routeTrackingStore, profileStore } = useStore();
-  const { getAll, studys, printTicket, update, exportForm, setventana } =
+  const { getAll, studys, printTicket, update, exportForm, setventana,searchrecive,setSearchRecive } =
     routeTrackingStore;
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const { profile } = profileStore;
-  const [values, setValues] = useState<SearchTracking>(
-    new TrackingFormValues()
-  );
+
 
   const [form] = Form.useForm<SearchTracking>();
 
@@ -36,7 +34,7 @@ const PendingSend = () => {
   useEffect(() => {
     const readPriceList = async () => {
       let studios = [];
-      var datas = await getAll(values!);
+      var datas = await getAll(searchrecive!);
       getBranchCityOptions();
       setventana("enviar");
       datas?.forEach((x: any) => studios.push(x.studys));
@@ -156,7 +154,10 @@ const PendingSend = () => {
     },
   ];
   const onFinish = async (newValues: SearchTracking) => {
-    const search = { ...values, ...newValues };
+    const search = { ...searchrecive, ...newValues };
+
+
+    setSearchRecive(search);
     let studios = [];
     var datas = await getAll(search!);
     datas?.forEach((x: any) => studios.push(x.pendings));
@@ -168,7 +169,7 @@ const PendingSend = () => {
         {...formItemLayout}
         form={form}
         name="reagent"
-        initialValues={values}
+        initialValues={searchrecive}
         onFinish={onFinish}
         scrollToFirstError
       >

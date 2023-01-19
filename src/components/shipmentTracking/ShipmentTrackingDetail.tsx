@@ -30,7 +30,8 @@ import {
   import { IStudyList } from "../../app/models/study";
   import views from "../../app/util/view";
 import {shipmentStudy, shipmenttracking} from "../../app/models/shipmentTracking";
-import { TrackingFormValues } from "../../app/models/routeTracking";
+import { TrackingFormValues,IRouteList } from "../../app/models/routeTracking";
+
   type StudyTableProps = {
     componentRef: React.MutableRefObject<any>;
     printing: boolean;
@@ -42,11 +43,12 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
     const [loading, setLoading] = useState(false);
     const [shipments,setShipments] = useState<shipmenttracking>();
     const [estudios,setEstudios] = useState<shipmentStudy[]>([]);
+    const [estudioslist,setEstudioslist] = useState<IRouteList[]>([]);
     let navigate = useNavigate();
     const { id } = useParams<UrlParams>();
     const { routeTrackingStore,shipmentTracking} = useStore();
 
-    const {getAll,studys}= routeTrackingStore;
+    const {getAll,studys, searchrecive}= routeTrackingStore;
     const { getashipment,shipment}=shipmentTracking;
     useEffect(()=>{
       var readshipment = async()=>{
@@ -64,8 +66,19 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
 
      useEffect(()=>{
       var readroute = async()=>{
-        var search = new  TrackingFormValues();
-          await getAll(search);
+        let estudiosrute =  await getAll(searchrecive);
+
+        let pivote = estudiosrute![0];
+        let result:IRouteList[]=[];
+        result.push(pivote);
+        estudiosrute!.forEach(element => {
+            if(element.seguimiento != pivote.seguimiento){
+              pivote = element;
+              result.push(element);
+            }
+        });
+        setEstudioslist(result);
+
       }
         readroute();
     },[getAll]);
@@ -76,15 +89,15 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
         searchedColumn: "",
       });
       const { width: windowWidth } = useWindowDimensions();
-      const actualMaquilador = () => {
+      const actual = () => {
         if (id) {
-          const index = studys.findIndex((x) => x.id === id);
+          const index = estudioslist.findIndex((x) => x.id === id);
           return index + 1;
         }
         return 0;
       };
-      const prevnextMaquilador = (index: number) => {
-        const maquila = studys[index];
+      const prevnext= (index: number) => {
+        const maquila = estudioslist[index];
         navigate(`/ShipmentTracking/${maquila.id}`);
        // navigate(`/${views.route}/${route.id}?${searchParams}&mode=readonly`);
       };
@@ -142,11 +155,11 @@ import { TrackingFormValues } from "../../app/models/routeTracking";
             <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
                 <Pagination
                 size="small"
-                total={ studys.length}
+                total={ estudioslist.length}
                 pageSize={1}
-                current={actualMaquilador()}
+                current={actual()}
                 onChange={(value) => {
-                       prevnextMaquilador(value - 1);
+                       prevnext(value - 1);
                 }}
                 />
             </Col>
