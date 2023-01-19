@@ -21,7 +21,7 @@ import {
   RequestFilterForm,
 } from "../models/request";
 import alerts from "../util/alerts";
-import { status, statusName } from "../util/catalogs";
+import { catalog, status, statusName } from "../util/catalogs";
 import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
@@ -46,6 +46,20 @@ export default class RequestStore {
 
     reaction(
       () => this.payments.slice(),
+      () => {
+        this.calculateTotals();
+      }
+    );
+
+    reaction(
+      () => this.request?.urgencia,
+      () => {
+        this.calculateTotals();
+      }
+    );
+
+    reaction(
+      () => this.request?.procedencia,
       () => {
         this.calculateTotals();
       }
@@ -166,11 +180,6 @@ export default class RequestStore {
     }
   };
 
-  setTotals = (totals: IRequestTotal) => {
-    this.totals = totals;
-    this.calculateTotals();
-  };
-
   getById = async (recordId: string, requestId: string) => {
     try {
       const request = await Request.getById(recordId, requestId);
@@ -219,7 +228,6 @@ export default class RequestStore {
       }
       this.studies = data.estudios;
       this.totals = data.total ?? new RequestTotal();
-      // this.calculateTotals();
       return data;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -268,9 +276,6 @@ export default class RequestStore {
         type: "study",
         estatusId: status.requestStudy.pendiente,
         estatus: statusName.requestStudy.pendiente,
-        aplicaCargo: false,
-        aplicaCopago: false,
-        aplicaDescuento: false,
         nuevo: true,
         asignado: true,
       };
@@ -312,9 +317,6 @@ export default class RequestStore {
       const pack: IRequestPack = {
         ...price,
         type: "pack",
-        aplicaCargo: false,
-        aplicaCopago: false,
-        aplicaDescuento: false,
         cancelado: false,
         nuevo: true,
         asignado: true,
@@ -323,9 +325,6 @@ export default class RequestStore {
           type: "study",
           estatusId: status.requestStudy.pendiente,
           estatus: statusName.requestStudy.pendiente,
-          aplicaCargo: false,
-          aplicaCopago: false,
-          aplicaDescuento: false,
           nuevo: true,
           asignado: true,
         })),
@@ -421,6 +420,10 @@ export default class RequestStore {
       if (!autoSave) this.loadingTabContentCount++;
       await Request.updateGeneral(request);
       if (!autoSave) alerts.success(messages.updated);
+      if (this.request) {
+        this.request.urgencia = request.urgencia;
+        this.request.procedencia = request.procedencia;
+      }
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -747,94 +750,39 @@ export default class RequestStore {
     }
   };
 
+  // prettier-ignore
   private calculateTotals = () => {
-    const totalStudies =
-      this.studies
-        .filter(
-          (x) => x.estatusId !== status.requestStudy.cancelado && x.asignado
-        )
-        .reduce((acc, obj) => acc + obj.precioFinal, 0) +
-      this.packs
-        .filter((x) => !x.cancelado && x.asignado)
-        .reduce((acc, obj) => acc + obj.precioFinal, 0);
+    const studies = this.studies.filter((x) => x.estatusId !== status.requestStudy.cancelado && x.asignado);
+    const packs = this.packs.filter((x) => !x.cancelado && x.asignado);
+    const payments = this.payments.filter((x) =>
+        x.estatusId === status.requestPayment.pagado ||
+        x.estatusId === status.requestPayment.facturado
+    );
+    
+    const studyAndPack = studies.map((x) => ({ descuento: x.descuento ?? 0, precio: x.precio, precioFinal: x.precioFinal, copago: x.copago ?? 0 }))
+      .concat(packs.map((x) => ({ descuento: x.descuento, precio: x.precio, precioFinal: x.precioFinal, copago: 0 })));
 
-    const desc =
-      this.totals.descuentoTipo === 1
-        ? ((this.studies
-            .filter(
-              (x) =>
-                x.estatusId !== status.requestStudy.cancelado &&
-                x.asignado &&
-                x.aplicaDescuento
-            )
-            .reduce((acc, obj) => acc + obj.precioFinal, 0) +
-            this.packs
-              .filter((x) => !x.cancelado && x.asignado && x.aplicaDescuento)
-              .reduce((acc, obj) => acc + obj.precioFinal, 0)) *
-            this.totals.descuento) /
-          100
-        : this.totals.descuento;
+    const totalStudies = studyAndPack.reduce((acc, obj) => acc + obj.precioFinal, 0);
 
-    const char =
-      this.totals.cargoTipo === 1
-        ? ((this.studies
-            .filter(
-              (x) =>
-                x.estatusId !== status.requestStudy.cancelado &&
-                x.asignado &&
-                x.aplicaCargo
-            )
-            .reduce((acc, obj) => acc + obj.precioFinal, 0) +
-            this.packs
-              .filter((x) => !x.cancelado && x.asignado && x.aplicaCargo)
-              .reduce((acc, obj) => acc + obj.precioFinal, 0)) *
-            this.totals.cargo) /
-          100
-        : this.totals.cargo;
+    const discount = totalStudies === 0 ? 0 : studyAndPack.reduce((acc, obj) => acc + obj.descuento, 0);
+    const charge = totalStudies === 0 ? 0
+        : this.request?.urgencia === catalog.urgency.urgenteCargo ? totalStudies * 0.1
+        : 0;
+    const cup = totalStudies === 0 ? 0 : this.request?.esWeeClinic ? studyAndPack.reduce((acc, obj) => acc + obj.copago, 0) 
+        : this.request?.procedencia === catalog.origin.convenio ? payments.reduce((acc,obj) => acc + obj.cantidad, 0) : 0;
 
-    const cop = this.request?.esWeeClinic
-      ? this.studies
-          .filter(
-            (x) => x.estatusId !== status.requestStudy.cancelado && x.asignado
-          )
-          .reduce((acc, obj) => acc + (obj.copago ?? 0), 0)
-      : this.totals.copagoTipo === 1
-      ? ((this.studies
-          .filter(
-            (x) =>
-              x.estatusId !== status.requestStudy.cancelado &&
-              x.asignado &&
-              x.aplicaCopago
-          )
-          .reduce((acc, obj) => acc + obj.precioFinal, 0) +
-          this.packs
-            .filter((x) => !x.cancelado && x.asignado && x.aplicaCopago)
-            .reduce((acc, obj) => acc + obj.precioFinal, 0)) *
-          this.totals.copago) /
-        100
-      : this.totals.copago;
-
-    const finalTotal = totalStudies - desc + char;
-    const finalTotalUser = cop > 0 ? cop : totalStudies - desc + char;
-
-    const balance =
-      finalTotal -
-      this.payments
-        .filter(
-          (x) =>
-            x.estatusId !== status.requestPayment.cancelado &&
-            x.estatusId !== status.requestPayment.facturaCancelada
-        )
-        .reduce((acc, p) => acc + p.cantidad, 0);
+    const finalTotal = totalStudies - discount + charge;
+    const userTotal = cup > 0 ? cup : finalTotal;
+    const balance =  finalTotal -  payments.reduce((acc,obj) => acc + obj.cantidad, 0);
 
     this.totals = {
       ...this.totals,
       totalEstudios: totalStudies,
-      total: finalTotalUser,
+      descuento: discount,
+      cargo: charge,
+      copago: cup,
+      total: userTotal,
       saldo: balance,
-      copago: cop,
-      cargo: char,
-      descuento: desc,
     };
   };
 

@@ -21,6 +21,8 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   parcialidad: boolean;
   registro?: string;
   esNuevo: boolean;
+  procedencia?: number;
+  urgencia?: number;
   folioWeeClinic?: string;
   esWeeClinic: boolean;
   tokenValidado: boolean;
@@ -212,9 +214,6 @@ export interface IRequestStudy {
   promocion?: string;
   estatusId: number;
   estatus?: string;
-  aplicaDescuento: boolean;
-  aplicaCargo: boolean;
-  aplicaCopago: boolean;
   departamentoId: number;
   areaId: number;
   dias: number;
@@ -266,9 +265,6 @@ export class RequestStudyValues implements IRequestStudy {
   promocion = "";
   estatusId = 0;
   estatus = "";
-  aplicaDescuento = false;
-  aplicaCargo = false;
-  aplicaCopago = false;
   departamentoId = 0;
   areaId = 0;
   dias = 0;
@@ -304,9 +300,6 @@ export interface IRequestPack {
   promocionId?: number;
   promocion?: string;
   cancelado: boolean;
-  aplicaDescuento: boolean;
-  aplicaCargo: boolean;
-  aplicaCopago: boolean;
   departamentoId: number;
   areaId: number;
   dias: number;
@@ -333,11 +326,8 @@ export interface IRequestTag {
 export interface IRequestTotal extends IRequestBase {
   totalEstudios: number;
   descuento: number;
-  descuentoTipo: number;
   cargo: number;
-  cargoTipo: number;
   copago: number;
-  copagoTipo: number;
   total: number;
   saldo: number;
 }
@@ -345,11 +335,8 @@ export interface IRequestTotal extends IRequestBase {
 export class RequestTotal implements IRequestTotal {
   totalEstudios: number = 0;
   descuento: number = 0;
-  descuentoTipo: number = 1;
   cargo: number = 0;
-  cargoTipo: number = 1;
   copago: number = 0;
-  copagoTipo: number = 1;
   total: number = 0;
   saldo: number = 0;
   solicitudId: string = "";
