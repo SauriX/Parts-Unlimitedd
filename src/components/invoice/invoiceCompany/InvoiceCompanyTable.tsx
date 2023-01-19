@@ -118,7 +118,7 @@ const InvoiceCompanyTable = () => {
                           <Text
                             strong
                             type={
-                              factura.estatus === "Cancelado"
+                              factura.estatus.nombre === "Cancelado"
                                 ? "danger"
                                 : "secondary"
                             }

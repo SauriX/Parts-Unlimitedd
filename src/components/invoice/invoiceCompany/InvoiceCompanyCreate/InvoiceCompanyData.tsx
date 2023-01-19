@@ -6,6 +6,7 @@ import SelectInput from "../../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../../app/common/form/proposal/TextInput";
 import { useStore } from "../../../../app/stores/store";
 import { formItemLayout, moneyFormatter } from "../../../../app/util/utils";
+import InvoiceCompanyDeliver from "./InvoiceCompanyDeliver";
 
 const { Title, Text } = Typography;
 type InvoiceCompanyInfoProps = {
@@ -15,14 +16,20 @@ type InvoiceCompanyInfoProps = {
   createInvoice: any;
 
   invoice: string;
+  facturapiId: string;
+  estatusFactura: any;
 };
 const InvoiceCompanyData = ({
   company,
   totalEstudios,
   createInvoice,
   invoice,
+  facturapiId,
+  estatusFactura,
 }: InvoiceCompanyInfoProps) => {
-  const { optionStore } = useStore();
+  const { optionStore, invoiceCompanyStore, modalStore } = useStore();
+  const { openModal } = modalStore;
+  const { printPdf, downloadPdf } = invoiceCompanyStore;
   const {
     bankOptions,
     paymentOptions,
@@ -43,6 +50,7 @@ const InvoiceCompanyData = ({
 
   const onFinish = () => {};
   useEffect(() => {
+    console.log("COMPANY", company);
     form.setFieldsValue(company);
   }, [company]);
   return (
@@ -128,23 +136,57 @@ const InvoiceCompanyData = ({
               <Button
                 type="primary"
                 onClick={createInvoice}
-                disabled={invoice !== "new"}
+                disabled={invoice !== "new" && estatusFactura === "Facturado"}
               >
                 Registrar Factura
               </Button>
             </Row>
             <Row style={{ justifyContent: "center", paddingTop: 10 }}>
-              <Button type="primary" onClick={() => {}}>
+              <Button
+                type="primary"
+                onClick={() => {
+                  if (!!facturapiId) {
+                    console.log("invoice", invoice);
+                    console.log("factura", facturapiId);
+                    downloadPdf(facturapiId);
+                  }
+                }}
+                disabled={invoice === "new" || estatusFactura === "Cancelado"}
+              >
                 Descargar
               </Button>
             </Row>
             <Row style={{ justifyContent: "center", paddingTop: 10 }}>
-              <Button type="primary" onClick={() => {}}>
+              <Button
+                type="primary"
+                onClick={() => {
+                  if (!!facturapiId) {
+                    printPdf(facturapiId);
+                  }
+                }}
+                disabled={invoice === "new" || estatusFactura === "Cancelado"}
+              >
                 Imprimir
               </Button>
             </Row>
             <Row style={{ justifyContent: "center", paddingTop: 10 }}>
-              <Button type="primary" onClick={() => {}}>
+              <Button
+                type="primary"
+                onClick={() => {
+                  console.log("Compañia", company);
+                  openModal({
+                    title: "Configuración de envío",
+                    body: (
+                      <InvoiceCompanyDeliver
+                        companiaId={company.id}
+                        facturapiId={facturapiId}
+                      />
+                    ),
+                    width: 800,
+                  });
+                }}
+                disabled={invoice === "new" || estatusFactura === "Cancelado"}
+              >
                 Configurar envió
               </Button>
             </Row>

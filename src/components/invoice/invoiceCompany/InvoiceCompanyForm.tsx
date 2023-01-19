@@ -20,20 +20,37 @@ const InvoiceComapnyForm = () => {
   const { optionStore, invoiceCompanyStore } = useStore();
   const [formCreate] = Form.useForm();
   const selectedCity = Form.useWatch("ciudad", form);
+  const isInvoice = Form.useWatch("isInvoice", formCreate);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [serieOptions, setSerieOptions] = useState<IOptions[]>([]);
   const [checkedValues, setCheckedValues] = useState<any[]>([]);
   const [disabled, setDisabled] = useState<boolean>(true);
+  const [requiredValues, setRequiredValues] = useState<boolean>(true);
+
   const {
     branchCityOptions,
     getBranchCityOptions,
     companyOptions,
     getCompanyOptions,
   } = optionStore;
-  const { getInvoicesCompany, isSameCommpany, selectedRows, setSerie } =
-    invoiceCompanyStore;
+  const {
+    getInvoicesCompany,
+    isSameCommpany,
+    selectedRows,
+    setSerie,
+    saveFilterDate,
+    printReceipt,
+  } = invoiceCompanyStore;
 
+  useEffect(() => {
+    console.log("isnvoice", isInvoice);
+    if (isInvoice === "Factura") {
+      setRequiredValues(true);
+    } else {
+      setRequiredValues(false);
+    }
+  }, [isInvoice]);
   useEffect(() => {
     // formCreate.setFieldValue("serie",); //TODO: validar la nueva tabla de series y como se relaciona
   }, [isSameCommpany, selectedRows]);
@@ -73,6 +90,7 @@ const InvoiceComapnyForm = () => {
       fechaFinal: newFormValues.fechas[1].utcOffset(0, true),
       fechaInicial: newFormValues.fechas[0].utcOffset(0, true),
     };
+    saveFilterDate(newFormValues.fechas);
     getInvoicesCompany(formValues);
   };
   const createInvoice = async (formValues: any) => {
@@ -86,18 +104,17 @@ const InvoiceComapnyForm = () => {
       );
       return;
     }
-    console.log("rowsSelected", toJS(selectedRows));
+
     let requestsWithInvoiceCompany: any[] = [];
     selectedRows.forEach((request) => {
       if (
         request.facturas.some((invoice: any) => invoice.tipo === "Compañia")
       ) {
-        console.log("entro", request.clave);
         requestsWithInvoiceCompany.push(request);
       }
     });
 
-    if (!!requestsWithInvoiceCompany.length) {
+    if (!!requestsWithInvoiceCompany.length && isInvoice === "Factura") {
       alerts.confirmInfo(
         "Solicitudes facturadas",
         <>
@@ -123,11 +140,24 @@ const InvoiceComapnyForm = () => {
         async () => {}
       );
     }
-    if (!requestsWithInvoiceCompany.length) {
+
+    if (!requestsWithInvoiceCompany.length || isInvoice === "Recibo") {
       if (formValues.isInvoice === "Factura") {
         if (formValues.tipoDesglose === "detalle") {
           navigate(`/invoice/create/new`);
         }
+      } else {
+        let solicitudesId = selectedRows.map((row) => row.solicitudId);
+        let receiptCompanyData = {
+          sucursal: "MONTERREY", // "SUCURSAL MONTERREY"
+          folio: "",
+          atiende: "",
+          usuario: "",
+          Contraseña: "",
+          ContactoTelefono: "",
+          SolicitudesId: solicitudesId,
+        };
+        printReceipt(receiptCompanyData);
       }
     }
   };
@@ -264,7 +294,7 @@ const InvoiceComapnyForm = () => {
                       name: "tipoDesglose",
                     }}
                     options={desgloceOptions}
-                    required
+                    required={requiredValues}
                   />
                 </Col>
                 <Col span={8}>
@@ -275,7 +305,7 @@ const InvoiceComapnyForm = () => {
                       console.log("sereie", serie);
                       setSerie(serie);
                     }}
-                    required
+                    required={requiredValues}
                   />
                 </Col>
               </Row>
