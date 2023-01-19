@@ -9,44 +9,39 @@ import SamplingHeader from "../components/Sampling/SamplingStudyHeader";
 import SamplingTable from "../components/Sampling/SamplingStudyBody";
 
 const ResultValidation = () => {
-  const { resultValidationStore,procedingStore } = useStore();
-   //const { /* scopes, access, clearScopes, */ exportList,search } = procedingStore;
-  const { /* scopes, access, clearScopes, */ exportList,search } = resultValidationStore;
+  const { resultValidationStore, relaseResultStore } = useStore();
+  //const { /* scopes, access, clearScopes, */ exportList,search } = procedingStore;
+  const { /* scopes, access, clearScopes, */ exportList, search } =
+    resultValidationStore;
+  const {
+    activeTab,
+    search: releaseSearch,
+    exportList: releaseExportList,
+  } = relaseResultStore;
   const [searchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);
 
   const componentRef = useRef<any>();
 
-
-
   const handleDownload = async () => {
     setLoading(true);
-    await exportList(search);
+    if (!activeTab) {
+      await releaseExportList(releaseSearch);
+    } else {
+      await exportList(search);
+    }
     setLoading(false);
   };
 
-  useEffect(() => {
-    const checkAccess = async () => {
-     // await access();
-    };
-
-    checkAccess();
-  }, [/* access */]);
-
-  useEffect(() => {
-    return () => {
-      //clearScopes();
-    };
-  }, [/* clearScopes */]);
-/* 
-  if (!scopes?.acceder) return null;
- */
+  
   return (
     <Fragment>
-      <ResultValidationHeader  handleList={handleDownload} />
-      <Divider className="header-divider" />
-      <ResultValidationTable componentRef={componentRef} printing={loading} />
+      <Fragment>
+        <ResultValidationHeader handleList={handleDownload} />
+        <Divider className="header-divider" />
+        <ResultValidationTable componentRef={componentRef} printing={loading} />
+      </Fragment>
     </Fragment>
   );
 };
