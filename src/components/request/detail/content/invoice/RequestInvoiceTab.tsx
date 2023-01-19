@@ -11,12 +11,14 @@ const { TabPane } = Tabs;
 type RequestInvoiceTabProps = {
   recordId: string;
   requestId: string;
+  branchId: string;
   payments: IRequestPayment[];
 };
 
 const RequestInvoiceTab = ({
   recordId,
   requestId,
+  branchId,
   payments,
 }: RequestInvoiceTabProps) => {
   const { modalStore } = useStore();
@@ -36,25 +38,35 @@ const RequestInvoiceTab = ({
     setTaxData(taxData);
   };
 
-  return (
-    <Tabs defaultActiveKey="1" onChange={onTabChange}>
-      <TabPane tab="Datos Fiscales" key="taxData">
+  const tabs = [
+    {
+      key: "taxData",
+      label: "Datos Fiscales",
+      children: (
         <DatosFiscalesForm
           local
           recordId={recordId}
           onSelectRow={onSelectTaxData}
         />
-      </TabPane>
-      <TabPane tab="Facturación" key="invoice" disabled={!taxData}>
+      ),
+    },
+    {
+      key: "invoice",
+      label: "Facturación",
+      disabled: !taxData,
+      children: (
         <RequestInvoiceDetail
           recordId={recordId}
           requestId={requestId}
+          branchId={branchId}
           payments={payments}
           taxData={taxData!}
         />
-      </TabPane>
-    </Tabs>
-  );
+      ),
+    },
+  ];
+
+  return <Tabs defaultActiveKey="1" onChange={onTabChange} items={tabs} />;
 };
 
 export default RequestInvoiceTab;

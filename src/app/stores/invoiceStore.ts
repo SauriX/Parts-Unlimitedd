@@ -19,4 +19,12 @@ export default class InvoiceStore {
       alerts.warning(getErrors(error));
     }
   };
+
+  printPDF = async (invoiceId: string) => {
+    try {
+      await Invoice.printPDF(invoiceId);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
 }

@@ -23,6 +23,7 @@ import Study from "../api/study";
 import Pack from "../api/pack";
 import Location from "../api/location";
 import { IWorkList } from "../models/workList";
+import Series from "../api/series";
 
 export const originOptions = [
   { label: "COMPAÑÍA", value: 1 },
@@ -675,7 +676,7 @@ export default class OptionStore {
     }
   };
 
-  servicesOptions: any[] = [];
+  servicesOptions: IOptions[] = [];
   getServicesOptions = async () => {
     try {
       const service = await Catalog.getActive<ICatalogBudgetList>("costofijo");
@@ -686,6 +687,34 @@ export default class OptionStore {
       }));
     } catch (error) {
       this.servicesOptions = [];
+    }
+  };
+
+  invoiceSeriesOptions: IOptions[] = [];
+  getInvoiceSeriesOptions = async (branchId: string) => {
+    try {
+      const series = await Series.getByBranch(branchId, 1);
+      this.invoiceSeriesOptions = series.map((x) => ({
+        key: x.id,
+        value: x.clave,
+        label: x.clave,
+      }));
+    } catch (error) {
+      this.invoiceSeriesOptions = [];
+    }
+  };
+
+  receiptSeriesOptions: IOptions[] = [];
+  getReceiptSeriesOptions = async (branchId: string) => {
+    try {
+      const series = await Series.getByBranch(branchId, 2);
+      this.receiptSeriesOptions = series.map((x) => ({
+        key: x.id,
+        value: x.clave,
+        label: x.clave,
+      }));
+    } catch (error) {
+      this.receiptSeriesOptions = [];
     }
   };
 }
