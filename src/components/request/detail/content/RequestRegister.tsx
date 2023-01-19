@@ -28,7 +28,6 @@ const RequestRegister = () => {
     request,
     payments,
     totals,
-    getPayments,
     getNextPaymentCode,
     printTicket,
     createPayment,
@@ -108,7 +107,7 @@ const RequestRegister = () => {
       render: (value) => moment(value).format("DD/MM/YYYY"),
     },
     {
-      ...getDefaultColumnProps("facturaId", "Factura", {
+      ...getDefaultColumnProps("serieFactura", "Factura", {
         searchState,
         setSearchState,
         width: 150,
@@ -136,17 +135,6 @@ const RequestRegister = () => {
       form.resetFields();
     }
   };
-
-  // useEffect(() => {
-  //   const readPayments = async () => {
-  //     if (request) {
-  //       await getPayments(request.expedienteId, request.solicitudId!);
-  //     }
-  //   };
-
-  //   readPayments();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
 
   useEffect(() => {
     const getNumber = async () => {
@@ -199,6 +187,7 @@ const RequestRegister = () => {
         <RequestInvoiceTab
           recordId={request!.expedienteId}
           requestId={request!.solicitudId!}
+          branchId={request!.sucursalId}
           payments={selectedPayments.filter(
             (x) => x.estatusId === status.requestPayment.pagado
           )}
@@ -206,6 +195,7 @@ const RequestRegister = () => {
       ),
       width: 900,
     });
+    setSelectedPayments([]);
   };
 
   const downloadXML = async () => {
@@ -273,28 +263,6 @@ const RequestRegister = () => {
                     label: "Número de cuenta",
                   }}
                   max={20}
-                />
-              </Col>
-              <Col span={2}>
-                <SelectInput
-                  formProps={{
-                    name: "serie",
-                    label: "Serie",
-                  }}
-                  options={[{ key: "MT", value: "MT", label: "MT" }]}
-                  required
-                  errors={errors.find((x) => x.name === "serie")?.errors}
-                />
-              </Col>
-              <Col span={2}>
-                <TextInput
-                  formProps={{
-                    name: "numero",
-                  }}
-                  placeholder="Número"
-                  max={100}
-                  readonly
-                  errors={errors.find((x) => x.name === "numero")?.errors}
                 />
               </Col>
               <Col span={8} style={{ textAlign: "right" }}>

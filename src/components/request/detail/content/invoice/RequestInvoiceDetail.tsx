@@ -9,6 +9,7 @@ import {
   Spin,
   Table,
 } from "antd";
+import TextArea from "antd/lib/input/TextArea";
 import { observer } from "mobx-react-lite";
 import React, { useEffect, useState } from "react";
 import SelectInput from "../../../../../app/common/form/proposal/SelectInput";
@@ -25,6 +26,7 @@ import alerts from "../../../../../app/util/alerts";
 import { moneyFormatter } from "../../../../../app/util/utils";
 
 interface IFormInvoice {
+  serie: string;
   usoCfdi: number;
   cantidad: string;
   numeroCuenta: string;
@@ -59,6 +61,7 @@ const settingsOptions: IOptions[] = [
 type RequestInvoiceDetailProps = {
   recordId: string;
   requestId: string;
+  branchId: string;
   payments: IRequestPayment[];
   taxData: ITaxData;
 };
@@ -66,23 +69,36 @@ type RequestInvoiceDetailProps = {
 const RequestInvoiceDetail = ({
   recordId,
   requestId,
+  branchId,
   payments,
   taxData,
 }: RequestInvoiceDetailProps) => {
   const { requestStore, optionStore, modalStore } = useStore();
   const { studies, packs, totals, checkInPayment } = requestStore;
-  const { paymentOptions, cfdiOptions, getPaymentOptions, getcfdiOptions } =
-    optionStore;
+  const {
+    paymentOptions,
+    cfdiOptions,
+    invoiceSeriesOptions,
+    getPaymentOptions,
+    getcfdiOptions,
+    getInvoiceSeriesOptions,
+  } = optionStore;
   const { closeModal } = modalStore;
 
   const [form] = Form.useForm<IFormInvoice>();
 
   const configuration = Form.useWatch("configuracion", form);
+  const sendings = Form.useWatch("metodoEnvio", form);
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<IFormError[]>([]);
+  const [previousSendings, setPreviousSendings] = useState<string[]>([]);
   const [detailData, setDetailData] = useState<IDetailInvoice[]>([]);
   const [avDetailType, setAvDetailType] = useState(settingsOptions);
+  const [simpleConcept, setSimpleConcept] = useState("");
+  const [paymentsTotal] = useState(
+    payments.reduce((acc, obj) => acc + obj.cantidad, 0)
+  );
 
   const detailColumns: IColumns<IDetailInvoice> = [
     {
@@ -90,6 +106,18 @@ const RequestInvoiceDetail = ({
       key: "concepto",
       title: "Concepto",
       width: "60%",
+      className: "no-padding-cell",
+      render: (value) => {
+        if (configuration === "desglozado") return value;
+        return (
+          <TextArea
+            value={simpleConcept}
+            autoSize
+            bordered={false}
+            onChange={(e) => setSimpleConcept(e.target.value)}
+          />
+        );
+      },
     },
     {
       dataIndex: "cantidad",
@@ -110,7 +138,33 @@ const RequestInvoiceDetail = ({
   useEffect(() => {
     getPaymentOptions();
     getcfdiOptions();
-  }, [getPaymentOptions, getcfdiOptions]);
+    getInvoiceSeriesOptions(branchId);
+  }, [branchId, getInvoiceSeriesOptions, getPaymentOptions, getcfdiOptions]);
+
+  const onValuesChange = (changedValues: any) => {
+    const path = Object.keys(changedValues)[0];
+
+    if (path === "metodoEnvio") {
+      const sendings: string[] = changedValues[path];
+      let metodoEnvio: string[] = [];
+
+      if (previousSendings.includes("ambos") && !sendings.includes("ambos")) {
+        metodoEnvio = [];
+      } else if (
+        !previousSendings.includes("ambos") &&
+        sendings.includes("ambos")
+      ) {
+        metodoEnvio = ["correo", "whatsapp", "ambos"];
+      } else if (sendings.length === 2 && !sendings.includes("ambos")) {
+        metodoEnvio = ["correo", "whatsapp", "ambos"];
+      } else {
+        metodoEnvio = sendings.filter((x) => x !== "ambos");
+      }
+
+      form.setFieldsValue({ metodoEnvio });
+      setPreviousSendings(metodoEnvio);
+    }
+  };
 
   const onFinish = async (values: IFormInvoice) => {
     const use = cfdiOptions.find((x) => x.value === values.usoCfdi);
@@ -123,15 +177,30 @@ const RequestInvoiceDetail = ({
     const requestCheckIn: IRequestCheckIn = {
       expedienteId: recordId,
       solicitudId: requestId,
+      serie: values.serie,
       datoFiscalId: taxData.id!,
       usoCFDI: use.label!.toString(),
-      conNombre: values.configuracion.includes("nombre"),
+      formaPago: values.formaPago,
+      simple: values.configuracion.includes("simple"),
+      porConcepto: values.configuracion.includes("concepto"),
       desglozado: values.configuracion.includes("desglozado"),
       envioCorreo: values.metodoEnvio.includes("correo"),
       envioWhatsapp: values.metodoEnvio.includes("whatsapp"),
       pagos: payments,
-      formaPago: "",
+      detalle: [],
     };
+
+    requestCheckIn.detalle = detailData.map((x) => {
+      const isSimple = requestCheckIn.simple || requestCheckIn.porConcepto;
+
+      return {
+        cantidad: x.cantidad,
+        clave: isSimple ? simpleConcept : x.concepto,
+        descripcion: isSimple ? simpleConcept : x.concepto,
+        descuento: 0,
+        precio: x.precioFinal,
+      };
+    });
 
     setLoading(true);
     const checkedIn = await checkInPayment(requestCheckIn);
@@ -169,6 +238,7 @@ const RequestInvoiceDetail = ({
     form.setFieldsValue({
       formaPago: maxPayment.formaPago,
       numeroCuenta: payments
+        .filter((x) => x.numeroCuenta)
         .map((x) => x.numeroCuenta)
         .filter((o, i, a) => a.indexOf(o) === i)
         .join(", "),
@@ -187,10 +257,11 @@ const RequestInvoiceDetail = ({
         })),
       ]);
     } else if (configuration === "simple") {
+      setSimpleConcept("ANALISIS CLINICOS");
       setDetailData([
         {
           concepto: "ANALISIS CLINICOS",
-          precioFinal: totals.total,
+          precioFinal: paymentsTotal,
           cantidad: 1,
         },
       ]);
@@ -198,7 +269,7 @@ const RequestInvoiceDetail = ({
       setDetailData([
         {
           concepto: "",
-          precioFinal: totals.total,
+          precioFinal: paymentsTotal,
           cantidad: 1,
         },
       ]);
@@ -208,7 +279,7 @@ const RequestInvoiceDetail = ({
 
   return (
     <Spin spinning={loading}>
-      <Space direction="vertical">
+      <Space style={{ display: "flex" }} direction="vertical">
         <Form<IFormInvoice>
           {...formItemLayout}
           form={form}
@@ -221,6 +292,7 @@ const RequestInvoiceDetail = ({
             }));
             setErrors(errors);
           }}
+          onValuesChange={onValuesChange}
           scrollToFirstError
         >
           <Row gutter={[0, 12]}>
@@ -230,7 +302,7 @@ const RequestInvoiceDetail = ({
                   name: "serie",
                   label: "Serie de Factura",
                 }}
-                options={[{ value: "MT", label: "MT" }]}
+                options={invoiceSeriesOptions}
                 required
                 errors={errors.find((x) => x.name === "serie")?.errors}
               />
