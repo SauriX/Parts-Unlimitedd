@@ -226,8 +226,8 @@ export default class TrackingOrdertStore {
       if(this.trackingOrder.length<=0){
         this.trackingOrder = studiesR;
       }else{
-         let studiescopi = [... this.trackingOrder];
-         studies.concat(studiesR);
+         let studiescopi = [... this.trackingOrder];    
+         studiescopi= studiescopi.concat(studiesR);
          this.trackingOrder = studiescopi;
       }
     } catch (error) {
