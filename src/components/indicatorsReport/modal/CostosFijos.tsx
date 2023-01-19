@@ -37,7 +37,7 @@ const CostosFijos = ({ data, loading }: CostosFijosProps) => {
       <Col span={24}>
         <div style={{ textAlign: "right", marginTop: 10 }}>
           <Tag color="blue" className="table-tag">
-            Costo Fijo actual: {data.totalMensual}
+            Costo Fijo actual: {data?.totalMensual ? data.totalMensual : 0}
           </Tag>
         </div>
       </Col>

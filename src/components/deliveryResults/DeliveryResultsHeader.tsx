@@ -1,8 +1,8 @@
-import { PageHeader, Typography } from "antd";
+import { Button, PageHeader, Switch, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import DownloadIcon from "../../app/common/icons/DownloadIcon";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import PrintIcon from "../../app/common/icons/PrintIcon";
 import React from "react";
 import { useStore } from "../../app/stores/store";
