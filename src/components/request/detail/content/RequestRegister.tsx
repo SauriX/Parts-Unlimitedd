@@ -28,17 +28,14 @@ const RequestRegister = () => {
     request,
     payments,
     totals,
-    getNextPaymentCode,
     printTicket,
     createPayment,
     cancelPayments,
   } = requestStore;
   const { openModal } = modalStore;
-  const { printXML } = invoiceStore;
+  const { printXML, printPDF } = invoiceStore;
 
   const [form] = Form.useForm<IRequestPayment>();
-
-  const series = Form.useWatch("serie", form);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<IFormError[]>([]);
@@ -61,14 +58,6 @@ const RequestRegister = () => {
         width: 50,
       }),
       render: (_value, _record, index) => index + 1,
-    },
-    {
-      ...getDefaultColumnProps("documento", "Documento", {
-        searchState,
-        setSearchState,
-        width: 135,
-      }),
-      render: (_, record) => record.serie + " " + record.numero,
     },
     {
       ...getDefaultColumnProps("formaPago", "Forma de Pago", {
@@ -136,20 +125,6 @@ const RequestRegister = () => {
     }
   };
 
-  useEffect(() => {
-    const getNumber = async () => {
-      if (!series) {
-        form.setFieldValue("numero", undefined);
-      } else {
-        const next = await getNextPaymentCode(series);
-        form.setFieldValue("numero", next);
-      }
-    };
-
-    getNumber();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [series]);
-
   const cancel = async () => {
     alerts.confirm(
       "¿Desea cancelar el pago?",
@@ -203,6 +178,14 @@ const RequestRegister = () => {
 
     setLoading(true);
     await printXML(invoiceId!);
+    setLoading(false);
+  };
+
+  const downloadPDF = async () => {
+    const invoiceId = selectedPayments[0].facturaId;
+
+    setLoading(true);
+    await printPDF(invoiceId!);
     setLoading(false);
   };
 
@@ -343,6 +326,17 @@ const RequestRegister = () => {
             onClick={downloadXML}
           >
             Descargar XML
+          </Button>
+          <Button
+            type="primary"
+            disabled={
+              selectedPayments.filter(
+                (x) => x.estatusId === status.requestPayment.facturado
+              ).length === 0
+            }
+            onClick={downloadPDF}
+          >
+            Descargar PDF
           </Button>
         </Col>
         <Col span={24}>
