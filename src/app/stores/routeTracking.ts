@@ -6,7 +6,7 @@ import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 import Sampling from "../api/sampling";
 import { ISamplingForm, ISamplingList, IUpdate } from "../models/sampling";
-import { IRouteList, SearchTracking } from "../models/routeTracking";
+import { IRouteList, SearchTracking, TrackingFormValues } from "../models/routeTracking";
 import RouteTracking from "../api/routetracking";
 import responses from "../util/responses";
 import { IRecibe, ISearchPending, searchValues } from "../models/pendingRecive";
@@ -21,6 +21,7 @@ export default class RouteTrackingStore {
   pendings?:IRecibe[]=[];
   ventana:string="enviar";
   searchPending?:ISearchPending = new searchValues();
+  searchrecive:  SearchTracking = new TrackingFormValues();
   clearScopes = () => {
     this.scopes = undefined;
   };
@@ -32,6 +33,9 @@ setventana=(ventana:string)=>{
   };
   setSearchi= (search:ISearchPending)=>{
     this.searchPending=search;
+  };
+  setSearchRecive= (search:SearchTracking)=>{
+    this.searchrecive=search;
   };
   access = async () => {
     try {

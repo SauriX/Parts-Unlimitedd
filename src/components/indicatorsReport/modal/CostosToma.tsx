@@ -1,5 +1,6 @@
 import { Space, Tag, Table, Col, Row } from "antd";
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 import { v4 as uuid } from "uuid";
 import { ISamplesCost } from "../../../app/models/indicators";
 import CostoTomaColumns from "../columnDefinition/costotoma";
@@ -10,12 +11,13 @@ type CostosTomaProps = {
 };
 
 const CostosToma = ({ samples, loading }: CostosTomaProps) => {
+
   return (
     <Row gutter={[0, 24]}>
       <Col span={24}>
         <div style={{ textAlign: "right", marginTop: 10 }}>
           <Tag color="blue" className="table-tag">
-            Costo Toma actual: {samples[0].costoToma}
+            Costo Toma actual: {samples[0]?.costoToma != undefined ? samples[0].costoToma : 0}
           </Tag>
         </div>
       </Col>

@@ -10,40 +10,72 @@ import { IOptions } from "../../../../app/models/shared";
 import optionStore from "../../../../app/stores/optionStore";
 import { useStore } from "../../../../app/stores/store";
 import { formItemLayout } from "../../../../app/util/utils";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 type InvoiceCompanyInfoProps = {
   company: any;
+  facturapiId: string;
+  estatusFactura: any;
 };
-const InvoiceCompanyInfo = ({ company }: InvoiceCompanyInfoProps) => {
+const InvoiceCompanyInfo = ({
+  company,
+  facturapiId,
+  estatusFactura,
+}: InvoiceCompanyInfoProps) => {
   const [form] = Form.useForm();
-  const onFinish = () => {};
+  const { optionStore, invoiceCompanyStore } = useStore();
+  const { fechas, cancelInvoice } = invoiceCompanyStore;
+  const navigate = useNavigate();
+  const onFinish = async (newFormValues: any) => {
+    let cancelationInvoiceData = {
+      facturapiId: facturapiId,
+      motivo: newFormValues.motivo,
+    };
+    console.log("valores", newFormValues);
+    console.log("invoice", facturapiId);
+    console.log("cancelationInvoice", cancelationInvoiceData);
+    await cancelInvoice(cancelationInvoiceData);
+    navigate(`/invoice`);
+  };
   useEffect(() => {
-    form.setFieldsValue(company);
+    form.setFieldValue("fechas", fechas);
+  }, []);
+  useEffect(() => {
+    if (company) {
+      company.direccionFiscal = `${company.estado} ${company.ciudad} ${company.codigoPostal} ${company.colonia} `;
+      form.setFieldsValue(company);
+    }
   }, [company]);
   const reasonCancelation: IOptions[] = [
     {
       label: "01 Comprobantes emitidos con errores con relación.",
-      value: "01 Comprobantes emitidos con errores con relación.",
+      value: "01",
     },
     {
       label: "02 Comprobantes emitidos con errores sin relación",
-      value: "02 Comprobantes emitidos con errores sin relación",
+      value: "02",
     },
     {
       label: "03 No se llevó a cabo la operación.",
-      value: "03 No se llevó a cabo la operación.",
+      value: "03",
     },
     {
       label: "04 Operación nominativa relacionada en una factura global.",
-      value: "04 Operación nominativa relacionada en una factura global.",
+      value: "04",
     },
   ];
   return (
     <>
       <Row justify="end" gutter={[24, 12]} className="filter-buttons">
         <Col span={24}>
-          <Button type="primary">Cancelar</Button>
+          <Button
+            type="primary"
+            disabled={facturapiId === "new" || estatusFactura === "Cancelado"}
+            onClick={() => form.submit()}
+          >
+            Cancelar
+          </Button>
         </Col>
       </Row>
       <div className="status-container" style={{ marginBottom: 12 }}>
@@ -64,7 +96,6 @@ const InvoiceCompanyInfo = ({ company }: InvoiceCompanyInfoProps) => {
                 <Col span={12}>
                   <SelectInput
                     form={form}
-                    multiple
                     formProps={{ label: "Selecciona motivo", name: "motivo" }}
                     options={reasonCancelation}
                   />
@@ -74,24 +105,32 @@ const InvoiceCompanyInfo = ({ company }: InvoiceCompanyInfoProps) => {
                   <TextInput
                     formProps={{ name: "clave", label: "Clave" }}
                     style={{ marginBottom: 10 }}
+                    readonly
                   />
-                  <TextInput formProps={{ name: "nombre", label: "Nombre" }} />
+                  <TextInput
+                    formProps={{ name: "nombre", label: "Nombre" }}
+                    readonly
+                  />
                 </Col>
                 <Col span={6}>
                   <TextInput
                     formProps={{ name: "rfc", label: "RFC" }}
                     style={{ marginBottom: 10 }}
+                    readonly
                   />
+
                   <TextAreaInput
                     formProps={{
                       name: "direccionFiscal",
                       label: "Dirección fiscal",
                     }}
                     rows={3}
+                    readonly
                   />
                   <TextInput
                     formProps={{ name: "razonSocial", label: "Razón social" }}
                     style={{ marginTop: 10 }}
+                    readonly
                   />
                 </Col>
                 <Col span={12}>
@@ -100,6 +139,7 @@ const InvoiceCompanyInfo = ({ company }: InvoiceCompanyInfoProps) => {
                       label: "Periodo de búsqueda de solicitudes:",
                       name: "fechas",
                     }}
+                    readonly
                   />
                 </Col>
               </Row>

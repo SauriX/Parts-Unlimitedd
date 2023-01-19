@@ -150,9 +150,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     };
     readStudy();
   }, [getStudiesOptions]);
-  useEffect(() => {
-    console.log(studiesOptions, "estudios");
-  }, [studiesOptions]);
+  useEffect(() => {}, [studiesOptions]);
   const togleRows = () => {
     if (openRows) {
       setOpenRows(false);
@@ -168,7 +166,6 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   }, [studys]);
 
   const onChange = (e: CheckboxChangeEvent, id: number, solicitud: string) => {
-    console.log("onchange");
     var data = ids;
     var solis = solicitudesData;
     var dataid: number[] = [];
@@ -226,12 +223,9 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
         }
       }
     }
-    console.log(dataupdate.length, "onchange");
     if (dataupdate.length <= 0) {
-      console.log("if");
       setActivar(false);
     } else {
-      console.log("else");
       setActivar(true);
     }
 
@@ -335,7 +329,6 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
       departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [departmentAreaOptions]);
-  console.log("Table");
   useEffect(() => {
     const readData = async () => {
       await getBranchCityOptions();
@@ -355,13 +348,11 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     readData();
   }, [getCity]);
   useEffect(() => {
-    console.log("here");
     const readPriceList = async () => {
       setLoading(true);
       let studios = [];
       var datas = await getAll(values!);
 
-      console.log(datas, "daata");
       setSoliCont(datas?.length!);
       datas?.forEach((x) =>
         x.estudios.forEach((x: any) => {
@@ -376,7 +367,6 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     if (expedientes.length === 0) {
       readPriceList();
     }
-    console.log(expandableStudyConfig, "config");
     setExpandable(expandableStudyConfig);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
@@ -411,7 +401,6 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     setexpandedRowKeys(expandRows);
   };
   useEffect(() => {
-    console.log(activiti, "useffect");
     setExpandable(expandableStudyConfig);
   }, [activiti]);
   const onFinish = async (newValues: ISearchRelase) => {
@@ -422,7 +411,6 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     setSearch(reagent);
     var data = await getAll(reagent);
     let studios = [];
-    console.log(data, "daata");
     setSoliCont(data?.length!);
     data?.forEach((x) =>
       x.estudios.forEach((x: any) => {
@@ -521,41 +509,30 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   return (
     <Fragment>
       <Spin spinning={loading} tip={printing ? "Imprimiendo" : ""}>
-        <div style={{ marginBottom: "5px", marginLeft: "90%" }}>
-          <Button
-            key="clean"
-            onClick={(e) => {
-              form.setFieldsValue(new searchrelase());
-              setValues(new searchrelase());
-            }}
-            style={{ marginLeft: "10%" }}
-          >
-            Limpiar
-          </Button>
-          <Button
-            key="filter"
-            type="primary"
-            onClick={(e) => {
-              e.stopPropagation();
-              form.submit();
-            }}
-            style={{ marginLeft: "10%" }}
-          >
-            Filtrar
-          </Button>
-        </div>
-        <div
-          className="status-container"
-          style={{
-            // backgroundColor: "#F2F2F2",
-            height: "auto",
-            borderStyle: "solid",
-            borderColor: "#CBC9C9",
-            borderWidth: "1px",
-            borderRadius: "10px",
-            padding: "10px",
-          }}
-        >
+        <Row justify="end" gutter={[24, 12]} className="filter-buttons">
+          <Col span={24}>
+            <Button
+              key="clean"
+              onClick={(e) => {
+                form.setFieldsValue(new searchrelase());
+                setValues(new searchrelase());
+              }}
+            >
+              Limpiar
+            </Button>
+            <Button
+              key="filter"
+              type="primary"
+              onClick={(e) => {
+                e.stopPropagation();
+                form.submit();
+              }}
+            >
+              Filtrar
+            </Button>
+          </Col>
+        </Row>
+        <div className="status-container">
           <Form<ISearchRelase>
             {...formItemLayout}
             form={form}
@@ -618,14 +595,6 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
                     ></SelectInput>
                   </Col>
                   <Col span={8}>
-                    {/* <SelectInput
-                    formProps={{
-                      name: "departamento",
-                      label: "Departamento",
-                    }}
-                    multiple
-                    options={departmentAreaOptions}
-                  ></SelectInput> */}
                     <Form.Item label="Áreas" className="no-error-text" help="">
                       <Input.Group>
                         <Row gutter={8}>
@@ -718,7 +687,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
         <Row>
           <Col md={8}>
             <Button
-              style={{ marginTop: "10px", marginBottom: "10px" }}
+              style={{ marginTop: "5px", marginBottom: "10px" }}
               type={activiti == "register" ? "primary" : "ghost"}
               onClick={register}
             >
@@ -726,7 +695,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
             </Button>
             <Button
               style={{
-                marginTop: "10px",
+                marginTop: "5px",
                 marginBottom: "10px",
                 marginLeft: "10px",
               }}

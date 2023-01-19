@@ -223,9 +223,6 @@ export default class AppoinmentStore {
         ...price,
         type: "study",
         estatusId: 0,
-        aplicaCargo: false,
-        aplicaCopago: false,
-        aplicaDescuento: false,
         nuevo: true,
         asignado: true,
       };
@@ -277,9 +274,6 @@ export default class AppoinmentStore {
       const pack: IRequestPack = {
         ...price,
         type: "pack",
-        aplicaCargo: false,
-        aplicaCopago: false,
-        aplicaDescuento: false,
         nuevo: true,
         asignado: true,
         cancelado: false,

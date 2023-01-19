@@ -146,63 +146,6 @@ const RequestStudy = () => {
       render: (value) => moneyFormatter.format(value),
     },
     {
-      key: "aplicaDescuento",
-      dataIndex: "aplicaDescuento",
-      title: "D",
-      align: "center",
-      width: 35,
-      render: (value, item) => (
-        <Checkbox
-          checked={value}
-          onChange={(e) => {
-            if (isStudy(item)) {
-              setStudy({ ...item, aplicaDescuento: e.target.checked });
-            } else {
-              setPack({ ...item, aplicaDescuento: e.target.checked });
-            }
-          }}
-        />
-      ),
-    },
-    {
-      key: "aplicaCargo",
-      dataIndex: "aplicaCargo",
-      title: "C",
-      align: "center",
-      width: 35,
-      render: (value, item) => (
-        <Checkbox
-          checked={value}
-          onChange={(e) => {
-            if (isStudy(item)) {
-              setStudy({ ...item, aplicaCargo: e.target.checked });
-            } else {
-              setPack({ ...item, aplicaCargo: e.target.checked });
-            }
-          }}
-        />
-      ),
-    },
-    {
-      key: "aplicaCopago",
-      dataIndex: "aplicaCopago",
-      title: "CP",
-      align: "center",
-      width: 45,
-      render: (value, item) => (
-        <Checkbox
-          checked={value}
-          onChange={(e) => {
-            if (isStudy(item)) {
-              setStudy({ ...item, aplicaCopago: e.target.checked });
-            } else {
-              setPack({ ...item, aplicaCopago: e.target.checked });
-            }
-          }}
-        />
-      ),
-    },
-    {
       ...getDefaultColumnProps("dias", "Días", {
         searchable: false,
         width: 70,

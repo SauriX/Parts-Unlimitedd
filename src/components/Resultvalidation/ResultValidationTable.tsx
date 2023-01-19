@@ -8,6 +8,7 @@ import {
   Form,
   Input,
   Row,
+  Spin,
 } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {
@@ -471,264 +472,259 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
 
   return (
     <Fragment>
-      <Row justify="end" gutter={[24, 12]} className="filter-buttons">
-        <Col span={24}>
-          <Button
-            key="clean"
-            onClick={(e) => {
-              clearFilter();
-              form.setFieldsValue(new searchValues());
-            }}
-          >
-            Limpiar
-          </Button>
-          <Button
-            key="filter"
-            type="primary"
-            onClick={(e) => {
-              form.submit();
-            }}
-          >
-            Buscar
-          </Button>
-        </Col>
-      </Row>
-      <div
-        className="status-container"
-        style={{
-          // backgroundColor: "#F2F2F2",
-          height: "auto",
-          borderStyle: "solid",
-          borderColor: "#CBC9C9",
-          borderWidth: "1px",
-          borderRadius: "10px",
-          padding: "10px",
-        }}
-      >
-        <Form<ISearchValidation>
-          {...formItemLayout}
-          form={form}
-          name="sampling"
-          initialValues={search}
-          onFinish={onFinish}
-          scrollToFirstError
-        >
-          <Row>
-            <Col span={24}>
-              <Row justify="space-between" gutter={[12, 12]}>
-                <Col span={8}>
-                  <DateRangeInput
-                    formProps={{ label: "Fecha", name: "fecha" }}
-                  />
-                </Col>
-                <Col span={8}>
-                  <TextInput
-                    formProps={{
-                      name: "search",
-                      label: "Buscar",
-                    }}
-                  />
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    form={form}
-                    formProps={{
-                      name: "tipoSoli",
-                      label: "Tipo solicitud",
-                    }}
-                    multiple
-                    options={urgencyOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    form={form}
-                    formProps={{
-                      name: "estudio",
-                      label: "Estudios",
-                    }}
-                    multiple
-                    options={studiesOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    form={form}
-                    formProps={{
-                      name: "estatus",
-                      label: "Estatus",
-                    }}
-                    multiple
-                    options={[
-                      { value: 5, label: "Validado" },
-                      { value: 4, label: "Capturado" },
-                      { value: 7, label: "Enviado" },
-                    ]}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <Form.Item label="Áreas" className="no-error-text" help="">
-                    <Input.Group>
-                      <Row gutter={8}>
-                        <Col span={12}>
-                          <SelectInput
-                            formProps={{
-                              name: "departament",
-                              label: "Departamento",
-                              noStyle: true,
-                            }}
-                            options={departmentOptions}
-                          />
-                        </Col>
-                        <Col span={12}>
-                          <SelectInput
-                            formProps={{
-                              name: "area",
-                              label: "Área",
-                              noStyle: true,
-                            }}
-                            options={areaOptions}
-                          />
-                        </Col>
-                      </Row>
-                    </Input.Group>
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    form={form}
-                    formProps={{
-                      name: "medico",
-                      label: "Médico",
-                    }}
-                    multiple
-                    options={medicOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <Form.Item label="Sucursal" className="no-error-text" help="">
-                    <Input.Group>
-                      <Row gutter={8}>
-                        <Col span={12}>
-                          <SelectInput
-                            formProps={{
-                              name: "ciudad",
-                              label: "Ciudad",
-                              noStyle: true,
-                            }}
-                            options={cityOptions}
-                          />
-                        </Col>
-                        <Col span={12}>
-                          <SelectInput
-                            form={form}
-                            formProps={{
-                              name: "sucursal",
-                              label: "Sucursales",
-                              noStyle: true,
-                            }}
-                            multiple
-                            options={branchOptions}
-                          />
-                        </Col>
-                      </Row>
-                    </Input.Group>
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    form={form}
-                    formProps={{
-                      name: "compañia",
-                      label: "Compañía",
-                    }}
-                    multiple
-                    options={companyOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}></Col>
-              </Row>
-            </Col>
-          </Row>
-        </Form>
-      </div>
-      <Row>
-        <Col md={8}>
-          <Button
-            style={{ marginTop: "10px", marginBottom: "10px" }}
-            type={activiti == "register" ? "primary" : "ghost"}
-            onClick={register}
-          >
-            Registrar Validación
-          </Button>
-          <Button
-            style={{
-              marginTop: "10px",
-              marginBottom: "10px",
-              marginLeft: "10px",
-            }}
-            type={activiti == "cancel" ? "primary" : "ghost"}
-            onClick={cancel}
-          >
-            Cancelar Validación
-          </Button>
-        </Col>
-        <Col md={13}></Col>
-        <Col md={3}>
-          {activiti == "register" ? (
+      <Spin spinning={loading} tip={printing ? "Imprimiendo" : ""}>
+        <Row justify="end" gutter={[24, 12]} className="filter-buttons">
+          <Col span={24}>
             <Button
-              style={{
-                marginTop: "10px",
-                marginBottom: "10px",
-                marginLeft: "34%",
-              }}
-              type="primary"
-              disabled={!activar}
-              onClick={() => {
-                updatedata();
+              key="clean"
+              onClick={(e) => {
+                clearFilter();
+                form.setFieldsValue(new searchValues());
               }}
             >
-              {activar ? "" : " "}
-              Aceptar Validación
+              Limpiar
             </Button>
-          ) : (
-            ""
-          )}
-          {activiti == "cancel" ? (
             <Button
-              style={{
-                marginTop: "10px",
-                marginBottom: "10px",
-                marginLeft: "30%",
-              }}
+              key="filter"
               type="primary"
-              disabled={!activar}
-              onClick={() => {
-                updatedata();
+              onClick={(e) => {
+                form.submit();
               }}
             >
-              {activar ? "" : " "}
+              Filtrar
+            </Button>
+          </Col>
+        </Row>
+        <div className="status-container">
+          <Form<ISearchValidation>
+            {...formItemLayout}
+            form={form}
+            name="sampling"
+            initialValues={search}
+            onFinish={onFinish}
+            scrollToFirstError
+          >
+            <Row>
+              <Col span={24}>
+                <Row justify="space-between" gutter={[12, 12]}>
+                  <Col span={8}>
+                    <DateRangeInput
+                      formProps={{ label: "Fecha", name: "fecha" }}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <TextInput
+                      formProps={{
+                        name: "search",
+                        label: "Buscar",
+                      }}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "tipoSoli",
+                        label: "Tipo solicitud",
+                      }}
+                      multiple
+                      options={urgencyOptions}
+                    ></SelectInput>
+                  </Col>
+                  <Col span={8}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "estudio",
+                        label: "Estudios",
+                      }}
+                      multiple
+                      options={studiesOptions}
+                    ></SelectInput>
+                  </Col>
+                  <Col span={8}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "estatus",
+                        label: "Estatus",
+                      }}
+                      multiple
+                      options={[
+                        { value: 5, label: "Validado" },
+                        { value: 4, label: "Capturado" },
+                        { value: 7, label: "Enviado" },
+                      ]}
+                    ></SelectInput>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Áreas" className="no-error-text" help="">
+                      <Input.Group>
+                        <Row gutter={8}>
+                          <Col span={12}>
+                            <SelectInput
+                              formProps={{
+                                name: "departament",
+                                label: "Departamento",
+                                noStyle: true,
+                              }}
+                              options={departmentOptions}
+                            />
+                          </Col>
+                          <Col span={12}>
+                            <SelectInput
+                              formProps={{
+                                name: "area",
+                                label: "Área",
+                                noStyle: true,
+                              }}
+                              options={areaOptions}
+                            />
+                          </Col>
+                        </Row>
+                      </Input.Group>
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "medico",
+                        label: "Médico",
+                      }}
+                      multiple
+                      options={medicOptions}
+                    ></SelectInput>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      label="Sucursal"
+                      className="no-error-text"
+                      help=""
+                    >
+                      <Input.Group>
+                        <Row gutter={8}>
+                          <Col span={12}>
+                            <SelectInput
+                              formProps={{
+                                name: "ciudad",
+                                label: "Ciudad",
+                                noStyle: true,
+                              }}
+                              options={cityOptions}
+                            />
+                          </Col>
+                          <Col span={12}>
+                            <SelectInput
+                              form={form}
+                              formProps={{
+                                name: "sucursal",
+                                label: "Sucursales",
+                                noStyle: true,
+                              }}
+                              multiple
+                              options={branchOptions}
+                            />
+                          </Col>
+                        </Row>
+                      </Input.Group>
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "compañia",
+                        label: "Compañía",
+                      }}
+                      multiple
+                      options={companyOptions}
+                    ></SelectInput>
+                  </Col>
+                  <Col span={8}></Col>
+                </Row>
+              </Col>
+            </Row>
+          </Form>
+        </div>
+        <Row>
+          <Col md={8}>
+            <Button
+              style={{ marginTop: "5px", marginBottom: "10px" }}
+              type={activiti == "register" ? "primary" : "ghost"}
+              onClick={register}
+            >
+              Registrar Validación
+            </Button>
+            <Button
+              style={{
+                marginTop: "5px",
+                marginBottom: "10px",
+                marginLeft: "10px",
+              }}
+              type={activiti == "cancel" ? "primary" : "ghost"}
+              onClick={cancel}
+            >
               Cancelar Validación
             </Button>
-          ) : (
-            ""
-          )}
-        </Col>
-      </Row>
-      <Fragment>
-        <ValidationTableStudy
-          data={studys}
-          columns={ValidationStudyColumns({ printTicket })}
-          expandable={ValidationStudyExpandable({
-            activiti,
-            onChange,
-            viewTicket,
-            visto,
-            setvisto,
-            updateData,
-          })}
-        />
-      </Fragment>
+          </Col>
+          <Col md={13}></Col>
+          <Col md={3}>
+            {activiti == "register" ? (
+              <Button
+                style={{
+                  marginTop: "10px",
+                  marginBottom: "10px",
+                  marginLeft: "34%",
+                }}
+                type="primary"
+                disabled={!activar}
+                onClick={() => {
+                  updatedata();
+                }}
+              >
+                {activar ? "" : " "}
+                Aceptar Validación
+              </Button>
+            ) : (
+              ""
+            )}
+            {activiti == "cancel" ? (
+              <Button
+                style={{
+                  marginTop: "10px",
+                  marginBottom: "10px",
+                  marginLeft: "30%",
+                }}
+                type="primary"
+                disabled={!activar}
+                onClick={() => {
+                  updatedata();
+                }}
+              >
+                {activar ? "" : " "}
+                Cancelar Validación
+              </Button>
+            ) : (
+              ""
+            )}
+          </Col>
+        </Row>
+        <Fragment>
+          <ValidationTableStudy
+            data={studys}
+            columns={ValidationStudyColumns({ printTicket })}
+            expandable={ValidationStudyExpandable({
+              activiti,
+              onChange,
+              viewTicket,
+              visto,
+              setvisto,
+              updateData,
+            })}
+          />
+        </Fragment>
+      </Spin>
     </Fragment>
   );
 };

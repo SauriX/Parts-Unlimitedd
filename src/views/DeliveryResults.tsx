@@ -33,7 +33,6 @@ const DeliveryResults = () => {
       />
       <Divider />
       <DeliveryResultsForm />
-
       <DeliveryResultsTable componentRef={componentRef} printing={loading} />
     </>
   );

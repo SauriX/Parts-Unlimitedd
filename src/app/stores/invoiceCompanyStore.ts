@@ -78,4 +78,58 @@ export class InvoiceCompanyStore {
       alerts.warning(getErrors(error));
     }
   };
+
+  downloadPdf = async (facturapiId: string) => {
+    try {
+      const invoiceInfo = await InvoiceCompany.downloadPdf(facturapiId);
+      console.log("conse", invoiceInfo);
+      return invoiceInfo;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  printPdf = async (facturapiId: string) => {
+    try {
+      const invoiceInfo = await InvoiceCompany.printPdf(facturapiId);
+      console.log("conse", invoiceInfo);
+      return invoiceInfo;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  fechas: any[] = [];
+  saveFilterDate = (fechas: any[]) => {
+    this.fechas = fechas;
+  };
+
+  sendInvoice = async (sendInvoiceData: any) => {
+    try {
+      return await InvoiceCompany.sendInvoice(sendInvoiceData);
+      // console.log("conse", invoiceInfo);
+      // return invoiceInfo;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  cancelInvoice = async (cancelInvoiceData: any) => {
+    try {
+      return await InvoiceCompany.cancelInvoice(cancelInvoiceData);
+      // console.log("conse", invoiceInfo);
+      // return invoiceInfo;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
+  printReceipt = async (receiptCompanyData: any) => {
+    try {
+      const reciptInfo = await InvoiceCompany.printReceipt(receiptCompanyData);
+      console.log("conse", reciptInfo);
+      return reciptInfo;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
 }

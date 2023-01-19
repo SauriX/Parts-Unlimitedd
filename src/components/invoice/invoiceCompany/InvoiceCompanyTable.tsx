@@ -105,11 +105,12 @@ const InvoiceCompanyTable = () => {
                   <div style={{ display: "flex", flexDirection: "row" }}>
                     <Link
                       onClick={() => {
-                        navigate(`#`);
+                        console.log("row", toJS(value));
+                        console.log("record", toJS(record));
+                        navigate(`/invoice/create/${record.solicitudId}`);
                       }}
                     >
-                      {/* {factura.facturaId} */}
-                      {"111111111111"}
+                      {factura.facturapiId}
                     </Link>
                     <span>
                       <small>
@@ -117,8 +118,7 @@ const InvoiceCompanyTable = () => {
                           <Text
                             strong
                             type={
-                              factura.estatusId ===
-                              status.requestPayment.cancelado
+                              factura.estatus.nombre === "Cancelado"
                                 ? "danger"
                                 : "secondary"
                             }
