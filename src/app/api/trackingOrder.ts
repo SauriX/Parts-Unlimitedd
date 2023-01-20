@@ -2,6 +2,8 @@ import {
   ITrackingOrderForm,
   ITrackingOrderList,
   IEstudiosList,
+  IRequestStudyOrder,
+  searchstudies,
 } from "../models/trackingOrder";
 import { IScopes } from "../models/shared";
 import requests from "./agent";
@@ -22,6 +24,10 @@ const TrackingOrder = {
     requests.download(`tracking-order/export/form/${id}`),
   findStudies: (study: number[]): Promise<IEstudiosList[]> =>
     requests.post(`tracking-order/findStudies`, study),
+    findStudiesAll: (study: searchstudies): Promise<IEstudiosList[]> =>
+    requests.post(`tracking-order/findStudiesall`, study),
+    findRequestStudies: (solicitud:string): Promise<IRequestStudyOrder[]> =>
+    requests.get(`tracking-order/findStudies/${solicitud}`),
   confirmarRecoleccion: (seguimientoId: string): Promise<void> =>
     requests.post(`tracking-order/confirmarRecoleccion`, seguimientoId),
   cancelarRecoleccion: (seguimientoId: string): Promise<void> =>
