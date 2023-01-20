@@ -54,6 +54,7 @@ const InvoiceCompanyCreate = () => {
       let filterRequests = invoices.solicitudes.filter((invoice: any) =>
         selectedRequestInvoice.includes(invoice.solicitudId)
       );
+
       console.log("filterrequest", toJS(filterRequests));
       setSelectedRequests([...filterRequests]);
     }
@@ -64,13 +65,14 @@ const InvoiceCompanyCreate = () => {
       const estuiosTotal = selectedRows.flatMap(
         (solicitud) => solicitud.estudios
       );
+      console.log("estudios", toJS(estuiosTotal));
       setEstudios(estuiosTotal);
     } else {
       if (!!selectRequests) {
         const estuiosTotal = selectRequests.flatMap(
           (solicitud: any) => solicitud.estudios
         );
-        console.log("estudios", estudios);
+        console.log("estudios", toJS(estuiosTotal));
         setEstudios(estuiosTotal);
       }
     }
@@ -111,9 +113,6 @@ const InvoiceCompanyCreate = () => {
   }, [selectedRows, selectRequests]);
 
   const createInvoice = async () => {
-    console.log("creating invoice...");
-    console.log("company", toJS(company));
-    console.log("totalrow", toJS(selectedRows));
     if (company) {
       const use = cfdiOptions.find((x) => x.value === company.cfdiId);
       const method = paymentOptions.find(
@@ -153,17 +152,37 @@ const InvoiceCompanyCreate = () => {
       navigate(`/invoice`);
     }
   };
+  const getEstatusFactura = () => {
+    if (!!selectRequests) {
+      if (id !== "new") {
+        return selectRequests[0].facturas[0].estatus.nombre;
+      }
+    }
+  };
+  const getFacturapi = () => {
+    if (!!selectRequests) {
+      if (id !== "new") {
+        return selectRequests[0].facturas[0].facturapiId;
+      }
+    }
+  };
   return (
     <>
       <InvoiceCompanyHeader handleDownload={() => {}} />
       <Divider />
-      <InvoiceCompanyInfo company={company} />
+      <InvoiceCompanyInfo
+        company={company}
+        facturapiId={getFacturapi()}
+        estatusFactura={getEstatusFactura()}
+      />
       <InvoiceCompanyData
         company={company}
         totalEstudios={total}
         totalFinal={totalFinalEstudios}
         createInvoice={createInvoice}
         invoice={id!}
+        estatusFactura={getEstatusFactura()}
+        facturapiId={getFacturapi()}
       />
       <InvoiceCompanyDetail
         estudios={estudios}
