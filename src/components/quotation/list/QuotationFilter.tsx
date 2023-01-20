@@ -80,6 +80,7 @@ const QuotationFilter = () => {
           <Col span={8}>
             <DateRangeInput
               formProps={{ name: "fechaAlta", label: "Fecha de alta" }}
+              disableAfterDates
             />
           </Col>
           <Col span={8}>
@@ -89,6 +90,14 @@ const QuotationFilter = () => {
                 label: "Paciente",
               }}
               placeholder="Expediente / Nombre / Código de barras / Huella digital"
+            />
+          </Col>
+          <Col span={8}>
+            <TextInput
+              formProps={{
+                name: "clave",
+                label: "Clave",
+              }}
             />
           </Col>
           <Col span={8}>
