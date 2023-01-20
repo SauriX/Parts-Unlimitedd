@@ -1,6 +1,7 @@
 import { Col, Space, Spin } from "antd";
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import moment from "moment";
+import { useEffect, useState } from "react";
 import { useStore } from "../../app/stores/store";
 import IndicatorFilter from "./IndicatorFilter";
 import IndicatorsTable from "./IndicatorsTable";
@@ -12,7 +13,21 @@ type IndicatorsProps = {
 const IndicatorsBody = ({ printing }: IndicatorsProps) => {
   const [loading, setLoading] = useState(false);
   const { indicatorsStore } = useStore();
-  const { data } = indicatorsStore;
+  const { data, getByFilter } = indicatorsStore;
+
+  useEffect(() => { 
+    const readRequests = async () => {
+      await getByFilter({
+        fechaIndividual: moment(Date.now()).utcOffset(0, true),
+        sucursalId: [],
+        fechaInicial: moment(Date.now()).utcOffset(0, true),
+        fechaFinal: moment(Date.now()).utcOffset(0, true)
+      });
+    };
+
+    readRequests();
+  }, []);
+
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>

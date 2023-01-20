@@ -25,6 +25,7 @@ import { catalog, status, statusName } from "../util/catalogs";
 import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
+import { v4 as uuidv4 } from "uuid";
 
 export default class RequestStore {
   constructor() {
@@ -226,7 +227,10 @@ export default class RequestStore {
       if (data.paquetes && data.paquetes.length > 0) {
         this.packs = data.paquetes;
       }
-      this.studies = data.estudios;
+      this.studies = data.estudios.map((x) => ({
+        ...x,
+        identificador: uuidv4(),
+      }));
       this.totals = data.total ?? new RequestTotal();
       return data;
     } catch (error) {
