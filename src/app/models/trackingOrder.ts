@@ -11,6 +11,7 @@ export interface IEstudiosList {
   id?: string;
   solicitudId: string;
   IsInRute?: boolean;
+  isExtra?:boolean;
 }
 
 export interface searchstudies {
@@ -38,6 +39,7 @@ export interface ITrackingOrderList {
   solicitudId: string;
   estudioId: number;
   expedienteId: string;
+  isExtra?:boolean;
 }
 
 export interface ITrackingOrderForm {

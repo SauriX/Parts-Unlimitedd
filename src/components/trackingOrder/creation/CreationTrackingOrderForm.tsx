@@ -283,6 +283,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
           escaneado: order.escaneado,
           temperatura: order.temperatura,
           estudioId: estudio.estudioId,
+          isExtra:estudio.isExtra
         };
       });
     trackingOrderSend.estudios = _.flatten(estudiosFiltrados);

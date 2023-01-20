@@ -68,6 +68,7 @@ export default class TrackingOrdertStore {
         }
         return a;
       });
+      console.log(estudios);
       this.trackingOrder = estudios;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -220,7 +221,8 @@ export default class TrackingOrdertStore {
 
       let studiesR = studies.map((x) => {
         let a = new TrackingOrderListValues(x);
-
+        console.log(a);
+        console.log(x);
         return a;
       });
       if(this.trackingOrder.length<=0){
