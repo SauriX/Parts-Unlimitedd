@@ -137,8 +137,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const loadInit = async () => {
     const cStudy = await getRequestStudyById(estudio.id!);
     setCurrentStudy(cStudy!);
+    console.log("cStudy", cStudy)
 
-    let captureResult = studies.find((x) => x.id == estudioId);
+    let captureResult = studies.find((x) => x.solicitudEstudioId! == estudio.id);
 
     if (captureResult && captureResult.parametros) {
       captureResult.parametros = captureResult.parametros.map((x) => {
@@ -640,6 +641,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                           let fieldResult = resultValue?.find(
                             (x) => x.id === fieldValue.id
                           )?.resultado as string;
+
+                          console.log(fieldValue)
+                          console.log(fieldResult)
 
                           let fieldRange =
                             parseFloat(fieldValue.valorInicial) >

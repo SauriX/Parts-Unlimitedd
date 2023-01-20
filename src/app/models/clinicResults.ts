@@ -3,6 +3,7 @@ import { ItipoValorForm } from "./parameter";
 
 export interface IClinicResultList {
   id: string;
+  identificador?: string;
   expedienteId: string;
   solicitud: string;
   nombre: string;
@@ -49,6 +50,7 @@ export interface IClinicStudy {
   fechaActualizacion?: string;
   usuarioActualizacion?: string;
   urgencia?: number;
+  solicitudEstudioId?: number;
   parametros: IClinicResultCaptureForm[];
 }
 

@@ -56,7 +56,7 @@ const IndicatorsTable = ({ data }: IndicatorsProps) => {
           dataIndex: x,
           title: x,
           render: (value, record: any) => {
-            if (record.Nombre === "COSTO REACTIVO" && x !== "Nombre") {
+            if (record.NOMBRE === "COSTO REACTIVO" && x !== "NOMBRE") {
               return (
                 <BudgetInput
                   loading={loading}
@@ -73,7 +73,7 @@ const IndicatorsTable = ({ data }: IndicatorsProps) => {
   }, [data]);
 
   return (
-    <Table<any> columns={columns} dataSource={data} loading={loadingReport} rowClassName={(item) => item.x === "UTILIDAD DE OPERACIÓN" ? "Resumen Total" : ""} />
+    <Table<any> columns={columns} dataSource={data} loading={loadingReport} />
   );
 };
 
