@@ -30,6 +30,7 @@ import { moneyFormatter } from "../../../../../app/util/utils";
 import { DownOutlined } from "@ant-design/icons";
 import { ItemType } from "antd/lib/menu/hooks/useItems";
 import Request from "../../../../../app/api/request";
+import { v4 as uuid } from "uuid";
 
 interface IFormInvoice {
   serie: string;
@@ -42,6 +43,7 @@ interface IFormInvoice {
 }
 
 interface IDetailInvoice {
+  id: string;
   concepto: string;
   cantidad: number;
   precioFinal: number;
@@ -243,6 +245,7 @@ const RequestInvoiceDetail = ({
         .filter((o, i, a) => a.indexOf(o) === i)
         .join(", "),
       configuracion: totalPayment === totals.total ? "desglozado" : "simple",
+      metodoEnvio: [],
     });
 
     Request.getById(recordId, requestId).then((req) => setRequest(req));
@@ -253,6 +256,7 @@ const RequestInvoiceDetail = ({
     if (configuration === "desglozado") {
       setDetailData([
         ...studies.map((x) => ({
+          id: uuid(),
           concepto: x.nombre,
           precioFinal: x.precioFinal,
           cantidad: 1,
@@ -262,6 +266,7 @@ const RequestInvoiceDetail = ({
       setSimpleConcept("ANALISIS CLINICOS");
       setDetailData([
         {
+          id: uuid(),
           concepto: "ANALISIS CLINICOS",
           precioFinal: paymentsTotal,
           cantidad: 1,
@@ -270,11 +275,7 @@ const RequestInvoiceDetail = ({
     } else {
       setSimpleConcept("");
       setDetailData([
-        {
-          concepto: "",
-          precioFinal: paymentsTotal,
-          cantidad: 1,
-        },
+        { id: uuid(), concepto: "", precioFinal: paymentsTotal, cantidad: 1 },
       ]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -467,6 +468,7 @@ const RequestInvoiceDetail = ({
         </Form>
         <Table<IDetailInvoice>
           key="clave"
+          rowKey={(o) => o.id}
           title={() => (
             <Row>
               <Col span={12}>Detalle</Col>
