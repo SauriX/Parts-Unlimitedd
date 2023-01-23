@@ -113,11 +113,11 @@ const IndicatorFilter = () => {
         onFinish={onFinish}
       >
         <Row justify="space-between" gutter={[16, 12]}>
-          <Col span={8}>
+          <Col span={10}>
             <Form.Item label="Fecha" className="no-error-text" help="">
               <Input.Group>
                 <Row gutter={[16, 12]}>
-                  <Col span={12}>
+                  <Col span={10}>
                     <DateInput
                       formProps={{
                         label: "",
@@ -127,7 +127,7 @@ const IndicatorFilter = () => {
                       pickerType={datePickerType}
                     />
                   </Col>
-                  <Col span={12}>
+                  <Col span={14}>
                     <Radio.Group
                       size="small"
                       defaultValue="date"
@@ -146,7 +146,7 @@ const IndicatorFilter = () => {
               </Input.Group>
             </Form.Item>
           </Col>
-          <Col span={8}>
+          <Col span={10}>
             <Form.Item label="Sucursal" className="no-error-text" help="">
               <Input.Group>
                 <Row gutter={8}>
@@ -178,7 +178,7 @@ const IndicatorFilter = () => {
               </Input.Group>
             </Form.Item>
           </Col>
-          <Col span={8} className="filter-buttons">
+          <Col span={4} className="filter-buttons">
             <Button key="modal" type="text" onClick={() => servicesCosts()}>
               <SettingFilled style={{ fontSize: 14 }} />
             </Button>
