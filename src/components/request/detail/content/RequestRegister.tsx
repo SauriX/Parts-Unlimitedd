@@ -248,7 +248,7 @@ const RequestRegister = () => {
                   max={20}
                 />
               </Col>
-              <Col span={8} style={{ textAlign: "right" }}>
+              <Col span={12} style={{ textAlign: "right" }}>
                 <Button htmlType="submit" type="primary">
                   Registrar Pago
                 </Button>
