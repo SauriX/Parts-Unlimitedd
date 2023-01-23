@@ -2,7 +2,9 @@ import {
   Button,
   Checkbox,
   Col,
+  Dropdown,
   Form,
+  MenuProps,
   Radio,
   Row,
   Space,
@@ -16,6 +18,7 @@ import SelectInput from "../../../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../../../app/common/form/proposal/TextInput";
 import { IColumns } from "../../../../../app/common/table/utils";
 import {
+  IRequest,
   IRequestCheckIn,
   IRequestPayment,
 } from "../../../../../app/models/request";
@@ -24,6 +27,9 @@ import { ITaxData } from "../../../../../app/models/taxdata";
 import { useStore } from "../../../../../app/stores/store";
 import alerts from "../../../../../app/util/alerts";
 import { moneyFormatter } from "../../../../../app/util/utils";
+import { DownOutlined } from "@ant-design/icons";
+import { ItemType } from "antd/lib/menu/hooks/useItems";
+import Request from "../../../../../app/api/request";
 
 interface IFormInvoice {
   serie: string;
@@ -58,6 +64,39 @@ const settingsOptions: IOptions[] = [
   { label: "Por concepto", value: "concepto" },
 ];
 
+type ItemTypeExt = ItemType & {
+  key: string;
+  disabled?: boolean;
+  description?: string;
+};
+
+interface MenuPropsExt extends MenuProps {
+  items: ItemTypeExt[];
+}
+
+const items: MenuPropsExt["items"] = [
+  {
+    label: "Sucursal",
+    key: "branch",
+    description: "ESTUDIOS DE LABORATORIO REALIZADOS EN SUCURSAL [branch]",
+  },
+  {
+    label: "Paciente",
+    key: "patient",
+    description: "PACIENTE: [patient]",
+  },
+  {
+    label: "Copago",
+    key: "cup",
+    description: "COPAGO TOTAL [total]",
+  },
+  {
+    label: "Consulta",
+    key: "simple",
+    description: "CONSULTA MEDICA",
+  },
+];
+
 type RequestInvoiceDetailProps = {
   recordId: string;
   requestId: string;
@@ -90,6 +129,7 @@ const RequestInvoiceDetail = ({
   const configuration = Form.useWatch("configuracion", form);
   const sendings = Form.useWatch("metodoEnvio", form);
 
+  const [request, setRequest] = useState<IRequest>();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<IFormError[]>([]);
   const [previousSendings, setPreviousSendings] = useState<string[]>([]);
@@ -99,6 +139,7 @@ const RequestInvoiceDetail = ({
   const [paymentsTotal] = useState(
     payments.reduce((acc, obj) => acc + obj.cantidad, 0)
   );
+  const [conceptItems, setConceptItems] = useState<ItemTypeExt[]>(items);
 
   const detailColumns: IColumns<IDetailInvoice> = [
     {
@@ -166,6 +207,79 @@ const RequestInvoiceDetail = ({
     }
   };
 
+  useEffect(() => {
+    form.setFieldValue(
+      "cantidad",
+      moneyFormatter.format(payments.reduce((acc, o) => acc + o.cantidad, 0))
+    );
+  }, [form, payments]);
+
+  useEffect(() => {
+    const totalPayment = payments.reduce((acc, obj) => acc + obj.cantidad, 0);
+
+    if (totalPayment === totals.total) {
+      setAvDetailType((prev) => [
+        { label: "Desglozado por estudio", value: "desglozado" },
+        ...prev.filter((x) => x.value !== "desglozado"),
+      ]);
+    }
+
+    if (!studies.some((x) => (x.copago ?? 0) > 0)) {
+      const items = [...conceptItems];
+      items[2].disabled = true;
+      setConceptItems(items);
+    }
+
+    const maxPayment = payments.reduce(
+      (p, c) => (p.cantidad > c.cantidad ? p : c),
+      payments[0]
+    );
+
+    form.setFieldsValue({
+      formaPago: maxPayment.formaPago,
+      numeroCuenta: payments
+        .filter((x) => x.numeroCuenta)
+        .map((x) => x.numeroCuenta)
+        .filter((o, i, a) => a.indexOf(o) === i)
+        .join(", "),
+      configuracion: totalPayment === totals.total ? "desglozado" : "simple",
+    });
+
+    Request.getById(recordId, requestId).then((req) => setRequest(req));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (configuration === "desglozado") {
+      setDetailData([
+        ...studies.map((x) => ({
+          concepto: x.nombre,
+          precioFinal: x.precioFinal,
+          cantidad: 1,
+        })),
+      ]);
+    } else if (configuration === "simple") {
+      setSimpleConcept("ANALISIS CLINICOS");
+      setDetailData([
+        {
+          concepto: "ANALISIS CLINICOS",
+          precioFinal: paymentsTotal,
+          cantidad: 1,
+        },
+      ]);
+    } else {
+      setSimpleConcept("");
+      setDetailData([
+        {
+          concepto: "",
+          precioFinal: paymentsTotal,
+          cantidad: 1,
+        },
+      ]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configuration]);
+
   const onFinish = async (values: IFormInvoice) => {
     const use = cfdiOptions.find((x) => x.value === values.usoCfdi);
 
@@ -213,73 +327,39 @@ const RequestInvoiceDetail = ({
     }
   };
 
-  useEffect(() => {
-    form.setFieldValue(
-      "cantidad",
-      moneyFormatter.format(payments.reduce((acc, o) => acc + o.cantidad, 0))
-    );
-  }, [form, payments]);
+  const onClick: MenuProps["onClick"] = ({ key }) => {
+    const item = conceptItems.find((x) => x.key === key);
+    const initial = simpleConcept.length === 0 ? "" : simpleConcept + "\n";
 
-  useEffect(() => {
-    const totalPayment = payments.reduce((acc, obj) => acc + obj.cantidad, 0);
+    if (!request) return;
 
-    if (totalPayment === totals.total) {
-      setAvDetailType((prev) => [
-        { label: "Desglozado por estudio", value: "desglozado" },
-        ...prev.filter((x) => x.value !== "desglozado"),
-      ]);
-    }
+    let newText = "";
 
-    const maxPayment = payments.reduce(
-      (p, c) => (p.cantidad > c.cantidad ? p : c),
-      payments[0]
-    );
-
-    form.setFieldsValue({
-      formaPago: maxPayment.formaPago,
-      numeroCuenta: payments
-        .filter((x) => x.numeroCuenta)
-        .map((x) => x.numeroCuenta)
-        .filter((o, i, a) => a.indexOf(o) === i)
-        .join(", "),
-      configuracion: totalPayment === totals.total ? "desglozado" : "simple",
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (configuration === "desglozado") {
-      setDetailData([
-        ...studies.map((x) => ({
-          concepto: x.nombre,
-          precioFinal: x.precioFinal,
-          cantidad: 1,
-        })),
-      ]);
-    } else if (configuration === "simple") {
-      setSimpleConcept("ANALISIS CLINICOS");
-      setDetailData([
-        {
-          concepto: "ANALISIS CLINICOS",
-          precioFinal: paymentsTotal,
-          cantidad: 1,
-        },
-      ]);
+    if (key === "branch") {
+      newText =
+        initial + item?.description?.replace("[branch]", request.sucursal!);
+    } else if (key === "patient") {
+      newText =
+        initial + item?.description?.replace("[patient]", request.paciente!);
+    } else if (key === "cup") {
+      newText =
+        initial +
+        item?.description?.replace(
+          "[total]",
+          moneyFormatter.format(
+            studies.reduce((acc, obj) => acc + (obj.copago ?? 0), 0)
+          )
+        );
     } else {
-      setDetailData([
-        {
-          concepto: "",
-          precioFinal: paymentsTotal,
-          cantidad: 1,
-        },
-      ]);
+      newText = initial + item?.description;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configuration]);
+
+    setSimpleConcept(newText);
+  };
 
   return (
     <Spin spinning={loading}>
-      <Space style={{ display: "flex" }} direction="vertical">
+      <Space style={{ display: "flex" }} size="middle" direction="vertical">
         <Form<IFormInvoice>
           {...formItemLayout}
           form={form}
@@ -387,7 +467,23 @@ const RequestInvoiceDetail = ({
         </Form>
         <Table<IDetailInvoice>
           key="clave"
-          title={() => "Detalle"}
+          title={() => (
+            <Row>
+              <Col span={12}>Detalle</Col>
+              {configuration === "concepto" && (
+                <Col span={12} style={{ textAlign: "right" }}>
+                  <Dropdown menu={{ items: items, onClick }}>
+                    <a href="/#" onClick={(e) => e.preventDefault()}>
+                      <Space>
+                        Agregar concepto
+                        <DownOutlined />
+                      </Space>
+                    </a>
+                  </Dropdown>
+                </Col>
+              )}
+            </Row>
+          )}
           columns={detailColumns}
           dataSource={detailData}
           pagination={false}

@@ -14,7 +14,9 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   claveMedico?: string;
   nombreCompania?: string;
   observaciones?: string;
+  paciente?: string;
   sucursalId: string;
+  sucursal?: string;
   clave?: string;
   estatusId: number;
   clavePatologica?: string;
