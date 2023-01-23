@@ -19,9 +19,9 @@ const CreationTrackingOrderHeader: FC<CreationTrackingOrderHeaderProps> = ({
   handlePrint,
 }) => {
   const navigate = useNavigate();
-  const { trackingOrderStore } = useStore();
+  const { trackingOrderStore,routeTrackingStore } = useStore();
   const { exportList, TranckingOrderSend, OrderId,clearTrackingOrders } = trackingOrderStore;
-
+  const { searchrecive, getAll }= routeTrackingStore;
   const [searchParams, setSearchParams] = useSearchParams();
 
   const download = () => {
@@ -41,9 +41,9 @@ const CreationTrackingOrderHeader: FC<CreationTrackingOrderHeaderProps> = ({
       extra={[
         <GoBackIcon
           key="back"
-          onClick={() => {
+          onClick={async () => {
             clearTrackingOrders()
-            
+            await getAll(searchrecive);
             navigate(`/segRutas`);
           }}
         />,

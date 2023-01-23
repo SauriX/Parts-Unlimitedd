@@ -133,8 +133,6 @@ const PendingRecive = () => {
     if (pendings!.length === 0) {
       readPriceList();
     }
-    console.log(getExpandableConfig("estudios"), "config");
-    setExpandable(expandableStudyConfig);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAllRecive]);
 
@@ -205,80 +203,6 @@ const PendingRecive = () => {
       render: (value) => moment(value).utc().format("MMMM D YYYY  h:mmA"),
     },
   ];
-  const expandableStudyConfig = {
-    expandedRowRender: (item: IRecibe, index: number) => (
-      <div>
-        <h4>Estudios</h4>
-        <>
-          <Table
-            size="small"
-            rowKey={(record) => record.id}
-            columns={columnsStudy}
-            dataSource={[...item.study]}
-            bordered
-            style={{}}
-            className="header-expandable-table"
-            pagination={false}
-            showHeader={index === 0}
-          ></Table>
-        </>
-        <br />
-
-        <h4>Muestras incluidas por recibir:</h4>
-        {item.extra != null &&
-          item.extra.map((x) => {
-            return (
-              <>
-                <Descriptions
-                  size="small"
-                  bordered
-                  layout="vertical"
-                  style={{ marginBottom: 5 }}
-                >
-                  <Descriptions.Item
-                    label="Clave Estudio"
-                    className="description-content"
-                    style={{ maxWidth: 30 }}
-                  >
-                    {x.clave}
-                  </Descriptions.Item>
-                  <Descriptions.Item
-                    label="Estudio"
-                    className="description-content"
-                    style={{ maxWidth: 30 }}
-                  >
-                    {x.estudio}
-                  </Descriptions.Item>
-                  <Descriptions.Item
-                    label="Solicitud"
-                    className="description-content"
-                    style={{ maxWidth: 30 }}
-                  >
-                    {x.solicitud}
-                  </Descriptions.Item>
-                  <Descriptions.Item
-                    label="Paciente"
-                    className="description-content"
-                    style={{ maxWidth: 30 }}
-                  >
-                    {x.paciente}
-                  </Descriptions.Item>
-
-                  <Descriptions.Item
-                    label=""
-                    className="description-content"
-                    style={{ maxWidth: 30 }}
-                  >
-                    <Switch checked={x.escaneado} />
-                  </Descriptions.Item>
-                </Descriptions>
-              </>
-            );
-          })}
-      </div>
-    ),
-    rowExpandable: () => true,
-  };
   const register = () => {
     setActiviti("register");
   };
@@ -319,6 +243,27 @@ const PendingRecive = () => {
       }),
     },
     {
+      ...getDefaultColumnProps("solicitud", "Solicitud", {
+        searchState,
+        setSearchState,
+        width: "15%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("estudio", "Estudio", {
+        searchState,
+        setSearchState,
+        width: "15%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("sucursal", "Sucursal de procedencia", {
+        searchState,
+        setSearchState,
+        width: "15%",
+      }),
+    },
+    {
       key: "status",
       dataIndex: "status",
       title: "Seguimiento",
@@ -333,45 +278,6 @@ const PendingRecive = () => {
           }}
           
         />
-      ),
-    },
-
-    {
-      ...getDefaultColumnProps("sucursal", "Sucursal de procedencia", {
-        searchState,
-        setSearchState,
-        width: "15%",
-      }),
-    },
-    {
-      key: "editar",
-      dataIndex: "fechaen",
-      title: "Fecha de entrega estimada",
-      align: "center",
-      width: "10%",
-      render: (value) => moment(value).format("MMMM D YYYY"),
-    },
-    {
-      key: "editar",
-      dataIndex: "fechaen",
-      title: "Hora de entrega estimada",
-      align: "center",
-      width: "15%",
-      render: (value) => moment(value).utc().format("h:mmA"),
-    },
-
-    {
-      key: "editar",
-      dataIndex: "fecha",
-      title: "Hora y fecha de entrega real",
-      align: "center",
-      width: "15%",
-      render: (value) => (
-        <div>
-          {moment(value).utc().format("h:mmA")}
-          <br />
-          {moment(value).format("MMMM D YYYY")}
-        </div>
       ),
     },
   ];
@@ -404,7 +310,6 @@ const PendingRecive = () => {
     let studios = [];
     var datas = await getAllRecive(search!);
     datas?.forEach((x: any) => studios.push(x.pendings));
-    setExpandable(expandableStudyConfig);
     console.log(reagent, "en el onfish");
     console.log(reagent);
     let success = false;
@@ -495,12 +400,6 @@ const PendingRecive = () => {
           pagination={false}
           dataSource={[...pendings!]}
           scroll={{ y: 500 }}
-          //(rowClassName={(item) => (item.claveMedico == "Total" || item.paciente === "Total" ? "Resumen Total" : "")}
-          expandable={{
-            ...expandable,
-            onExpand: onExpand,
-            expandedRowKeys: expandedRowKeys,
-          }}
         />
         <div style={{ textAlign: "right", marginTop: 10 }}>
           <Tag color="lime">
