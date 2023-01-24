@@ -30,6 +30,8 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   tokenValidado: boolean;
   servicios?: string[];
   saldoPendiente?: boolean;
+  serie?: string;
+  serieNumero?: string;
   estudios?: IRequestStudyInfo[];
 }
 

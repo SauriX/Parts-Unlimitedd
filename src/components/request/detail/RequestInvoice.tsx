@@ -1,15 +1,35 @@
 import { Descriptions, Select, Row, Col, Input, Button } from "antd";
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 import { useStore } from "../../../app/stores/store";
+import alerts from "../../../app/util/alerts";
 import { moneyFormatter } from "../../../app/util/utils";
 
 const RequestInvoice = () => {
-  const { requestStore } = useStore();
-  const { totals } = requestStore;
+  const { requestStore, optionStore } = useStore();
+  const { request, totals, updateSeries } = requestStore;
+  const { receiptSeriesOptions, getReceiptSeriesOptions } = optionStore;
+
+  useEffect(() => {
+    if (request?.sucursalId) getReceiptSeriesOptions(request.sucursalId);
+  }, [getReceiptSeriesOptions, request?.sucursalId]);
+
+  const onSeriesChange = (value: string) => {
+    alerts.confirm(
+      "¿Desea actualizar la serie?",
+      `Se cambiará la serie a ${value} y se actualizará el consecutivo`,
+      async () => {
+        if (!request) return;
+        const req = { ...request };
+        req.serie = value;
+        await updateSeries(req);
+      }
+    );
+  };
 
   return (
     <Row gutter={[8, 12]} align="bottom">
-      <Col span={5}>
+      <Col span={6}>
         <div style={{ height: 24 }}>
           <label>Serie</label>
         </div>
@@ -20,13 +40,20 @@ const RequestInvoice = () => {
           filterOption={(input: any, option: any) =>
             option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
           }
+          value={request?.serie}
           showArrow={true}
-          options={[]}
+          options={receiptSeriesOptions}
           style={{ width: "100%" }}
+          onChange={onSeriesChange}
         ></Select>
       </Col>
-      <Col span={8}>
-        <Input autoComplete="off" type={"text"} />
+      <Col span={7}>
+        <Input
+          autoComplete="off"
+          type={"text"}
+          value={request?.serieNumero}
+          disabled
+        />
       </Col>
       <Col span={11} style={{ textAlign: "right" }}>
         <Button

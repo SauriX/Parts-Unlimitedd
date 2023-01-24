@@ -59,6 +59,8 @@ const Request = {
     requests.post("request/payment", request),
   checkInPayment: (request: IRequestCheckIn): Promise<IRequestPayment[]> =>
     requests.post("request/payment/checkin", request),
+  updateSeries: (request: IRequest): Promise<number> =>
+    requests.put("request/series", request),
   updateGeneral: (request: IRequestGeneral): Promise<void> =>
     requests.put("request/general", request),
   updateTotals: (request: IRequestTotal): Promise<void> =>
