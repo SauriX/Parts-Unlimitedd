@@ -431,7 +431,7 @@ const PendingRecive = () => {
             form={form}
               formProps={{
                 name: "sucursal",
-                label: "Sucursales de donde recibir",
+                label: "Sucursal(es) receptor(as)",
                 labelCol: { span: 12 },
                 wrapperCol: { span: 12 },
               }}
