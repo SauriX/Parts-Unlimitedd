@@ -419,6 +419,22 @@ export default class RequestStore {
     }
   };
 
+  updateSeries = async (request: IRequest) => {
+    try {
+      const seriesNumber = await Request.updateSeries(request);
+      alerts.success(messages.updated);
+      if (this.request) {
+        this.request.serie = request.serie;
+        this.request.serieNumero = seriesNumber.toString();
+      }
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    } finally {
+    }
+  };
+
   updateGeneral = async (request: IRequestGeneral, autoSave: boolean) => {
     try {
       if (!autoSave) this.loadingTabContentCount++;
