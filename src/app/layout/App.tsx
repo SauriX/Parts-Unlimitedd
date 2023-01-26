@@ -82,6 +82,8 @@ import Notifications from "../../views/Notifications";
 import NotificationsDetail from "../../components/notifications/NotificationsDetail";
 import Relaseresult from "../../views/Relaseresult";
 import Test1 from "../../Test1";
+import InvoiceCatalog from "../../views/InvoiceCatalog";
+
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -255,6 +257,10 @@ function App() {
             <Route
               path={`${views.relaseValidation}`}
               element={<Relaseresult />}
+            />
+                        <Route
+              path={`${views.invoiceCatalog}`}
+              element={<InvoiceCatalog />}
             />
             <Route
               path="forbidden"

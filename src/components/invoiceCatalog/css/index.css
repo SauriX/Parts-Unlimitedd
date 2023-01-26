@@ -1,0 +1,52 @@
+.ant-collapse.request-filter-collapse
+  > .ant-collapse-item
+  > .ant-collapse-header,
+.ant-collapse.request-filter-collapse
+  > .ant-collapse-item
+  .ant-collapse-content-box {
+  padding-top: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.ant-collapse.request-filter-collapse button ~ button {
+  margin-left: 8px;
+}
+
+.site-description-item-profile-wrapper {
+  margin-bottom: 4px;
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+[data-theme="compact"] .site-description-item-profile-wrapper {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+p.site-description-item-profile-p {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 16px;
+  line-height: 1.5715;
+}
+
+[data-theme="compact"] p.site-description-item-profile-p {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.site-description-item-profile-p-label {
+  display: inline-block;
+  /* vertical-align: top; */
+  /* margin-right: 8px; */
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.ant-table.ant-table-small .ant-table-tbody > tr > td.no-padding-cell {
+  padding-top: 0;
+  padding-bottom: 0;
+}
