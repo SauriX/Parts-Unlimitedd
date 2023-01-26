@@ -1,5 +1,5 @@
-import { PageHeader, Typography } from "antd";
-import { FC } from "react";
+import { PageHeader, Switch, Typography } from "antd";
+import { FC, useEffect, useState } from "react";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import ImageButton from "../../app/common/button/ImageButton";
 import { observer } from "mobx-react-lite";
@@ -10,12 +10,23 @@ type ResultValidationHeaderProps = {
   handleList: () => void;
 };
 const { Text } = Typography;
+
 const ResultValidationHeader: FC<ResultValidationHeaderProps> = ({
   handleList,
 }) => {
-  const { procedingStore, optionStore, locationStore, resultValidationStore } = useStore();
+  const { relaseResultStore, resultValidationStore } = useStore();
+  const { soliCont, studyCont } = resultValidationStore;
+  const { setActiveTab } = relaseResultStore;
+  const [active, setActive] = useState(true);
 
-  const { getAll, studys, printTicket, update,soliCont,studyCont } = resultValidationStore;
+  const onChangeActive = () => {
+    setActive(false);
+  };
+
+  useEffect(() => {
+    setActiveTab(active);
+  }, [active]);
+
   return (
     <PageHeader
       ghost={false}
@@ -27,14 +38,17 @@ const ResultValidationHeader: FC<ResultValidationHeaderProps> = ({
       }
       className="header-container"
       extra={[
+        <Switch
+          checkedChildren="Liberación"
+          unCheckedChildren="Validación"
+          checked={true}
+          onChange={() => onChangeActive()}
+        />,
         <Text key="request">
           Solicitudes: <Text strong>{soliCont}</Text>
         </Text>,
         <Text key="number">
-          Estudios:{" "}
-          <Text strong>
-            {studyCont}
-          </Text>
+          Estudios: <Text strong>{studyCont}</Text>
         </Text>,
         ,
         <DownloadIcon key="doc" onClick={handleList} />,

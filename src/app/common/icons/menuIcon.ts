@@ -35,8 +35,8 @@ import {
   faMapLocation,
   faClipboardList,
   faSyringe,
-  faMoneyBill1Wave
-  
+  faMoneyBill1Wave,
+  faFileMedical
 } from "@fortawesome/free-solid-svg-icons";
 
 const getMenuIcon = (name: string) => {
@@ -87,6 +87,8 @@ const getMenuIcon = (name: string) => {
       return faFileInvoiceDollar;
     case "report":
       return faChartColumn;
+    case "results":
+      return faFileMedical;
     case "appointments":
       return faCalendarCheck;
     case "reception":
@@ -111,7 +113,7 @@ const getMenuIcon = (name: string) => {
       return faMapLocation;
     case "worklist":
       return faClipboardList;
-    case "ResultValidation":
+    case "relaseResult":
       return faListCheck;
     case "quotation":
       return faMoneyBill1Wave;

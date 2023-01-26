@@ -9,44 +9,41 @@ import ResultValidationHeader from "../components/Resultvalidation/ResultValidat
 import ResultValidationTable from "../components/Resultvalidation/ResultValidationTable";
 
 const Relaseresult = () => {
-  const { resultValidationStore,procedingStore,relaseResultStore } = useStore();
-   //const { /* scopes, access, clearScopes, */ exportList,search } = procedingStore;
-  const { /* scopes, access, clearScopes, */ exportList,search } = relaseResultStore;
-  const [searchParams] = useSearchParams();
-
+  const { relaseResultStore, resultValidationStore } = useStore();
+  const { exportList, search, activeTab } = relaseResultStore;
+  const { exportList: exportValidationList, search: validationSearch } =
+    resultValidationStore;
   const [loading, setLoading] = useState(false);
-
   const componentRef = useRef<any>();
-
-
 
   const handleDownload = async () => {
     setLoading(true);
-    await exportList(search);
+    if (!activeTab) {
+      await exportList(search);
+    } else {
+      await exportValidationList(validationSearch);
+    }
     setLoading(false);
   };
 
-  useEffect(() => {
-    const checkAccess = async () => {
-     // await access();
-    };
-
-    checkAccess();
-  }, [/* access */]);
-
-  useEffect(() => {
-    return () => {
-      //clearScopes();
-    };
-  }, [/* clearScopes */]);
-/* 
-  if (!scopes?.acceder) return null;
- */
   return (
     <Fragment>
-      <RelaseResultHeader  handleList={handleDownload} />
-      <Divider className="header-divider" />
-      <RelaseResultTable componentRef={componentRef} printing={loading} />
+      {!activeTab ? (
+        <Fragment>
+          <RelaseResultHeader handleList={handleDownload} />
+          <Divider className="header-divider" />
+          <RelaseResultTable componentRef={componentRef} printing={loading} />
+        </Fragment>
+      ) : (
+        <Fragment>
+          <ResultValidationHeader handleList={handleDownload} />
+          <Divider className="header-divider" />
+          <ResultValidationTable
+            componentRef={componentRef}
+            printing={loading}
+          />
+        </Fragment>
+      )}
     </Fragment>
   );
 };

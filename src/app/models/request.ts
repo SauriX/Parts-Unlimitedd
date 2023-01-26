@@ -14,7 +14,9 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   claveMedico?: string;
   nombreCompania?: string;
   observaciones?: string;
+  paciente?: string;
   sucursalId: string;
+  sucursal?: string;
   clave?: string;
   estatusId: number;
   clavePatologica?: string;
@@ -28,6 +30,8 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   tokenValidado: boolean;
   servicios?: string[];
   saldoPendiente?: boolean;
+  serie?: string;
+  serieNumero?: string;
   estudios?: IRequestStudyInfo[];
 }
 
@@ -146,6 +150,7 @@ export interface IRequestPayment extends IRequestBase {
   numero: string;
   estatusId: number;
   facturaId?: string;
+  serieFactura: string;
   facturapiId: string;
   usuarioRegistra?: string;
   fechaPago: moment.Moment;
@@ -153,13 +158,24 @@ export interface IRequestPayment extends IRequestBase {
 
 export interface IRequestCheckIn extends IRequestBase {
   datoFiscalId: string;
+  serie: string;
   usoCFDI: string;
   formaPago: string;
   desglozado: boolean;
-  conNombre: boolean;
+  simple: boolean;
+  porConcepto: boolean;
   envioCorreo: boolean;
   envioWhatsapp: boolean;
   pagos: IRequestPayment[];
+  detalle: IRequestCheckInDetail[];
+}
+
+export interface IRequestCheckInDetail {
+  clave: string;
+  descripcion: string;
+  precio: number;
+  cantidad: number;
+  descuento: number;
 }
 
 export interface IRequestImage extends IRequestBase {

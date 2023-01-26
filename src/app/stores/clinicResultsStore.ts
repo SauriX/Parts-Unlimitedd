@@ -15,6 +15,7 @@ import {
 } from "../models/clinicResults";
 import Request from "../api/request";
 import messages from "../util/messages";
+import { v4 as uuidv4 } from "uuid";
 
 export default class ClinicResultsStores {
   constructor() {
@@ -41,19 +42,19 @@ export default class ClinicResultsStores {
 
   setObservationsSelected = (observationsSelected: IOptions[]) => {
     this.observationsSelected = observationsSelected;
-  }
+  };
 
   setObservationsText = (observationText: string) => {
     this.observationText = observationText;
-  }
+  };
 
   getObservationsSelected = () => {
     return this.observationsSelected;
-  }
+  };
 
   getObservationsText = () => {
     return this.observationText;
-  }
+  };
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -266,10 +267,12 @@ export default class ClinicResultsStores {
     try {
       const params = await ClinicResults.getStudies(recordId, requestId);
       this.studies = params.estudios.map((x) => ({
+        identificador: uuidv4(),
         id: x.estudioId,
         clave: x.clave,
         nombre: x.nombre,
         status: x.estatusId,
+        solicitudEstudioId: x.id,
         parametros: x.parametros.map((y, i) => ({
           id: y.resultadoId,
           estudioId: x.estudioId,
@@ -302,6 +305,7 @@ export default class ClinicResultsStores {
             parseFloat(y.resultado) >= y.criticoMaximo,
         })),
       }));
+      console.log("studies", toJS(this.studies));
       return params;
     } catch (error) {
       alerts.warning(getErrors(error));

@@ -19,6 +19,8 @@ import {
   ITrackingOrderForm,
   TrackingOrderFormValues,
   ITrackingOrderList,
+  IEstudiosList,
+  IRequestStudyOrder,
 } from "../../../app/models/trackingOrder";
 
 import ImageButton from "../../../app/common/button/ImageButton";
@@ -39,6 +41,7 @@ import { IDias, IRouteForm, RouteFormValues } from "../../../app/models/route";
 import _ from "lodash";
 import NumberInput from "../../../app/common/form/NumberInput";
 import { IOptions } from "../../../app/models/shared";
+import { StudyModal } from "./modal/StudyModal";
 
 type TrackingOrderFormProps = {
   id: string;
@@ -79,7 +82,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   } = trackingOrderStore;
 
   const [searchParams] = useSearchParams();
-
+  const [StudySelected,setStudySelected]=useState<IRequestStudyOrder[]>([]); 
   const [form] = Form.useForm<ITrackingOrderForm>();
 
   const [loading, setLoading] = useState(false);
@@ -100,6 +103,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   const [newTrackingOrder, setNewTrackingOrder] = useState<ITrackingOrderForm>(
     new TrackingOrderFormValues()
   );
+
   const treeData = [
     {
       title: "Sucursales",
@@ -162,6 +166,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   ];
   const [routeFoundOptions, setRouteFoundOptions] = useState<IOptions[]>([]);
   const selecteddestino = Form.useWatch("sucursalDestinoId", form);
+  const solicitud = Form.useWatch("muestraId", form);
   const routesoptions: IOptions[] = foundRoutes.map((route) => {
     var data: IOptions = {
       value: route.id,
@@ -278,6 +283,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
           escaneado: order.escaneado,
           temperatura: order.temperatura,
           estudioId: estudio.estudioId,
+          isExtra:estudio.isExtra
         };
       });
     trackingOrderSend.estudios = _.flatten(estudiosFiltrados);
@@ -498,6 +504,8 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                     name: "muestraId",
                     label: "Muestra",
                   }}
+                 
+                  onKeyUp={async (e)=>{if(e.code==="Enter"){ await StudyModal(StudySelected,solicitud);}}}
                   max={100}
                   readonly={readonly}
                 />

@@ -37,12 +37,9 @@ export interface IRecibe
     id:string
     nseguimiento:string
     claveroute:string
+    solicitud:string
+    estudio:string
     sucursal:string
-    fechaen:moment.Moment
-    horaen:moment.Moment
-    fechareal:moment.Moment
-    study :IReciveStudy[]
-    extra:IExtraStudy[]
     status:IStatus
 }
 

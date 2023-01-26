@@ -120,8 +120,8 @@ const DeliveryResultsForm = () => {
 
   return (
     <>
-      <Row justify="end" style={{ marginBottom: 10 }}>
-        <Col>
+      <Row justify="end" gutter={[24, 12]} className="filter-buttons">
+        <Col span={24}>
           <Button
             key="clean"
             onClick={(e) => {
@@ -131,7 +131,6 @@ const DeliveryResultsForm = () => {
           >
             Limpiar
           </Button>
-          ,
           <Button
             key="filter"
             type="primary"

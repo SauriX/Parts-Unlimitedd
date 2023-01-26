@@ -36,6 +36,8 @@ export interface ISamplesCost {
   sucursalId: string;
   fechaAlta: moment.Moment;
   aplica: string;
+  fechaModificacion: moment.Moment;
+  ciudad: string;
 }
 
 export interface IServicesCost {

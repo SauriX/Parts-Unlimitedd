@@ -58,7 +58,7 @@ const ClinicalResultsInfo = () => {
     getStudies: getStudiesParams,
     clearSelectedStudies,
   } = clinicResultsStore;
- 
+
   const [printing, setPrinting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [markAll, setMarkAll] = useState(false);
@@ -317,13 +317,14 @@ const ClinicalResultsInfo = () => {
       <Row>
         <Col span={24}>
           {studies.map((req: IRequestStudy, index: any) => {
+            console.log("req", req.identificador);
             const idPatologia = departmentOptions.find(
               (dep) => dep.label === "PATOLOGÍA"
             )?.value;
 
             if (idPatologia === req.departamentoId) {
               return (
-                <div key={req.id}>
+                <div key={req.identificador}>
                   <Divider orientation="left"></Divider>
                   <ClinicalResultsForm
                     estudio={req}
@@ -340,7 +341,7 @@ const ClinicalResultsInfo = () => {
             } else {
               return (
                 <ClinicalResultsDetails
-                  key={req.id}
+                  key={req.identificador}
                   estudio={req}
                   estudioId={req.estudioId}
                   paciente={procedingCurrent}

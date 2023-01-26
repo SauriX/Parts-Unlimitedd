@@ -51,7 +51,8 @@ setventana=(ventana:string)=>{
   getAll = async (search: SearchTracking) => {
     try {
       const study = await RouteTracking.getAll(search);
-      this.studys = study;
+      let orderStudy = study.sort((x,y)=>{return x.seguimiento.localeCompare(y.seguimiento)}); 
+      this.studys = orderStudy;
       return study;
     } catch (error) {
       alerts.warning(getErrors(error));
