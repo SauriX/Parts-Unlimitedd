@@ -59,6 +59,12 @@ export const studyStatusOptions = [
   { label: "Entregado", value: 10 },
 ];
 
+export const seriesTypeOptions = [
+  { label: "FACTURA", value: 1 },
+  { label: "RECIBO", value: 2 },
+];
+
+
 export default class OptionStore {
   constructor() {
     makeAutoObservable(this);

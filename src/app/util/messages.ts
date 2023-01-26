@@ -36,6 +36,8 @@ const messages = {
     deltaUncheck: "Delta Check ha sido desactivado",
     showFormato: "Mostrar Formato ha sido desactivado",
     unshownFormato: "Mostrar Formato ha sido desactivado",
+    invoiceEnabled: "El estatus se encuentra en Vigente",
+    invoiceDisabled: "El estatus se encuentra en Caducado",
   },
 
   warnings: {
