@@ -7,7 +7,7 @@ import {
   ICatalogDescriptionList,
   ICatalogNormalList,
 } from "../models/catalog";
-import { IOptions } from "../models/shared";
+import { IOptions, IProfile } from "../models/shared";
 import Parameter from "../api/parameter";
 import Reagent from "../api/reagent";
 import Maquilador from "../api/maquilador";
@@ -24,6 +24,7 @@ import Pack from "../api/pack";
 import Location from "../api/location";
 import { IWorkList } from "../models/workList";
 import Series from "../api/series";
+import Profile from "../api/profile";
 
 export const originOptions = [
   { label: "COMPAÑÍA", value: 1 },
@@ -723,4 +724,16 @@ export default class OptionStore {
       this.receiptSeriesOptions = [];
     }
   };
+
+  profileOptions: IProfile | undefined;
+  getProfileOptions = async () => {
+    try {
+      const profile = await Profile.getProfile();
+      this.profileOptions = {
+        ...profile,
+      };
+    } catch (error) {
+      this.profileOptions = undefined;
+    }
+  }
 }

@@ -46,7 +46,7 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
   printing,
 }) => {
   const { trackingOrderStore } = useStore();
-  const { trackingOrderStudies, trackingOrder, setEscaneado, setTemperature } =
+  const { temperatura, trackingOrder, setEscaneado, setTemperature } =
     trackingOrderStore;
 
   const [searchParams] = useSearchParams();
@@ -159,7 +159,7 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
         <Input
           max={100}
           required
-          value={fullrow.estudio?.temperatura}
+          value={fullrow.estudio?.temperatura ? fullrow.estudio?.temperatura : temperatura}
           type={"number"}
           onChange={(newValue) => {
             setTemperature(+newValue.target.value, fullrow.id);

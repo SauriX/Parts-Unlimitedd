@@ -142,7 +142,7 @@ const ConfigurationFiscalForm = () => {
             <TextInput
               formProps={{
                 name: "ciudad",
-                label: "Colonia",
+                label: "Ciudad",
                 noStyle: true,
               }}
               max={4000}
