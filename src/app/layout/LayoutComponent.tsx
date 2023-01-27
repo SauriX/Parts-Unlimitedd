@@ -15,7 +15,7 @@ import {
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import IconSelector from "../common/icons/IconSelector";
-import { IMenu } from "../models/shared";
+import { IMenu, IOptions } from "../models/shared";
 import {
   UserOutlined,
   DownOutlined,
@@ -37,6 +37,8 @@ import Configuration from "../../components/configuration/Configuration";
 import { useThemeSwitcher } from "react-css-theme-switcher";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import getMenuIcon from "../common/icons/menuIcon";
+import SelectInput from "../common/form/proposal/SelectInput";
+import { useForm } from "antd/es/form/Form";
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
 
@@ -48,8 +50,16 @@ interface IItem {
 }
 
 const LayoutComponent = () => {
-  const { profileStore, drawerStore, modalStore, notificationStore } =
-    useStore();
+  const {
+    profileStore,
+    drawerStore,
+    modalStore,
+    notificationStore,
+    optionStore,
+    userStore,
+  } = useStore();
+  const { updateBranch } = userStore;
+  const { getBranchCityOptions, branchCityOptions } = optionStore;
   const { openDrawer } = drawerStore;
   const { openModal } = modalStore;
   const { createHubConnection } = notificationStore;
@@ -58,8 +68,10 @@ const LayoutComponent = () => {
 
   const { switcher } = useThemeSwitcher();
   const location = useLocation();
+  const [form] = useForm();
 
   const [collapsed, setCollapsed] = useState(true);
+  const [branchCityFiltered, setBranchCityFiltered] = useState<any>();
   const [menus, setMenus] = useState<IItem[]>([]);
 
   const convertMenu = useCallback(
@@ -129,6 +141,34 @@ const LayoutComponent = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => {
+    getBranchCityOptions();
+  }, []);
+  useEffect(() => {
+    if (profile) {
+      form.setFieldValue("sucursal", profile.sucursal);
+    }
+  }, [profile]);
+  useEffect(() => {
+    const branchesFiltered: IOptions[] = [];
+    branchCityOptions.forEach((bco) => {
+      let sucursalesDisponibles = bco.options?.filter((x) =>
+        profile?.sucursales.includes("" + x.value)
+      );
+      if (!!sucursalesDisponibles?.length) {
+        let copy = {
+          ...bco,
+          options: sucursalesDisponibles,
+        };
+        branchesFiltered.push(copy);
+      }
+    });
+    setBranchCityFiltered(branchesFiltered);
+  }, [branchCityOptions]);
+  const updateUserBranch = async (changedValues: any) => {
+    await updateBranch(changedValues.sucursal);
+    await getProfile();
+  };
 
   const openNotifications = () => {
     openDrawer({
@@ -152,8 +192,13 @@ const LayoutComponent = () => {
     <Layout id="app-layout">
       <Header className="header">
         <Row>
-          <Col span={12}> 
-            <div className="header-logo-container" onClick={()=>{navigate(`/`);}}>
+          <Col span={15}>
+            <div
+              className="header-logo-container"
+              onClick={() => {
+                navigate(`/`);
+              }}
+            >
               <Image
                 src={
                   logoImg ??
@@ -163,7 +208,19 @@ const LayoutComponent = () => {
               />
             </div>
           </Col>
-          <Col span={12} className="header-data" style={{ textAlign: "right" }}>
+          <Col
+            span={3}
+            className="header-data"
+            style={{ textAlign: "right", paddingTop: 20 }}
+          >
+            <Form form={form} onValuesChange={updateUserBranch}>
+              <SelectInput
+                formProps={{ label: "Sucursal", name: "sucursal" }}
+                options={branchCityFiltered}
+              />
+            </Form>
+          </Col>
+          <Col span={6} className="header-data" style={{ textAlign: "right" }}>
             <Avatar icon={<UserOutlined />} />
             <Text>{profile?.nombre}</Text>
             <NotificationOutlined
