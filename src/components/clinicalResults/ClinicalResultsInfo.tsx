@@ -317,12 +317,13 @@ const ClinicalResultsInfo = () => {
       <Row>
         <Col span={24}>
           {studies.map((req: IRequestStudy, index: any) => {
-            console.log("req", req.identificador);
-            const idPatologia = departmentOptions.find(
-              (dep) => dep.label === "PATOLOGÍA"
-            )?.value;
+            console.log("req", req.tipo);
+            // const idPatologia = departmentOptions.find(
+            //   (dep) => dep.label === "PATOLOGÍA"
+            // )?.value;
 
-            if (idPatologia === req.departamentoId) {
+            // if (idPatologia === req.departamentoId) {
+            if (req.tipo === "PATOLOGICO") {
               return (
                 <div key={req.identificador}>
                   <Divider orientation="left"></Divider>
