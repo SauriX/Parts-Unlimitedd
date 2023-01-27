@@ -81,4 +81,5 @@ export type imagesType =
   | "massSearch"
   | "invoice-company"
   | "notifications"
-  | "enviar-datos";
+  | "enviar-datos"
+  |"facturas";
