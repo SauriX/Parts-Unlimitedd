@@ -245,7 +245,7 @@ const ConfigurationFiscalForm = () => {
           </Col>
           <Col span={24}>
             <TextInput
-              formProps={{ name: "email", label: "Correo" }}
+              formProps={{ name: "correo", label: "Correo" }}
               type="email"
               readonly={readonly}
             />
