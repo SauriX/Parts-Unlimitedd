@@ -5,10 +5,11 @@ export interface ISeriesList {
   clave: string;
   descripcion: string;
   sucursal: string;
-  tipoSerie: number;
+  tipoSerie: string;
+  tipo: number;
   activo: boolean;
   cfdi: boolean;
-  año: moment.Moment;
+  año: string;
 }
 
 export interface ITicketList {
@@ -40,10 +41,10 @@ export interface ISeriesInvoice{
   tipoSerie: number;
   estatus: boolean;
   cfdi: boolean;
-  archivoCer: File | Blob;
-  archivoKey: File | Blob;
-  claveCer: string;
-  claveKey: string;
+  archivoCer?: File;
+  archivoKey?: File;
+  claveCer?: string;
+  claveKey?: string;
   contraseña: string;
   año: moment.Moment;
 }
@@ -72,15 +73,16 @@ export interface ISeriesExpedition {
   numeroInterior: string;
   colonia: string;
   codigoPostal: string;
-  ciudad: string;
+  municipio: string;
   estado: string;
   pais: string;
   telefono: string;
+  sucursalId: string;
 }
 
 export interface ISeriesFilter {
   año: moment.Moment;
-  tipoSerie?: number[];
+  tipoSeries?: number[];
   buscar?: string;
   sucursalId?: string[]; 
   ciudad?: string[];
@@ -97,7 +99,7 @@ export class SeriesFilterValues implements ISeriesFilter {
   sucursalId = [];
   ciudad = [];
   año = moment(Date.now()).utcOffset(0, true);
-  tipoSerie = [];
+  tipoSeries = [];
   buscar = '';
 
   constructor(init?: ISeriesFilter) {
@@ -132,15 +134,13 @@ export class SeriesInvoiceValues implements ISeriesInvoice {
   clave = '';
   nombre = '';
   observaciones = '';
-  tipoSerie = 0;
+  tipoSerie = 1;
   estatus = false;
   cfdi = false;
-  archivoCer = new File([''], 'archivo.cer');
-  archivoKey = new File([''], 'archivo.key');
   claveCer = '';
   claveKey = '';
   contraseña = '';
-  año = moment(Date.now()).utcOffset(0, true);
+  año = moment();
 
   constructor(init?: ISeriesInvoice) {
     Object.assign(this, init);
@@ -175,10 +175,11 @@ export class SeriesExpeditionValues implements ISeriesExpedition {
   numeroInterior = '';
   colonia = '';
   codigoPostal = '';
-  ciudad = '';
+  municipio = '';
   estado = '';
   pais = '';
   telefono = '';
+  sucursalId = '';
 
   constructor(init?: ISeriesExpedition) {
     Object.assign(this, init);
@@ -189,7 +190,7 @@ export class TicketSeriesValues implements ITicketSerie {
   id = 0;
   clave = '';
   nombre = '';
-  tipoSerie = 0;
+  tipoSerie = 2;
 
   constructor(init?: ITicketSerie) {
     Object.assign(this, init);

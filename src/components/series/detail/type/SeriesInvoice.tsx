@@ -32,15 +32,18 @@ import {
   uploadFakeRequest,
 } from "../../../../app/util/utils";
 import { UploadOutlined } from "@ant-design/icons";
-import { UploadChangeParam } from "antd/lib/upload";
+import { RcFile, UploadChangeParam } from "antd/lib/upload";
+import React from "react";
+import moment from "moment";
 
 type SeriesInvoiceProps = {
   id: number;
+  tipoSerie: number;
 };
 
-const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id }) => {
-  const { seriesStore, optionStore } = useStore();
-  //   const {} = optionStore
+const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
+  const { seriesStore, profileStore } = useStore();
+  const { profile } = profileStore;
   const { getById, createInvoice, updateInvoice, setSeriesType, getNewForm } =
     seriesStore;
 
@@ -50,29 +53,36 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id }) => {
   const [form] = Form.useForm<ISeries>();
   const [values, setValues] = useState<ISeries>(new SeriesValues());
 
+  const [keyFile, setKeyFile] = useState<RcFile>();
+  const [cerFile, setCerFile] = useState<RcFile>();
+
   useEffect(() => {
-    const readSerie = async (serieId: number) => {
+    const readSerie = async (serieId: number, tipo: number) => {
       setLoading(true);
-      const serie = await getById(serieId);
+      const serie = await getById(serieId, tipo);
 
       if (serie) {
+        serie.factura.año = moment(serie.factura.año);
         setValues(serie);
-      } else {
-        const newForm: ISeriesNewForm = {
-          tipoSerie: 1,
-          sucursalId: "0",
-        };
-        let newValues = await getNewForm(newForm);
-
-        if (newValues) {
-          setValues(newValues);
-        }
+        form.setFieldsValue(serie);
       }
       setLoading(false);
     };
 
     if (id) {
-      readSerie(id);
+      readSerie(id, tipoSerie);
+    } else {
+      const newForm: ISeriesNewForm = {
+        tipoSerie: 1,
+        sucursalId: profile?.sucursal!,
+      };
+      getNewForm(newForm).then((newValues) => {
+        if (newValues) {
+          newValues.factura.año = moment(newValues.factura.año);
+          setValues(newValues);
+          form.setFieldsValue(newValues);
+        }
+      });
     }
   }, [id, getById]);
 
@@ -81,13 +91,14 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id }) => {
     navigate("/series");
   };
 
-  const submitFile = async (file: FormData, fileName: string) => {
+  const submitFile = async (file: RcFile, fileName: string) => {
     setLoading(true);
     alerts.confirm(
       "Cargar archivo",
       `¿Está seguro que desea cargar el archivo ${fileName}?`,
       async () => {
         // await saveFile(file);
+        fileName.split(".")[1] === "key" ? setKeyFile(file) : setCerFile(file);
         message.success(`${fileName} cargado existosamente.`);
         setLoading(false);
       },
@@ -101,10 +112,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id }) => {
     if (status === "uploading") {
       return;
     } else if (status === "done") {
-      submitFile(
-        objectToFormData({ archivo: info.file.originFileObj }),
-        info.file.name
-      );
+      submitFile(info.file.originFileObj!, info.file.name);
     } else if (status === "error") {
       message.error(`Error al cargar el archivo ${info.file.name}.`);
     }
@@ -122,12 +130,16 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id }) => {
     setLoading(true);
 
     const serie = { ...values, ...newValues };
-    serie.factura.tipoSerie = 1;
+    serie.factura.archivoKey = keyFile;
+    serie.factura.archivoCer = cerFile;
+    serie.expedicion.sucursalId = profile?.sucursal!;
+
+    let serieFormData = objectToFormData(serie);
 
     if (id) {
-      await updateInvoice(serie);
+      await updateInvoice(serieFormData);
     } else {
-      await createInvoice(serie);
+      await createInvoice(serieFormData);
     }
     setLoading(false);
     goBack();
@@ -135,10 +147,16 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id }) => {
 
   return (
     <Fragment>
-      <Row>
-        <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
+      <Row gutter={[24, 12]}>
+        <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
           <Button onClick={goBack}>Cancelar</Button>
-          <Button type="primary" htmlType="submit">
+          <Button
+            type="primary"
+            htmlType="submit"
+            onClick={() => {
+              form.submit();
+            }}
+          >
             Guardar
           </Button>
         </Col>
@@ -151,11 +169,11 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id }) => {
         initialValues={values}
         scrollToFirstError
       >
-        <Row>
+        <Row gutter={[24, 12]}>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "factura.clave",
+                name: ["factura", "clave"],
                 label: "Clave",
               }}
               required
@@ -164,7 +182,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id }) => {
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "factura.nombre",
+                name: ["factura", "nombre"],
                 label: "Nombre",
               }}
               required
@@ -173,20 +191,20 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id }) => {
           <Col md={6} sm={24} xs={12}>
             <DateInput
               formProps={{
-                name: "factura.año",
                 label: "Año",
+                name: ["factura", "año"],
               }}
+              disableAfterDates
               pickerType="year"
-              required
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
-            <SwitchInput name="factura.cfdi" label="Crear CFDI" required />
+            <SwitchInput name={["factura", "cfdi"]} label="Crear CFDI" required />
           </Col>
           <Col span={6}>
             <SelectInput
               form={form}
-              formProps={{ name: "factura.tipoSerie", label: "Tipo" }}
+              formProps={{ name: ["factura", "tipoSerie"], label: "Tipo" }}
               options={[{ value: 1, label: "Factura" }]}
               required
               readonly={true}
@@ -195,7 +213,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id }) => {
           <Col md={6} sm={24} xs={12}>
             <PasswordInput
               formProps={{
-                name: "factura.contraseña",
+                name: ["factura", "contraseña"],
                 label: "Contraseña",
               }}
               placeholder={"Contraseña"}
@@ -203,8 +221,17 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id }) => {
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
+            <TextInput
+              formProps={{
+                name: ["factura", "sucursalKey"],
+                label: "Key Sucursal",
+              }}
+              required
+            />
+          </Col>
+          <Col md={6} sm={24} xs={12}>
             <SwitchInput
-              name="factura.estatus"
+              name={["factura", "estatus"]}
               label="Estatus"
               onChange={(value) => {
                 if (value) {
@@ -219,7 +246,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id }) => {
           <Col md={6} sm={24} xs={12}>
             <TextAreaInput
               formProps={{
-                name: "factura.observaciones",
+                name: ["factura", "observaciones"],
                 label: "Observaciones",
               }}
               rows={4}
@@ -228,7 +255,11 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id }) => {
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
-            <Form.Item name="factura.archivoKey" label="Archivo.Key" required>
+            <Form.Item
+              name={["factura", "archivoKey"]}
+              label="Archivo.Key"
+              required
+            >
               <Upload {...props}>
                 <Button type="primary" icon={<UploadOutlined />}>
                   Subir archivo
@@ -237,7 +268,11 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id }) => {
             </Form.Item>
           </Col>
           <Col md={6} sm={24} xs={12}>
-            <Form.Item name="factura.archivoCer" label="Archivo.Cer" required>
+            <Form.Item
+              name={["factura", "archivoCer"]}
+              label="Archivo.Cer"
+              required
+            >
               <Upload {...props}>
                 <Button type="primary" icon={<UploadOutlined />}>
                   Subir archivo
@@ -248,184 +283,206 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id }) => {
         </Row>
 
         <Divider orientation="left">Datos del emisor</Divider>
-        <Row>
+        <Row gutter={[24, 12]}>
           <Col md={12} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "emisor.rfc",
+                name: ["emisor", "rfc"],
                 label: "RFC",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={12} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "emisor.nombre",
+                name: ["emisor", "razonSocial"],
                 label: "Nombre",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "emisor.codigoPostal",
+                name: ["emisor", "codigoPostal"],
                 label: "Código postal",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "emisor.calle",
+                name: ["emisor", "calle"],
                 label: "Calle",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "emisor.colonia",
+                name: ["emisor", "colonia"],
                 label: "Colonia",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "emisor.ciudad",
+                name: ["emisor", "ciudad"],
                 label: "Municipio",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "emisor.estado",
+                name: ["emisor", "estado"],
                 label: "Estado",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "emisor.pais",
+                name: ["emisor", "pais"],
                 label: "País",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "emisor.numeroExterior",
+                name: ["emisor", "numeroExterior"],
                 label: "No. Ext.",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "emisor.numeroInterior",
+                name: ["emisor", "numeroInterior"],
                 label: "No. Int.",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "emisor.telefono",
+                name: ["emisor", "telefono"],
                 label: "Teléfono",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "emisor.website",
+                name: ["emisor", "webSite"],
                 label: "WebSite",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "emisor.correo",
+                name: ["emisor", "email"],
                 label: "E-mail",
               }}
+              readonly={true}
             />
           </Col>
         </Row>
         <Divider orientation="left">Lugar de expedición</Divider>
-        <Row>
+        <Row gutter={[24, 12]}>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "expedicion.codigoPostal",
+                name: ["expedicion", "codigoPostal"],
                 label: "Código postal",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "expedicion.calle",
+                name: ["expedicion", "calle"],
                 label: "Calle",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "expedicion.colonia",
+                name: ["expedicion", "colonia"],
                 label: "Colonia",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "expedicion.ciudad",
+                name: ["expedicion", "municipio"],
                 label: "Municipio",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "expedicion.estado",
+                name: ["expedicion", "estado"],
                 label: "Estado",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "expedicion.pais",
+                name: ["expedicion", "pais"],
                 label: "País",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "expedicion.numeroExterior",
+                name: ["expedicion", "numeroExterior"],
                 label: "No. Ext.",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "expedicion.numeroInterior",
+                name: ["expedicion", "numeroInterior"],
                 label: "No. Int.",
               }}
+              readonly={true}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: "expedicion.telefono",
+                name: ["expedicion", "telefono"],
                 label: "Teléfono",
               }}
+              readonly={true}
             />
           </Col>
         </Row>

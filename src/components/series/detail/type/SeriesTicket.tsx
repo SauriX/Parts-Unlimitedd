@@ -15,9 +15,10 @@ import { formItemLayout } from "../../../../app/util/utils";
 
 type SeriesTicketProps = {
   id: number;
+  tipoSerie: number;
 };
 
-const SeriesTicket: FC<SeriesTicketProps> = ({ id }) => {
+const SeriesTicket: FC<SeriesTicketProps> = ({ id, tipoSerie }) => {
   const { seriesStore } = useStore();
   const { getById, createTicket, updateTicket, setSeriesType } = seriesStore;
 
@@ -28,9 +29,9 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id }) => {
   const [values, setValues] = useState<ITicketSerie>(new TicketSeriesValues());
 
   useEffect(() => {
-    const readSerie = async (serieId: number) => {
+    const readSerie = async (serieId: number, tipo: number) => {
       setLoading(true);
-      const serie = await getById(serieId);
+      const serie = await getById(serieId, tipo);
 
       if (serie) {
         const ticket: ITicketSerie = {
@@ -40,12 +41,13 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id }) => {
           tipoSerie: 2,
         };
         setValues(ticket);
+        form.setFieldsValue(ticket);
       }
       setLoading(false);
     };
 
     if (id) {
-      readSerie(id);
+      readSerie(id, tipoSerie);
     }
   }, [id, getById]);
 
@@ -71,10 +73,16 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id }) => {
 
   return (
     <Fragment>
-      <Row>
-        <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
+      <Row gutter={[24, 12]}>
+        <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
           <Button onClick={goBack}>Cancelar</Button>
-          <Button type="primary" htmlType="submit">
+          <Button
+            type="primary"
+            htmlType="submit"
+            onClick={() => {
+              form.submit();
+            }}
+          >
             Guardar
           </Button>
         </Col>
@@ -87,7 +95,11 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id }) => {
         initialValues={values}
         scrollToFirstError
       >
-        <Row>
+        <Row
+          justify={"space-between"}
+          gutter={[0, 12]}
+          style={{ marginTop: 10 }}
+        >
           <Col md={8} sm={24} xs={12}>
             <TextInput
               formProps={{
@@ -106,7 +118,7 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id }) => {
               required
             />
           </Col>
-          <Col span={8}>
+          <Col md={8} sm={24} xs={12}>
             <SelectInput
               form={form}
               formProps={{ name: "tipoSerie", label: "Tipo" }}
@@ -115,6 +127,7 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id }) => {
               readonly={true}
             />
           </Col>
+          <Col md={16}></Col>
         </Row>
       </Form>
     </Fragment>

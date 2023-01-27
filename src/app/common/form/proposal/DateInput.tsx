@@ -23,6 +23,7 @@ interface IProps {
 const dateFormat = "DD/MM/YYYY";
 const weekFormat = "DD/MM";
 const monthFormat = 'MM/YYYY';
+const yearFormat = 'YYYY';
 
 const customWeekStartEndFormat: DatePickerProps["format"] = (value) =>
   `${moment(value).startOf("week").format(weekFormat)} - ${moment(value)
@@ -101,7 +102,7 @@ const DateInput = ({
               : disabledDates
           }
           disabled={readonly}
-          format={pickerType === "week" ? customWeekStartEndFormat : pickerType === "month" ? monthFormat : dateFormat}
+          format={pickerType === "week" ? customWeekStartEndFormat : pickerType === "month" ? monthFormat : pickerType === "year" ? yearFormat : dateFormat}
           style={{
             paddingRight: paddingRight,
             width: width ?? "100%",

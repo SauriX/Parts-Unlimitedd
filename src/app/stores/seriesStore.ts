@@ -43,6 +43,7 @@ export default class SeriesStore {
     try {
       const scopes = await Series.access();
       this.scopes = scopes;
+      return scopes;
     } catch (error) {
       alerts.warning(getErrors(error));
       history.push("/forbidden");
@@ -75,10 +76,10 @@ export default class SeriesStore {
     }
   };
 
-  getById = async (id: number) => {
+  getById = async (id: number, tipoSerie: number) => {
     try {
       this.loading = true;
-      const serie = await Series.getById(id);
+      const serie = await Series.getById(id, tipoSerie);
       return serie;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -87,7 +88,7 @@ export default class SeriesStore {
     }
   };
 
-  createInvoice = async (serie: ISeries) => {
+  createInvoice = async (serie: FormData) => {
     try {
       await Series.createInvoice(serie);
       alerts.success(messages.created);
@@ -96,7 +97,7 @@ export default class SeriesStore {
     }
   };
 
-  updateInvoice = async (serie: ISeries) => {
+  updateInvoice = async (serie: FormData) => {
     try {
       await Series.updateInvoice(serie);
       alerts.success(messages.created);

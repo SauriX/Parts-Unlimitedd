@@ -4,39 +4,47 @@ import SeriesForm from "./SeriesForm";
 import { Divider } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
 type SeriesParams = {
   id: string;
+  tipoSerie: string;
 };
 
 const SeriesDetail = () => {
   const { seriesStore } = useStore();
-  const { clearScopes, scopes } = seriesStore;
+  const { clearScopes, scopes, access } = seriesStore;
   const navigate = useNavigate();
 
-  const { id } = useParams<SeriesParams>();
-  const seriesId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
-
-  useEffect(() => {
-    if (seriesId === undefined) {
-      navigate("/notFound");
-    }
-  }, [navigate, seriesId]);
+  const { id, tipoSerie } = useParams<SeriesParams>();
 
   useEffect(() => {
     clearScopes();
   }, [clearScopes]);
 
-  if (seriesId === undefined) navigate("/series");
-  if (!scopes?.acceder) navigate("/notFound");
+  useEffect(() => {
+    const checkAccess = async () => {
+      const permissions = await access();
+
+      if (!permissions?.crear && id === "new") {
+        navigate(`/forbidden`);
+      } else if (!permissions?.modificar && id !== "new") {
+        navigate(`/forbidden`);
+      }
+    };
+
+    checkAccess();
+  }, [access, navigate, id]);
+
+  if (!scopes?.acceder) return null;
 
   return (
     <Fragment>
       <SeriesDetailHeader />
       <Divider className="header-divider" />
-      <SeriesForm id={seriesId!} />
+      <SeriesForm id={Number(id)} tipoSerie={Number(tipoSerie)} />
     </Fragment>
   );
 };
 
-export default SeriesDetail;
+export default observer(SeriesDetail);

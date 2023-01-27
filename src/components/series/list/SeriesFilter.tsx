@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { IOptions } from "../../../app/models/shared";
 import { useStore } from "../../../app/stores/store";
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Input, Row, Select, Spin } from "antd";
+import { Button, Col, Form, Input, Row, Select, Space, Spin } from "antd";
 import { ISeriesFilter } from "../../../app/models/series";
 import { formItemLayout } from "../../../app/util/utils";
 import moment from "moment";
@@ -58,37 +58,37 @@ const SeriesFilter = () => {
 
     if (selected) {
       setSeriesType(selected);
+    } else {
+      setSeriesType(0);
     }
   };
 
   return (
     <Spin spinning={loading}>
-      <Row justify="end" gutter={[24, 12]} className="filter-buttons">
+      <Row justify="end" gutter={[24, 24]} className="filter-buttons">
         <Col span={24}>
-          <Select
-            key="serie"
-            placeholder="Tipo"
-            optionFilterProp="children"
-            allowClear
-            onChange={handleChange}
-            options={seriesTypeOptions}
-          ></Select>
-          <Button
-            key="filter"
-            type="primary"
-            onClick={(e) => {
-              navigate(`/series/new`);
-            }}
-            icon={<PlusOutlined />}
-            style={{
-              backgroundColor: "#6EAA46",
-              color: "white",
-              borderColor: "#6EAA46",
-            }}
-            disabled={seriesType === 0}
-          >
-            Nuevo
-          </Button>
+          <Space>
+            <SelectInput
+              formProps={{
+                name: "tipo",
+                label: "",
+              }}
+              placeholder="Tipo de serie"
+              onChange={handleChange}
+              options={seriesTypeOptions}
+            ></SelectInput>
+            <Button
+              key="filter"
+              type="primary"
+              onClick={(e) => {
+                navigate(`/series/new/${seriesType}`);
+              }}
+              icon={<PlusOutlined />}
+              disabled={seriesType === 0}
+            >
+              Nuevo
+            </Button>
+          </Space>
         </Col>
       </Row>
       <div className="status-container">
@@ -100,7 +100,7 @@ const SeriesFilter = () => {
           onFinish={onFinish}
           scrollToFirstError
         >
-          <Row>
+          <Row gutter={[24, 12]}>
             <Col span={24}>
               <Row justify="space-between" gutter={[0, 12]}>
                 <Col span={6}>
@@ -110,7 +110,7 @@ const SeriesFilter = () => {
                       name: "año",
                     }}
                     disableAfterDates
-                    pickerType={"year"}
+                    pickerType="year"
                   />
                 </Col>
                 <Col span={6}>
@@ -151,13 +151,14 @@ const SeriesFilter = () => {
                       name: "buscar",
                       label: "Buscar",
                     }}
+                    placeholder="Clave"
                   />
                 </Col>
                 <Col span={6}>
                   <SelectInput
                     form={form}
                     formProps={{
-                      name: "tipoSerie",
+                      name: "tipoSeries",
                       label: "Tipo",
                     }}
                     multiple
@@ -166,7 +167,7 @@ const SeriesFilter = () => {
                 </Col>
               </Row>
             </Col>
-            <Col span={16} style={{ textAlign: "right" }}>
+            <Col span={24} style={{ textAlign: "right" }}>
               <Button key="clean" htmlType="reset">
                 Limpiar
               </Button>

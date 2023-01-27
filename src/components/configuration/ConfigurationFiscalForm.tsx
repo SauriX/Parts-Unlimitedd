@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Form, Row, Col, Button, Spin, Input } from "antd";
-import TextInput from "../../app/common/form/TextInput";
+import TextInput from "../../app/common/form/proposal/TextInput";
 import { observer } from "mobx-react-lite";
 import { IConfigurationFiscal } from "../../app/models/configuration";
 import { useStore } from "../../app/stores/store";
 import { IOptions } from "../../app/models/shared";
-import SelectInput from "../../app/common/form/SelectInput";
-import MaskInput from "../../app/common/form/MaskInput";
+import SelectInput from "../../app/common/form/proposal/SelectInput";
+import MaskInput from "../../app/common/form/proposal/MaskInput";
 
 const formItemLayout = {
   labelCol: {
@@ -104,118 +104,161 @@ const ConfigurationFiscalForm = () => {
         onFinish={onFinish}
         scrollToFirstError
       >
-        <TextInput formProps={{ name: "rfc", label: "RFC" }} max={4000} required readonly={readonly} />
-        <TextInput
-          formProps={{ name: "razonSocial", label: "Razón social" }}
-          max={4000}
-          required
-          readonly={readonly}
-        />
-        <Form.Item label="Código Postal" required>
-          <Input.Group compact>
+        <Row gutter={[0, 24]}>
+          <Col span={24}>
+            <TextInput
+              formProps={{ name: "rfc", label: "RFC" }}
+              max={4000}
+              required
+              readonly={readonly}
+            />
+          </Col>
+          <Col span={24}>
+            <TextInput
+              formProps={{ name: "razonSocial", label: "Razón social" }}
+              max={4000}
+              required
+              readonly={readonly}
+            />
+          </Col>
+          <Col span={24}>
+            <Form.Item label="Código Postal" className="no-error-text" required>
+              <Input.Group>
+                <Row gutter={[0, 24]}>
+                  <Col span={8}>
+                    <MaskInput
+                      formProps={{
+                        name: "codigoPostal",
+                        label: "Código Postal",
+                        noStyle: true,
+                      }}
+                      mask={[/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/]}
+                      validator={(_, value: any) => {
+                        if (!value || value.indexOf("_") === -1) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          "El campo debe contener 5 dígitos"
+                        );
+                      }}
+                      readonly={readonly}
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <TextInput
+                      formProps={{
+                        name: "estado",
+                        label: "Estado",
+                        noStyle: true,
+                      }}
+                      max={4000}
+                      readonly
+                    />
+                  </Col>
+                  <Col span={8}>
+                    <TextInput
+                      formProps={{
+                        name: "ciudad",
+                        label: "Ciudad",
+                        noStyle: true,
+                      }}
+                      max={4000}
+                      readonly
+                    />
+                  </Col>
+                </Row>
+              </Input.Group>
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <SelectInput
+              formProps={{
+                name: "colonia",
+                label: "Colonia",
+              }}
+              required
+              readonly={readonly}
+              options={colonies}
+            />
+          </Col>
+          <Col span={24}>
+            <Form.Item label="Dirección" className="no-error-text" required>
+              <Input.Group>
+                <Row gutter={[0, 24]}>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "calle",
+                        label: "Calle",
+                        noStyle: true,
+                      }}
+                      max={4000}
+                      required
+                      readonly={readonly}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <TextInput
+                      formProps={{
+                        name: "numero",
+                        label: "Número",
+                        noStyle: true,
+                      }}
+                      max={4000}
+                      required
+                      readonly={readonly}
+                    />
+                  </Col>
+                </Row>
+              </Input.Group>
+            </Form.Item>
+          </Col>
+          <Col span={24}>
             <MaskInput
               formProps={{
-                name: "codigoPostal",
-                label: "Código Postal",
-                noStyle: true,
+                name: "telefono",
+                label: "Teléfono",
               }}
-              mask={[/[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/, /[0-9]/]}
+              mask={[
+                /[0-9]/,
+                /[0-9]/,
+                /[0-9]/,
+                "-",
+                /[0-9]/,
+                /[0-9]/,
+                /[0-9]/,
+                "-",
+                /[0-9]/,
+                /[0-9]/,
+                "-",
+                /[0-9]/,
+                /[0-9]/,
+              ]}
               validator={(_, value: any) => {
                 if (!value || value.indexOf("_") === -1) {
                   return Promise.resolve();
                 }
-                return Promise.reject("El campo debe contener 5 dígitos");
+                return Promise.reject("El campo debe contener 10 dígitos");
               }}
               readonly={readonly}
-              width="30%"
             />
+          </Col>
+          <Col span={24}>
             <TextInput
-              formProps={{
-                name: "estado",
-                label: "Estado",
-                noStyle: true,
-              }}
-              max={4000}
-              readonly
-              width="35%"
-            />
-            <TextInput
-              formProps={{
-                name: "ciudad",
-                label: "Ciudad",
-                noStyle: true,
-              }}
-              max={4000}
-              readonly
-              width="35%"
-            />
-          </Input.Group>
-        </Form.Item>
-        <SelectInput
-          formProps={{
-            name: "colonia",
-            label: "Colonia",
-          }}
-          required
-          readonly={readonly}
-          options={colonies}
-        />
-        <Form.Item label="Dirección" required>
-          <Input.Group compact>
-            <TextInput
-              formProps={{
-                name: "calle",
-                label: "Calle",
-                noStyle: true,
-              }}
-              max={4000}
-              required
+              formProps={{ name: "email", label: "Correo" }}
+              type="email"
               readonly={readonly}
-              width="65%"
             />
+          </Col>
+          <Col span={24}>
             <TextInput
-              formProps={{
-                name: "numero",
-                label: "Número",
-                noStyle: true,
-              }}
-              max={4000}
-              required
+              formProps={{ name: "webSite", label: "WebSite" }}
               readonly={readonly}
-              width="35%"
             />
-          </Input.Group>
-        </Form.Item>
-        <MaskInput
-          formProps={{
-            name: "telefono",
-            label: "Teléfono",
-          }}
-          mask={[
-            /[0-9]/,
-            /[0-9]/,
-            /[0-9]/,
-            "-",
-            /[0-9]/,
-            /[0-9]/,
-            /[0-9]/,
-            "-",
-            /[0-9]/,
-            /[0-9]/,
-            "-",
-            /[0-9]/,
-            /[0-9]/,
-          ]}
-          validator={(_, value: any) => {
-            if (!value || value.indexOf("_") === -1) {
-              return Promise.resolve();
-            }
-            return Promise.reject("El campo debe contener 10 dígitos");
-          }}
-          readonly={readonly}
-        />
+          </Col>
+        </Row>
         <Row>
-          <Col span={24} style={{ textAlign: "right" }}>
+          <Col span={24} style={{ textAlign: "right", marginTop: 10 }}>
             {!readonly && (
               <Button type="primary" htmlType="submit">
                 Guardar

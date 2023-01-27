@@ -13,7 +13,7 @@ type SeriesBodyProps = {
 
 const SeriesBody: FC<SeriesBodyProps> = ({ printing }) => {
   const { seriesStore } = useStore();
-  const { seriesList, getByFilter } = seriesStore;
+  const { seriesList, getByFilter, setSeriesType } = seriesStore;
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -21,6 +21,7 @@ const SeriesBody: FC<SeriesBodyProps> = ({ printing }) => {
       await getByFilter({
         año: moment(Date.now()).utcOffset(0, true),
       });
+      setSeriesType(0);
     };
 
     readRequests();
