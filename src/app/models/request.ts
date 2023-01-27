@@ -261,6 +261,7 @@ export interface IRequestStudy {
   usuarioCaptura?: string;
   usuarioLiberado?: string;
   usuarioEnviado?: string;
+  tipo?: string;
 }
 
 export class RequestStudyValues implements IRequestStudy {
