@@ -1,4 +1,4 @@
-import { Button, Divider, PageHeader, Table, Tabs } from "antd";
+import { Button, Divider, PageHeader, Table, Tabs, Typography } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
@@ -18,15 +18,23 @@ import { IRouteList } from "../../app/models/route";
 import PendingSend from "./TapsComponents/PendingSend";
 import PendingRecive from "./TapsComponents/PendingRecive";
 
+const { Text } = Typography;
+
 type RouteTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
 
-const RouteTrackingTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
-    const { TabPane } = Tabs;
-    const { routeStore } = useStore();
+const RouteTrackingTable: FC<RouteTableProps> = ({
+  componentRef,
+  printing,
+}) => {
+  const { TabPane } = Tabs;
+  const { routeStore, profileStore, optionStore } = useStore();
   const { routes, getAll } = routeStore;
+  
+
+  
 
   const [searchParams] = useSearchParams();
 
@@ -49,13 +57,11 @@ const RouteTrackingTable: FC<RouteTableProps> = ({ componentRef, printing }) => 
       await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
       getAll("all");
-      // create(routes).then(x => { getAll("all")});
     };
 
     if (routes.length === 0) {
       readRoutes();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const columns: IColumns<IRouteList> = [
@@ -71,7 +77,9 @@ const RouteTrackingTable: FC<RouteTableProps> = ({ componentRef, printing }) => 
         <Button
           type="link"
           onClick={() => {
-            navigate(`/${views.route}/${route.id}?${searchParams}&mode=readonly`);
+            navigate(
+              `/${views.route}/${route.id}?${searchParams}&mode=readonly`
+            );
           }}
         >
           {value}
@@ -97,14 +105,14 @@ const RouteTrackingTable: FC<RouteTableProps> = ({ componentRef, printing }) => 
       }),
     },
     {
-        ...getDefaultColumnProps("sucursalDestino", "Destino", {
-          searchState,
-          setSearchState,
-          width: "20%",
-          minWidth: 150,
-          windowSize: windowWidth,
-        }),
-      },
+      ...getDefaultColumnProps("sucursalDestino", "Destino", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
     {
       key: "activo",
       dataIndex: "activo",
@@ -153,17 +161,17 @@ const RouteTrackingTable: FC<RouteTableProps> = ({ componentRef, printing }) => 
 
   return (
     <Fragment>
-        <Tabs defaultActiveKey="1" >
-            <TabPane tab="Pendientes de enviar" key="1">
-                <PendingSend></PendingSend>
-            </TabPane>
-            <TabPane tab="Pendientes de recibir" key="2">
-              <PendingRecive></PendingRecive>
-            </TabPane>
-            <TabPane tab="Reporte" key="3">
-            Content of Tab Pane 3 
-            </TabPane>
-        </Tabs>
+      <Tabs defaultActiveKey="1">
+        <TabPane tab="Pendientes de enviar" key="1">
+          <PendingSend></PendingSend>
+        </TabPane>
+        <TabPane tab="Pendientes de recibir" key="2">
+          <PendingRecive></PendingRecive>
+        </TabPane>
+        <TabPane tab="Reporte" key="3">
+          Content of Tab Pane 3
+        </TabPane>
+      </Tabs>
     </Fragment>
   );
 };

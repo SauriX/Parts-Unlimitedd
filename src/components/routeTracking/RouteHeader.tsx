@@ -1,5 +1,5 @@
-import { Button, Input, PageHeader } from "antd";
-import { FC } from "react";
+import { Button, Input, PageHeader, Typography } from "antd";
+import { FC, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../app/common/button/ImageButton";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
@@ -7,6 +7,8 @@ import { useStore } from "../../app/stores/store";
 import { PlusOutlined } from "@ant-design/icons";
 import PrintIcon from "../../app/common/icons/PrintIcon";
 import DownloadIcon from "../../app/common/icons/DownloadIcon";
+
+const { Text } = Typography;
 
 const { Search } = Input;
 
@@ -19,8 +21,18 @@ const RouteTrackingHeader: FC<RouteHeaderProps> = ({
   handlePrint,
   handleDownload,
 }) => {
-  const { routeStore } = useStore();
+  const { routeStore, profileStore, optionStore } = useStore();
   const { scopes, getAll } = routeStore;
+  const { profile } = profileStore;
+  const { BranchOptions, getBranchOptions } = optionStore;
+
+  useEffect(() => {
+    getBranchOptions();
+  }, [getBranchOptions]);
+
+  const branchName = BranchOptions.find(
+    (x) => x.value === profile?.sucursal
+  )?.label;
 
   const navigate = useNavigate();
 
@@ -50,12 +62,9 @@ const RouteTrackingHeader: FC<RouteHeaderProps> = ({
         scopes?.descargar && (
           <DownloadIcon key="doc" onClick={handleDownload} />
         ),
-        <Search
-          key="search"
-          placeholder="Buscar"
-          defaultValue={searchParams.get("search") ?? ""}
-          onSearch={search}
-        />,
+        <Text>
+          Sucursal activa: {" "} <strong>{branchName}</strong>
+        </Text>,
         scopes?.crear && (
           <Button
             key="new"
