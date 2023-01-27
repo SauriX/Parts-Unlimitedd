@@ -10,6 +10,7 @@ import {
   IPriceListList,
   ISucMedComList,
 } from "../models/priceList";
+import { IDias, IPromotionEstudioList } from "../models/promotion";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
@@ -47,7 +48,7 @@ export default class PriceListStore {
   };
   getAllStudy = async () => {
     try {
-      const studies = await Study. getAllPrice("all");
+      const studies = await Study.getAllPrice("all");
 
       return studies;
     } catch (error: any) {
@@ -76,7 +77,7 @@ export default class PriceListStore {
         };
         return data;
       });
-      
+
       this.packs = studies;
       return studies;
     } catch (error: any) {
@@ -100,6 +101,62 @@ export default class PriceListStore {
       const priceList = await PriceList.getById(id);
       console.log("se obtuvo la lista de precios");
       return priceList;
+    } catch (error: any) {
+      if (error.status === responses.notFound) {
+        history.push("/notFound");
+      } else {
+        alerts.warning(getErrors(error));
+      }
+    }
+  };
+
+  take: number = 50;
+  skip: number = 0;
+  getSkip = () => {
+    return this.skip * this.take;
+  };
+
+  addSkip = () => {
+    this.skip = this.skip + 1;
+  };
+
+  resetSkip = () => {
+    this.skip = 0;
+  };
+
+  getStudiesById = async (filter: any) => {
+    try {
+      const priceList: IPromotionEstudioList[] = await PriceList.getStudiesById(
+        filter
+      );
+      var estudios = priceList.map((x) => {
+        var dia: IDias[] = [];
+        if (x.lunes) {
+          dia.push({ id: 1, dia: "L" });
+        }
+        if (x.martes) {
+          dia.push({ id: 2, dia: "M" });
+        }
+        if (x.miercoles) {
+          dia.push({ id: 3, dia: "M" });
+        }
+        if (x.jueves) {
+          dia.push({ id: 4, dia: "J" });
+        }
+        if (x.viernes) {
+          dia.push({ id: 5, dia: "V" });
+        }
+        if (x.sabado) {
+          dia.push({ id: 6, dia: "S" });
+        }
+        if (x.domingo) {
+          dia.push({ id: 7, dia: "D" });
+        }
+        x.selectedTags = dia;
+        return x;
+      });
+      console.log("se obtuvo la lista de estudios");
+      return estudios;
     } catch (error: any) {
       if (error.status === responses.notFound) {
         history.push("/notFound");
