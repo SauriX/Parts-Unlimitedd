@@ -44,6 +44,10 @@ const QuotationFilter = () => {
     form.setFieldValue("sucursales", []);
   }, [branchCityOptions, form, selectedCity]);
 
+  useEffect(() => {
+    form.setFieldsValue(filter);
+  }, [filter, form]);
+
   const onFinish = (values: IQuotationFilter) => {
     setErrors([]);
     const filter = { ...values };
