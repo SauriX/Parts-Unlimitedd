@@ -64,7 +64,7 @@ const SeriesColumns = () => {
         setSearchState,
         width: "10%",
       }),
-      render: (_value, record) => (record.cfdi ? "SI" : record.cfdi == null ? "-" : "NO"), 
+      render: (_value, record) => (record.cfdi ? "SI" : record.cfdi == null || record.tipo === 2 ? "" : "NO"), 
     },
     {
       ...getDefaultColumnProps("año", "Año", {
@@ -79,7 +79,7 @@ const SeriesColumns = () => {
           setSearchState,
           width: "10%",
         }),
-        render: (_value, record) => (record.activo && record.tipo === 1 ? "Vigente" : record.activo == null ? "-" : "Caducado"),
+        render: (_value, record) => (record.activo && record.tipo === 1 ? "Vigente" : record.activo == null || record.tipo === 2 ? "" : "Caducado"),
       },
   ];
 

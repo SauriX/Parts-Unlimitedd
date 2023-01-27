@@ -2,7 +2,6 @@ import { useForm } from "antd/lib/form/Form";
 import { useEffect, useState } from "react";
 import { IOptions } from "../../../app/models/shared";
 import { useStore } from "../../../app/stores/store";
-import { PlusOutlined } from "@ant-design/icons";
 import { Button, Col, Form, Input, Row, Select, Space, Spin } from "antd";
 import { ISeriesFilter } from "../../../app/models/series";
 import { formItemLayout } from "../../../app/util/utils";
@@ -53,44 +52,8 @@ const SeriesFilter = () => {
     setLoading(false);
   };
 
-  const handleChange = (value: number) => {
-    const selected = seriesTypeOptions.find((x) => x.value === value)?.value;
-
-    if (selected) {
-      setSeriesType(selected);
-    } else {
-      setSeriesType(0);
-    }
-  };
-
   return (
     <Spin spinning={loading}>
-      <Row justify="end" gutter={[24, 24]} className="filter-buttons">
-        <Col span={24}>
-          <Space>
-            <SelectInput
-              formProps={{
-                name: "tipo",
-                label: "",
-              }}
-              placeholder="Tipo de serie"
-              onChange={handleChange}
-              options={seriesTypeOptions}
-            ></SelectInput>
-            <Button
-              key="filter"
-              type="primary"
-              onClick={(e) => {
-                navigate(`/series/new/${seriesType}`);
-              }}
-              icon={<PlusOutlined />}
-              disabled={seriesType === 0}
-            >
-              Nuevo
-            </Button>
-          </Space>
-        </Col>
-      </Row>
       <div className="status-container">
         <Form<ISeriesFilter>
           {...formItemLayout}
@@ -100,74 +63,70 @@ const SeriesFilter = () => {
           onFinish={onFinish}
           scrollToFirstError
         >
-          <Row gutter={[24, 12]}>
-            <Col span={24}>
-              <Row justify="space-between" gutter={[0, 12]}>
-                <Col span={6}>
-                  <DateInput
-                    formProps={{
-                      label: "Año",
-                      name: "año",
-                    }}
-                    disableAfterDates
-                    pickerType="year"
-                  />
-                </Col>
-                <Col span={6}>
-                  <Form.Item label="Sucursal" className="no-error-text" help="">
-                    <Input.Group>
-                      <Row gutter={8}>
-                        <Col span={12}>
-                          <SelectInput
-                            form={form}
-                            formProps={{
-                              name: "ciudad",
-                              label: "Ciudad",
-                              noStyle: true,
-                            }}
-                            options={cityOptions}
-                            multiple
-                          />
-                        </Col>
-                        <Col span={12}>
-                          <SelectInput
-                            form={form}
-                            formProps={{
-                              name: "sucursalId",
-                              label: "Sucursales",
-                              noStyle: true,
-                            }}
-                            multiple
-                            options={branchOptions}
-                          />
-                        </Col>
-                      </Row>
-                    </Input.Group>
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <TextInput
-                    formProps={{
-                      name: "buscar",
-                      label: "Buscar",
-                    }}
-                    placeholder="Clave"
-                  />
-                </Col>
-                <Col span={6}>
-                  <SelectInput
-                    form={form}
-                    formProps={{
-                      name: "tipoSeries",
-                      label: "Tipo",
-                    }}
-                    multiple
-                    options={seriesTypeOptions}
-                  ></SelectInput>
-                </Col>
-              </Row>
+          <Row justify="space-between" gutter={[24, 24]}>
+            <Col span={2}>
+              <DateInput
+                formProps={{
+                  label: "Año",
+                  name: "año",
+                }}
+                disableAfterDates
+                pickerType="year"
+              />
             </Col>
-            <Col span={24} style={{ textAlign: "right" }}>
+            <Col span={7}>
+              <Form.Item label="Sucursal" className="no-error-text" help="">
+                <Input.Group>
+                  <Row gutter={8}>
+                    <Col span={12}>
+                      <SelectInput
+                        form={form}
+                        formProps={{
+                          name: "ciudad",
+                          label: "Ciudad",
+                          noStyle: true,
+                        }}
+                        options={cityOptions}
+                        multiple
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <SelectInput
+                        form={form}
+                        formProps={{
+                          name: "sucursalId",
+                          label: "Sucursales",
+                          noStyle: true,
+                        }}
+                        multiple
+                        options={branchOptions}
+                      />
+                    </Col>
+                  </Row>
+                </Input.Group>
+              </Form.Item>
+            </Col>
+            <Col span={7}>
+              <TextInput
+                formProps={{
+                  name: "buscar",
+                  label: "Buscar",
+                }}
+                placeholder="Clave"
+              />
+            </Col>
+            <Col span={4}>
+              <SelectInput
+                form={form}
+                formProps={{
+                  name: "tipoSeries",
+                  label: "Tipo",
+                }}
+                multiple
+                options={seriesTypeOptions}
+              ></SelectInput>
+            </Col>
+            <Col span={4} style={{textAlign: "right"}}>
               <Button key="clean" htmlType="reset">
                 Limpiar
               </Button>

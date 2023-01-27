@@ -31,7 +31,7 @@ const ClinicResultsFilter = () => {
     getCompanyOptions,
     getStudiesOptions,
     areaByDeparmentOptions,
-    getAreaByDeparmentOptions
+    getAreaByDeparmentOptions,
   } = optionStore;
 
   const [form] = useForm();
@@ -88,7 +88,6 @@ const ClinicResultsFilter = () => {
     setDepartmentOptions(
       areaByDeparmentOptions.map((x) => ({ value: x.value, label: x.label }))
     );
-    
   }, [areaByDeparmentOptions]);
 
   useEffect(() => {
@@ -98,7 +97,7 @@ const ClinicResultsFilter = () => {
         .flatMap((x) => x.options ?? [])
     );
     form.setFieldValue("area", []);
-    console.log("areaByDeparmentOptions", areaByDeparmentOptions)
+    console.log("areaByDeparmentOptions", areaByDeparmentOptions);
   }, [areaByDeparmentOptions, form, selectedDepartment]);
 
   const onFinish = async (newFormValues: IClinicResultForm) => {
@@ -164,7 +163,9 @@ const ClinicResultsFilter = () => {
                       name: "buscar",
                       label: "Buscar",
                     }}
-                    onPressEnter={() => onFinish}
+                    onPressEnter={() => {
+                      form.submit();
+                    }} 
                   />
                 </Col>
                 <Col span={8}>

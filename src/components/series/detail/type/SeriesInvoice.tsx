@@ -395,7 +395,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
           <Col md={6} sm={24} xs={12}>
             <TextInput
               formProps={{
-                name: ["emisor", "email"],
+                name: ["emisor", "correo"],
                 label: "E-mail",
               }}
               readonly={true}
