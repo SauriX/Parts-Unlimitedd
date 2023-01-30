@@ -24,7 +24,7 @@ const PendingSend = () => {
   const { optionStore, routeTrackingStore, profileStore } = useStore();
   const { getAll, studys, printTicket, update, exportForm, setventana,searchrecive,setSearchRecive } =
     routeTrackingStore;
-  const { branchCityOptions, getBranchCityOptions } = optionStore;
+  const { allbranchCityOptions, getAllBranchCityOptions } = optionStore;
   const { profile } = profileStore;
 
 
@@ -35,7 +35,7 @@ const PendingSend = () => {
     const readPriceList = async () => {
       let studios = [];
       var datas = await getAll(searchrecive!);
-      getBranchCityOptions();
+      getAllBranchCityOptions();
       setventana("enviar");
       datas?.forEach((x: any) => studios.push(x.studys));
     };
@@ -181,7 +181,7 @@ const PendingSend = () => {
           </Col>
           <Col span={5}>
             <SelectInput
-              options={branchCityOptions}
+              options={allbranchCityOptions}
               formProps={{
                 name: "sucursal",
                 label: "Sucursal a donde enviar",

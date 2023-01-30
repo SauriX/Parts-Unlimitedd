@@ -574,7 +574,7 @@ export default class OptionStore {
     }
   };
 
-  branchCityOptions: IOptions[] = [];
+  branchCityOptions: IOptions[] = []; 
   getBranchCityOptions = async () => {
     try {
       const branch = Branch.getBranchByCity();
@@ -591,7 +591,23 @@ export default class OptionStore {
       this.branchCityOptions = [];
     }
   };
-
+  allbranchCityOptions: IOptions[] = []; 
+  getAllBranchCityOptions = async () => {
+    try {
+      const branch = Branch.getBranchByCity();
+      this.branchCityOptions = (await branch).map((x) => ({
+        value: x.ciudad,
+        label: x.ciudad,
+        disabled: true,
+        options: x.sucursales.map((y) => ({
+          value: y.idSucursal,
+          label: y.nombre,
+        })),
+      }));
+    } catch (error) {
+      this.branchCityOptions = [];
+    }
+  };
   studiesOptions: any[] = [];
   getStudiesOptions = async () => {
     try {
