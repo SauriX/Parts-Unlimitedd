@@ -135,6 +135,14 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
     if (values.fechaNacimiento === null) {
       delete values.fechaNacimiento;
     }
+    if(values.fechaNacimiento != null){
+      console.log(values.fechaNacimiento,"nacimiento");
+     values.fechaNacimiento=  values.fechaNacimiento!.utcOffset(0, true);
+    }
+
+    if ( values.fechaAlta != null) {
+      values.fechaAlta = [values.fechaAlta![0].utcOffset(0, true),values.fechaAlta![1].utcOffset(0, true)] 
+    }
     setSearch(values);
     await getnow(values!);
   };
