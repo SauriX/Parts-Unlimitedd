@@ -35,6 +35,8 @@ import { UploadOutlined } from "@ant-design/icons";
 import { RcFile, UploadChangeParam } from "antd/lib/upload";
 import React from "react";
 import moment from "moment";
+import { useSearchParams } from "react-router-dom";
+import ImageButton from "../../../../app/common/button/ImageButton";
 
 type SeriesInvoiceProps = {
   id: number;
@@ -49,6 +51,10 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [readonly, setReadonly] = useState(
+    searchParams.get("mode") === "readonly"
+  );
 
   const [form] = Form.useForm<ISeries>();
   const [values, setValues] = useState<ISeries>(new SeriesValues());
@@ -87,6 +93,8 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
   }, [id, getById]);
 
   const goBack = () => {
+    searchParams.delete("mode");
+    setSearchParams(searchParams);
     setSeriesType(0);
     navigate("/series");
   };
@@ -126,6 +134,11 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
     onChange: (info) => onChangeFile(info),
   };
 
+  const setEditMode = () => {
+    navigate(`/series/${id}/${tipoSerie}?${searchParams}&mode=edit`);
+    setReadonly(false);
+  };
+
   const onFinish = async (newValues: ISeries) => {
     setLoading(true);
 
@@ -148,18 +161,30 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
   return (
     <Fragment>
       <Row gutter={[24, 12]}>
-        <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
-          <Button onClick={goBack}>Cancelar</Button>
-          <Button
-            type="primary"
-            htmlType="submit"
-            onClick={() => {
-              form.submit();
-            }}
-          >
-            Guardar
-          </Button>
-        </Col>
+        {!readonly && (
+          <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
+            <Button onClick={goBack}>Cancelar</Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              onClick={() => {
+                form.submit();
+              }}
+            >
+              Guardar
+            </Button>
+          </Col>
+        )}
+        {readonly && (
+          <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
+            <ImageButton
+              key="edit"
+              title="Editar"
+              image="editar"
+              onClick={setEditMode}
+            />
+          </Col>
+        )}
       </Row>
       <Form<ISeries>
         {...formItemLayout}
@@ -177,6 +202,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
                 label: "Clave",
               }}
               required
+              readonly={readonly}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
@@ -186,6 +212,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
                 label: "Nombre",
               }}
               required
+              readonly={readonly}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
@@ -196,10 +223,16 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
               }}
               disableAfterDates
               pickerType="year"
+              readonly={readonly}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
-            <SwitchInput name={["factura", "cfdi"]} label="Crear CFDI" required />
+            <SwitchInput
+              name={["factura", "cfdi"]}
+              label="Crear CFDI"
+              required
+              readonly={readonly}
+            />
           </Col>
           <Col span={6}>
             <SelectInput
@@ -218,6 +251,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
               }}
               placeholder={"Contraseña"}
               required
+              readonly={readonly}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
@@ -227,6 +261,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
                 label: "Key Sucursal",
               }}
               required
+              readonly={readonly}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
@@ -241,6 +276,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
                 }
               }}
               required
+              readonly={readonly}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
@@ -252,6 +288,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
               rows={4}
               autoSize
               required
+              readonly={readonly}
             />
           </Col>
           <Col md={6} sm={24} xs={12}>
@@ -261,7 +298,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
               required
             >
               <Upload {...props}>
-                <Button type="primary" icon={<UploadOutlined />}>
+                <Button type="primary" icon={<UploadOutlined />} disabled={readonly} >
                   Subir archivo
                 </Button>
               </Upload>
@@ -274,7 +311,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
               required
             >
               <Upload {...props}>
-                <Button type="primary" icon={<UploadOutlined />}>
+                <Button type="primary" icon={<UploadOutlined />} disabled={readonly} >
                   Subir archivo
                 </Button>
               </Upload>

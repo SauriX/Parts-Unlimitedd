@@ -64,7 +64,7 @@ const SeriesFilter = () => {
           scrollToFirstError
         >
           <Row justify="space-between" gutter={[24, 24]}>
-            <Col span={2}>
+            <Col span={4}>
               <DateInput
                 formProps={{
                   label: "Año",
@@ -74,7 +74,7 @@ const SeriesFilter = () => {
                 pickerType="year"
               />
             </Col>
-            <Col span={7}>
+            <Col span={6}>
               <Form.Item label="Sucursal" className="no-error-text" help="">
                 <Input.Group>
                   <Row gutter={8}>
@@ -106,7 +106,7 @@ const SeriesFilter = () => {
                 </Input.Group>
               </Form.Item>
             </Col>
-            <Col span={7}>
+            <Col span={6}>
               <TextInput
                 formProps={{
                   name: "buscar",

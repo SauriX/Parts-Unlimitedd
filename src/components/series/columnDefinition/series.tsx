@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Typography } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import series from "../../../app/api/series";
 import {
   getDefaultColumnProps,
@@ -17,6 +17,7 @@ const SeriesColumns = () => {
     searchedText: "",
     searchedColumn: "",
   });
+  const [searchParams] = useSearchParams();
 
   const navigate = useNavigate();
 
@@ -30,7 +31,7 @@ const SeriesColumns = () => {
       render: (_value, record) => (
         <Link
           onClick={() => {
-            navigate(`/series/${record.id}/${record.tipo}`);
+            navigate(`/series/${record.id}/${record.tipo}?${searchParams}&mode=readonly`);
           }}
         >
           {record.id}

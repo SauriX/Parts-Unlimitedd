@@ -3,6 +3,7 @@ import form from "antd/lib/form";
 import { observer } from "mobx-react-lite";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import ImageButton from "../../../../app/common/button/ImageButton";
 import SelectInput from "../../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../../app/common/form/proposal/TextInput";
 import {
@@ -24,6 +25,10 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id, tipoSerie }) => {
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [readonly, setReadonly] = useState(
+    searchParams.get("mode") === "readonly"
+  );
 
   const [form] = Form.useForm<ITicketSerie>();
   const [values, setValues] = useState<ITicketSerie>(new TicketSeriesValues());
@@ -52,8 +57,15 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id, tipoSerie }) => {
   }, [id, getById]);
 
   const goBack = () => {
+    searchParams.delete("mode");
+    setSearchParams(searchParams);
     setSeriesType(0);
     navigate("/series");
+  };
+
+  const setEditMode = () => {
+    navigate(`/series/${id}/${tipoSerie}?${searchParams}&mode=edit`);
+    setReadonly(false);
   };
 
   const onFinish = async (newValues: ITicketSerie) => {
@@ -74,18 +86,30 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id, tipoSerie }) => {
   return (
     <Fragment>
       <Row gutter={[24, 12]}>
-        <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
-          <Button onClick={goBack}>Cancelar</Button>
-          <Button
-            type="primary"
-            htmlType="submit"
-            onClick={() => {
-              form.submit();
-            }}
-          >
-            Guardar
-          </Button>
-        </Col>
+      {!readonly && (
+          <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
+            <Button onClick={goBack}>Cancelar</Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              onClick={() => {
+                form.submit();
+              }}
+            >
+              Guardar
+            </Button>
+          </Col>
+        )}
+        {readonly && (
+          <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
+            <ImageButton
+              key="edit"
+              title="Editar"
+              image="editar"
+              onClick={setEditMode}
+            />
+          </Col>
+        )}
       </Row>
       <Form<ITicketSerie>
         {...formItemLayout}
@@ -107,6 +131,7 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id, tipoSerie }) => {
                 label: "Clave",
               }}
               required
+              readonly={readonly}
             />
           </Col>
           <Col md={16} sm={24} xs={12}>
@@ -116,6 +141,7 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id, tipoSerie }) => {
                 label: "Nombre",
               }}
               required
+              readonly={readonly}
             />
           </Col>
           <Col md={8} sm={24} xs={12}>
