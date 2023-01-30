@@ -137,6 +137,23 @@ export default class UserStore {
       return false;
     }
   };
+  updateBranch = async (branchId: string) => {
+    try {
+      await User.updateBranch(branchId);
+      alerts.success(messages.updated);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+  sucrusalesId: string[] = [];
+  setSucursalesId = (sucrusalesId: any) => {
+    this.sucrusalesId = sucrusalesId;
+  };
+  getSucursalesId = () => {
+    return this.sucrusalesId;
+  };
   changePassordF = async () => {
     return await this.changePasswordFlag;
   };

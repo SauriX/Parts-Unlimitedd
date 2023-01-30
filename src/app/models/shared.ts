@@ -6,6 +6,7 @@ export interface IProfile {
   requiereCambio: boolean;
   sucursal: string;
   admin: boolean;
+  sucursales: string[];
 }
 
 export interface IScopes {

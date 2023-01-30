@@ -14,7 +14,9 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   claveMedico?: string;
   nombreCompania?: string;
   observaciones?: string;
+  paciente?: string;
   sucursalId: string;
+  sucursal?: string;
   clave?: string;
   estatusId: number;
   clavePatologica?: string;
@@ -28,6 +30,8 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   tokenValidado: boolean;
   servicios?: string[];
   saldoPendiente?: boolean;
+  serie?: string;
+  serieNumero?: string;
   estudios?: IRequestStudyInfo[];
 }
 
@@ -257,6 +261,7 @@ export interface IRequestStudy {
   usuarioCaptura?: string;
   usuarioLiberado?: string;
   usuarioEnviado?: string;
+  tipo?: string;
 }
 
 export class RequestStudyValues implements IRequestStudy {

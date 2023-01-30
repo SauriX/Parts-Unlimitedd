@@ -146,8 +146,6 @@ const InvoiceCompanyData = ({
                 type="primary"
                 onClick={() => {
                   if (!!facturapiId) {
-                    console.log("invoice", invoice);
-                    console.log("factura", facturapiId);
                     downloadPdf(facturapiId);
                   }
                 }}

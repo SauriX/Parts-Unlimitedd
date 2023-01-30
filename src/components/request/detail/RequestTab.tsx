@@ -2,7 +2,8 @@ import { Button, Col, Form, notification, Row, Space, Spin, Tabs } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { Tab } from "rc-tabs/lib/interface";
+import { useCallback, useEffect, useState } from "react";
 import { IRequestGeneral } from "../../../app/models/request";
 import { useStore } from "../../../app/stores/store";
 import alerts from "../../../app/util/alerts";
@@ -47,6 +48,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     request,
     studyUpdate,
     loadingTabContent,
+    allStudies,
     getStudies,
     getPayments,
     updateGeneral,
@@ -63,6 +65,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
   const [formGeneral] = Form.useForm<IRequestGeneral>();
 
   const [currentKey, setCurrentKey] = useState<keys>("general");
+  const [tabs, setTabs] = useState<Tab[]>([]);
 
   const onChangeTab = async (key: string) => {
     if (
@@ -183,91 +186,101 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     </Space>
   );
 
-  const tabRender = (tabName: string) => {
-    let component = (
-      <RequestGeneral
-        branchId={branchId}
-        form={formGeneral}
-        onSubmit={(request, showLoader) => {
-          onSubmitGeneral(request, showLoader, updateGeneral).then((ok) => {
-            if (!ok) setCurrentKey("general");
-          });
-        }}
-      />
-    );
+  const tabRender = useCallback(
+    (tabName: string) => {
+      let component = (
+        <RequestGeneral
+          branchId={branchId}
+          form={formGeneral}
+          onSubmit={(request, showLoader) => {
+            onSubmitGeneral(request, showLoader, updateGeneral).then((ok) => {
+              if (!ok) setCurrentKey("general");
+            });
+          }}
+        />
+      );
 
-    if (tabName === "studies") {
-      component = <RequestStudy />;
-    } else if (tabName === "indications") {
-      component = <RequestIndication />;
-    } else if (tabName === "register") {
-      component = <RequestRegister />;
-    } else if (tabName === "sampler") {
-      component = <RequestSampler />;
-    } else if (tabName === "print") {
-      component = <RequestPrint />;
-    } else if (tabName === "request") {
-      component = <RequestRequest formGeneral={formGeneral} />;
-    } else if (tabName === "images") {
-      component = <RequestImage />;
-    }
+      if (tabName === "studies") {
+        component = <RequestStudy />;
+      } else if (tabName === "indications") {
+        component = <RequestIndication />;
+      } else if (tabName === "register") {
+        component = <RequestRegister />;
+      } else if (tabName === "sampler") {
+        component = <RequestSampler />;
+      } else if (tabName === "print") {
+        component = <RequestPrint />;
+      } else if (tabName === "request") {
+        component = <RequestRequest formGeneral={formGeneral} />;
+      } else if (tabName === "images") {
+        component = <RequestImage />;
+      }
 
-    return (
-      <Row gutter={8}>
-        <Col span={18}>{component}</Col>
-        <Col span={6}>
-          <RequestInvoice />
-        </Col>
-      </Row>
-    );
-  };
+      return (
+        <Row gutter={8}>
+          <Col span={18}>{component}</Col>
+          <Col span={6}>
+            <RequestInvoice />
+          </Col>
+        </Row>
+      );
+    },
+    [branchId, formGeneral, updateGeneral]
+  );
+
+  useEffect(() => {
+    setTabs([
+      {
+        key: "general",
+        label: "Generales",
+        children: tabRender("general"),
+      },
+      {
+        key: "studies",
+        label: "Estudios",
+        children: tabRender("studies"),
+      },
+      {
+        key: "indications",
+        label: "Indicaciones",
+        children: tabRender("indications"),
+        disabled: allStudies.length === 0,
+      },
+      {
+        key: "register",
+        label: "Caja",
+        children: tabRender("register"),
+        disabled: allStudies.length === 0,
+      },
+      {
+        key: "sampler",
+        label: "Registro de toma",
+        children: tabRender("sampler"),
+        disabled: allStudies.length === 0,
+      },
+      {
+        key: "print",
+        label: "Imprimir",
+        children: tabRender("print"),
+        disabled: allStudies.length === 0,
+      },
+      {
+        key: "request",
+        label: "Solicitar Estudio",
+        children: tabRender("request"),
+        disabled: allStudies.length === 0,
+      },
+      {
+        key: "images",
+        label: "Imágenes",
+        children: tabRender("images"),
+      },
+    ]);
+  }, [allStudies.length, tabRender]);
 
   if (!branchId) {
     return <p>Por favor selecciona una sucursal.</p>;
   }
-
-  const tabs = [
-    {
-      key: "general",
-      label: "Generales",
-      children: tabRender("general"),
-    },
-    {
-      key: "studies",
-      label: "Estudios",
-      children: tabRender("studies"),
-    },
-    {
-      key: "indications",
-      label: "Indicaciones",
-      children: tabRender("indications"),
-    },
-    {
-      key: "register",
-      label: "Caja",
-      children: tabRender("register"),
-    },
-    {
-      key: "sampler",
-      label: "Registro de toma",
-      children: tabRender("sampler"),
-    },
-    {
-      key: "print",
-      label: "Imprimir",
-      children: tabRender("print"),
-    },
-    {
-      key: "request",
-      label: "Solicitar Estudio",
-      children: tabRender("request"),
-    },
-    {
-      key: "images",
-      label: "Imágenes",
-      children: tabRender("images"),
-    },
-  ];
 
   return (
     <Spin spinning={loadingTabContent}>

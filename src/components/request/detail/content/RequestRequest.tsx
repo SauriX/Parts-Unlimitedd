@@ -55,8 +55,11 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
 
     setStudy({ ...item, fechaEntrega: value.utcOffset(0, true) });
     const origin = formGeneral.getFieldValue("urgencia");
-    if (origin === catalog.urgency.normal) {
-      alerts.info("La solicitud se marcará como urgente");
+    if (
+      origin === catalog.urgency.normal &&
+      moment(item.fechaEntrega).isAfter(value.utcOffset(0, true))
+    ) {
+      alerts.info("La solicitud se marcó como urgente");
       formGeneral.setFieldValue("urgencia", catalog.urgency.urgente);
       formGeneral.submit();
     }
@@ -106,7 +109,13 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
         return (
           <DatePicker
             bordered={false}
-            value={value ? (isMoment(value) ? value : moment(value)) : moment()}
+            value={
+              value
+                ? isMoment(value)
+                  ? value
+                  : moment(value.replace("Z", ""))
+                : moment()
+            }
             format="DD/MM/YYYY HH:mm"
             minuteStep={5}
             showTime
