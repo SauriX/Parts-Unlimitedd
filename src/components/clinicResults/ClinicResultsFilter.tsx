@@ -19,7 +19,7 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 
 const ClinicResultsFilter = () => {
-  const { optionStore, clinicResultsStore } = useStore();
+  const { optionStore, clinicResultsStore,profileStore } = useStore();
   const { getAll, setFormValues, clearFilter } = clinicResultsStore;
   const {
     branchCityOptions,
@@ -33,7 +33,7 @@ const ClinicResultsFilter = () => {
     areaByDeparmentOptions,
     getAreaByDeparmentOptions
   } = optionStore;
-
+  const {profile} = profileStore;
   const [form] = useForm();
   const [loading, setLoading] = useState(false);
   const [studyFilter, setStudyFilter] = useState<any[]>(studiesOptions);
@@ -64,14 +64,40 @@ const ClinicResultsFilter = () => {
   ]);
 
   useEffect(() => {
+    const branchesFiltered: IOptions[] = [];
+    branchCityOptions.forEach((bco) => {
+      let sucursalesDisponibles = bco.options?.filter((x) =>
+        profile?.sucursales.includes("" + x.value)
+      );
+      if (!!sucursalesDisponibles?.length) {
+        let copy = {
+          ...bco,
+          options: sucursalesDisponibles,
+        };
+        branchesFiltered.push(copy);
+      }
+    });
     setCityOptions(
-      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
+      branchesFiltered.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
+    const branchesFiltered: IOptions[] = [];
+    branchCityOptions.forEach((bco) => {
+      let sucursalesDisponibles = bco.options?.filter((x) =>
+        profile?.sucursales.includes("" + x.value)
+      );
+      if (!!sucursalesDisponibles?.length) {
+        let copy = {
+          ...bco,
+          options: sucursalesDisponibles,
+        };
+        branchesFiltered.push(copy);
+      }
+    });
     setCityOptions(
-      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
+      branchesFiltered.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 

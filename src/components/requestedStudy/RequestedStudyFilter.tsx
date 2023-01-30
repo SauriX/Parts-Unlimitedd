@@ -18,7 +18,7 @@ import moment from "moment";
 import { IOptions } from "../../app/models/shared";
 
 const RequestedStudyFilter = () => {
-  const { optionStore, requestedStudyStore } = useStore();
+  const { optionStore, requestedStudyStore,profileStore } = useStore();
   const { getAll, setFormValues } = requestedStudyStore;
   const {
     branchCityOptions,
@@ -30,7 +30,7 @@ const RequestedStudyFilter = () => {
     getMedicOptions,
     getCompanyOptions,
   } = optionStore;
-
+  const {profile}=profileStore;
   const [form] = useForm();
   const [loading, setLoading] = useState(false);
 
@@ -54,14 +54,40 @@ const RequestedStudyFilter = () => {
   ]);
 
   useEffect(() => {
+    const branchesFiltered: IOptions[] = [];
+    branchCityOptions.forEach((bco) => {
+      let sucursalesDisponibles = bco.options?.filter((x) =>
+        profile?.sucursales.includes("" + x.value)
+      );
+      if (!!sucursalesDisponibles?.length) {
+        let copy = {
+          ...bco,
+          options: sucursalesDisponibles,
+        };
+        branchesFiltered.push(copy);
+      }
+    });
     setCityOptions(
-      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
+      branchesFiltered.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
+    const branchesFiltered: IOptions[] = [];
+    branchCityOptions.forEach((bco) => {
+      let sucursalesDisponibles = bco.options?.filter((x) =>
+        profile?.sucursales.includes("" + x.value)
+      );
+      if (!!sucursalesDisponibles?.length) {
+        let copy = {
+          ...bco,
+          options: sucursalesDisponibles,
+        };
+        branchesFiltered.push(copy);
+      }
+    });
     setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+      branchesFiltered.find((x) => x.value === selectedCity)?.options ?? []
     );
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);

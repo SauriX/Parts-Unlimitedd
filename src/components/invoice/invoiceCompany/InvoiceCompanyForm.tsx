@@ -17,7 +17,7 @@ const { Search } = Input;
 const InvoiceComapnyForm = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const { optionStore, invoiceCompanyStore } = useStore();
+  const { optionStore, invoiceCompanyStore,profileStore } = useStore();
   const [formCreate] = Form.useForm();
   const selectedCity = Form.useWatch("ciudad", form);
   const isInvoice = Form.useWatch("isInvoice", formCreate);
@@ -28,6 +28,7 @@ const InvoiceComapnyForm = () => {
   const [disabled, setDisabled] = useState<boolean>(true);
   const [requiredValues, setRequiredValues] = useState<boolean>(true);
 
+  const {profile}=profileStore;
   const {
     branchCityOptions,
     getBranchCityOptions,
@@ -60,14 +61,40 @@ const InvoiceComapnyForm = () => {
   }, []);
 
   useEffect(() => {
+    const branchesFiltered: IOptions[] = [];
+    branchCityOptions.forEach((bco) => {
+      let sucursalesDisponibles = bco.options?.filter((x) =>
+        profile?.sucursales.includes("" + x.value)
+      );
+      if (!!sucursalesDisponibles?.length) {
+        let copy = {
+          ...bco,
+          options: sucursalesDisponibles,
+        };
+        branchesFiltered.push(copy);
+      }
+    });
     setCityOptions(
-      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
+      branchesFiltered.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
+    const branchesFiltered: IOptions[] = [];
+    branchCityOptions.forEach((bco) => {
+      let sucursalesDisponibles = bco.options?.filter((x) =>
+        profile?.sucursales.includes("" + x.value)
+      );
+      if (!!sucursalesDisponibles?.length) {
+        let copy = {
+          ...bco,
+          options: sucursalesDisponibles,
+        };
+        branchesFiltered.push(copy);
+      }
+    });
     setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+      branchesFiltered.find((x) => x.value === selectedCity)?.options ?? []
     );
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);

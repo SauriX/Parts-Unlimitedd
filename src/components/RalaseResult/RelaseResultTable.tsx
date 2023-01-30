@@ -48,6 +48,7 @@ import {
   searchrelase,
 } from "../../app/models/relaseresult";
 import RelaseTableStudy from "./RelaseTableStudy";
+import ProfileStore from "../../app/stores/profileStore";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -83,8 +84,8 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     procedingStore,
     optionStore,
     locationStore,
-    resultValidationStore,
     relaseResultStore,
+    profileStore
   } = useStore();
   const { expedientes, getnow } = procedingStore;
   const {
@@ -116,6 +117,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     viewTicket,
     setSearch,
   } = relaseResultStore;
+const {profile}  = profileStore;
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
   const { getCity } = locationStore;
   const [searchParams] = useSearchParams();
@@ -371,20 +373,59 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
   useEffect(() => {
+    const branchesFiltered: IOptions[] = [];
+    branchCityOptions.forEach((bco) => {
+      let sucursalesDisponibles = bco.options?.filter((x) =>
+        profile?.sucursales.includes("" + x.value)
+      );
+      if (!!sucursalesDisponibles?.length) {
+        let copy = {
+          ...bco,
+          options: sucursalesDisponibles,
+        };
+        branchesFiltered.push(copy);
+      }
+    });
     setCityOptions(
-      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
+      branchesFiltered.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
   useEffect(() => {
+    const branchesFiltered: IOptions[] = [];
+    branchCityOptions.forEach((bco) => {
+      let sucursalesDisponibles = bco.options?.filter((x) =>
+        profile?.sucursales.includes("" + x.value)
+      );
+      if (!!sucursalesDisponibles?.length) {
+        let copy = {
+          ...bco,
+          options: sucursalesDisponibles,
+        };
+        branchesFiltered.push(copy);
+      }
+    });
     setAreaOptions(
-      departmentAreaOptions.find((x) => x.value === selectedDepartment)
+      branchesFiltered.find((x) => x.value === selectedDepartment)
         ?.options ?? []
     );
     form.setFieldValue("sucursalId", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
   useEffect(() => {
+    const branchesFiltered: IOptions[] = [];
+    branchCityOptions.forEach((bco) => {
+      let sucursalesDisponibles = bco.options?.filter((x) =>
+        profile?.sucursales.includes("" + x.value)
+      );
+      if (!!sucursalesDisponibles?.length) {
+        let copy = {
+          ...bco,
+          options: sucursalesDisponibles,
+        };
+        branchesFiltered.push(copy);
+      }
+    });
     setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+      branchesFiltered.find((x) => x.value === selectedCity)?.options ?? []
     );
     form.setFieldValue("sucursal", []);
   }, [branchCityOptions, form, selectedCity]);

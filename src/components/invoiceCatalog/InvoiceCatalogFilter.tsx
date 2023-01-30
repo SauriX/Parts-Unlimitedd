@@ -15,10 +15,10 @@ import { formItemLayout } from "../../app/util/utils";
 import "./css/index.css";
 
 const InvoiceCatalogFilter = () => {
-  const {  optionStore,invoiceCatalogStore } = useStore();
+  const {  optionStore,invoiceCatalogStore,profileStore } = useStore();
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const {search,setSearch,getAll } = invoiceCatalogStore;
-
+  const {profile}= profileStore;
   const [form] = useForm<IInvoiceCatalogFilter>();
 
   const selectedCity = Form.useWatch("ciudad", form);
@@ -32,14 +32,40 @@ const InvoiceCatalogFilter = () => {
   }, [getBranchCityOptions]);
 
   useEffect(() => {
+    const branchesFiltered: IOptions[] = [];
+    branchCityOptions.forEach((bco) => {
+      let sucursalesDisponibles = bco.options?.filter((x) =>
+        profile?.sucursales.includes("" + x.value)
+      );
+      if (!!sucursalesDisponibles?.length) {
+        let copy = {
+          ...bco,
+          options: sucursalesDisponibles,
+        };
+        branchesFiltered.push(copy);
+      }
+    });
     setCityOptions(
-      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
+      branchesFiltered.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
+    const branchesFiltered: IOptions[] = [];
+    branchCityOptions.forEach((bco) => {
+      let sucursalesDisponibles = bco.options?.filter((x) =>
+        profile?.sucursales.includes("" + x.value)
+      );
+      if (!!sucursalesDisponibles?.length) {
+        let copy = {
+          ...bco,
+          options: sucursalesDisponibles,
+        };
+        branchesFiltered.push(copy);
+      }
+    });
     setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+      branchesFiltered.find((x) => x.value === selectedCity)?.options ?? []
     );
     form.setFieldValue("sucursales", []);
   }, [branchCityOptions, form, selectedCity]);
