@@ -24,14 +24,8 @@ const RequestRegister = () => {
     useStore();
   const { profile } = profileStore;
   const { paymentOptions, getPaymentOptions } = optionStore;
-  const {
-    request,
-    payments,
-    totals,
-    printTicket,
-    createPayment,
-    cancelPayments,
-  } = requestStore;
+  const { request, payments, totals, createPayment, cancelPayments } =
+    requestStore;
   const { openModal } = modalStore;
   const { printXML, printPDF } = invoiceStore;
 
@@ -279,23 +273,6 @@ const RequestRegister = () => {
           />
         </Col>
         <Col span={24} style={{ textAlign: "right" }}>
-          <Button
-            type="default"
-            disabled={selectedPayments.length === 0}
-            onClick={async () => {
-              if (request) {
-                setLoading(true);
-                await printTicket(
-                  request.expedienteId,
-                  request.solicitudId!,
-                  selectedPayments[0].id
-                );
-                setLoading(false);
-              }
-            }}
-          >
-            Imprimir
-          </Button>
           <Button
             ghost
             danger
