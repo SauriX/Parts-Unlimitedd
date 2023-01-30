@@ -32,7 +32,10 @@ import TextInput from "../../../app/common/form/TextInput";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
-import { IResultPathological } from "../../../app/models/clinicResults";
+import {
+  IResultPathological,
+  ResultPathologicalValues,
+} from "../../../app/models/clinicResults";
 import { objectToFormData, toolBarOptions } from "../../../app/util/utils";
 import { RcFile } from "antd/lib/upload";
 import { uniqueId, values } from "lodash";
@@ -88,15 +91,15 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     updateStatusStudy,
     addSelectedStudy,
     removeSelectedStudy,
-    clearSelectedStudies
+    clearSelectedStudies,
   } = clinicResultsStore;
   const { request } = requestStore;
   const { medicOptions, getMedicOptions } = optionStore;
   const [form] = Form.useForm();
 
   useEffect(() => {
-    clearSelectedStudies()
-  }, [])
+    clearSelectedStudies();
+  }, []);
 
   useEffect(() => {
     const loadOptions = async () => {
@@ -119,7 +122,10 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
   }, [isMarked]);
 
   const loadInit = async () => {
-    const resultPathological = await getResultPathological(estudio.id!);
+    let resultPathological = await getResultPathological(estudio.id!);
+    if (resultPathological === null) {
+      resultPathological = new ResultPathologicalValues();
+    }
     let archivos: RcFile[] = [];
     const cStudy = await getRequestStudyById(estudio.id!);
     console.log("estudio encontrado", toJS(cStudy));
@@ -262,7 +268,8 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
   const renderUpdateStatus = () => {
     return (
       <>
-        {currentStudy.estatusId >= status.requestStudy.solicitado && currentStudy.estatusId <= status.requestStudy.liberado ? (
+        {currentStudy.estatusId >= status.requestStudy.solicitado &&
+        currentStudy.estatusId <= status.requestStudy.liberado ? (
           <Row>
             <Col span={24}>
               <Row justify="space-between" gutter={[12, 24]}>

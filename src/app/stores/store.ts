@@ -47,6 +47,7 @@ import RelaseResultStore from "./RelaseResultStore";
 import InvoiceStore from "./invoiceStore";
 import IndicatorStore from "./indicatorStore";
 import SeriesStore from "./seriesStore";
+import InvoiceCatalogStore from "./InvoiceCatalogStore";
 configure({
   enforceActions: "never",
 });
@@ -98,6 +99,7 @@ interface Store {
   invoiceStore: InvoiceStore;
   invoiceCompanyStore: InvoiceCompanyStore;
   seriesStore: SeriesStore;
+  invoiceCatalogStore:InvoiceCatalogStore;
 }
 
 export const store: Store = {
@@ -147,6 +149,7 @@ export const store: Store = {
   invoiceStore: new InvoiceStore(),
   invoiceCompanyStore: new InvoiceCompanyStore(),
   seriesStore: new SeriesStore(),
+  invoiceCatalogStore: new InvoiceCatalogStore(),
 };
 
 export const StoreContext = createContext(store);

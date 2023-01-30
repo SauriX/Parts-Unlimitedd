@@ -84,4 +84,5 @@ export type imagesType =
   | "sello"
   | "cuenta"
   | "recibo"
-  | "enviar-datos";
+  | "enviar-datos"
+  |"facturas";

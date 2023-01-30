@@ -134,7 +134,8 @@ const RequestSampler = () => {
                 disabled:
                   (record.estatusId !== status.requestStudy.pendiente &&
                     record.estatusId !== status.requestStudy.tomaDeMuestra) ||
-                  !record.asignado,
+                  !record.asignado ||
+                  !record.id,
               }),
               selectedRowKeys: selectedStudies.map(
                 (x) => x.id ?? x.identificador!
