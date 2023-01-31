@@ -82,6 +82,8 @@ import Notifications from "../../views/Notifications";
 import NotificationsDetail from "../../components/notifications/NotificationsDetail";
 import Relaseresult from "../../views/Relaseresult";
 import Test1 from "../../Test1";
+import Series from "../../views/Series";
+import SeriesDetail from "../../components/series/detail/SeriesDetail";
 import InvoiceCatalog from "../../views/InvoiceCatalog";
 
 
@@ -170,6 +172,8 @@ function App() {
               path="invoice/create/:id"
               element={<InvoiceCompanyCreate />}
             />
+            <Route path="series" element={<Series />} />
+            <Route path="series/:id/:tipoSerie" element={<SeriesDetail />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="notifications/:id" element={<NotificationsDetail />} />
             <Route path="roles/new-role" element={<NewRole />} />

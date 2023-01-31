@@ -123,17 +123,9 @@ const QuotationFilter = () => {
             <TextInput
               formProps={{
                 name: "expediente",
-                label: "Paciente",
+                label: "Buscar",
               }}
-              placeholder="Expediente / Nombre / Código de barras / Huella digital"
-            />
-          </Col>
-          <Col span={8}>
-            <TextInput
-              formProps={{
-                name: "clave",
-                label: "Clave",
-              }}
+              placeholder="Clave cotización / Nombre"
             />
           </Col>
           <Col span={8}>

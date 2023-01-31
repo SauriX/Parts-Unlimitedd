@@ -6,7 +6,11 @@ import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 import Sampling from "../api/sampling";
 import { ISamplingForm, ISamplingList, IUpdate } from "../models/sampling";
-import { IRouteList, SearchTracking, TrackingFormValues } from "../models/routeTracking";
+import {
+  IRouteList,
+  SearchTracking,
+  TrackingFormValues,
+} from "../models/routeTracking";
 import RouteTracking from "../api/routetracking";
 import responses from "../util/responses";
 import { IRecibe, ISearchPending, searchValues } from "../models/pendingRecive";
@@ -18,24 +22,26 @@ export default class RouteTrackingStore {
 
   scopes?: IScopes;
   studys: IRouteList[] = [];
-  pendings?:IRecibe[]=[];
-  ventana:string="enviar";
-  searchPending?:ISearchPending = new searchValues();
-  searchrecive:  SearchTracking = new TrackingFormValues();
+  pendings?: IRecibe[] = [];
+  ventana: string = "enviar";
+  searchPending?: ISearchPending = new searchValues();
+  searchrecive: SearchTracking = new TrackingFormValues();
+  loadingRoutes: boolean = false;
+
   clearScopes = () => {
     this.scopes = undefined;
   };
-setventana=(ventana:string)=>{
-  this.ventana=ventana
-};
+  setventana = (ventana: string) => {
+    this.ventana = ventana;
+  };
   clearStudy = () => {
     this.studys = [];
   };
-  setSearchi= (search:ISearchPending)=>{
-    this.searchPending=search;
+  setSearchi = (search: ISearchPending) => {
+    this.searchPending = search;
   };
-  setSearchRecive= (search:SearchTracking)=>{
-    this.searchrecive=search;
+  setSearchRecive = (search: SearchTracking) => {
+    this.searchrecive = search;
   };
   access = async () => {
     try {
@@ -50,19 +56,24 @@ setventana=(ventana:string)=>{
 
   getAll = async (search: SearchTracking) => {
     try {
+      this.loadingRoutes = true;
       const study = await RouteTracking.getAll(search);
-      let orderStudy = study.sort((x,y)=>{return x.seguimiento.localeCompare(y.seguimiento)}); 
+      let orderStudy = study.sort((x, y) => {
+        return x.seguimiento.localeCompare(y.seguimiento);
+      });
       this.studys = orderStudy;
       return study;
     } catch (error) {
       alerts.warning(getErrors(error));
       this.studys = [];
+    } finally {
+      this.loadingRoutes = false;
     }
   };
   getAllRecive = async (search: ISearchPending) => {
     try {
       const study = await RouteTracking.getRecive(search);
-      this.pendings= study;
+      this.pendings = study;
       return study;
     } catch (error) {
       alerts.warning(getErrors(error));

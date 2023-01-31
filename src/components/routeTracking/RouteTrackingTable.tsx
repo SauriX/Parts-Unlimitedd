@@ -30,7 +30,7 @@ const RouteTrackingTable: FC<RouteTableProps> = ({
   printing,
 }) => {
   const { TabPane } = Tabs;
-  const { routeStore, profileStore, optionStore } = useStore();
+  const { routeStore } = useStore();
   const { routes, getAll } = routeStore;
   
 
@@ -56,12 +56,12 @@ const RouteTrackingTable: FC<RouteTableProps> = ({
       setLoading(true);
       await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
-      getAll("all");
+      // create(routes).then(x => { getAll("all")});
     };
 
-    if (routes.length === 0) {
-      readRoutes();
-    }
+    readRoutes();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const columns: IColumns<IRouteList> = [
