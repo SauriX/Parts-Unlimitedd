@@ -19,7 +19,7 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 
 const ClinicResultsFilter = () => {
-  const { optionStore, clinicResultsStore,profileStore } = useStore();
+  const { optionStore, clinicResultsStore, profileStore } = useStore();
   const { getAll, setFormValues, clearFilter } = clinicResultsStore;
   const {
     branchCityOptions,
@@ -33,7 +33,7 @@ const ClinicResultsFilter = () => {
     areaByDeparmentOptions,
     getAreaByDeparmentOptions,
   } = optionStore;
-  const {profile} = profileStore;
+  const { profile } = profileStore;
   const [form] = useForm();
   const [loading, setLoading] = useState(false);
   const [studyFilter, setStudyFilter] = useState<any[]>(studiesOptions);
@@ -64,14 +64,12 @@ const ClinicResultsFilter = () => {
   ]);
 
   useEffect(() => {
-
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
-
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
@@ -112,200 +110,177 @@ const ClinicResultsFilter = () => {
   };
 
   return (
-    <>
-      <Row justify="end" gutter={[24, 12]} className="filter-buttons">
-        <Col span={24}>
-          <Button
-            key="clean"
-            onClick={(e) => {
-              clearFilter();
-              form.resetFields();
-            }}
-          >
-            Limpiar
-          </Button>
-          <Button
-            key="filter"
-            type="primary"
-            onClick={(e) => {
-              form.submit();
-            }}
-          >
-            Buscar
-          </Button>
-        </Col>
-      </Row>
-      <div className="status-container">
-        <Form<IClinicResultForm>
-          {...formItemLayout}
-          form={form}
-          name="clinicResults"
-          onFinish={onFinish}
-          initialValues={{
-            fecha: [
-              moment(Date.now()).utcOffset(0, true),
-              moment(Date.now()).utcOffset(0, true),
-            ],
-          }}
-          scrollToFirstError
-        >
-          <Row>
-            <Col span={24}>
-              <Row justify="space-between" gutter={[0, 12]}>
-                <Col span={8}>
-                  <DateRangeInput
-                    formProps={{ label: "Fecha", name: "fecha" }}
-                    required={true}
-                    disableAfterDates
-                  />
-                </Col>
-                <Col span={8}>
-                  <TextInput
-                    formProps={{
-                      name: "buscar",
-                      label: "Buscar",
-                    }}
-                    onPressEnter={() => {
-                      form.submit();
-                    }} 
-                  />
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    form={form}
-                    formProps={{
-                      name: "procedencia",
-                      label: "Procedencia",
-                    }}
-                    multiple
-                    options={originOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    form={form}
-                    formProps={{
-                      name: "tipoSolicitud",
-                      label: "Tipo solicitud",
-                    }}
-                    multiple
-                    options={urgencyOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    form={form}
-                    formProps={{
-                      name: "estatus",
-                      label: "Estatus",
-                    }}
-                    multiple
-                    options={studyStatusOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <Form.Item label="Áreas" className="no-error-text" help="">
-                    <Input.Group>
-                      <Row gutter={8}>
-                        <Col span={12}>
-                          <SelectInput
-                            form={form}
-                            formProps={{
-                              name: "departamento",
-                              label: "Departamento",
-                              noStyle: true,
-                            }}
-                            multiple
-                            options={departmentOptions}
-                          />
-                        </Col>
-                        <Col span={12}>
-                          <SelectInput
-                            form={form}
-                            formProps={{
-                              name: "area",
-                              label: "Área",
-                              noStyle: true,
-                            }}
-                            multiple
-                            options={areaOptions}
-                          />
-                        </Col>
-                      </Row>
-                    </Input.Group>
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    form={form}
-                    formProps={{
-                      name: "estudio",
-                      label: "Estudio",
-                    }}
-                    multiple
-                    options={studyFilter}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    form={form}
-                    formProps={{
-                      name: "medicoId",
-                      label: "Médico",
-                    }}
-                    multiple
-                    options={medicOptions}
-                  ></SelectInput>
-                </Col>
-                <Col span={8}>
-                  <Form.Item label="Sucursal" className="no-error-text" help="">
-                    <Input.Group>
-                      <Row gutter={8}>
-                        <Col span={12}>
-                          <SelectInput
-                            form={form}
-                            formProps={{
-                              name: "ciudad",
-                              label: "Ciudad",
-                              noStyle: true,
-                            }}
-                            multiple
-                            options={cityOptions}
-                          />
-                        </Col>
-                        <Col span={12}>
-                          <SelectInput
-                            form={form}
-                            formProps={{
-                              name: "sucursalId",
-                              label: "Sucursales",
-                              noStyle: true,
-                            }}
-                            multiple
-                            options={branchOptions}
-                          />
-                        </Col>
-                      </Row>
-                    </Input.Group>
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    form={form}
-                    formProps={{
-                      name: "compañiaId",
-                      label: "Compañía",
-                    }}
-                    multiple
-                    options={companyOptions}
-                  ></SelectInput>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Form>
-      </div>
-    </>
+    <div className="status-container">
+      <Form<IClinicResultForm>
+        {...formItemLayout}
+        form={form}
+        name="clinicResults"
+        onFinish={onFinish}
+        initialValues={{
+          fecha: [
+            moment(Date.now()).utcOffset(0, true),
+            moment(Date.now()).utcOffset(0, true),
+          ],
+        }}
+        scrollToFirstError
+      >
+        <Row justify="space-between" gutter={[0, 12]}>
+          <Col span={8}>
+            <DateRangeInput
+              formProps={{ label: "Fecha", name: "fecha" }}
+              required={true}
+              disableAfterDates
+            />
+          </Col>
+          <Col span={8}>
+            <TextInput
+              formProps={{
+                name: "buscar",
+                label: "Buscar",
+              }}
+            />
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              form={form}
+              formProps={{
+                name: "procedencia",
+                label: "Procedencia",
+              }}
+              multiple
+              options={originOptions}
+            ></SelectInput>
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              form={form}
+              formProps={{
+                name: "tipoSolicitud",
+                label: "Tipo solicitud",
+              }}
+              multiple
+              options={urgencyOptions}
+            ></SelectInput>
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              form={form}
+              formProps={{
+                name: "estatus",
+                label: "Estatus",
+              }}
+              multiple
+              options={studyStatusOptions}
+            ></SelectInput>
+          </Col>
+          <Col span={8}>
+            <Form.Item label="Áreas" className="no-error-text" help="">
+              <Input.Group>
+                <Row gutter={8}>
+                  <Col span={12}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "departamento",
+                        label: "Departamento",
+                        noStyle: true,
+                      }}
+                      multiple
+                      options={departmentOptions}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "area",
+                        label: "Área",
+                        noStyle: true,
+                      }}
+                      multiple
+                      options={areaOptions}
+                    />
+                  </Col>
+                </Row>
+              </Input.Group>
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              form={form}
+              formProps={{
+                name: "estudio",
+                label: "Estudio",
+              }}
+              multiple
+              options={studyFilter}
+            ></SelectInput>
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              form={form}
+              formProps={{
+                name: "medicoId",
+                label: "Médico",
+              }}
+              multiple
+              options={medicOptions}
+            ></SelectInput>
+          </Col>
+          <Col span={8}>
+            <Form.Item label="Sucursal" className="no-error-text" help="">
+              <Input.Group>
+                <Row gutter={8}>
+                  <Col span={12}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "ciudad",
+                        label: "Ciudad",
+                        noStyle: true,
+                      }}
+                      multiple
+                      options={cityOptions}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "sucursalId",
+                        label: "Sucursales",
+                        noStyle: true,
+                      }}
+                      multiple
+                      options={branchOptions}
+                    />
+                  </Col>
+                </Row>
+              </Input.Group>
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              form={form}
+              formProps={{
+                name: "compañiaId",
+                label: "Compañía",
+              }}
+              multiple
+              options={companyOptions}
+            ></SelectInput>
+          </Col>
+          <Col span={16} style={{ textAlign: "right" }}>
+            <Button key="clean" htmlType="reset">
+              Limpiar
+            </Button>
+            <Button key="filter" type="primary" htmlType="submit">
+              Buscar
+            </Button>
+          </Col>
+        </Row>
+      </Form>
+    </div>
   );
 };
 
