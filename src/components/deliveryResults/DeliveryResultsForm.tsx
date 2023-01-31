@@ -102,13 +102,11 @@ const DeliveryResultsForm = () => {
   }, []);
 
   const onFinish = async (newFormValues: any) => {
-    console.log("newFormValues", newFormValues);
     const formValues = {
       ...newFormValues,
       fechaFinal: newFormValues.fechas[1].utcOffset(0, true),
       fechaInicial: newFormValues.fechas[0].utcOffset(0, true),
     };
-    console.log("formValues", formValues);
     await getAllCaptureResults(formValues);
     setFormDeliverResult(formValues);
   };
@@ -150,6 +148,12 @@ const DeliveryResultsForm = () => {
           onFinish={onFinish}
           size="small"
           initialValues={{ fechas: [moment(), moment()], tipoFecha: 1 }}
+          onKeyUp={(event) => {
+            if (event.key === "Enter") {
+              event.stopPropagation();
+              form.submit();
+            }
+          }}
         >
           <Row gutter={[0, 12]}>
             <Col span={8}>
@@ -197,9 +201,6 @@ const DeliveryResultsForm = () => {
                   { value: "Correo", label: "Correo" },
                   // { value: "Fisico", label: "Fisico" },
                 ]}
-                onChange={(value: any, option: any) => {
-                  console.log("areas", value, option);
-                }}
               />
             </Col>
             <Col span={8}>
@@ -211,9 +212,6 @@ const DeliveryResultsForm = () => {
                   name: "tipoSolicitud",
                 }}
                 options={urgencyOptions}
-                onChange={(value: any, option: any) => {
-                  console.log("areas", value, option);
-                }}
               />
             </Col>
             <Col span={8}>
@@ -222,9 +220,6 @@ const DeliveryResultsForm = () => {
                 multiple
                 formProps={{ label: "Estatus", name: "estatus" }}
                 options={studyStatusOptions}
-                onChange={(value: any, option: any) => {
-                  console.log("areas", value, option);
-                }}
               />
             </Col>
             <Col span={8}>
@@ -233,9 +228,6 @@ const DeliveryResultsForm = () => {
                 multiple
                 formProps={{ label: "Médicos", name: "medicos" }}
                 options={medicOptions}
-                onChange={(value: any, option: any) => {
-                  console.log("areas", value, option);
-                }}
               />
             </Col>
 
@@ -305,9 +297,6 @@ const DeliveryResultsForm = () => {
                 multiple
                 formProps={{ label: "Procedencias", name: "procedencias" }}
                 options={originOptions}
-                onChange={(value: any, option: any) => {
-                  console.log("areas", value, option);
-                }}
               />
             </Col>
           </Row>
