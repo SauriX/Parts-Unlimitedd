@@ -20,7 +20,6 @@ export interface IQuotationFilter {
   fechaNInicial?: moment.Moment;
   fechaNFinal?: moment.Moment;
   expediente?: string;
-  clave?: string;
 }
 
 export class QuotationFilterForm implements IQuotationFilter {

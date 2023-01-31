@@ -7,7 +7,7 @@ import {
   ICatalogDescriptionList,
   ICatalogNormalList,
 } from "../models/catalog";
-import { IOptions } from "../models/shared";
+import { IOptions, IProfile } from "../models/shared";
 import Parameter from "../api/parameter";
 import Reagent from "../api/reagent";
 import Maquilador from "../api/maquilador";
@@ -25,6 +25,7 @@ import Location from "../api/location";
 import { IWorkList } from "../models/workList";
 import Series from "../api/series";
 import { store } from "./store";
+import Profile from "../api/profile";
 
 export const originOptions = [
   { label: "COMPAÑÍA", value: 1 },
@@ -60,6 +61,12 @@ export const studyStatusOptions = [
   { label: "Entregado", value: 10 },
 ];
 
+export const seriesTypeOptions = [
+  { label: "FACTURA", value: 1 },
+  { label: "RECIBO", value: 2 },
+];
+
+
 export default class OptionStore {
   constructor() {
     makeAutoObservable(this);
@@ -90,8 +97,10 @@ export default class OptionStore {
       this.departmentOptions = [];
     }
   };
-  UnitOptions: IOptions[] = [];
 
+  
+
+  UnitOptions: IOptions[] = [];
   getUnitOptions = async () => {
     try {
       const departments = await Catalog.getActive<ICatalogNormalList>("units");
@@ -733,4 +742,16 @@ export default class OptionStore {
       this.receiptSeriesOptions = [];
     }
   };
+
+  profileOptions: IProfile | undefined;
+  getProfileOptions = async () => {
+    try {
+      const profile = await Profile.getProfile();
+      this.profileOptions = {
+        ...profile,
+      };
+    } catch (error) {
+      this.profileOptions = undefined;
+    }
+  }
 }
