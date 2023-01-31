@@ -66,7 +66,6 @@ export const seriesTypeOptions = [
   { label: "RECIBO", value: 2 },
 ];
 
-
 export default class OptionStore {
   constructor() {
     makeAutoObservable(this);
@@ -97,8 +96,6 @@ export default class OptionStore {
       this.departmentOptions = [];
     }
   };
-
-  
 
   UnitOptions: IOptions[] = [];
   getUnitOptions = async () => {
@@ -500,30 +497,44 @@ export default class OptionStore {
       this.studyOptions = [];
     }
   };
-  studyOptionscita: IOptions[] = [];
 
-  getStudyOptionscita = async (area: string) => {
+  appointmentStudyOptions: IOptions[] = [];
+  getAppointmentStudyOptions = async (department: string) => {
     try {
       const studyOptions = await Study.getActive();
-      console.log(studyOptions, "studis");
-      var studyOptionsf = studyOptions.filter((x) =>
-        x.departamento.includes(area)
+      let filterStudyOptions = studyOptions.filter(
+        (x) => x.departamento == department
       );
-      console.log(studyOptionsf, "filter");
-      var test = studyOptionsf.map((x) => ({
+      this.appointmentStudyOptions = filterStudyOptions.map((x) => ({
         key: "study-" + x.id,
         value: "study-" + x.id,
         label: x.clave + " - " + x.nombre,
         group: "study",
       }));
-      this.packOptionscita = test;
-      console.log(test, "final");
     } catch (error) {
-      this.studyOptionscita = [];
+      this.appointmentStudyOptions = [];
     }
   };
-  packOptions: IOptions[] = [];
 
+  appointmentPackOptions: IOptions[] = [];
+  getAppointmentPackOptions = async (department: string) => {
+    try {
+      const packOptions = await Pack.getActive();
+      let filterPackOptions = packOptions.filter(
+        (x) => x.departamento == department
+      );
+      this.appointmentPackOptions = filterPackOptions.map((x) => ({
+        key: "pack-" + x.id,
+        value: "pack-" + x.id,
+        label: x.clave + " - " + x.nombre,
+        group: "pack",
+      }));
+    } catch (error) {
+      this.appointmentPackOptions = [];
+    }
+  };
+
+  packOptions: IOptions[] = [];
   getPackOptions = async () => {
     try {
       const packOptions = await Pack.getActive();
@@ -537,8 +548,8 @@ export default class OptionStore {
       this.packOptions = [];
     }
   };
-  packOptionscita: IOptions[] = [];
 
+  packOptionscita: IOptions[] = [];
   getPackOptionscita = async (area: string) => {
     try {
       const packOptions = await Pack.getActive();
@@ -583,11 +594,11 @@ export default class OptionStore {
       this.medicOptions = [];
     }
   };
-  
+
   branchCityOptions: IOptions[] = [];
   getBranchCityOptions = async () => {
     try {
-      const profile = store.profileStore.profile
+      const profile = store.profileStore.profile;
       const branch = Branch.getBranchByCity();
       let branches = (await branch).map((x) => ({
         value: x.ciudad,
@@ -753,5 +764,5 @@ export default class OptionStore {
     } catch (error) {
       this.profileOptions = undefined;
     }
-  }
+  };
 }
