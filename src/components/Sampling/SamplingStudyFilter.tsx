@@ -54,38 +54,14 @@ const {profile}=profileStore;
   ]);
 
   useEffect(() => {
-    const branchesFiltered: IOptions[] = [];
-    branchCityOptions.forEach((bco) => {
-      let sucursalesDisponibles = bco.options?.filter((x) =>
-        profile?.sucursales.includes("" + x.value)
-      );
-      if (!!sucursalesDisponibles?.length) {
-        let copy = {
-          ...bco,
-          options: sucursalesDisponibles,
-        };
-        branchesFiltered.push(copy);
-      }
-    });
+
     setCityOptions(
-      branchesFiltered.map((x) => ({ value: x.value, label: x.label }))
+      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
-    const branchesFiltered: IOptions[] = [];
-    branchCityOptions.forEach((bco) => {
-      let sucursalesDisponibles = bco.options?.filter((x) =>
-        profile?.sucursales.includes("" + x.value)
-      );
-      if (!!sucursalesDisponibles?.length) {
-        let copy = {
-          ...bco,
-          options: sucursalesDisponibles,
-        };
-        branchesFiltered.push(copy);
-      }
-    });
+
     setBranchOptions(
       branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
     );

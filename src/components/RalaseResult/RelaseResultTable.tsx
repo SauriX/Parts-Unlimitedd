@@ -373,59 +373,20 @@ const {profile}  = profileStore;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
   useEffect(() => {
-    const branchesFiltered: IOptions[] = [];
-    branchCityOptions.forEach((bco) => {
-      let sucursalesDisponibles = bco.options?.filter((x) =>
-        profile?.sucursales.includes("" + x.value)
-      );
-      if (!!sucursalesDisponibles?.length) {
-        let copy = {
-          ...bco,
-          options: sucursalesDisponibles,
-        };
-        branchesFiltered.push(copy);
-      }
-    });
     setCityOptions(
-      branchesFiltered.map((x) => ({ value: x.value, label: x.label }))
+      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
   useEffect(() => {
-    const branchesFiltered: IOptions[] = [];
-    branchCityOptions.forEach((bco) => {
-      let sucursalesDisponibles = bco.options?.filter((x) =>
-        profile?.sucursales.includes("" + x.value)
-      );
-      if (!!sucursalesDisponibles?.length) {
-        let copy = {
-          ...bco,
-          options: sucursalesDisponibles,
-        };
-        branchesFiltered.push(copy);
-      }
-    });
     setAreaOptions(
-      branchesFiltered.find((x) => x.value === selectedDepartment)
+      branchCityOptions.find((x) => x.value === selectedDepartment)
         ?.options ?? []
     );
     form.setFieldValue("sucursalId", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
   useEffect(() => {
-    const branchesFiltered: IOptions[] = [];
-    branchCityOptions.forEach((bco) => {
-      let sucursalesDisponibles = bco.options?.filter((x) =>
-        profile?.sucursales.includes("" + x.value)
-      );
-      if (!!sucursalesDisponibles?.length) {
-        let copy = {
-          ...bco,
-          options: sucursalesDisponibles,
-        };
-        branchesFiltered.push(copy);
-      }
-    });
     setBranchOptions(
-      branchesFiltered.find((x) => x.value === selectedCity)?.options ?? []
+      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
     );
     form.setFieldValue("sucursal", []);
   }, [branchCityOptions, form, selectedCity]);
