@@ -23,19 +23,33 @@ type RequestStudyProps = {
   setData: React.Dispatch<React.SetStateAction<IRequestStudy[]>>;
   setTotal: React.Dispatch<React.SetStateAction<number>>;
 };
- 
-const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total }) => {
-  const { priceListStore, optionStore,appointmentStore } = useStore();
-  const {getPricePacks,getPriceStudys,isStudy,isPack,packs,studies,setStudyFilter,studyFilter}=appointmentStore;
+
+const RequestStudy: FC<RequestStudyProps> = ({
+  data,
+  setData,
+  setTotal,
+  total,
+}) => {
+  const { priceListStore, optionStore, appointmentStore } = useStore();
   const {
-    studyOptionscita,
-    packOptionscita,
-    getStudyOptionscita,
-    getPackOptionscita,
+    getPricePacks,
+    getPriceStudys,
+    isStudy,
+    isPack,
+    packs,
+    studies,
+    setStudyFilter,
+    studyFilter,
+  } = appointmentStore;
+  const {
     studyOptions,
     packOptions,
     getStudyOptions,
     getPackOptions,
+    appointmentStudyOptions,
+    getAppointmentStudyOptions,
+    appointmentPackOptions,
+    getAppointmentPackOptions
   } = optionStore;
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedRows, setSelectedRows] = useState<IRequestStudy[]>([]);
@@ -47,46 +61,47 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
   });
 
   useEffect(() => {
-    const getdata = async ()=>{
+    const getdata = async () => {
       if (searchParams.get("type") == "laboratorio") {
-        await getStudyOptionscita("IMAGENOLOGÍA");
-        await getPackOptionscita("IMAGENOLOGÍA");
-        
+        await getAppointmentStudyOptions("IMAGENOLOGÍA");
+        await getAppointmentPackOptions("IMAGENOLOGÍA");
       } else {
         await getStudyOptions();
         await getPackOptions();
       }
-    }
+    };
+
     getdata();
-  }, [getPackOptionscita, getStudyOptionscita, getPackOptions, getStudyOptions]);
+  }, [
+    getPackOptions,
+    getStudyOptions,
+    getAppointmentStudyOptions,
+    getAppointmentPackOptions,
+  ]);
 
   useEffect(() => {
-
-    if (searchParams.get("type") == "laboratorio") {
-      console.log(packOptionscita,"laboratorio");
+    if (searchParams.get("type") === "laboratorio") {
       const options: IOptions[] = [
         {
           value: "study",
           label: "Estudios",
-          options: studyOptionscita,
+          options: appointmentStudyOptions,
         },
         {
           value: "pack",
           label: "Paquetes",
-          options: packOptionscita,
+          options: appointmentPackOptions,
         },
       ];
       setOptions(options);
-      console.log(options);
     } else {
-      console.log(studyOptions,"laboratorios");
       const options: IOptions[] = [
         {
           value: "study",
           label: "Estudios",
           options: studyOptions,
         },
-        { 
+        {
           value: "pack",
           label: "Paquetes",
           options: packOptions,
@@ -94,8 +109,7 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
       ];
       setOptions(options);
     }
-    
-  }, [packOptionscita, studyOptionscita,studyOptions,packOptions]);
+  }, [studyOptions, packOptions, appointmentStudyOptions, appointmentPackOptions]);
 
   const columns: IColumns<IRequestStudy | IRequestPack> = [
     {
@@ -186,88 +200,18 @@ const RequestStudy: FC<RequestStudyProps> = ({ data, setData, setTotal, total })
     if (isNaN(value)) return;
 
     if (option.group === "study") {
-      const study = await getPriceStudys(studyFilter,value);
+      const study = await getPriceStudys(studyFilter, value);
       if (study == null) {
         return;
       }
-setTotal(study.precio+total);
-      // setData((prev) => [
-      //   ...prev,
-      //   {
-      //     precioListaId: study.precioListaId,
-      //     estudioId: study.estudioId,
-      //     clave: study.clave,
-      //     nombre: study.nombre,
-      //     precio: study.precioListaPrecio,
-      //     descuento: false,
-      //     cargo: false,
-      //     copago: false,
-      //     precioFinal: study.precioListaPrecio,
-      //     type: "study",
-      //     parametros: study.parametros.map((x) => ({
-      //       id: x.id,
-      //       clave: x.clave,
-      //       nombre: x.nombre,
-      //       nombreCorto: x.nombreCorto,
-      //       area: x.area,
-      //       departamento: x.departamento,
-      //       activo: x.activo,
-      //     })),
-      //     indicaciones: study.indicaciones.map((x) => ({
-      //       id: x.id,
-      //       clave: x.clave,
-      //       nombre: x.nombre,
-      //       descripcion: x.descripcion,
-      //       activo: x.activo,
-      //       estudios: [],
-      //     })),
-      //   },
-      // ]);
-      console.log(study);
+      setTotal(study.precio + total);
     }
 
     if (option.group === "pack") {
-      const pack = await getPricePacks(studyFilter,value);
+      const pack = await getPricePacks(studyFilter, value);
       if (pack == null) {
         return;
       }
-      // setData((prev) => [
-      //   ...prev,
-      //   {
-      //     precioListaId: pack.precioListaId,
-      //     estudioId: pack.paqueteId,
-      //     clave: pack.clave,
-      //     nombre: pack.nombre,
-      //     precio: pack.precioListaPrecio,
-      //     descuento: false,
-      //     cargo: false,
-      //     copago: false,
-      //     precioFinal: pack.precioListaPrecio,
-      //     type: "pack",
-      //     parametros: pack.estudios
-      //       .flatMap((x) => x.parametros)
-      //       .map((x) => ({
-      //         id: x.id,
-      //         clave: x.clave,
-      //         nombre: x.nombre,
-      //         nombreCorto: x.nombreCorto,
-      //         area: x.area,
-      //         departamento: x.departamento,
-      //         activo: x.activo,
-      //       })),
-      //     indicaciones: pack.estudios
-      //       .flatMap((x) => x.indicaciones)
-      //       .map((x) => ({
-      //         id: x.id,
-      //         clave: x.clave,
-      //         nombre: x.nombre,
-      //         descripcion: x.descripcion,
-      //         activo: x.activo,
-      //         estudios: [],
-      //       })),
-      //   },
-      // ]);
-      console.log(pack);
     }
 
     setOptions((prev) => {
@@ -330,7 +274,7 @@ setTotal(study.precio+total);
         /> */}
       </Col>
       <Col span={24}>
-      <Table<IRequestStudy | IRequestPack>
+        <Table<IRequestStudy | IRequestPack>
           size="small"
           rowKey={(record) => record.type + "-" + record.clave}
           columns={columns}
@@ -339,13 +283,17 @@ setTotal(study.precio+total);
           rowSelection={{
             onSelect: (_item, _selected, c) => {
               const studies = [
-                ...c.filter((x) => x.type === "study").map((x) => x as IRequestStudy),
-                ...c.filter((x) => x.type === "pack").flatMap((x) => (x as IRequestPack).estudios),
+                ...c
+                  .filter((x) => x.type === "study")
+                  .map((x) => x as IRequestStudy),
+                ...c
+                  .filter((x) => x.type === "pack")
+                  .flatMap((x) => (x as IRequestPack).estudios),
               ];
               setSelectedStudies(studies);
             },
             getCheckboxProps: (item) => ({
-              disabled:false
+              disabled: false,
             }),
           }}
           sticky
@@ -354,7 +302,12 @@ setTotal(study.precio+total);
       </Col>
       <Col span={24}>
         <Button
-          style={{ borderColor: "#87CEFA", marginTop: "40px", marginLeft: "400px", width: "700px;" }}
+          style={{
+            borderColor: "#87CEFA",
+            marginTop: "40px",
+            marginLeft: "400px",
+            width: "700px;",
+          }}
           onClick={() => {
             setData([]);
           }}
@@ -367,7 +320,9 @@ setTotal(study.precio+total);
 };
 
 const ContainerBadge = ({ color }: { color: string }) => {
-  return <div className="badge-container" style={{ backgroundColor: color }}></div>;
+  return (
+    <div className="badge-container" style={{ backgroundColor: color }}></div>
+  );
 };
 
 export default observer(RequestStudy);
