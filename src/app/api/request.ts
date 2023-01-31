@@ -85,12 +85,8 @@ const Request = {
     requests.put("request/studies/request", request),
   addPartiality: (request: IRequestPartiality): Promise<void> =>
     requests.put("request/partiality", request),
-  printTicket: (
-    recordId: string,
-    requestId: string,
-    paymentId: string
-  ): Promise<void> =>
-    requests.print(`request/ticket/${recordId}/${requestId}/${paymentId}`),
+  printTicket: (recordId: string, requestId: string): Promise<void> =>
+    requests.print(`request/ticket/${recordId}/${requestId}`),
   getOrderPdfUrl: (recordId: string, requestId: string): Promise<string> =>
     requests.getFileUrl(
       `request/order/${recordId}/${requestId}`,

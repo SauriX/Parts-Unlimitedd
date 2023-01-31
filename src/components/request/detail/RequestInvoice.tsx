@@ -7,7 +7,7 @@ import { moneyFormatter } from "../../../app/util/utils";
 
 const RequestInvoice = () => {
   const { requestStore, optionStore } = useStore();
-  const { request, totals, updateSeries } = requestStore;
+  const { request, totals, updateSeries, printTicket } = requestStore;
   const { receiptSeriesOptions, getReceiptSeriesOptions } = optionStore;
 
   useEffect(() => {
@@ -25,6 +25,12 @@ const RequestInvoice = () => {
         await updateSeries(req);
       }
     );
+  };
+
+  const print = () => {
+    if (request) {
+      printTicket(request.expedienteId, request.solicitudId!);
+    }
   };
 
   return (
@@ -56,20 +62,7 @@ const RequestInvoice = () => {
         />
       </Col>
       <Col span={11} style={{ textAlign: "right" }}>
-        <Button
-          type="default"
-          onClick={async () => {
-            // if (request) {
-            //   setLoading(true);
-            //   await printTicket(
-            //     request.expedienteId,
-            //     request.solicitudId!,
-            //     selectedPayments[0].id
-            //   );
-            //   setLoading(false);
-            // }
-          }}
-        >
+        <Button type="default" onClick={print}>
           Ticket
         </Button>
       </Col>
