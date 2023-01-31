@@ -1,4 +1,5 @@
 import { IDepartamenList } from "./departament";
+import { ISeriesList } from "./series";
 export interface IBranchForm {
   idSucursal: string;
   clave: string;
@@ -17,6 +18,7 @@ export interface IBranchForm {
   coloniaId?: number;
   codigoPostal: string;
   departamentos: IBranchDepartment[];
+  series: ISeriesList[];
   matriz?: boolean;
 }
 
@@ -43,6 +45,7 @@ export interface IBranchDepartment {
   departamento: string;
 }
 
+
 export class BranchFormValues implements IBranchForm {
   idSucursal = "";
   clave = "";
@@ -62,6 +65,7 @@ export class BranchFormValues implements IBranchForm {
   numeroInt = undefined;
   numeroExt = undefined;
   departamentos: IBranchDepartment[] = [];
+  series: ISeriesList[] = [];
   constructor(init?: IBranchForm) {
     Object.assign(this, init);
   }

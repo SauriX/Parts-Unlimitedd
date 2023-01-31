@@ -96,8 +96,10 @@ export default class OptionStore {
       this.departmentOptions = [];
     }
   };
-  UnitOptions: IOptions[] = [];
 
+  
+
+  UnitOptions: IOptions[] = [];
   getUnitOptions = async () => {
     try {
       const departments = await Catalog.getActive<ICatalogNormalList>("units");

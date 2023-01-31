@@ -1,5 +1,6 @@
 import {
   ISeries,
+  ISeriesExpedition,
   ISeriesFilter,
   ISeriesList,
   ISeriesNewForm,
@@ -17,6 +18,7 @@ const Series = {
   getNewForm: (newForm: ISeriesNewForm): Promise<ISeries> =>
     requests.post(`series/new`, newForm),
   getById: (id: number, tipoSerie: number): Promise<ISeries> => requests.get(`series/${id}/${tipoSerie}`),
+  getBranch: (branchId: string): Promise<ISeriesExpedition> => requests.get(`series/${branchId}`),
   createInvoice: (serie: FormData): Promise<void> =>
     requests.post(`series/invoice`, serie),
   updateInvoice: (serie: FormData): Promise<void> =>

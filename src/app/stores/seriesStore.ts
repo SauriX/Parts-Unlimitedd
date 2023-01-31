@@ -88,21 +88,37 @@ export default class SeriesStore {
     }
   };
 
+  getBranch = async (branchId: string) => {
+    try {
+      this.loading = true;
+      const serie = await Series.getBranch(branchId);
+      return serie;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    } finally {
+      this.loading = false;
+    }
+  };
+
   createInvoice = async (serie: FormData) => {
     try {
       await Series.createInvoice(serie);
       alerts.success(messages.created);
+      return true;
     } catch (error) {
       alerts.warning(getErrors(error));
+      return false;
     }
   };
 
   updateInvoice = async (serie: FormData) => {
     try {
       await Series.updateInvoice(serie);
-      alerts.success(messages.created);
+      alerts.success(messages.updated);
+      return true;
     } catch (error) {
       alerts.warning(getErrors(error));
+      return false;
     }
   };
 
@@ -110,17 +126,21 @@ export default class SeriesStore {
     try {
       await Series.createTicket(ticket);
       alerts.success(messages.created);
+      return true;
     } catch (error) {
       alerts.warning(getErrors(error));
+      return false;
     }
   };
 
   updateTicket = async (ticket: ITicketSerie) => {
     try {
       await Series.updateTicket(ticket);
-      alerts.success(messages.created);
+      alerts.success(messages.updated);
+      return true;
     } catch (error) {
       alerts.warning(getErrors(error));
+      return false;
     }
   };
 

@@ -8,6 +8,9 @@ import {
   UploadFile,
   UploadProps,
   Divider,
+  Spin,
+  Tag,
+  Input,
 } from "antd";
 import { observer } from "mobx-react-lite";
 import { FC, Fragment, useEffect, useState } from "react";
@@ -37,6 +40,7 @@ import React from "react";
 import moment from "moment";
 import { useSearchParams } from "react-router-dom";
 import ImageButton from "../../../../app/common/button/ImageButton";
+import { IOptions } from "../../../../app/models/shared";
 
 type SeriesInvoiceProps = {
   id: number;
@@ -44,10 +48,17 @@ type SeriesInvoiceProps = {
 };
 
 const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
-  const { seriesStore, profileStore } = useStore();
+  const { seriesStore, profileStore, optionStore } = useStore();
   const { profile } = profileStore;
-  const { getById, createInvoice, updateInvoice, setSeriesType, getNewForm } =
-    seriesStore;
+  const {
+    getById,
+    createInvoice,
+    updateInvoice,
+    setSeriesType,
+    getNewForm,
+    getBranch,
+  } = seriesStore;
+  const { getBranchOptions, BranchOptions } = optionStore;
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -61,6 +72,11 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
 
   const [keyFile, setKeyFile] = useState<RcFile>();
   const [cerFile, setCerFile] = useState<RcFile>();
+  const [branch, setBranch] = useState<string>("");
+
+  useEffect(() => {
+    getBranchOptions();
+  }, [getBranchOptions]);
 
   useEffect(() => {
     const readSerie = async (serieId: number, tipo: number) => {
@@ -139,27 +155,40 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
     setReadonly(false);
   };
 
+  const onChangeBranch = async (value: string) => {
+    const branch = await getBranch(value);
+    setBranch(value);
+    if (branch) {
+      form.setFieldsValue({ expedicion: branch });
+    }
+  };
+
   const onFinish = async (newValues: ISeries) => {
     setLoading(true);
 
     const serie = { ...values, ...newValues };
     serie.factura.archivoKey = keyFile;
     serie.factura.archivoCer = cerFile;
-    serie.expedicion.sucursalId = profile?.sucursal!;
+    serie.expedicion.sucursalId = branch;
 
     let serieFormData = objectToFormData(serie);
 
+    let success = false;
+
     if (id) {
-      await updateInvoice(serieFormData);
+      success = await updateInvoice(serieFormData);
     } else {
-      await createInvoice(serieFormData);
+      success = await createInvoice(serieFormData);
     }
     setLoading(false);
-    goBack();
+
+    if (success) {
+      goBack();
+    }
   };
 
   return (
-    <Fragment>
+    <Spin spinning={loading} tip={"Guardando"}>
       <Row gutter={[24, 12]}>
         {!readonly && (
           <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
@@ -297,11 +326,26 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
               label="Archivo.Key"
               required
             >
-              <Upload {...props}>
-                <Button type="primary" icon={<UploadOutlined />} disabled={readonly} >
-                  Subir archivo
-                </Button>
-              </Upload>
+              <Input.Group>
+                <Row gutter={4}>
+                  <Col span={id ? 12 : 24}>
+                    <Upload {...props}>
+                      <Button
+                        type="primary"
+                        icon={<UploadOutlined />}
+                        disabled={readonly}
+                      >
+                        Subir archivo
+                      </Button>
+                    </Upload>
+                  </Col>
+                  {id && (
+                    <Col span={12}>
+                      <Tag color="green">{values.factura.claveKey}</Tag>
+                    </Col>
+                  )}
+                </Row>
+              </Input.Group>
             </Form.Item>
           </Col>
           <Col md={6} sm={24} xs={12}>
@@ -310,11 +354,26 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
               label="Archivo.Cer"
               required
             >
-              <Upload {...props}>
-                <Button type="primary" icon={<UploadOutlined />} disabled={readonly} >
-                  Subir archivo
-                </Button>
-              </Upload>
+              <Input.Group>
+                <Row gutter={4}>
+                  <Col span={id ? 12 : 24}>
+                    <Upload {...props}>
+                      <Button
+                        type="primary"
+                        icon={<UploadOutlined />}
+                        disabled={readonly}
+                      >
+                        Subir archivo
+                      </Button>
+                    </Upload>
+                  </Col>
+                  {id && (
+                    <Col span={12}>
+                      <Tag color="green">{values.factura.claveCer}</Tag>
+                    </Col>
+                  )}
+                </Row>
+              </Input.Group>
             </Form.Item>
           </Col>
         </Row>
@@ -440,6 +499,22 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
           </Col>
         </Row>
         <Divider orientation="left">Lugar de expedición</Divider>
+        <Row gutter={[24, 12]} style={{ marginBottom: 12 }}>
+          <Col span={6} offset={18}>
+            <SelectInput
+              formProps={{
+                name: ["expedicion", "sucursalId"],
+                label: "Sucursal",
+              }}
+              options={BranchOptions}
+              onChange={(value) => {
+                onChangeBranch(value);
+              }}
+              required
+              readonly={readonly}
+            />
+          </Col>
+        </Row>
         <Row gutter={[24, 12]}>
           <Col md={6} sm={24} xs={12}>
             <TextInput
@@ -524,7 +599,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
           </Col>
         </Row>
       </Form>
-    </Fragment>
+    </Spin>
   );
 };
 

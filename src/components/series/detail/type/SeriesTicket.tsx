@@ -74,19 +74,24 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id, tipoSerie }) => {
     const serie = { ...values, ...newValues };
     serie.tipoSerie = 2;
 
+    let success = false;
+
     if (id) {
-      await updateTicket(serie);
+      success = await updateTicket(serie);
     } else {
-      await createTicket(serie);
+      success = await createTicket(serie);
     }
     setLoading(false);
-    goBack();
+
+    if (success) {
+      goBack();
+    }
   };
 
   return (
     <Fragment>
       <Row gutter={[24, 12]}>
-      {!readonly && (
+        {!readonly && (
           <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
             <Button onClick={goBack}>Cancelar</Button>
             <Button
