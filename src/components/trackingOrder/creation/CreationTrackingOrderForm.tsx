@@ -56,7 +56,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
 }) => {
   const { trackingOrderStore, profileStore, optionStore, routeStore } =
     useStore();
-  const { profile } = profileStore;
+  const { profile, getProfile } = profileStore;
   const { find, foundRoutes, routes } = routeStore;
   const {
     getSucursalesOptions,
@@ -66,6 +66,8 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     getBranchOptions,
     MaquiladorOptions,
     getMaquiladorOptions,
+    profileOptions,
+    getProfileOptions,
   } = optionStore;
   const {
     getById,
@@ -103,6 +105,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   const [newTrackingOrder, setNewTrackingOrder] = useState<ITrackingOrderForm>(
     new TrackingOrderFormValues()
   );
+  const navigate = useNavigate();
 
   const treeData = [
     {
@@ -124,16 +127,19 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
       })),
     },
   ];
+  
   const setSucursalOrigenInicial = () => {
-    values.sucursalOrigenId = profile!.sucursal;
+    values.sucursalOrigenId = profileOptions?.sucursal;
     form.setFieldsValue(values!);
   };
+
   useEffect(() => {
     getSucursalesOptions();
     getBranchOptions();
     getMaquiladorOptions();
     setSucursalOrigenInicial();
-  }, [getSucursalesOptions, getBranchOptions, getMaquiladorOptions, profile]);
+    getProfileOptions();
+  }, [getSucursalesOptions, getBranchOptions, getMaquiladorOptions, profile, getProfileOptions]);
 
   useEffect(() => {
     const readTrackingOrder = async (id: string) => {
@@ -307,6 +313,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
       } else {
         success = await create(trackingOrderSend);
       }
+      navigate(`/segRutas`);
       setLoading(false);
     }
   };
@@ -437,6 +444,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
               if (propertyForm == "temperatura") {
                 setTemperatura(changes_values[propertyForm]);
                 setTemperature(changes_values[propertyForm]);
+                console.log(changes_values[propertyForm])
               }
               if (propertyForm === "fecha") {
                 var date = changes_values[propertyForm];

@@ -46,6 +46,7 @@ import ResultValidationStore from "./resultValidationStore";
 import RelaseResultStore from "./RelaseResultStore";
 import InvoiceStore from "./invoiceStore";
 import IndicatorStore from "./indicatorStore";
+import SeriesStore from "./seriesStore";
 import InvoiceCatalogStore from "./InvoiceCatalogStore";
 configure({
   enforceActions: "never",
@@ -97,6 +98,7 @@ interface Store {
   relaseResultStore: RelaseResultStore;
   invoiceStore: InvoiceStore;
   invoiceCompanyStore: InvoiceCompanyStore;
+  seriesStore: SeriesStore;
   invoiceCatalogStore:InvoiceCatalogStore;
 }
 
@@ -146,6 +148,7 @@ export const store: Store = {
   relaseResultStore: new RelaseResultStore(),
   invoiceStore: new InvoiceStore(),
   invoiceCompanyStore: new InvoiceCompanyStore(),
+  seriesStore: new SeriesStore(),
   invoiceCatalogStore: new InvoiceCatalogStore(),
 };
 

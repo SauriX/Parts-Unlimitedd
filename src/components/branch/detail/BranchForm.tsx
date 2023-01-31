@@ -10,7 +10,6 @@ import {
   Divider,
   Select,
 } from "antd";
-import { IDepartamenList } from "../../../app/models/departament";
 import { List, Typography } from "antd";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
@@ -25,13 +24,12 @@ import {
   IBranchDepartment,
 } from "../../../app/models/branch";
 import { IOptions } from "../../../app/models/shared";
-import NumberInput from "../../../app/common/form/NumberInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
 import SelectInput from "../../../app/common/form/SelectInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import MaskInput from "../../../app/common/form/MaskInput";
-import { error } from "console";
+import { ISeriesList } from "../../../app/models/series";
 
 type BranchFormProps = {
   componentRef: React.MutableRefObject<any>;
@@ -52,6 +50,7 @@ const BranchForm: FC<BranchFormProps> = ({
   const [searchParams] = useSearchParams();
   const { getDepartmentOptions, departmentOptions } = optionStore;
   const [department, setDepartment] = useState<IBranchDepartment>();
+
   const navigate = useNavigate();
   const [form] = Form.useForm<IBranchForm>();
   const [loading, setLoading] = useState(false);
@@ -519,6 +518,20 @@ const BranchForm: FC<BranchFormProps> = ({
                   deleteClinic(item.departamentoId);
                 }}
               />
+            </Col>
+          </List.Item>
+        )}
+      />
+      <Divider orientation="left">Series</Divider>
+      <List<ISeriesList>
+        header={"Listado de series que se pueden utilizar en esta sucursal"}
+        footer={<div></div>}
+        bordered
+        dataSource={values.series}
+        renderItem={(item) => (
+          <List.Item>
+            <Col span={24}>
+              <Typography.Text mark>{item.clave}</Typography.Text>
             </Col>
           </List.Item>
         )}
