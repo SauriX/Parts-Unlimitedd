@@ -164,7 +164,9 @@ const ClinicResultsFilter = () => {
                       name: "buscar",
                       label: "Buscar",
                     }}
-                    onPressEnter={() => onFinish}
+                    onPressEnter={() => {
+                      form.submit();
+                    }} 
                   />
                 </Col>
                 <Col span={8}>
