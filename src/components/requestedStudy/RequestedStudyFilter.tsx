@@ -18,7 +18,7 @@ import moment from "moment";
 import { IOptions } from "../../app/models/shared";
 
 const RequestedStudyFilter = () => {
-  const { optionStore, requestedStudyStore } = useStore();
+  const { optionStore, requestedStudyStore,profileStore } = useStore();
   const { getAll, setFormValues } = requestedStudyStore;
   const {
     branchCityOptions,
@@ -30,7 +30,7 @@ const RequestedStudyFilter = () => {
     getMedicOptions,
     getCompanyOptions,
   } = optionStore;
-
+  const {profile}=profileStore;
   const [form] = useForm();
   const [loading, setLoading] = useState(false);
 
@@ -54,12 +54,14 @@ const RequestedStudyFilter = () => {
   ]);
 
   useEffect(() => {
+
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
+
     setBranchOptions(
       branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
     );

@@ -18,7 +18,7 @@ import { IOptions } from "../../app/models/shared";
 import { ISamplingForm } from "../../app/models/sampling";
 
 const SamplingStudyFilter = () => {
-  const { optionStore, samplingStudyStore } = useStore();
+  const { optionStore, samplingStudyStore,profileStore } = useStore();
   const { getAll, setFormValues } = samplingStudyStore;
   const {
     branchCityOptions,
@@ -30,7 +30,7 @@ const SamplingStudyFilter = () => {
     getMedicOptions,
     getCompanyOptions,
   } = optionStore;
-
+const {profile}=profileStore;
   const [form] = useForm();
   const [loading, setLoading] = useState(false);
 
@@ -54,12 +54,14 @@ const SamplingStudyFilter = () => {
   ]);
 
   useEffect(() => {
+
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
+
     setBranchOptions(
       branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
     );

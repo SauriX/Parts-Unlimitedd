@@ -15,10 +15,10 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const QuotationFilter = () => {
-  const { quotationStore, optionStore } = useStore();
+  const { quotationStore, optionStore,profileStore } = useStore();
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const { filter, setFilter, getQuotations } = quotationStore;
-
+  const { profile } = profileStore;
   const [form] = useForm<IQuotationFilter>();
 
   const selectedCity = Form.useWatch("ciudad", form);

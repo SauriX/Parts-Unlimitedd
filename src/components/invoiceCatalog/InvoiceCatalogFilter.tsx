@@ -15,10 +15,10 @@ import { formItemLayout } from "../../app/util/utils";
 import "./css/index.css";
 
 const InvoiceCatalogFilter = () => {
-  const {  optionStore,invoiceCatalogStore } = useStore();
+  const {  optionStore,invoiceCatalogStore,profileStore } = useStore();
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const {search,setSearch,getAll } = invoiceCatalogStore;
-
+  const {profile}= profileStore;
   const [form] = useForm<IInvoiceCatalogFilter>();
 
   const selectedCity = Form.useWatch("ciudad", form);

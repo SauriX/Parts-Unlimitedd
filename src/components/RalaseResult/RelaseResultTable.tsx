@@ -48,6 +48,7 @@ import {
   searchrelase,
 } from "../../app/models/relaseresult";
 import RelaseTableStudy from "./RelaseTableStudy";
+import ProfileStore from "../../app/stores/profileStore";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -83,8 +84,8 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     procedingStore,
     optionStore,
     locationStore,
-    resultValidationStore,
     relaseResultStore,
+    profileStore
   } = useStore();
   const { expedientes, getnow } = procedingStore;
   const {
@@ -116,6 +117,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     viewTicket,
     setSearch,
   } = relaseResultStore;
+const {profile}  = profileStore;
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
   const { getCity } = locationStore;
   const [searchParams] = useSearchParams();
@@ -377,7 +379,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   }, [branchCityOptions]);
   useEffect(() => {
     setAreaOptions(
-      departmentAreaOptions.find((x) => x.value === selectedDepartment)
+      branchCityOptions.find((x) => x.value === selectedDepartment)
         ?.options ?? []
     );
     form.setFieldValue("sucursalId", []);

@@ -24,6 +24,7 @@ import Pack from "../api/pack";
 import Location from "../api/location";
 import { IWorkList } from "../models/workList";
 import Series from "../api/series";
+import { store } from "./store";
 import Profile from "../api/profile";
 
 export const originOptions = [
@@ -582,12 +583,13 @@ export default class OptionStore {
       this.medicOptions = [];
     }
   };
-
+  
   branchCityOptions: IOptions[] = [];
   getBranchCityOptions = async () => {
     try {
+      const profile = store.profileStore.profile
       const branch = Branch.getBranchByCity();
-      this.branchCityOptions = (await branch).map((x) => ({
+      let branches = (await branch).map((x) => ({
         value: x.ciudad,
         label: x.ciudad,
         disabled: true,
@@ -596,6 +598,20 @@ export default class OptionStore {
           label: y.nombre,
         })),
       }));
+      const branchesFiltered: IOptions[] = [];
+      branches.forEach((bco) => {
+        let sucursalesDisponibles = bco.options?.filter((x) =>
+          profile?.sucursales.includes("" + x.value)
+        );
+        if (!!sucursalesDisponibles?.length) {
+          let copy = {
+            ...bco,
+            options: sucursalesDisponibles,
+          };
+          branchesFiltered.push(copy);
+        }
+      });
+      this.branchCityOptions = branchesFiltered;
     } catch (error) {
       this.branchCityOptions = [];
     }

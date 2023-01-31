@@ -19,7 +19,7 @@ import { IOptions } from "../../app/models/shared";
 const DeliveryResultsForm = () => {
   const [form] = Form.useForm();
 
-  const { requestStore, optionStore, massResultSearchStore } = useStore();
+  const { requestStore, optionStore, massResultSearchStore,profileStore } = useStore();
 
   const {
     branchCityOptions,
@@ -37,7 +37,7 @@ const DeliveryResultsForm = () => {
     getBranchOptions,
     getDepartmentAreaOptions,
   } = optionStore;
-
+const {profile}= profileStore;
   const {
     clearFormDeliverResult,
     clearRequests,
@@ -69,6 +69,7 @@ const DeliveryResultsForm = () => {
     getDepartmentOptions,
   ]);
   useEffect(() => {
+
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
