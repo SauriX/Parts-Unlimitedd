@@ -143,6 +143,9 @@ const {profile}=profileStore;
                       name: "buscar",
                       label: "Buscar",
                     }}
+                    onPressEnter={() => {
+                      form.submit();
+                    }}
                   />
                 </Col>
                 <Col span={8}>

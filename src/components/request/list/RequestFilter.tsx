@@ -93,8 +93,8 @@ const RequestFilter = () => {
                 label: "Fecha de",
               }}
               options={[
-                { value: 1, label: "Creación" },
-                { value: 2, label: "Entrega" },
+                { value: 1, label: "Fecha de Creación" },
+                { value: 2, label: "Fecha de Entrega" },
               ]}
             />
           </Col>
