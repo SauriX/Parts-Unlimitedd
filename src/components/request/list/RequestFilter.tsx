@@ -88,11 +88,11 @@ const RequestFilter = () => {
             <SelectInput
               formProps={{
                 name: "tipoFecha",
-                label: "Fechas por",
+                label: "Fecha de",
               }}
               options={[
-                { value: 1, label: "Solicitudes hechas" },
-                { value: 2, label: "Solicitudes a entregar" },
+                { value: 1, label: "Creación" },
+                { value: 2, label: "Entrega" },
               ]}
             />
           </Col>
