@@ -5,7 +5,7 @@ export interface IInvoiceCatalogFilter{
     sucursal:string[];
     buscar:string;
     tipo:string;
-    ciudad:string;
+    ciudad:string[];
 }
 
 export interface IInvoiceList {
@@ -28,7 +28,7 @@ export class invoiceCatalogValues implements IInvoiceCatalogFilter {
         sucursal = [];
         buscar = "";
         tipo= "";
-        ciudad = "";
+        ciudad = [];
     constructor(init?: IInvoiceCatalogFilter) {
       Object.assign(this, init);
     }
