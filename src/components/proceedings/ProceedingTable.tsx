@@ -48,7 +48,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
   componentRef,
   printing,
 }) => {
-  const { procedingStore, optionStore, locationStore } = useStore();
+  const { procedingStore, optionStore, locationStore,profileStore } = useStore();
   const { expedientes, getAll, getnow, setSearch, search } = procedingStore;
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const { getCity } = locationStore;
@@ -65,22 +65,26 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
     searchedColumn: "",
   });
   const selectedCity = Form.useWatch("ciudad", form);
+  const { profile } =profileStore;
   useEffect(() => {
+    getBranchCityOptions();
+  }, [getBranchCityOptions]);
+
+  useEffect(() => {
+    
     setCityOptions(
-      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
+      branchCityOptions.map((x:any) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
+    
     setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+      branchCityOptions.find((x:any) => x.value === selectedCity)?.options ?? []
     );
     form.setFieldValue("sucursal", []);
   }, [branchCityOptions, form, selectedCity]);
-  console.log("Table");
-  useEffect(() => {
-    getBranchCityOptions();
-  }, [getBranchCityOptions]);
+
   useEffect(() => {
     const readData = async () => {
       await getCity();
@@ -103,6 +107,14 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
     console.log(values);
     if (values.fechaNacimiento === null) {
       delete values.fechaNacimiento;
+    }
+    if(values.fechaNacimiento != null){
+      console.log(values.fechaNacimiento,"nacimiento");
+     values.fechaNacimiento=  values.fechaNacimiento!.utcOffset(0, true);
+    }
+
+    if ( values.fechaAlta != null) {
+      values.fechaAlta = [values.fechaAlta![0].utcOffset(0, true),values.fechaAlta![1].utcOffset(0, true)] 
     }
     setSearch(values);
     await getnow(values!);
@@ -245,7 +257,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
                 formProps={{ label: "Fecha de alta", name: "fechaAlta" }}
                 disableAfterDates={true}
               />
-            </Col>
+            </Col> 
             <Col span={8}>
               <MaskInput
                 formProps={{

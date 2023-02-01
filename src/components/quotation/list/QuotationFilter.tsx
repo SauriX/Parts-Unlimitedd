@@ -1,6 +1,7 @@
 import { Button, Col, Form, Input, Row } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import DateInput from "../../../app/common/form/proposal/DateInput";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
@@ -14,10 +15,10 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const QuotationFilter = () => {
-  const { quotationStore, optionStore } = useStore();
+  const { quotationStore, optionStore,profileStore } = useStore();
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const { filter, setFilter, getQuotations } = quotationStore;
-
+  const { profile } = profileStore;
   const [form] = useForm<IQuotationFilter>();
 
   const selectedCity = Form.useWatch("ciudad", form);
@@ -42,6 +43,10 @@ const QuotationFilter = () => {
     );
     form.setFieldValue("sucursales", []);
   }, [branchCityOptions, form, selectedCity]);
+
+  useEffect(() => {
+    form.setFieldsValue(filter);
+  }, [filter, form]);
 
   const onFinish = (values: IQuotationFilter) => {
     setErrors([]);
@@ -74,7 +79,12 @@ const QuotationFilter = () => {
           setErrors(errors);
         }}
         size="small"
-        initialValues={filter}
+        initialValues={{
+          fechaAlta: [
+            moment(Date.now()).utcOffset(0, true),
+            moment(Date.now()).utcOffset(0, true),
+          ],
+        }}
       >
         <Row gutter={[0, 12]}>
           <Col span={8}>
@@ -87,17 +97,9 @@ const QuotationFilter = () => {
             <TextInput
               formProps={{
                 name: "expediente",
-                label: "Paciente",
+                label: "Buscar",
               }}
-              placeholder="Expediente / Nombre / Código de barras / Huella digital"
-            />
-          </Col>
-          <Col span={8}>
-            <TextInput
-              formProps={{
-                name: "clave",
-                label: "Clave",
-              }}
+              placeholder="Clave cotización / Nombre"
             />
           </Col>
           <Col span={8}>

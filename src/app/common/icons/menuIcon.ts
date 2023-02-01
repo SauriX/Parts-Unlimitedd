@@ -36,7 +36,9 @@ import {
   faClipboardList,
   faSyringe,
   faMoneyBill1Wave,
-  faFileMedical
+  faFileMedical,
+  faFileInvoice,
+  faMoneyBills
 } from "@fortawesome/free-solid-svg-icons";
 
 const getMenuIcon = (name: string) => {
@@ -117,6 +119,10 @@ const getMenuIcon = (name: string) => {
       return faListCheck;
     case "quotation":
       return faMoneyBill1Wave;
+    case "invoice":
+      return faMoneyBills;
+    case "series":
+      return faFileInvoice;
     default:
       return faCircle;
   }

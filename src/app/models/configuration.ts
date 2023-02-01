@@ -22,4 +22,6 @@ export interface IConfigurationFiscal {
   calle: string;
   numero: string;
   telefono?: string;
+  correo?: string;
+  webSite?: string;
 }

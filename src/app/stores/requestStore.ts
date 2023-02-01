@@ -681,15 +681,14 @@ export default class RequestStore {
     }
   };
 
-  printTicket = async (
-    recordId: string,
-    requestId: string,
-    paymentId: string
-  ) => {
+  printTicket = async (recordId: string, requestId: string) => {
     try {
-      await Request.printTicket(recordId, requestId, paymentId);
+      this.loadingTabContentCount++;
+      await Request.printTicket(recordId, requestId);
     } catch (error: any) {
       alerts.warning(getErrors(error));
+    } finally {
+      this.loadingTabContentCount--;
     }
   };
 

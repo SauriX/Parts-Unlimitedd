@@ -1,6 +1,6 @@
-import { Button,  Col,  Form, Row, Table } from "antd";
-import {  Fragment, useEffect, useState } from "react";
-import { useNavigate,  } from "react-router-dom";
+import { Button, Col, Form, Row, Table } from "antd";
+import { Fragment, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import { EditOutlined } from "@ant-design/icons";
@@ -22,11 +22,18 @@ import PrintIcon from "../../../app/common/icons/PrintIcon";
 import { formItemLayout } from "../../../app/util/utils";
 const PendingSend = () => {
   const { optionStore, routeTrackingStore, profileStore } = useStore();
-  const { getAll, studys, printTicket, update, exportForm, setventana,searchrecive,setSearchRecive } =
-    routeTrackingStore;
+  const {
+    getAll,
+    studys,
+    printTicket,
+    loadingRoutes,
+    exportForm,
+    setventana,
+    searchrecive,
+    setSearchRecive,
+  } = routeTrackingStore;
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const { profile } = profileStore;
-
 
   const [form] = Form.useForm<SearchTracking>();
 
@@ -46,19 +53,14 @@ const PendingSend = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
 
-
-
-
-
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
 
-
   const columns: IColumns<IRouteList> = [
     {
-      ...getDefaultColumnProps("seguimiento", "# De seguimiento", {
+      ...getDefaultColumnProps("seguimiento", "No. de seguimiento", {
         searchState,
         setSearchState,
         width: "10%",
@@ -88,7 +90,7 @@ const PendingSend = () => {
       title: "Solicitud",
       align: "center",
       width: "10%",
-      render: (value) => (value),
+      render: (value) => value,
     },
     {
       key: "editar",
@@ -96,7 +98,7 @@ const PendingSend = () => {
       title: "Estatus",
       align: "center",
       width: "10%",
-      render: (value) => (value),
+      render: (value) => value,
     },
     {
       ...getDefaultColumnProps("estudio", "Estudio", {
@@ -118,7 +120,7 @@ const PendingSend = () => {
       title: "Fecha de entrega",
       align: "center",
       width: "10%",
-      render: (value) => (value),
+      render: (value) => value,
     },
     {
       key: "editar",
@@ -156,7 +158,6 @@ const PendingSend = () => {
   const onFinish = async (newValues: SearchTracking) => {
     const search = { ...searchrecive, ...newValues };
 
-
     setSearchRecive(search);
     let studios = [];
     var datas = await getAll(search!);
@@ -184,7 +185,7 @@ const PendingSend = () => {
               options={branchCityOptions}
               formProps={{
                 name: "sucursal",
-                label: "Sucursal a donde enviar",
+                label: "Destino",
                 labelCol: { span: 12 },
                 wrapperCol: { span: 14 },
               }}
@@ -226,6 +227,7 @@ const PendingSend = () => {
 
       <div style={{ marginTop: "2%" }}>
         <Table<IRouteList>
+          loading={loadingRoutes}
           size="small"
           rowKey={(record) => record.id}
           columns={columns}

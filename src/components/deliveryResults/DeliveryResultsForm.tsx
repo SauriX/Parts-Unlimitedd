@@ -19,7 +19,8 @@ import { IOptions } from "../../app/models/shared";
 const DeliveryResultsForm = () => {
   const [form] = Form.useForm();
 
-  const { requestStore, optionStore, massResultSearchStore } = useStore();
+  const { requestStore, optionStore, massResultSearchStore, profileStore } =
+    useStore();
 
   const {
     branchCityOptions,
@@ -37,7 +38,7 @@ const DeliveryResultsForm = () => {
     getBranchOptions,
     getDepartmentAreaOptions,
   } = optionStore;
-
+  const { profile } = profileStore;
   const {
     clearFormDeliverResult,
     clearRequests,
@@ -160,11 +161,11 @@ const DeliveryResultsForm = () => {
               <SelectInput
                 formProps={{
                   name: "tipoFecha",
-                  label: "Fechas por",
+                  label: "Fecha de",
                 }}
                 options={[
-                  { value: 1, label: "Solicitudes hechas" },
-                  { value: 2, label: "Solicitudes a entregar" },
+                  { value: 1, label: "Fecha de Creación" },
+                  { value: 2, label: "Fecha de Entrega" },
                 ]}
               />
             </Col>

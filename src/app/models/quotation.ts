@@ -20,11 +20,13 @@ export interface IQuotationFilter {
   fechaNInicial?: moment.Moment;
   fechaNFinal?: moment.Moment;
   expediente?: string;
-  clave?: string;
 }
 
 export class QuotationFilterForm implements IQuotationFilter {
-  fechaAlta = [moment(), moment()];
+  fechaAlta = [
+    moment(Date.now()).utcOffset(0, true),
+    moment(Date.now()).utcOffset(0, true),
+  ];
   fechaAInicial = moment().utcOffset(0, true);
   fechaAFinal = moment().utcOffset(0, true);
 

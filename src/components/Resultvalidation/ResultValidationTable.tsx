@@ -60,7 +60,9 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     locationStore,
     samplingStudyStore: samplig,
     resultValidationStore,
+    profileStore
   } = useStore();
+  const { profile }=profileStore
   const { expedientes, getnow } = procedingStore;
   const {
     branchCityOptions,
@@ -361,12 +363,14 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
   useEffect(() => {
+
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
+
     setBranchOptions(
       branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
     );

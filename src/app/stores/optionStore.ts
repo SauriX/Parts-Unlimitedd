@@ -7,7 +7,7 @@ import {
   ICatalogDescriptionList,
   ICatalogNormalList,
 } from "../models/catalog";
-import { IOptions } from "../models/shared";
+import { IOptions, IProfile } from "../models/shared";
 import Parameter from "../api/parameter";
 import Reagent from "../api/reagent";
 import Maquilador from "../api/maquilador";
@@ -24,6 +24,8 @@ import Pack from "../api/pack";
 import Location from "../api/location";
 import { IWorkList } from "../models/workList";
 import Series from "../api/series";
+import { store } from "./store";
+import Profile from "../api/profile";
 
 export const originOptions = [
   { label: "COMPAÑÍA", value: 1 },
@@ -59,6 +61,11 @@ export const studyStatusOptions = [
   { label: "Entregado", value: 10 },
 ];
 
+export const seriesTypeOptions = [
+  { label: "FACTURA", value: 1 },
+  { label: "RECIBO", value: 2 },
+];
+
 export default class OptionStore {
   constructor() {
     makeAutoObservable(this);
@@ -89,8 +96,8 @@ export default class OptionStore {
       this.departmentOptions = [];
     }
   };
-  UnitOptions: IOptions[] = [];
 
+  UnitOptions: IOptions[] = [];
   getUnitOptions = async () => {
     try {
       const departments = await Catalog.getActive<ICatalogNormalList>("units");
@@ -490,30 +497,44 @@ export default class OptionStore {
       this.studyOptions = [];
     }
   };
-  studyOptionscita: IOptions[] = [];
 
-  getStudyOptionscita = async (area: string) => {
+  appointmentStudyOptions: IOptions[] = [];
+  getAppointmentStudyOptions = async (department: string) => {
     try {
       const studyOptions = await Study.getActive();
-      console.log(studyOptions, "studis");
-      var studyOptionsf = studyOptions.filter((x) =>
-        x.departamento.includes(area)
+      let filterStudyOptions = studyOptions.filter(
+        (x) => x.departamento == department
       );
-      console.log(studyOptionsf, "filter");
-      var test = studyOptionsf.map((x) => ({
+      this.appointmentStudyOptions = filterStudyOptions.map((x) => ({
         key: "study-" + x.id,
         value: "study-" + x.id,
         label: x.clave + " - " + x.nombre,
         group: "study",
       }));
-      this.packOptionscita = test;
-      console.log(test, "final");
     } catch (error) {
-      this.studyOptionscita = [];
+      this.appointmentStudyOptions = [];
     }
   };
-  packOptions: IOptions[] = [];
 
+  appointmentPackOptions: IOptions[] = [];
+  getAppointmentPackOptions = async (department: string) => {
+    try {
+      const packOptions = await Pack.getActive();
+      let filterPackOptions = packOptions.filter(
+        (x) => x.departamento == department
+      );
+      this.appointmentPackOptions = filterPackOptions.map((x) => ({
+        key: "pack-" + x.id,
+        value: "pack-" + x.id,
+        label: x.clave + " - " + x.nombre,
+        group: "pack",
+      }));
+    } catch (error) {
+      this.appointmentPackOptions = [];
+    }
+  };
+
+  packOptions: IOptions[] = [];
   getPackOptions = async () => {
     try {
       const packOptions = await Pack.getActive();
@@ -527,8 +548,8 @@ export default class OptionStore {
       this.packOptions = [];
     }
   };
-  packOptionscita: IOptions[] = [];
 
+  packOptionscita: IOptions[] = [];
   getPackOptionscita = async (area: string) => {
     try {
       const packOptions = await Pack.getActive();
@@ -577,8 +598,9 @@ export default class OptionStore {
   branchCityOptions: IOptions[] = [];
   getBranchCityOptions = async () => {
     try {
+      const profile = store.profileStore.profile;
       const branch = Branch.getBranchByCity();
-      this.branchCityOptions = (await branch).map((x) => ({
+      let branches = (await branch).map((x) => ({
         value: x.ciudad,
         label: x.ciudad,
         disabled: true,
@@ -587,6 +609,20 @@ export default class OptionStore {
           label: y.nombre,
         })),
       }));
+      const branchesFiltered: IOptions[] = [];
+      branches.forEach((bco) => {
+        let sucursalesDisponibles = bco.options?.filter((x) =>
+          profile?.sucursales.includes("" + x.value)
+        );
+        if (!!sucursalesDisponibles?.length) {
+          let copy = {
+            ...bco,
+            options: sucursalesDisponibles,
+          };
+          branchesFiltered.push(copy);
+        }
+      });
+      this.branchCityOptions = branchesFiltered;
     } catch (error) {
       this.branchCityOptions = [];
     }
@@ -715,6 +751,18 @@ export default class OptionStore {
       }));
     } catch (error) {
       this.receiptSeriesOptions = [];
+    }
+  };
+
+  profileOptions: IProfile | undefined;
+  getProfileOptions = async () => {
+    try {
+      const profile = await Profile.getProfile();
+      this.profileOptions = {
+        ...profile,
+      };
+    } catch (error) {
+      this.profileOptions = undefined;
     }
   };
 }

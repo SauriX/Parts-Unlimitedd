@@ -17,7 +17,7 @@ const { Search } = Input;
 const InvoiceComapnyForm = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const { optionStore, invoiceCompanyStore } = useStore();
+  const { optionStore, invoiceCompanyStore,profileStore } = useStore();
   const [formCreate] = Form.useForm();
   const selectedCity = Form.useWatch("ciudad", form);
   const isInvoice = Form.useWatch("isInvoice", formCreate);
@@ -28,6 +28,7 @@ const InvoiceComapnyForm = () => {
   const [disabled, setDisabled] = useState<boolean>(true);
   const [requiredValues, setRequiredValues] = useState<boolean>(true);
 
+  const {profile}=profileStore;
   const {
     branchCityOptions,
     getBranchCityOptions,
@@ -60,6 +61,7 @@ const InvoiceComapnyForm = () => {
   }, []);
 
   useEffect(() => {
+
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );

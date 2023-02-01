@@ -17,7 +17,7 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const RequestFilter = () => {
-  const { requestStore, optionStore } = useStore();
+  const { requestStore, optionStore,profileStore} = useStore();
   const {
     branchCityOptions,
     medicOptions,
@@ -29,7 +29,7 @@ const RequestFilter = () => {
     getDepartmentOptions,
   } = optionStore;
   const { filter, setFilter, getRequests } = requestStore;
-
+  const {profile} = profileStore
   const [form] = useForm<IRequestFilter>();
 
   const selectedCity = Form.useWatch("ciudad", form);
@@ -50,12 +50,14 @@ const RequestFilter = () => {
   ]);
 
   useEffect(() => {
+
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
+
     setBranchOptions(
       branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
     );
@@ -88,11 +90,11 @@ const RequestFilter = () => {
             <SelectInput
               formProps={{
                 name: "tipoFecha",
-                label: "Fechas por",
+                label: "Fecha de",
               }}
               options={[
-                { value: 1, label: "Solicitudes hechas" },
-                { value: 2, label: "Solicitudes a entregar" },
+                { value: 1, label: "Fecha de Creación" },
+                { value: 2, label: "Fecha de Entrega" },
               ]}
             />
           </Col>
