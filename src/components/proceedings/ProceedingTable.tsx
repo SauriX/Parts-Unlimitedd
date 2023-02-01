@@ -38,6 +38,7 @@ import { useForm } from "antd/lib/form/Form";
 import DateInput from "../../app/common/form/proposal/DateInput";
 import {  IOptions } from "../../app/models/shared";
 import MaskInput from "../../app/common/form/proposal/MaskInput";
+import { includes } from "lodash";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -78,9 +79,9 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
   }, [branchCityOptions]);
 
   useEffect(() => {
-    
+
     setBranchOptions(
-      branchCityOptions.find((x:any) => x.value === selectedCity)?.options ?? []
+      branchCityOptions.find((x:any) => selectedCity.includes(x.value) )?.options ?? []
     );
     form.setFieldValue("sucursal", []);
   }, [branchCityOptions, form, selectedCity]);
@@ -302,11 +303,13 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
                   <Row gutter={8}>
                     <Col span={12}>
                       <SelectInput
+                      form={form}
                         formProps={{
                           name: "ciudad",
                           label: "Ciudad",
                           noStyle: true,
                         }}
+                        multiple
                         options={cityOptions}
                       />
                     </Col>
