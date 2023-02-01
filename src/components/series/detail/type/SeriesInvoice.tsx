@@ -98,7 +98,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
         tipoSerie: 1,
         sucursalId: profile?.sucursal!,
       };
-      getNewForm(newForm).then((newValues) => {
+      getNewForm(newForm).then((newValues: any) => {
         if (newValues) {
           newValues.factura.año = moment(newValues.factura.año);
           setValues(newValues);
