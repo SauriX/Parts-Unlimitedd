@@ -18,7 +18,8 @@ const ClinicResultsTable = ({
   columns,
   expandable,
 }: ClinicResultsTableProps) => {
-  const { clinicResultsStore } = useStore();
+  const { clinicResultsStore, requestStore } = useStore();
+  const { lastViewedCode } = requestStore;
   const { loadingStudies, getAll } = clinicResultsStore;
   const [openRows, setOpenRows] = useState<boolean>(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
@@ -57,6 +58,7 @@ const ClinicResultsTable = ({
         moment(Date.now()).utcOffset(0, true),
         moment(Date.now()).utcOffset(0, true),
       ],
+      buscar: lastViewedCode,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

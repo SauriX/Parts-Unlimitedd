@@ -2,8 +2,8 @@ import { Form, Row, Col, Checkbox, Input, Button } from "antd";
 import { FormInstance } from "antd/es/form/Form";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import MaskInput from "../../../../app/common/form/proposal/MaskInput";
 import SelectInput from "../../../../app/common/form/proposal/SelectInput";
+import SelectTagInput from "../../../../app/common/form/proposal/SelectTagInput";
 import TextAreaInput from "../../../../app/common/form/proposal/TextAreaInput";
 import TextInput from "../../../../app/common/form/proposal/TextInput";
 import { IRequestGeneral } from "../../../../app/models/request";
@@ -55,8 +55,8 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
   const doctorId = Form.useWatch("medicoId", form);
   const companyId = Form.useWatch("compañiaId", form);
 
-  const email = Form.useWatch("correo", form);
-  const whatsapp = Form.useWatch("whatsapp", form);
+  const emails = Form.useWatch("correos", form);
+  const whatsapps = Form.useWatch("whatsapps", form);
 
   const [errors, setErrors] = useState<IFormError[]>([]);
   const [previousSendings, setPreviousSendings] = useState<string[]>([]);
@@ -92,11 +92,19 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
   }, [request]);
 
   useEffect(() => {
-    setIsValidEmail(validateEmail(email));
-    setIsValidWhatsapp(
-      (whatsapp ?? "").replaceAll("-", "").replaceAll("_", "").length === 10
+    setIsValidEmail(
+      !!emails && emails.length > 0 && emails.every(validateEmail)
     );
-  }, [email, whatsapp]);
+    setIsValidWhatsapp(
+      !!whatsapps &&
+        whatsapps.length > 0 &&
+        whatsapps.every(
+          (whatsapp) =>
+            (whatsapp ?? "").replaceAll("-", "").replaceAll("_", "").length ===
+            10
+        )
+    );
+  }, [emails, whatsapps]);
 
   const onValuesChange = (changedValues: any) => {
     const path = Object.keys(changedValues)[0];
@@ -107,7 +115,7 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
 
       if (previousSendings.includes("ambos") && !sendings.includes("ambos")) {
         metodoEnvio = [];
-        form.setFieldsValue({ correo: undefined, whatsapp: undefined });
+        form.setFieldsValue({ correos: [], whatsapps: [] });
       } else if (
         !previousSendings.includes("ambos") &&
         sendings.includes("ambos")
@@ -120,10 +128,10 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
       }
 
       if (!sendings.includes("correo")) {
-        form.setFieldsValue({ correo: undefined });
+        form.setFieldsValue({ correos: [] });
       }
       if (!sendings.includes("whatsapp")) {
-        form.setFieldsValue({ whatsapp: undefined });
+        form.setFieldsValue({ whatsapps: [] });
       }
 
       form.setFieldsValue({ metodoEnvio });
@@ -134,23 +142,26 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
   const onFinish = (values: IRequestGeneral) => {
     setErrors([]);
     const request = { ...requestGeneral, ...values };
+    request.correo = !isValidEmail ? undefined : emails?.join(",");
+    request.whatsapp = !isValidWhatsapp ? undefined : whatsapps?.join(",");
+
     const autoSave = form.getFieldValue("guardadoAutomatico");
 
     onSubmit(request, autoSave);
   };
 
   const sendEmail = async () => {
-    if (request) {
-      await sendTestEmail(request.expedienteId, request.solicitudId!, email);
+    if (request && emails) {
+      await sendTestEmail(request.expedienteId, request.solicitudId!, emails);
     }
   };
 
   const sendWhatsapp = async () => {
-    if (request) {
+    if (request && whatsapps) {
       await sendTestWhatsapp(
         request.expedienteId,
         request.solicitudId!,
-        whatsapp
+        whatsapps
       );
     }
   };
@@ -175,6 +186,8 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
         metodoEnvio: [],
         companyId: catalog.company.particulares,
         procedencia: PARTICULAR,
+        correos: [],
+        whatsapps: [],
       }}
       onValuesChange={onValuesChange}
       size="small"
@@ -255,15 +268,16 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
             <Input.Group>
               <Row>
                 <Col span={12}>
-                  <TextInput
+                  <SelectTagInput
                     formProps={{
-                      name: "correo",
+                      name: "correos",
                       label: "E-Mail",
                       noStyle: true,
                     }}
+                    regex={/([a-z0-9_.-]+)@([\da-z.-]+)\.([a-z.]{2,6})$/}
                     readonly={!sendings?.includes("correo")}
                     required={sendings?.includes("correo")}
-                    errors={errors.find((x) => x.name === "correo")?.errors}
+                    errors={errors.find((x) => x.name === "correos")?.errors}
                   />
                 </Col>
                 <Col span={12}>
@@ -289,45 +303,32 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
             required={sendings?.includes("whatsapp")}
           >
             <Input.Group>
-              <MaskInput
-                formProps={{
-                  name: "whatsapp",
-                  label: "Whatsapp",
-                  noStyle: true,
-                }}
-                width="50%"
-                mask={[
-                  /[0-9]/,
-                  /[0-9]/,
-                  /[0-9]/,
-                  "-",
-                  /[0-9]/,
-                  /[0-9]/,
-                  /[0-9]/,
-                  "-",
-                  /[0-9]/,
-                  /[0-9]/,
-                  "-",
-                  /[0-9]/,
-                  /[0-9]/,
-                ]}
-                validator={(_, value: any) => {
-                  if (!value || value.indexOf("_") === -1) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject("El campo debe contener 10 dígitos");
-                }}
-                readonly={!sendings?.includes("whatsapp")}
-                required={sendings?.includes("whatsapp")}
-                errors={errors.find((x) => x.name === "whatsapp")?.errors}
-              />
-              <Button
-                type="primary"
-                disabled={!sendings?.includes("whatsapp") || !isValidWhatsapp}
-                onClick={sendWhatsapp}
-              >
-                Prueba
-              </Button>
+              <Row>
+                <Col span={12}>
+                  <SelectTagInput
+                    formProps={{
+                      name: "whatsapps",
+                      label: "Whatsapp",
+                      noStyle: true,
+                    }}
+                    regex={/([0-9]{3})-?([0-9]{3})-?([0-9]{2})-?([0-9]{2})$/}
+                    readonly={!sendings?.includes("whatsapp")}
+                    required={sendings?.includes("whatsapp")}
+                    errors={errors.find((x) => x.name === "whatsapps")?.errors}
+                  />
+                </Col>
+                <Col span={12}>
+                  <Button
+                    type="primary"
+                    disabled={
+                      !sendings?.includes("whatsapp") || !isValidWhatsapp
+                    }
+                    onClick={sendWhatsapp}
+                  >
+                    Prueba
+                  </Button>
+                </Col>
+              </Row>
             </Input.Group>
           </Form.Item>
         </Col>
