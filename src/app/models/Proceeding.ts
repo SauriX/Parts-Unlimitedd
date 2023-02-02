@@ -5,7 +5,7 @@ export interface ISearchMedical {
   telefono?: string;
   fechaNacimiento?: moment.Moment;
   fechaAlta?: moment.Moment[];
-  ciudad?: string;
+  ciudad: string[];
   sucursal: string[];
 }
 export interface IProceedingList {
@@ -50,7 +50,7 @@ export class SearchMedicalFormValues implements ISearchMedical {
   expediente = "";
   telefono = "";
   fechaAlta = [moment(), moment()];
-  ciudad = undefined;
+  ciudad = [];
   sucursal = [];
 
   constructor(init?: ISearchMedical) {
