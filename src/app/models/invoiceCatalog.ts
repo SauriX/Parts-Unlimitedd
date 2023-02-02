@@ -4,7 +4,7 @@ export interface IInvoiceCatalogFilter{
     fecha: moment.Moment[];
     sucursal:string[];
     buscar:string;
-    tipo:string;
+    tipo:string[];
     ciudad:string[];
 }
 
@@ -27,7 +27,7 @@ export class invoiceCatalogValues implements IInvoiceCatalogFilter {
         fecha = [moment(),moment()];
         sucursal = [];
         buscar = "";
-        tipo= "";
+        tipo= [];
         ciudad = [];
     constructor(init?: IInvoiceCatalogFilter) {
       Object.assign(this, init);
