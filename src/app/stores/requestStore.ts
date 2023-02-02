@@ -78,6 +78,7 @@ export default class RequestStore {
   payments: IRequestPayment[] = [];
   loadingRequests: boolean = false;
   loadingTabContentCount: number = 0;
+  lastViewedCode?: string;
 
   get loadingTabContent() {
     return this.loadingTabContentCount > 0;
@@ -139,6 +140,10 @@ export default class RequestStore {
     this.filter = { ...filter };
   };
 
+  setLastViewedCode = (code: string | undefined) => {
+    this.lastViewedCode = code;
+  };
+
   setStudyFilter = (
     branchId?: string,
     doctorId?: string,
@@ -184,6 +189,7 @@ export default class RequestStore {
   getById = async (recordId: string, requestId: string) => {
     try {
       const request = await Request.getById(recordId, requestId);
+      this.lastViewedCode = request.clave;
       this.request = request;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -209,8 +215,14 @@ export default class RequestStore {
       this.loadingTabContentCount++;
       const request = await Request.getGeneral(recordId, requestId);
       request.metodoEnvio = [];
-      if (request.correo) request.metodoEnvio.push("correo");
-      if (request.whatsapp) request.metodoEnvio.push("whatsapp");
+      if (request.correo) {
+        request.metodoEnvio.push("correo");
+        request.correos = request.correo.split(",");
+      }
+      if (request.whatsapp) {
+        request.metodoEnvio.push("whatsapp");
+        request.whatsapps = request.whatsapp.split(",");
+      }
       if (request.metodoEnvio.length === 2) request.metodoEnvio.push("ambos");
       return request;
     } catch (error) {
@@ -346,7 +358,7 @@ export default class RequestStore {
   sendTestEmail = async (
     recordId: string,
     requestId: string,
-    email: string
+    email: string[]
   ) => {
     try {
       this.loadingTabContentCount++;
@@ -362,7 +374,7 @@ export default class RequestStore {
   sendTestWhatsapp = async (
     recordId: string,
     requestId: string,
-    phone: string
+    phone: string[]
   ) => {
     try {
       this.loadingTabContentCount++;

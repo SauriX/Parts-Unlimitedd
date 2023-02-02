@@ -19,7 +19,9 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 
 const ClinicResultsFilter = () => {
-  const { optionStore, clinicResultsStore, profileStore } = useStore();
+  const { requestStore, optionStore, clinicResultsStore, profileStore } =
+    useStore();
+  const { lastViewedCode } = requestStore;
   const { getAll, setFormValues, clearFilter } = clinicResultsStore;
   const {
     branchCityOptions,
@@ -121,6 +123,7 @@ const ClinicResultsFilter = () => {
             moment(Date.now()).utcOffset(0, true),
             moment(Date.now()).utcOffset(0, true),
           ],
+          buscar: lastViewedCode,
         }}
         scrollToFirstError
       >

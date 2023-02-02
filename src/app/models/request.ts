@@ -135,8 +135,10 @@ export interface IRequestGeneral extends IRequestBase {
   afiliacion: string;
   urgencia?: number;
   metodoEnvio?: string[];
-  correo: string;
-  whatsapp: string;
+  correo?: string;
+  correos?: string[];
+  whatsapp?: string;
+  whatsapps?: string[];
   observaciones: string;
 }
 

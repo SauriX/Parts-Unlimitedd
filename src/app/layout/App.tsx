@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation, useSearchParams } from "react-router-dom";
 import "../../App.less";
 import ReagentDetail from "../../components/reagent/detail/ReagentDetail";
 import MedicsDetail from "../../components/medics/detail/MedicsDetail";
@@ -28,7 +28,7 @@ import Company from "../../views/Company";
 import CompanyDetail from "../../components/company/detail/CompanyDetail";
 import Parameters from "../../views/Parameters";
 import ParameterDetail from "../../components/parameter/detail/ParameterDetail";
-import { useStore } from "../stores/store";
+import { store, useStore } from "../stores/store";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { Spin } from "antd";
 import { observer } from "mobx-react-lite";
@@ -86,13 +86,15 @@ import Series from "../../views/Series";
 import SeriesDetail from "../../components/series/detail/SeriesDetail";
 import InvoiceCatalog from "../../views/InvoiceCatalog";
 
-
 function App() {
   const { profileStore, configurationStore } = useStore();
   const { token, getProfile, getMenu } = profileStore;
   const { getGeneral } = configurationStore;
 
+  const location = useLocation();
+
   const [loading, setLoading] = useState(true);
+  const [lastLocation, setLastLocation] = useState<string>();
 
   const loadUser = useCallback(async () => {
     await Promise.all([getMenu(), getProfile(), getGeneral()]).then((x) => {
@@ -108,6 +110,20 @@ function App() {
       setLoading(false);
     }
   }, [token, setLoading, loadUser]);
+
+  useEffect(() => {
+    if (
+      lastLocation &&
+      !lastLocation.match(/\/requests\/([a-zA-Z0-9-]+)\/([a-zA-Z0-9-]+)/g) &&
+      !lastLocation.match(
+        /\/clinicResultsDetails\/([a-zA-Z0-9-]+)\/([a-zA-Z0-9-]+)/g
+      )
+    ) {
+      store.requestStore.setLastViewedCode(undefined);
+    }
+    setLastLocation(location.pathname);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
 
   if (loading)
     return (
@@ -262,7 +278,7 @@ function App() {
               path={`${views.relaseValidation}`}
               element={<Relaseresult />}
             />
-                        <Route
+            <Route
               path={`${views.invoiceCatalog}`}
               element={<InvoiceCatalog />}
             />
