@@ -1,12 +1,15 @@
-import { Button, Col, InputNumber, Row, Spin, Table } from "antd";
+import { Button, Col, Form, InputNumber, Row, Spin, Table } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
+import SelectInput from "../../../../../app/common/form/proposal/SelectInput";
 import {
   IColumns,
   getDefaultColumnProps,
 } from "../../../../../app/common/table/utils";
 import { IRequestStudy, IRequestTag } from "../../../../../app/models/request";
 import { useStore } from "../../../../../app/stores/store";
+import alerts from "../../../../../app/util/alerts";
+import { formItemLayout } from "../../../../../app/util/utils";
 
 const RequestPrintTag = () => {
   const { requestStore } = useStore();
@@ -52,13 +55,35 @@ const RequestPrintTag = () => {
     }
   };
 
+  const handleAdd = () => {
+    const newStudy: IRequestTag = {
+      taponClave: labels[0].taponClave ?? "",
+      taponNombre: labels[0].taponNombre ?? "",
+      estudios: "",
+      cantidad: 1,
+    };
+    setLabels([...labels, newStudy]);
+  };
+
+  const onFinish = (study: IRequestTag) => {
+    setLoading(true);
+
+    if (!study) {
+      alerts.warning("No se ha seleccionado ningún estudio");
+      setLoading(false);
+      return;
+    }
+
+    const index = labels.findIndex((x) => x.taponClave === study.taponClave);
+    if (index > -1) {
+      const lbls = [...labels];
+      lbls[index] = { ...lbls[index], estudios: study.estudios };
+      setLabels(lbls);
+    }
+    setLoading(false);
+  };
+
   const columns: IColumns<IRequestTag> = [
-    {
-      ...getDefaultColumnProps("estudios", "Estudios", {
-        searchable: false,
-        width: "50%",
-      }),
-    },
     {
       ...getDefaultColumnProps("taponClave", "Clave", {
         searchable: false,
@@ -70,6 +95,21 @@ const RequestPrintTag = () => {
         searchable: false,
         width: "30%",
       }),
+    },
+    {
+      ...getDefaultColumnProps("estudios", "Estudios", {
+        searchable: false,
+        width: "50%",
+      }),
+      render(text: string, record: IRequestTag) {
+        return (
+          <RequestTag
+            defaultValue={record}
+            onFinish={(study) => onFinish(study)}
+            loading={loading}
+          />
+        );
+      },
     },
     {
       ...getDefaultColumnProps("cantidad", "Cant.", {
@@ -94,6 +134,11 @@ const RequestPrintTag = () => {
   return (
     <Spin spinning={loading}>
       <Row gutter={[8, 12]}>
+        <Col span={24} style={{ textAlign: "right" }}>
+          <Button type="primary" onClick={handleAdd}>
+            Agregar etiqueta
+          </Button>
+        </Col>
         <Col span={24}>
           <Table<IRequestTag>
             size="small"
@@ -127,3 +172,41 @@ const RequestPrintTag = () => {
 };
 
 export default observer(RequestPrintTag);
+
+type RequestTagProps = {
+  defaultValue: IRequestTag;
+  onFinish: (value: IRequestTag) => void;
+  loading: boolean;
+};
+
+const RequestTag = ({ defaultValue, onFinish, loading }: RequestTagProps) => {
+  const [form] = Form.useForm<IRequestTag>();
+
+  return (
+    <Spin spinning={loading}>
+      <Form<IRequestTag>
+        {...formItemLayout}
+        form={form}
+        name="studies"
+        initialValues={defaultValue}
+        onFinish={(values) => {
+          onFinish({ ...defaultValue, estudios: values.estudios });
+        }}
+        scrollToFirstError
+      >
+        <Row gutter={8}>
+          <Col span={12}>
+            <SelectInput
+              formProps={{
+                name: "estudios",
+                label: "",
+                noStyle: true,
+              }}
+              options={[]}
+            />
+          </Col>
+        </Row>
+      </Form>
+    </Spin>
+  );
+};
