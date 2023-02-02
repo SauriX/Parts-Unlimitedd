@@ -11,13 +11,19 @@ import { formItemLayout } from "../../../app/util/utils";
 import { useNavigate } from "react-router-dom";
 import alerts from "../../../app/util/alerts";
 import { toJS } from "mobx";
+import { useParams } from "react-router-dom";
 
 const { Search } = Input;
 
+type UrlParams = {
+  id: string;
+  tipo: string;
+};
 const InvoiceComapnyForm = () => {
+  let { id, tipo } = useParams<UrlParams>();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const { optionStore, invoiceCompanyStore,profileStore } = useStore();
+  const { optionStore, invoiceCompanyStore, profileStore } = useStore();
   const [formCreate] = Form.useForm();
   const selectedCity = Form.useWatch("ciudad", form);
   const isInvoice = Form.useWatch("isInvoice", formCreate);
@@ -28,7 +34,7 @@ const InvoiceComapnyForm = () => {
   const [disabled, setDisabled] = useState<boolean>(true);
   const [requiredValues, setRequiredValues] = useState<boolean>(true);
 
-  const {profile}=profileStore;
+  const { profile } = profileStore;
   const {
     branchCityOptions,
     getBranchCityOptions,
@@ -61,7 +67,6 @@ const InvoiceComapnyForm = () => {
   }, []);
 
   useEffect(() => {
-
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
@@ -146,7 +151,12 @@ const InvoiceComapnyForm = () => {
     if (!requestsWithInvoiceCompany.length || isInvoice === "Recibo") {
       if (formValues.isInvoice === "Factura") {
         if (formValues.tipoDesglose === "detalle") {
-          navigate(`/invoice/create/new`);
+          if (tipo === "company") {
+            navigate(`/invoice/company/new`);
+          }
+          if (tipo === "request") {
+            navigate(`/invoice/request/new`);
+          }
         }
       } else {
         let solicitudesId = selectedRows.map((row) => row.solicitudId);

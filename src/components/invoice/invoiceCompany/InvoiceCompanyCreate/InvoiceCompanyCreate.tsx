@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 
 type UrlParams = {
   id: string;
+  tipo: string;
 };
 
 const InvoiceCompanyCreate = () => {
@@ -36,27 +37,31 @@ const InvoiceCompanyCreate = () => {
   const [estudios, setEstudios] = useState<any[]>([]);
   const [currentPaymentMethod, setCurrenPaymentMethod] = useState<any>();
   const [selectRequests, setSelectedRequests] = useState<any>();
-  let { id } = useParams<UrlParams>();
+  let { id, tipo } = useParams<UrlParams>();
   useEffect(() => {
     getcfdiOptions();
     getpaymentMethodOptions();
     getPaymentOptions();
-    if (id !== "new") {
-      console.log("ID", id);
-      let selectedRequestInvoice = invoices.solicitudes
-        .find((invoice: any) => invoice.solicitudId === id)
-        .facturas.find(
-          (invoice: any) => invoice.tipo === "Compañia"
-        )?.solicitudesId;
+    if (tipo === "company") {
+      if (id !== "new") {
+        console.log("ID", id);
+        let selectedRequestInvoice = invoices.solicitudes
+          .find((invoice: any) => invoice.solicitudId === id)
+          .facturas.find(
+            (invoice: any) => invoice.tipo === "Compañia"
+          )?.solicitudesId;
+        let filterRequests = invoices.solicitudes.filter((invoice: any) =>
+          selectedRequestInvoice.includes(invoice.solicitudId)
+        );
 
-      // console.log("solicitudes", toJS(invoices.solicitudes));
-      // console.log("selectedRequestInvoice", toJS(selectedRequestInvoice));
-      let filterRequests = invoices.solicitudes.filter((invoice: any) =>
-        selectedRequestInvoice.includes(invoice.solicitudId)
-      );
-
-      console.log("filterrequest", toJS(filterRequests));
-      setSelectedRequests([...filterRequests]);
+        console.log("filterrequest", toJS(filterRequests));
+        setSelectedRequests([...filterRequests]);
+      }
+    }
+    if (tipo === "request") {
+      selectedRows.forEach((element) => {
+        console.log(toJS(element));
+      });
     }
   }, [id]);
 

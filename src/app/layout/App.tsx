@@ -86,7 +86,6 @@ import Series from "../../views/Series";
 import SeriesDetail from "../../components/series/detail/SeriesDetail";
 import InvoiceCatalog from "../../views/InvoiceCatalog";
 
-
 function App() {
   const { profileStore, configurationStore } = useStore();
   const { token, getProfile, getMenu } = profileStore;
@@ -167,9 +166,9 @@ function App() {
             <Route path="companies/new" element={<CompanyDetail />} />
             <Route path="indications" element={<Indication />} />
             <Route path="indications/:id" element={<IndicationDetail />} />
-            <Route path="invoice" element={<Invoice />} />
+            <Route path="invoice/:tipo" element={<Invoice />} />
             <Route
-              path="invoice/create/:id"
+              path="invoice/:tipo/:id"
               element={<InvoiceCompanyCreate />}
             />
             <Route path="series" element={<Series />} />
@@ -262,7 +261,7 @@ function App() {
               path={`${views.relaseValidation}`}
               element={<Relaseresult />}
             />
-                        <Route
+            <Route
               path={`${views.invoiceCatalog}`}
               element={<InvoiceCatalog />}
             />
