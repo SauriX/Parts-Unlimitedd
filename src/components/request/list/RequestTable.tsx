@@ -22,7 +22,7 @@ const RequestTable = () => {
   const {
     loadingRequests,
     filter,
-    lastViewedCode,
+    lastViewedFrom,
     requests,
     setFilter,
     getRequests,
@@ -37,8 +37,13 @@ const RequestTable = () => {
 
   useEffect(() => {
     const readRequests = async () => {
-      setFilter({ ...filter, clave: lastViewedCode ?? filter.clave });
-      await getRequests({ ...filter, clave: lastViewedCode ?? filter.clave });
+      const defaultCode = !lastViewedFrom
+        ? undefined
+        : lastViewedFrom.from === "requests"
+        ? undefined
+        : lastViewedFrom.code;
+      setFilter({ ...filter, clave: defaultCode ?? filter.clave });
+      await getRequests({ ...filter, clave: defaultCode ?? filter.clave });
     };
 
     readRequests();

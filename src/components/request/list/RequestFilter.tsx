@@ -1,8 +1,8 @@
 import { Button, Col, Form, Input, Row } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
@@ -18,7 +18,7 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const RequestFilter = () => {
-  const { requestStore, optionStore, profileStore } = useStore();
+  const { requestStore, optionStore } = useStore();
   const {
     branchCityOptions,
     medicOptions,
@@ -85,6 +85,7 @@ const RequestFilter = () => {
         {...formItemLayout}
         form={form}
         onFinish={onFinish}
+        initialValues={{ tipoFecha: 1, fechas: [moment(), moment()] }}
         size="small"
       >
         <Row gutter={[0, 12]}>

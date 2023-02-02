@@ -19,7 +19,7 @@ const ClinicResultsTable = ({
   expandable,
 }: ClinicResultsTableProps) => {
   const { clinicResultsStore, requestStore } = useStore();
-  const { lastViewedCode } = requestStore;
+  const { lastViewedFrom } = requestStore;
   const { loadingStudies, getAll } = clinicResultsStore;
   const [openRows, setOpenRows] = useState<boolean>(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
@@ -53,12 +53,17 @@ const ClinicResultsTable = ({
   };
 
   useEffect(() => {
+    const defaultCode = !lastViewedFrom
+      ? undefined
+      : lastViewedFrom.from === "results"
+      ? undefined
+      : lastViewedFrom.code;
     getAll({
       fecha: [
         moment(Date.now()).utcOffset(0, true),
         moment(Date.now()).utcOffset(0, true),
       ],
-      buscar: lastViewedCode,
+      buscar: defaultCode,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

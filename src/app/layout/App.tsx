@@ -112,15 +112,22 @@ function App() {
   }, [token, setLoading, loadUser]);
 
   useEffect(() => {
-    if (
-      lastLocation &&
-      !lastLocation.match(/\/requests\/([a-zA-Z0-9-]+)\/([a-zA-Z0-9-]+)/g) &&
-      !lastLocation.match(
-        /\/clinicResultsDetails\/([a-zA-Z0-9-]+)\/([a-zA-Z0-9-]+)/g
-      )
-    ) {
+    if (!lastLocation) {
+      setLastLocation(location.pathname);
+      return;
+    }
+
+    const isRequestDetail = lastLocation.match(
+      /\/requests\/([a-zA-Z0-9-]+)\/([a-zA-Z0-9-]+)/g
+    );
+    const isResultsDetail = lastLocation.match(
+      /\/clinicResultsDetails\/([a-zA-Z0-9-]+)\/([a-zA-Z0-9-]+)/g
+    );
+
+    if (!isRequestDetail && !isResultsDetail) {
       store.requestStore.setLastViewedCode(undefined);
     }
+
     setLastLocation(location.pathname);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);

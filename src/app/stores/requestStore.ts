@@ -78,7 +78,7 @@ export default class RequestStore {
   payments: IRequestPayment[] = [];
   loadingRequests: boolean = false;
   loadingTabContentCount: number = 0;
-  lastViewedCode?: string;
+  lastViewedFrom?: { from: "requests" | "results"; code: string };
 
   get loadingTabContent() {
     return this.loadingTabContentCount > 0;
@@ -140,8 +140,15 @@ export default class RequestStore {
     this.filter = { ...filter };
   };
 
-  setLastViewedCode = (code: string | undefined) => {
-    this.lastViewedCode = code;
+  setLastViewedCode = (
+    data:
+      | {
+          from: "requests" | "results";
+          code: string;
+        }
+      | undefined
+  ) => {
+    this.lastViewedFrom = data;
   };
 
   setStudyFilter = (
@@ -186,10 +193,14 @@ export default class RequestStore {
     }
   };
 
-  getById = async (recordId: string, requestId: string) => {
+  getById = async (
+    recordId: string,
+    requestId: string,
+    from: "requests" | "results"
+  ) => {
     try {
       const request = await Request.getById(recordId, requestId);
-      this.lastViewedCode = request.clave;
+      this.lastViewedFrom = { from: from, code: request.clave! };
       this.request = request;
     } catch (error) {
       alerts.warning(getErrors(error));
