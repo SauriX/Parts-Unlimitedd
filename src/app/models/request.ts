@@ -140,6 +140,8 @@ export interface IRequestGeneral extends IRequestBase {
   whatsapp?: string;
   whatsapps?: string[];
   observaciones: string;
+  correoMedico?: string;
+  telefonoMedico?: string;
 }
 
 export interface IRequestPayment extends IRequestBase {

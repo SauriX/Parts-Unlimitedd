@@ -600,6 +600,7 @@ export default class OptionStore {
       this.medicOptions = MedicOptions.map((x) => ({
         value: x.idMedico,
         label: x.nombreCompleto,
+        extra: { correo: x.correo, celular: x.celular },
       }));
     } catch (error) {
       this.medicOptions = [];

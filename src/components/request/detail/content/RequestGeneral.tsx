@@ -57,12 +57,14 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
 
   const emails = Form.useWatch("correos", form);
   const whatsapps = Form.useWatch("whatsapps", form);
+  const sendToMedic = Form.useWatch("envioMedico", form);
 
   const [errors, setErrors] = useState<IFormError[]>([]);
   const [previousSendings, setPreviousSendings] = useState<string[]>([]);
   const [requestGeneral, setRequestGeneral] = useState<IRequestGeneral>();
   const [isValidEmail, setIsValidEmail] = useState(false);
   const [isValidWhatsapp, setIsValidWhatsapp] = useState(false);
+  const [selectedMedic, setSelectedMedic] = useState<IOptions>();
 
   useEffect(() => {
     getCompanyOptions();
@@ -105,6 +107,25 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
         )
     );
   }, [emails, whatsapps]);
+
+  useEffect(() => {
+    if (sendToMedic) {
+      const medicId = form.getFieldValue("medicoId");
+      if (medicId) {
+        const medic = MedicOptions.find((x) => x.value === medicId);
+        form.setFieldsValue({
+          correoMedico: medic?.extra?.correo ?? "Sin correo registrado",
+          telefonoMedico: medic?.extra?.celular ?? "Sin celular registrado",
+        });
+        setSelectedMedic(medic);
+      } else {
+        setSelectedMedic(undefined);
+      }
+    } else {
+      setSelectedMedic(undefined);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sendToMedic]);
 
   const onValuesChange = (changedValues: any) => {
     const path = Object.keys(changedValues)[0];
@@ -332,6 +353,39 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
             </Input.Group>
           </Form.Item>
         </Col>
+        <Col span={24} style={{ textAlign: "start" }}>
+          <Form.Item
+            noStyle
+            name="envioMedico"
+            labelCol={{ span: 0 }}
+            wrapperCol={{ span: 24 }}
+            valuePropName="checked"
+          >
+            <Checkbox>Enviar resultados a médico</Checkbox>
+          </Form.Item>
+        </Col>
+        {selectedMedic && (
+          <Col span={24}>
+            <TextInput
+              formProps={{
+                name: "correoMedico",
+                label: "Correo médico",
+              }}
+              readonly
+            />
+          </Col>
+        )}
+        {selectedMedic && (
+          <Col span={24}>
+            <TextInput
+              formProps={{
+                name: "telefonoMedico",
+                label: "Télefono médico",
+              }}
+              readonly
+            />
+          </Col>
+        )}
         <Col span={24}>
           <TextAreaInput
             formProps={{
