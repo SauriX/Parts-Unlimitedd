@@ -420,16 +420,21 @@ export default class OptionStore {
 
   getSucursalesOptions = async () => {
     try {
+      const profile = store.profileStore.profile;
       const priceListOptions1 = await branch.getAll("all");
       console.log(priceListOptions1);
-      this.sucursales = priceListOptions1.map((x) => ({
-        value: x.idSucursal,
-        label: x.nombre,
-      }));
-      this.sucursalesClave = priceListOptions1.map((x) => ({
-        value: x.idSucursal,
-        clave: x.clave,
-      }));
+      this.sucursales = priceListOptions1
+        .filter((x) => profile?.sucursales.includes(x.idSucursal))
+        .map((x) => ({
+          value: x.idSucursal,
+          label: x.nombre,
+        }));
+      this.sucursalesClave = priceListOptions1
+        .filter((x) => profile?.sucursales.includes(x.idSucursal))
+        .map((x) => ({
+          value: x.idSucursal,
+          clave: x.clave,
+        }));
     } catch (error) {
       this.sucursales = [];
     }
@@ -439,15 +444,21 @@ export default class OptionStore {
   cityOptions: IOptions[] = [];
   getBranchOptions = async () => {
     try {
+      const profile = store.profileStore.profile;
       const branch = Branch.getAll("");
-      this.BranchOptions = (await branch).map((x) => ({
-        value: x.idSucursal,
-        label: x.nombre,
-      }));
-      this.cityOptions = (await branch).map((x) => ({
-        value: x.ciudad,
-        label: x.ciudad,
-      }));
+      this.BranchOptions = (await branch)
+        .filter((x) => profile?.sucursales.includes(x.idSucursal))
+        .map((x) => ({
+          value: x.idSucursal,
+          label: x.nombre,
+        }));
+
+      this.cityOptions = (await branch)
+        .filter((x) => profile?.sucursales.includes(x.idSucursal))
+        .map((x) => ({
+          value: x.ciudad,
+          label: x.ciudad,
+        }));
     } catch (error) {
       this.BranchOptions = [];
       this.cityOptions = [];

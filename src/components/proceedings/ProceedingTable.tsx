@@ -36,7 +36,7 @@ import TextInput from "../../app/common/form/proposal/TextInput";
 import { formItemLayout } from "../../app/util/utils";
 import { useForm } from "antd/lib/form/Form";
 import DateInput from "../../app/common/form/proposal/DateInput";
-import {  IOptions } from "../../app/models/shared";
+import { IOptions } from "../../app/models/shared";
 import MaskInput from "../../app/common/form/proposal/MaskInput";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
@@ -48,7 +48,8 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
   componentRef,
   printing,
 }) => {
-  const { procedingStore, optionStore, locationStore,profileStore } = useStore();
+  const { procedingStore, optionStore, locationStore, profileStore } =
+    useStore();
   const { expedientes, getAll, getnow, setSearch, search } = procedingStore;
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const { getCity } = locationStore;
@@ -65,22 +66,21 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
     searchedColumn: "",
   });
   const selectedCity = Form.useWatch("ciudad", form);
-  const { profile } =profileStore;
+  const { profile } = profileStore;
   useEffect(() => {
     getBranchCityOptions();
   }, [getBranchCityOptions]);
 
   useEffect(() => {
-    
     setCityOptions(
-      branchCityOptions.map((x:any) => ({ value: x.value, label: x.label }))
+      branchCityOptions.map((x: any) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
-    
     setBranchOptions(
-      branchCityOptions.find((x:any) => x.value === selectedCity)?.options ?? []
+      branchCityOptions.find((x: any) => x.value === selectedCity)?.options ??
+        []
     );
     form.setFieldValue("sucursal", []);
   }, [branchCityOptions, form, selectedCity]);
@@ -103,18 +103,24 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getnow]);
+  useEffect(() => {
+    onfinish(new SearchMedicalFormValues());
+  }, []);
   const onfinish = async (values: ISearchMedical) => {
     console.log(values);
     if (values.fechaNacimiento === null) {
       delete values.fechaNacimiento;
     }
-    if(values.fechaNacimiento != null){
-      console.log(values.fechaNacimiento,"nacimiento");
-     values.fechaNacimiento=  values.fechaNacimiento!.utcOffset(0, true);
+    if (values.fechaNacimiento != null) {
+      console.log(values.fechaNacimiento, "nacimiento");
+      values.fechaNacimiento = values.fechaNacimiento!.utcOffset(0, true);
     }
 
-    if ( values.fechaAlta != null) {
-      values.fechaAlta = [values.fechaAlta![0].utcOffset(0, true),values.fechaAlta![1].utcOffset(0, true)] 
+    if (values.fechaAlta != null) {
+      values.fechaAlta = [
+        values.fechaAlta![0].utcOffset(0, true),
+        values.fechaAlta![1].utcOffset(0, true),
+      ];
     }
     setSearch(values);
     await getnow(values!);
@@ -257,7 +263,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
                 formProps={{ label: "Fecha de alta", name: "fechaAlta" }}
                 disableAfterDates={true}
               />
-            </Col> 
+            </Col>
             <Col span={8}>
               <MaskInput
                 formProps={{

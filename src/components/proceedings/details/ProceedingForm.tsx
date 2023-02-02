@@ -261,11 +261,10 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   }, [id, getById]);
 
   useEffect(() => {
-    console.log(searchParams.get("mode"));
-    if (!profile?.admin) {
+    if (profile) {
       form.setFieldsValue({ sucursal: profile?.sucursal });
     }
-  });
+  }, []);
 
   useEffect(() => {
     const readData = async (search: ISearchMedical) => {
