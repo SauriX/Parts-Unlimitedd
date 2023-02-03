@@ -21,6 +21,11 @@ export class InvoiceCompanyStore {
       : false;
   };
 
+  selectedUser: string = "";
+  setSelectedName = (user: string) => {
+    this.selectedUser = user;
+  };
+
   invoices: any = {};
   isLoading: boolean = false;
   getInvoicesCompany = async (filter: any) => {

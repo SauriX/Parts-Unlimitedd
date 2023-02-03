@@ -33,7 +33,8 @@ const InvoiceCompanyInfo = ({
   const [form] = Form.useForm();
   const nombre = Form.useWatch("nombre", form);
   const { optionStore, invoiceCompanyStore, modalStore } = useStore();
-  const { fechas, cancelInvoice, selectedRows } = invoiceCompanyStore;
+  const { fechas, cancelInvoice, selectedRows, setSelectedName } =
+    invoiceCompanyStore;
   const { openModal, closeModal } = modalStore;
   const navigate = useNavigate();
 
@@ -76,6 +77,7 @@ const InvoiceCompanyInfo = ({
 
   useEffect(() => {
     console.log("NOMBRE", nombre);
+    setSelectedName(nombre);
   }, [nombre]);
 
   const reasonCancelation: IOptions[] = [
