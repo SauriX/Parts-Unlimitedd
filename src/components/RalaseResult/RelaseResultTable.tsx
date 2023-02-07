@@ -385,10 +385,19 @@ const {profile}  = profileStore;
     form.setFieldValue("sucursalId", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
   useEffect(() => {
-    setBranchOptions(
-      branchCityOptions.find((x) => selectedCity.includes(x.value))?.options ?? []
-    );
-    form.setFieldValue("sucursal", []);
+    var options:IOptions[] =[]; 
+
+    if(selectedCity!=undefined && selectedCity !=null){
+      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
+      branhces.forEach(x=>x.options!.forEach(y=> options.push(y)));
+      console.log(options,"option");
+    
+      setBranchOptions(
+        options
+      );
+    }
+
+    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
   const onExpand = (isExpanded: boolean, record: Irelacelist) => {
     let expandRows: string[] = expandedRowKeys;

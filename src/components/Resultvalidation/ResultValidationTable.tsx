@@ -370,11 +370,19 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   }, [branchCityOptions]);
 
   useEffect(() => {
+    var options:IOptions[] =[]; 
 
-    setBranchOptions(
-      branchCityOptions.find((x) =>  selectedCity?.includes(x.value.toString()))?.options ?? []
-    );
-    form.setFieldValue("sucursal", []);
+    if(selectedCity!=undefined && selectedCity !=null){
+      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
+      branhces.forEach(x=>x.options!.forEach(y=> options.push(y)));
+      console.log(options,"option");
+    
+      setBranchOptions(
+        options
+      );
+    }
+
+    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
   const onExpand = (isExpanded: boolean, record: Ivalidationlist) => {
     let expandRows: string[] = expandedRowKeys;

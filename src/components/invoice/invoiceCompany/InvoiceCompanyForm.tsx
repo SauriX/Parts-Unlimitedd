@@ -69,9 +69,18 @@ const InvoiceComapnyForm = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    setBranchOptions(
-      branchCityOptions.find((x) => selectedCity.includes(x.value))?.options ?? []
-    );
+    var options:IOptions[] =[]; 
+
+    if(selectedCity!=undefined && selectedCity !=null){
+      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
+      branhces.forEach(x=>x.options!.forEach(y=> options.push(y)));
+      console.log(options,"option");
+    
+      setBranchOptions(
+        options
+      );
+    }
+
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
