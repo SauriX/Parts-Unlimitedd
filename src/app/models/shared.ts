@@ -49,6 +49,7 @@ export interface IOptions {
   group?: string | number;
   disabled?: boolean;
   options?: IOptions[];
+  extra?: any;
 }
 
 // export interface ITreeOptions {

@@ -131,7 +131,7 @@ const RequestDetail = () => {
     };
 
     const getRequestById = async () => {
-      await getById(recordId!, requestId!);
+      await getById(recordId!, requestId!, "requests");
     };
 
     if (recordId && !requestId) {

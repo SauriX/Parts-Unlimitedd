@@ -1,6 +1,7 @@
 import { Button, Col, Form, Input, Row } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
@@ -17,7 +18,7 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const RequestFilter = () => {
-  const { requestStore, optionStore,profileStore} = useStore();
+  const { requestStore, optionStore } = useStore();
   const {
     branchCityOptions,
     medicOptions,
@@ -29,7 +30,7 @@ const RequestFilter = () => {
     getDepartmentOptions,
   } = optionStore;
   const { filter, setFilter, getRequests } = requestStore;
-  const {profile} = profileStore
+
   const [form] = useForm<IRequestFilter>();
 
   const selectedCity = Form.useWatch("ciudad", form);
@@ -50,19 +51,21 @@ const RequestFilter = () => {
   ]);
 
   useEffect(() => {
-
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
-
     setBranchOptions(
       branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
     );
     form.setFieldValue("sucursales", []);
   }, [branchCityOptions, form, selectedCity]);
+
+  useEffect(() => {
+    form.setFieldsValue(filter);
+  }, [filter, form]);
 
   const onFinish = (values: IRequestFilter) => {
     const filter = { ...values };
@@ -82,8 +85,8 @@ const RequestFilter = () => {
         {...formItemLayout}
         form={form}
         onFinish={onFinish}
+        initialValues={{ tipoFecha: 1, fechas: [moment(), moment()] }}
         size="small"
-        initialValues={filter}
       >
         <Row gutter={[0, 12]}>
           <Col span={8}>
