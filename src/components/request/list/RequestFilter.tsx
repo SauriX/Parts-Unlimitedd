@@ -60,8 +60,6 @@ const RequestFilter = () => {
     if(selectedCity!=undefined && selectedCity !=null){
       var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
     var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
-      console.log(options,"option");
-    
       setBranchOptions(
         options
       );
