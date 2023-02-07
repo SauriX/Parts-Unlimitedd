@@ -37,20 +37,18 @@ const InvoiceCatalogFilter = () => {
     );
   }, [branchCityOptions]);
   useEffect(() => {
-    var options:IOptions[] =[]; 
-
     if(selectedCity!=undefined && selectedCity !=null){
       var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
-      branhces.forEach(x=>x.options!.forEach(y=> options.push(y)));
+    var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
       console.log(options,"option");
     
       setBranchOptions(
         options
       );
     }
-
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
+
 
   const onFinish = (values: IInvoiceCatalogFilter) => {
     setErrors([]);
