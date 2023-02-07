@@ -766,6 +766,20 @@ export default class OptionStore {
     }
   };
 
+  seriesOptions: IOptions[] = [];
+  getSeriesOptions = async (branchId: string) => {
+    try {
+      const series = await Series.getSeries(branchId);
+      this.seriesOptions = series.map((x) => ({
+        key: x.id,
+        value: x.id,
+        label: x.clave,
+      }));
+    } catch (error) {
+      this.seriesOptions = [];
+    }
+  };
+
   profileOptions: IProfile | undefined;
   getProfileOptions = async () => {
     try {
