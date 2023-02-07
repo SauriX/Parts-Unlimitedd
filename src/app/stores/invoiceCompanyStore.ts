@@ -1,3 +1,4 @@
+import { ITaxData } from "./../models/taxdata";
 import { IOptions } from "./../models/shared";
 import { makeAutoObservable } from "mobx";
 import alerts from "../util/alerts";
@@ -19,6 +20,22 @@ export class InvoiceCompanyStore {
           (request) => request.compania === rows[0].compania
         )
       : false;
+  };
+
+  selectedRequests: any[] = [];
+  setSelectedRequests = (user: string) => {
+    this.selectedRequests = this.selectedRows.filter(
+      (x) => x.expedienteId === user
+    );
+    console.log("seletedRequests", this.selectedRequests);
+  };
+  detailInvoice: any = [];
+  setDetailInvoice = (detailInvoice: any) => {
+    this.detailInvoice = detailInvoice;
+  };
+  configurationInvoice: any = "";
+  setConfigurationInvoice = (config: any) => {
+    this.configurationInvoice = config;
   };
 
   invoices: any = {};
@@ -78,7 +95,14 @@ export class InvoiceCompanyStore {
       alerts.warning(getErrors(error));
     }
   };
-
+  taxData: any = {};
+  setTaxData = (data: ITaxData) => {
+    this.taxData = data;
+  };
+  nombreSeleccionado: string = "";
+  setNombre = (nombre: string) => {
+    this.nombreSeleccionado = nombre;
+  };
   downloadPdf = async (facturapiId: string) => {
     try {
       const invoiceInfo = await InvoiceCompany.downloadPdf(facturapiId);
