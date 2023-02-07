@@ -13,6 +13,7 @@ import { formItemLayout } from "../../../../app/util/utils";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import DatosFiscalesForm from "../../../proceedings/details/DatosFiscalesForm";
+import { ITaxData } from "../../../../app/models/taxdata";
 
 const { Title, Text } = Typography;
 type InvoiceCompanyInfoProps = {
@@ -31,14 +32,21 @@ const InvoiceCompanyInfo = ({
 }: InvoiceCompanyInfoProps) => {
   let { id, tipo } = useParams<UrlParams>();
   const [form] = Form.useForm();
-  const nombre = Form.useWatch("nombre", form);
   const { optionStore, invoiceCompanyStore, modalStore } = useStore();
-  const { fechas, cancelInvoice, selectedRows, setSelectedName } =
-    invoiceCompanyStore;
+  const {
+    fechas,
+    cancelInvoice,
+    selectedRows,
+    setSelectedRequests,
+    setTaxData,
+    setNombre,
+  } = invoiceCompanyStore;
+  const nombre = Form.useWatch("nombre", form);
   const { openModal, closeModal } = modalStore;
   const navigate = useNavigate();
 
   const [nameOptions, setNameOptions] = useState<IOptions[]>([]);
+  // const [taxData, setTaxData] = useState<ITaxData>();
 
   const onFinish = async (newFormValues: any) => {
     let cancelationInvoiceData = {
@@ -52,6 +60,12 @@ const InvoiceCompanyInfo = ({
     if (tipo === "request") {
       navigate(`/invoice/request`);
     }
+  };
+
+  const onSelectTaxData = (taxData: ITaxData) => {
+    console.log("TAXDATA", taxData);
+    form.setFieldsValue(taxData);
+    setTaxData(taxData);
   };
   useEffect(() => {
     form.setFieldValue("fechas", fechas);
@@ -77,7 +91,8 @@ const InvoiceCompanyInfo = ({
 
   useEffect(() => {
     console.log("NOMBRE", nombre);
-    setSelectedName(nombre);
+    setSelectedRequests(nombre);
+    setNombre(nombre);
   }, [nombre]);
 
   const reasonCancelation: IOptions[] = [
@@ -152,6 +167,7 @@ const InvoiceCompanyInfo = ({
                     <SelectInput
                       formProps={{ name: "nombre", label: "Nombre" }}
                       options={nameOptions}
+                      required
                     />
                   )}
 
@@ -189,7 +205,11 @@ const InvoiceCompanyInfo = ({
                         openModal({
                           title: "Seleccionar o Ingresar Datos Fiscales",
                           body: (
-                            <DatosFiscalesForm local={true} recordId={nombre} />
+                            <DatosFiscalesForm
+                              local={true}
+                              recordId={nombre}
+                              onSelectRow={onSelectTaxData}
+                            />
                           ),
                           width: 900,
                         })
@@ -199,7 +219,7 @@ const InvoiceCompanyInfo = ({
                         color: "white",
                         borderColor: "#6EAA46",
                       }}
-                      // disabled={readonly}
+                      disabled={!nombre}
                     >
                       Datos Fiscales
                     </Button>

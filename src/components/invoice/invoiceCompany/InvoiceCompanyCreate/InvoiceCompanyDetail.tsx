@@ -65,7 +65,14 @@ const InvoiceCompanyDetail = ({
   const { invoiceCompanyStore, profileStore, requestStore, branchStore } =
     useStore();
   const { getById } = branchStore;
-  const { selectedRows, serie, consecutiveBySerie } = invoiceCompanyStore;
+  const {
+    selectedRows,
+    serie,
+    consecutiveBySerie,
+    selectedRequests,
+    setDetailInvoice,
+    setConfigurationInvoice,
+  } = invoiceCompanyStore;
   const { studies } = requestStore;
   const { profile } = profileStore;
   const [form] = Form.useForm<any>();
@@ -81,6 +88,7 @@ const InvoiceCompanyDetail = ({
       label: "Paciente",
       key: "patient",
       description: "PACIENTE: [patient]",
+      disabled: !selectedRequests.length,
     },
     {
       label: "Copago",
@@ -129,7 +137,24 @@ const InvoiceCompanyDetail = ({
         { id: uuid(), concepto: "", precioFinal: totalEstudios, cantidad: 1 },
       ]);
     }
+    setConfigurationInvoice(configuration);
   }, [configuration]);
+
+  useEffect(() => {
+    const detalle = detailData.map((x) => {
+      // const isSimple = requestCheckIn.simple || requestCheckIn.porConcepto;
+
+      return {
+        cantidad: x.cantidad,
+        clave: simpleConcept,
+        estudio: simpleConcept,
+        descuento: 0,
+        precio: x.precioFinal,
+      };
+    });
+    console.log("DETALLE", detalle);
+    setDetailInvoice(detalle);
+  }, [detailData, simpleConcept]);
 
   const detailColumns: IColumns<IDetailInvoice> = [
     {
@@ -208,7 +233,8 @@ const InvoiceCompanyDetail = ({
       newText =
         initial + item?.description?.replace("[branch]", branch?.nombre!);
     } else if (key === "patient") {
-      newText = initial + item?.description?.replace("[patient]", "");
+      const userName = selectedRequests[0].nombre;
+      newText = initial + item?.description?.replace("[patient]", userName);
     } else if (key === "cup") {
       newText =
         initial +
