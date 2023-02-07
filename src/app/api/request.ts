@@ -42,15 +42,15 @@ const Request = {
   sendTestEmail: (
     recordId: string,
     requestId: string,
-    email: string
+    emails: string[]
   ): Promise<void> =>
-    requests.get(`request/email/${recordId}/${requestId}/${email}`),
+    requests.post(`request/email/${recordId}/${requestId}`, emails),
   sendTestWhatsapp: (
     recordId: string,
     requestId: string,
-    phone: string
+    phones: string[]
   ): Promise<void> =>
-    requests.get(`request/whatsapp/${recordId}/${requestId}/${phone}`),
+    requests.post(`request/whatsapp/${recordId}/${requestId}`, phones),
   create: (request: IRequest): Promise<string> =>
     requests.post("request", request),
   createWeeClinic: (request: IRequest): Promise<string> =>

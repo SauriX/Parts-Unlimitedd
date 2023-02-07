@@ -22,18 +22,18 @@ const ClinicResultsBody = ({ printing, formValues }: CRDefaultProps) => {
   const { data, getAll } = clinicResultsStore;
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const readRequests = async () => {
-      await getAll({
-        fecha: [
-          moment(Date.now()).utcOffset(0, true),
-          moment(Date.now()).utcOffset(0, true),
-        ],
-      });
-    };
+  // useEffect(() => {
+  //   const readRequests = async () => {
+  //     await getAll({
+  //       fecha: [
+  //         moment(Date.now()).utcOffset(0, true),
+  //         moment(Date.now()).utcOffset(0, true),
+  //       ],
+  //     });
+  //   };
 
-    readRequests();
-  }, []);
+  //   readRequests();
+  // }, []);
 
   return (
     <Fragment>

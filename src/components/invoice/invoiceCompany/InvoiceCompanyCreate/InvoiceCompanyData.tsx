@@ -7,8 +7,14 @@ import TextInput from "../../../../app/common/form/proposal/TextInput";
 import { useStore } from "../../../../app/stores/store";
 import { formItemLayout, moneyFormatter } from "../../../../app/util/utils";
 import InvoiceCompanyDeliver from "./InvoiceCompanyDeliver";
+import { useParams } from "react-router-dom";
 
 const { Title, Text } = Typography;
+
+type UrlParams = {
+  id: string;
+  tipo: string;
+};
 type InvoiceCompanyInfoProps = {
   company: any;
   totalFinal: number;
@@ -27,9 +33,13 @@ const InvoiceCompanyData = ({
   facturapiId,
   estatusFactura,
 }: InvoiceCompanyInfoProps) => {
-  const { optionStore, invoiceCompanyStore, modalStore } = useStore();
+  let { id, tipo } = useParams<UrlParams>();
+  const { optionStore, invoiceCompanyStore, modalStore, profileStore } =
+    useStore();
   const { openModal } = modalStore;
-  const { printPdf, downloadPdf } = invoiceCompanyStore;
+  const { printPdf, downloadPdf, selectedRows, selectedRequests } =
+    invoiceCompanyStore;
+  const { profile } = profileStore;
   const {
     bankOptions,
     paymentOptions,
@@ -39,6 +49,8 @@ const InvoiceCompanyData = ({
     getpaymentMethodOptions,
     getcfdiOptions,
     getPaymentOptions,
+    invoiceSeriesOptions,
+    getInvoiceSeriesOptions,
   } = optionStore;
   const [form] = Form.useForm();
   useEffect(() => {
@@ -46,12 +58,15 @@ const InvoiceCompanyData = ({
     getpaymentMethodOptions();
     getcfdiOptions();
     getPaymentOptions();
-  }, []);
+    getInvoiceSeriesOptions(profile?.sucursal!);
+  }, [profile]);
 
   const onFinish = () => {};
   useEffect(() => {
     console.log("COMPANY", company);
-    form.setFieldsValue(company);
+    if (tipo === "company") {
+      form.setFieldsValue(company);
+    }
   }, [company]);
   return (
     <>
@@ -73,25 +88,72 @@ const InvoiceCompanyData = ({
           <Col span={10}>
             <SelectInput
               formProps={{ name: "formaDePagoId", label: "Forma de pago" }}
-              options={paymentOptions}
+              options={
+                tipo === "company"
+                  ? paymentOptions
+                  : selectedRequests
+                      .flatMap((x) => x.formasPagos)
+                      .filter(
+                        (value, index, arreglo) =>
+                          arreglo.map((arr) => arr).indexOf(value) === index
+                      )
+                      .map((x) => ({
+                        value: x,
+                        label: x,
+                      }))
+              }
+              required={tipo !== "company"}
             />
-            <TextInput
-              formProps={{ name: "numeroDeCuenta", label: "Número de cuenta" }}
-              style={{ marginTop: 10 }}
-            />
-            <TextInput
+            {tipo === "company" && (
+              <TextInput
+                formProps={{
+                  name: "numeroDeCuenta",
+                  label: "Número de cuenta",
+                }}
+                style={{ marginTop: 10 }}
+              />
+            )}
+            {tipo === "request" && (
+              <SelectInput
+                formProps={{
+                  name: "numeroDeCuenta",
+                  label: "Número de cuenta",
+                }}
+                style={{ marginTop: 10 }}
+                options={selectedRequests
+                  .flatMap((x) => x.numerosCuentas)
+                  .filter(
+                    (value, index, arreglo) =>
+                      arreglo.map((arr) => arr).indexOf(value) === index
+                  )
+                  .map((x) => ({
+                    value: x,
+                    label: x,
+                  }))}
+                readonly
+              />
+            )}
+            <SelectInput
               formProps={{ name: "serieCFDI", label: "SerieCFDI" }}
               style={{ marginTop: 10 }}
+              options={invoiceSeriesOptions}
             />
-            <TextInput
-              formProps={{ name: "diasCredito", label: "Días de crédito" }}
-              style={{ marginTop: 10 }}
-            />
-            <SelectInput
-              formProps={{ name: "metodoDePagoId", label: "Método de pago" }}
-              style={{ marginTop: 10 }}
-              options={paymentMethodOptions}
-            />
+            {tipo === "company" && (
+              <>
+                <TextInput
+                  formProps={{ name: "diasCredito", label: "Días de crédito" }}
+                  style={{ marginTop: 10 }}
+                />
+                <SelectInput
+                  formProps={{
+                    name: "metodoDePagoId",
+                    label: "Método de pago",
+                  }}
+                  style={{ marginTop: 10 }}
+                  options={paymentMethodOptions}
+                />
+              </>
+            )}
           </Col>
           <Col span={10} style={{ paddingLeft: 10, textAlign: "end" }}>
             <Text
@@ -100,22 +162,27 @@ const InvoiceCompanyData = ({
             >{`Cantidad Total: ${moneyFormatter.format(
               totalEstudios
             )} (IVA incluido)`}</Text>
-            <SelectInput
-              formProps={{ name: "bancoId", label: "Banco" }}
-              options={bankOptions}
-            />
+            {tipo === "company" && (
+              <SelectInput
+                formProps={{ name: "bancoId", label: "Banco" }}
+                options={bankOptions}
+              />
+            )}
             <SelectInput
               formProps={{ name: "cfdiId", label: "Uso de CFDI" }}
               style={{ marginTop: 10 }}
               options={cfdiOptions}
+              required={tipo !== "company"}
             />
-            <TextInput
-              formProps={{
-                name: "limiteDeCredito",
-                label: "Límite de crédito",
-              }}
-              style={{ marginTop: 10 }}
-            />
+            {tipo === "company" && (
+              <TextInput
+                formProps={{
+                  name: "limiteDeCredito",
+                  label: "Límite de crédito",
+                }}
+                style={{ marginTop: 10 }}
+              />
+            )}
             <div>
               <Text
                 style={{ textAlign: "center" }}
@@ -135,7 +202,9 @@ const InvoiceCompanyData = ({
             <Row style={{ justifyContent: "center" }}>
               <Button
                 type="primary"
-                onClick={createInvoice}
+                onClick={() => {
+                  createInvoice(form.getFieldsValue());
+                }}
                 disabled={invoice !== "new" && estatusFactura === "Facturado"}
               >
                 Registrar Factura

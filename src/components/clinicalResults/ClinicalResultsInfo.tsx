@@ -78,7 +78,7 @@ const ClinicalResultsInfo = () => {
     const searchRequest = async () => {
       setLoading(true);
       await getDepartmentOptions();
-      await getById(expedienteId!, requestId!);
+      await getById(expedienteId!, requestId!, "results");
       const procedingFound = await procedingById(expedienteId!);
       await getStudies(expedienteId!, requestId!);
       await getStudiesParams(expedienteId!, requestId!);

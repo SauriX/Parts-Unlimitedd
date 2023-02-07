@@ -31,6 +31,7 @@ export default class ClinicResultsStores {
   studiesSelectedToPrint: IPrintTypes[] = [];
   observationsSelected: IOptions[] = [];
   observationText: string = "";
+  lastViewedCode?: string;
 
   printSelectedStudies = async (configuration: any) => {
     try {

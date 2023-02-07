@@ -6,7 +6,7 @@ import {
   IColumns,
   ISearch,
 } from "../../../app/common/table/utils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import { IRequestInfo, IRequestStudyInfo } from "../../../app/models/request";
@@ -19,7 +19,14 @@ const logoWee = `/${process.env.REACT_APP_NAME}/admin/assets/logos/weeclinic.png
 
 const RequestTable = () => {
   const { requestStore } = useStore();
-  const { loadingRequests, filter, requests, getRequests } = requestStore;
+  const {
+    loadingRequests,
+    filter,
+    lastViewedFrom,
+    requests,
+    setFilter,
+    getRequests,
+  } = requestStore;
 
   let navigate = useNavigate();
 
@@ -30,7 +37,13 @@ const RequestTable = () => {
 
   useEffect(() => {
     const readRequests = async () => {
-      await getRequests(filter);
+      const defaultCode = !lastViewedFrom
+        ? undefined
+        : lastViewedFrom.from === "requests"
+        ? undefined
+        : lastViewedFrom.code;
+      setFilter({ ...filter, clave: defaultCode ?? filter.clave });
+      await getRequests({ ...filter, clave: defaultCode ?? filter.clave });
     };
 
     readRequests();
