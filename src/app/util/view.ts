@@ -19,7 +19,8 @@ const views = {
   workLists: "workLists",
   resultValidation:"ResultValidation",
   relaseValidation:"RelaseResult",
-  invoiceCatalog:"invoiceCatalog"
+  invoiceCatalog:"invoiceCatalog",
+  ReportStudy:"reportstudy"
 };
 
 export default views;

@@ -85,6 +85,7 @@ import Test1 from "../../Test1";
 import Series from "../../views/Series";
 import SeriesDetail from "../../components/series/detail/SeriesDetail";
 import InvoiceCatalog from "../../views/InvoiceCatalog";
+import ReportStudy from "../../views/ReportStudy";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -261,6 +262,7 @@ function App() {
               element={<ApointmentDetail />}
             />
             <Route path={`${views.request}`} element={<Request />} />
+            <Route path={`${views.ReportStudy}`} element={<ReportStudy />} />
             <Route
               path={`${views.request}/:recordId`}
               element={<RequestDetail />}
