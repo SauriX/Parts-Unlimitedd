@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button, Checkbox, Table, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import {
@@ -13,8 +13,12 @@ import { toJS } from "mobx";
 import { moneyFormatter } from "../../../app/util/utils";
 import { status } from "../../../app/util/catalogs";
 const { Link, Text } = Typography;
-
+type UrlParams = {
+  id: string;
+  tipo: string;
+};
 const InvoiceCompanyTable = () => {
+  let { id, tipo } = useParams<UrlParams>();
   const navigate = useNavigate();
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
@@ -99,39 +103,41 @@ const InvoiceCompanyTable = () => {
       render(value, record: any, index) {
         return (
           <>
-            {value.map((factura: any) => {
-              return (
-                <>
-                  <div style={{ display: "flex", flexDirection: "row" }}>
-                    <Link
-                      onClick={() => {
-                        console.log("row", toJS(value));
-                        console.log("record", toJS(record));
-                        navigate(`/invoice/create/${record.solicitudId}`);
-                      }}
-                    >
-                      {factura.facturapiId}
-                    </Link>
-                    <span>
-                      <small>
-                        <Text type="secondary">
-                          <Text
-                            strong
-                            type={
-                              factura.estatus.nombre === "Cancelado"
-                                ? "danger"
-                                : "secondary"
-                            }
-                          >
-                            {`(${factura.estatus?.clave})`}
+            {value
+              .filter((factura: any) => factura.tipo === tipo)
+              .map((factura: any) => {
+                return (
+                  <>
+                    <div style={{ display: "flex", flexDirection: "row" }}>
+                      <Link
+                        onClick={() => {
+                          console.log("row", toJS(value));
+                          console.log("record", toJS(record));
+                          navigate(`/invoice/${tipo}/${record.solicitudId}`);
+                        }}
+                      >
+                        {factura.facturapiId}
+                      </Link>
+                      <span>
+                        <small>
+                          <Text type="secondary">
+                            <Text
+                              strong
+                              type={
+                                factura.estatus.nombre === "Cancelado"
+                                  ? "danger"
+                                  : "secondary"
+                              }
+                            >
+                              {`(${factura.estatus?.clave})`}
+                            </Text>
                           </Text>
-                        </Text>
-                      </small>
-                    </span>
-                  </div>
-                </>
-              );
-            })}
+                        </small>
+                      </span>
+                    </div>
+                  </>
+                );
+              })}
           </>
         );
       },

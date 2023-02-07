@@ -11,13 +11,19 @@ import { formItemLayout } from "../../../app/util/utils";
 import { useNavigate } from "react-router-dom";
 import alerts from "../../../app/util/alerts";
 import { toJS } from "mobx";
+import { useParams } from "react-router-dom";
 
 const { Search } = Input;
 
+type UrlParams = {
+  id: string;
+  tipo: string;
+};
 const InvoiceComapnyForm = () => {
+  let { id, tipo } = useParams<UrlParams>();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const { optionStore, invoiceCompanyStore,profileStore } = useStore();
+  const { optionStore, invoiceCompanyStore, profileStore } = useStore();
   const [formCreate] = Form.useForm();
   const selectedCity = Form.useWatch("ciudad", form);
   const isInvoice = Form.useWatch("isInvoice", formCreate);
@@ -28,12 +34,14 @@ const InvoiceComapnyForm = () => {
   const [disabled, setDisabled] = useState<boolean>(true);
   const [requiredValues, setRequiredValues] = useState<boolean>(true);
 
-  const {profile}=profileStore;
+  const { profile } = profileStore;
   const {
     branchCityOptions,
     getBranchCityOptions,
     companyOptions,
     getCompanyOptions,
+    invoiceSeriesOptions,
+    getInvoiceSeriesOptions,
   } = optionStore;
   const {
     getInvoicesCompany,
@@ -45,23 +53,16 @@ const InvoiceComapnyForm = () => {
   } = invoiceCompanyStore;
 
   useEffect(() => {
-    console.log("isnvoice", isInvoice);
-    if (isInvoice === "Factura") {
-      setRequiredValues(true);
-    } else {
-      setRequiredValues(false);
-    }
-  }, [isInvoice]);
+    onFinish(form.getFieldsValue());
+  }, [tipo]);
   useEffect(() => {
-    // formCreate.setFieldValue("serie",); //TODO: validar la nueva tabla de series y como se relaciona
-  }, [isSameCommpany, selectedRows]);
-  useEffect(() => {
+    getInvoiceSeriesOptions(profile?.sucursal!);
     getBranchCityOptions();
     getCompanyOptions();
+    onFinish(form.getFieldsValue());
   }, []);
 
   useEffect(() => {
-
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
@@ -91,6 +92,7 @@ const InvoiceComapnyForm = () => {
       tipoFactura: checkedValues,
       fechaFinal: newFormValues.fechas[1].utcOffset(0, true),
       fechaInicial: newFormValues.fechas[0].utcOffset(0, true),
+      facturaMetodo: tipo,
     };
     saveFilterDate(newFormValues.fechas);
     getInvoicesCompany(formValues);
@@ -109,9 +111,7 @@ const InvoiceComapnyForm = () => {
 
     let requestsWithInvoiceCompany: any[] = [];
     selectedRows.forEach((request) => {
-      if (
-        request.facturas.some((invoice: any) => invoice.tipo === "Compañia")
-      ) {
+      if (request.facturas.some((invoice: any) => invoice.tipo === tipo)) {
         requestsWithInvoiceCompany.push(request);
       }
     });
@@ -145,8 +145,12 @@ const InvoiceComapnyForm = () => {
 
     if (!requestsWithInvoiceCompany.length || isInvoice === "Recibo") {
       if (formValues.isInvoice === "Factura") {
-        if (formValues.tipoDesglose === "detalle") {
-          navigate(`/invoice/create/new`);
+        if (tipo === "company") {
+          navigate(`/invoice/company/new`);
+        }
+        if (tipo === "request") {
+          console.log("hgolaaaaaa");
+          navigate(`/invoice/request/new`);
         }
       } else {
         let solicitudesId = selectedRows.map((row) => row.solicitudId);
@@ -203,13 +207,16 @@ const InvoiceComapnyForm = () => {
                 <Col span={8}>
                   <TextInput formProps={{ name: "buscar", label: "Buscar" }} />
                 </Col>
+
                 <Col span={8}>
-                  <SelectInput
-                    form={form}
-                    multiple
-                    formProps={{ label: "Compañias", name: "companias" }}
-                    options={companyOptions}
-                  />
+                  {tipo === "company" && (
+                    <SelectInput
+                      form={form}
+                      multiple
+                      formProps={{ label: "Compañias", name: "companias" }}
+                      options={companyOptions}
+                    />
+                  )}
                 </Col>
                 <Col span={8}>
                   <Form.Item label="Sucursal" className="no-error-text" help="">
@@ -291,7 +298,7 @@ const InvoiceComapnyForm = () => {
                     </Row>
                   </Form.Item>
                 </Col>
-                <Col span={8}>
+                {/* <Col span={8}>
                   <SelectInput
                     formProps={{
                       label: "Desglose por",
@@ -300,16 +307,16 @@ const InvoiceComapnyForm = () => {
                     options={desgloceOptions}
                     required={requiredValues}
                   />
-                </Col>
+                </Col> */}
                 <Col span={8}>
                   <SelectInput
                     formProps={{ label: "Serie", name: "serie" }}
-                    options={[{ key: "MT", value: "MT", label: "MT" }]}
+                    options={invoiceSeriesOptions}
                     onChange={(serie: any) => {
                       console.log("sereie", serie);
                       setSerie(serie);
                     }}
-                    required={requiredValues}
+                    required={true}
                   />
                 </Col>
               </Row>

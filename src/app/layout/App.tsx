@@ -190,9 +190,9 @@ function App() {
             <Route path="companies/new" element={<CompanyDetail />} />
             <Route path="indications" element={<Indication />} />
             <Route path="indications/:id" element={<IndicationDetail />} />
-            <Route path="invoice" element={<Invoice />} />
+            <Route path="invoice/:tipo" element={<Invoice />} />
             <Route
-              path="invoice/create/:id"
+              path="invoice/:tipo/:id"
               element={<InvoiceCompanyCreate />}
             />
             <Route path="series" element={<Series />} />
