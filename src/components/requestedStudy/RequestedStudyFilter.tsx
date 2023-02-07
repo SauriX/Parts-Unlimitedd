@@ -158,11 +158,13 @@ const RequestedStudyFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
+                    form={form}
                       formProps={{
                         name: "departament",
                         label: "Departamento",
                         noStyle: true,
                       }}
+                      multiple
                       options={departmentOptions}
                     />
                   </Col>

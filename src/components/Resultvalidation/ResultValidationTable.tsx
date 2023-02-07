@@ -372,7 +372,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   useEffect(() => {
 
     setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+      branchCityOptions.find((x) =>  selectedCity?.includes(x.value.toString()))?.options ?? []
     );
     form.setFieldValue("sucursal", []);
   }, [branchCityOptions, form, selectedCity]);
@@ -610,11 +610,13 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                         <Row gutter={8}>
                           <Col span={12}>
                             <SelectInput
+                            form={form}
                               formProps={{
                                 name: "ciudad",
                                 label: "Ciudad",
                                 noStyle: true,
                               }}
+                              multiple
                               options={cityOptions}
                             />
                           </Col>

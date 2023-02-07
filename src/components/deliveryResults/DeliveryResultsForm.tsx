@@ -77,7 +77,7 @@ const DeliveryResultsForm = () => {
 
   useEffect(() => {
     setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+      branchCityOptions.find((x) =>  selectedCity.includes(x.value))?.options ?? []
     );
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
@@ -238,11 +238,13 @@ const DeliveryResultsForm = () => {
                   <Row gutter={8}>
                     <Col span={12}>
                       <SelectInput
+                      form={form}
                         formProps={{
                           name: "ciudad",
                           label: "Ciudad",
                           noStyle: true,
                         }}
+                        multiple
                         options={cityOptions}
                       />
                     </Col>

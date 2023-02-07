@@ -39,7 +39,7 @@ const QuotationFilter = () => {
 
   useEffect(() => {
     setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+      branchCityOptions.find((x) =>  selectedCity?.includes(x.value.toString()))?.options ?? []
     );
     form.setFieldValue("sucursales", []);
   }, [branchCityOptions, form, selectedCity]);
@@ -156,11 +156,13 @@ const QuotationFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
+                    form={form}
                       formProps={{
                         name: "ciudad",
                         label: "Ciudad",
                         noStyle: true,
                       }}
+                      multiple
                       options={cityOptions}
                     />
                   </Col>

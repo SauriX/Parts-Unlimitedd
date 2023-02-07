@@ -199,11 +199,13 @@ const SamplingStudyFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
+                    form={form}
                       formProps={{
                         name: "ciudad",
                         label: "Ciudad",
                         noStyle: true,
                       }}
+                      multiple
                       options={cityOptions}
                     />
                   </Col>

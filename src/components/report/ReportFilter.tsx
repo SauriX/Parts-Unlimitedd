@@ -93,7 +93,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
 
   useEffect(() => {
     setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
+      branchCityOptions.find((x) =>  selectedCity.includes(x.value))?.options ?? []
     );
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
@@ -164,11 +164,13 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
                       <Row gutter={8}>
                         <Col span={12}>
                           <SelectInput
+                           form={form}
                             formProps={{
                               name: "ciudad",
                               label: "Ciudad",
                               noStyle: true,
                             }}
+                            multiple
                             options={cityOptions}
                           />
                         </Col>
