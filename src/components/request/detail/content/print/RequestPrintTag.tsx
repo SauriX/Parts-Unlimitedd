@@ -1,4 +1,5 @@
 import { Button, Col, Form, InputNumber, Row, Spin, Table } from "antd";
+import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import SelectInput from "../../../../../app/common/form/proposal/SelectInput";
@@ -7,23 +8,33 @@ import {
   getDefaultColumnProps,
 } from "../../../../../app/common/table/utils";
 import { IRequestStudy, IRequestTag } from "../../../../../app/models/request";
+import { IOptions } from "../../../../../app/models/shared";
 import { useStore } from "../../../../../app/stores/store";
 import alerts from "../../../../../app/util/alerts";
 import { formItemLayout } from "../../../../../app/util/utils";
+import { v4 as uuid } from "uuid";
 
 const RequestPrintTag = () => {
-  const { requestStore } = useStore();
-  const { request, allStudies, printTags } = requestStore;
+  const { requestStore, optionStore } = useStore();
+  const { studyOptions, getStudyOptions } = optionStore;
+  const { request, allStudies, printTags, tags, setTags } = requestStore;
 
   const [labels, setLabels] = useState<IRequestTag[]>([]);
+  const [options, setOptions] = useState<IOptions[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    getStudyOptions();
+  }, [getStudyOptions]);
 
   useEffect(() => {
     const grouped = allStudies.reduce((group: IRequestTag[], study) => {
       const index = group.findIndex((x) => x.taponClave === study.taponClave);
       if (index === -1) {
         group.push({
+          tableId: uuid(),
+          estudioId: "study-" + study.estudioId,
           taponClave: study.taponClave ?? "",
           taponNombre: study.taponNombre ?? "",
           cantidad: 1,
@@ -34,51 +45,117 @@ const RequestPrintTag = () => {
       }
       return group;
     }, []);
-    setLabels(grouped);
+    setTags(grouped);
   }, [allStudies]);
 
+  useEffect(() => {
+    if (request) {
+      const getStudiesFromRequest = (request: IRequestStudy[]) => {
+        const studies = request.map((x) => "study-" + x.estudioId);
+
+        let filterStudies = studyOptions.filter((x) =>
+          studies.includes(x.value as string)
+        );
+
+        return filterStudies;
+      };
+
+      const studies = getStudiesFromRequest(allStudies);
+      setOptions(studies);
+    }
+  }, [request, studyOptions]);
+
   const changeQty = (qty: number, record: IRequestTag) => {
-    let index = labels.findIndex((x) => x.taponClave === record.taponClave);
+    let index = tags.findIndex((x) => x.tableId === record.tableId!);
     if (index > -1) {
-      const lbls = [...labels];
+      const lbls = [...tags];
       lbls[index] = { ...lbls[index], cantidad: qty };
-      setLabels(lbls);
+      setTags(lbls);
     }
   };
 
   const print = async () => {
     if (request) {
       setLoading(true);
-      const toPrint = labels.filter((x) => selectedKeys.includes(x.taponClave));
-      await printTags(request.expedienteId, request.solicitudId!, toPrint);
+      const toPrint = tags.filter((x) => selectedKeys.includes(x.tableId!));
+
+      if (toPrint.length === 0) {
+        alerts.warning("No se ha seleccionado ningún estudio");
+        setLoading(false);
+        return;
+      }
+
+      const groupBySumCantidad = toJS(toPrint).reduce(
+        (group: IRequestTag[], study) => {
+          const index = group.findIndex((x) => x.estudios === study.estudios);
+          if (index === -1) {
+            group.push({
+              tableId: uuid(),
+              taponClave: study.taponClave ?? "",
+              taponNombre: study.taponNombre ?? "",
+              estudios: study.estudios,
+              cantidad: study.cantidad,
+            });
+          } else {
+            group[index].cantidad += study.cantidad;
+          }
+          return group;
+        },
+        []
+      );
+
+      const groupToPrintBySumCantidad = groupBySumCantidad.map(
+        (x) => {
+          const index = toPrint.findIndex((y) => y.cantidad === 1 && y.estudios === x.estudios);
+          if (index > -1) {
+            toPrint[index].cantidad = x.cantidad;
+          }
+          return x;
+        }
+      );
+
+      console.log("toPrint", toPrint);
+      console.log("groupBySumEqualToOne", groupToPrintBySumCantidad);
+      console.log("groupBySumEqualToOne", groupBySumCantidad);
+
+      // await printTags(request.expedienteId, request.solicitudId!, groupBySumEqualToOne);
+      // await printTags(request.expedienteId, request.solicitudId!, toPrint);
       setLoading(false);
     }
   };
 
   const handleAdd = () => {
     const newStudy: IRequestTag = {
-      taponClave: labels[0].taponClave ?? "",
-      taponNombre: labels[0].taponNombre ?? "",
+      tableId: uuid(),
+      taponClave: tags[0].taponClave ?? "",
+      taponNombre: tags[0].taponNombre ?? "",
       estudios: "",
-      cantidad: 1,
+      cantidad: 0,
     };
-    setLabels([...labels, newStudy]);
+    setTags([...tags, newStudy]);
   };
 
   const onFinish = (study: IRequestTag) => {
     setLoading(true);
 
-    if (!study) {
+    if (!study.estudios) {
       alerts.warning("No se ha seleccionado ningún estudio");
       setLoading(false);
       return;
     }
 
-    const index = labels.findIndex((x) => x.taponClave === study.taponClave);
+    const getLabel = studyOptions
+      .find((x) => x.value === study.estudios)
+      ?.label?.toString();
+    let studyLabel = getLabel?.split(" - ") ?? "";
+
+    study.estudios = studyLabel[0];
+
+    const index = tags.findIndex((x) => x.tableId === study.tableId!);
     if (index > -1) {
-      const lbls = [...labels];
+      const lbls = [...tags];
       lbls[index] = { ...lbls[index], estudios: study.estudios };
-      setLabels(lbls);
+      setTags(lbls);
     }
     setLoading(false);
   };
@@ -107,6 +184,7 @@ const RequestPrintTag = () => {
             defaultValue={record}
             onFinish={(study) => onFinish(study)}
             loading={loading}
+            studyOptions={options}
           />
         );
       },
@@ -120,10 +198,11 @@ const RequestPrintTag = () => {
         <InputNumber
           value={record.cantidad}
           bordered={false}
-          min={1}
+          min={0}
+          step="0.1"
           style={{ width: "100%" }}
           onChange={(qty) => {
-            changeQty(qty ?? 0, record);
+            changeQty(qty ?? 0.5, record);
           }}
         />
       ),
@@ -142,15 +221,15 @@ const RequestPrintTag = () => {
         <Col span={24}>
           <Table<IRequestTag>
             size="small"
-            rowKey={(record) => record.taponClave}
+            rowKey={(x) => x.tableId!}
             columns={columns}
-            dataSource={labels}
+            dataSource={tags}
             pagination={false}
             rowSelection={{
               fixed: "right",
               selectedRowKeys: selectedKeys,
               onSelect: (r, s, selected) => {
-                setSelectedKeys(selected.map((x) => x.taponClave));
+                setSelectedKeys(selected.map((x) => x.tableId!));
               },
             }}
             sticky
@@ -176,10 +255,16 @@ export default observer(RequestPrintTag);
 type RequestTagProps = {
   defaultValue: IRequestTag;
   onFinish: (value: IRequestTag) => void;
+  studyOptions: IOptions[];
   loading: boolean;
 };
 
-const RequestTag = ({ defaultValue, onFinish, loading }: RequestTagProps) => {
+const RequestTag = ({
+  defaultValue,
+  onFinish,
+  loading,
+  studyOptions,
+}: RequestTagProps) => {
   const [form] = Form.useForm<IRequestTag>();
 
   return (
@@ -188,21 +273,23 @@ const RequestTag = ({ defaultValue, onFinish, loading }: RequestTagProps) => {
         {...formItemLayout}
         form={form}
         name="studies"
-        initialValues={defaultValue}
-        onFinish={(values) => {
-          onFinish({ ...defaultValue, estudios: values.estudios });
-        }}
+        initialValues={{ estudios: defaultValue.estudioId }}
         scrollToFirstError
       >
         <Row gutter={8}>
           <Col span={12}>
             <SelectInput
+              form={form}
               formProps={{
                 name: "estudios",
                 label: "",
                 noStyle: true,
               }}
-              options={[]}
+              options={studyOptions}
+              onChange={(value) => {
+                onFinish({ ...defaultValue, estudios: value });
+              }}
+              defaultValue={defaultValue.estudioId}
             />
           </Col>
         </Row>

@@ -338,6 +338,8 @@ export interface IRequestPack {
 }
 
 export interface IRequestTag {
+  tableId?: string;
+  estudioId?: string;
   taponClave: string;
   taponNombre: string;
   estudios: string;

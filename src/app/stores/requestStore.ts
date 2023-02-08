@@ -79,6 +79,11 @@ export default class RequestStore {
   loadingRequests: boolean = false;
   loadingTabContentCount: number = 0;
   lastViewedFrom?: { from: "requests" | "results"; code: string };
+  tags: IRequestTag[] = [];
+
+  setTags = (tags: IRequestTag[]) => {
+    this.tags = tags;
+  };
 
   get loadingTabContent() {
     return this.loadingTabContentCount > 0;
