@@ -56,7 +56,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
   id,
   componentRef,
   printing,
-  download
+  download,
 }) => {
   const { priceListStore, optionStore, modalStore } = useStore();
   const {
@@ -286,7 +286,6 @@ const PriceListForm: FC<PriceListFormProps> = ({
       setLoading(true);
       const user = await getById(idUser);
 
-
       var studis = await getAllStudy();
       var pcks = await getAllPack();
       // pcks = pcks?.filter((x) => x.activo);
@@ -455,8 +454,6 @@ const PriceListForm: FC<PriceListFormProps> = ({
   };
 
   const filterByDepartament = async (departament: number) => {
-
-    
     if (departament) {
       var departamento = departmentOptions.filter(
         (x) => x.value === departament
@@ -581,9 +578,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
     }
     var paquetesSindescuento: IPriceListEstudioList[] = [];
     values.paquete.forEach((element) => {
-      if (
-        (element.descuento == 0 || element.descuento == undefined) 
-      ) {
+      if (element.descuento === 0 || element.descuento === undefined) {
         paquetesSindescuento.push(element);
       }
     });
@@ -695,7 +690,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
             var active = false;
             if (value1.target.checked) {
               active = true;
-              console.log(value1.target.checked)
+              console.log(value1.target.checked);
               // setActiveStudy(active)
             }
 
@@ -900,7 +895,10 @@ const PriceListForm: FC<PriceListFormProps> = ({
     },
   ];
   return (
-    <Spin spinning={loading || printing || download} tip={printing?"Imprimiendo" :(download ? "descargando" : "")}>
+    <Spin
+      spinning={loading || printing || download}
+      tip={printing ? "Imprimiendo" : download ? "descargando" : ""}
+    >
       <Row style={{ marginBottom: 24 }}>
         {!readonly && (
           <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
@@ -953,7 +951,10 @@ const PriceListForm: FC<PriceListFormProps> = ({
           >
             <Row>
               <Col span={24}>
-                <Row justify={printing ? "end" : "space-between"} gutter={[24, 24]}>
+                <Row
+                  justify={printing ? "end" : "space-between"}
+                  gutter={[24, 24]}
+                >
                   <Col span={12}>
                     <TextInput
                       formProps={{
@@ -1036,7 +1037,11 @@ const PriceListForm: FC<PriceListFormProps> = ({
           </Row>
 
           <Divider orientation="left">ESTUDIOS Y PAQUETE</Divider>
-          <Row justify="space-between" align="middle" gutter={printing ? [24, 24] : 0}>
+          <Row
+            justify="space-between"
+            align="middle"
+            gutter={printing ? [24, 24] : 0}
+          >
             <Col span={printing ? 8 : 6}>
               <Search
                 key="search"
@@ -1075,7 +1080,6 @@ const PriceListForm: FC<PriceListFormProps> = ({
                     value={areaId || undefined}
                     placeholder={"Área"}
                     formProps={{
-                     
                       label: "Área",
                     }}
                   />

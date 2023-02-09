@@ -14,14 +14,17 @@ import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import views from "../../../app/util/view";
-import { IPriceListEstudioList, IPriceListList } from "../../../app/models/priceList";
+import {
+  IPriceListEstudioList,
+  IPriceListList,
+} from "../../../app/models/priceList";
 
 type PriceListTableProps = {
-    data:IPriceListEstudioList[];
-    closeModal: () => void
+  data: IPriceListEstudioList[];
+  closeModal: () => void;
 };
 
-const StudyTable: FC<PriceListTableProps> = ({ data,closeModal }) => {
+const StudyTable: FC<PriceListTableProps> = ({ data, closeModal }) => {
   const { priceListStore } = useStore();
   const { priceLists, getAll } = priceListStore;
 
@@ -40,14 +43,14 @@ const StudyTable: FC<PriceListTableProps> = ({ data,closeModal }) => {
 
   const columns: IColumns<IPriceListEstudioList> = [
     {
-        ...getDefaultColumnProps("clave", "Clave", {
-          searchState,
-          setSearchState,
-          width: "30%",
-          minWidth: 150,
-          windowSize: windowWidth,
-        }),
-      },
+      ...getDefaultColumnProps("clave", "Clave", {
+        searchState,
+        setSearchState,
+        width: "30%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
     {
       ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,

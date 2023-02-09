@@ -12,13 +12,15 @@ import { observer } from "mobx-react-lite";
 import { IRequestInfo, IRequestStudyInfo } from "../../../app/models/request";
 import { moneyFormatter } from "../../../app/util/utils";
 import views from "../../../app/util/view";
-import { ReportRequestInfo, StudyReportInfo } from "../../../app/models/ReportRequest";
-import moment from "moment";
+import {
+  IReportRequestInfo,
+  IStudyReportInfo,
+} from "../../../app/models/ReportRequest";
 
 const { Link, Text } = Typography;
 
 const logoWee = `/${process.env.REACT_APP_NAME}/admin/assets/logos/weeclinic.png`;
-const data:ReportRequestInfo[] = [{
+const data:IReportRequestInfo[] = [{
   expedienteId:"string",
   solicitudId:"string",
   solicitud:"string",
@@ -72,7 +74,7 @@ const ReportTable = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const columns: IColumns<ReportRequestInfo> = [
+  const columns: IColumns<IReportRequestInfo> = [
     {
       ...getDefaultColumnProps("solicitud", "Clave", {
         searchState,
@@ -191,8 +193,7 @@ const ReportTable = () => {
       ),
     },
   ];
-  const nestedcolumns: IColumns<StudyReportInfo> = [
-
+  const nestedcolumns: IColumns<IStudyReportInfo> = [
     {
       ...getDefaultColumnProps("nombre", "Estudio", {
         searchState,
@@ -223,10 +224,9 @@ const ReportTable = () => {
         showTitle: false,
       },
     },
-
   ];
   return (
-    <Table<ReportRequestInfo>
+    <Table<IReportRequestInfo>
       size="small"
       loading={loadingRequests}
       rowKey={(record) => record.solicitudId}
@@ -236,7 +236,7 @@ const ReportTable = () => {
       sticky
       scroll={{ x: "fit-content" }}
       expandable={{
-        expandedRowRender: (record,index) => (
+        expandedRowRender: (record, index) => (
           <Table
           rowKey={(records)=> records.idStudio +  records.estatus }
           columns={nestedcolumns}
