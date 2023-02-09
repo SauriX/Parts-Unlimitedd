@@ -1,4 +1,4 @@
-export interface reportsoliInfo {
+export interface ReportRequestInfo {
     expedienteId:string
     solicitudId:string
     solicitud:string
@@ -10,11 +10,11 @@ export interface reportsoliInfo {
     tipo :string
     compañia:string
     entrega:string
-    estudios:studireportinfo[]
+    estudios:StudyReportInfo[]
     estatus:string
 }
 
-export interface studireportinfo{
+export interface StudyReportInfo{
     idstudio:string
     estudioI:string
     estatus:string

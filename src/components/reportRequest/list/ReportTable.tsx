@@ -12,7 +12,7 @@ import { observer } from "mobx-react-lite";
 import { IRequestInfo, IRequestStudyInfo } from "../../../app/models/request";
 import { moneyFormatter } from "../../../app/util/utils";
 import views from "../../../app/util/view";
-import { reportsoliInfo, studireportinfo } from "../../../app/models/reportstudi";
+import { ReportRequestInfo, StudyReportInfo } from "../../../app/models/ReportRequest";
 
 const { Link, Text } = Typography;
 
@@ -51,7 +51,7 @@ const ReportTable = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const columns: IColumns<reportsoliInfo> = [
+  const columns: IColumns<ReportRequestInfo> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
@@ -170,7 +170,7 @@ const ReportTable = () => {
       ),
     },
   ];
-  const nestedcolumns: IColumns<studireportinfo> = [
+  const nestedcolumns: IColumns<StudyReportInfo> = [
 
     {
       ...getDefaultColumnProps("nombre", "Estudio", {
@@ -205,7 +205,7 @@ const ReportTable = () => {
 
   ];
   return (
-    <Table<reportsoliInfo>
+    <Table<ReportRequestInfo>
       size="small"
       loading={loadingRequests}
       rowKey={(record) => record.solicitudId}
