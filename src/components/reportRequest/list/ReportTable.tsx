@@ -13,11 +13,32 @@ import { IRequestInfo, IRequestStudyInfo } from "../../../app/models/request";
 import { moneyFormatter } from "../../../app/util/utils";
 import views from "../../../app/util/view";
 import { ReportRequestInfo, StudyReportInfo } from "../../../app/models/ReportRequest";
+import moment from "moment";
 
 const { Link, Text } = Typography;
 
 const logoWee = `/${process.env.REACT_APP_NAME}/admin/assets/logos/weeclinic.png`;
+const data:ReportRequestInfo[] = [{
+  expedienteId:"string",
+  solicitudId:"string",
+  solicitud:"string",
+  paciente:"string",
+  edad:"string",
+  sexo:"string",
+  sucursal:"string",
+  medico:"string",
+  tipo :"string",
+  compañia:"string",
+  entrega:"12-02-2023 - 14-02-2023",
+  estudios:[{
+    idStudio:"string",
+    nombre:"string",
+    estatus:"string",
+    fecha:"12-02-2023",
+  }],
+  estatus:"uregente"
 
+}]
 const ReportTable = () => {
   const { requestStore } = useStore();
   const {
@@ -53,7 +74,7 @@ const ReportTable = () => {
 
   const columns: IColumns<ReportRequestInfo> = [
     {
-      ...getDefaultColumnProps("clave", "Clave", {
+      ...getDefaultColumnProps("solicitud", "Clave", {
         searchState,
         setSearchState,
         width: 150,
@@ -142,7 +163,7 @@ const ReportTable = () => {
       render: (value) => value,
     },
     {
-      ...getDefaultColumnProps("fecha", "Fecha de entrega", {
+      ...getDefaultColumnProps("entrega", "Fecha de entrega", {
         searchState,
         setSearchState,
         width: 120,
@@ -150,7 +171,7 @@ const ReportTable = () => {
       align: "right",
       render: (value) => value,
     },
-    {
+     {
       key: "estudios",
       dataIndex: "estudios",
       title: "Estudios",
@@ -210,14 +231,14 @@ const ReportTable = () => {
       loading={loadingRequests}
       rowKey={(record) => record.solicitudId}
       columns={columns}
-      dataSource={[...[]]}
+      dataSource={[...data]}
       pagination={defaultPaginationProperties}
       sticky
       scroll={{ x: "fit-content" }}
       expandable={{
         expandedRowRender: (record,index) => (
           <Table
-          rowKey={(records)=> records.idstudio +  records.estatus }
+          rowKey={(records)=> records.idStudio +  records.estatus }
           columns={nestedcolumns}
           dataSource={record.estudios}
           pagination={false}
