@@ -158,6 +158,7 @@ export interface IRequestPayment extends IRequestBase {
   facturapiId: string;
   usuarioRegistra?: string;
   fechaPago: moment.Moment;
+  notificacionId?: string;
 }
 
 export interface IRequestCheckIn extends IRequestBase {
