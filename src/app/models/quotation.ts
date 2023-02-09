@@ -12,7 +12,7 @@ export interface IQuotationFilter {
   fechaAlta?: moment.Moment[];
   fechaAInicial?: moment.Moment;
   fechaAFinal?: moment.Moment;
-  ciudad?: string;
+  ciudad?: string[];
   sucursales?: string[];
   correo?: string;
   telefono?: string;
@@ -29,7 +29,7 @@ export class QuotationFilterForm implements IQuotationFilter {
   ];
   fechaAInicial = moment().utcOffset(0, true);
   fechaAFinal = moment().utcOffset(0, true);
-
+  ciudad = [];
   constructor(init?: IQuotationFilter) {
     Object.assign(this, init);
   }
