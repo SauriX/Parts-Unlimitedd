@@ -262,7 +262,7 @@ function App() {
               element={<ApointmentDetail />}
             />
             <Route path={`${views.request}`} element={<Request />} />
-            <Route path={`${views.ReportStudy}`} element={<ReportStudy />} />
+            <Route path={`${views.reportStudy}`} element={<ReportStudy />} />
             <Route
               path={`${views.request}/:recordId`}
               element={<RequestDetail />}

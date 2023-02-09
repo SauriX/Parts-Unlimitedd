@@ -12,7 +12,10 @@ import { observer } from "mobx-react-lite";
 import { IRequestInfo, IRequestStudyInfo } from "../../../app/models/request";
 import { moneyFormatter } from "../../../app/util/utils";
 import views from "../../../app/util/view";
-import { ReportRequestInfo, StudyReportInfo } from "../../../app/models/ReportRequest";
+import {
+  IReportRequestInfo,
+  IStudyReportInfo,
+} from "../../../app/models/ReportRequest";
 
 const { Link, Text } = Typography;
 
@@ -51,7 +54,7 @@ const ReportTable = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const columns: IColumns<ReportRequestInfo> = [
+  const columns: IColumns<IReportRequestInfo> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
@@ -170,8 +173,7 @@ const ReportTable = () => {
       ),
     },
   ];
-  const nestedcolumns: IColumns<StudyReportInfo> = [
-
+  const nestedcolumns: IColumns<IStudyReportInfo> = [
     {
       ...getDefaultColumnProps("nombre", "Estudio", {
         searchState,
@@ -202,10 +204,9 @@ const ReportTable = () => {
         showTitle: false,
       },
     },
-
   ];
   return (
-    <Table<ReportRequestInfo>
+    <Table<IReportRequestInfo>
       size="small"
       loading={loadingRequests}
       rowKey={(record) => record.solicitudId}
@@ -215,15 +216,15 @@ const ReportTable = () => {
       sticky
       scroll={{ x: "fit-content" }}
       expandable={{
-        expandedRowRender: (record,index) => (
+        expandedRowRender: (record, index) => (
           <Table
-          rowKey={(records)=> records.idstudio +  records.estatus }
-          columns={nestedcolumns}
-          dataSource={record.estudios}
-          pagination={false}
-          className="header-expandable-table"
-          showHeader={false}
-        />
+            rowKey={(records) => records.idstudio + records.estatus}
+            columns={nestedcolumns}
+            dataSource={record.estudios}
+            pagination={false}
+            className="header-expandable-table"
+            showHeader={false}
+          />
         ),
         rowExpandable: (record) => record.estudios.length > 0,
       }}
