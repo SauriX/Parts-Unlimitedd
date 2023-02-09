@@ -77,9 +77,18 @@ const PriceListDetail = () => {
 
   return (
     <Fragment>
-      <PriceListFormHeader id={priceListId} handlePrint={handlePrint} handleDownload={handleDownload} />
+      <PriceListFormHeader
+        id={priceListId}
+        handlePrint={handlePrint}
+        handleDownload={handleDownload}
+      />
       <Divider className="header-divider" />
-      <PriceListForm id={priceListId} componentRef={componentRef} printing={printing} download={download}/>
+      <PriceListForm
+        id={priceListId}
+        componentRef={componentRef}
+        printing={printing}
+        download={download}
+      />
     </Fragment>
   );
 };
