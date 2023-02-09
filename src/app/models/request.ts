@@ -2,6 +2,7 @@ import moment from "moment";
 import { IIndicationList } from "./indication";
 import { IParameterList } from "./parameter";
 import { IPriceListInfoPromo } from "./priceList";
+import { IStudyTag } from "./study";
 
 export interface IRequestBase {
   solicitudId: string;
@@ -222,10 +223,6 @@ export interface IRequestStudy {
   estudioId: number;
   clave: string;
   nombre: string;
-  taponId?: number;
-  taponColor?: string;
-  taponClave?: string;
-  taponNombre?: string;
   paqueteId?: number;
   paquete?: string;
   listaPrecioId: string;
@@ -249,6 +246,7 @@ export interface IRequestStudy {
   promociones: IPriceListInfoPromo[];
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
+  etiquetas: IStudyTag[];
   fechaActualizacion?: string;
   usuarioActualizacion?: string;
   solicitudEstudioId?: number;
@@ -300,6 +298,7 @@ export class RequestStudyValues implements IRequestStudy {
   asignado = true;
   parametros: IParameterList[] = [];
   indicaciones: IIndicationList[] = [];
+  etiquetas: IStudyTag[] = [];
   promociones = [];
   fechaActualizacion = "";
   usuarioActualizacion = "";

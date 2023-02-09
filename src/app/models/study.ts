@@ -46,6 +46,29 @@ export interface IStudyForm {
   paquete: IPacketList[];
 }
 
+export interface IStudyTag {
+  id: number;
+  etiquetaId: number;
+  estudioId: number;
+  clave: string;
+  claveInicial: string;
+  nombre: string;
+  cantidad: number;
+  orden: number;
+  color: string;
+  estudios: IStudyTagList[];
+}
+
+export interface IStudyTagList {
+  id: number;
+  clave: string;
+  claveInicial: string;
+  estudioId: number;
+  etiquetaId: number;
+  cantidad: number;
+  color: string;
+}
+
 export class StudyFormValues implements IStudyForm {
   id = 0;
   clave = "";
@@ -73,7 +96,7 @@ export class StudyFormValues implements IStudyForm {
   paquete: IPacketList[] = [];
   tapon = 0;
   cantidad = 0;
-  workLists="";
+  workLists = "";
   constructor(init?: IStudyForm) {
     Object.assign(this, init);
   }

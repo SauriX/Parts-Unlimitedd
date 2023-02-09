@@ -2,6 +2,7 @@ import React from "react";
 import { IIndicationList } from "./indication";
 import { IPackEstudioList } from "./packet";
 import { IParameterList } from "./parameter";
+import { IStudyTag } from "./study";
 
 export interface IPriceListList {
   id: number | string;
@@ -114,6 +115,7 @@ export interface IPriceListInfoStudy {
   promociones: IPriceListInfoPromo[];
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
+  etiquetas: IStudyTag[];
 }
 
 export interface IPriceListInfoPack {

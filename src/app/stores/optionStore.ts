@@ -333,7 +333,7 @@ export default class OptionStore {
       const tapon = await Tapon.getAll();
       this.taponOption = tapon.map((x) => ({
         value: x.id,
-        label: x.name,
+        label: x.nombre,
       }));
     } catch (error) {
       this.taponOption = [];
