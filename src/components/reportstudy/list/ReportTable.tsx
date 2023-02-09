@@ -12,6 +12,7 @@ import { observer } from "mobx-react-lite";
 import { IRequestInfo, IRequestStudyInfo } from "../../../app/models/request";
 import { moneyFormatter } from "../../../app/util/utils";
 import views from "../../../app/util/view";
+import { reportsoliInfo, studireportinfo } from "../../../app/models/reportstudi";
 
 const { Link, Text } = Typography;
 
@@ -50,7 +51,7 @@ const ReportTable = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const columns: IColumns<IRequestInfo> = [
+  const columns: IColumns<reportsoliInfo> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
@@ -69,17 +70,10 @@ const ReportTable = () => {
             {value}
           </Link>
           <small>
-            <Text type="secondary">{item.clavePatologica}</Text>
+            <Text type="secondary">{item.estatus}</Text>
           </small>
         </div>
       ),
-    },
-    {
-      ...getDefaultColumnProps("afiliacion", "Afiliación", {
-        searchState,
-        setSearchState,
-        width: 180,
-      }),
     },
     {
       ...getDefaultColumnProps("paciente", "Paciente", {
@@ -92,60 +86,69 @@ const ReportTable = () => {
       },
     },
     {
+      ...getDefaultColumnProps("edad", "Edad", {
+        searchState,
+        setSearchState,
+        width: 180,
+      }),
+      ellipsis: {
+        showTitle: false,
+      },
+    },
+    {
+      ...getDefaultColumnProps("sexo", "Sexo", {
+        searchState,
+        setSearchState,
+        width: 180,
+      }),
+      ellipsis: {
+        showTitle: false,
+      },
+    },
+    {
+      ...getDefaultColumnProps("sucursal", "Sucursal origen", {
+        searchState,
+        setSearchState,
+        width: 120,
+      }),
+      align: "right",
+      render: (value) => value,
+    },
+    {
+      ...getDefaultColumnProps("medico", "Nombre del  médico", {
+        searchState,
+        setSearchState,
+        width: 120,
+      }),
+      align: "right",
+      render: (value) => value,
+    },
+    {
+      ...getDefaultColumnProps("tipo", "Tipo de Solicitud", {
+        searchState,
+        setSearchState,
+        width: 120,
+      }),
+      align: "right",
+      render: (value) => value,
+    },
+    {
       ...getDefaultColumnProps("compañia", "Compañia", {
         searchState,
         setSearchState,
-        width: 180,
+        width: 120,
       }),
-      ellipsis: {
-        showTitle: false,
-      },
+      align: "right",
+      render: (value) => value,
     },
     {
-      ...getDefaultColumnProps("procedencia", "Procedencia", {
-        searchState,
-        setSearchState,
-        width: 180,
-      }),
-      ellipsis: {
-        showTitle: false,
-      },
-    },
-    {
-      ...getDefaultColumnProps("importe", "Importe", {
+      ...getDefaultColumnProps("fecha", "Fecha de entrega", {
         searchState,
         setSearchState,
         width: 120,
       }),
       align: "right",
-      render: (value) => moneyFormatter.format(value),
-    },
-    {
-      ...getDefaultColumnProps("descuento", "Descuento", {
-        searchState,
-        setSearchState,
-        width: 120,
-      }),
-      align: "right",
-      render: (value) => moneyFormatter.format(value),
-    },
-    {
-      ...getDefaultColumnProps("total", "Total", {
-        searchState,
-        setSearchState,
-        width: 120,
-      }),
-      align: "right",
-      render: (value) => moneyFormatter.format(value),
-    },
-    {
-      ...getDefaultColumnProps("saldo", "Saldo", {
-        searchState,
-        setSearchState,
-        width: 120,
-      }),
-      align: "right",
-      render: (value) => moneyFormatter.format(value),
+      render: (value) => value,
     },
     {
       key: "estudios",
@@ -160,44 +163,67 @@ const ReportTable = () => {
               key={x.clave + x.estatus}
               style={{ display: "flex", alignItems: "center" }}
             >
-              <ContainerBadge color={x.color} text={x.estatus[0]} />
+              <ContainerBadge color={x.color} text={x.estatus} />
             </Col>
           ))}
         </Row>
       ),
     },
-    {
-      key: "esWeeClinic",
-      dataIndex: "esWeeClinic",
-      width: 40,
-      fixed: "right",
-      render: (value) => (value ? <Image src={logoWee} /> : ""),
-    },
   ];
+  const nestedcolumns: IColumns<studireportinfo> = [
 
+    {
+      ...getDefaultColumnProps("nombre", "Estudio", {
+        searchState,
+        setSearchState,
+        width: 240,
+      }),
+      ellipsis: {
+        showTitle: false,
+      },
+    },
+    {
+      ...getDefaultColumnProps("estatus", "Estatus", {
+        searchState,
+        setSearchState,
+        width: 180,
+      }),
+      ellipsis: {
+        showTitle: false,
+      },
+    },
+    {
+      ...getDefaultColumnProps("fecha", "Fecha de entrega", {
+        searchState,
+        setSearchState,
+        width: 180,
+      }),
+      ellipsis: {
+        showTitle: false,
+      },
+    },
+
+  ];
   return (
-    <Table<IRequestInfo>
+    <Table<reportsoliInfo>
       size="small"
       loading={loadingRequests}
       rowKey={(record) => record.solicitudId}
       columns={columns}
-      dataSource={[...requests]}
+      dataSource={[...[]]}
       pagination={defaultPaginationProperties}
       sticky
       scroll={{ x: "fit-content" }}
       expandable={{
-        expandedRowRender: (record) => (
-          <Row align="middle" gutter={[25, 25]}>
-            {record.estudios.map((x) => (
-              <Col
-                key={x.clave + x.estatus}
-                style={{ display: "flex", alignItems: "center" }}
-              >
-                {x.nombre}{" "}
-                <ContainerBadge color={x.color} text={x.estatus[0]} />
-              </Col>
-            ))}
-          </Row>
+        expandedRowRender: (record,index) => (
+          <Table
+          rowKey={(records)=> records.idstudio +  records.estatus }
+          columns={nestedcolumns}
+          dataSource={record.estudios}
+          pagination={false}
+          className="header-expandable-table"
+          showHeader={false}
+        />
         ),
         rowExpandable: (record) => record.estudios.length > 0,
       }}

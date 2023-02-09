@@ -582,8 +582,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
     var paquetesSindescuento: IPriceListEstudioList[] = [];
     values.paquete.forEach((element) => {
       if (
-        (element.descuento == 0 || element.descuento == undefined) &&
-        element.paqute
+        (element.descuento == 0 || element.descuento == undefined) 
       ) {
         paquetesSindescuento.push(element);
       }
@@ -1076,7 +1075,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
                     value={areaId || undefined}
                     placeholder={"Área"}
                     formProps={{
-                      name: "area",
+                     
                       label: "Área",
                     }}
                   />

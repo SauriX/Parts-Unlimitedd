@@ -97,7 +97,6 @@ const ReportFilter = () => {
           <Col span={8}>
             <DateRangeInput
               formProps={{ name: "fechas", label: "Fechas" }}
-              disableAfterDates
             />
           </Col>
           <Col span={8}>
