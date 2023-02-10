@@ -385,11 +385,16 @@ const {profile}  = profileStore;
     form.setFieldValue("sucursalId", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
   useEffect(() => {
-    setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
-    );
-    form.setFieldValue("sucursal", []);
+    if(selectedCity!=undefined && selectedCity !=null){
+      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
+    var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
+      setBranchOptions(
+        options
+      );
+    }
+    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
+
   const onExpand = (isExpanded: boolean, record: Irelacelist) => {
     let expandRows: string[] = expandedRowKeys;
     if (isExpanded) {
@@ -645,11 +650,13 @@ const {profile}  = profileStore;
                         <Row gutter={8}>
                           <Col span={12}>
                             <SelectInput
+                            form={form}
                               formProps={{
                                 name: "ciudad",
                                 label: "Ciudad",
                                 noStyle: true,
                               }}
+                              multiple
                               options={cityOptions}
                             />
                           </Col>

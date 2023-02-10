@@ -126,24 +126,25 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     const readCompany = async (id: string) => {
       setLoading(true);
       const company = await getById(id);
-      console.log(company);
+
       if (company) {
-        form.setFieldsValue(company);
-        company.regimenFiscal = company.regimenFiscal.slice(0, 3);
         setValues(company);
         setContacts(company.contacts);
         setFilteredContacts(company.contacts);
-        getLocation(company.codigoPostal?.toString());
+        company.regimenFiscal = company.regimenFiscal?.slice(0, 3);
+        if(company.codigoPostal) {
+          getLocation(company.codigoPostal?.toString());
+        }
+        form.setFieldsValue(company);
       }
 
       setLoading(false);
-      console.log(company);
     };
 
     if (id) {
       readCompany(id);
     }
-  }, [form, getById, getLocation, id]);
+  }, [getById, getLocation, id]);
 
   useEffect(() => {
     getpaymentOptions();
@@ -162,7 +163,6 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
     getprovenanceOptions,
     getPromotionOptions,
   ]);
-  console.log(values.contacts);
 
   useEffect(() => {
     const readCompany = async () => {
@@ -176,6 +176,8 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
 
   const onFinish = async (newValues: ICompanyForm) => {
     const company = { ...values, ...newValues };
+    console.log(values);
+    console.log(newValues);
     company.contacts = contacts;
     const colonia = colonies.find((x) => x.value === company.coloniaId);
     company.colonia = "" + colonia?.label;
@@ -209,25 +211,18 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
       )}&search=${searchParams.get("search")}`
     );
   };
-  console.log("Aqui esta el console");
-  console.log(id);
 
   useEffect(() => {
     const newpass = async () => {
       let pass = await generatePass();
       form.setFieldsValue({ contrasena: pass });
     };
-    console.log(values);
     if (!id) {
-      console.log(id);
-      console.log(id);
       newpass();
     }
   }, [values]);
 
   const onValuesChange = async (changeValues: any, values: ICompanyForm) => {
-    console.log(changeValues, values);
-
     const field = Object.keys(changeValues)[0];
 
     if (field === "codigoPostal") {
@@ -263,8 +258,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
       setPrinting(false);
     },
   });
-  console.log(values);
-  console.log("Table");
+
   const { width: windowWidth } = useWindowDimensions();
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
@@ -403,7 +397,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
           </Col>
         )}
       </Row>
-      <Row>
+      {/* <Row>
         <Col md={10} sm={24} style={{ marginRight: 20 }}>
           <Form<ICompanyForm>
             {...formItemLayout}
@@ -421,7 +415,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
             }}
           ></Form>
         </Col>
-      </Row>
+      </Row> */}
 
       <div style={{ display: printing ? "none" : "" }}>
         <div ref={componentRef}>
