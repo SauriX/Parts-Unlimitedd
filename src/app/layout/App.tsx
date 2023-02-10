@@ -1,4 +1,10 @@
-import { Route, Routes, useLocation, useSearchParams } from "react-router-dom";
+import {
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import "../../App.less";
 import ReagentDetail from "../../components/reagent/detail/ReagentDetail";
 import MedicsDetail from "../../components/medics/detail/MedicsDetail";
@@ -86,6 +92,7 @@ import Series from "../../views/Series";
 import SeriesDetail from "../../components/series/detail/SeriesDetail";
 import InvoiceCatalog from "../../views/InvoiceCatalog";
 import ReportStudy from "../../views/ReportStudy";
+import { useKeyPress } from "../hooks/useKeyPress";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -93,6 +100,7 @@ function App() {
   const { getGeneral } = configurationStore;
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [lastLocation, setLastLocation] = useState<string>();
@@ -132,6 +140,22 @@ function App() {
     setLastLocation(location.pathname);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
+
+  useKeyPress("E", () => {
+    navigate(`/${views.proceeding}`);
+  });
+
+  useKeyPress("X", () => {
+    navigate(`/${views.proceeding}/new`);
+  });
+
+  useKeyPress("S", () => {
+    navigate(`/${views.request}`);
+  });
+
+  useKeyPress("U", () => {
+    navigate(`/${views.quotation}`);
+  });
 
   if (loading)
     return (
