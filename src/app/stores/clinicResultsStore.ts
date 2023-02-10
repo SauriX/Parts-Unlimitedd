@@ -69,6 +69,23 @@ export default class ClinicResultsStores {
     this.studiesSelectedToPrint.push(estudio);
   };
 
+  getDeliveryHistory = async (solicitudId: string) => {
+    try {
+      const historial = await ClinicResults.getDeliveryHistory(solicitudId);
+      return historial;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  createNoteDeliveryHistory = async (nota: any) => {
+    try {
+      const historial = await ClinicResults.createNoteDeliveryHistory(nota);
+      return historial;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
   clearSelectedStudies = () => {
     this.studiesSelectedToPrint = [];
   };
