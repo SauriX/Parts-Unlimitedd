@@ -79,9 +79,9 @@ export default class RequestStore {
   loadingRequests: boolean = false;
   loadingTabContentCount: number = 0;
   lastViewedFrom?: { from: "requests" | "results"; code: string };
-  tags: any[] = [];
+  tags: IRequestTag[] = [];
 
-  setTags = (tags: any[]) => {
+  setTags = (tags: IRequestTag[]) => {
     this.tags = tags;
   };
 
@@ -328,10 +328,12 @@ export default class RequestStore {
             repeated.map((x) => x.clave).join(", "),
           async () => {
             this.studies.unshift(study);
+            this.updateTagsStudy(study);
           }
         );
       } else {
         this.studies.unshift(study);
+        this.updateTagsStudy(study);
       }
 
       return true;
@@ -339,6 +341,63 @@ export default class RequestStore {
       alerts.warning(getErrors(error));
       return false;
     }
+  };
+
+  updateTagsStudy = (study: IRequestStudy) => {
+    const tags = this.allStudies
+      .flatMap((x) => x.etiquetas)
+      .map((y) => {
+        const { estudioId, orden, nombreEstudio, cantidad, id, ...tag } = y;
+        return tag;
+      })
+      .filter((v, i, a) => a.indexOf(v) === i);
+    // const tags = [...this.tags];
+
+    // const studyTags = this.allStudies
+    //   .flatMap((x) => x.etiquetas)
+    //   .sort((a, b) => {
+    //     return (
+    //       a.orden - b.orden && a.claveEtiqueta.localeCompare(b.claveEtiqueta)
+    //     );
+    //   });
+    const studyTags = study.etiquetas.sort(
+      (a, b) =>
+        a.orden - b.orden && a.claveEtiqueta.localeCompare(b.claveEtiqueta)
+    );
+    console.log(studyTags);
+
+    let requestTags = [...this.tags];
+    while (studyTags.length > 0) {
+      const studyTag = studyTags.shift();
+      const tag = tags.find((x) => x.etiquetaId === studyTag?.etiquetaId);
+
+      if (!studyTag || !tag) continue;
+
+      const index = requestTags
+        .reverse()
+        .findIndex((x) => x.claveEtiqueta === studyTag.claveEtiqueta);
+      if (
+        index === -1 ||
+        requestTags[index].estudios.reduce((a, b) => a + b.cantidad, 0) +
+          studyTag.cantidad >
+          1
+      ) {
+        requestTags.push({
+          identificador: uuidv4(),
+          ...tag,
+          cantidad: 1,
+          estudios: [studyTag],
+        });
+      } else {
+        requestTags[index].estudios.push(studyTag);
+      }
+    }
+
+    // console.table(tags);
+    console.table(studyTags);
+    console.log(requestTags);
+
+    this.setTags(requestTags);
   };
 
   getPricePack = async (packId: number, filter: IPriceListInfoFilter) => {

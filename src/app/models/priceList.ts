@@ -79,8 +79,8 @@ export interface IPriceListEstudioList {
   descuenNum?: number;
   precioFinal?: number;
   pack?: IPackEstudioList[];
-  form?:React.ReactNode
-  check?:React.ReactNode
+  form?: React.ReactNode;
+  check?: React.ReactNode;
 }
 
 export interface IPriceListInfoFilter {

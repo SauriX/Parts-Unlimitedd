@@ -337,12 +337,15 @@ export interface IRequestPack {
 }
 
 export interface IRequestTag {
-  tableId?: string;
-  estudioId?: string;
-  taponClave: string;
-  taponNombre: string;
-  estudios: string;
+  id?: number;
+  identificador?: string;
+  etiquetaId: number;
+  claveEtiqueta: string;
+  claveInicial: string;
+  nombreEtiqueta: string;
   cantidad: number;
+  color: string;
+  estudios: IStudyTag[];
 }
 
 export interface IRequestTotal extends IRequestBase {

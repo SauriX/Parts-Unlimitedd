@@ -1,4 +1,4 @@
-import { Button, Col, Form, InputNumber, Row, Spin, Table } from "antd";
+import { Button, Col, Form, InputNumber, Row, Select, Spin, Table } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { Fragment, useEffect, useState } from "react";
@@ -13,108 +13,97 @@ import { useStore } from "../../../../../app/stores/store";
 import alerts from "../../../../../app/util/alerts";
 import { formItemLayout } from "../../../../../app/util/utils";
 import { v4 as uuid } from "uuid";
+import { IStudyTag } from "../../../../../app/models/study";
 
 const RequestPrintTag = () => {
   const { requestStore, optionStore } = useStore();
-  const { studyOptions, getStudyOptions } = optionStore;
   const { request, allStudies, printTags, tags, setTags } = requestStore;
 
   const [labels, setLabels] = useState<IRequestTag[]>([]);
   const [options, setOptions] = useState<IOptions[]>([]);
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+  const [selectedKeys, setSelectedKeys] = useState<(string | number)[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [studyTags, setStudyTags] = useState<IStudyTag[]>([]);
 
   useEffect(() => {
-    getStudyOptions();
-  }, [getStudyOptions]);
-
-  useEffect(() => {
-    const tags = allStudies
-      .flatMap((x) => x.etiquetas)
-      .map((y) => {
-        const { estudioId, orden, color, ...tag } = y;
-        return tag;
-      });
-
-    const studyTags = allStudies
-      .flatMap((x) =>
-        x.etiquetas.map((y) => ({ ...y, estudioId: x.estudioId }))
-      )
-      .sort((a, b) => {
-        return a.orden - b.orden && a.clave.localeCompare(b.clave);
-      });
-
-    let requestTags: any[] = [];
-    while (studyTags.length > 0) {
-      const tag = studyTags.shift();
-
-      if (!tag) continue;
-
-      const index = requestTags
-        .reverse()
-        .findIndex((x) => x.clave === tag.clave);
-      if (
-        index === -1 ||
-        requestTags[index].estudios.reduce(
-          (a: any, b: any) => a + b.cantidad,
-          0
-        ) +
-          tag.cantidad >
-          1
-      ) {
-        requestTags.push({
-          ...tag,
-          cantidad: 1,
-          estudios: [tag],
-        });
-      } else {
-        requestTags[index].cantidad += 1;
-        requestTags[index].estudios.push(tag);
-      }
-    }
-
-    console.table(tags);
-    console.table(studyTags);
-    console.log(requestTags);
-
-    // const grouped = allStudies.reduce((group: IRequestTag[], study) => {
-    //   const index = group.findIndex((x) => x.taponClave === study.taponClave);
-    //   if (index === -1) {
-    //     group.push({
-    //       tableId: uuid(),
-    //       estudioId: "study-" + study.estudioId,
-    //       taponClave: study.taponClave ?? "",
-    //       taponNombre: study.taponNombre ?? "",
-    //       cantidad: 1,
-    //       estudios: study.clave,
-    //     });
-    //   } else {
-    //     group[index].estudios += `, ${study.clave}`;
-    //   }
-    //   return group;
-    // }, []);
-    setTags(requestTags);
+    setStudyTags(allStudies.flatMap((x) => x.etiquetas));
   }, [allStudies]);
 
-  useEffect(() => {
-    if (request) {
-      const getStudiesFromRequest = (request: IRequestStudy[]) => {
-        const studies = request.map((x) => "study-" + x.estudioId);
+  // useEffect(() => {
+  //   const tags = allStudies
+  //     .flatMap((x) => x.etiquetas)
+  //     .map((y) => {
+  //       const { estudioId, orden, nombreEstudio, cantidad, id, ...tag } = y;
+  //       return tag;
+  //     });
 
-        let filterStudies = studyOptions.filter((x) =>
-          studies.includes(x.value as string)
-        );
+  //   const studyTags = allStudies
+  //     .flatMap((x) => x.etiquetas)
+  //     .sort((a, b) => {
+  //       console.log("A: ", a);
+  //       console.log("B: ", b);
+  //       return (
+  //         a.orden - b.orden && a.claveEtiqueta.localeCompare(b.claveEtiqueta)
+  //       );
+  //     });
+  //   console.log(studyTags);
+  //   setStudyTags([...studyTags]);
 
-        return filterStudies;
-      };
+  //   let requestTags: IRequestTag[] = [];
+  //   while (studyTags.length > 0) {
+  //     const studyTag = studyTags.shift();
+  //     const tag = tags.find((x) => x.etiquetaId === studyTag?.etiquetaId);
 
-      const studies = getStudiesFromRequest(allStudies);
-      setOptions(studies);
-    }
-  }, [request, studyOptions]);
+  //     if (!studyTag || !tag) continue;
+
+  //     const index = requestTags
+  //       .reverse()
+  //       .findIndex((x) => x.claveEtiqueta === studyTag.claveEtiqueta);
+  //     if (
+  //       index === -1 ||
+  //       requestTags[index].estudios.reduce((a, b) => a + b.cantidad, 0) +
+  //         studyTag.cantidad >
+  //         1
+  //     ) {
+  //       requestTags.push({
+  //         identificador: uuid(),
+  //         ...tag,
+  //         cantidad: 1,
+  //         estudios: [studyTag],
+  //       });
+  //     } else {
+  //       requestTags[index].estudios.push(studyTag);
+  //     }
+  //   }
+
+  //   // console.table(tags);
+  //   console.table(studyTags);
+  //   console.log(requestTags);
+
+  //   setTags(requestTags);
+  // }, [allStudies]);
+
+  // useEffect(() => {
+  //   if (request) {
+  //     const getStudiesFromRequest = (request: IRequestStudy[]) => {
+  //       const studies = request.map((x) => "study-" + x.estudioId);
+
+  //       let filterStudies = studyOptions.filter((x) =>
+  //         studies.includes(x.value as string)
+  //       );
+
+  //       return filterStudies;
+  //     };
+
+  //     const studies = getStudiesFromRequest(allStudies);
+  //     setOptions(studies);
+  //   }
+  // }, [request, studyOptions]);
 
   const changeQty = (qty: number, record: IRequestTag) => {
-    let index = tags.findIndex((x) => x.tableId === record.tableId!);
+    let index = tags.findIndex(
+      (x) => x.id === record.id && x.identificador === record.identificador
+    );
     if (index > -1) {
       const lbls = [...tags];
       lbls[index] = { ...lbls[index], cantidad: qty };
@@ -123,100 +112,98 @@ const RequestPrintTag = () => {
   };
 
   const print = async () => {
-    if (request) {
-      setLoading(true);
-      const toPrint = tags.filter((x) => selectedKeys.includes(x.tableId!));
-
-      if (toPrint.length === 0) {
-        alerts.warning("No se ha seleccionado ningún estudio");
-        setLoading(false);
-        return;
-      }
-
-      const groupBySumCantidad = toJS(toPrint).reduce(
-        (group: IRequestTag[], study) => {
-          const index = group.findIndex((x) => x.estudios === study.estudios);
-          if (index === -1) {
-            group.push({
-              tableId: uuid(),
-              taponClave: study.taponClave ?? "",
-              taponNombre: study.taponNombre ?? "",
-              estudios: study.estudios,
-              cantidad: study.cantidad,
-            });
-          } else {
-            group[index].cantidad += study.cantidad;
-          }
-          return group;
-        },
-        []
-      );
-
-      const groupToPrintBySumCantidad = groupBySumCantidad.map((x) => {
-        const index = toPrint.findIndex(
-          (y) => y.cantidad === 1 && y.estudios === x.estudios
-        );
-        if (index > -1) {
-          toPrint[index].cantidad = x.cantidad;
-        }
-        return x;
-      });
-
-      console.log("toPrint", toPrint);
-      console.log("groupBySumEqualToOne", groupToPrintBySumCantidad);
-      console.log("groupBySumEqualToOne", groupBySumCantidad);
-
-      // await printTags(request.expedienteId, request.solicitudId!, groupBySumEqualToOne);
-      // await printTags(request.expedienteId, request.solicitudId!, toPrint);
-      setLoading(false);
-    }
+    // if (request) {
+    //   setLoading(true);
+    //   const toPrint = tags.filter((x) => selectedKeys.includes(x.id));
+    //   if (toPrint.length === 0) {
+    //     alerts.warning("No se ha seleccionado ningún estudio");
+    //     setLoading(false);
+    //     return;
+    //   }
+    //   const groupBySumCantidad = toJS(toPrint).reduce(
+    //     (group: IRequestTag[], study) => {
+    //       const index = group.findIndex((x) => x.estudios === study.estudios);
+    //       if (index === -1) {
+    //         group.push({
+    //           id: uuid(),
+    //           taponClave: study.taponClave ?? "",
+    //           taponNombre: study.taponNombre ?? "",
+    //           estudios: study.estudios,
+    //           cantidad: study.cantidad,
+    //         });
+    //       } else {
+    //         group[index].cantidad += study.cantidad;
+    //       }
+    //       return group;
+    //     },
+    //     []
+    //   );
+    //   const groupToPrintBySumCantidad = groupBySumCantidad.map((x) => {
+    //     const index = toPrint.findIndex(
+    //       (y) => y.cantidad === 1 && y.estudios === x.estudios
+    //     );
+    //     if (index > -1) {
+    //       toPrint[index].cantidad = x.cantidad;
+    //     }
+    //     return x;
+    //   });
+    //   console.log("toPrint", toPrint);
+    //   console.log("groupBySumEqualToOne", groupToPrintBySumCantidad);
+    //   console.log("groupBySumEqualToOne", groupBySumCantidad);
+    //   // await printTags(request.expedienteId, request.solicitudId!, groupBySumEqualToOne);
+    //   // await printTags(request.expedienteId, request.solicitudId!, toPrint);
+    //   setLoading(false);
+    // }
   };
 
   const handleAdd = () => {
     const newStudy: IRequestTag = {
-      tableId: uuid(),
-      taponClave: tags[0].taponClave ?? "",
-      taponNombre: tags[0].taponNombre ?? "",
-      estudios: "",
+      identificador: uuid(),
+      claveEtiqueta: tags[0].claveEtiqueta ?? "",
+      nombreEtiqueta: tags[0].nombreEtiqueta ?? "",
+      estudios: [],
       cantidad: 0,
+      etiquetaId: tags[0].etiquetaId,
+      claveInicial: tags[0].claveInicial,
+      color: tags[0].color,
     };
     setTags([...tags, newStudy]);
   };
 
-  const onFinish = (study: IRequestTag) => {
-    setLoading(true);
-
-    if (!study.estudios) {
+  const onChangeStudies = (values: number[], tag: IRequestTag) => {
+    if (values.length === 0) {
       alerts.warning("No se ha seleccionado ningún estudio");
-      setLoading(false);
       return;
     }
 
-    const getLabel = studyOptions
-      .find((x) => x.value === study.estudios)
-      ?.label?.toString();
-    let studyLabel = getLabel?.split(" - ") ?? "";
+    const newTags = [...tags];
+    const index = newTags.findIndex(
+      (x) => x.id === tag.id && x.identificador === tag.identificador
+    );
 
-    study.estudios = studyLabel[0];
+    if (index === -1) return;
 
-    const index = tags.findIndex((x) => x.tableId === study.tableId!);
-    if (index > -1) {
-      const lbls = [...tags];
-      lbls[index] = { ...lbls[index], estudios: study.estudios };
-      setTags(lbls);
-    }
-    setLoading(false);
+    const selectedStudyTags = studyTags.filter((x) => values.includes(x.id));
+    newTags[index].estudios = selectedStudyTags;
+
+    setTags(newTags);
   };
 
-  const columns: IColumns<any> = [
+  useEffect(() => {
+    console.log(studyTags);
+  }, [studyTags]);
+
+  const columns: IColumns<IRequestTag> = [
     {
-      ...getDefaultColumnProps("clave", "Clave", {
+      ...getDefaultColumnProps("claveEtiqueta", "Clave", {
         searchable: false,
         width: "10%",
       }),
+      defaultSortOrder: "ascend",
+      sorter: (a, b) => a.claveEtiqueta.localeCompare(b.claveEtiqueta),
     },
     {
-      ...getDefaultColumnProps("nombre", "Tapón", {
+      ...getDefaultColumnProps("nombreEtiqueta", "Tapón", {
         searchable: false,
         width: "30%",
       }),
@@ -226,13 +213,19 @@ const RequestPrintTag = () => {
         searchable: false,
         width: "50%",
       }),
-      render(text: string, record: any) {
+      render(value: IStudyTag[], record) {
         return (
           <RequestTag
-            defaultValue={record}
-            onFinish={(study) => onFinish(study)}
+            tags={value}
+            onChange={(values) => onChangeStudies(values, record)}
             loading={loading}
-            studyOptions={options}
+            studyOptions={studyTags
+              .filter((x) => x.etiquetaId === record.etiquetaId)
+              .map((x) => ({
+                key: x.id,
+                value: x.id,
+                label: x.nombreEstudio + ` (${x.cantidad})`,
+              }))}
           />
         );
       },
@@ -246,11 +239,11 @@ const RequestPrintTag = () => {
         <InputNumber
           value={record.cantidad}
           bordered={false}
-          min={0}
-          step="0.1"
+          min={1}
+          step="1"
           style={{ width: "100%" }}
           onChange={(qty) => {
-            changeQty(qty ?? 0.5, record);
+            changeQty(qty ?? 1, record);
           }}
         />
       ),
@@ -262,14 +255,12 @@ const RequestPrintTag = () => {
     <Spin spinning={loading}>
       <Row gutter={[8, 12]}>
         <Col span={24} style={{ textAlign: "right" }}>
-          <Button type="primary" onClick={handleAdd}>
-            Agregar etiqueta
-          </Button>
+          <Button type="primary">Agregar etiqueta</Button>
         </Col>
         <Col span={24}>
-          <Table<any>
+          <Table<IRequestTag>
             size="small"
-            rowKey={(x) => x.tableId!}
+            rowKey={(x) => x.id ?? x.identificador!}
             columns={columns}
             dataSource={tags}
             pagination={false}
@@ -277,7 +268,7 @@ const RequestPrintTag = () => {
               fixed: "right",
               selectedRowKeys: selectedKeys,
               onSelect: (r, s, selected) => {
-                setSelectedKeys(selected.map((x) => x.tableId!));
+                setSelectedKeys(selected.map((x) => x.id ?? x.identificador!));
               },
             }}
             sticky
@@ -301,51 +292,26 @@ const RequestPrintTag = () => {
 export default observer(RequestPrintTag);
 
 type RequestTagProps = {
-  defaultValue: any;
-  onFinish: (value: IRequestTag) => void;
+  tags: IStudyTag[];
+  onChange: (value: number[]) => void;
   studyOptions: IOptions[];
   loading: boolean;
 };
 
 const RequestTag = ({
-  defaultValue,
-  onFinish,
+  tags,
+  onChange,
   loading,
   studyOptions,
 }: RequestTagProps) => {
-  const [form] = Form.useForm<any>();
-
   return (
-    <Fragment>
-      <p>{defaultValue.estudios.map((x: any) => x.nombre)}</p>
-    </Fragment>
-    // <Spin spinning={loading}>
-    //   <Form<any>
-    //     {...formItemLayout}
-    //     form={form}
-    //     name="studies"
-    //     initialValues={{ estudios: defaultValue.estudioId }}
-    //     scrollToFirstError
-    //   >
-    //     <Row gutter={8}>
-    //       <Col span={12}>
-    //         <SelectInput
-    //           form={form}
-    //           formProps={{
-    //             name: "estudios",
-    //             label: "",
-    //             noStyle: true,
-    //           }}
-    //           options={studyOptions}
-    //           onChange={(value) => {
-    //             onFinish({ ...defaultValue, estudios: value });
-    //           }}
-    //           multiple
-    //           defaultValue={defaultValue.estudioId}
-    //         />
-    //       </Col>
-    //     </Row>
-    //   </Form>
-    // </Spin>
+    <Select
+      bordered={false}
+      options={studyOptions}
+      onChange={onChange}
+      style={{ width: "100%" }}
+      mode="multiple"
+      value={tags.map((x) => x.id)}
+    />
   );
 };
