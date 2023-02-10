@@ -268,14 +268,14 @@ const RequestStudy = () => {
 
   return (
     <Row gutter={[8, 8]}>
-      <Col span={18}>
+      <Col span={24} style={{ textAlign: "end" }}>
         <Select
           showSearch
           value={[]}
           mode="multiple"
           placeholder="Buscar Estudios"
           optionFilterProp="children"
-          style={{ width: "100%" }}
+          style={{ width: "80%", textAlign: "left" }}
           onChange={(_, option) => {
             addStudy((option as IOptions[])[0]);
           }}
@@ -284,11 +284,6 @@ const RequestStudy = () => {
           }
           options={options}
         />
-      </Col>
-      <Col span={6} style={{ textAlign: "end" }}>
-        <Button danger onClick={cancel}>
-          Cancelar estudios
-        </Button>
       </Col>
       <Col span={24}>
         <Table<IRequestStudy | IRequestPack>
@@ -329,6 +324,11 @@ const RequestStudy = () => {
           sticky
           scroll={{ x: "fit-content" }}
         />
+      </Col>
+      <Col span={24} style={{ textAlign: "end" }}>
+        <Button danger onClick={cancel}>
+          Cancelar estudios
+        </Button>
       </Col>
     </Row>
   );
