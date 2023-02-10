@@ -63,7 +63,6 @@ const InvoiceCompanyData = ({
 
   const onFinish = () => {};
   useEffect(() => {
-    console.log("COMPANY", company);
     if (tipo === "company") {
       form.setFieldsValue(company);
     }
@@ -119,7 +118,6 @@ const InvoiceCompanyData = ({
                       name: "numeroDeCuenta",
                       label: "Número de cuenta",
                     }}
-                    // style={{ marginTop: 10 }}
                   />
                 )}
                 {tipo === "request" && (
@@ -128,7 +126,6 @@ const InvoiceCompanyData = ({
                       name: "numeroDeCuenta",
                       label: "Número de cuenta",
                     }}
-                    // style={{ paddingTop: 10 }}
                     options={selectedRequests
                       .flatMap((x) => x.numerosCuentas)
                       .filter(
@@ -146,7 +143,6 @@ const InvoiceCompanyData = ({
               <Col span={10}>
                 <SelectInput
                   formProps={{ name: "serieCFDI", label: "SerieCFDI" }}
-                  // style={{ paddingTop: 10 }}
                   options={invoiceSeriesOptions}
                 />
               </Col>
@@ -157,7 +153,6 @@ const InvoiceCompanyData = ({
                       name: "diasCredito",
                       label: "Días de crédito",
                     }}
-                    // style={{ marginTop: 10 }}
                   />
                 )}
               </Col>
@@ -168,7 +163,6 @@ const InvoiceCompanyData = ({
                       name: "metodoDePagoId",
                       label: "Método de pago",
                     }}
-                    // style={{ marginTop: 10 }}
                     options={paymentMethodOptions}
                   />
                 )}
@@ -185,7 +179,6 @@ const InvoiceCompanyData = ({
               <Col span={10}>
                 <SelectInput
                   formProps={{ name: "cfdiId", label: "Uso de CFDI" }}
-                  // style={{ marginTop: 10 }}
                   options={cfdiOptions}
                   required={tipo !== "company"}
                 />
@@ -197,7 +190,6 @@ const InvoiceCompanyData = ({
                       name: "limiteDeCredito",
                       label: "Límite de crédito",
                     }}
-                    // style={{ marginTop: 10 }}
                   />
                 )}
               </Col>
@@ -240,7 +232,6 @@ const InvoiceCompanyData = ({
                   <Button
                     type="primary"
                     onClick={() => {
-                      console.log("FACTURAPI", facturapiId);
                       if (!!facturapiId) {
                         downloadPdf(facturapiId);
                       }
@@ -271,7 +262,6 @@ const InvoiceCompanyData = ({
                   <Button
                     type="primary"
                     onClick={() => {
-                      console.log("Compañia", company);
                       openModal({
                         title: "Configuración de envío",
                         body: (

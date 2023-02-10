@@ -75,7 +75,6 @@ export default class ClinicResultsStores {
       return historial;
     } catch (error) {
       alerts.warning(getErrors(error));
-      // history.push("/forbidden");
     }
   };
   createNoteDeliveryHistory = async (nota: any) => {
@@ -84,7 +83,6 @@ export default class ClinicResultsStores {
       return historial;
     } catch (error) {
       alerts.warning(getErrors(error));
-      // history.push("/forbidden");
     }
   };
 

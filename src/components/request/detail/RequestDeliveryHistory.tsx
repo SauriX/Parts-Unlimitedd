@@ -31,12 +31,11 @@ const RequestDeliveryHistory = ({
     const consultarHistorial = async () => {
       setLoading(true);
       const h = await getDeliveryHistory(solicitudId);
-      console.log("HISTORIAL", toJS(h));
+
       setHistorial(h);
       setLoading(false);
     };
     consultarHistorial();
-    console.log("consulta historial");
   }, [solicitudId]);
 
   const [form] = useForm();
@@ -93,8 +92,6 @@ const RequestDeliveryHistory = ({
             style={{
               height: 400,
               overflow: "auto",
-              //   padding: "0 16px",
-              //   border: "1px solid rgba(140, 140, 140, 0.35)",
             }}
           >
             <List

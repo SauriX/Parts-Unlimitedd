@@ -55,7 +55,6 @@ const InvoiceCompanyCreate = () => {
     getPaymentOptions();
     if (tipo === "company") {
       if (id !== "new") {
-        console.log("ID", id);
         let selectedRequestInvoice = invoices.solicitudes
           .find((invoice: any) => invoice.solicitudId === id)
           .facturas.find(
@@ -65,14 +64,8 @@ const InvoiceCompanyCreate = () => {
           selectedRequestInvoice.includes(invoice.solicitudId)
         );
 
-        console.log("filterrequest", toJS(filterRequests));
         setSelectedRequests([...filterRequests]);
       }
-    }
-    if (tipo === "request") {
-      selectedRows.forEach((element) => {
-        console.log(toJS(element));
-      });
     }
   }, [id]);
 
@@ -81,14 +74,12 @@ const InvoiceCompanyCreate = () => {
       const estuiosTotal = selectedRows.flatMap(
         (solicitud) => solicitud.estudios
       );
-      console.log("estudios", toJS(estuiosTotal));
       setEstudios(estuiosTotal);
     } else {
       if (!!selectRequests) {
         const estuiosTotal = selectRequests.flatMap(
           (solicitud: any) => solicitud.estudios
         );
-        console.log("estudios", toJS(estuiosTotal));
         setEstudios(estuiosTotal);
       }
     }
@@ -129,9 +120,6 @@ const InvoiceCompanyCreate = () => {
   }, [selectedRows, selectRequests]);
 
   const createInvoice = async (formDataValues: any) => {
-    console.log("FORMVALUESDATA", formDataValues);
-    console.log("taxData", toJS(taxData));
-
     if (tipo === "company") {
       const use = cfdiOptions.find((x) => x.value === company?.cfdiId);
       const method = paymentOptions.find(
@@ -164,15 +152,10 @@ const InvoiceCompanyCreate = () => {
           pais: "México",
         },
       };
-      console.log("invoice", invoiceData);
 
       const invoiceInfo = await checkIn(invoiceData);
       if (invoiceInfo) {
-        console.log("invoiceInfo", invoiceInfo);
-
-        // navigate(`/invoice/company`);
       }
-      console.log("invoice REQUEST", invoiceData);
     }
     if (tipo === "request") {
       if (!nombreSeleccionado) {
@@ -233,11 +216,7 @@ const InvoiceCompanyCreate = () => {
       };
       const invoiceInfo = await checkIn(invoiceData);
       if (invoiceInfo) {
-        console.log("invoiceInfo", invoiceInfo);
-
-        // navigate(`/invoice/request`);
       }
-      console.log("invoice REQUEST", invoiceData);
     }
   };
   const getEstatusFactura = () => {

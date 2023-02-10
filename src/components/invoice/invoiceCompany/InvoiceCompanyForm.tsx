@@ -122,8 +122,7 @@ const InvoiceComapnyForm = () => {
       }
     });
 
-    // if (!!requestsWithInvoiceCompany.length && isInvoice === "Factura") {
-    if (false) {
+    if (!!requestsWithInvoiceCompany.length && isInvoice === "Factura") {
       alerts.confirmInfo(
         "Solicitudes facturadas",
         <>
@@ -150,8 +149,7 @@ const InvoiceComapnyForm = () => {
       );
     }
 
-    // if (!requestsWithInvoiceCompany.length || isInvoice === "Recibo") {
-    if (true) {
+    if (!requestsWithInvoiceCompany.length || isInvoice === "Recibo") {
       if (formValues.isInvoice === "Factura") {
         if (tipo === "company") {
           navigate(`/invoice/company/new`);
