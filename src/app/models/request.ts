@@ -46,7 +46,7 @@ export interface IRequestFilter {
   estatus?: number[];
   urgencias?: number[];
   departamentos?: number[];
-  ciudad?: string;
+  ciudad?: string[];
   sucursales?: string[];
   compañias?: string[];
   medicos?: string[];

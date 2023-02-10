@@ -26,7 +26,7 @@ export interface ICompanyForm {
   estado: string;
   ciudad: string;
   razonSocial: string;
-  coloniaId: number;
+  coloniaId?: number;
   colonia: string | null | undefined;
   regimenFiscal: string;
   metodoDePagoId?: number;
@@ -47,7 +47,7 @@ export class CompanyFormValues implements ICompanyForm {
   emailEmpresarial = "";
   procedenciaId = undefined;
   precioListaId = null;
-  promocionesId = 0;
+  promocionesId = undefined;
   rfc = "";
   codigoPostal = "";
   estado = "";
@@ -62,7 +62,7 @@ export class CompanyFormValues implements ICompanyForm {
   bancoId = undefined;
   activo = true;
   contacts: IContactForm[] = [];
-  coloniaId = 0;
+  coloniaId = undefined;
   colonia = "";
   calle = "";
   numero = "";
