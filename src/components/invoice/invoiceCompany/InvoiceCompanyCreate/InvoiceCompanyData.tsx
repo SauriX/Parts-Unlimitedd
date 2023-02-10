@@ -63,7 +63,6 @@ const InvoiceCompanyData = ({
 
   const onFinish = () => {};
   useEffect(() => {
-    console.log("COMPANY", company);
     if (tipo === "company") {
       form.setFieldsValue(company);
     }
@@ -85,14 +84,50 @@ const InvoiceCompanyData = ({
           </Col>
         </Row>
         <Row>
-          <Col span={10}>
-            <SelectInput
-              formProps={{ name: "formaDePagoId", label: "Forma de pago" }}
-              options={
-                tipo === "company"
-                  ? paymentOptions
-                  : selectedRequests
-                      .flatMap((x) => x.formasPagos)
+          <Col span={22}>
+            <Row gutter={[0, 12]}>
+              <Col span={10}>
+                <SelectInput
+                  formProps={{ name: "formaDePagoId", label: "Forma de pago" }}
+                  options={
+                    tipo === "company"
+                      ? paymentOptions
+                      : selectedRequests
+                          .flatMap((x) => x.formasPagos)
+                          .filter(
+                            (value, index, arreglo) =>
+                              arreglo.map((arr) => arr).indexOf(value) === index
+                          )
+                          .map((x) => ({
+                            value: x,
+                            label: x,
+                          }))
+                  }
+                  required={tipo !== "company"}
+                />
+              </Col>
+              <Col span={10} style={{ textAlign: "end" }}>
+                <Text mark>{`Cantidad Total: ${moneyFormatter.format(
+                  totalEstudios
+                )} (IVA incluido)`}</Text>
+              </Col>
+              <Col span={10}>
+                {tipo === "company" && (
+                  <TextInput
+                    formProps={{
+                      name: "numeroDeCuenta",
+                      label: "Número de cuenta",
+                    }}
+                  />
+                )}
+                {tipo === "request" && (
+                  <SelectInput
+                    formProps={{
+                      name: "numeroDeCuenta",
+                      label: "Número de cuenta",
+                    }}
+                    options={selectedRequests
+                      .flatMap((x) => x.numerosCuentas)
                       .filter(
                         (value, index, arreglo) =>
                           arreglo.map((arr) => arr).indexOf(value) === index
@@ -100,167 +135,154 @@ const InvoiceCompanyData = ({
                       .map((x) => ({
                         value: x,
                         label: x,
-                      }))
-              }
-              required={tipo !== "company"}
-            />
-            {tipo === "company" && (
-              <TextInput
-                formProps={{
-                  name: "numeroDeCuenta",
-                  label: "Número de cuenta",
-                }}
-                style={{ marginTop: 10 }}
-              />
-            )}
-            {tipo === "request" && (
-              <SelectInput
-                formProps={{
-                  name: "numeroDeCuenta",
-                  label: "Número de cuenta",
-                }}
-                style={{ marginTop: 10 }}
-                options={selectedRequests
-                  .flatMap((x) => x.numerosCuentas)
-                  .filter(
-                    (value, index, arreglo) =>
-                      arreglo.map((arr) => arr).indexOf(value) === index
-                  )
-                  .map((x) => ({
-                    value: x,
-                    label: x,
-                  }))}
-                readonly
-              />
-            )}
-            <SelectInput
-              formProps={{ name: "serieCFDI", label: "SerieCFDI" }}
-              style={{ marginTop: 10 }}
-              options={invoiceSeriesOptions}
-            />
-            {tipo === "company" && (
-              <>
-                <TextInput
-                  formProps={{ name: "diasCredito", label: "Días de crédito" }}
-                  style={{ marginTop: 10 }}
-                />
+                      }))}
+                    readonly
+                  />
+                )}
+              </Col>
+              <Col span={10}>
                 <SelectInput
-                  formProps={{
-                    name: "metodoDePagoId",
-                    label: "Método de pago",
-                  }}
-                  style={{ marginTop: 10 }}
-                  options={paymentMethodOptions}
+                  formProps={{ name: "serieCFDI", label: "SerieCFDI" }}
+                  options={invoiceSeriesOptions}
                 />
-              </>
-            )}
+              </Col>
+              <Col span={10}>
+                {tipo === "company" && (
+                  <TextInput
+                    formProps={{
+                      name: "diasCredito",
+                      label: "Días de crédito",
+                    }}
+                  />
+                )}
+              </Col>
+              <Col span={10}>
+                {tipo === "company" && (
+                  <SelectInput
+                    formProps={{
+                      name: "metodoDePagoId",
+                      label: "Método de pago",
+                    }}
+                    options={paymentMethodOptions}
+                  />
+                )}
+              </Col>
+
+              {tipo === "company" && (
+                <Col span={10}>
+                  <SelectInput
+                    formProps={{ name: "bancoId", label: "Banco" }}
+                    options={bankOptions}
+                  />
+                </Col>
+              )}
+              <Col span={10}>
+                <SelectInput
+                  formProps={{ name: "cfdiId", label: "Uso de CFDI" }}
+                  options={cfdiOptions}
+                  required={tipo !== "company"}
+                />
+              </Col>
+              <Col span={10}>
+                {tipo === "company" && (
+                  <TextInput
+                    formProps={{
+                      name: "limiteDeCredito",
+                      label: "Límite de crédito",
+                    }}
+                  />
+                )}
+              </Col>
+              <Col span={10} style={{ textAlign: "end" }} offset={10}>
+                <div>
+                  <Text
+                    style={{ textAlign: "center" }}
+                  >{`IVA 16%: ${moneyFormatter.format(
+                    (totalEstudios / 100) * 16
+                  )}`}</Text>
+                </div>
+                <div>
+                  <Text
+                    style={{ textAlign: "center" }}
+                  >{`Subtotal: ${moneyFormatter.format(
+                    totalEstudios - (totalEstudios / 100) * 16
+                  )} `}</Text>
+                </div>
+              </Col>
+            </Row>
           </Col>
-          <Col span={10} style={{ paddingLeft: 10, textAlign: "end" }}>
-            <Text
-              style={{ textAlign: "center" }}
-              mark
-            >{`Cantidad Total: ${moneyFormatter.format(
-              totalEstudios
-            )} (IVA incluido)`}</Text>
-            {tipo === "company" && (
-              <SelectInput
-                formProps={{ name: "bancoId", label: "Banco" }}
-                options={bankOptions}
-              />
-            )}
-            <SelectInput
-              formProps={{ name: "cfdiId", label: "Uso de CFDI" }}
-              style={{ marginTop: 10 }}
-              options={cfdiOptions}
-              required={tipo !== "company"}
-            />
-            {tipo === "company" && (
-              <TextInput
-                formProps={{
-                  name: "limiteDeCredito",
-                  label: "Límite de crédito",
-                }}
-                style={{ marginTop: 10 }}
-              />
-            )}
-            <div>
-              <Text
-                style={{ textAlign: "center" }}
-              >{`IVA 16%: ${moneyFormatter.format(
-                (totalEstudios / 100) * 16
-              )}`}</Text>
-            </div>
-            <div>
-              <Text
-                style={{ textAlign: "center" }}
-              >{`Subtotal: ${moneyFormatter.format(
-                totalEstudios - (totalEstudios / 100) * 16
-              )} `}</Text>
-            </div>
-          </Col>
-          <Col span={4} style={{ paddingLeft: 10, paddingTop: 10 }}>
+          <Col span={2}>
             <Row style={{ justifyContent: "center" }}>
-              <Button
-                type="primary"
-                onClick={() => {
-                  createInvoice(form.getFieldsValue());
-                }}
-                disabled={invoice !== "new" && estatusFactura === "Facturado"}
-              >
-                Registrar Factura
-              </Button>
-            </Row>
-            <Row style={{ justifyContent: "center", paddingTop: 10 }}>
-              <Button
-                type="primary"
-                onClick={() => {
-                  if (!!facturapiId) {
-                    downloadPdf(facturapiId);
-                  }
-                }}
-                disabled={invoice === "new" || estatusFactura === "Cancelado"}
-              >
-                Descargar
-              </Button>
-            </Row>
-            <Row style={{ justifyContent: "center", paddingTop: 10 }}>
-              <Button
-                type="primary"
-                onClick={() => {
-                  if (!!facturapiId) {
-                    printPdf(facturapiId);
-                  }
-                }}
-                disabled={invoice === "new" || estatusFactura === "Cancelado"}
-              >
-                Imprimir
-              </Button>
-            </Row>
-            <Row style={{ justifyContent: "center", paddingTop: 10 }}>
-              <Button
-                type="primary"
-                onClick={() => {
-                  console.log("Compañia", company);
-                  openModal({
-                    title: "Configuración de envío",
-                    body: (
-                      <InvoiceCompanyDeliver
-                        companiaId={company.id}
-                        facturapiId={facturapiId}
-                      />
-                    ),
-                    width: 800,
-                  });
-                }}
-                disabled={invoice === "new" || estatusFactura === "Cancelado"}
-              >
-                Configurar envió
-              </Button>
+              {/* //BOTONES DE FACTURACION */}
+              <Col span={24}>
+                <Row style={{ justifyContent: "center" }}>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      createInvoice(form.getFieldsValue());
+                    }}
+                    disabled={
+                      invoice !== "new" && estatusFactura === "Facturado"
+                    }
+                  >
+                    Registrar Factura
+                  </Button>
+                </Row>
+                <Row style={{ justifyContent: "center", paddingTop: 10 }}>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      if (!!facturapiId) {
+                        downloadPdf(facturapiId);
+                      }
+                    }}
+                    disabled={
+                      invoice === "new" || estatusFactura === "Cancelado"
+                    }
+                  >
+                    Descargar
+                  </Button>
+                </Row>
+                <Row style={{ justifyContent: "center", paddingTop: 10 }}>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      if (!!facturapiId) {
+                        printPdf(facturapiId);
+                      }
+                    }}
+                    disabled={
+                      invoice === "new" || estatusFactura === "Cancelado"
+                    }
+                  >
+                    Imprimir
+                  </Button>
+                </Row>
+                <Row style={{ justifyContent: "center", paddingTop: 10 }}>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      openModal({
+                        title: "Configuración de envío",
+                        body: (
+                          <InvoiceCompanyDeliver
+                            companiaId={company.id}
+                            facturapiId={facturapiId}
+                          />
+                        ),
+                        width: 800,
+                      });
+                    }}
+                    disabled={
+                      invoice === "new" || estatusFactura === "Cancelado"
+                    }
+                  >
+                    Configurar envió
+                  </Button>
+                </Row>
+              </Col>
             </Row>
           </Col>
-        </Row>
-        <Row justify="end">
-          <Col span={4}></Col>
         </Row>
       </Form>
       {/* </div> */}

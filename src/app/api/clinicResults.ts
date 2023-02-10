@@ -19,8 +19,12 @@ const ClinicResults = {
     requests.get(`clinicResults/studies_params/${recordId}/${requestId}`),
   getLabResultsById: (id: string): Promise<IClinicResultCaptureForm[]> =>
     requests.get(`parameter/${id}`),
+  getDeliveryHistory: (id: string): Promise<any[]> =>
+    requests.get(`clinicResults/getHisoty/request/${id}`),
   createResults: (results: IClinicResultCaptureForm[]): Promise<string[]> =>
     requests.post(`clinicResults/saveResults`, results),
+  createNoteDeliveryHistory: (nota: any[]): Promise<any[]> =>
+    requests.post(`clinicResults/create/record`, nota),
   updateResults: (
     results: IClinicResultCaptureForm[],
     envioManual: boolean

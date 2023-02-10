@@ -113,7 +113,7 @@ const InvoiceCompanyTable = () => {
                         onClick={() => {
                           console.log("row", toJS(value));
                           console.log("record", toJS(record));
-                          navigate(`/invoice/${tipo}/${record.solicitudId}`);
+                          navigate(`/invoice/${tipo}/${factura.facturapiId}`);
                         }}
                       >
                         {factura.facturapiId}
