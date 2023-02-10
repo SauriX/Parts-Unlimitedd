@@ -154,7 +154,7 @@ function App() {
   });
 
   useKeyPress("U", () => {
-    navigate(`/${views.quotation}`);
+    navigate(`/${views.appointment}`);
   });
 
   if (loading)

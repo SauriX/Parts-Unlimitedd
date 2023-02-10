@@ -44,17 +44,20 @@ const RequestPrint = () => {
     );
 
     if (canPrintFormat) {
-      setTabs((prev) => [
-        ...prev,
-        {
-          label: "Formato",
-          value: "format",
-          icon: <FilePdfOutlined />,
-        },
-      ]);
+      if (tabs.findIndex((x) => x.value === "format") === -1) {
+        setTabs((prev) => [
+          ...prev,
+          {
+            label: "Formato",
+            value: "format",
+            icon: <FilePdfOutlined />,
+          },
+        ]);
+      }
     } else {
       setTabs((prev) => prev.filter((x) => x.value !== "format"));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allStudies]);
 
   return (
