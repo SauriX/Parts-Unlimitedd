@@ -46,7 +46,9 @@ const InvoiceCompanyCreate = () => {
   const [estudios, setEstudios] = useState<any[]>([]);
   const [currentPaymentMethod, setCurrenPaymentMethod] = useState<any>();
   const [selectRequests, setSelectedRequests] = useState<any>();
+
   let { id, tipo } = useParams<UrlParams>();
+
   useEffect(() => {
     getcfdiOptions();
     getpaymentMethodOptions();
@@ -168,7 +170,7 @@ const InvoiceCompanyCreate = () => {
       if (invoiceInfo) {
         console.log("invoiceInfo", invoiceInfo);
 
-        navigate(`/invoice/company`);
+        // navigate(`/invoice/company`);
       }
       console.log("invoice REQUEST", invoiceData);
     }
@@ -197,8 +199,16 @@ const InvoiceCompanyCreate = () => {
         tipoFactura: tipo,
         companyId: selectedRows[0]?.companiaId,
         solicitudesId: selectedRows.map((row: any) => row.solicitudId),
-        estudios:
-          configurationInvoice === "desglozado" ? estudios : detailInvoice,
+        detalles:
+          configurationInvoice === "desglozado"
+            ? estudios.map((estudio) => ({
+                estudioClave: estudio.clave,
+                concepto: estudio.estudio,
+                importe: estudio.precio,
+                descuento: estudio.descuento,
+                cantidad: 1,
+              }))
+            : detailInvoice,
         // formaPago: "" + company?.formaDePagoId,
         formaPago: formDataValues?.formaDePagoId,
         tipo: "PUE",
@@ -225,7 +235,7 @@ const InvoiceCompanyCreate = () => {
       if (invoiceInfo) {
         console.log("invoiceInfo", invoiceInfo);
 
-        navigate(`/invoice/request`);
+        // navigate(`/invoice/request`);
       }
       console.log("invoice REQUEST", invoiceData);
     }

@@ -116,7 +116,8 @@ const InvoiceComapnyForm = () => {
       }
     });
 
-    if (!!requestsWithInvoiceCompany.length && isInvoice === "Factura") {
+    // if (!!requestsWithInvoiceCompany.length && isInvoice === "Factura") {
+    if (false) {
       alerts.confirmInfo(
         "Solicitudes facturadas",
         <>
@@ -143,13 +144,13 @@ const InvoiceComapnyForm = () => {
       );
     }
 
-    if (!requestsWithInvoiceCompany.length || isInvoice === "Recibo") {
+    // if (!requestsWithInvoiceCompany.length || isInvoice === "Recibo") {
+    if (true) {
       if (formValues.isInvoice === "Factura") {
         if (tipo === "company") {
           navigate(`/invoice/company/new`);
         }
         if (tipo === "request") {
-          console.log("hgolaaaaaa");
           navigate(`/invoice/request/new`);
         }
       } else {
@@ -171,7 +172,12 @@ const InvoiceComapnyForm = () => {
     <>
       <Row justify="end" style={{ marginBottom: 10 }}>
         <Col>
-          <Button key="clean" onClick={(e) => {}}>
+          <Button
+            key="clean"
+            onClick={(e) => {
+              form.resetFields();
+            }}
+          >
             Limpiar
           </Button>
           <Button
@@ -195,74 +201,66 @@ const InvoiceComapnyForm = () => {
           size="small"
           initialValues={{ fechas: [moment(), moment()] }}
         >
-          <Row>
-            <Col span={20}>
-              <Row gutter={[0, 12]}>
-                <Col span={8}>
-                  <DateRangeInput
-                    formProps={{ label: "Fechas", name: "fechas" }}
-                    disableAfterDates
-                  />
-                </Col>
-                <Col span={8}>
-                  <TextInput formProps={{ name: "buscar", label: "Buscar" }} />
-                </Col>
-
-                <Col span={8}>
-                  {tipo === "company" && (
-                    <SelectInput
-                      form={form}
-                      multiple
-                      formProps={{ label: "Compañias", name: "companias" }}
-                      options={companyOptions}
-                    />
-                  )}
-                </Col>
-                <Col span={8}>
-                  <Form.Item label="Sucursal" className="no-error-text" help="">
-                    <Input.Group>
-                      <Row gutter={8}>
-                        <Col span={12}>
-                          <SelectInput
-                            formProps={{
-                              name: "ciudad",
-                              label: "Ciudad",
-                              noStyle: true,
-                            }}
-                            options={cityOptions}
-                          />
-                        </Col>
-                        <Col span={12}>
-                          <SelectInput
-                            form={form}
-                            formProps={{
-                              name: "sucursalId",
-                              label: "Sucursales",
-                              noStyle: true,
-                            }}
-                            multiple
-                            options={branchOptions}
-                          />
-                        </Col>
-                      </Row>
-                    </Input.Group>
-                  </Form.Item>
-                </Col>
-              </Row>
+          <Row gutter={[0, 12]}>
+            <Col span={8}>
+              <DateRangeInput
+                formProps={{ label: "Fechas", name: "fechas" }}
+                disableAfterDates
+              />
             </Col>
-            <Col span={4}>
-              <Row justify="center">
-                <Row gutter={8} justify="center">
-                  <Col span={12}>
-                    <Checkbox.Group
-                      options={facturasOptions}
-                      onChange={(newChekedValues) => {
-                        setCheckedValues(newChekedValues);
-                      }}
-                    />
-                  </Col>
-                </Row>
-              </Row>
+
+            {tipo === "company" && (
+              <Col span={8}>
+                <SelectInput
+                  form={form}
+                  multiple
+                  formProps={{ label: "Compañias", name: "companias" }}
+                  options={companyOptions}
+                />
+              </Col>
+            )}
+            <Col span={8}>
+              <Form.Item label="Sucursal" className="no-error-text" help="">
+                <Input.Group>
+                  <Row gutter={8}>
+                    <Col span={12}>
+                      <SelectInput
+                        formProps={{
+                          name: "ciudad",
+                          label: "Ciudad",
+                          noStyle: true,
+                        }}
+                        options={cityOptions}
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <SelectInput
+                        form={form}
+                        formProps={{
+                          name: "sucursalId",
+                          label: "Sucursales",
+                          noStyle: true,
+                        }}
+                        multiple
+                        options={branchOptions}
+                      />
+                    </Col>
+                  </Row>
+                </Input.Group>
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <TextInput formProps={{ name: "buscar", label: "Buscar" }} />
+            </Col>
+          </Row>
+          <Row gutter={[0, 12]} style={{ paddingLeft: 75, paddingTop: 10 }}>
+            <Col span={12}>
+              <Checkbox.Group
+                options={facturasOptions}
+                onChange={(newChekedValues) => {
+                  setCheckedValues(newChekedValues);
+                }}
+              />
             </Col>
           </Row>
         </Form>
@@ -317,22 +315,23 @@ const InvoiceComapnyForm = () => {
                     required={true}
                   />
                 </Col>
+                <Row justify="end">
+                  <Col span={8}>
+                    <Button
+                      onClick={() => {
+                        formCreate.submit();
+                      }}
+                      type="primary"
+                      // disabled={disabled}
+                    >
+                      Generar
+                    </Button>
+                  </Col>
+                </Row>
               </Row>
             </Col>
           </Row>
         </Form>
-        <Row justify="end" style={{ marginTop: 10 }}>
-          <Col span={2}>
-            <Button
-              onClick={() => {
-                formCreate.submit();
-              }}
-              // disabled={disabled}
-            >
-              Generar
-            </Button>
-          </Col>
-        </Row>
       </div>
     </>
   );
