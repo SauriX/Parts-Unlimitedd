@@ -26,6 +26,7 @@ import { v4 as uuid } from "uuid";
 import { IBranchInfo } from "../../../../app/models/branch";
 import { ICompanyForm } from "../../../../app/models/company";
 import branch from "../../../../app/api/branch";
+import { useParams } from "react-router-dom";
 
 const { Title, Text } = Typography;
 type InvoiceCompanyDetailProps = {
@@ -51,6 +52,10 @@ type ItemTypeExt = ItemType & {
 interface MenuPropsExt extends MenuProps {
   items: ItemTypeExt[];
 }
+type UrlParams = {
+  id: string;
+  tipo: string;
+};
 
 interface IDetailInvoice {
   id: string;
@@ -72,10 +77,12 @@ const InvoiceCompanyDetail = ({
     selectedRequests,
     setDetailInvoice,
     setConfigurationInvoice,
+    invoice,
   } = invoiceCompanyStore;
   const { studies } = requestStore;
   const { profile } = profileStore;
   const [form] = Form.useForm<any>();
+  let { id, tipo } = useParams<UrlParams>();
 
   const configuration = Form.useWatch("configuracion", form);
   const items: MenuPropsExt["items"] = [
@@ -109,7 +116,34 @@ const InvoiceCompanyDetail = ({
   const [detailData, setDetailData] = useState<IDetailInvoice[]>([]);
   const [simpleConcept, setSimpleConcept] = useState("");
   const [request, setRequest] = useState<IRequest>();
+  const [estudiosDetalle, setEstudiosDetalle] = useState<any[]>([]);
+  const [totalEstudiosFinal, setTotalEstudiosFinal] = useState<any>();
+
   let timer: any = null;
+  useEffect(() => {
+    console.log("factura lista detail", invoice);
+    if (invoice) {
+      if (tipo === "request") {
+        form.setFieldValue("configuracion", invoice.tipoDesgloce);
+
+        setEstudiosDetalle(
+          invoice.detalles.map((x: any) => ({
+            claveSolicitud: x.claveSolicitud,
+            clave: x.estudioClave,
+            estudio: x.concepto,
+            precioFinal: x.importe,
+          }))
+        );
+        setTotalEstudiosFinal(invoice.cantidadTotal);
+      }
+    }
+  }, [invoice]);
+  useEffect(() => {
+    setEstudiosDetalle(estudios);
+  }, [estudios]);
+  useEffect(() => {
+    setTotalEstudiosFinal(totalEstudios);
+  }, [totalEstudios]);
 
   useEffect(() => {
     timer = window.setInterval(() => {
@@ -127,7 +161,7 @@ const InvoiceCompanyDetail = ({
         {
           id: uuid(),
           concepto: "ANALISIS CLINICOS",
-          precioFinal: totalEstudios,
+          precioFinal: totalEstudiosFinal,
           cantidad: 1,
         },
       ]);
@@ -141,17 +175,47 @@ const InvoiceCompanyDetail = ({
   }, [configuration]);
 
   useEffect(() => {
-    const detalle = detailData.map((x) => {
-      // const isSimple = requestCheckIn.simple || requestCheckIn.porConcepto;
+    console.log("ESTUDIOS", toJS(estudios));
+    console.log("DETAIL DATA", toJS(detailData));
+    console.log("nose ", toJS(configuration));
+    let detalle: any[] = [];
+    if (configuration === "desglozado") {
+      detalle = estudiosDetalle.map((x) => {
+        // const isSimple = requestCheckIn.simple || requestCheckIn.porConcepto;
 
-      return {
-        cantidad: x.cantidad,
-        clave: simpleConcept,
-        estudio: simpleConcept,
-        descuento: 0,
-        precio: x.precioFinal,
-      };
-    });
+        return {
+          estudioClave: x.clave,
+          concepto: x.estudio,
+          importe: x.precio,
+          descuento: x.descuento,
+          cantidad: 1,
+
+          // cantidad: x.cantidad,
+          // estudiclave: simpleConcept,
+          // concepto: simpleConcept,
+          // descuento: 0,
+          // precio: x.precioFinal,
+        };
+      });
+    } else {
+      detalle = detailData.map((x) => {
+        // const isSimple = requestCheckIn.simple || requestCheckIn.porConcepto;
+
+        return {
+          estudioClave: uuid(),
+          concepto: simpleConcept,
+          importe: x.precioFinal,
+          descuento: 0,
+          cantidad: 1,
+
+          // cantidad: x.cantidad,
+          // estudiclave: simpleConcept,
+          // concepto: simpleConcept,
+          // descuento: 0,
+          // precio: x.precioFinal,
+        };
+      });
+    }
     console.log("DETALLE", detalle);
     setDetailInvoice(detalle);
   }, [detailData, simpleConcept]);
@@ -271,7 +335,7 @@ const InvoiceCompanyDetail = ({
                   labelCol={{ span: 0 }}
                   wrapperCol={{ span: 24 }}
                 >
-                  <Radio.Group options={avDetailType} />
+                  <Radio.Group options={avDetailType} disabled={id !== "new"} />
                 </Form.Item>
               </Col>
             </Row>
@@ -302,7 +366,9 @@ const InvoiceCompanyDetail = ({
             size="small"
             bordered
             pagination={false}
-            dataSource={configuration === "desglozado" ? estudios : detailData}
+            dataSource={
+              configuration === "desglozado" ? estudiosDetalle : detailData
+            }
             rowClassName={"row-search"}
             className="header-expandable-table"
             columns={configuration === "desglozado" ? columns : detailColumns}
@@ -336,7 +402,10 @@ const InvoiceCompanyDetail = ({
                         Total (Con IVA) :{" "}
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={1} align="center">
-                        <Text> {moneyFormatter.format(totalEstudios)}</Text>
+                        <Text>
+                          {" "}
+                          {moneyFormatter.format(totalEstudiosFinal)}
+                        </Text>
                       </Table.Summary.Cell>
                     </Table.Summary.Row>
                   </Table.Summary>

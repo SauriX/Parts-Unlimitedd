@@ -5,6 +5,8 @@ const InvoiceCompany = {
     requests.post("invoiceCompany/filter", filter),
   getConsecutiveBySerie: (serie: string): Promise<any> =>
     requests.get(`invoiceCompany/getConsecutiveBySerie/${serie}`),
+  getInvoice: (id: string): Promise<any> =>
+    requests.get(`invoiceCompany/${id}`),
   checkIn: (invoiceData: any): Promise<any> =>
     requests.post(`invoiceCompany/checkin/company`, invoiceData),
   sendInvoice: (sendInvoiceData: any): Promise<any> =>

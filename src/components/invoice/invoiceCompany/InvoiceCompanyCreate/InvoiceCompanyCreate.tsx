@@ -38,6 +38,10 @@ const InvoiceCompanyCreate = () => {
     detailInvoice,
     configurationInvoice,
     nombreSeleccionado,
+    consecutiveBySerie,
+    getInvoice,
+    invoice,
+    selectedRequests,
   } = invoiceCompanyStore;
   const [company, setCompany] = useState<ICompanyForm>();
   const [totalFinalEstudios, setTotalFinalEstudios] = useState<number>(0);
@@ -67,7 +71,14 @@ const InvoiceCompanyCreate = () => {
         setSelectedRequests([...filterRequests]);
       }
     }
+    if (id !== "new") {
+      getInvoice(id!);
+    }
   }, [id]);
+
+  useEffect(() => {
+    console.log("INVOICE", invoice);
+  }, [invoice]);
 
   useEffect(() => {
     if (id === "new") {
@@ -178,9 +189,15 @@ const InvoiceCompanyCreate = () => {
       const method = paymentOptions.find(
         (x) => x.value === formDataValues?.formaDePagoId
       )?.label;
+      console.log("taxDataSelected", toJS(taxData));
+      console.log("detailInvoiceSelected", toJS(detailInvoice));
+      console.log("configurationInvoiceSelected", toJS(configurationInvoice));
+      console.log("nombreSeleccionado", toJS(nombreSeleccionado));
+      console.log("formDataValues", toJS(formDataValues));
       const invoiceData = {
         tipoFactura: tipo,
         companyId: selectedRows[0]?.companiaId,
+        nombre: selectedRequests[0].nombre,
         solicitudesId: selectedRows.map((row: any) => row.solicitudId),
         detalles:
           configurationInvoice === "desglozado"
@@ -192,11 +209,24 @@ const InvoiceCompanyCreate = () => {
                 cantidad: 1,
               }))
             : detailInvoice,
-        // formaPago: "" + company?.formaDePagoId,
+        taxDataId: taxData.id,
+        expedienteId: nombreSeleccionado,
+        formaPagoId: "",
         formaPago: formDataValues?.formaDePagoId,
+        numeroCuenta: "",
+        serie: formDataValues.serieCFDI,
+        usoCFDI: use?.label,
+        tipoDesgloce: configurationInvoice,
+        cantidadTotal: total,
+        subtotal: total - (total * 16) / 100,
+        IVA: (total * 16) / 100,
+        consecutivo: consecutiveBySerie,
+        usuario: "",
+        fecha: "",
+        hora: "",
+
         tipo: "PUE",
         claveExterna: company?.clave,
-        usoCFDI: use?.label,
         cliente: {
           razonSocial: taxData?.razonSocial,
           RFC: taxData?.rfc,
@@ -214,9 +244,10 @@ const InvoiceCompanyCreate = () => {
           pais: "MEX",
         },
       };
+      console.log("DATOS DE FACTURA", invoiceData);
       const invoiceInfo = await checkIn(invoiceData);
-      if (invoiceInfo) {
-      }
+      // if (invoiceInfo) {
+      // }
     }
   };
   const getEstatusFactura = () => {

@@ -37,8 +37,13 @@ const InvoiceCompanyData = ({
   const { optionStore, invoiceCompanyStore, modalStore, profileStore } =
     useStore();
   const { openModal } = modalStore;
-  const { printPdf, downloadPdf, selectedRows, selectedRequests } =
-    invoiceCompanyStore;
+  const {
+    printPdf,
+    downloadPdf,
+    selectedRows,
+    selectedRequests,
+    invoice: invoiceExisting,
+  } = invoiceCompanyStore;
   const { profile } = profileStore;
   const {
     bankOptions,
@@ -60,13 +65,24 @@ const InvoiceCompanyData = ({
     getPaymentOptions();
     getInvoiceSeriesOptions(profile?.sucursal!);
   }, [profile]);
-
+  useEffect(() => {
+    console.log("factura lista", invoiceExisting);
+    if (invoiceExisting) {
+      if (tipo === "request") {
+        form.setFieldValue("formaDePagoId", invoiceExisting.formaPago);
+        form.setFieldValue("numeroDeCuenta", invoiceExisting.numeroCuenta);
+        form.setFieldValue("cfdiId", invoiceExisting.usoCFDI);
+        form.setFieldValue("serieCFDI", invoiceExisting.serie);
+      }
+    }
+  }, [invoiceExisting]);
   const onFinish = () => {};
   useEffect(() => {
     if (tipo === "company") {
       form.setFieldsValue(company);
     }
   }, [company]);
+
   return (
     <>
       {/* <div className="status-container" style={{ marginBottom: 12 }}> */}
@@ -103,13 +119,16 @@ const InvoiceCompanyData = ({
                             label: x,
                           }))
                   }
+                  readonly={id !== "new"}
                   required={tipo !== "company"}
                 />
               </Col>
               <Col span={10} style={{ textAlign: "end" }}>
-                <Text mark>{`Cantidad Total: ${moneyFormatter.format(
-                  totalEstudios
-                )} (IVA incluido)`}</Text>
+                <Text mark>{`Cantidad Total: ${
+                  tipo === "request"
+                    ? invoiceExisting?.cantidadTotal
+                    : moneyFormatter.format(totalEstudios)
+                } (IVA incluido)`}</Text>
               </Col>
               <Col span={10}>
                 {tipo === "company" && (
@@ -144,6 +163,7 @@ const InvoiceCompanyData = ({
                 <SelectInput
                   formProps={{ name: "serieCFDI", label: "SerieCFDI" }}
                   options={invoiceSeriesOptions}
+                  readonly={id !== "new"}
                 />
               </Col>
               <Col span={10}>
@@ -181,6 +201,7 @@ const InvoiceCompanyData = ({
                   formProps={{ name: "cfdiId", label: "Uso de CFDI" }}
                   options={cfdiOptions}
                   required={tipo !== "company"}
+                  readonly={id !== "new"}
                 />
               </Col>
               <Col span={10}>
@@ -195,18 +216,20 @@ const InvoiceCompanyData = ({
               </Col>
               <Col span={10} style={{ textAlign: "end" }} offset={10}>
                 <div>
-                  <Text
-                    style={{ textAlign: "center" }}
-                  >{`IVA 16%: ${moneyFormatter.format(
-                    (totalEstudios / 100) * 16
-                  )}`}</Text>
+                  <Text style={{ textAlign: "center" }}>{`IVA 16%: ${
+                    tipo === "request"
+                      ? invoiceExisting?.iva
+                      : moneyFormatter.format((totalEstudios * 16) / 100)
+                  }`}</Text>
                 </div>
                 <div>
-                  <Text
-                    style={{ textAlign: "center" }}
-                  >{`Subtotal: ${moneyFormatter.format(
-                    totalEstudios - (totalEstudios / 100) * 16
-                  )} `}</Text>
+                  <Text style={{ textAlign: "center" }}>{`Subtotal: ${
+                    tipo === "request"
+                      ? invoiceExisting?.subtotal
+                      : moneyFormatter.format(
+                          totalEstudios - (totalEstudios * 16) / 100
+                        )
+                  } `}</Text>
                 </div>
               </Col>
             </Row>
@@ -221,9 +244,7 @@ const InvoiceCompanyData = ({
                     onClick={() => {
                       createInvoice(form.getFieldsValue());
                     }}
-                    disabled={
-                      invoice !== "new" && estatusFactura === "Facturado"
-                    }
+                    disabled={id !== "new"}
                   >
                     Registrar Factura
                   </Button>
@@ -232,13 +253,9 @@ const InvoiceCompanyData = ({
                   <Button
                     type="primary"
                     onClick={() => {
-                      if (!!facturapiId) {
-                        downloadPdf(facturapiId);
-                      }
+                      downloadPdf(invoiceExisting?.facturaId);
                     }}
-                    disabled={
-                      invoice === "new" || estatusFactura === "Cancelado"
-                    }
+                    disabled={id === "new"}
                   >
                     Descargar
                   </Button>
@@ -247,13 +264,9 @@ const InvoiceCompanyData = ({
                   <Button
                     type="primary"
                     onClick={() => {
-                      if (!!facturapiId) {
-                        printPdf(facturapiId);
-                      }
+                      printPdf(invoiceExisting?.facturaId);
                     }}
-                    disabled={
-                      invoice === "new" || estatusFactura === "Cancelado"
-                    }
+                    disabled={id === "new"}
                   >
                     Imprimir
                   </Button>
@@ -266,16 +279,14 @@ const InvoiceCompanyData = ({
                         title: "Configuración de envío",
                         body: (
                           <InvoiceCompanyDeliver
-                            companiaId={company.id}
+                            companiaId={company?.id}
                             facturapiId={facturapiId}
                           />
                         ),
                         width: 800,
                       });
                     }}
-                    disabled={
-                      invoice === "new" || estatusFactura === "Cancelado"
-                    }
+                    disabled={id === "new"}
                   >
                     Configurar envió
                   </Button>
