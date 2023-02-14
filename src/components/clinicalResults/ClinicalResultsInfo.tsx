@@ -326,7 +326,6 @@ const ClinicalResultsInfo = () => {
             if (req.tipo === "PATOLOGICO") {
               return (
                 <div key={req.identificador}>
-                  <Divider orientation="left"></Divider>
                   <ClinicalResultsForm
                     estudio={req}
                     estudioId={req.estudioId}

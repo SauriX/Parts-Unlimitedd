@@ -4,6 +4,7 @@ import {
   Card,
   Checkbox,
   Col,
+  Divider,
   Form,
   Row,
   Table,
@@ -22,7 +23,7 @@ import {
   RequestStudyInfoForm,
   RequestStudyValues,
 } from "../../../app/models/request";
-import { FC, useEffect, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 import { toJS } from "mobx";
 import { IProceedingForm } from "../../../app/models/Proceeding";
 import { useStore } from "../../../app/stores/store";
@@ -40,6 +41,7 @@ import { objectToFormData, toolBarOptions } from "../../../app/util/utils";
 import { RcFile } from "antd/lib/upload";
 import { uniqueId, values } from "lodash";
 import alerts from "../../../app/util/alerts";
+import StatusTable from "../content/StatusTable";
 const { Text, Title } = Typography;
 type ClinicalResultsFormProps = {
   estudio: IRequestStudy;
@@ -454,70 +456,11 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
   };
 
   return (
-    <>
-      <Row style={{ marginBottom: "20px" }}>
-        <Col span={8}>
-          <p>
-            CAP -{" "}
-            {currentStudy.estatusId >= 4 && (
-              <strong>{`${moment(currentStudy.fechaCaptura).format(
-                "DD/MM/YYYY HH:mm"
-              )}, ${currentStudy.usuarioCaptura}`}</strong>
-            )}
-          </p>
-        </Col>
-        <Col span={8}>
-          <p>
-            LIB -{" "}
-            {currentStudy.estatusId >= 6 && (
-              <strong>{`${moment(currentStudy.fechaLiberado).format(
-                "DD/MM/YYYY HH:mm"
-              )}, ${currentStudy.usuarioLiberado}`}</strong>
-            )}
-          </p>
-        </Col>
-        <Col span={8}>
-          <p>
-            IMP -
-            {currentStudy.estatusId >= 8 && (
-              <strong>{`${moment(currentStudy.fechaValidacion).format(
-                "DD/MM/YYYY HH:mm"
-              )}, ${currentStudy.usuarioValidacion
-                ?.split(" ")
-                .map((word: string) => word[0])
-                .join("")}`}</strong>
-            )}
-          </p>
-        </Col>
-        <Col span={8}>
-          <p>
-            VAL -{" "}
-            {currentStudy.estatusId >= 5 && (
-              <strong>{`${moment(currentStudy.fechaValidacion).format(
-                "DD/MM/YYYY HH:mm"
-              )}, ${currentStudy.usuarioValidacion}`}</strong>
-            )}
-          </p>
-        </Col>
-        <Col span={8}>
-          <p>
-            ENV -{" "}
-            {currentStudy.estatusId >= 7 && (
-              <strong>{`${moment(currentStudy.fechaValidacion).format(
-                "DD/MM/YYYY HH:mm"
-              )}, ${currentStudy.usuarioValidacion}`}</strong>
-            )}
-          </p>
-        </Col>
-        <Col span={8}>
-          <p>
-            ENT -{" "}
-            {currentStudy.estatusId >= 8 && (
-              <strong>{`${moment(currentStudy.fechaValidacion).format(
-                "DD/MM/YYYY HH:mm"
-              )}, ${currentStudy.usuarioValidacion}`}</strong>
-            )}
-          </p>
+    <Fragment key={estudio.id}>
+      <Row gutter={[24, 24]}>
+        <Divider orientation="left">{currentStudy.nombre}</Divider>
+        <Col span={24}>
+          <StatusTable currentStudy={currentStudy} />
         </Col>
         <Col span={24}>
           <Table<any>
@@ -696,7 +639,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
           </Card>
         </Col>
       </Row>
-    </>
+    </Fragment>
   );
 };
 export default observer(ClinicalResultsForm);

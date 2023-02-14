@@ -4,6 +4,7 @@ import {
   Card,
   Checkbox,
   Col,
+  Divider,
   Form,
   Input,
   Row,
@@ -35,6 +36,7 @@ import { useNavigate } from "react-router-dom";
 
 import alerts from "../../../app/util/alerts";
 import { toJS } from "mobx";
+import StatusTable from "../content/StatusTable";
 const { TextArea } = Input;
 const { Text, Link } = Typography;
 
@@ -85,7 +87,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     removeSelectedStudy,
     observationsSelected,
     setObservationsSelected,
-    clearSelectedStudies
+    clearSelectedStudies,
   } = clinicResultsStore;
   const { request } = requestStore;
   const { getMedicOptions, getUnitOptions } = optionStore;
@@ -97,8 +99,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const navigate = useNavigate();
 
   useEffect(() => {
-    clearSelectedStudies()
-  }, [])
+    clearSelectedStudies();
+  }, []);
 
   useEffect(() => {
     setCheckedPrint(isMarked);
@@ -137,9 +139,11 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const loadInit = async () => {
     const cStudy = await getRequestStudyById(estudio.id!);
     setCurrentStudy(cStudy!);
-    console.log("cStudy", cStudy)
+    console.log("cStudy", cStudy);
 
-    let captureResult = studies.find((x) => x.solicitudEstudioId! == estudio.id);
+    let captureResult = studies.find(
+      (x) => x.solicitudEstudioId! == estudio.id
+    );
 
     if (captureResult && captureResult.parametros) {
       captureResult.parametros = captureResult.parametros.map((x) => {
@@ -250,7 +254,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const renderUpdateStatus = () => {
     return (
       <>
-        {currentStudy.estatusId >= status.requestStudy.solicitado && currentStudy.estatusId <= status.requestStudy.liberado ? (
+        {currentStudy.estatusId >= status.requestStudy.solicitado &&
+        currentStudy.estatusId <= status.requestStudy.liberado ? (
           <Row>
             <Col span={24}>
               <Row justify="space-between" gutter={[12, 24]}>
@@ -518,69 +523,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     <Fragment key={estudio.id}>
       {currentStudy.estatusId >= 3 && currentStudy.estatusId != 9 ? (
         <Spin spinning={loading}>
-          <Row style={{ marginBottom: "20px" }}>
-            <Col span={8}>
-              <p>
-                CAP -{" "}
-                {currentStudy.estatusId >= 4 && (
-                  <strong>{`${moment(currentStudy.fechaCaptura).format(
-                    "DD/MM/YYYY HH:mm"
-                  )}, ${currentStudy.usuarioCaptura}`}</strong>
-                )}
-              </p>
-            </Col>
-            <Col span={8}>
-              <p>
-                LIB -{" "}
-                {currentStudy.estatusId >= 6 && (
-                  <strong>{`${moment(currentStudy.fechaLiberado).format(
-                    "DD/MM/YYYY HH:mm"
-                  )}, ${currentStudy.usuarioLiberado}`}</strong>
-                )}
-              </p>
-            </Col>
-            <Col span={8}>
-              <p>
-                IMP -
-                {currentStudy.estatusId >= 8 && (
-                  <strong>{`${moment(currentStudy.fechaValidacion).format(
-                    "DD/MM/YYYY HH:mm"
-                  )}, ${currentStudy.usuarioValidacion
-                    ?.split(" ")
-                    .map((word: string) => word[0])
-                    .join("")}`}</strong>
-                )}
-              </p>
-            </Col>
-            <Col span={8}>
-              <p>
-                VAL -{" "}
-                {currentStudy.estatusId >= 5 && (
-                  <strong>{`${moment(currentStudy.fechaValidacion).format(
-                    "DD/MM/YYYY HH:mm"
-                  )}, ${currentStudy.usuarioValidacion}`}</strong>
-                )}
-              </p>
-            </Col>
-            <Col span={8}>
-              <p>
-                ENV -{" "}
-                {currentStudy.estatusId >= 7 && (
-                  <strong>{`${moment(currentStudy.fechaValidacion).format(
-                    "DD/MM/YYYY HH:mm"
-                  )}, ${currentStudy.usuarioValidacion}`}</strong>
-                )}
-              </p>
-            </Col>
-            <Col span={8}>
-              <p>
-                ENT -{" "}
-                {currentStudy.estatusId >= 8 && (
-                  <strong>{`${moment(currentStudy.fechaValidacion).format(
-                    "DD/MM/YYYY HH:mm"
-                  )}, ${currentStudy.usuarioValidacion}`}</strong>
-                )}
-              </p>
+          <Row gutter={[24, 24]}>
+            <Divider orientation="left">{currentStudy.nombre}</Divider>
+            <Col span={24}>
+              <StatusTable currentStudy={currentStudy} />
             </Col>
             <Col span={24}>
               <Table<any>
@@ -642,8 +588,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                             (x) => x.id === fieldValue.id
                           )?.resultado as string;
 
-                          console.log(fieldValue)
-                          console.log(fieldResult)
+                          console.log(fieldValue);
+                          console.log(fieldResult);
 
                           let fieldRange =
                             parseFloat(fieldValue.valorInicial) >
