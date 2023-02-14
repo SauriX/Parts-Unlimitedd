@@ -27,6 +27,7 @@ import { IBranchInfo } from "../../../../app/models/branch";
 import { ICompanyForm } from "../../../../app/models/company";
 import branch from "../../../../app/api/branch";
 import { useParams } from "react-router-dom";
+import { IInvoiceDetail } from "../../../../app/models/Invoice";
 
 const { Title, Text } = Typography;
 type InvoiceCompanyDetailProps = {
@@ -121,13 +122,12 @@ const InvoiceCompanyDetail = ({
 
   let timer: any = null;
   useEffect(() => {
-    console.log("factura lista detail", invoice);
     if (invoice) {
       if (tipo === "request") {
         form.setFieldValue("configuracion", invoice.tipoDesgloce);
 
         setEstudiosDetalle(
-          invoice.detalles.map((x: any) => ({
+          invoice.detalles.map((x: IInvoiceDetail) => ({
             claveSolicitud: x.claveSolicitud,
             clave: x.estudioClave,
             estudio: x.concepto,
@@ -175,48 +175,28 @@ const InvoiceCompanyDetail = ({
   }, [configuration]);
 
   useEffect(() => {
-    console.log("ESTUDIOS", toJS(estudios));
-    console.log("DETAIL DATA", toJS(detailData));
-    console.log("nose ", toJS(configuration));
-    let detalle: any[] = [];
+    let detalle: IInvoiceDetail[] = [];
     if (configuration === "desglozado") {
       detalle = estudiosDetalle.map((x) => {
-        // const isSimple = requestCheckIn.simple || requestCheckIn.porConcepto;
-
         return {
           estudioClave: x.clave,
           concepto: x.estudio,
           importe: x.precio,
           descuento: x.descuento,
           cantidad: 1,
-
-          // cantidad: x.cantidad,
-          // estudiclave: simpleConcept,
-          // concepto: simpleConcept,
-          // descuento: 0,
-          // precio: x.precioFinal,
         };
       });
     } else {
       detalle = detailData.map((x) => {
-        // const isSimple = requestCheckIn.simple || requestCheckIn.porConcepto;
-
         return {
           estudioClave: uuid(),
           concepto: simpleConcept,
           importe: x.precioFinal,
           descuento: 0,
           cantidad: 1,
-
-          // cantidad: x.cantidad,
-          // estudiclave: simpleConcept,
-          // concepto: simpleConcept,
-          // descuento: 0,
-          // precio: x.precioFinal,
         };
       });
     }
-    console.log("DETALLE", detalle);
     setDetailInvoice(detalle);
   }, [detailData, simpleConcept]);
 
@@ -284,7 +264,6 @@ const InvoiceCompanyDetail = ({
     },
   ];
   const onClick: MenuProps["onClick"] = async ({ key }) => {
-    console.log("CAMBIO DE CONCEPTO", key);
     const item = conceptItems.find((x) => x.key === key);
     const initial = simpleConcept.length === 0 ? "" : simpleConcept + "\n";
 

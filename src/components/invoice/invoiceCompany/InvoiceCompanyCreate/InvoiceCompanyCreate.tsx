@@ -77,10 +77,6 @@ const InvoiceCompanyCreate = () => {
   }, [id]);
 
   useEffect(() => {
-    console.log("INVOICE", invoice);
-  }, [invoice]);
-
-  useEffect(() => {
     if (id === "new") {
       const estuiosTotal = selectedRows.flatMap(
         (solicitud) => solicitud.estudios
@@ -189,11 +185,7 @@ const InvoiceCompanyCreate = () => {
       const method = paymentOptions.find(
         (x) => x.value === formDataValues?.formaDePagoId
       )?.label;
-      console.log("taxDataSelected", toJS(taxData));
-      console.log("detailInvoiceSelected", toJS(detailInvoice));
-      console.log("configurationInvoiceSelected", toJS(configurationInvoice));
-      console.log("nombreSeleccionado", toJS(nombreSeleccionado));
-      console.log("formDataValues", toJS(formDataValues));
+
       const invoiceData = {
         tipoFactura: tipo,
         companyId: selectedRows[0]?.companiaId,
@@ -244,7 +236,7 @@ const InvoiceCompanyCreate = () => {
           pais: "MEX",
         },
       };
-      console.log("DATOS DE FACTURA", invoiceData);
+
       const invoiceInfo = await checkIn(invoiceData);
       // if (invoiceInfo) {
       // }
