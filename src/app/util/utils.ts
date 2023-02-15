@@ -95,6 +95,18 @@ export const beforeUploadValidation = (
   return isValidType && isValidSize;
 };
 
+export const generateRandomHex = (length: number): string => {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let result = "";
+  const charLength = characters.length;
+
+  for (let i = 0; i < length; i++) {
+    result += characters[Math.floor(Math.random() * charLength)];
+  }
+
+  return result;
+};
+
 export const getBase64 = (
   file: RcFile | File | Blob | undefined,
   callback: (url: string | ArrayBuffer | null) => void

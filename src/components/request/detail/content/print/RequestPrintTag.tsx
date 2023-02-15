@@ -1,4 +1,14 @@
-import { Button, Col, Form, InputNumber, Row, Select, Spin, Table } from "antd";
+import {
+  Button,
+  Col,
+  Form,
+  InputNumber,
+  Popconfirm,
+  Row,
+  Select,
+  Spin,
+  Table,
+} from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { Fragment, useEffect, useState } from "react";
@@ -14,10 +24,13 @@ import alerts from "../../../../../app/util/alerts";
 import { formItemLayout } from "../../../../../app/util/utils";
 import { v4 as uuid } from "uuid";
 import { IStudyTag } from "../../../../../app/models/study";
+import IconButton from "../../../../../app/common/button/IconButton";
+import { DeleteOutlined, DeleteTwoTone } from "@ant-design/icons";
 
 const RequestPrintTag = () => {
   const { requestStore, optionStore } = useStore();
-  const { request, allStudies, printTags, tags, setTags } = requestStore;
+  const { request, allActiveStudies, printTags, tags, setTags, deleteTag } =
+    requestStore;
 
   const [labels, setLabels] = useState<IRequestTag[]>([]);
   const [options, setOptions] = useState<IOptions[]>([]);
@@ -26,8 +39,8 @@ const RequestPrintTag = () => {
   const [studyTags, setStudyTags] = useState<IStudyTag[]>([]);
 
   useEffect(() => {
-    setStudyTags(allStudies.flatMap((x) => x.etiquetas));
-  }, [allStudies]);
+    setStudyTags(allActiveStudies.flatMap((x) => x.etiquetas));
+  }, [allActiveStudies]);
 
   // useEffect(() => {
   //   const tags = allStudies
@@ -170,21 +183,55 @@ const RequestPrintTag = () => {
     setTags([...tags, newStudy]);
   };
 
-  const onChangeStudies = (values: number[], tag: IRequestTag) => {
-    if (values.length === 0) {
-      alerts.warning("No se ha seleccionado ningún estudio");
-      return;
-    }
-
-    const newTags = [...tags];
+  const onSelectStudy = (value: string, tag: IRequestTag) => {
+    const newTags = toJS(tags);
     const index = newTags.findIndex(
       (x) => x.id === tag.id && x.identificador === tag.identificador
     );
 
     if (index === -1) return;
 
-    const selectedStudyTags = studyTags.filter((x) => values.includes(x.id));
-    newTags[index].estudios = selectedStudyTags;
+    const selectedStudyTag = studyTags.find((x) => value === x.identificador);
+    if (!selectedStudyTag) return;
+
+    selectedStudyTag.manual = true;
+    selectedStudyTag.borrado = false;
+    selectedStudyTag.identificadorEtiqueta = tag.identificador!;
+    newTags[index].estudios = [
+      ...newTags[index].estudios.filter((x) => value !== x.identificador),
+      selectedStudyTag,
+    ];
+
+    console.log("%conSelectStudy", "color:green");
+    console.log(newTags);
+
+    setTags(newTags);
+  };
+
+  const onDeselectStudy = (value: string, tag: IRequestTag) => {
+    const newTags = toJS(tags);
+    const index = newTags.findIndex(
+      (x) => x.id === tag.id && x.identificador === tag.identificador
+    );
+
+    if (index === -1) return;
+
+    const selectedStudyTag = studyTags.find((x) => value === x.identificador);
+    if (!selectedStudyTag) return;
+
+    selectedStudyTag.borrado = true;
+    newTags[index].estudios = [
+      ...newTags[index].estudios.filter((x) => value !== x.identificador),
+      selectedStudyTag,
+    ];
+
+    // if (newTags[index].estudios.filter((x) => !x.borrado).length === 0) {
+    //   alerts.warning("La etiqueta debe tener al menos un estudio");
+    //   return;
+    // }
+
+    console.log("%conDeselectStudy", "color:green");
+    console.log(newTags);
 
     setTags(newTags);
   };
@@ -192,6 +239,16 @@ const RequestPrintTag = () => {
   useEffect(() => {
     console.log(studyTags);
   }, [studyTags]);
+
+  // const confirmDeleteTag = (id: string) => {
+  //   alerts.confirm(
+  //     "Eliminar etiqueta",
+  //     `¿Desea eliminar la etiqueta?`,
+  //     async () => {
+  //       deleteTag(id);
+  //     }
+  //   );
+  // };
 
   const columns: IColumns<IRequestTag> = [
     {
@@ -205,25 +262,44 @@ const RequestPrintTag = () => {
     {
       ...getDefaultColumnProps("nombreEtiqueta", "Tapón", {
         searchable: false,
-        width: "30%",
+        width: "28%",
       }),
     },
     {
       ...getDefaultColumnProps("estudios", "Estudios", {
         searchable: false,
-        width: "50%",
+        width: "45%",
       }),
       render(value: IStudyTag[], record) {
         return (
           <RequestTag
-            tags={value}
-            onChange={(values) => onChangeStudies(values, record)}
+            tags={value.filter((x) => !x.borrado)}
+            onSelect={(value) => onSelectStudy(value, record)}
+            onDeselect={(value) => onDeselectStudy(value, record)}
             loading={loading}
             studyOptions={studyTags
               .filter((x) => x.etiquetaId === record.etiquetaId)
+              .filter(
+                (x) =>
+                  record.estudios
+                    .map((y) => y.identificador)
+                    .includes(x.identificador) ||
+                  !record.estudios
+                    .map((y) => y.nombreEstudio)
+                    .includes(x.nombreEstudio)
+              )
+              .filter(
+                (v, i, a) =>
+                  a.map((x) => x.nombreEstudio).indexOf(v.nombreEstudio) ===
+                    i ||
+                  record.estudios
+                    .map((y) => y.identificador)
+                    .includes(v.identificador)
+              )
+              .filter((x) => !x.borrado)
               .map((x) => ({
-                key: x.id,
-                value: x.id,
+                key: x.identificador,
+                value: x.identificador,
                 label: x.nombreEstudio + ` (${x.cantidad})`,
               }))}
           />
@@ -233,7 +309,7 @@ const RequestPrintTag = () => {
     {
       ...getDefaultColumnProps("cantidad", "Cant.", {
         searchable: false,
-        width: "10%",
+        width: "8%",
       }),
       render: (_, record) => (
         <InputNumber
@@ -248,21 +324,42 @@ const RequestPrintTag = () => {
         />
       ),
     },
+    {
+      key: "borrado",
+      dataIndex: "borrado",
+      title: "",
+      width: "5%",
+      align: "center",
+      render: (value, item) => (
+        <Popconfirm
+          title="¿Desea eliminar la etiqueta?"
+          okText="Sí"
+          cancelText="No"
+          trigger="hover"
+          onConfirm={() => deleteTag(item.identificador!)}
+        >
+          <DeleteTwoTone twoToneColor="red" />
+        </Popconfirm>
+        // <IconButton
+        //   danger
+        //   title="Eliminar"
+        //   icon={<DeleteOutlined />}
+        //   onClick={() => confirmDeleteTag(item.identificador!)}
+        // />
+      ),
+    },
     Table.SELECTION_COLUMN,
   ];
 
   return (
     <Spin spinning={loading}>
       <Row gutter={[8, 12]}>
-        <Col span={24} style={{ textAlign: "right" }}>
-          <Button type="primary">Agregar etiqueta</Button>
-        </Col>
         <Col span={24}>
           <Table<IRequestTag>
             size="small"
             rowKey={(x) => x.id ?? x.identificador!}
             columns={columns}
-            dataSource={tags}
+            dataSource={[...tags.filter((x) => !x.borrado)]}
             pagination={false}
             rowSelection={{
               fixed: "right",
@@ -293,14 +390,16 @@ export default observer(RequestPrintTag);
 
 type RequestTagProps = {
   tags: IStudyTag[];
-  onChange: (value: number[]) => void;
+  onSelect: (value: string) => void;
+  onDeselect: (value: string) => void;
   studyOptions: IOptions[];
   loading: boolean;
 };
 
 const RequestTag = ({
   tags,
-  onChange,
+  onSelect,
+  onDeselect,
   loading,
   studyOptions,
 }: RequestTagProps) => {
@@ -308,10 +407,11 @@ const RequestTag = ({
     <Select
       bordered={false}
       options={studyOptions}
-      onChange={onChange}
+      onSelect={onSelect}
+      onDeselect={onDeselect}
       style={{ width: "100%" }}
       mode="multiple"
-      value={tags.map((x) => x.id)}
+      value={tags.map((x) => x.identificador)}
     />
   );
 };

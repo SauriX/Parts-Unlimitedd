@@ -346,6 +346,7 @@ export interface IRequestTag {
   cantidad: number;
   color: string;
   estudios: IStudyTag[];
+  borrado?: boolean;
 }
 
 export interface IRequestTotal extends IRequestBase {

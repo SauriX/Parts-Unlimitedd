@@ -56,7 +56,11 @@ export interface IStudyTag {
   cantidad: number;
   orden: number;
   color: string;
+  manual: boolean;
+  borrado: boolean;
   nombreEstudio: string;
+  identificador: string;
+  identificadorEtiqueta: string;
   // estudios: IStudyTagList[];
 }
 
