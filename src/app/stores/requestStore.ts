@@ -443,6 +443,7 @@ export default class RequestStore {
     payment.notificacionId = guid;
 
     const res = NetPay.paymentCharge(payment);
+    if (!res) return;
 
     const connection = store.notificationStore.hubConnection;
     if (!connection) return;
