@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
+import { useKeyPress } from "../../../app/hooks/useKeyPress";
 import { IRequestFilter } from "../../../app/models/request";
 import { IOptions } from "../../../app/models/shared";
 import {
@@ -38,6 +39,8 @@ const RequestFilter = () => {
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
 
+  useKeyPress("L", form.submit);
+
   useEffect(() => {
     getBranchCityOptions();
     getMedicOptions();
@@ -57,12 +60,14 @@ const RequestFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    if(selectedCity!=undefined && selectedCity !=null){
-      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
-    var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
-      setBranchOptions(
-        options
+    if (selectedCity != undefined && selectedCity != null) {
+      var branhces = branchCityOptions.filter((x) =>
+        selectedCity.includes(x.value.toString())
       );
+      var options = branhces.flatMap((x) =>
+        x.options == undefined ? [] : x.options
+      );
+      setBranchOptions(options);
     }
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
@@ -152,7 +157,7 @@ const RequestFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
-                    form={form}
+                      form={form}
                       formProps={{
                         name: "ciudad",
                         label: "Ciudad",

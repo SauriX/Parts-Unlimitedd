@@ -20,6 +20,7 @@ import Center from "../../../app/layout/Center";
 import RequestTokenValidation from "./RequestTokenValidation";
 import { useCallbackPrompt } from "../../../app/hooks/useCallbackPrompt";
 import NavigationConfirm from "../../../app/common/navigation/NavigationConfirm";
+import RequestDeliveryHistory from "./RequestDeliveryHistory";
 
 const { Link } = Typography;
 
@@ -219,6 +220,8 @@ const RequestDetail = () => {
         setBranchId={setBranchId}
       />
       <RequestTab recordId={recordId} branchId={branchId} />
+      <Divider className="header-divider" />
+      <RequestDeliveryHistory solicitudId={requestId!} />
     </Fragment>
   );
 };

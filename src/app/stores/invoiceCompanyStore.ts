@@ -85,6 +85,16 @@ export class InvoiceCompanyStore {
       alerts.warning(getErrors(error));
     }
   };
+  invoice: any = null;
+  getInvoice = async (id: string) => {
+    try {
+      const invoiceData = await InvoiceCompany.getInvoice(id);
+      this.invoice = invoiceData;
+      return invoiceData;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
 
   checkIn = async (invoiceData: any) => {
     try {

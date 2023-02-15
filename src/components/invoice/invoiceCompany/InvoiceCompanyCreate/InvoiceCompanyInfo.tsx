@@ -30,9 +30,11 @@ const InvoiceCompanyInfo = ({
   facturapiId,
   estatusFactura,
 }: InvoiceCompanyInfoProps) => {
-  let { id, tipo } = useParams<UrlParams>();
   const [form] = Form.useForm();
-  const { optionStore, invoiceCompanyStore, modalStore } = useStore();
+  const [formCancel] = Form.useForm();
+  let { id, tipo } = useParams<UrlParams>();
+  const { optionStore, invoiceCompanyStore, modalStore, procedingStore } =
+    useStore();
   const {
     fechas,
     cancelInvoice,
@@ -40,15 +42,32 @@ const InvoiceCompanyInfo = ({
     setSelectedRequests,
     setTaxData,
     setNombre,
+    invoice,
   } = invoiceCompanyStore;
+  const { getById, getTaxData } = procedingStore;
+
   const nombre = Form.useWatch("nombre", form);
   const { openModal, closeModal } = modalStore;
   const navigate = useNavigate();
 
   const [nameOptions, setNameOptions] = useState<IOptions[]>([]);
   // const [taxData, setTaxData] = useState<ITaxData>();
-
+  useEffect(() => {
+    if (invoice) {
+      // getTaxData(invoice.taxDataId);
+      const consultarInformacionFiscal = async () => {
+        const generalDataRequest = await getById(invoice.expedienteId);
+        const taxDataInfo = generalDataRequest?.taxData?.find(
+          (x) => x.id === invoice.taxDataId
+        );
+        onSelectTaxData(taxDataInfo!);
+      };
+      consultarInformacionFiscal();
+      form.setFieldValue("nombre", invoice.nombre);
+    }
+  }, [invoice]);
   const onFinish = async (newFormValues: any) => {
+    console.log("Invoice cancelled", facturapiId, newFormValues);
     let cancelationInvoiceData = {
       facturapiId: facturapiId,
       motivo: newFormValues.motivo,
@@ -65,6 +84,10 @@ const InvoiceCompanyInfo = ({
   const onSelectTaxData = (taxData: ITaxData) => {
     console.log("TAXDATA", taxData);
     form.setFieldsValue(taxData);
+    form.setFieldValue(
+      "direccionFiscal",
+      `${taxData.calle} ${taxData.municipio} ${taxData.estado} ${taxData.cp}`.trim()
+    );
     setTaxData(taxData);
   };
   useEffect(() => {
@@ -72,7 +95,8 @@ const InvoiceCompanyInfo = ({
   }, []);
   useEffect(() => {
     if (company && tipo === "company") {
-      company.direccionFiscal = `${company.estado} ${company.ciudad} ${company.codigoPostal} ${company.colonia} `;
+      company.direccionFiscal =
+        `${company.estado} ${company.ciudad} ${company.codigoPostal} ${company.colonia} `.trim();
       form.setFieldsValue(company);
     }
   }, [company]);
@@ -115,12 +139,12 @@ const InvoiceCompanyInfo = ({
   ];
   return (
     <>
-      <Row justify="end" gutter={[24, 12]} className="filter-buttons">
+      <Row justify="end" className="filter-buttons">
         <Col span={24}>
           <Button
             type="primary"
-            disabled={facturapiId === "new" || estatusFactura === "Cancelado"}
-            onClick={() => form.submit()}
+            disabled={id === "new"}
+            onClick={() => formCancel.submit()}
           >
             Cancelar
           </Button>
@@ -129,27 +153,50 @@ const InvoiceCompanyInfo = ({
       <div className="status-container" style={{ marginBottom: 12 }}>
         <Form<any>
           {...formItemLayout}
+          form={formCancel}
+          name="invoiceCompany"
+          onFinish={onFinish}
+          size="small"
+          initialValues={{ fechas: [moment(), moment()] }}
+        >
+          <Row justify="space-between" gutter={[0, 12]}>
+            <Col span={16}>
+              <Title level={5}>Datos de la compañia</Title>
+            </Col>
+            <Col span={8}>
+              <SelectInput
+                form={formCancel}
+                formProps={{ label: "Selecciona motivo", name: "motivo" }}
+                options={reasonCancelation}
+                readonly={id === "new"}
+              />
+            </Col>
+          </Row>
+        </Form>
+        <Form<any>
+          {...formItemLayout}
           form={form}
           name="invoiceCompany"
           onFinish={onFinish}
           size="small"
           initialValues={{ fechas: [moment(), moment()] }}
         >
-          <Row>
+          {/* <Row justify="space-between" gutter={[0, 12]}>
+            <Col span={16}>
+              <Title level={5}>Datos de la compañia</Title>
+            </Col>
+            <Col span={8}>
+              <SelectInput
+                form={form}
+                formProps={{ label: "Selecciona motivo", name: "motivo" }}
+                options={reasonCancelation}
+              />
+            </Col>
+          </Row> */}
+          <Row justify="space-between" gutter={[0, 12]}>
             <Col span={24}>
-              <Row justify="space-between" gutter={[12, 12]}>
-                <Col span={12}>
-                  <Title level={5}>Datos de la compañia</Title>
-                </Col>
-                <Col span={12}>
-                  <SelectInput
-                    form={form}
-                    formProps={{ label: "Selecciona motivo", name: "motivo" }}
-                    options={reasonCancelation}
-                  />
-                </Col>
-
-                <Col span={10}>
+              <Row justify="space-between">
+                <Col span={8}>
                   {tipo === "company" && (
                     <TextInput
                       formProps={{ name: "clave", label: "Clave" }}
@@ -167,20 +214,55 @@ const InvoiceCompanyInfo = ({
                     <SelectInput
                       formProps={{ name: "nombre", label: "Nombre" }}
                       options={nameOptions}
+                      readonly={id !== "new"}
                       required
                     />
                   )}
-
-                  <TextInput
-                    formProps={{ name: "rfc", label: "RFC" }}
-                    style={{ marginBottom: 10 }}
+                </Col>
+                <Col span={8}>
+                  <DateRangeInput
+                    formProps={{
+                      label: "Periodo de búsqueda",
+                      name: "fechas",
+                    }}
                     readonly
                   />
-                  <TextInput
-                    formProps={{ name: "razonSocial", label: "Razón social" }}
-                    style={{ marginTop: 10 }}
-                    readonly
-                  />
+                </Col>
+              </Row>
+            </Col>
+            <Col span={8}>
+              <TextInput formProps={{ name: "rfc", label: "RFC" }} readonly />
+            </Col>
+            <Col span={14}>
+              {tipo === "request" && (
+                <Button
+                  onClick={() =>
+                    openModal({
+                      title: "Seleccionar o Ingresar Datos Fiscales",
+                      body: (
+                        <DatosFiscalesForm
+                          local={true}
+                          recordId={nombre}
+                          onSelectRow={onSelectTaxData}
+                        />
+                      ),
+                      width: 900,
+                    })
+                  }
+                  style={{
+                    backgroundColor: "#6EAA46",
+                    color: "white",
+                    borderColor: "#6EAA46",
+                  }}
+                  disabled={!nombre}
+                >
+                  Datos Fiscales
+                </Button>
+              )}
+            </Col>
+            <Col span={24}>
+              <Row style={{ paddingBottom: 10 }}>
+                <Col span={8}>
                   <TextAreaInput
                     formProps={{
                       name: "direccionFiscal",
@@ -190,40 +272,13 @@ const InvoiceCompanyInfo = ({
                     readonly
                   />
                 </Col>
-                {/* <Col span={6}></Col> */}
-                <Col span={14}>
-                  <DateRangeInput
-                    formProps={{
-                      label: "Periodo de búsqueda de solicitudes:",
-                      name: "fechas",
-                    }}
+              </Row>
+              <Row>
+                <Col span={8}>
+                  <TextInput
+                    formProps={{ name: "razonSocial", label: "Razón social" }}
                     readonly
                   />
-                  {tipo === "request" && (
-                    <Button
-                      onClick={() =>
-                        openModal({
-                          title: "Seleccionar o Ingresar Datos Fiscales",
-                          body: (
-                            <DatosFiscalesForm
-                              local={true}
-                              recordId={nombre}
-                              onSelectRow={onSelectTaxData}
-                            />
-                          ),
-                          width: 900,
-                        })
-                      }
-                      style={{
-                        backgroundColor: "#6EAA46",
-                        color: "white",
-                        borderColor: "#6EAA46",
-                      }}
-                      disabled={!nombre}
-                    >
-                      Datos Fiscales
-                    </Button>
-                  )}
                 </Col>
               </Row>
             </Col>

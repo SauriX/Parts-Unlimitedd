@@ -38,6 +38,10 @@ const InvoiceCompanyCreate = () => {
     detailInvoice,
     configurationInvoice,
     nombreSeleccionado,
+    consecutiveBySerie,
+    getInvoice,
+    invoice,
+    selectedRequests,
   } = invoiceCompanyStore;
   const [company, setCompany] = useState<ICompanyForm>();
   const [totalFinalEstudios, setTotalFinalEstudios] = useState<number>(0);
@@ -46,14 +50,15 @@ const InvoiceCompanyCreate = () => {
   const [estudios, setEstudios] = useState<any[]>([]);
   const [currentPaymentMethod, setCurrenPaymentMethod] = useState<any>();
   const [selectRequests, setSelectedRequests] = useState<any>();
+
   let { id, tipo } = useParams<UrlParams>();
+
   useEffect(() => {
     getcfdiOptions();
     getpaymentMethodOptions();
     getPaymentOptions();
     if (tipo === "company") {
       if (id !== "new") {
-        console.log("ID", id);
         let selectedRequestInvoice = invoices.solicitudes
           .find((invoice: any) => invoice.solicitudId === id)
           .facturas.find(
@@ -63,14 +68,11 @@ const InvoiceCompanyCreate = () => {
           selectedRequestInvoice.includes(invoice.solicitudId)
         );
 
-        console.log("filterrequest", toJS(filterRequests));
         setSelectedRequests([...filterRequests]);
       }
     }
-    if (tipo === "request") {
-      selectedRows.forEach((element) => {
-        console.log(toJS(element));
-      });
+    if (id !== "new") {
+      getInvoice(id!);
     }
   }, [id]);
 
@@ -79,14 +81,12 @@ const InvoiceCompanyCreate = () => {
       const estuiosTotal = selectedRows.flatMap(
         (solicitud) => solicitud.estudios
       );
-      console.log("estudios", toJS(estuiosTotal));
       setEstudios(estuiosTotal);
     } else {
       if (!!selectRequests) {
         const estuiosTotal = selectRequests.flatMap(
           (solicitud: any) => solicitud.estudios
         );
-        console.log("estudios", toJS(estuiosTotal));
         setEstudios(estuiosTotal);
       }
     }
@@ -127,9 +127,6 @@ const InvoiceCompanyCreate = () => {
   }, [selectedRows, selectRequests]);
 
   const createInvoice = async (formDataValues: any) => {
-    console.log("FORMVALUESDATA", formDataValues);
-    console.log("taxData", toJS(taxData));
-
     if (tipo === "company") {
       const use = cfdiOptions.find((x) => x.value === company?.cfdiId);
       const method = paymentOptions.find(
@@ -162,15 +159,10 @@ const InvoiceCompanyCreate = () => {
           pais: "México",
         },
       };
-      console.log("invoice", invoiceData);
 
       const invoiceInfo = await checkIn(invoiceData);
       if (invoiceInfo) {
-        console.log("invoiceInfo", invoiceInfo);
-
-        navigate(`/invoice/company`);
       }
-      console.log("invoice REQUEST", invoiceData);
     }
     if (tipo === "request") {
       if (!nombreSeleccionado) {
@@ -193,17 +185,40 @@ const InvoiceCompanyCreate = () => {
       const method = paymentOptions.find(
         (x) => x.value === formDataValues?.formaDePagoId
       )?.label;
+
       const invoiceData = {
         tipoFactura: tipo,
         companyId: selectedRows[0]?.companiaId,
+        nombre: selectedRequests[0].nombre,
         solicitudesId: selectedRows.map((row: any) => row.solicitudId),
-        estudios:
-          configurationInvoice === "desglozado" ? estudios : detailInvoice,
-        // formaPago: "" + company?.formaDePagoId,
+        detalles:
+          configurationInvoice === "desglozado"
+            ? estudios.map((estudio) => ({
+                estudioClave: estudio.clave,
+                concepto: estudio.estudio,
+                importe: estudio.precio,
+                descuento: estudio.descuento,
+                cantidad: 1,
+              }))
+            : detailInvoice,
+        taxDataId: taxData.id,
+        expedienteId: nombreSeleccionado,
+        formaPagoId: "",
         formaPago: formDataValues?.formaDePagoId,
+        numeroCuenta: "",
+        serie: formDataValues.serieCFDI,
+        usoCFDI: use?.label,
+        tipoDesgloce: configurationInvoice,
+        cantidadTotal: total,
+        subtotal: total - (total * 16) / 100,
+        IVA: (total * 16) / 100,
+        consecutivo: consecutiveBySerie,
+        usuario: "",
+        fecha: "",
+        hora: "",
+
         tipo: "PUE",
         claveExterna: company?.clave,
-        usoCFDI: use?.label,
         cliente: {
           razonSocial: taxData?.razonSocial,
           RFC: taxData?.rfc,
@@ -221,13 +236,10 @@ const InvoiceCompanyCreate = () => {
           pais: "MEX",
         },
       };
-      const invoiceInfo = await checkIn(invoiceData);
-      if (invoiceInfo) {
-        console.log("invoiceInfo", invoiceInfo);
 
-        navigate(`/invoice/request`);
-      }
-      console.log("invoice REQUEST", invoiceData);
+      const invoiceInfo = await checkIn(invoiceData);
+      // if (invoiceInfo) {
+      // }
     }
   };
   const getEstatusFactura = () => {

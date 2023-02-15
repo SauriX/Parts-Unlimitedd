@@ -3,7 +3,8 @@ import { observer } from "mobx-react-lite";
 import { FC } from "react";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import DownloadIcon from "../../../app/common/icons/DownloadIcon";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import GoBackIcon from "../../../app/common/icons/GoBackIcon";
 
 type InvoiceCompanyHeaderProps = {
   handleDownload: () => void;
@@ -15,6 +16,7 @@ type UrlParams = {
 const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
   handleDownload,
 }) => {
+  let navigate = useNavigate();
   let { id, tipo } = useParams<UrlParams>();
   return (
     <>
@@ -33,7 +35,15 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
           />
         }
         className="header-container"
-        extra={[<DownloadIcon key="doc" onClick={handleDownload} />]}
+        extra={[
+          <DownloadIcon key="doc" onClick={handleDownload} />,
+          <GoBackIcon
+            key="back"
+            onClick={() => {
+              navigate(-1);
+            }}
+          />,
+        ]}
       ></PageHeader>
     </>
   );
