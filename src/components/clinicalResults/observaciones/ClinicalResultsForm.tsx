@@ -194,7 +194,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       dataIndex: "clave",
       title: "Clave",
       align: "left",
-      width: "20%",
+      width: "15%",
       render: () => {
         return <strong>{estudio.areaId === 30 ? "HP" : "CITO"}</strong>;
       },
@@ -204,7 +204,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       dataIndex: "nombre",
       title: "Estudio",
       align: "left",
-      width: "30%",
+      width: "20%",
       render: () => {
         return (
           <strong>
@@ -217,7 +217,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       key: "id",
       dataIndex: "acciones",
       title: "Acciones",
-      align: "center",
+      align: "left",
       width: "20%",
       render: () => renderUpdateStatus(),
     },
@@ -226,7 +226,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       dataIndex: "orden",
       title: "Orden",
       align: "left",
-      width: "15%",
+      width: "20%",
       render: (value) => {
         return <strong>{value}</strong>;
       },
@@ -236,7 +236,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       dataIndex: "imprimir",
       title: "Seleccionar",
       align: "center",
-      width: "20%",
+      width: "5%",
       render: () => {
         return (
           <Checkbox

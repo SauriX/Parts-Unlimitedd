@@ -524,7 +524,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       {currentStudy.estatusId >= 3 && currentStudy.estatusId != 9 ? (
         <Spin spinning={loading}>
           <Row gutter={[24, 24]}>
-            <Divider orientation="left">{currentStudy.nombre}</Divider>
+            <Divider orientation="left" style={{backgroundColor: "#253B65", color: "white"}}>{currentStudy.nombre}</Divider>
             <Col span={24}>
               <StatusTable currentStudy={currentStudy} />
             </Col>
