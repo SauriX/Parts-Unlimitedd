@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { Fragment, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
+import { useKeyPress } from "../../../app/hooks/useKeyPress";
 import { useStore } from "../../../app/stores/store";
 import { guidPattern } from "../../../app/util/utils";
 import ProceedingForm from "./ProceedingForm";
@@ -20,6 +21,8 @@ const ProceedingDetail = () => {
 
   const [printing, setPrinting] = useState(false);
   const [isPrinting, setIsPrinting] = useState(false);
+
+  useKeyPress("V", () => navigate(`/requests/${id}`));
 
   const { id } = useParams<UrlParams>();
   const reagentId = !id ? "" : !guidPattern.test(id) ? undefined : id;

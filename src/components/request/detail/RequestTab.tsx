@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { Tab } from "rc-tabs/lib/interface";
 import { useCallback, useEffect, useState } from "react";
+import { useKeyPress } from "../../../app/hooks/useKeyPress";
 import { IRequestGeneral } from "../../../app/models/request";
 import { useStore } from "../../../app/stores/store";
 import alerts from "../../../app/util/alerts";
@@ -145,6 +146,8 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       showAutoSaveMessage();
     }
   };
+
+  useKeyPress("L", submit);
 
   const cancel = () => {
     alerts.confirm(

@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
-import { useKeyPress } from "../../../app/hooks/useKeyPress";
 import { IRequestFilter } from "../../../app/models/request";
 import { IOptions } from "../../../app/models/shared";
 import {
@@ -18,7 +17,7 @@ import { useStore } from "../../../app/stores/store";
 import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
-const RequestFilter = () => {
+const ReportFilter = () => {
   const { requestStore, optionStore } = useStore();
   const {
     branchCityOptions,
@@ -39,8 +38,6 @@ const RequestFilter = () => {
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
 
-  useKeyPress("L", form.submit);
-
   useEffect(() => {
     getBranchCityOptions();
     getMedicOptions();
@@ -60,25 +57,23 @@ const RequestFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    if (selectedCity != undefined && selectedCity != null) {
-      var branhces = branchCityOptions.filter((x) =>
-        selectedCity.includes(x.value.toString())
-      );
-      var options = branhces.flatMap((x) =>
-        x.options == undefined ? [] : x.options
-      );
-      setBranchOptions(options);
-    }
-    form.setFieldValue("sucursalId", []);
+    setBranchOptions(
+      branchCityOptions.find((x) => selectedCity?.includes(x.value.toString()))?.options ?? []
+    );
+    form.setFieldValue("sucursales", []);
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
+    var filtered = filter;
+    filter.tipoFecha = 2;
+    getRequests(filter);
+  }, [getRequests]);
+  useEffect(() => {
     form.setFieldsValue(filter);
-  }, [filter, form]);
-
+  }, [ form]);
   const onFinish = (values: IRequestFilter) => {
     const filter = { ...values };
-
+      filter.tipoFecha = 2;
     if (filter.fechas && filter.fechas.length > 1) {
       filter.fechaInicial = filter.fechas[0].utcOffset(0, true);
       filter.fechaFinal = filter.fechas[1].utcOffset(0, true);
@@ -98,22 +93,10 @@ const RequestFilter = () => {
         size="small"
       >
         <Row gutter={[0, 12]}>
-          <Col span={8}>
-            <SelectInput
-              formProps={{
-                name: "tipoFecha",
-                label: "Fecha de",
-              }}
-              options={[
-                { value: 1, label: "Fecha de Creación" },
-                { value: 2, label: "Fecha de Entrega" },
-              ]}
-            />
-          </Col>
+          
           <Col span={8}>
             <DateRangeInput
               formProps={{ name: "fechas", label: "Fechas" }}
-              disableAfterDates
             />
           </Col>
           <Col span={8}>
@@ -157,13 +140,11 @@ const RequestFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
-                      form={form}
                       formProps={{
                         name: "ciudad",
                         label: "Ciudad",
                         noStyle: true,
                       }}
-                      multiple
                       options={cityOptions}
                     />
                   </Col>
@@ -199,7 +180,8 @@ const RequestFilter = () => {
               options={medicOptions}
             />
           </Col>
-          <Col span={16} style={{ textAlign: "right" }}>
+          <Col span={16}></Col>
+          <Col span={8} style={{ textAlign: "right" }}>
             <Button key="clean" htmlType="reset">
               Limpiar
             </Button>
@@ -213,4 +195,4 @@ const RequestFilter = () => {
   );
 };
 
-export default observer(RequestFilter);
+export default observer(ReportFilter);

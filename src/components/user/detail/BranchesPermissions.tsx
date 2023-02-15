@@ -68,8 +68,9 @@ const BranchesPermissions = ({
     [targetKeys]
   );
   useEffect(() => {
-    if (sucursalId) {
+    if (sucursalId && id) {
       let sucursalesConjunto = [sucursalId, ...sucursalesUser];
+
       sucursalesConjunto = sucursalesConjunto.filter(
         (item, index) => sucursalesConjunto.indexOf(item) === index
       );

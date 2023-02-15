@@ -10,9 +10,11 @@ import InvoiceCompanyDetail from "./InvoiceCompanyDetail";
 import InvoiceCompanyInfo from "./InvoiceCompanyInfo";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import alerts from "../../../../app/util/alerts";
 
 type UrlParams = {
   id: string;
+  tipo: string;
 };
 
 const InvoiceCompanyCreate = () => {
@@ -27,8 +29,20 @@ const InvoiceCompanyCreate = () => {
     paymentMethodOptions,
   } = optionStore;
 
-  const { selectedRows, getCompanyById, checkIn, invoices } =
-    invoiceCompanyStore;
+  const {
+    selectedRows,
+    getCompanyById,
+    checkIn,
+    invoices,
+    taxData,
+    detailInvoice,
+    configurationInvoice,
+    nombreSeleccionado,
+    consecutiveBySerie,
+    getInvoice,
+    invoice,
+    selectedRequests,
+  } = invoiceCompanyStore;
   const [company, setCompany] = useState<ICompanyForm>();
   const [totalFinalEstudios, setTotalFinalEstudios] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
@@ -36,27 +50,29 @@ const InvoiceCompanyCreate = () => {
   const [estudios, setEstudios] = useState<any[]>([]);
   const [currentPaymentMethod, setCurrenPaymentMethod] = useState<any>();
   const [selectRequests, setSelectedRequests] = useState<any>();
-  let { id } = useParams<UrlParams>();
+
+  let { id, tipo } = useParams<UrlParams>();
+
   useEffect(() => {
     getcfdiOptions();
     getpaymentMethodOptions();
     getPaymentOptions();
+    if (tipo === "company") {
+      if (id !== "new") {
+        let selectedRequestInvoice = invoices.solicitudes
+          .find((invoice: any) => invoice.solicitudId === id)
+          .facturas.find(
+            (invoice: any) => invoice.tipo === "Compañia"
+          )?.solicitudesId;
+        let filterRequests = invoices.solicitudes.filter((invoice: any) =>
+          selectedRequestInvoice.includes(invoice.solicitudId)
+        );
+
+        setSelectedRequests([...filterRequests]);
+      }
+    }
     if (id !== "new") {
-      console.log("ID", id);
-      let selectedRequestInvoice = invoices.solicitudes
-        .find((invoice: any) => invoice.solicitudId === id)
-        .facturas.find(
-          (invoice: any) => invoice.tipo === "Compañia"
-        )?.solicitudesId;
-
-      // console.log("solicitudes", toJS(invoices.solicitudes));
-      // console.log("selectedRequestInvoice", toJS(selectedRequestInvoice));
-      let filterRequests = invoices.solicitudes.filter((invoice: any) =>
-        selectedRequestInvoice.includes(invoice.solicitudId)
-      );
-
-      console.log("filterrequest", toJS(filterRequests));
-      setSelectedRequests([...filterRequests]);
+      getInvoice(id!);
     }
   }, [id]);
 
@@ -65,14 +81,12 @@ const InvoiceCompanyCreate = () => {
       const estuiosTotal = selectedRows.flatMap(
         (solicitud) => solicitud.estudios
       );
-      console.log("estudios", toJS(estuiosTotal));
       setEstudios(estuiosTotal);
     } else {
       if (!!selectRequests) {
         const estuiosTotal = selectRequests.flatMap(
           (solicitud: any) => solicitud.estudios
         );
-        console.log("estudios", toJS(estuiosTotal));
         setEstudios(estuiosTotal);
       }
     }
@@ -112,14 +126,14 @@ const InvoiceCompanyCreate = () => {
     loadCompany();
   }, [selectedRows, selectRequests]);
 
-  const createInvoice = async () => {
-    if (company) {
-      const use = cfdiOptions.find((x) => x.value === company.cfdiId);
+  const createInvoice = async (formDataValues: any) => {
+    if (tipo === "company") {
+      const use = cfdiOptions.find((x) => x.value === company?.cfdiId);
       const method = paymentOptions.find(
-        (x) => x.value === company.formaDePagoId
+        (x) => x.value === company?.formaDePagoId
       )?.label;
-      console.log("method", toJS(method));
       const invoiceData = {
+        tipoFactura: tipo,
         companyId: selectedRows[0]?.companiaId,
         solicitudesId: selectedRows.map((row: any) => row.solicitudId),
         estudios: estudios,
@@ -145,11 +159,87 @@ const InvoiceCompanyCreate = () => {
           pais: "México",
         },
       };
-      console.log("invoice", invoiceData);
 
       const invoiceInfo = await checkIn(invoiceData);
+      if (invoiceInfo) {
+      }
+    }
+    if (tipo === "request") {
+      if (!nombreSeleccionado) {
+        alerts.info("Debe seleccionar un usuario");
+        return;
+      }
+      if (!Object.keys(taxData).length) {
+        alerts.info("Debe seleccionar los datos fiscales del usuario");
+        return;
+      }
+      if (!formDataValues.formaDePagoId) {
+        alerts.info("Seleccione una forma de pago");
+        return;
+      }
+      if (!formDataValues.cfdiId) {
+        alerts.info("Seleccione un uso de CFDI");
+        return;
+      }
+      const use = cfdiOptions.find((x) => x.value === formDataValues?.cfdiId);
+      const method = paymentOptions.find(
+        (x) => x.value === formDataValues?.formaDePagoId
+      )?.label;
 
-      navigate(`/invoice`);
+      const invoiceData = {
+        tipoFactura: tipo,
+        companyId: selectedRows[0]?.companiaId,
+        nombre: selectedRequests[0].nombre,
+        solicitudesId: selectedRows.map((row: any) => row.solicitudId),
+        detalles:
+          configurationInvoice === "desglozado"
+            ? estudios.map((estudio) => ({
+                estudioClave: estudio.clave,
+                concepto: estudio.estudio,
+                importe: estudio.precio,
+                descuento: estudio.descuento,
+                cantidad: 1,
+              }))
+            : detailInvoice,
+        taxDataId: taxData.id,
+        expedienteId: nombreSeleccionado,
+        formaPagoId: "",
+        formaPago: formDataValues?.formaDePagoId,
+        numeroCuenta: "",
+        serie: formDataValues.serieCFDI,
+        usoCFDI: use?.label,
+        tipoDesgloce: configurationInvoice,
+        cantidadTotal: total,
+        subtotal: total - (total * 16) / 100,
+        IVA: (total * 16) / 100,
+        consecutivo: consecutiveBySerie,
+        usuario: "",
+        fecha: "",
+        hora: "",
+
+        tipo: "PUE",
+        claveExterna: company?.clave,
+        cliente: {
+          razonSocial: taxData?.razonSocial,
+          RFC: taxData?.rfc,
+          regimenFiscal: taxData?.regimenFiscal,
+          correo: taxData?.correo,
+          telefono: "1234567890", // => tomarlo de expdientes
+          codigoPostal: taxData?.cp,
+          calle: taxData?.calle,
+          // numeroExterior: taxData?.numero,
+          // numeroInterior: "",
+          colonia: taxData?.colonian,
+          ciudad: taxData?.municipio,
+          municipio: taxData?.municipio,
+          estado: taxData?.estado,
+          pais: "MEX",
+        },
+      };
+
+      const invoiceInfo = await checkIn(invoiceData);
+      // if (invoiceInfo) {
+      // }
     }
   };
   const getEstatusFactura = () => {

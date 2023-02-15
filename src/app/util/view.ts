@@ -12,14 +12,15 @@ const views = {
   quotation: "cotizacion",
   report: "reportes",
   cash: "cash",
-  sampling:"samplings",
-  routeTraking:"segRutas",
-  shipmenttracking:"ShipmentTracking",
-  recivetracking:"ReciveTracking",
+  sampling: "samplings",
+  routeTraking: "segRutas",
+  shipmenttracking: "ShipmentTracking",
+  recivetracking: "ReciveTracking",
   workLists: "workLists",
-  resultValidation:"ResultValidation",
-  relaseValidation:"RelaseResult",
-  invoiceCatalog:"invoiceCatalog"
+  resultValidation: "ResultValidation",
+  relaseValidation: "RelaseResult",
+  invoiceCatalog: "invoiceCatalog",
+  reportStudy: "reportstudy",
 };
 
 export default views;

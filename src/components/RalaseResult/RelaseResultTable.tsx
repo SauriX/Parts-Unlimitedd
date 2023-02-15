@@ -54,28 +54,7 @@ type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
-/* const studys =[{
-  id:"string",
-  solicitud:"string",
-  nombre:"string",
-  registro:"string",
-  sucursal:"string",
-  edad:"string",
-  sexo:"string",
-  compañia:"string",
-  estudios:[{
-      id:1,
-      study:"string",
-      area:"string",
-      status:"string",
-      registro:"string",
-      entrega:"string",
-      estatus :4,
-      solicitudId:"string",
-  }],
-  order: "string",
-  parcialidad:true
-}] */
+
 const RelaseResultTable: FC<ProceedingTableProps> = ({
   componentRef,
   printing,
@@ -117,7 +96,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     viewTicket,
     setSearch,
   } = relaseResultStore;
-const {profile}  = profileStore;
+
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
   const { getCity } = locationStore;
   const [searchParams] = useSearchParams();
@@ -152,16 +131,9 @@ const {profile}  = profileStore;
     };
     readStudy();
   }, [getStudiesOptions]);
+
   useEffect(() => {}, [studiesOptions]);
-  const togleRows = () => {
-    if (openRows) {
-      setOpenRows(false);
-      setexpandedRowKeys([]);
-    } else {
-      setOpenRows(true);
-      setexpandedRowKeys(studys!.map((x) => x.id));
-    }
-  };
+
   useEffect(() => {
     setexpandedRowKeys(studys!.map((x) => x.id));
     setOpenRows(true);
@@ -326,11 +298,13 @@ const {profile}  = profileStore;
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
+  
   useEffect(() => {
     setDepartmentOptions(
       departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [departmentAreaOptions]);
+
   useEffect(() => {
     const readData = async () => {
       await getBranchCityOptions();
@@ -349,6 +323,7 @@ const {profile}  = profileStore;
     };
     readData();
   }, [getCity]);
+
   useEffect(() => {
     const readPriceList = async () => {
       setLoading(true);
@@ -372,11 +347,13 @@ const {profile}  = profileStore;
     setExpandable(expandableStudyConfig);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
+
   useEffect(() => {
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
+
   useEffect(() => {
     setAreaOptions(
       branchCityOptions.find((x) => x.value === selectedDepartment)
@@ -384,12 +361,18 @@ const {profile}  = profileStore;
     );
     form.setFieldValue("sucursalId", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
+
   useEffect(() => {
-    setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
-    );
-    form.setFieldValue("sucursal", []);
+    if(selectedCity!=undefined && selectedCity !=null){
+      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
+    var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
+      setBranchOptions(
+        options
+      );
+    }
+    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
+
   const onExpand = (isExpanded: boolean, record: Irelacelist) => {
     let expandRows: string[] = expandedRowKeys;
     if (isExpanded) {
@@ -402,9 +385,11 @@ const {profile}  = profileStore;
     }
     setexpandedRowKeys(expandRows);
   };
+
   useEffect(() => {
     setExpandable(expandableStudyConfig);
   }, [activiti]);
+
   const onFinish = async (newValues: ISearchRelase) => {
     setLoading(true);
 
@@ -435,78 +420,6 @@ const {profile}  = profileStore;
     setIds([]);
     setActivar(false);
   };
-  const columns: IColumns<Irelacelist> = [
-    {
-      ...getDefaultColumnProps("solicitud", "Clave", {
-        searchState,
-        setSearchState,
-        width: "15%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("nombre", "Nombre", {
-        searchState,
-        setSearchState,
-        width: "30%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("registro", "Registro", {
-        searchState,
-        setSearchState,
-        width: "20%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("sucursal", "Sucursal", {
-        searchState,
-        setSearchState,
-        width: "15%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("edad", "Edad", {
-        searchState,
-        setSearchState,
-        width: "15%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("sexo", "Sexo", {
-        searchState,
-        setSearchState,
-        width: "15%",
-      }),
-    },
-
-    {
-      ...getDefaultColumnProps("compañia", "Compañia", {
-        searchState,
-        setSearchState,
-        width: "20%",
-      }),
-    },
-  ];
-
-  /*   const PriceListTablePrint = () => {
-    return (
-      <div ref={componentRef}>
-        <PageHeader
-          ghost={false}
-          title={<HeaderTitle title="Catálogo de Lista de Expedientes"  />}
-          className="header-container"
-        ></PageHeader>
-        <Divider className="header-divider" />
-        <Table<IProceedingList>
-          size="small"
-          rowKey={(record) => record.id}
-          columns={columns.slice(0, 7)}
-          pagination={false}
-          dataSource={[...expedientes]}
-        />
-      </div>
-    );
-  }; */
 
   return (
     <Fragment>
@@ -645,11 +558,13 @@ const {profile}  = profileStore;
                         <Row gutter={8}>
                           <Col span={12}>
                             <SelectInput
+                            form={form}
                               formProps={{
                                 name: "ciudad",
                                 label: "Ciudad",
                                 noStyle: true,
                               }}
+                              multiple
                               options={cityOptions}
                             />
                           </Col>

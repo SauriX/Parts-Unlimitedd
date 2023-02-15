@@ -80,7 +80,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
 
   useEffect(() => {
     setBranchOptions(
-      branchCityOptions.find((x: any) => selectedCity.includes(x.value))
+      branchCityOptions.find((x: any) => selectedCity?.includes(x.value))
         ?.options ?? []
     );
     form.setFieldValue("sucursal", []);
