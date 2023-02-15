@@ -42,7 +42,7 @@ const data:IReportRequestInfo[] = [{
 
 }]
 const ReportTable = () => {
-  const { requestStore } = useStore();
+  const { reportStudyStore } = useStore();
   const {
     loadingRequests,
     filter,
@@ -50,7 +50,7 @@ const ReportTable = () => {
     requests,
     setFilter,
     getRequests,
-  } = requestStore;
+  } = reportStudyStore;
 
   let navigate = useNavigate();
 
@@ -93,7 +93,7 @@ const ReportTable = () => {
             {value}
           </Link>
           <small>
-            <Text type="secondary">{item.estatus}</Text>
+            <Text type="secondary" style={{color:item.estatus==="Ruta"?"#00FF80":item.estatus==="Urgente"?"#FF8000":item.estatus!="Normal"?"#AE7BEE":""}}>{item.estatus}</Text>
           </small>
         </div>
       ),
@@ -186,7 +186,7 @@ const ReportTable = () => {
               key={x.clave + x.estatus}
               style={{ display: "flex", alignItems: "center" }}
             >
-              <ContainerBadge color={x.color} text={x.estatus} />
+              <ContainerBadge color={"#FF9F40"} text={x.estatus[0]} />
             </Col>
           ))}
         </Row>
@@ -198,12 +198,16 @@ const ReportTable = () => {
       ...getDefaultColumnProps("nombre", "Estudio", {
         searchState,
         setSearchState,
-        width: 240,
+        width: 150,
       }),
-      ellipsis: {
-        showTitle: false,
-      },
+      render: (value, item) => (
+        <div style={{ display: "inline", flexDirection: "column" }}>
+          {value}
+          <ContainerBadge color={"#FF9F40"} text={item.estatus[0]} />
+        </div>
+      ),
     },
+
     {
       ...getDefaultColumnProps("estatus", "Estatus", {
         searchState,
@@ -223,7 +227,7 @@ const ReportTable = () => {
       ellipsis: {
         showTitle: false,
       },
-    },
+    },     
   ];
   return (
     <Table<IReportRequestInfo>
@@ -231,7 +235,7 @@ const ReportTable = () => {
       loading={loadingRequests}
       rowKey={(record) => record.solicitudId}
       columns={columns}
-      dataSource={[...data]}
+      dataSource={[...requests]}
       pagination={defaultPaginationProperties}
       sticky
       scroll={{ x: "fit-content" }}
