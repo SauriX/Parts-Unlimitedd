@@ -275,13 +275,17 @@ const RequestStudy = () => {
           mode="multiple"
           placeholder="Buscar Estudios"
           optionFilterProp="children"
-          style={{ width: "80%", textAlign: "left" }}
+          style={{ width: "45%", textAlign: "left" }}
           onChange={(_, option) => {
             addStudy((option as IOptions[])[0]);
           }}
-          filterOption={(input: any, option: any) =>
-            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }
+          filterOption={(input: string, option: any) => {
+            if (input.indexOf("-") > -1) {
+              const value = input.split("-")[0];
+              return option.label.toLowerCase().split("-")[0] === value + " ";
+            }
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+          }}
           options={options}
         />
       </Col>
