@@ -104,6 +104,7 @@ const QuotationFilter = () => {
                 name: "expediente",
                 label: "Buscar",
               }}
+              autoFocus
               placeholder="Clave cotización / Nombre"
             />
           </Col>

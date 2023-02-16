@@ -88,6 +88,7 @@ const InvoiceCatalogFilter = () => {
                 label: "Buscar",
               }}
               placeholder="Buscar"
+              autoFocus
             />
           </Col>
           <Col span={8}>

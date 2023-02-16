@@ -112,6 +112,7 @@ const SeriesFilter = () => {
                   name: "buscar",
                   label: "Buscar",
                 }}
+                autoFocus
                 placeholder="Clave"
               />
             </Col>
