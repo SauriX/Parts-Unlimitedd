@@ -5,7 +5,7 @@ export interface IReportRequestInfo {
     paciente:string
     edad:string
     sexo:string
-    sucursalorigin :string
+    sucursal:string
     medico:string
     tipo :string
     compañia:string
@@ -15,8 +15,8 @@ export interface IReportRequestInfo {
 }
 
 export interface IStudyReportInfo{
-    idstudio:string
-    estudioI:string
+    idStudio:string
+    nombre:string
     estatus:string
-    fechaentrega:string
+    fecha:string
 }

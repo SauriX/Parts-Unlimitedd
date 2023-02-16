@@ -21,11 +21,13 @@ import {
   RequestFilterForm,
 } from "../models/request";
 import alerts from "../util/alerts";
-import { catalog, status, statusName } from "../util/catalogs";
+import { catalog, paymentForms, status, statusName } from "../util/catalogs";
 import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 import { v4 as uuidv4 } from "uuid";
+import { store } from "./store";
+import NetPay from "../api/netPay";
 
 export default class RequestStore {
   constructor() {
@@ -122,6 +124,11 @@ export default class RequestStore {
     this.studies = [];
     this.packs = [];
     this.totals = new RequestTotal();
+  };
+
+  clearStudies = () => {
+    this.studies = [];
+    this.packs = [];
   };
 
   setOriginalTotal = (totals: IRequestTotal) => {
@@ -415,8 +422,18 @@ export default class RequestStore {
   createPayment = async (request: IRequestPayment) => {
     try {
       this.loadingTabContentCount++;
-      const payment = await Request.createPayment(request);
-      this.payments.push(payment);
+
+      if (
+        request.formaPagoId !== paymentForms.tarjetaDebito &&
+        request.formaPagoId !== paymentForms.tarjetaCredito
+      ) {
+        const payment = await Request.createPayment(request);
+        this.payments.push(payment);
+        // this.payments = [...this.payments, payment];
+      } else {
+        this.chargePayPalPayment(request);
+      }
+
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -424,6 +441,32 @@ export default class RequestStore {
     } finally {
       this.loadingTabContentCount--;
     }
+  };
+
+  chargePayPalPayment = (payment: IRequestPayment) => {
+    const guid = uuidv4();
+    payment.notificacionId = guid;
+
+    const res = NetPay.paymentCharge(payment);
+    if (!res) return;
+
+    const connection = store.notificationStore.hubConnection;
+    if (!connection) return;
+
+    console.log("Esperando respuesta de terminal...");
+
+    if (connection.state === "Connected") {
+      connection.invoke("SubscribeWithName", guid);
+    }
+
+    connection.on("NotifyPaymentResponse", (payment: IRequestPayment) => {
+      console.log("Respuesta recibida de terminal");
+      // this.payments.push(payment);
+      console.log(payment);
+      this.payments = [...this.payments, payment];
+      connection.invoke("RemoveWithName", guid);
+      connection.off("NotifyPaymentResponse");
+    });
   };
 
   checkInPayment = async (request: IRequestCheckIn) => {
@@ -466,6 +509,9 @@ export default class RequestStore {
       if (this.request) {
         this.request.urgencia = request.urgencia;
         this.request.procedencia = request.procedencia;
+      }
+      if (request.cambioCompañia) {
+        this.clearStudies();
       }
       return true;
     } catch (error: any) {

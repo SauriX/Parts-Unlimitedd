@@ -256,7 +256,7 @@ const InvoiceComapnyForm = () => {
               </Form.Item>
             </Col>
             <Col span={8}>
-              <TextInput formProps={{ name: "buscar", label: "Buscar" }} />
+              <TextInput formProps={{ name: "buscar", label: "Buscar" }} autoFocus/>
             </Col>
           </Row>
           <Row gutter={[0, 12]} style={{ paddingLeft: 60, paddingTop: 10 }}>

@@ -13,6 +13,7 @@ import {
   urgencyOptions,
 } from "../../../../app/stores/optionStore";
 import { useStore } from "../../../../app/stores/store";
+import alerts from "../../../../app/util/alerts";
 import { catalog } from "../../../../app/util/catalogs";
 import { validateEmail } from "../../../../app/util/utils";
 import RequestDeliveryHistory from "../RequestDeliveryHistory";
@@ -33,7 +34,7 @@ const sendOptions = [
 type RequestGeneralProps = {
   branchId: string | undefined;
   form: FormInstance<IRequestGeneral>;
-  onSubmit: (general: IRequestGeneral, showLoader: boolean) => void;
+  onSubmit: (general: IRequestGeneral, showLoader: boolean) => Promise<void>;
 };
 
 const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
@@ -46,6 +47,7 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
   } = optionStore;
   const {
     request,
+    clearStudies,
     setStudyFilter,
     getGeneral,
     sendTestEmail,
@@ -167,9 +169,29 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
     request.correo = !isValidEmail ? undefined : emails?.join(",");
     request.whatsapp = !isValidWhatsapp ? undefined : whatsapps?.join(",");
 
-    const autoSave = form.getFieldValue("guardadoAutomatico");
+    if (requestGeneral?.compañiaId !== request.compañiaId) {
+      alerts.confirm(
+        "Hubo un cambio de compañía",
+        "Al cambiar la compañía los estudios serán eliminados",
+        async () => {
+          request.cambioCompañia = true;
+          await submit(request);
+        },
+        async () => {
+          form.setFieldsValue(requestGeneral!);
+        }
+      );
+      return;
+    }
 
-    onSubmit(request, autoSave);
+    request.cambioCompañia = false;
+    submit(request);
+  };
+
+  const submit = async (request: IRequestGeneral) => {
+    setRequestGeneral((prev) => ({ ...prev!, compañiaId: request.compañiaId }));
+    const autoSave = form.getFieldValue("guardadoAutomatico");
+    await onSubmit(request, autoSave);
   };
 
   const sendEmail = async () => {
