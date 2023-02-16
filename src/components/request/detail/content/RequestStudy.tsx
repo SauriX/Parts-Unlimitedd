@@ -1,13 +1,4 @@
-import {
-  Button,
-  Checkbox,
-  Col,
-  Row,
-  Select,
-  Table,
-  Tooltip,
-  Typography,
-} from "antd";
+import { Button, Col, Row, Select, Table, Tooltip, Typography } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
@@ -40,8 +31,6 @@ const RequestStudy = () => {
     studies,
     packs,
     studyFilter,
-    setStudy,
-    setPack,
     getPriceStudy,
     getPricePack,
     deleteStudy,
