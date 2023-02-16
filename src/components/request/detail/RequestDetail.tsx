@@ -221,7 +221,6 @@ const RequestDetail = () => {
       />
       <RequestTab recordId={recordId} branchId={branchId} />
       <Divider className="header-divider" />
-      <RequestDeliveryHistory solicitudId={requestId!} />
     </Fragment>
   );
 };

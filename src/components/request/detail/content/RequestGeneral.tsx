@@ -15,6 +15,7 @@ import {
 import { useStore } from "../../../../app/stores/store";
 import { catalog } from "../../../../app/util/catalogs";
 import { validateEmail } from "../../../../app/util/utils";
+import RequestDeliveryHistory from "../RequestDeliveryHistory";
 
 const formItemLayout = {
   labelCol: { span: 4 },
@@ -397,6 +398,9 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
             rows={3}
             errors={errors.find((x) => x.name === "observaciones")?.errors}
           />
+        </Col>
+        <Col span={24}>
+          <RequestDeliveryHistory />
         </Col>
       </Row>
     </Form>
