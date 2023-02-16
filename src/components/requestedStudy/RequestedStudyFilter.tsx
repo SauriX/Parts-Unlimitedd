@@ -122,6 +122,7 @@ const RequestedStudyFilter = () => {
                 name: "buscar",
                 label: "Buscar",
               }}
+              autoFocus
             />
           </Col>
           <Col span={8}>

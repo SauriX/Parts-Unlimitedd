@@ -424,29 +424,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   return (
     <Fragment>
       <Spin spinning={loading} tip={printing ? "Imprimiendo" : ""}>
-        <Row justify="end" gutter={[24, 12]} className="filter-buttons">
-          <Col span={24}>
-            <Button
-              key="clean"
-              onClick={(e) => {
-                form.setFieldsValue(new searchrelase());
-                setValues(new searchrelase());
-              }}
-            >
-              Limpiar
-            </Button>
-            <Button
-              key="filter"
-              type="primary"
-              onClick={(e) => {
-                e.stopPropagation();
-                form.submit();
-              }}
-            >
-              Filtrar
-            </Button>
-          </Col>
-        </Row>
+
         <div className="status-container">
           <Form<ISearchRelase>
             {...formItemLayout}
@@ -470,6 +448,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
                         name: "search",
                         label: "Buscar",
                       }}
+                      autoFocus
                     />
                   </Col>
                   <Col span={8}>
@@ -600,6 +579,29 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
               </Col>
             </Row>
           </Form>
+          <Row justify="end" gutter={[24, 12]} className="filter-buttons">
+          <Col span={24}>
+            <Button
+              key="clean"
+              onClick={(e) => {
+                form.setFieldsValue(new searchrelase());
+                setValues(new searchrelase());
+              }}
+            >
+              Limpiar
+            </Button>
+            <Button
+              key="filter"
+              type="primary"
+              onClick={(e) => {
+                e.stopPropagation();
+                form.submit();
+              }}
+            >
+              Filtrar
+            </Button>
+          </Col>
+        </Row>
         </div>
         <Row>
           <Col md={8}>
