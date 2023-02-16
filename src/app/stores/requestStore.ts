@@ -126,6 +126,11 @@ export default class RequestStore {
     this.totals = new RequestTotal();
   };
 
+  clearStudies = () => {
+    this.studies = [];
+    this.packs = [];
+  };
+
   setOriginalTotal = (totals: IRequestTotal) => {
     this.totalsOriginal = totals;
   };
@@ -504,6 +509,9 @@ export default class RequestStore {
       if (this.request) {
         this.request.urgencia = request.urgencia;
         this.request.procedencia = request.procedencia;
+      }
+      if (request.cambioCompañia) {
+        this.clearStudies();
       }
       return true;
     } catch (error: any) {
