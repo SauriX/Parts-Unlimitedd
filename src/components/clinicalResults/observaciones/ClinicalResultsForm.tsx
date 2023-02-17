@@ -4,6 +4,7 @@ import {
   Card,
   Checkbox,
   Col,
+  Divider,
   Form,
   Row,
   Table,
@@ -22,7 +23,7 @@ import {
   RequestStudyInfoForm,
   RequestStudyValues,
 } from "../../../app/models/request";
-import { FC, useEffect, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 import { toJS } from "mobx";
 import { IProceedingForm } from "../../../app/models/Proceeding";
 import { useStore } from "../../../app/stores/store";
@@ -40,6 +41,7 @@ import { objectToFormData, toolBarOptions } from "../../../app/util/utils";
 import { RcFile } from "antd/lib/upload";
 import { uniqueId, values } from "lodash";
 import alerts from "../../../app/util/alerts";
+import StatusTable from "../content/StatusTable";
 const { Text, Title } = Typography;
 type ClinicalResultsFormProps = {
   estudio: IRequestStudy;
@@ -128,7 +130,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     }
     let archivos: RcFile[] = [];
     const cStudy = await getRequestStudyById(estudio.id!);
-    console.log("estudio encontrado", toJS(cStudy));
+    
     setCurrentStudy(cStudy!);
     if (
       resultPathological?.imagenPatologica !== null &&
@@ -156,10 +158,6 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
 
   useEffect(() => {
     if (currentResult) {
-      console.log(
-        "result actual",
-        JSON.parse(currentResult?.descripcionMacroscopica)
-      );
       setEditorMacroscopica(
         EditorState.createWithContent(
           convertFromRaw(JSON.parse(currentResult.descripcionMacroscopica))
@@ -177,13 +175,9 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       );
     }
   }, [currentResult]);
-  useEffect(() => {
-    // console.log("PRUEBA TEST", prueba);
-  }, [prueba]);
 
   useEffect(() => {
     setDisabled(!(currentStudy.estatusId === status.requestStudy.solicitado));
-    console.log("CURRENT STUDY", toJS(currentStudy));
   }, [estudio, currentStudy]);
 
   const columns: IColumns<any> = [
@@ -192,7 +186,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       dataIndex: "clave",
       title: "Clave",
       align: "left",
-      width: "20%",
+      width: "15%",
       render: () => {
         return <strong>{estudio.areaId === 30 ? "HP" : "CITO"}</strong>;
       },
@@ -202,7 +196,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       dataIndex: "nombre",
       title: "Estudio",
       align: "left",
-      width: "30%",
+      width: "20%",
       render: () => {
         return (
           <strong>
@@ -215,7 +209,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       key: "id",
       dataIndex: "acciones",
       title: "Acciones",
-      align: "center",
+      align: "left",
       width: "20%",
       render: () => renderUpdateStatus(),
     },
@@ -224,7 +218,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       dataIndex: "orden",
       title: "Orden",
       align: "left",
-      width: "15%",
+      width: "20%",
       render: (value) => {
         return <strong>{value}</strong>;
       },
@@ -234,7 +228,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       dataIndex: "imprimir",
       title: "Seleccionar",
       align: "center",
-      width: "20%",
+      width: "5%",
       render: () => {
         return (
           <Checkbox
@@ -341,8 +335,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                             async () => {
                               setEnvioManual(true);
                               form.submit();
-                            },
-                            () => console.log("do nothing")
+                            }
                           );
                         } else {
                           setEnvioManual(true);
@@ -373,7 +366,6 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     );
   };
   const guardarReporte = async (values: any) => {
-    console.log("medicos options", medicOptions);
     const reporteClinico: IResultPathological = {
       solicitudId: solicitud.solicitudId!,
       estudioId: estudio.id!,
@@ -398,15 +390,12 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
 
     const formData = objectToFormData(reporteClinico);
 
-    console.log("resultado actual", toJS(currentResult));
     if (!!currentResult) {
       await updateResultPathological(formData, envioManual);
     } else {
       await createResultPathological(formData);
     }
     await loadInit();
-    console.log("reporte", reporteClinico);
-    console.log("final form", values);
   };
   const updateStatus = async (esCancelacion: boolean = false) => {
     let nuevoEstado = 0;
@@ -448,76 +437,16 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     setPrueba(newFileList);
   };
   const beforeUploadTest = (value: any) => {
-    console.log("before PRUEBA", value);
     setPrueba((x) => [...x, value]);
     return false;
   };
 
   return (
-    <>
-      <Row style={{ marginBottom: "20px" }}>
-        <Col span={8}>
-          <p>
-            CAP -{" "}
-            {currentStudy.estatusId >= 4 && (
-              <strong>{`${moment(currentStudy.fechaCaptura).format(
-                "DD/MM/YYYY HH:mm"
-              )}, ${currentStudy.usuarioCaptura}`}</strong>
-            )}
-          </p>
-        </Col>
-        <Col span={8}>
-          <p>
-            LIB -{" "}
-            {currentStudy.estatusId >= 6 && (
-              <strong>{`${moment(currentStudy.fechaLiberado).format(
-                "DD/MM/YYYY HH:mm"
-              )}, ${currentStudy.usuarioLiberado}`}</strong>
-            )}
-          </p>
-        </Col>
-        <Col span={8}>
-          <p>
-            IMP -
-            {currentStudy.estatusId >= 8 && (
-              <strong>{`${moment(currentStudy.fechaValidacion).format(
-                "DD/MM/YYYY HH:mm"
-              )}, ${currentStudy.usuarioValidacion
-                ?.split(" ")
-                .map((word: string) => word[0])
-                .join("")}`}</strong>
-            )}
-          </p>
-        </Col>
-        <Col span={8}>
-          <p>
-            VAL -{" "}
-            {currentStudy.estatusId >= 5 && (
-              <strong>{`${moment(currentStudy.fechaValidacion).format(
-                "DD/MM/YYYY HH:mm"
-              )}, ${currentStudy.usuarioValidacion}`}</strong>
-            )}
-          </p>
-        </Col>
-        <Col span={8}>
-          <p>
-            ENV -{" "}
-            {currentStudy.estatusId >= 7 && (
-              <strong>{`${moment(currentStudy.fechaValidacion).format(
-                "DD/MM/YYYY HH:mm"
-              )}, ${currentStudy.usuarioValidacion}`}</strong>
-            )}
-          </p>
-        </Col>
-        <Col span={8}>
-          <p>
-            ENT -{" "}
-            {currentStudy.estatusId >= 8 && (
-              <strong>{`${moment(currentStudy.fechaValidacion).format(
-                "DD/MM/YYYY HH:mm"
-              )}, ${currentStudy.usuarioValidacion}`}</strong>
-            )}
-          </p>
+    <Fragment key={estudio.id}>
+      <Row gutter={[24, 24]}>
+        <Divider orientation="left">{currentStudy.nombre}</Divider>
+        <Col span={24}>
+          <StatusTable currentStudy={currentStudy} />
         </Col>
         <Col span={24}>
           <Table<any>
@@ -696,7 +625,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
           </Card>
         </Col>
       </Row>
-    </>
+    </Fragment>
   );
 };
 export default observer(ClinicalResultsForm);
