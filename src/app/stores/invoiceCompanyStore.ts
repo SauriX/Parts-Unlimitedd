@@ -1,6 +1,6 @@
 import { ITaxData } from "./../models/taxdata";
 import { IOptions } from "./../models/shared";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, toJS } from "mobx";
 import alerts from "../util/alerts";
 import { getErrors } from "../util/utils";
 import InvoiceCompany from "../api/invoiceCompany";
@@ -15,6 +15,7 @@ export class InvoiceCompanyStore {
   isSameCommpany: boolean = false;
   setSelectedRows = (rows: any[]) => {
     this.selectedRows = rows;
+    console.log("seleccionadas", toJS(rows));
     this.isSameCommpany = !!rows.length
       ? this.selectedRows.every(
           (request) => request.compania === rows[0].compania

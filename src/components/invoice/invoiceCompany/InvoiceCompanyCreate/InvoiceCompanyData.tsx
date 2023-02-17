@@ -43,6 +43,7 @@ const InvoiceCompanyData = ({
     selectedRows,
     selectedRequests,
     invoice: invoiceExisting,
+    setSerie,
   } = invoiceCompanyStore;
   const { profile } = profileStore;
   const {
@@ -100,6 +101,70 @@ const InvoiceCompanyData = ({
           </Col>
         </Row>
         <Row>
+          <Col span={24}>
+            <Row style={{ justifyContent: "space-around" }}>
+              {/* //BOTONES DE FACTURACION */}
+              {/* <Col span={24}> */}
+              {/* <Row style={{ justifyContent: "center" }}> */}
+              <Button
+                type="primary"
+                onClick={() => {
+                  createInvoice(form.getFieldsValue());
+                }}
+                disabled={id !== "new"}
+              >
+                Registrar Factura
+              </Button>
+              {/* </Row>
+                <Row style={{ justifyContent: "center", paddingTop: 10 }}> */}
+              <Button
+                type="primary"
+                onClick={() => {
+                  downloadPdf(invoiceExisting?.facturaId);
+                }}
+                disabled={id === "new"}
+              >
+                Descargar
+              </Button>
+              {/* </Row> */}
+              {/* <Row style={{ justifyContent: "center", paddingTop: 10 }}> */}
+              <Button
+                type="primary"
+                onClick={() => {
+                  printPdf(invoiceExisting?.facturaId);
+                }}
+                disabled={id === "new"}
+              >
+                Imprimir
+              </Button>
+              {/* </Row>
+                <Row style={{ justifyContent: "center", paddingTop: 10 }}> */}
+              <Button
+                type="primary"
+                onClick={() => {
+                  openModal({
+                    title: "Configuración de envío",
+                    body: (
+                      <InvoiceCompanyDeliver
+                        companiaId={company?.id}
+                        facturapiId={facturapiId}
+                        id={id!}
+                        tipo={tipo!}
+                      />
+                    ),
+                    width: 800,
+                  });
+                }}
+                disabled={id === "new"}
+              >
+                Configurar envió
+              </Button>
+              {/* </Row> */}
+              {/* </Col> */}
+            </Row>
+          </Col>
+        </Row>
+        <Row style={{ paddingTop: 10 }}>
           <Col span={22}>
             <Row gutter={[0, 12]}>
               <Col span={10}>
@@ -126,7 +191,11 @@ const InvoiceCompanyData = ({
               <Col span={10} style={{ textAlign: "end" }}>
                 <Text mark>{`Cantidad Total: ${
                   tipo === "request"
-                    ? invoiceExisting?.cantidadTotal
+                    ? moneyFormatter.format(
+                        id === "new"
+                          ? totalEstudios
+                          : invoiceExisting?.cantidadTotal
+                      )
                     : moneyFormatter.format(totalEstudios)
                 } (IVA incluido)`}</Text>
               </Col>
@@ -159,25 +228,32 @@ const InvoiceCompanyData = ({
                   />
                 )}
               </Col>
-              <Col span={10}>
-                <SelectInput
-                  formProps={{ name: "serieCFDI", label: "SerieCFDI" }}
-                  options={invoiceSeriesOptions}
-                  readonly={id !== "new"}
-                />
+              <Col span={10} style={{ textAlign: "end" }}>
+                <div>
+                  <Text style={{ textAlign: "center" }}>{`IVA 16%: ${
+                    tipo === "request"
+                      ? moneyFormatter.format(
+                          id === "new"
+                            ? (totalEstudios * 16) / 100
+                            : invoiceExisting?.iva
+                        )
+                      : moneyFormatter.format((totalEstudios * 16) / 100)
+                  }`}</Text>
+                </div>
               </Col>
-              <Col span={10}>
-                {tipo === "company" && (
+
+              {tipo === "company" && (
+                <Col span={10}>
                   <TextInput
                     formProps={{
                       name: "diasCredito",
                       label: "Días de crédito",
                     }}
                   />
-                )}
-              </Col>
-              <Col span={10}>
-                {tipo === "company" && (
+                </Col>
+              )}
+              {tipo === "company" && (
+                <Col span={10}>
                   <SelectInput
                     formProps={{
                       name: "metodoDePagoId",
@@ -185,8 +261,8 @@ const InvoiceCompanyData = ({
                     }}
                     options={paymentMethodOptions}
                   />
-                )}
-              </Col>
+                </Col>
+              )}
 
               {tipo === "company" && (
                 <Col span={10}>
@@ -204,93 +280,41 @@ const InvoiceCompanyData = ({
                   readonly={id !== "new"}
                 />
               </Col>
-              <Col span={10}>
-                {tipo === "company" && (
+              {tipo === "company" && (
+                <Col span={10}>
                   <TextInput
                     formProps={{
                       name: "limiteDeCredito",
                       label: "Límite de crédito",
                     }}
                   />
-                )}
-              </Col>
-              <Col span={10} style={{ textAlign: "end" }} offset={10}>
-                <div>
-                  <Text style={{ textAlign: "center" }}>{`IVA 16%: ${
-                    tipo === "request"
-                      ? invoiceExisting?.iva
-                      : moneyFormatter.format((totalEstudios * 16) / 100)
-                  }`}</Text>
-                </div>
+                </Col>
+              )}
+              <Col span={10} style={{ textAlign: "end" }}>
                 <div>
                   <Text style={{ textAlign: "center" }}>{`Subtotal: ${
                     tipo === "request"
-                      ? invoiceExisting?.subtotal
+                      ? moneyFormatter.format(
+                          id === "new"
+                            ? totalEstudios - (totalEstudios * 16) / 100
+                            : invoiceExisting?.subtotal
+                        )
                       : moneyFormatter.format(
                           totalEstudios - (totalEstudios * 16) / 100
                         )
                   } `}</Text>
                 </div>
               </Col>
-            </Row>
-          </Col>
-          <Col span={2}>
-            <Row style={{ justifyContent: "center" }}>
-              {/* //BOTONES DE FACTURACION */}
-              <Col span={24}>
-                <Row style={{ justifyContent: "center" }}>
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      createInvoice(form.getFieldsValue());
-                    }}
-                    disabled={id !== "new"}
-                  >
-                    Registrar Factura
-                  </Button>
-                </Row>
-                <Row style={{ justifyContent: "center", paddingTop: 10 }}>
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      downloadPdf(invoiceExisting?.facturaId);
-                    }}
-                    disabled={id === "new"}
-                  >
-                    Descargar
-                  </Button>
-                </Row>
-                <Row style={{ justifyContent: "center", paddingTop: 10 }}>
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      printPdf(invoiceExisting?.facturaId);
-                    }}
-                    disabled={id === "new"}
-                  >
-                    Imprimir
-                  </Button>
-                </Row>
-                <Row style={{ justifyContent: "center", paddingTop: 10 }}>
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      openModal({
-                        title: "Configuración de envío",
-                        body: (
-                          <InvoiceCompanyDeliver
-                            companiaId={company?.id}
-                            facturapiId={facturapiId}
-                          />
-                        ),
-                        width: 800,
-                      });
-                    }}
-                    disabled={id === "new"}
-                  >
-                    Configurar envió
-                  </Button>
-                </Row>
+              <Col span={10}>
+                <SelectInput
+                  formProps={{ name: "serieCFDI", label: "SerieCFDI" }}
+                  options={invoiceSeriesOptions}
+                  onChange={(serie: any) => {
+                    console.log("sereie", serie);
+                    setSerie(serie);
+                  }}
+                  readonly={id !== "new"}
+                />
               </Col>
             </Row>
           </Col>

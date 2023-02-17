@@ -11,6 +11,7 @@ import InvoiceCompanyInfo from "./InvoiceCompanyInfo";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import alerts from "../../../../app/util/alerts";
+import history from "../../../../app/util/history";
 
 type UrlParams = {
   id: string;
@@ -212,7 +213,7 @@ const InvoiceCompanyCreate = () => {
         cantidadTotal: total,
         subtotal: total - (total * 16) / 100,
         IVA: (total * 16) / 100,
-        consecutivo: consecutiveBySerie,
+        consecutivo: +consecutiveBySerie,
         usuario: "",
         fecha: "",
         hora: "",
@@ -238,8 +239,10 @@ const InvoiceCompanyCreate = () => {
       };
 
       const invoiceInfo = await checkIn(invoiceData);
-      // if (invoiceInfo) {
-      // }
+      if (!!invoiceInfo?.facturapiId) {
+        alerts.success("Factura creada conrrectamente");
+        history.push(`/invoice/${tipo}/${invoiceInfo?.facturapiId}`);
+      }
     }
   };
   const getEstatusFactura = () => {
