@@ -139,7 +139,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const loadInit = async () => {
     const cStudy = await getRequestStudyById(estudio.id!);
     setCurrentStudy(cStudy!);
-    console.log("cStudy", cStudy);
 
     let captureResult = studies.find(
       (x) => x.solicitudEstudioId! == estudio.id
@@ -355,7 +354,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                               setEnvioManual(true);
                               form.submit();
                             },
-                            () => console.log("do nothing")
                           );
                         } else {
                           setEnvioManual(true);
@@ -426,7 +424,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       return obj;
     });
 
-    console.log(labResults);
     success = await updateResults(
       labResults,
       solicitud.expedienteId,
@@ -587,9 +584,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                           let fieldResult = resultValue?.find(
                             (x) => x.id === fieldValue.id
                           )?.resultado as string;
-
-                          console.log(fieldValue);
-                          console.log(fieldResult);
 
                           let fieldRange =
                             parseFloat(fieldValue.valorInicial) >

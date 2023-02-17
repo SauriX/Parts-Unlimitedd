@@ -113,7 +113,7 @@ const ClinicalResultsInfo = () => {
       imprimirCriticos: printCritics,
       imprimirPrevios: printPrevious,
     };
-    console.log("sendToPrintSelectedStudies", toJS(studiesSelectedToPrint));
+
     await printSelectedStudies(studiesToPrint);
     setPrinting(false);
   };
@@ -272,7 +272,6 @@ const ClinicalResultsInfo = () => {
             </Col>
             <Radio.Group
               onChange={(value) => {
-                console.log("checked", value.target.value);
                 if (value.target.value === "unmarked") {
                   setMarkAll(false);
                   clearSelectedStudies();
@@ -317,12 +316,6 @@ const ClinicalResultsInfo = () => {
       <Row>
         <Col span={24}>
           {studies.map((req: IRequestStudy, index: any) => {
-            console.log("req", req.tipo);
-            // const idPatologia = departmentOptions.find(
-            //   (dep) => dep.label === "PATOLOGÍA"
-            // )?.value;
-
-            // if (idPatologia === req.departamentoId) {
             if (req.tipo === "PATOLOGICO") {
               return (
                 <div key={req.identificador}>

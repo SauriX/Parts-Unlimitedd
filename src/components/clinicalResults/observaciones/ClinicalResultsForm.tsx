@@ -130,7 +130,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     }
     let archivos: RcFile[] = [];
     const cStudy = await getRequestStudyById(estudio.id!);
-    console.log("estudio encontrado", toJS(cStudy));
+    
     setCurrentStudy(cStudy!);
     if (
       resultPathological?.imagenPatologica !== null &&
@@ -158,10 +158,6 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
 
   useEffect(() => {
     if (currentResult) {
-      console.log(
-        "result actual",
-        JSON.parse(currentResult?.descripcionMacroscopica)
-      );
       setEditorMacroscopica(
         EditorState.createWithContent(
           convertFromRaw(JSON.parse(currentResult.descripcionMacroscopica))
@@ -179,13 +175,9 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       );
     }
   }, [currentResult]);
-  useEffect(() => {
-    // console.log("PRUEBA TEST", prueba);
-  }, [prueba]);
 
   useEffect(() => {
     setDisabled(!(currentStudy.estatusId === status.requestStudy.solicitado));
-    console.log("CURRENT STUDY", toJS(currentStudy));
   }, [estudio, currentStudy]);
 
   const columns: IColumns<any> = [
@@ -343,8 +335,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                             async () => {
                               setEnvioManual(true);
                               form.submit();
-                            },
-                            () => console.log("do nothing")
+                            }
                           );
                         } else {
                           setEnvioManual(true);
@@ -375,7 +366,6 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     );
   };
   const guardarReporte = async (values: any) => {
-    console.log("medicos options", medicOptions);
     const reporteClinico: IResultPathological = {
       solicitudId: solicitud.solicitudId!,
       estudioId: estudio.id!,
@@ -400,15 +390,12 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
 
     const formData = objectToFormData(reporteClinico);
 
-    console.log("resultado actual", toJS(currentResult));
     if (!!currentResult) {
       await updateResultPathological(formData, envioManual);
     } else {
       await createResultPathological(formData);
     }
     await loadInit();
-    console.log("reporte", reporteClinico);
-    console.log("final form", values);
   };
   const updateStatus = async (esCancelacion: boolean = false) => {
     let nuevoEstado = 0;
@@ -450,7 +437,6 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     setPrueba(newFileList);
   };
   const beforeUploadTest = (value: any) => {
-    console.log("before PRUEBA", value);
     setPrueba((x) => [...x, value]);
     return false;
   };
