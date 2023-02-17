@@ -250,18 +250,6 @@ const CatalogBudgetForm: FC<CatalogBudgetFormProps> = ({
               </Col>
               <Col md={12} sm={24} xs={12}></Col>
               <Col md={12} sm={24} xs={12}>
-                <NumberInput
-                  formProps={{
-                    name: "costoFijo",
-                    label: "Costo Fijo",
-                  }}
-                  min={0}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}></Col>
-              <Col md={12} sm={24} xs={12}>
                 <Form.Item label="Sucursal" className="no-error-text" help="">
                   <Input.Group>
                     <Row gutter={8}>

@@ -41,11 +41,19 @@ export interface ISamplesCost {
 }
 
 export interface IServicesCost {
-  id?: number;
+  id?: string;
+  costoFijoId?: number;
+  identificador?: string;
   costoFijo: number;
   nombre?: string;
-  sucursal?: string;
-  fechaAlta: moment.Moment;
+  sucursales?: IBranchService[];
+  fechaAlta?: moment.Moment;
+}
+
+export interface IBranchService{
+  costoId?: string;
+  sucursalId: string;
+  ciudad: string;
 }
 
 export interface IServicesInvoice {
@@ -69,8 +77,26 @@ export interface IModalIndicatorsFilter {
   ciudad?: string[];
 }
 
+export interface IUpdateService{
+  servicios: IServicesCost[];
+  filtros: IModalIndicatorsFilter;
+}
+
 export interface IServiceFile {
   archivo?: File | Blob;
+}
+
+export class ServicesCost implements IServicesCost {
+  costoFijoId = 0;
+  identificador = "";
+  costoFijo = 0;
+  nombre = "";
+  sucursales = [];
+  fechaAlta = moment(Date.now()).utcOffset(0, true);
+
+  constructor(init?: IServicesCost) {
+    Object.assign(this, init);
+  }
 }
 
 export class IndicatorFilterValues implements IReportIndicatorsFilter {
