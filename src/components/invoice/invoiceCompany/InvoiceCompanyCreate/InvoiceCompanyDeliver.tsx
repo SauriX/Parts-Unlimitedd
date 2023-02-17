@@ -51,10 +51,7 @@ const InvoiceCompanyDeliver = ({
   const [isSelectedContacts, setIsSelectedContacts] = useState<boolean>(true);
   const [isValidEmail, setIsValidEmail] = useState(false);
   const [isValidWhatsapp, setIsValidWhatsapp] = useState(false);
-  useEffect(() => {
-    console.log("ID DE LA FACTURAapi", id);
-    console.log("TIPO DE LA FACTURAapi", tipo);
-  }, [id, tipo]);
+
   useEffect(() => {
     setIsValidEmail(validateEmail(email));
     setIsValidWhatsapp(
@@ -323,8 +320,6 @@ const InvoiceCompanyDeliver = ({
           <Button
             disabled={!mediosEnvios.length}
             onClick={() => {
-              console.log("HAY CONTACTOS SELECCIONADOS", isSelectedContacts);
-              console.log("CONTASCTOS", toJS(contactos));
               let sendInvoiceData: IInvoiceDeliveryInfo = {
                 contactos:
                   isSelectedContacts && tipo !== "request"

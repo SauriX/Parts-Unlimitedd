@@ -310,7 +310,6 @@ const InvoiceCompanyData = ({
                   formProps={{ name: "serieCFDI", label: "SerieCFDI" }}
                   options={invoiceSeriesOptions}
                   onChange={(serie: any) => {
-                    console.log("sereie", serie);
                     setSerie(serie);
                   }}
                   readonly={id !== "new"}

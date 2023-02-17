@@ -290,36 +290,6 @@ const InvoiceComapnyForm = () => {
           </Col>
         </Row>
       </div>
-      {/* <Row justify="center">
-        <Col span={20}>
-          <Row gutter={[0, 12]} justify="center">
-            <Col span={8}>
-              <Form.Item name="isInvoice" required>
-                <Row justify="center">
-                  <Radio.Group>
-                    <Radio value={"Factura"}>Factura</Radio>
-                    <Radio value={"Recibo"}>Recibo</Radio>
-                  </Radio.Group>
-                </Row>
-              </Form.Item>
-            </Col>
-            
-            <Row justify="end">
-              <Col span={8}>
-                <Button
-                  onClick={() => {
-                    formCreate.submit();
-                  }}
-                  type="primary"
-                  // disabled={disabled}
-                >
-                  Generar
-                </Button>
-              </Col>
-            </Row>
-          </Row>
-        </Col>
-      </Row> */}
     </>
   );
 };

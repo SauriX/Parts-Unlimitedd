@@ -15,7 +15,7 @@ export class InvoiceCompanyStore {
   isSameCommpany: boolean = false;
   setSelectedRows = (rows: any[]) => {
     this.selectedRows = rows;
-    console.log("seleccionadas", toJS(rows));
+
     this.isSameCommpany = !!rows.length
       ? this.selectedRows.every(
           (request) => request.compania === rows[0].compania
