@@ -1,4 +1,11 @@
-import { DatePicker, DatePickerProps, Form, FormItemProps, Space, Tooltip } from "antd";
+import {
+  DatePicker,
+  DatePickerProps,
+  Form,
+  FormItemProps,
+  Space,
+  Tooltip,
+} from "antd";
 import { Rule } from "antd/lib/form";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
@@ -17,13 +24,20 @@ interface IProps {
   disabledDates?: (current: moment.Moment) => boolean;
   disableBeforeDates?: boolean;
   disableAfterDates?: boolean;
-  pickerType?: "time" | "date" | "week" | "month" | "quarter" | "year" | undefined;
+  pickerType?:
+    | "time"
+    | "date"
+    | "week"
+    | "month"
+    | "quarter"
+    | "year"
+    | undefined;
 }
 
 const dateFormat = "DD/MM/YYYY";
 const weekFormat = "DD/MM";
-const monthFormat = 'MM/YYYY';
-const yearFormat = 'YYYY';
+const monthFormat = "MM/YYYY";
+const yearFormat = "YYYY";
 
 const customWeekStartEndFormat: DatePickerProps["format"] = (value) =>
   `${moment(value).startOf("week").format(weekFormat)} - ${moment(value)
@@ -42,7 +56,7 @@ const DateInput = ({
   disabledDates,
   disableBeforeDates,
   disableAfterDates,
-  pickerType
+  pickerType,
 }: IProps) => {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -50,7 +64,6 @@ const DateInput = ({
 
   useEffect(() => {
     const observer = new ResizeObserver((entries) => {
-      console.log(entries[0]);
       const width = entries[0].target.clientWidth;
       setPaddingRight(width === 0 ? 7 : width);
     });
@@ -102,7 +115,15 @@ const DateInput = ({
               : disabledDates
           }
           disabled={readonly}
-          format={pickerType === "week" ? customWeekStartEndFormat : pickerType === "month" ? monthFormat : pickerType === "year" ? yearFormat : dateFormat}
+          format={
+            pickerType === "week"
+              ? customWeekStartEndFormat
+              : pickerType === "month"
+              ? monthFormat
+              : pickerType === "year"
+              ? yearFormat
+              : dateFormat
+          }
           style={{
             paddingRight: paddingRight,
             width: width ?? "100%",
@@ -111,7 +132,6 @@ const DateInput = ({
           picker={pickerType ?? "date"}
         />
       </Form.Item>
-      {/* {(!!suffix || isGroup || !!errors) && ( */}
       <div
         className={`suffix-container ${readonly ? "disabled" : ""}`}
         style={{ display: !!suffix || isGroup || !!errors ? "" : "none" }}
