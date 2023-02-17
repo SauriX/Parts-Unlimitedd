@@ -18,6 +18,11 @@ export const catalogs: IOptionsCatalog[] = [
   { value: "costofijo", label: "Serv. Costos Fijos", type: "costofijo" },
 ];
 
+export const paymentForms = {
+  tarjetaCredito: 4,
+  tarjetaDebito: 18,
+};
+
 export const regimenFiscal: IOptions[] = [
   {
     value: "601",

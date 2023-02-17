@@ -199,6 +199,7 @@ const PendingSend = () => {
                 label: "Buscar",
                 labelCol: { span: 5 },
               }}
+              autoFocus
             ></TextInput>
           </Col>
           <Col span={4}>

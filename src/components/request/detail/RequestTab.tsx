@@ -195,10 +195,13 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
         <RequestGeneral
           branchId={branchId}
           form={formGeneral}
-          onSubmit={(request, showLoader) => {
-            onSubmitGeneral(request, showLoader, updateGeneral).then((ok) => {
-              if (!ok) setCurrentKey("general");
-            });
+          onSubmit={async (request, showLoader) => {
+            const ok = await onSubmitGeneral(
+              request,
+              showLoader,
+              updateGeneral
+            );
+            if (!ok) setCurrentKey("general");
           }}
         />
       );

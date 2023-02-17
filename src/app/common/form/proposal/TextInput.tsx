@@ -23,6 +23,7 @@ interface IProps {
   onKeyUp?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
   onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
   onPressEnter?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
+  autoFocus?: boolean | undefined;
 }
 
 const TextInput = ({
@@ -43,6 +44,7 @@ const TextInput = ({
   onKeyUp,
   onChange,
   onPressEnter,
+autoFocus
 }: // onChange,
 IProps) => {
   let ref = useRef<HTMLDivElement>(null);
@@ -130,6 +132,7 @@ IProps) => {
             ...(style ?? {}),
           }}
           allowClear
+          autoFocus={autoFocus}
         />
       </Form.Item>
       {/* {(!!suffix || isGroup || !!errors) && ( */}

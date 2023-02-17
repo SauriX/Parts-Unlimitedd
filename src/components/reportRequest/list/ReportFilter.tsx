@@ -18,7 +18,7 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const ReportFilter = () => {
-  const { requestStore, optionStore } = useStore();
+  const { reportStudyStore, optionStore } = useStore();
   const {
     branchCityOptions,
     medicOptions,
@@ -29,7 +29,7 @@ const ReportFilter = () => {
     getCompanyOptions,
     getDepartmentOptions,
   } = optionStore;
-  const { filter, setFilter, getRequests } = requestStore;
+  const { filter, setFilter, getRequests } = reportStudyStore;
 
   const [form] = useForm<IRequestFilter>();
 
@@ -57,30 +57,34 @@ const ReportFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    setBranchOptions(
-      branchCityOptions.find((x) => selectedCity?.includes(x.value.toString()))?.options ?? []
-    );
+    if(selectedCity!=undefined && selectedCity !=null){
+      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
+    var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
+      setBranchOptions(
+        options
+      );
+    }
     form.setFieldValue("sucursales", []);
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
     var filtered = filter;
-    filter.tipoFecha = 2;
-    getRequests(filter);
+    filtered.tipoFecha = 2;
+    getRequests(filtered);
   }, [getRequests]);
   useEffect(() => {
     form.setFieldsValue(filter);
   }, [ form]);
   const onFinish = (values: IRequestFilter) => {
-    const filter = { ...values };
-      filter.tipoFecha = 2;
-    if (filter.fechas && filter.fechas.length > 1) {
-      filter.fechaInicial = filter.fechas[0].utcOffset(0, true);
-      filter.fechaFinal = filter.fechas[1].utcOffset(0, true);
+    const filtered = { ...values };
+      filtered.tipoFecha = 2;
+    if (filtered.fechas && filtered.fechas.length > 1) {
+      filtered.fechaInicial = filtered.fechas[0].utcOffset(0, true);
+      filtered.fechaFinal = filtered.fechas[1].utcOffset(0, true);
     }
 
-    setFilter(filter);
-    getRequests(filter);
+    setFilter(filtered);
+    getRequests(filtered);
   };
 
   return (
@@ -100,7 +104,7 @@ const ReportFilter = () => {
             />
           </Col>
           <Col span={8}>
-            <TextInput formProps={{ name: "clave", label: "Clave/Paciente" }} />
+            <TextInput formProps={{ name: "clave", label: "Clave/Paciente" }} autoFocus={true}/>
           </Col>
           <Col span={8}>
             <SelectInput
@@ -140,11 +144,13 @@ const ReportFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
+                    form={form}
                       formProps={{
                         name: "ciudad",
                         label: "Ciudad",
                         noStyle: true,
                       }}
+                      multiple
                       options={cityOptions}
                     />
                   </Col>
