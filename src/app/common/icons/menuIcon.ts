@@ -83,7 +83,7 @@ const getMenuIcon = (name: string) => {
       return faGears;
     case "equipment":
       return faFolder;
-    case "expedientes":
+    case "MedicalRecord":
       return faBookMedical;
     case "cotizacion":
       return faFileInvoiceDollar;
