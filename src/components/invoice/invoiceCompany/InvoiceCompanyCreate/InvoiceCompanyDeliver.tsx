@@ -9,6 +9,7 @@ import {
   Table,
   Typography,
 } from "antd";
+import { useParams } from "react-router-dom";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
@@ -17,16 +18,25 @@ import TextInput from "../../../../app/common/form/proposal/TextInput";
 import { IFormError } from "../../../../app/models/shared";
 import { useStore } from "../../../../app/stores/store";
 import { formItemLayout, validateEmail } from "../../../../app/util/utils";
+import { IContact, IInvoiceDeliveryInfo } from "../../../../app/models/Invoice";
 const { Text } = Typography;
-
+// type UrlParams = {
+//   id: string;
+//   tipo: string;
+// };
 type InvoiceCompanyDeliverType = {
   companiaId: string;
   facturapiId: string;
+  id: string;
+  tipo: string;
 };
 const InvoiceCompanyDeliver = ({
   companiaId,
   facturapiId,
+  tipo,
+  id,
 }: InvoiceCompanyDeliverType) => {
+  // let { id, tipo } = useParams<UrlParams>();
   const { companyStore, invoiceCompanyStore } = useStore();
   const { getContactsByCompany, contactos } = companyStore;
   const { sendInvoice } = invoiceCompanyStore;
@@ -115,12 +125,14 @@ const InvoiceCompanyDeliver = ({
         <Col span={9}>
           <Text>Seleccionar contacto de agenda</Text>
         </Col>
-        <Col>
-          <Switch
-            defaultChecked
-            onChange={(checked) => setIsSelectedContacts(checked)}
-          ></Switch>
-        </Col>
+        {tipo !== "request" && (
+          <Col>
+            <Switch
+              defaultChecked
+              onChange={(checked) => setIsSelectedContacts(checked)}
+            ></Switch>
+          </Col>
+        )}
       </Row>
       <Row>
         <Checkbox.Group
@@ -137,7 +149,7 @@ const InvoiceCompanyDeliver = ({
         />
       </Row>
       <Row>
-        {isSelectedContacts ? (
+        {isSelectedContacts && tipo !== "request" ? (
           <Col span={24}>
             <Table
               rowKey={(record) => record.id}
@@ -187,7 +199,7 @@ const InvoiceCompanyDeliver = ({
                               !mediosEnvios?.includes("correo") || !isValidEmail
                             }
                             onClick={() => {
-                              let sendInvoiceData = {
+                              let sendInvoiceData: IInvoiceDeliveryInfo = {
                                 contactos: [
                                   {
                                     nombre: "",
@@ -196,7 +208,7 @@ const InvoiceCompanyDeliver = ({
                                   },
                                 ],
                                 mediosEnvio: ["correo"],
-                                facturapiId,
+                                facturapiId: id!,
                                 esPrueba: true,
                               };
                               sendInvoice(sendInvoiceData);
@@ -209,7 +221,7 @@ const InvoiceCompanyDeliver = ({
                     </Input.Group>
                   </Form.Item>
                 </Col>
-                <Col span={24}>
+                <Col span={24} style={{ marginTop: 10 }}>
                   <Form.Item
                     label="Whatsapp"
                     labelCol={{ span: 4 }}
@@ -262,7 +274,7 @@ const InvoiceCompanyDeliver = ({
                           !isValidWhatsapp
                         }
                         onClick={() => {
-                          let sendInvoiceData = {
+                          let sendInvoiceData: IInvoiceDeliveryInfo = {
                             contactos: [
                               {
                                 nombre: "",
@@ -271,7 +283,7 @@ const InvoiceCompanyDeliver = ({
                               },
                             ],
                             mediosEnvio: ["whatsapp"],
-                            facturapiId,
+                            facturapiId: id!,
                             esPrueba: true,
                           };
                           sendInvoice(sendInvoiceData);
@@ -306,27 +318,28 @@ const InvoiceCompanyDeliver = ({
       <Row>
         <Col span={24}>
           <Button
-            disabled={!selectedRowKeys?.length || !mediosEnvios.length}
+            disabled={!mediosEnvios.length}
             onClick={() => {
-              let sendInvoiceData = {
-                contactos: isSelectedContacts
-                  ? contactos
-                      .filter((contacto: any) =>
-                        selectedRowKeys?.includes(contacto.id)
-                      )
-                      .map((contacto) => ({
-                        ...contacto,
-                        telefono: "" + contacto.telefono,
-                      }))
-                  : [
-                      {
-                        nombre: "",
-                        telefono: whatsapp,
-                        correo: email,
-                      },
-                    ],
+              let sendInvoiceData: IInvoiceDeliveryInfo = {
+                contactos:
+                  isSelectedContacts && tipo !== "request"
+                    ? contactos
+                        .filter((contacto: any) =>
+                          selectedRowKeys?.includes(contacto.id)
+                        )
+                        .map((contacto) => ({
+                          ...contacto,
+                          telefono: "" + contacto.telefono,
+                        }))
+                    : [
+                        {
+                          nombre: "",
+                          telefono: whatsapp,
+                          correo: email,
+                        },
+                      ],
                 mediosEnvio: mediosEnvios,
-                facturapiId,
+                facturapiId: id!,
                 esPrueba: false,
               };
               sendInvoice(sendInvoiceData);

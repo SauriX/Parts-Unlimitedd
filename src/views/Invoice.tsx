@@ -12,9 +12,9 @@ const Invoice = () => {
       <InvoiceCompanyHeader
         handleDownload={handleDownload}
       ></InvoiceCompanyHeader>
-      <Divider />
+      <Divider className="header-divider" />
       <InvoiceCompanyForm />
-      <Divider />
+      {/* <Divider /> */}
       <InvoiceCompanyTable />
     </>
   );

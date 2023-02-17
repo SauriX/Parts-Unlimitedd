@@ -176,28 +176,6 @@ const InvoiceComapnyForm = () => {
   };
   return (
     <>
-      <Row justify="end" style={{ marginBottom: 10 }}>
-        <Col>
-          <Button
-            key="clean"
-            onClick={(e) => {
-              form.resetFields();
-            }}
-          >
-            Limpiar
-          </Button>
-          <Button
-            key="filter"
-            type="primary"
-            onClick={(e) => {
-              form.submit();
-            }}
-          >
-            Filtrar
-          </Button>
-        </Col>
-      </Row>
-
       <div className="status-container" style={{ marginBottom: 12 }}>
         <Form<any>
           {...formItemLayout}
@@ -256,7 +234,10 @@ const InvoiceComapnyForm = () => {
               </Form.Item>
             </Col>
             <Col span={8}>
-              <TextInput formProps={{ name: "buscar", label: "Buscar" }} autoFocus/>
+              <TextInput
+                formProps={{ name: "buscar", label: "Buscar" }}
+                autoFocus
+              />
             </Col>
           </Row>
           <Row gutter={[0, 12]} style={{ paddingLeft: 60, paddingTop: 10 }}>
@@ -270,7 +251,7 @@ const InvoiceComapnyForm = () => {
             </Col>
           </Row>
         </Form>
-        <Divider></Divider>
+
         <Form<any>
           {...formItemLayout}
           form={formCreate}
@@ -286,58 +267,28 @@ const InvoiceComapnyForm = () => {
                 isSameCommpany
             );
           }}
-        >
-          <Row justify="center">
-            <Col span={20}>
-              <Row gutter={[0, 12]} justify="center">
-                <Col span={8}>
-                  <Form.Item name="isInvoice" required>
-                    <Row justify="center">
-                      <Radio.Group>
-                        <Radio value={"Factura"}>Factura</Radio>
-                        <Radio value={"Recibo"}>Recibo</Radio>
-                      </Radio.Group>
-                    </Row>
-                  </Form.Item>
-                </Col>
-                {/* <Col span={8}>
-                  <SelectInput
-                    formProps={{
-                      label: "Desglose por",
-                      name: "tipoDesglose",
-                    }}
-                    options={desgloceOptions}
-                    required={requiredValues}
-                  />
-                </Col> */}
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{ label: "Serie", name: "serie" }}
-                    options={invoiceSeriesOptions}
-                    onChange={(serie: any) => {
-                      console.log("sereie", serie);
-                      setSerie(serie);
-                    }}
-                    required={true}
-                  />
-                </Col>
-                <Row justify="end">
-                  <Col span={8}>
-                    <Button
-                      onClick={() => {
-                        formCreate.submit();
-                      }}
-                      type="primary"
-                      // disabled={disabled}
-                    >
-                      Generar
-                    </Button>
-                  </Col>
-                </Row>
-              </Row>
-            </Col>
-          </Row>
-        </Form>
+        ></Form>
+        <Row justify="end" style={{ marginBottom: 10 }}>
+          <Col>
+            <Button
+              key="clean"
+              onClick={(e) => {
+                form.resetFields();
+              }}
+            >
+              Limpiar
+            </Button>
+            <Button
+              key="filter"
+              type="primary"
+              onClick={(e) => {
+                form.submit();
+              }}
+            >
+              Filtrar
+            </Button>
+          </Col>
+        </Row>
       </div>
     </>
   );
