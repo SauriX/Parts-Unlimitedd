@@ -93,7 +93,9 @@ const ClinicalResultsInfo = () => {
     };
     searchRequest();
   }, [getById, procedingById, expedienteId, requestId]);
-
+  useEffect(() => {
+    console.log("ESTUDIOS GENERALES DE LA SOLICITUF", toJS(studies));
+  }, [studies]);
   useEffect(() => {
     form.setFieldsValue({
       ...dataClinicalResult,

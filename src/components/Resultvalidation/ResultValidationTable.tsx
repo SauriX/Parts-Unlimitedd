@@ -519,6 +519,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                         name: "search",
                         label: "Buscar",
                       }}
+                      autoFocus
                     />
                   </Col>
                   <Col span={8}>
