@@ -39,7 +39,7 @@ const InvoiceCompanyDeliver = ({
   // let { id, tipo } = useParams<UrlParams>();
   const { companyStore, invoiceCompanyStore } = useStore();
   const { getContactsByCompany, contactos } = companyStore;
-  const { sendInvoice } = invoiceCompanyStore;
+  const { sendInvoice, selectedRows, invoice } = invoiceCompanyStore;
   const [form] = Form.useForm<any>();
   const email = Form.useWatch("correo", form);
   const whatsapp = Form.useWatch("whatsapp", form);
@@ -51,6 +51,7 @@ const InvoiceCompanyDeliver = ({
   const [isSelectedContacts, setIsSelectedContacts] = useState<boolean>(true);
   const [isValidEmail, setIsValidEmail] = useState(false);
   const [isValidWhatsapp, setIsValidWhatsapp] = useState(false);
+  const [facturaId, setFacturaId] = useState<string>("");
 
   useEffect(() => {
     setIsValidEmail(validateEmail(email));
@@ -208,7 +209,7 @@ const InvoiceCompanyDeliver = ({
                                   },
                                 ],
                                 mediosEnvio: ["correo"],
-                                facturapiId: id!,
+                                facturapiId: invoice?.facturaId!,
                                 esPrueba: true,
                               };
                               sendInvoice(sendInvoiceData);
@@ -283,7 +284,7 @@ const InvoiceCompanyDeliver = ({
                               },
                             ],
                             mediosEnvio: ["whatsapp"],
-                            facturapiId: id!,
+                            facturapiId: invoice?.facturaId!,
                             esPrueba: true,
                           };
                           sendInvoice(sendInvoiceData);
@@ -339,7 +340,7 @@ const InvoiceCompanyDeliver = ({
                         },
                       ],
                 mediosEnvio: mediosEnvios,
-                facturapiId: id!,
+                facturapiId: invoice?.facturaId!,
                 esPrueba: false,
               };
               sendInvoice(sendInvoiceData);
