@@ -117,7 +117,10 @@ const RequestFilter = () => {
             />
           </Col>
           <Col span={8}>
-            <TextInput formProps={{ name: "clave", label: "Clave/Paciente" }} />
+            <TextInput
+              formProps={{ name: "clave", label: "Clave/Paciente" }}
+              autoFocus
+            />
           </Col>
           <Col span={8}>
             <SelectInput
