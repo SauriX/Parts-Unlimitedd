@@ -33,7 +33,8 @@ const InvoiceCompanyInfo = ({
   const [form] = Form.useForm();
   const [formCancel] = Form.useForm();
   let { id, tipo } = useParams<UrlParams>();
-  const { optionStore, invoiceCompanyStore, modalStore } = useStore();
+  const { optionStore, invoiceCompanyStore, modalStore, procedingStore } =
+    useStore();
   const {
     fechas,
     cancelInvoice,
@@ -41,14 +42,30 @@ const InvoiceCompanyInfo = ({
     setSelectedRequests,
     setTaxData,
     setNombre,
+    invoice,
   } = invoiceCompanyStore;
+  const { getById, getTaxData } = procedingStore;
+
   const nombre = Form.useWatch("nombre", form);
   const { openModal, closeModal } = modalStore;
   const navigate = useNavigate();
 
   const [nameOptions, setNameOptions] = useState<IOptions[]>([]);
   // const [taxData, setTaxData] = useState<ITaxData>();
-
+  useEffect(() => {
+    if (invoice) {
+      // getTaxData(invoice.taxDataId);
+      const consultarInformacionFiscal = async () => {
+        const generalDataRequest = await getById(invoice.expedienteId);
+        const taxDataInfo = generalDataRequest?.taxData?.find(
+          (x) => x.id === invoice.taxDataId
+        );
+        onSelectTaxData(taxDataInfo!);
+      };
+      consultarInformacionFiscal();
+      form.setFieldValue("nombre", invoice.nombre);
+    }
+  }, [invoice]);
   const onFinish = async (newFormValues: any) => {
     console.log("Invoice cancelled", facturapiId, newFormValues);
     let cancelationInvoiceData = {
@@ -126,7 +143,7 @@ const InvoiceCompanyInfo = ({
         <Col span={24}>
           <Button
             type="primary"
-            disabled={facturapiId === "new" || estatusFactura === "Cancelado"}
+            disabled={id === "new"}
             onClick={() => formCancel.submit()}
           >
             Cancelar
@@ -151,6 +168,7 @@ const InvoiceCompanyInfo = ({
                 form={formCancel}
                 formProps={{ label: "Selecciona motivo", name: "motivo" }}
                 options={reasonCancelation}
+                readonly={id === "new"}
               />
             </Col>
           </Row>
@@ -196,6 +214,7 @@ const InvoiceCompanyInfo = ({
                     <SelectInput
                       formProps={{ name: "nombre", label: "Nombre" }}
                       options={nameOptions}
+                      readonly={id !== "new"}
                       required
                     />
                   )}

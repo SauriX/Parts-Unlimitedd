@@ -123,6 +123,7 @@ const InvoiceComapnyForm = () => {
     });
 
     if (!!requestsWithInvoiceCompany.length && isInvoice === "Factura") {
+      // if (false) {
       alerts.confirmInfo(
         "Solicitudes facturadas",
         <>
@@ -137,7 +138,7 @@ const InvoiceComapnyForm = () => {
                   {request?.clave} -{" "}
                   {
                     request?.facturas.find(
-                      (invoice: any) => invoice.tipo === "Compañia"
+                      (invoice: any) => invoice.tipo === tipo
                     )?.facturapiId
                   }
                 </div>
@@ -150,6 +151,7 @@ const InvoiceComapnyForm = () => {
     }
 
     if (!requestsWithInvoiceCompany.length || isInvoice === "Recibo") {
+      // if (true) {
       if (formValues.isInvoice === "Factura") {
         if (tipo === "company") {
           navigate(`/invoice/company/new`);
@@ -254,10 +256,10 @@ const InvoiceComapnyForm = () => {
               </Form.Item>
             </Col>
             <Col span={8}>
-              <TextInput formProps={{ name: "buscar", label: "Buscar" }} />
+              <TextInput formProps={{ name: "buscar", label: "Buscar" }} autoFocus/>
             </Col>
           </Row>
-          <Row gutter={[0, 12]} style={{ paddingLeft: 75, paddingTop: 10 }}>
+          <Row gutter={[0, 12]} style={{ paddingLeft: 60, paddingTop: 10 }}>
             <Col span={12}>
               <Checkbox.Group
                 options={facturasOptions}

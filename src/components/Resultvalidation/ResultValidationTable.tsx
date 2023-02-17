@@ -58,22 +58,17 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     procedingStore,
     optionStore,
     locationStore,
-    samplingStudyStore: samplig,
     resultValidationStore,
-    profileStore
   } = useStore();
-  const { profile }=profileStore
-  const { expedientes, getnow } = procedingStore;
+
+  const { expedientes } = procedingStore;
   const {
     branchCityOptions,
     getBranchCityOptions,
-    areas,
     getareaOptions,
     medicOptions,
     getMedicOptions,
-    CityOptions,
     getCityOptions,
-
     getDepartmentOptions,
     companyOptions,
     getCompanyOptions,
@@ -82,6 +77,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     departmentAreaOptions,
     getDepartmentAreaOptions,
   } = optionStore;
+
   const {
     getAll,
     studys,
@@ -99,39 +95,38 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
 
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
   const { getCity } = locationStore;
-  const [searchParams] = useSearchParams();
   const [form] = Form.useForm<ISearchValidation>();
   const selectedDepartment = Form.useWatch("departament", form);
-  let navigate = useNavigate();
 
   const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
   const [ids, setIds] = useState<number[]>([]);
   const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
-  const { width: windowWidth } = useWindowDimensions();
+
   const [expandable, setExpandable] =
     useState<ExpandableConfig<Ivalidationlist>>();
   const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
   const [visto, setvisto] = useState<checked[]>([]);
-  const hasFooterRow = true;
   const [activar, setActivar] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [activiti, setActiviti] = useState<string>("");
   const [openRows, setOpenRows] = useState<boolean>(false);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
-  //const [search,SetSearch] = useState<ISearchMedical>(new SearchMedicalFormValues())
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
+
   useEffect(() => {
     getDepartmentAreaOptions();
   }, [getDepartmentAreaOptions]);
   const selectedCity = Form.useWatch("ciudad", form);
+
   useEffect(() => {
     setDepartmentOptions(
       departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [departmentAreaOptions]);
+
   useEffect(() => {
     setAreaOptions(
       departmentAreaOptions.find((x) => x.value === selectedDepartment)
@@ -139,24 +134,18 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     );
     form.setFieldValue("sucursalId", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
+
   useEffect(() => {
     const readStudy = async () => {
       await getStudiesOptions();
     };
     readStudy();
   }, [getStudiesOptions]);
+
   useEffect(() => {}, [studiesOptions]);
-  const togleRows = () => {
-    if (openRows) {
-      setOpenRows(false);
-      setexpandedRowKeys([]);
-    } else {
-      setOpenRows(true);
-      setexpandedRowKeys(studys!.map((x) => x.id));
-    }
-  };
+
   useEffect(() => {
-    setexpandedRowKeys(studys!.map((x) => x.id));
+    setexpandedRowKeys(studys?.map((x) => x.id) ?? []);
     setOpenRows(true);
   }, [studys]);
 
@@ -338,6 +327,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     };
     readData();
   }, [getCity]);
+
   useEffect(() => {
     const readPriceList = async () => {
       setLoading(true);
@@ -362,20 +352,22 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     setExpandable(expandableStudyConfig);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAll]);
-  useEffect(() => {
 
+  useEffect(() => {
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
-    if(selectedCity!=undefined && selectedCity !=null){
-      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
-    var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
-      setBranchOptions(
-        options
+    if (selectedCity != undefined && selectedCity != null) {
+      var branhces = branchCityOptions.filter((x) =>
+        selectedCity.includes(x.value.toString())
       );
+      var options = branhces.flatMap((x) =>
+        x.options == undefined ? [] : x.options
+      );
+      setBranchOptions(options);
     }
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
@@ -395,6 +387,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   useEffect(() => {
     setExpandable(expandableStudyConfig);
   }, [activiti]);
+
   const onFinish = async (newValues: ISearchValidation) => {
     setLoading(true);
 
@@ -526,6 +519,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                         name: "search",
                         label: "Buscar",
                       }}
+                      autoFocus
                     />
                   </Col>
                   <Col span={8}>
@@ -614,7 +608,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                         <Row gutter={8}>
                           <Col span={12}>
                             <SelectInput
-                            form={form}
+                              form={form}
                               formProps={{
                                 name: "ciudad",
                                 label: "Ciudad",

@@ -143,6 +143,7 @@ export interface IRequestGeneral extends IRequestBase {
   observaciones: string;
   correoMedico?: string;
   telefonoMedico?: string;
+  cambioCompañia?: boolean;
 }
 
 export interface IRequestPayment extends IRequestBase {
@@ -159,6 +160,7 @@ export interface IRequestPayment extends IRequestBase {
   facturapiId: string;
   usuarioRegistra?: string;
   fechaPago: moment.Moment;
+  notificacionId?: string;
 }
 
 export interface IRequestCheckIn extends IRequestBase {

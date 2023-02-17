@@ -157,7 +157,7 @@ const RequestTable = () => {
         <Row align="middle">
           {value.map((x, i) => (
             <Col
-              key={x.clave + x.estatus}
+              key={x.id}
               style={{ display: "flex", alignItems: "center" }}
             >
               <ContainerBadge color={x.color} text={x.estatus[0]} />
@@ -190,7 +190,7 @@ const RequestTable = () => {
           <Row align="middle" gutter={[25, 25]}>
             {record.estudios.map((x) => (
               <Col
-                key={x.clave + x.estatus}
+                key={x.id}
                 style={{ display: "flex", alignItems: "center" }}
               >
                 {x.nombre}{" "}

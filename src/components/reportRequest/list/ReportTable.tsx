@@ -20,9 +20,29 @@ import {
 const { Link, Text } = Typography;
 
 const logoWee = `/${process.env.REACT_APP_NAME}/admin/assets/logos/weeclinic.png`;
+const data:IReportRequestInfo[] = [{
+  expedienteId:"string",
+  solicitudId:"string",
+  solicitud:"string",
+  paciente:"string",
+  edad:"string",
+  sexo:"string",
+  sucursal:"string",
+  medico:"string",
+  tipo :"string",
+  compañia:"string",
+  entrega:"12-02-2023 - 14-02-2023",
+  estudios:[{
+    idStudio:"string",
+    nombre:"string",
+    estatus:"string",
+    fecha:"12-02-2023",
+  }],
+  estatus:"uregente"
 
+}]
 const ReportTable = () => {
-  const { requestStore } = useStore();
+  const { reportStudyStore } = useStore();
   const {
     loadingRequests,
     filter,
@@ -30,7 +50,7 @@ const ReportTable = () => {
     requests,
     setFilter,
     getRequests,
-  } = requestStore;
+  } = reportStudyStore;
 
   let navigate = useNavigate();
 
@@ -56,7 +76,7 @@ const ReportTable = () => {
 
   const columns: IColumns<IReportRequestInfo> = [
     {
-      ...getDefaultColumnProps("clave", "Clave", {
+      ...getDefaultColumnProps("solicitud", "Clave", {
         searchState,
         setSearchState,
         width: 150,
@@ -73,7 +93,7 @@ const ReportTable = () => {
             {value}
           </Link>
           <small>
-            <Text type="secondary">{item.estatus}</Text>
+            <Text type="secondary" style={{color:item.estatus==="Ruta"?"#00FF80":item.estatus==="Urgente"?"#FF8000":item.estatus!="Normal"?"#AE7BEE":""}}>{item.estatus}</Text>
           </small>
         </div>
       ),
@@ -145,7 +165,7 @@ const ReportTable = () => {
       render: (value) => value,
     },
     {
-      ...getDefaultColumnProps("fecha", "Fecha de entrega", {
+      ...getDefaultColumnProps("entrega", "Fecha de entrega", {
         searchState,
         setSearchState,
         width: 120,
@@ -153,7 +173,7 @@ const ReportTable = () => {
       align: "right",
       render: (value) => value,
     },
-    {
+     {
       key: "estudios",
       dataIndex: "estudios",
       title: "Estudios",
@@ -166,7 +186,7 @@ const ReportTable = () => {
               key={x.clave + x.estatus}
               style={{ display: "flex", alignItems: "center" }}
             >
-              <ContainerBadge color={x.color} text={x.estatus} />
+              <ContainerBadge color={"#FF9F40"} text={x.estatus[0]} />
             </Col>
           ))}
         </Row>
@@ -178,12 +198,16 @@ const ReportTable = () => {
       ...getDefaultColumnProps("nombre", "Estudio", {
         searchState,
         setSearchState,
-        width: 240,
+        width: 150,
       }),
-      ellipsis: {
-        showTitle: false,
-      },
+      render: (value, item) => (
+        <div style={{ display: "inline", flexDirection: "column" }}>
+          {value}
+          <ContainerBadge color={"#FF9F40"} text={item.estatus[0]} />
+        </div>
+      ),
     },
+
     {
       ...getDefaultColumnProps("estatus", "Estatus", {
         searchState,
@@ -203,7 +227,7 @@ const ReportTable = () => {
       ellipsis: {
         showTitle: false,
       },
-    },
+    },     
   ];
   return (
     <Table<IReportRequestInfo>
@@ -211,20 +235,20 @@ const ReportTable = () => {
       loading={loadingRequests}
       rowKey={(record) => record.solicitudId}
       columns={columns}
-      dataSource={[...[]]}
+      dataSource={[...requests]}
       pagination={defaultPaginationProperties}
       sticky
       scroll={{ x: "fit-content" }}
       expandable={{
         expandedRowRender: (record, index) => (
           <Table
-            rowKey={(records) => records.idstudio + records.estatus}
-            columns={nestedcolumns}
-            dataSource={record.estudios}
-            pagination={false}
-            className="header-expandable-table"
-            showHeader={false}
-          />
+          rowKey={(records)=> records.idStudio +  records.estatus }
+          columns={nestedcolumns}
+          dataSource={record.estudios}
+          pagination={false}
+          className="header-expandable-table"
+          showHeader={false}
+        />
         ),
         rowExpandable: (record) => record.estudios.length > 0,
       }}
