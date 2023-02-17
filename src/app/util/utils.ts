@@ -2,6 +2,7 @@ import { RcFile, UploadChangeParam, UploadFile } from "antd/lib/upload";
 import alerts from "./alerts";
 import messages from "./messages";
 import { UploadRequestOption } from "rc-upload/lib/interface";
+import { IGrouped } from "../models/shared";
 
 export const tokenName = "lab-ramos-token";
 
@@ -124,6 +125,25 @@ export const uploadFakeRequest = ({ onSuccess }: UploadRequestOption) => {
       onSuccess("ok");
     }
   }, 0);
+};
+
+export const groupBy = <T, K extends keyof T>(
+  arr: T[],
+  key: K
+): IGrouped<T>[] => {
+  const groups: Map<string, T[]> = arr.reduce((map, obj) => {
+    const groupKey = String(obj[key]);
+    const group = map.get(groupKey) || [];
+    group.push(obj);
+    map.set(groupKey, group);
+    return map;
+  }, new Map<string, T[]>());
+
+  const result: IGrouped<T>[] = [];
+  groups.forEach((value, key) => {
+    result.push({ key, items: value });
+  });
+  return result;
 };
 
 export const formItemLayout = {

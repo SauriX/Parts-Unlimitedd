@@ -115,6 +115,9 @@ export interface IPriceListInfoStudy {
   promociones: IPriceListInfoPromo[];
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
+  destinoTipo: number;
+  destinoId: string;
+  destino: string;
   etiquetas: IStudyTag[];
 }
 

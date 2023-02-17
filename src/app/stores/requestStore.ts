@@ -24,7 +24,7 @@ import alerts from "../util/alerts";
 import { catalog, status, statusName } from "../util/catalogs";
 import history from "../util/history";
 import messages from "../util/messages";
-import { generateRandomHex, getErrors } from "../util/utils";
+import { generateRandomHex, getErrors, groupBy } from "../util/utils";
 import { v4 as uuidv4 } from "uuid";
 import { ITag } from "../models/tag";
 
@@ -125,7 +125,7 @@ export default class RequestStore {
 
   get allActiveStudies() {
     return this.allStudies.filter(
-      (x) => x.estatusId !== status.requestStudy.cancelado
+      (x) => x.estatusId !== status.requestStudy.cancelado && x.asignado
     );
   }
 
@@ -365,107 +365,90 @@ export default class RequestStore {
   };
 
   updateTagsStudy = (study: IRequestStudy) => {
-    const tags = this.allActiveStudies
-      .flatMap((x) => x.etiquetas)
-      .map((x) => {
-        const {
-          estudioId,
-          orden,
-          nombreEstudio,
-          cantidad,
-          id,
-          identificador,
-          ...tag
-        } = x;
-        return { ...tag };
-      })
-      .filter(
-        (v, i, a) => a.map((x) => x.etiquetaId).indexOf(v.etiquetaId) === i
-      );
-    // const tags = [...this.tags];
+    const groupedStudies = groupBy(toJS(this.allActiveStudies), "destinoId");
 
-    console.log("%ctags", "color:green");
-    console.log(tags);
+    console.log(groupedStudies);
 
-    // const studyTags = study.etiquetas.sort(
-    //   (a, b) =>
-    //     a.orden - b.orden && a.claveEtiqueta.localeCompare(b.claveEtiqueta)
-    // );
+    // const tags = this.allActiveStudies
+    //   .flatMap((x) => x.etiquetas)
+    //   .map((x) => {
+    //     const { estudioId, orden, nombreEstudio, cantidad, id, identificador, ...tag } = x;
+    //     return { ...tag };
+    //   })
+    //   .filter(
+    //     (v, i, a) => a.map((x) => x.etiquetaId).indexOf(v.etiquetaId) === i
+    //   );
+    // // const tags = [...this.tags];
+    // console.log("%ctags", "color:green");
+    // console.log(tags);
+    // // const studyTags = study.etiquetas.sort(
+    // //   (a, b) =>
+    // //     a.orden - b.orden && a.claveEtiqueta.localeCompare(b.claveEtiqueta)
+    // // );
+    // // console.log(studyTags);
+    // let requestTags = toJS(this.tags);
+    // for (const item of requestTags) {
+    //   item.estudios = item.estudios.filter((x) => x.manual || x.borrado);
+    // }
+    // console.log("%crequestTags", "color:green");
+    // console.log(requestTags);
+    // const studyTags = this.allActiveStudies
+    //   .flatMap((x) => {
+    //     // const tag = requestTags.find((rt) =>
+    //     //   rt.estudios
+    //     //     .map((s) => s.identificador)
+    //     //     .includes(x.identificador ?? "")
+    //     // );
+    //     // return x.etiquetas.map((t) => ({
+    //     //   ...t,
+    //     //   identificadorEtiqueta: tag?.identificador ?? "",
+    //     // }));
+    //     return x.etiquetas;
+    //   })
+    //   .sort((a, b) => a.orden - b.orden);
+    // console.log("%cstudyTags", "color:green");
     // console.log(studyTags);
-
-    let requestTags = toJS(this.tags);
-
-    for (const item of requestTags) {
-      item.estudios = item.estudios.filter((x) => x.manual || x.borrado);
-    }
-
-    console.log("%crequestTags", "color:green");
-    console.log(requestTags);
-
-    const studyTags = this.allActiveStudies
-      .flatMap((x) => {
-        // const tag = requestTags.find((rt) =>
-        //   rt.estudios
-        //     .map((s) => s.identificador)
-        //     .includes(x.identificador ?? "")
-        // );
-        // return x.etiquetas.map((t) => ({
-        //   ...t,
-        //   identificadorEtiqueta: tag?.identificador ?? "",
-        // }));
-        return x.etiquetas;
-      })
-      .sort((a, b) => a.orden - b.orden);
-    console.log("%cstudyTags", "color:green");
-    console.log(studyTags);
-
-    while (studyTags.length > 0) {
-      const studyTag = studyTags.shift();
-      const tag = tags.find((x) => x.etiquetaId === studyTag?.etiquetaId);
-
-      if (!studyTag || !tag) continue;
-
-      const existing = requestTags
-        .flatMap((x) => x.estudios)
-        .find(
-          (x) =>
-            x.identificador === studyTag.identificador &&
-            x.identificadorEtiqueta === studyTag.identificadorEtiqueta
-        );
-      if (existing && (existing.borrado || existing.manual)) continue;
-
-      const index = requestTags
-        // .reverse()
-        .findIndex(
-          (x) =>
-            x.etiquetaId === studyTag.etiquetaId &&
-            x.estudios
-              .filter((s) => !s.manual && !s.borrado)
-              .reduce((a, b) => a + b.cantidad, 0) +
-              studyTag.cantidad <=
-              1
-        );
-      if (index === -1) {
-        const id = uuidv4();
-        studyTag.identificadorEtiqueta = id;
-        requestTags.push({
-          identificador: id,
-          ...tag,
-          cantidad: 1,
-          estudios: [studyTag],
-        });
-      } else {
-        studyTag.identificadorEtiqueta = requestTags[index].identificador!;
-        requestTags[index].estudios.push(studyTag);
-      }
-
-      console.log("%crequestTags", "color:green");
-      console.log(requestTags);
-    }
-
-    // console.table(tags);
-
-    this.setTags(requestTags);
+    // while (studyTags.length > 0) {
+    //   const studyTag = studyTags.shift();
+    //   const tag = tags.find((x) => x.etiquetaId === studyTag?.etiquetaId);
+    //   if (!studyTag || !tag) continue;
+    //   const existing = requestTags
+    //     .flatMap((x) => x.estudios)
+    //     .find(
+    //       (x) =>
+    //         x.identificador === studyTag.identificador &&
+    //         x.identificadorEtiqueta === studyTag.identificadorEtiqueta
+    //     );
+    //   if (existing && (existing.borrado || existing.manual)) continue;
+    //   const index = requestTags
+    //     // .reverse()
+    //     .findIndex(
+    //       (x) =>
+    //         x.etiquetaId === studyTag.etiquetaId &&
+    //         x.estudios
+    //           .filter((s) => !s.manual && !s.borrado)
+    //           .reduce((a, b) => a + b.cantidad, 0) +
+    //           studyTag.cantidad <=
+    //           1
+    //     );
+    //   if (index === -1) {
+    //     const id = uuidv4();
+    //     studyTag.identificadorEtiqueta = id;
+    //     requestTags.push({
+    //       identificador: id,
+    //       ...tag,
+    //       cantidad: 1,
+    //       estudios: [studyTag],
+    //     });
+    //   } else {
+    //     studyTag.identificadorEtiqueta = requestTags[index].identificador!;
+    //     requestTags[index].estudios.push(studyTag);
+    //   }
+    //   console.log("%crequestTags", "color:green");
+    //   console.log(requestTags);
+    // }
+    // // console.table(tags);
+    // this.setTags(requestTags);
   };
 
   getPricePack = async (packId: number, filter: IPriceListInfoFilter) => {

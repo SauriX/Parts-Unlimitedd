@@ -264,6 +264,9 @@ export interface IRequestStudy {
   usuarioLiberado?: string;
   usuarioEnviado?: string;
   tipo?: string;
+  destinoTipo: number;
+  destinoId: string;
+  destino: string;
 }
 
 export class RequestStudyValues implements IRequestStudy {
@@ -302,6 +305,9 @@ export class RequestStudyValues implements IRequestStudy {
   promociones = [];
   fechaActualizacion = "";
   usuarioActualizacion = "";
+  destinoTipo = 1;
+  destinoId = "";
+  destino = "";
 
   constructor(init?: IRequestStudy) {
     Object.assign(this, init);

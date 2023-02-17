@@ -104,3 +104,8 @@ export interface IFormError {
   name: string;
   errors: string[];
 }
+
+export interface IGrouped<T> {
+  key: string;
+  items: T[];
+}
