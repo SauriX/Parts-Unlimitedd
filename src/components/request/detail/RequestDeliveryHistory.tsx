@@ -20,23 +20,22 @@ type RequestDeliveryHistoryTypes = {
   solicitudId: string;
 };
 
-const RequestDeliveryHistory = ({
-  solicitudId,
-}: RequestDeliveryHistoryTypes) => {
-  const { clinicResultsStore } = useStore();
+const RequestDeliveryHistory = () => {
+  const { clinicResultsStore, requestStore } = useStore();
   const { getDeliveryHistory, createNoteDeliveryHistory } = clinicResultsStore;
+  const { request } = requestStore;
   const [historial, setHistorial] = useState<any[]>();
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     const consultarHistorial = async () => {
       setLoading(true);
-      const h = await getDeliveryHistory(solicitudId);
+      const h = await getDeliveryHistory(request?.solicitudId!);
 
       setHistorial(h);
       setLoading(false);
     };
     consultarHistorial();
-  }, [solicitudId]);
+  }, [request]);
 
   const [form] = useForm();
   return (
@@ -51,7 +50,7 @@ const RequestDeliveryHistory = ({
               console.log("nueva nota", newFormValues);
               const nota = {
                 ...newFormValues,
-                solicitudId: solicitudId,
+                solicitudId: request?.solicitudId!,
               };
               setLoading(true);
               const h = await createNoteDeliveryHistory(nota);
@@ -112,7 +111,7 @@ const RequestDeliveryHistory = ({
                       }
                       description={item.descripcion}
                     />
-                    <Divider type="vertical"></Divider>
+
                     <div>{item.correo}</div>
                     <Divider type="vertical"></Divider>
                     <div>{item.numero}</div>
