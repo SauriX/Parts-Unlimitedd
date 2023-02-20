@@ -2,20 +2,16 @@ import "../css/containerInfo.less";
 import {
   Button,
   Card,
-  Checkbox,
   Col,
-  Divider,
   Form,
   Input,
   Row,
   Select,
   Spin,
-  Table,
   Tooltip,
 } from "antd";
 import { observer } from "mobx-react-lite";
 import { Typography } from "antd";
-import { IColumns } from "../../../app/common/table/utils";
 import {
   IRequest,
   IRequestStudy,
@@ -27,16 +23,15 @@ import { useStore } from "../../../app/stores/store";
 import { status } from "../../../app/util/catalogs";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { IClinicResultCaptureForm } from "../../../app/models/clinicResults";
-import moment from "moment";
 import { ObservationModal } from "./ObservationModal";
-import { DownloadOutlined } from "@ant-design/icons";
 import { v4 as uuid } from "uuid";
 import { EyeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
-import alerts from "../../../app/util/alerts";
-import { toJS } from "mobx";
 import StatusTable from "../content/StatusTable";
+import StudyActions from "../content/StudyActions";
+import { referenceValues, updateStatus } from "../utils";
+
 const { TextArea } = Input;
 const { Text, Link } = Typography;
 
@@ -61,26 +56,12 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   solicitud,
   showHeaderTable,
 }) => {
-  const [disabled, setDisabled] = useState(false);
-  const [currentStudy, setCurrentStudy] = useState<IRequestStudy>(
-    new RequestStudyValues()
-  );
-
-  const [loading, setLoading] = useState(false);
-  const [envioManual, setEnvioManual] = useState(false);
-  const [checkedPrint, setCheckedPrint] = useState(false);
-  const [hideWhenCancel, setHideWhenCancel] = useState(false);
-  const [exportGlucoseData, setExportGlucoseData] =
-    useState<IClinicResultCaptureForm>();
-  const [resultParam, setResultParam] = useState<any[]>([]);
-  const [modalValues, setModalValues] = useState<any>();
-  const { optionStore, clinicResultsStore, requestStore } = useStore();
+  const { clinicResultsStore } = useStore();
 
   const {
     getRequestStudyById,
     updateStatusStudy,
     studies,
-    exportGlucose,
     updateResults,
     cancelResults,
     addSelectedStudy,
@@ -89,8 +70,19 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     setObservationsSelected,
     clearSelectedStudies,
   } = clinicResultsStore;
-  const { request } = requestStore;
-  const { getMedicOptions, getUnitOptions } = optionStore;
+
+  const [currentStudy, setCurrentStudy] = useState<IRequestStudy>(
+    new RequestStudyValues()
+  );
+  const [exportGlucoseData, setExportGlucoseData] =
+    useState<IClinicResultCaptureForm>();
+
+  const [loading, setLoading] = useState(false);
+  const [envioManual, setEnvioManual] = useState(false);
+  const [checkedPrint, setCheckedPrint] = useState(false);
+  const [resultParam, setResultParam] = useState<any[]>([]);
+  const [modalValues, setModalValues] = useState<any>();
+
   const [form] = Form.useForm();
   const resultValue = Form.useWatch(
     "parametros",
@@ -102,41 +94,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     clearSelectedStudies();
   }, []);
 
-  useEffect(() => {
-    setCheckedPrint(isMarked);
-    if (currentStudy.estatusId > status.requestStudy.capturado) {
-      if (isMarked) {
-        addSelectedStudy({ id: currentStudy.id!, tipo: "LABORATORY" });
-      } else {
-        removeSelectedStudy({
-          id: currentStudy.id!,
-          tipo: "LABORATORY",
-        });
-      }
-    }
-  }, [isMarked]);
-
-  useEffect(() => {
-    const loadOptions = async () => {
-      await getMedicOptions();
-    };
-    loadOptions();
-  }, []);
-
-  useEffect(() => {
-    const readdepartments = async () => {
-      await getUnitOptions();
-    };
-    readdepartments();
-  }, [getUnitOptions]);
-
-  useEffect(() => {
-    form.setFieldValue("dr", claveMedico);
-  }, [claveMedico]);
-
   useEffect(() => {}, [resultValue]);
 
   const loadInit = async () => {
+    setLoading(true);
     const cStudy = await getRequestStudyById(estudio.id!);
     setCurrentStudy(cStudy!);
 
@@ -167,252 +128,17 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       captureResult?.parametros.find((x) => x.estudioId == 631)
     );
     form.setFieldValue("parametros", captureResult?.parametros);
+    setLoading(false);
   };
 
   useEffect(() => {
     loadInit();
   }, [studies, estudio, estudioId]);
 
-  useEffect(() => {
-    setDisabled(
-      !(
-        estudio.estatusId === status.requestStudy.solicitado ||
-        estudio.estatusId === status.requestStudy.capturado ||
-        estudio.estatusId === status.requestStudy.validado ||
-        estudio.estatusId === status.requestStudy.liberado ||
-        estudio.estatusId === status.requestStudy.enviado
-      )
-    );
-  }, [estudio]);
-
-  const columns: IColumns<any> = [
-    {
-      key: uuid(),
-      dataIndex: "clave",
-      title: "Clave",
-      align: "left",
-      width: "15%",
-      render: () => {
-        return <strong>{estudio.clave}</strong>;
-      },
-    },
-    {
-      key: uuid(),
-      dataIndex: "nombre",
-      title: "Estudio",
-      align: "left",
-      width: "20%",
-      render: () => {
-        return <strong>{estudio.nombre}</strong>;
-      },
-    },
-    {
-      key: uuid(),
-      dataIndex: "orden",
-      title: "Acciones",
-      align: "left",
-      width: "20%",
-      render: () => renderUpdateStatus(),
-    },
-    {
-      key: uuid(),
-      dataIndex: "imprimir",
-      title: "Seleccionar",
-      align: "center",
-      width: "5%",
-      render: () => {
-        return (
-          <Checkbox
-            checked={
-              currentStudy.estatusId < status.requestStudy.capturado
-                ? false
-                : checkedPrint
-            }
-            disabled={currentStudy.estatusId < status.requestStudy.capturado}
-            onChange={(value) => {
-              if (value.target.checked) {
-                addSelectedStudy({
-                  id: currentStudy.id!,
-                  tipo: "LABORATORY",
-                });
-                setCheckedPrint(true);
-              } else {
-                removeSelectedStudy({
-                  id: currentStudy.id!,
-                  tipo: "LABORATORY",
-                });
-                setCheckedPrint(false);
-              }
-            }}
-          ></Checkbox>
-        );
-      },
-    },
-  ];
-
-  const renderUpdateStatus = () => {
-    return (
-      <>
-        {currentStudy.estatusId >= status.requestStudy.solicitado &&
-        currentStudy.estatusId <= status.requestStudy.liberado ? (
-          <Row>
-            <Col span={24}>
-              <Row justify="space-between" gutter={[12, 24]}>
-                {currentStudy.estatusId <= 3 ? (
-                  ""
-                ) : (
-                  <>
-                    <Col
-                      span={
-                        currentStudy.estudioId == 631
-                          ? 8
-                          : currentStudy.estatusId ==
-                            status.requestStudy.liberado
-                          ? 6
-                          : 12
-                      }
-                    >
-                      <Button
-                        type="default"
-                        htmlType="submit"
-                        disabled={
-                          currentStudy.estatusId ===
-                            status.requestStudy.tomaDeMuestra ||
-                          currentStudy.estatusId ===
-                            status.requestStudy.pendiente
-                        }
-                        onClick={async () => {
-                          setLoading(true);
-                          await updateStatus(true);
-                          setLoading(false);
-                        }}
-                        danger
-                      >
-                        Cancelar{" "}
-                        {currentStudy.estatusId ===
-                        status.requestStudy.capturado
-                          ? "Captura"
-                          : currentStudy.estatusId ===
-                            status.requestStudy.validado
-                          ? "Validación"
-                          : ""}
-                      </Button>
-                    </Col>
-                  </>
-                )}
-                <Col
-                  span={
-                    currentStudy.estudioId == 631
-                      ? 8
-                      : currentStudy.estatusId == status.requestStudy.liberado
-                      ? 6
-                      : 12
-                  }
-                >
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    onClick={() => {
-                      setEnvioManual(false);
-                      form.submit();
-                    }}
-                    style={{
-                      backgroundColor: "#6EAA46",
-                      color: "white",
-                      borderColor: "#6EAA46",
-                    }}
-                  >
-                    {currentStudy.estatusId === status.requestStudy.capturado
-                      ? "Validar estudio"
-                      : currentStudy.estatusId === status.requestStudy.validado
-                      ? "Liberar estudio"
-                      : currentStudy.estatusId ===
-                        status.requestStudy.solicitado
-                      ? "Guardar captura"
-                      : ""}
-                  </Button>
-                </Col>
-                {currentStudy.estatusId === status.requestStudy.liberado ? (
-                  <Col
-                    span={
-                      currentStudy.estudioId == 631
-                        ? 8
-                        : currentStudy.estatusId == status.requestStudy.liberado
-                        ? 6
-                        : 12
-                    }
-                  >
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      onClick={async () => {
-                        if (request?.saldoPendiente) {
-                          alerts.confirm(
-                            "Solicitud con saldo pendiente",
-                            "¿Esta seguro que desea enviar el resultado?",
-                            async () => {
-                              setEnvioManual(true);
-                              form.submit();
-                            },
-                          );
-                        } else {
-                          setEnvioManual(true);
-                          form.submit();
-                        }
-                      }}
-                      style={{
-                        backgroundColor: "#6EAA46",
-                        color: "white",
-                        borderColor: "#6EAA46",
-                      }}
-                    >
-                      Envio Manual
-                    </Button>
-                  </Col>
-                ) : (
-                  ""
-                )}
-                {currentStudy.estudioId == 631 &&
-                currentStudy.estatusId >= 5 ? (
-                  <Col
-                    span={
-                      currentStudy.estudioId == 631
-                        ? 8
-                        : currentStudy.estatusId == status.requestStudy.liberado
-                        ? 6
-                        : 12
-                    }
-                  >
-                    <Button
-                      type="primary"
-                      icon={<DownloadOutlined />}
-                      onClick={async () => {
-                        setLoading(true);
-                        await exportGlucose(exportGlucoseData!);
-                        setLoading(false);
-                      }}
-                    >
-                      Exportar a Excel
-                    </Button>
-                  </Col>
-                ) : (
-                  ""
-                )}
-              </Row>
-            </Col>
-          </Row>
-        ) : (
-          ""
-        )}
-      </>
-    );
-  };
-
   const onFinish = async (newValuesForm: any) => {
     setLoading(true);
     let labResults: IClinicResultCaptureForm[] = newValuesForm.parametros;
     let success = false;
-    await updateStatus();
 
     labResults = labResults.map((x) => {
       const obj = {
@@ -430,7 +156,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       envioManual
     );
     if (success) {
-      setHideWhenCancel(false);
       setObservationsSelected([]);
       await loadInit();
     }
@@ -441,78 +166,24 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const cancelation = async (estado: number) => {
     await updateStatusStudy(currentStudy.id!, estado);
     if (estado === status.requestStudy.solicitado) {
-      cancelResults(currentStudy.id!);
+      return cancelResults(currentStudy.id!);
     }
-    await loadInit();
   };
 
-  const updateStatus = async (esCancelacion: boolean = false) => {
-    let nuevoEstado = 0;
-    if (currentStudy.estatusId === status.requestStudy.solicitado) {
-      await updateStatusStudy(currentStudy.id!, status.requestStudy.capturado);
-      return status.requestStudy.capturado;
-    }
-    if (currentStudy.estatusId === status.requestStudy.capturado) {
-      nuevoEstado = esCancelacion
-        ? status.requestStudy.solicitado
-        : status.requestStudy.validado;
-      await updateStatusStudy(currentStudy.id!, nuevoEstado);
-    }
-    if (currentStudy.estatusId === status.requestStudy.validado) {
-      nuevoEstado = esCancelacion
-        ? status.requestStudy.capturado
-        : status.requestStudy.liberado;
-      await updateStatusStudy(currentStudy.id!, nuevoEstado);
-    }
-    if (currentStudy.estatusId === status.requestStudy.liberado) {
-      nuevoEstado = esCancelacion
-        ? status.requestStudy.validado
-        : status.requestStudy.enviado;
-      await updateStatusStudy(currentStudy.id!, nuevoEstado);
-    }
-    if (esCancelacion) {
-      await cancelation(nuevoEstado);
-      removeSelectedStudy({
-        id: currentStudy.id!,
-        tipo: "LABORATORY",
-      });
-      setHideWhenCancel(true);
-      setCheckedPrint(false);
-    }
-    return nuevoEstado;
-  };
-
-  const disableInput = () => {
-    return currentStudy.estatusId > 3;
-  };
-
-  const referenceValues = (
-    tipoValor: string,
-    valorInicial?: string,
-    valorFinal?: string,
-    primeraColumna?: string,
-    segundaColumna?: string,
-    terceraColumna?: string,
-    cuartaColumna?: string,
-    quintaColumna?: string
+  const onSubmit = async (
+    esCancelacion: boolean,
+    currentStudy: IRequestStudy
   ) => {
-    if (
-      tipoValor == "1" ||
-      tipoValor == "2" ||
-      tipoValor == "3" ||
-      tipoValor == "4"
-    ) {
-      return valorInicial + " - " + valorFinal;
-    } else if (tipoValor == "7" || tipoValor == "8" || tipoValor == "10") {
-      return valorInicial + "";
-    } else if (tipoValor == "11") {
-      return primeraColumna + " - " + segundaColumna + "\n";
-    } else if (tipoValor == "12") {
-      return `${primeraColumna} \t ${segundaColumna} \t ${terceraColumna}`;
-    } else if (tipoValor == "13") {
-      return `${primeraColumna} \t ${segundaColumna} \t ${terceraColumna} \t ${cuartaColumna}`;
-    } else if (tipoValor == "14") {
-      return `${primeraColumna} \t ${segundaColumna} \t ${terceraColumna} \t ${cuartaColumna} \t ${quintaColumna}`;
+    const isUpdated = await updateStatus(
+      esCancelacion,
+      currentStudy,
+      updateStatusStudy,
+      cancelation,
+      removeSelectedStudy,
+      setCheckedPrint
+    );
+    if (isUpdated) {
+      await loadInit();
     }
   };
 
@@ -520,20 +191,22 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     <Fragment key={estudio.id}>
       {currentStudy.estatusId >= 3 && currentStudy.estatusId != 9 ? (
         <Spin spinning={loading}>
+          <Row gutter={[24, 24]} className="study-divider" >
+            <Col span={24}>
+              <StudyActions
+                currentStudy={currentStudy}
+                setEnvioManual={setEnvioManual}
+                setCheckedPrint={setCheckedPrint}
+                checkedPrint={checkedPrint}
+                exportGlucoseData={exportGlucoseData}
+                isMarked={isMarked}
+                submitResults={onSubmit}
+              />
+            </Col>
+          </Row>
           <Row gutter={[24, 24]}>
-            <Divider orientation="left" style={{backgroundColor: "#253B65", color: "white"}}>{currentStudy.nombre}</Divider>
             <Col span={24}>
               <StatusTable currentStudy={currentStudy} />
-            </Col>
-            <Col span={24}>
-              <Table<any>
-                size="small"
-                rowKey={uuid()}
-                columns={columns}
-                pagination={false}
-                dataSource={[currentStudy]}
-                showHeader={showHeaderTable}
-              />
             </Col>
           </Row>
           <Card className="capture-details">
@@ -541,14 +214,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
               form={form}
               onFinish={onFinish}
               name="dynamic_form_item"
-              onValuesChange={() => {
-                setDisabled(
-                  !form.isFieldsTouched() ||
-                    form.getFieldsError().filter(({ errors }) => errors.length)
-                      .length > 0
-                );
-              }}
-              disabled={disableInput()}
+              disabled={currentStudy.estatusId > status.requestStudy.solicitado}
             >
               <Row>
                 <Col span={24}>

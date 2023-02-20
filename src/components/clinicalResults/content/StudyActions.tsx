@@ -1,38 +1,75 @@
-import { Row, Col, Button } from "antd";
+import { Row, Col, Button, Checkbox, Typography } from "antd";
 import form from "antd/lib/form";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import request from "../../../app/api/request";
 import { IRequest, IRequestStudy } from "../../../app/models/request";
 import { status } from "../../../app/util/catalogs";
 import alerts from "../../../app/util/alerts";
 import { DownloadOutlined } from "@ant-design/icons";
 import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
+import { Stats } from "fs";
+import { IClinicResultCaptureForm } from "../../../app/models/clinicResults";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
+
+const { Text } = Typography;
 
 type StudyActionsProps = {
   currentStudy: IRequestStudy;
   request?: IRequest | undefined;
+  exportGlucoseData?: IClinicResultCaptureForm;
+  setEnvioManual: (envioManual: boolean) => void;
+  setCheckedPrint: (checkedPrint: boolean) => void;
+  checkedPrint: boolean;
+  isMarked: boolean;
+  submitResults: (
+    esCancelacion: boolean,
+    currentStudy: IRequestStudy
+  ) => Promise<void>;
 };
 
-const StudyActions = ({ currentStudy, request }: StudyActionsProps) => {
+const StudyActions = ({
+  currentStudy,
+  request,
+  setEnvioManual,
+  setCheckedPrint,
+  checkedPrint,
+  isMarked,
+  exportGlucoseData,
+  submitResults,
+}: StudyActionsProps) => {
   const { clinicResultsStore } = useStore();
-  const { updateStatusStudy, removeSelectedStudy, exportGlucose } = clinicResultsStore;
-  
-  const [loading, setLoading] = useState(false);
+  const { exportGlucose, addSelectedStudy, removeSelectedStudy } =
+    clinicResultsStore;
   const estudioCTG = currentStudy.estudioId == 631;
+
+  useEffect(() => {
+    setCheckedPrint(isMarked);
+    if (currentStudy.estatusId > status.requestStudy.capturado) {
+      if (isMarked) {
+        addSelectedStudy({ id: currentStudy.id!, tipo: "LABORATORY" });
+      } else {
+        removeSelectedStudy({
+          id: currentStudy.id!,
+          tipo: "LABORATORY",
+        });
+      }
+    }
+  }, [isMarked]);
 
   const saveTextButton = (estatus: number) => {
     const text = {
-      [status.requestStudy.capturado]: "Validar estudio",
-      [status.requestStudy.validado]: "Liberar estudio",
-      [status.requestStudy.solicitado]: "Guardar captura",
+      [status.requestStudy.capturado]: "Validar",
+      [status.requestStudy.validado]: "Liberar",
+      [status.requestStudy.solicitado]: "Capturar",
     };
     return text[estatus];
   };
 
   const cancelTextButton = (estatus: number) => {
     const text = {
-      [status.requestStudy.capturado]: "Cancelar Captura",
-      [status.requestStudy.validado]: "Cancelar Validación",
+      [status.requestStudy.capturado]: "Cancelar",
+      [status.requestStudy.validado]: "Cancelar",
     };
     return text[estatus];
   };
@@ -45,176 +82,111 @@ const StudyActions = ({ currentStudy, request }: StudyActionsProps) => {
     return disable[estatus];
   };
 
-  const updateStatus = async (esCancelacion: boolean = false) => {
-    let nuevoEstado = 0;
-    if (currentStudy.estatusId === status.requestStudy.solicitado) {
-      await updateStatusStudy(currentStudy.id!, status.requestStudy.capturado);
-      return status.requestStudy.capturado;
+  const updateButtonAction = (isCancel: boolean) => {
+    if (!isCancel) {
+      setEnvioManual(false);
+      submitResults(false, currentStudy);
+    } else {
+      submitResults(true, currentStudy);
     }
-    if (currentStudy.estatusId === status.requestStudy.capturado) {
-      nuevoEstado = esCancelacion
-        ? status.requestStudy.solicitado
-        : status.requestStudy.validado;
-      await updateStatusStudy(currentStudy.id!, nuevoEstado);
+  };
+
+  const manualSubmission = async () => {
+    if (request?.saldoPendiente) {
+      alerts.confirm(
+        "Solicitud con saldo pendiente",
+        "¿Esta seguro que desea enviar el resultado?",
+        async () => {
+          setEnvioManual(true);
+          submitResults(false, currentStudy);
+        }
+      );
+    } else {
+      setEnvioManual(true);
+      submitResults(false, currentStudy);
     }
-    if (currentStudy.estatusId === status.requestStudy.validado) {
-      nuevoEstado = esCancelacion
-        ? status.requestStudy.capturado
-        : status.requestStudy.liberado;
-      await updateStatusStudy(currentStudy.id!, nuevoEstado);
-    }
-    if (currentStudy.estatusId === status.requestStudy.liberado) {
-      nuevoEstado = esCancelacion
-        ? status.requestStudy.validado
-        : status.requestStudy.enviado;
-      await updateStatusStudy(currentStudy.id!, nuevoEstado);
-    }
-    if (esCancelacion) {
-      await cancelation(nuevoEstado);
+  };
+
+  const exportGlucoseDataToExcel = async () => {
+    await exportGlucose(exportGlucoseData!);
+  };
+
+  const selectToPrint = (value: CheckboxChangeEvent) => {
+    if (value.target.checked) {
+      addSelectedStudy({
+        id: currentStudy.id!,
+        tipo: "LABORATORY",
+      });
+      setCheckedPrint(true);
+    } else {
       removeSelectedStudy({
         id: currentStudy.id!,
         tipo: "LABORATORY",
       });
-      setHideWhenCancel(true);
       setCheckedPrint(false);
     }
-    return nuevoEstado;
   };
 
   return (
     <Fragment>
-      {currentStudy.estatusId >= status.requestStudy.solicitado &&
-      currentStudy.estatusId <= status.requestStudy.liberado ? (
-        <Row>
-          <Col span={24}>
-            <Row justify="space-between" gutter={[12, 24]}>
-              {currentStudy.estatusId <= 3 ? (
-                ""
-              ) : (
-                <>
-                  <Col
-                    span={
-                      estudioCTG
-                        ? 8
-                        : currentStudy.estatusId == status.requestStudy.liberado
-                        ? 6
-                        : 12
-                    }
+      <Row justify="space-between" gutter={[24, 24]}>
+        <Col span={12}>
+          <Checkbox
+            checked={
+              currentStudy.estatusId < status.requestStudy.capturado
+                ? false
+                : checkedPrint
+            }
+            disabled={currentStudy.estatusId < status.requestStudy.capturado}
+            onChange={(value) => selectToPrint(value)}
+          ></Checkbox>
+          <Text className="result-study">
+            {currentStudy.clave} - {currentStudy.nombre}
+          </Text>
+        </Col>
+        <Col span={12} style={{ textAlign: "right" }}>
+          {currentStudy.estatusId >= status.requestStudy.solicitado &&
+            currentStudy.estatusId <= status.requestStudy.liberado && (
+              <>
+                {currentStudy.estatusId > status.requestStudy.solicitado && (
+                  <Button
+                    type="default"
+                    disabled={disableButton(currentStudy.estatusId)}
+                    onClick={() => updateButtonAction(true)}
+                    danger
                   >
-                    <Button
-                      type="default"
-                      htmlType="submit"
-                      disabled={disableButton(currentStudy.estatusId)}
-                      onClick={async () => {
-                        setLoading(true);
-                        await updateStatus(true);
-                        setLoading(false);
-                      }}
-                      danger
-                    >
-                      {cancelTextButton(currentStudy.estatusId)}
-                    </Button>
-                  </Col>
-                </>
-              )}
-              <Col
-                span={
-                  currentStudy.estudioId == 631
-                    ? 8
-                    : currentStudy.estatusId == status.requestStudy.liberado
-                    ? 6
-                    : 12
-                }
-              >
+                    {cancelTextButton(currentStudy.estatusId)}
+                  </Button>
+                )}
                 <Button
                   type="primary"
-                  htmlType="submit"
-                  onClick={() => {
-                    setEnvioManual(false);
-                    form.submit();
-                  }}
-                  style={{
-                    backgroundColor: "#6EAA46",
-                    color: "white",
-                    borderColor: "#6EAA46",
-                  }}
+                  onClick={() => updateButtonAction(false)}
                 >
                   {saveTextButton(currentStudy.estatusId)}
                 </Button>
-              </Col>
-              {currentStudy.estatusId === status.requestStudy.liberado ? (
-                <Col
-                  span={
-                    estudioCTG
-                      ? 8
-                      : currentStudy.estatusId == status.requestStudy.liberado
-                      ? 6
-                      : 12
-                  }
-                >
+                {currentStudy.estatusId === status.requestStudy.liberado && (
                   <Button
                     type="primary"
-                    htmlType="submit"
-                    onClick={async () => {
-                      if (request?.saldoPendiente) {
-                        alerts.confirm(
-                          "Solicitud con saldo pendiente",
-                          "¿Esta seguro que desea enviar el resultado?",
-                          async () => {
-                            setEnvioManual(true);
-                            form.submit();
-                          }
-                        );
-                      } else {
-                        setEnvioManual(true);
-                        form.submit();
-                      }
-                    }}
-                    style={{
-                      backgroundColor: "#6EAA46",
-                      color: "white",
-                      borderColor: "#6EAA46",
-                    }}
+                    onClick={manualSubmission}
+                    className="manual-submission"
                   >
                     Envio Manual
                   </Button>
-                </Col>
-              ) : (
-                ""
-              )}
-              {estudioCTG && currentStudy.estatusId >= 5 ? (
-                <Col
-                  span={
-                    estudioCTG
-                      ? 8
-                      : currentStudy.estatusId == status.requestStudy.liberado
-                      ? 6
-                      : 12
-                  }
-                >
-                  <Button
-                    type="primary"
-                    icon={<DownloadOutlined />}
-                    onClick={async () => {
-                      setLoading(true);
-                      await exportGlucose(exportGlucoseData!);
-                      setLoading(false);
-                    }}
-                  >
-                    Exportar a Excel
-                  </Button>
-                </Col>
-              ) : (
-                ""
-              )}
-            </Row>
-          </Col>
-        </Row>
-      ) : (
-        ""
-      )}
+                )}
+                {estudioCTG &&
+                  currentStudy.estatusId >= status.requestStudy.validado && (
+                    <Button
+                      type="primary"
+                      icon={<DownloadOutlined />}
+                      onClick={exportGlucoseDataToExcel}
+                    ></Button>
+                  )}
+              </>
+            )}
+        </Col>
+      </Row>
     </Fragment>
   );
 };
 
-export default StudyActions;
+export default observer(StudyActions);
