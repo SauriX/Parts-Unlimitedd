@@ -7,6 +7,7 @@ import {
   Divider,
   Form,
   Row,
+  Spin,
   Table,
   Upload,
   UploadFile,
@@ -42,6 +43,8 @@ import { RcFile } from "antd/lib/upload";
 import { uniqueId, values } from "lodash";
 import alerts from "../../../app/util/alerts";
 import StatusTable from "../content/StatusTable";
+import { updateStatus } from "../utils";
+import StudyActions from "../content/StudyActions";
 const { Text, Title } = Typography;
 type ClinicalResultsFormProps = {
   estudio: IRequestStudy;
@@ -94,6 +97,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     addSelectedStudy,
     removeSelectedStudy,
     clearSelectedStudies,
+    cancelResults,
   } = clinicResultsStore;
   const { request } = requestStore;
   const { medicOptions, getMedicOptions } = optionStore;
@@ -130,7 +134,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     }
     let archivos: RcFile[] = [];
     const cStudy = await getRequestStudyById(estudio.id!);
-    
+
     setCurrentStudy(cStudy!);
     if (
       resultPathological?.imagenPatologica !== null &&
@@ -205,167 +209,10 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
         );
       },
     },
-    {
-      key: "id",
-      dataIndex: "acciones",
-      title: "Acciones",
-      align: "left",
-      width: "20%",
-      render: () => renderUpdateStatus(),
-    },
-    {
-      key: "Orden",
-      dataIndex: "orden",
-      title: "Orden",
-      align: "left",
-      width: "20%",
-      render: (value) => {
-        return <strong>{value}</strong>;
-      },
-    },
-    {
-      key: "Seleccionar",
-      dataIndex: "imprimir",
-      title: "Seleccionar",
-      align: "center",
-      width: "5%",
-      render: () => {
-        return (
-          <Checkbox
-            checked={
-              currentStudy.estatusId < status.requestStudy.capturado
-                ? false
-                : checkedPrint
-            }
-            disabled={currentStudy.estatusId < status.requestStudy.capturado}
-            onChange={(value) => {
-              if (value.target.checked) {
-                addSelectedStudy({
-                  id: currentStudy.id!,
-                  tipo: "PATHOLOGICAL",
-                });
-                setCheckedPrint(true);
-              } else {
-                removeSelectedStudy({
-                  id: currentStudy.id!,
-                  tipo: "PATHOLOGICAL",
-                });
-                setCheckedPrint(false);
-              }
-            }}
-          ></Checkbox>
-        );
-      },
-    },
   ];
 
-  const renderUpdateStatus = () => {
-    return (
-      <>
-        {currentStudy.estatusId >= status.requestStudy.solicitado &&
-        currentStudy.estatusId <= status.requestStudy.liberado ? (
-          <Row>
-            <Col span={24}>
-              <Row justify="space-between" gutter={[12, 24]}>
-                {currentStudy.estatusId <= 3 ? (
-                  ""
-                ) : (
-                  <Col span={8}>
-                    <Button
-                      type="default"
-                      htmlType="submit"
-                      disabled={
-                        currentStudy.estatusId ===
-                          status.requestStudy.tomaDeMuestra ||
-                        currentStudy.estatusId === status.requestStudy.pendiente
-                      }
-                      onClick={async () => {
-                        setLoading(true);
-                        await updateStatus(true);
-                        setLoading(false);
-                      }}
-                      danger
-                    >
-                      Cancelar{" "}
-                      {currentStudy.estatusId === status.requestStudy.capturado
-                        ? "Captura"
-                        : currentStudy.estatusId ===
-                          status.requestStudy.validado
-                        ? "Validación"
-                        : ""}
-                    </Button>
-                  </Col>
-                )}
-                <Col span={8}>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    // disabled={disabled}
-                    onClick={() => {
-                      setEnvioManual(false);
-                      form.submit();
-                    }}
-                    style={{
-                      backgroundColor: "#6EAA46",
-                      color: "white",
-                      borderColor: "#6EAA46",
-                    }}
-                  >
-                    {currentStudy.estatusId === status.requestStudy.capturado
-                      ? "Validar Estudio"
-                      : currentStudy.estatusId === status.requestStudy.validado
-                      ? "Liberar Estudio"
-                      : currentStudy.estatusId ===
-                        status.requestStudy.solicitado
-                      ? "Guardar Captura"
-                      : ""}
-                  </Button>
-                </Col>
-                {currentStudy.estatusId === status.requestStudy.liberado ? (
-                  <Col span={8}>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      // disabled={disabled}
-                      onClick={() => {
-                        if (request?.saldoPendiente) {
-                          alerts.confirm(
-                            "Solicitud con saldo pendiente",
-                            "¿Esta seguro que desea enviar el resultado?",
-                            async () => {
-                              setEnvioManual(true);
-                              form.submit();
-                            }
-                          );
-                        } else {
-                          setEnvioManual(true);
-                          form.submit();
-                        }
-                        // setEnvioManual(true);
-                        // form.submit();
-                      }}
-                      style={{
-                        backgroundColor: "#6EAA46",
-                        color: "white",
-                        borderColor: "#6EAA46",
-                      }}
-                    >
-                      Envio Manual
-                    </Button>
-                  </Col>
-                ) : (
-                  ""
-                )}
-              </Row>
-            </Col>
-          </Row>
-        ) : (
-          ""
-        )}
-      </>
-    );
-  };
   const guardarReporte = async (values: any) => {
+    setLoading(true);
     const reporteClinico: IResultPathological = {
       solicitudId: solicitud.solicitudId!,
       estudioId: estudio.id!,
@@ -383,7 +230,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       medicoId: values.medicoId,
       imagenPatologica: prueba,
       listaImagenesCargadas: deletedFiles,
-      estatus: (await updateStatus()) ?? 0,
+      estatus: currentStudy.estatusId,
       departamentoEstudio:
         estudio.areaId === 30 ? "HISTOPATOLÓGICO" : "CITOLÓGICO",
     };
@@ -396,39 +243,9 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       await createResultPathological(formData);
     }
     await loadInit();
+    setLoading(false);
   };
-  const updateStatus = async (esCancelacion: boolean = false) => {
-    let nuevoEstado = 0;
-    if (currentStudy.estatusId === status.requestStudy.solicitado) {
-      // await updateStatusStudy(currentStudy.id!, status.requestStudy.capturado);
-      return status.requestStudy.capturado;
-    }
-    if (currentStudy.estatusId === status.requestStudy.capturado) {
-      nuevoEstado = esCancelacion
-        ? status.requestStudy.solicitado
-        : status.requestStudy.validado;
 
-      // return nuevoEstado;
-    }
-    if (currentStudy.estatusId === status.requestStudy.validado) {
-      nuevoEstado = esCancelacion
-        ? status.requestStudy.capturado
-        : status.requestStudy.liberado;
-      // await updateStatusStudy(currentStudy.id!, nuevoEstado);
-      // return nuevoEstado;
-    }
-    if (currentStudy.estatusId === status.requestStudy.liberado) {
-      nuevoEstado = esCancelacion
-        ? status.requestStudy.validado
-        : status.requestStudy.enviado;
-      // await updateStatusStudy(currentStudy.id!, nuevoEstado);
-      // return nuevoEstado;
-    }
-    if (esCancelacion) {
-      await updateStatusStudy(currentStudy.id!, nuevoEstado);
-    }
-    return nuevoEstado;
-  };
   const removeTestFile = (file: any) => {
     const index = prueba.indexOf(file);
     const newFileList = prueba.slice();
@@ -441,190 +258,220 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     return false;
   };
 
+  const cancelation = async (estado: number) => {
+    await updateStatusStudy(currentStudy.id!, estado);
+    if (estado === status.requestStudy.solicitado) {
+      return cancelResults(currentStudy.id!);
+    }
+  };
+
+  const onSubmit = async (
+    esCancelacion: boolean,
+    currentStudy: IRequestStudy
+  ) => {
+    const isUpdated = await updateStatus(
+      esCancelacion,
+      currentStudy,
+      updateStatusStudy,
+      cancelation,
+      removeSelectedStudy,
+      setCheckedPrint
+    );
+    if (isUpdated) {
+      await loadInit();
+    }
+  };
+
   return (
     <Fragment key={estudio.id}>
-      <Row gutter={[24, 24]}>
-        <Divider orientation="left">{currentStudy.nombre}</Divider>
-        <Col span={24}>
-          <StatusTable currentStudy={currentStudy} />
-        </Col>
-        <Col span={24}>
-          <Table<any>
-            size="small"
-            rowKey={(record) => record.id}
-            columns={columns}
-            pagination={false}
-            dataSource={[currentStudy]}
-            showHeader={showHeaderTable}
-          />
-        </Col>
-      </Row>
-      <Row style={{ marginBottom: "20px" }}>
-        <Col span={24}>
-          <Card className="capture-observartions">
-            <Form
-              form={form}
-              initialValues={currentResult}
-              onFinish={guardarReporte}
-              onValuesChange={(changes_values: any) => {
-                setDisabled(
-                  !form.isFieldsTouched() ||
-                    form.getFieldsError().filter(({ errors }) => errors.length)
-                      .length > 0
-                );
-              }}
-            >
-              <Row justify="space-between" gutter={[2, 12]}>
-                <Col span={8}>
-                  <Text key="expediente">
-                    Médico: <Text strong>{medico}</Text>
-                  </Text>
-                </Col>
-                <Col span={8}>
-                  <Text key="expediente">
-                    Fecha: <Text strong>{moment().format("LL")}</Text>
-                  </Text>
-                </Col>
-              </Row>
-              <Row justify="space-between" gutter={[2, 12]}>
-                <Col span={8}>
-                  <Text key="expediente">
-                    Paciente: <Text strong>{paciente.nombre}</Text>
-                  </Text>
-                </Col>
-                <Col span={8}>
-                  <Text key="expediente">
-                    Edad: <Text strong>{paciente.edad} años.</Text>
-                  </Text>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Text key="expediente">
-                    {/* Estudio: <Text strong>{currentStudy.nombre}</Text> */}
-                    Estudio:{" "}
-                    <Text strong>
-                      {estudio.areaId === 30 ? "HISTOPATOLOGÍA" : "CITOLOGÍA"}
+      <Spin spinning={loading}>
+        <Row gutter={[24, 24]} className="study-divider">
+          <Col span={24}>
+            <StudyActions
+              currentStudy={currentStudy}
+              setEnvioManual={setEnvioManual}
+              setCheckedPrint={setCheckedPrint}
+              checkedPrint={checkedPrint}
+              isMarked={isMarked}
+              submitResults={onSubmit}
+              tipoEstudio={"PATHOLOGICAL"}
+            />
+          </Col>
+        </Row>
+        <Row gutter={[24, 24]}>
+          <Col span={24}>
+            <StatusTable currentStudy={currentStudy} />
+          </Col>
+        </Row>
+        <Row style={{ margin: "20px 0" }}>
+          <Col span={24}>
+            <Card className="capture-observartions">
+              <Form
+                form={form}
+                initialValues={currentResult}
+                onFinish={guardarReporte}
+                onValuesChange={(changes_values: any) => {
+                  setDisabled(
+                    !form.isFieldsTouched() ||
+                      form
+                        .getFieldsError()
+                        .filter(({ errors }) => errors.length).length > 0
+                  );
+                }}
+              >
+                <Row justify="space-between" gutter={[2, 12]}>
+                  <Col span={8}>
+                    <Text key="expediente">
+                      Médico: <Text strong>{medico}</Text>
                     </Text>
-                  </Text>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Text key="expediente">
-                    {/* Clave: <Text strong>{estudio.clave}</Text> */}
-                    Clave:{" "}
-                    <Text strong>{estudio.areaId === 30 ? "HP" : "CITO"}</Text>
-                  </Text>
-                </Col>
-              </Row>
-              <Row justify="center">
-                <Col span={6}>
-                  <Title level={5}>
-                    REPORTE DE ESTUDIO
-                    {estudio.areaId === 30
-                      ? " HISTOPATOLÓGICO "
-                      : " CITOLÓGICO "}
-                    {currentStudy.id}
-                  </Title>
-                </Col>
-              </Row>
-              <Row>
-                <Col span={2}>
-                  <Text key="expediente">Muestra recibida:</Text>
-                </Col>
-                <Col span={5}>
-                  <TextInput
-                    formProps={{ name: "muestraRecibida" }}
-                    readonly={disabled}
-                    required
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col span={24}>
-                  <Text key="expediente">DESCRIPCIÓN MACROSCÓPICA</Text>
+                  </Col>
+                  <Col span={8}>
+                    <Text key="expediente">
+                      Fecha: <Text strong>{moment().format("LL")}</Text>
+                    </Text>
+                  </Col>
+                </Row>
+                <Row justify="space-between" gutter={[2, 12]}>
+                  <Col span={8}>
+                    <Text key="expediente">
+                      Paciente: <Text strong>{paciente.nombre}</Text>
+                    </Text>
+                  </Col>
+                  <Col span={8}>
+                    <Text key="expediente">
+                      Edad: <Text strong>{paciente.edad} años.</Text>
+                    </Text>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Text key="expediente">
+                      {/* Estudio: <Text strong>{currentStudy.nombre}</Text> */}
+                      Estudio:{" "}
+                      <Text strong>
+                        {estudio.areaId === 30 ? "HISTOPATOLOGÍA" : "CITOLOGÍA"}
+                      </Text>
+                    </Text>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Text key="expediente">
+                      {/* Clave: <Text strong>{estudio.clave}</Text> */}
+                      Clave:{" "}
+                      <Text strong>
+                        {estudio.areaId === 30 ? "HP" : "CITO"}
+                      </Text>
+                    </Text>
+                  </Col>
+                </Row>
+                <Row justify="center">
+                  <Col span={6}>
+                    <Title level={5}>
+                      REPORTE DE ESTUDIO
+                      {estudio.areaId === 30
+                        ? " HISTOPATOLÓGICO "
+                        : " CITOLÓGICO "}
+                      {currentStudy.id}
+                    </Title>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={2}>
+                    <Text key="expediente">Muestra recibida:</Text>
+                  </Col>
+                  <Col span={5}>
+                    <TextInput
+                      formProps={{ name: "muestraRecibida" }}
+                      readonly={disabled}
+                      required
+                    />
+                  </Col>
+                </Row>
+                <Row>
                   <Col span={24}>
+                    <Text key="expediente">DESCRIPCIÓN MACROSCÓPICA</Text>
+                    <Col span={24}>
+                      <Editor
+                        editorState={editorMacroscopica}
+                        wrapperClassName="wrapper-class"
+                        editorClassName="editor-class"
+                        toolbarClassName="toolbar-class"
+                        onEditorStateChange={setEditorMacroscopica}
+                        readOnly={disabled}
+                        toolbar={toolBarOptions}
+                      />
+                    </Col>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={24}>
+                    <Text key="expediente">DESCRIPCIÓN MICROSCÓPICA</Text>
                     <Editor
-                      editorState={editorMacroscopica}
+                      editorState={editorMicroscopica}
                       wrapperClassName="wrapper-class"
                       editorClassName="editor-class"
                       toolbarClassName="toolbar-class"
-                      onEditorStateChange={setEditorMacroscopica}
+                      onEditorStateChange={setEditorMicroscopica}
                       readOnly={disabled}
                       toolbar={toolBarOptions}
                     />
                   </Col>
-                </Col>
-              </Row>
-              <Row>
-                <Col span={24}>
-                  <Text key="expediente">DESCRIPCIÓN MICROSCÓPICA</Text>
-                  <Editor
-                    editorState={editorMicroscopica}
-                    wrapperClassName="wrapper-class"
-                    editorClassName="editor-class"
-                    toolbarClassName="toolbar-class"
-                    onEditorStateChange={setEditorMicroscopica}
-                    readOnly={disabled}
-                    toolbar={toolBarOptions}
-                  />
-                </Col>
-              </Row>
-              {estudio.areaId === 30 && (
-                <Row style={{ marginTop: "20px", marginBottom: "20px" }}>
+                </Row>
+                {estudio.areaId === 30 && (
+                  <Row style={{ marginTop: "20px", marginBottom: "20px" }}>
+                    <Col span={24}>
+                      <Upload
+                        multiple
+                        listType="picture"
+                        beforeUpload={beforeUploadTest}
+                        onRemove={removeTestFile}
+                        className="upload-list-inline"
+                        // defaultFileList={prueba}
+                        fileList={prueba}
+                      >
+                        <Button type="primary" disabled={disabled}>
+                          Añadir imagen(es) +
+                        </Button>
+                      </Upload>
+                    </Col>
+                  </Row>
+                )}
+                <Row>
                   <Col span={24}>
-                    <Upload
-                      multiple
-                      listType="picture"
-                      beforeUpload={beforeUploadTest}
-                      onRemove={removeTestFile}
-                      className="upload-list-inline"
-                      // defaultFileList={prueba}
-                      fileList={prueba}
-                    >
-                      <Button type="primary" disabled={disabled}>
-                        Añadir imagen(es) +
-                      </Button>
-                    </Upload>
+                    <Text key="expediente">DIAGNÓSTICO</Text>
+                    <Editor
+                      editorState={editorDiagnostico}
+                      editorClassName="editor-class"
+                      toolbarClassName="toolbar-class"
+                      onEditorStateChange={setEditorDiagnostico}
+                      readOnly={disabled}
+                      toolbar={toolBarOptions}
+                    />
                   </Col>
                 </Row>
-              )}
-
-              <Row>
-                <Col span={24}>
-                  <Text key="expediente">DIAGNÓSTICO</Text>
-                  <Editor
-                    editorState={editorDiagnostico}
-                    editorClassName="editor-class"
-                    toolbarClassName="toolbar-class"
-                    onEditorStateChange={setEditorDiagnostico}
-                    readOnly={disabled}
-                    toolbar={toolBarOptions}
-                  />
-                </Col>
-              </Row>
-              <Row justify="center">
-                <Col span={2}>
-                  <Text key="expediente">Atentamente.</Text>
-                </Col>
-              </Row>
-              <Row justify="center">
-                <Col span={4}>
-                  <SelectInput
-                    formProps={{
-                      name: "medicoId",
-                      label: "Dr.",
-                    }}
-                    options={medicOptions}
-                    readonly={disabled}
-                  ></SelectInput>
-                </Col>
-              </Row>
-            </Form>
-          </Card>
-        </Col>
-      </Row>
+                <Row justify="center">
+                  <Col span={2}>
+                    <Text key="expediente">Atentamente.</Text>
+                  </Col>
+                </Row>
+                <Row justify="center">
+                  <Col span={4}>
+                    <SelectInput
+                      formProps={{
+                        name: "medicoId",
+                        label: "Dr.",
+                      }}
+                      options={medicOptions}
+                      readonly={disabled}
+                    ></SelectInput>
+                  </Col>
+                </Row>
+              </Form>
+            </Card>
+          </Col>
+        </Row>
+      </Spin>
     </Fragment>
   );
 };

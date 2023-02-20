@@ -22,6 +22,7 @@ type StudyActionsProps = {
   setCheckedPrint: (checkedPrint: boolean) => void;
   checkedPrint: boolean;
   isMarked: boolean;
+  tipoEstudio: string;
   submitResults: (
     esCancelacion: boolean,
     currentStudy: IRequestStudy
@@ -35,6 +36,7 @@ const StudyActions = ({
   setCheckedPrint,
   checkedPrint,
   isMarked,
+  tipoEstudio,
   exportGlucoseData,
   submitResults,
 }: StudyActionsProps) => {
@@ -46,13 +48,22 @@ const StudyActions = ({
   useEffect(() => {
     setCheckedPrint(isMarked);
     if (currentStudy.estatusId > status.requestStudy.capturado) {
-      if (isMarked) {
+      if (isMarked && tipoEstudio == "LABORATORY") {
         addSelectedStudy({ id: currentStudy.id!, tipo: "LABORATORY" });
-      } else {
+      } else if (!isMarked && tipoEstudio == "LABORATORY") {
         removeSelectedStudy({
           id: currentStudy.id!,
           tipo: "LABORATORY",
         });
+      } else if (isMarked && tipoEstudio == "PATHOLOGICAL") {
+        addSelectedStudy({ id: currentStudy.id!, tipo: "PATHOLOGICAL" });
+      } else if (!isMarked && tipoEstudio == "PATHOLOGICAL") {
+        removeSelectedStudy({
+          id: currentStudy.id!,
+          tipo: "PATHOLOGICAL",
+        });
+      } else {
+        return;
       }
     }
   }, [isMarked]);
@@ -62,14 +73,6 @@ const StudyActions = ({
       [status.requestStudy.capturado]: "Validar",
       [status.requestStudy.validado]: "Liberar",
       [status.requestStudy.solicitado]: "Capturar",
-    };
-    return text[estatus];
-  };
-
-  const cancelTextButton = (estatus: number) => {
-    const text = {
-      [status.requestStudy.capturado]: "Cancelar",
-      [status.requestStudy.validado]: "Cancelar",
     };
     return text[estatus];
   };
@@ -112,18 +115,43 @@ const StudyActions = ({
   };
 
   const selectToPrint = (value: CheckboxChangeEvent) => {
-    if (value.target.checked) {
+    if (value.target.checked && tipoEstudio == "LABORATORY") {
       addSelectedStudy({
         id: currentStudy.id!,
         tipo: "LABORATORY",
       });
       setCheckedPrint(true);
-    } else {
+    } else if (!value.target.checked && tipoEstudio == "LABORATORY") {
       removeSelectedStudy({
         id: currentStudy.id!,
         tipo: "LABORATORY",
       });
       setCheckedPrint(false);
+    } else if (value.target.checked && tipoEstudio == "PATHOLOGICAL") {
+      addSelectedStudy({
+        id: currentStudy.id!,
+        tipo: "PATHOLOGICAL",
+      });
+      setCheckedPrint(true);
+    } else if (!value.target.checked && tipoEstudio == "PATHOLOGICAL") {
+      removeSelectedStudy({
+        id: currentStudy.id!,
+        tipo: "PATHOLOGICAL",
+      });
+      setCheckedPrint(false);
+    } else {
+      return;
+    }
+  };
+
+  const studyTitle = (studyType: string, currentStudy: IRequestStudy) => {
+    if (studyType == "LABORATORY") {
+      return currentStudy.clave + " - " + currentStudy.nombre;
+    }
+    if (studyType == "PATHOLOGICAL") {
+      let clave = currentStudy.areaId === 30 ? "HP" : "CITO";
+      let nombre = currentStudy.areaId === 30 ? "HISTOPATOLOGÍA" : "CITOLOGÍA";
+      return clave + " - " + nombre;
     }
   };
 
@@ -141,7 +169,7 @@ const StudyActions = ({
             onChange={(value) => selectToPrint(value)}
           ></Checkbox>
           <Text className="result-study">
-            {currentStudy.clave} - {currentStudy.nombre}
+            {studyTitle(tipoEstudio, currentStudy)}
           </Text>
         </Col>
         <Col span={12} style={{ textAlign: "right" }}>
@@ -155,7 +183,7 @@ const StudyActions = ({
                     onClick={() => updateButtonAction(true)}
                     danger
                   >
-                    {cancelTextButton(currentStudy.estatusId)}
+                    Cancelar
                   </Button>
                 )}
                 <Button

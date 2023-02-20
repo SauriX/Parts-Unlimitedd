@@ -97,7 +97,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   useEffect(() => {}, [resultValue]);
 
   const loadInit = async () => {
-    setLoading(true);
     const cStudy = await getRequestStudyById(estudio.id!);
     setCurrentStudy(cStudy!);
 
@@ -128,7 +127,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       captureResult?.parametros.find((x) => x.estudioId == 631)
     );
     form.setFieldValue("parametros", captureResult?.parametros);
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -200,7 +198,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                 checkedPrint={checkedPrint}
                 exportGlucoseData={exportGlucoseData}
                 isMarked={isMarked}
-                submitResults={onSubmit}
+                submitResults={onSubmit} 
+                tipoEstudio={"LABORATORY"}                
               />
             </Col>
           </Row>
