@@ -199,7 +199,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                 exportGlucoseData={exportGlucoseData}
                 isMarked={isMarked}
                 submitResults={onSubmit} 
-                tipoEstudio={"LABORATORY"}                
+                tipoEstudio={"LABORATORY"}     
+                isXRay={false}           
               />
             </Col>
           </Row>

@@ -31,6 +31,7 @@ import { v4 as uuid } from "uuid";
 import { ProceedingFormValues } from "../../app/models/Proceeding";
 import moment from "moment";
 import React from "react";
+import ClinicalResultsXRay from "./desglose/ClinicalResultsXRay";
 
 const { Text } = Typography;
 const { Panel } = Collapse;
@@ -333,7 +334,7 @@ const ClinicalResultsInfo = () => {
                   />
                 </div>
               );
-            } else {
+            } else if (req.tipo === "LABORATORIO") {
               return (
                 <ClinicalResultsDetails
                   key={req.identificador}
@@ -346,6 +347,15 @@ const ClinicalResultsInfo = () => {
                   isMarked={markAll}
                   printing={loading}
                   showHeaderTable={index === 0}
+                />
+              );
+            } else {
+              return (
+                <ClinicalResultsXRay
+                  key={req.identificador}
+                  study={req}
+                  request={request!}
+                  record={procedingCurrent}
                 />
               );
             }

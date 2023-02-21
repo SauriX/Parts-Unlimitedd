@@ -295,6 +295,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
               isMarked={isMarked}
               submitResults={onSubmit}
               tipoEstudio={"PATHOLOGICAL"}
+              isXRay={false}
             />
           </Col>
         </Row>

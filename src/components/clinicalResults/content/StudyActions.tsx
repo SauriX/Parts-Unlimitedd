@@ -20,9 +20,10 @@ type StudyActionsProps = {
   exportGlucoseData?: IClinicResultCaptureForm;
   setEnvioManual: (envioManual: boolean) => void;
   setCheckedPrint: (checkedPrint: boolean) => void;
-  checkedPrint: boolean;
-  isMarked: boolean;
+  checkedPrint?: boolean;
+  isMarked?: boolean;
   tipoEstudio: string;
+  isXRay: boolean;
   submitResults: (
     esCancelacion: boolean,
     currentStudy: IRequestStudy
@@ -37,6 +38,7 @@ const StudyActions = ({
   checkedPrint,
   isMarked,
   tipoEstudio,
+  isXRay,
   exportGlucoseData,
   submitResults,
 }: StudyActionsProps) => {
@@ -46,7 +48,7 @@ const StudyActions = ({
   const estudioCTG = currentStudy.estudioId == 631;
 
   useEffect(() => {
-    setCheckedPrint(isMarked);
+    setCheckedPrint(isMarked!);
     if (currentStudy.estatusId > status.requestStudy.capturado) {
       if (isMarked && tipoEstudio == "LABORATORY") {
         addSelectedStudy({ id: currentStudy.id!, tipo: "LABORATORY" });
@@ -145,73 +147,77 @@ const StudyActions = ({
   };
 
   const studyTitle = (studyType: string, currentStudy: IRequestStudy) => {
-    if (studyType == "LABORATORY") {
-      return currentStudy.clave + " - " + currentStudy.nombre;
-    }
     if (studyType == "PATHOLOGICAL") {
       let clave = currentStudy.areaId === 30 ? "HP" : "CITO";
       let nombre = currentStudy.areaId === 30 ? "HISTOPATOLOGÍA" : "CITOLOGÍA";
       return clave + " - " + nombre;
+    }
+    else {
+      return currentStudy.clave + " - " + currentStudy.nombre;
     }
   };
 
   return (
     <Fragment>
       <Row justify="space-between" gutter={[24, 24]}>
-        <Col span={12}>
-          <Checkbox
-            checked={
-              currentStudy.estatusId < status.requestStudy.capturado
-                ? false
-                : checkedPrint
-            }
-            disabled={currentStudy.estatusId < status.requestStudy.capturado}
-            onChange={(value) => selectToPrint(value)}
-          ></Checkbox>
+        <Col span={!isXRay ? 12 : 24}>
+          {!isXRay && (
+            <Checkbox
+              checked={
+                currentStudy.estatusId < status.requestStudy.capturado
+                  ? false
+                  : checkedPrint
+              }
+              disabled={currentStudy.estatusId < status.requestStudy.capturado}
+              onChange={(value) => selectToPrint(value)}
+            ></Checkbox>
+          )}
           <Text className="result-study">
             {studyTitle(tipoEstudio, currentStudy)}
           </Text>
         </Col>
-        <Col span={12} style={{ textAlign: "right" }}>
-          {currentStudy.estatusId >= status.requestStudy.solicitado &&
-            currentStudy.estatusId <= status.requestStudy.liberado && (
-              <>
-                {currentStudy.estatusId > status.requestStudy.solicitado && (
-                  <Button
-                    type="default"
-                    disabled={disableButton(currentStudy.estatusId)}
-                    onClick={() => updateButtonAction(true)}
-                    danger
-                  >
-                    Cancelar
-                  </Button>
-                )}
-                <Button
-                  type="primary"
-                  onClick={() => updateButtonAction(false)}
-                >
-                  {saveTextButton(currentStudy.estatusId)}
-                </Button>
-                {currentStudy.estatusId === status.requestStudy.liberado && (
+        {!isXRay && (
+          <Col span={12} style={{ textAlign: "right" }}>
+            {currentStudy.estatusId >= status.requestStudy.solicitado &&
+              currentStudy.estatusId <= status.requestStudy.liberado && (
+                <>
+                  {currentStudy.estatusId > status.requestStudy.solicitado && (
+                    <Button
+                      type="default"
+                      disabled={disableButton(currentStudy.estatusId)}
+                      onClick={() => updateButtonAction(true)}
+                      danger
+                    >
+                      Cancelar
+                    </Button>
+                  )}
                   <Button
                     type="primary"
-                    onClick={manualSubmission}
-                    className="manual-submission"
+                    onClick={() => updateButtonAction(false)}
                   >
-                    Envio Manual
+                    {saveTextButton(currentStudy.estatusId)}
                   </Button>
-                )}
-                {estudioCTG &&
-                  currentStudy.estatusId >= status.requestStudy.validado && (
+                  {currentStudy.estatusId === status.requestStudy.liberado && (
                     <Button
                       type="primary"
-                      icon={<DownloadOutlined />}
-                      onClick={exportGlucoseDataToExcel}
-                    ></Button>
+                      onClick={manualSubmission}
+                      className="manual-submission"
+                    >
+                      Envio Manual
+                    </Button>
                   )}
-              </>
-            )}
-        </Col>
+                  {estudioCTG &&
+                    currentStudy.estatusId >= status.requestStudy.validado && (
+                      <Button
+                        type="primary"
+                        icon={<DownloadOutlined />}
+                        onClick={exportGlucoseDataToExcel}
+                      ></Button>
+                    )}
+                </>
+              )}
+          </Col>
+        )}
       </Row>
     </Fragment>
   );
