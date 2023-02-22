@@ -24,19 +24,11 @@ import alerts from "../util/alerts";
 import { catalog, paymentForms, status, statusName } from "../util/catalogs";
 import history from "../util/history";
 import messages from "../util/messages";
-import {
-  consoleColor,
-  generateRandomHex,
-  getDistinct,
-  getErrors,
-  groupBy,
-  isEqualObject,
-} from "../util/utils";
+import { getDistinct, getErrors, groupBy } from "../util/utils";
 import { v4 as uuidv4 } from "uuid";
 import { store } from "./store";
 import NetPay from "../api/netPay";
 import { ITag, ITagStudy } from "../models/tag";
-import { IStudyTag } from "../models/study";
 import moment from "moment";
 
 export default class RequestStore {
@@ -407,9 +399,6 @@ export default class RequestStore {
   updateTagsStudy = (study: IRequestStudy) => {
     // prettier-ignore
     const groupedStudies = groupBy(this.allActiveStudies, "destinoId", "destino", "destinoTipo");
-    consoleColor("ESTUDIOS AGRUPADOS POR DESTINO:", "green");
-    console.log(groupedStudies);
-
     const allTags: IRequestTag[] = this.tags.map((x) => toJS(x));
 
     for (const group of groupedStudies) {
@@ -425,13 +414,8 @@ export default class RequestStore {
               .flatMap((s) => s.estudios)
               .find((s) => s.nombreEstudio === x.nombreEstudio);
             return !t;
-            // !this.availableTagStudies
-            //   .map((s) => s.nombreEstudio)
-            //   .includes(x.nombreEstudio);
           })
       );
-      consoleColor(`ETIQUETAS EN DESTINO ${group.key}:`, "green");
-      console.log(groupTags);
 
       // prettier-ignore
       const destinationTags = groupTags.map(
@@ -484,36 +468,10 @@ export default class RequestStore {
       }
     }
 
-    // this.availableTagStudies = getDistinct([
-    //   ...this.availableTagStudies,
-    //   ...this.allActiveStudies
-    //     .flatMap((x) => x.etiquetas)
-    //     .map(({ etiquetaId, estudioId, nombreEstudio, orden, cantidad }) => ({
-    //       etiquetaId,
-    //       estudioId,
-    //       nombreEstudio,
-    //       orden,
-    //       asignado: true,
-    //       cantidad,
-    //     })),
-    // ]);
-
-    consoleColor("ETIQUETAS DISPONIBLES:", "green");
-    console.log(toJS(this.availableTagStudies));
-
-    consoleColor("ETIQUETAS AGRUPADAS POR DESTINO Y ETIQUETA:", "blue");
-    console.log(allTags);
     this.setTags(allTags);
   };
 
   updateAvailableTags = () => {
-    // etiquetaId: number;
-    // estudioId: number;
-    // nombreEstudio: string;
-    // orden: number;
-    // asignado: boolean;
-    // cantidad: number;
-
     this.availableTagStudies = getDistinct(
       this.allActiveStudies
         .flatMap((x) => x.etiquetas)
@@ -558,7 +516,6 @@ export default class RequestStore {
         })),
       };
 
-      console.log(pack);
       this.packs.unshift(pack);
       return true;
     } catch (error) {
@@ -650,7 +607,6 @@ export default class RequestStore {
       ) {
         const payment = await Request.createPayment(request);
         this.payments.push(payment);
-        // this.payments = [...this.payments, payment];
       } else {
         this.chargePayPalPayment(request);
       }
@@ -674,16 +630,11 @@ export default class RequestStore {
     const connection = store.notificationStore.hubConnection;
     if (!connection) return;
 
-    console.log("Esperando respuesta de terminal...");
-
     if (connection.state === "Connected") {
       connection.invoke("SubscribeWithName", guid);
     }
 
     connection.on("NotifyPaymentResponse", (payment: IRequestPayment) => {
-      console.log("Respuesta recibida de terminal");
-      // this.payments.push(payment);
-      console.log(payment);
       this.payments = [...this.payments, payment];
       connection.invoke("RemoveWithName", guid);
       connection.off("NotifyPaymentResponse");
@@ -818,7 +769,6 @@ export default class RequestStore {
         descuentoPorcentaje: promo?.descuentoPorcentaje,
         precioFinal: _study.precio - (promo?.descuento ?? 0),
       };
-      // this.calculateTotals();
     }
   };
 
@@ -837,7 +787,6 @@ export default class RequestStore {
         promocionDescuento: promo?.descuento,
         promocionDescuentoPorcentaje: promo?.descuentoPorcentaje,
       };
-      // this.calculateTotals();
     }
   };
 

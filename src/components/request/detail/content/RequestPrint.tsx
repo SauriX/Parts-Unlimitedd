@@ -12,7 +12,7 @@ import RequestPrintConsent from "./print/RequestPrintConsent";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../../app/stores/store";
 import { catalog } from "../../../../app/util/catalogs";
-import { DownOutlined, UserOutlined } from "@ant-design/icons";
+import { DownOutlined } from "@ant-design/icons";
 
 const segmentOptions = [
   {
