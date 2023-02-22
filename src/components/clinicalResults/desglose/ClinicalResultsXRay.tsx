@@ -89,6 +89,7 @@ const ClinicalResultsXRay = ({ study, record, request }: CRXRProps) => {
                 style={{ width: "calc(100% - 500px)" }}
                 name="Enlance"
                 placeholder="https://laboratorioramos.com"
+                disabled
               />
               <Tooltip title="Copiar enlance">
                 <Button icon={<CopyOutlined />} />

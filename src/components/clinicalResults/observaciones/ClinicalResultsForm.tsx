@@ -72,6 +72,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
   const [currentStudy, setCurrentStudy] = useState<IRequestStudy>(
     new RequestStudyValues()
   );
+  const [newEstatus, setNewEstatus] = useState<number>(0);
   const [deletedFiles, setDeletedFiles] = useState<string[]>([]);
   const [envioManual, setEnvioManual] = useState<boolean>(false);
   const [prueba, setPrueba] = useState<UploadFile[]>([]);
@@ -158,7 +159,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
 
   useEffect(() => {
     loadInit();
-  }, []);
+  }, [estudio, estudioId]);
 
   useEffect(() => {
     if (currentResult) {
@@ -212,7 +213,8 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
   ];
 
   const guardarReporte = async (values: any) => {
-    setLoading(true);
+    let sucess = false;
+
     const reporteClinico: IResultPathological = {
       solicitudId: solicitud.solicitudId!,
       estudioId: estudio.id!,
@@ -230,7 +232,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
       medicoId: values.medicoId,
       imagenPatologica: prueba,
       listaImagenesCargadas: deletedFiles,
-      estatus: currentStudy.estatusId,
+      estatus: newEstatus,
       departamentoEstudio:
         estudio.areaId === 30 ? "HISTOPATOLÓGICO" : "CITOLÓGICO",
     };
@@ -238,12 +240,12 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     const formData = objectToFormData(reporteClinico);
 
     if (!!currentResult) {
-      await updateResultPathological(formData, envioManual);
+      sucess = await updateResultPathological(formData, envioManual);
     } else {
-      await createResultPathological(formData);
+      sucess = await createResultPathological(formData);
     }
-    await loadInit();
-    setLoading(false);
+
+    return sucess;
   };
 
   const removeTestFile = (file: any) => {
@@ -269,17 +271,26 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
     esCancelacion: boolean,
     currentStudy: IRequestStudy
   ) => {
+    setLoading(true);
     const isUpdated = await updateStatus(
       esCancelacion,
       currentStudy,
       updateStatusStudy,
       cancelation,
       removeSelectedStudy,
-      setCheckedPrint
+      setCheckedPrint,
+      setNewEstatus
     );
-    if (isUpdated) {
-      await loadInit();
+
+    const saveReport = await guardarReporte(form.getFieldsValue());
+
+    await loadInit();
+    if (isUpdated && saveReport) {
+      console.log(currentStudy);
+      console.log(isUpdated);
+      alerts.success("Se ha guardado correctamente");
     }
+    setLoading(false);
   };
 
   return (

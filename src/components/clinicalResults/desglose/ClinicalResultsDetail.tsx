@@ -134,7 +134,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   }, [studies, estudio, estudioId]);
 
   const onFinish = async (newValuesForm: any) => {
-    setLoading(true);
     let labResults: IClinicResultCaptureForm[] = newValuesForm.parametros;
     let success = false;
 
@@ -153,12 +152,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
       solicitud.expedienteId,
       envioManual
     );
-    if (success) {
-      setObservationsSelected([]);
-      await loadInit();
-    }
 
-    setLoading(false);
+    return success;
   };
 
   const cancelation = async (estado: number) => {
@@ -172,24 +167,30 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     esCancelacion: boolean,
     currentStudy: IRequestStudy
   ) => {
+    setLoading(true);
     const isUpdated = await updateStatus(
       esCancelacion,
       currentStudy,
       updateStatusStudy,
       cancelation,
       removeSelectedStudy,
-      setCheckedPrint
+      setCheckedPrint,
     );
-    if (isUpdated) {
+
+    const saveResults = await onFinish(form.getFieldsValue());
+
+    if (isUpdated && saveResults) {
+      setObservationsSelected([]);
       await loadInit();
     }
+    setLoading(false);
   };
 
   return (
     <Fragment key={estudio.id}>
       {currentStudy.estatusId >= 3 && currentStudy.estatusId != 9 ? (
         <Spin spinning={loading}>
-          <Row gutter={[24, 24]} className="study-divider" >
+          <Row gutter={[24, 24]} className="study-divider">
             <Col span={24}>
               <StudyActions
                 currentStudy={currentStudy}
@@ -198,9 +199,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                 checkedPrint={checkedPrint}
                 exportGlucoseData={exportGlucoseData}
                 isMarked={isMarked}
-                submitResults={onSubmit} 
-                tipoEstudio={"LABORATORY"}     
-                isXRay={false}           
+                submitResults={onSubmit}
+                tipoEstudio={"LABORATORY"}
+                isXRay={false}
               />
             </Col>
           </Row>

@@ -8,10 +8,12 @@ export const updateStatus = async (
   updateStatusStudy: (id: number, status: number) => Promise<true | undefined>,
   cancelation: (status: number) => Promise<boolean | undefined>,
   removeSelectedStudy: (study: { id: number; tipo: string }) => void,
-  setCheckedPrint: (value: boolean) => void
+  setCheckedPrint: (value: boolean) => void,
+  setNewStatus?: (value: number) => void
 ) => {
   let nuevoEstado = 0;
   if (currentStudy.estatusId === status.requestStudy.solicitado) {
+    setNewStatus && setNewStatus(status.requestStudy.capturado);
     return await updateStatusStudy(
       currentStudy.id!,
       status.requestStudy.capturado
@@ -21,18 +23,21 @@ export const updateStatus = async (
     nuevoEstado = esCancelacion
       ? status.requestStudy.solicitado
       : status.requestStudy.validado;
+      setNewStatus && setNewStatus(nuevoEstado);
     return await updateStatusStudy(currentStudy.id!, nuevoEstado);
   }
   if (currentStudy.estatusId === status.requestStudy.validado) {
     nuevoEstado = esCancelacion
       ? status.requestStudy.capturado
       : status.requestStudy.liberado;
+      setNewStatus && setNewStatus(nuevoEstado);
     return await updateStatusStudy(currentStudy.id!, nuevoEstado);
   }
   if (currentStudy.estatusId === status.requestStudy.liberado) {
     nuevoEstado = esCancelacion
       ? status.requestStudy.validado
       : status.requestStudy.enviado;
+      setNewStatus && setNewStatus(nuevoEstado);
     return await updateStatusStudy(currentStudy.id!, nuevoEstado);
   }
   if (esCancelacion) {

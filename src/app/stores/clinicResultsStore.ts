@@ -210,6 +210,7 @@ export default class ClinicResultsStores {
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
+      return false
     }
   };
   getResultPathological = async (result: number) => {
@@ -230,6 +231,7 @@ export default class ClinicResultsStores {
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
+      return false
     }
   };
   sendResultFile = async (listResult: any) => {
