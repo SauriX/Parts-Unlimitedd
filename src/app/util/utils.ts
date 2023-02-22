@@ -3,6 +3,7 @@ import alerts from "./alerts";
 import messages from "./messages";
 import { UploadRequestOption } from "rc-upload/lib/interface";
 import { IGrouped } from "../models/shared";
+import { toJS } from "mobx";
 
 export const tokenName = "lab-ramos-token";
 
@@ -127,14 +128,21 @@ export const uploadFakeRequest = ({ onSuccess }: UploadRequestOption) => {
   }, 0);
 };
 
-export const groupBy = <T, K extends keyof T>(
+type KeyFunc<T> = (obj: T) => string;
+type KeyOrFunc<T> = keyof T | KeyFunc<T>;
+
+export const groupBy = <T>(
   arr: T[],
-  key: K
+  ...keys: KeyOrFunc<T>[]
 ): IGrouped<T>[] => {
   const groups: Map<string, T[]> = arr.reduce((map, obj) => {
-    const groupKey = String(obj[key]);
+    const groupKey = keys
+      .map((key) =>
+        typeof key === "string" ? obj[key] : (key as KeyFunc<T>)(obj)
+      )
+      .join(":");
     const group = map.get(groupKey) || [];
-    group.push(obj);
+    group.push(toJS(obj));
     map.set(groupKey, group);
     return map;
   }, new Map<string, T[]>());
@@ -144,6 +152,59 @@ export const groupBy = <T, K extends keyof T>(
     result.push({ key, items: value });
   });
   return result;
+};
+
+export const getDistinct = <T>(list: T[]): T[] => {
+  const distinctValues = new Set<string>();
+  const distinctObjects: T[] = [];
+
+  for (let obj of list) {
+    obj = toJS(obj);
+    const jsonStr = JSON.stringify(obj);
+    if (!distinctValues.has(jsonStr)) {
+      distinctValues.add(jsonStr);
+      distinctObjects.push(obj);
+    }
+  }
+
+  return distinctObjects;
+};
+
+export const isEqualObject = <T extends Record<string, any>>(
+  a: T,
+  b: T
+): boolean => {
+  if (a === b) {
+    return true;
+  }
+
+  if (
+    a == null ||
+    typeof a !== "object" ||
+    b == null ||
+    typeof b !== "object"
+  ) {
+    return false;
+  }
+
+  const aProps = Object.getOwnPropertyNames(a);
+  const bProps = Object.getOwnPropertyNames(b);
+
+  if (aProps.length !== bProps.length) {
+    return false;
+  }
+
+  for (const propName of aProps) {
+    if (a[propName] !== b[propName]) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+export const consoleColor = (msg: string, color: string) => {
+  console.log(`%c${msg}`, `color: ${color}`);
 };
 
 export const formItemLayout = {

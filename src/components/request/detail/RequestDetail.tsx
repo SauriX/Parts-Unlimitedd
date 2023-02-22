@@ -220,7 +220,6 @@ const RequestDetail = () => {
         setBranchId={setBranchId}
       />
       <RequestTab recordId={recordId} branchId={branchId} />
-      <Divider className="header-divider" />
     </Fragment>
   );
 };

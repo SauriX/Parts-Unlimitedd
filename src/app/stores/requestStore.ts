@@ -24,11 +24,20 @@ import alerts from "../util/alerts";
 import { catalog, paymentForms, status, statusName } from "../util/catalogs";
 import history from "../util/history";
 import messages from "../util/messages";
-import { generateRandomHex, getErrors, groupBy } from "../util/utils";
+import {
+  consoleColor,
+  generateRandomHex,
+  getDistinct,
+  getErrors,
+  groupBy,
+  isEqualObject,
+} from "../util/utils";
 import { v4 as uuidv4 } from "uuid";
 import { store } from "./store";
 import NetPay from "../api/netPay";
-import { ITag } from "../models/tag";
+import { ITag, ITagStudy } from "../models/tag";
+import { IStudyTag } from "../models/study";
+import moment from "moment";
 
 export default class RequestStore {
   constructor() {
@@ -68,6 +77,20 @@ export default class RequestStore {
         this.calculateTotals();
       }
     );
+
+    reaction(
+      () => this.tags.slice(),
+      () => {
+        this.updateAvailableTags();
+      }
+    );
+
+    reaction(
+      () => this.allActiveStudies.length,
+      () => {
+        this.updateAvailableTags();
+      }
+    );
   }
 
   filter: IRequestFilter = new RequestFilterForm();
@@ -83,6 +106,7 @@ export default class RequestStore {
   loadingTabContentCount: number = 0;
   lastViewedFrom?: { from: "requests" | "results"; code: string };
   tags: IRequestTag[] = [];
+  availableTagStudies: ITagStudy[] = [];
 
   setTags = (tags: IRequestTag[]) => {
     this.tags = tags;
@@ -132,17 +156,17 @@ export default class RequestStore {
   }
 
   get distinctTags() {
-    return this.tags
-      .map((x) => ({
-        etiquetaId: x.etiquetaId,
-        claveEtiqueta: x.claveEtiqueta,
-        nombreEtiqueta: x.nombreEtiqueta,
-        color: x.color,
-        claveInicial: x.claveInicial,
-      }))
-      .filter(
-        (v, i, a) => a.map((x) => x.etiquetaId).indexOf(v.etiquetaId) === i
-      );
+    return getDistinct(
+      this.allActiveStudies
+        .flatMap((x) => x.etiquetas)
+        .map((x) => ({
+          etiquetaId: x.etiquetaId,
+          claveEtiqueta: x.claveEtiqueta,
+          nombreEtiqueta: x.nombreEtiqueta,
+          color: x.color,
+          claveInicial: x.claveInicial,
+        }))
+    );
   }
 
   clearDetailData = () => {
@@ -288,6 +312,7 @@ export default class RequestStore {
         identificador: uuidv4(),
       }));
       this.totals = data.total ?? new RequestTotal();
+
       return data;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -303,7 +328,15 @@ export default class RequestStore {
       this.payments = payments;
     } catch (error) {
       alerts.warning(getErrors(error));
-      return [];
+    }
+  };
+
+  getTags = async (recordId: string, requestId: string) => {
+    try {
+      const tags = await Request.getTags(recordId, requestId);
+      this.tags = tags;
+    } catch (error) {
+      alerts.warning(getErrors(error));
     }
   };
 
@@ -372,90 +405,136 @@ export default class RequestStore {
   };
 
   updateTagsStudy = (study: IRequestStudy) => {
-    const groupedStudies = groupBy(toJS(this.allActiveStudies), "destinoId");
-
+    // prettier-ignore
+    const groupedStudies = groupBy(this.allActiveStudies, "destinoId", "destino", "destinoTipo");
+    consoleColor("ESTUDIOS AGRUPADOS POR DESTINO:", "green");
     console.log(groupedStudies);
 
-    // const tags = this.allActiveStudies
-    //   .flatMap((x) => x.etiquetas)
-    //   .map((x) => {
-    //     const { estudioId, orden, nombreEstudio, cantidad, id, identificador, ...tag } = x;
-    //     return { ...tag };
-    //   })
-    //   .filter(
-    //     (v, i, a) => a.map((x) => x.etiquetaId).indexOf(v.etiquetaId) === i
-    //   );
-    // // const tags = [...this.tags];
-    // console.log("%ctags", "color:green");
-    // console.log(tags);
-    // // const studyTags = study.etiquetas.sort(
-    // //   (a, b) =>
-    // //     a.orden - b.orden && a.claveEtiqueta.localeCompare(b.claveEtiqueta)
-    // // );
-    // // console.log(studyTags);
-    // let requestTags = toJS(this.tags);
-    // for (const item of requestTags) {
-    //   item.estudios = item.estudios.filter((x) => x.manual || x.borrado);
-    // }
-    // console.log("%crequestTags", "color:green");
-    // console.log(requestTags);
-    // const studyTags = this.allActiveStudies
-    //   .flatMap((x) => {
-    //     // const tag = requestTags.find((rt) =>
-    //     //   rt.estudios
-    //     //     .map((s) => s.identificador)
-    //     //     .includes(x.identificador ?? "")
-    //     // );
-    //     // return x.etiquetas.map((t) => ({
-    //     //   ...t,
-    //     //   identificadorEtiqueta: tag?.identificador ?? "",
-    //     // }));
-    //     return x.etiquetas;
-    //   })
-    //   .sort((a, b) => a.orden - b.orden);
-    // console.log("%cstudyTags", "color:green");
-    // console.log(studyTags);
-    // while (studyTags.length > 0) {
-    //   const studyTag = studyTags.shift();
-    //   const tag = tags.find((x) => x.etiquetaId === studyTag?.etiquetaId);
-    //   if (!studyTag || !tag) continue;
-    //   const existing = requestTags
-    //     .flatMap((x) => x.estudios)
-    //     .find(
-    //       (x) =>
-    //         x.identificador === studyTag.identificador &&
-    //         x.identificadorEtiqueta === studyTag.identificadorEtiqueta
-    //     );
-    //   if (existing && (existing.borrado || existing.manual)) continue;
-    //   const index = requestTags
-    //     // .reverse()
-    //     .findIndex(
-    //       (x) =>
-    //         x.etiquetaId === studyTag.etiquetaId &&
-    //         x.estudios
-    //           .filter((s) => !s.manual && !s.borrado)
-    //           .reduce((a, b) => a + b.cantidad, 0) +
-    //           studyTag.cantidad <=
-    //           1
-    //     );
-    //   if (index === -1) {
-    //     const id = uuidv4();
-    //     studyTag.identificadorEtiqueta = id;
-    //     requestTags.push({
-    //       identificador: id,
-    //       ...tag,
-    //       cantidad: 1,
-    //       estudios: [studyTag],
-    //     });
-    //   } else {
-    //     studyTag.identificadorEtiqueta = requestTags[index].identificador!;
-    //     requestTags[index].estudios.push(studyTag);
-    //   }
-    //   console.log("%crequestTags", "color:green");
-    //   console.log(requestTags);
-    // }
-    // // console.table(tags);
-    // this.setTags(requestTags);
+    const allTags: IRequestTag[] = this.tags.map((x) => toJS(x));
+
+    for (const group of groupedStudies) {
+      const keyArr = group.key.split(":");
+      // prettier-ignore
+      const keyData = { destinoId: keyArr[0], destino: keyArr[1], destinoTipo: keyArr[2] };
+
+      const groupTags = getDistinct(
+        group.items
+          .flatMap((x) => x.etiquetas)
+          .filter((x) => {
+            const t = allTags
+              .flatMap((s) => s.estudios)
+              .find((s) => s.nombreEstudio === x.nombreEstudio);
+            return !t;
+            // !this.availableTagStudies
+            //   .map((s) => s.nombreEstudio)
+            //   .includes(x.nombreEstudio);
+          })
+      );
+      consoleColor(`ETIQUETAS EN DESTINO ${group.key}:`, "green");
+      console.log(groupTags);
+
+      // prettier-ignore
+      const destinationTags = groupTags.map(
+        ({ etiquetaId, claveEtiqueta, claveInicial, nombreEtiqueta, color }) => ({
+          destinoId: keyData.destinoId,
+          destino: keyData.destino,
+          destinoTipo: Number(keyData.destinoTipo),
+          etiquetaId,
+          claveEtiqueta,
+          claveInicial,
+          nombreEtiqueta,
+          color,
+          cantidad: 1
+        })
+      );
+
+      const groupedByTags = groupBy(groupTags, "etiquetaId");
+      for (const groupTag of groupedByTags) {
+        const items = getDistinct(groupTag.items);
+
+        // prettier-ignore
+        const tag = destinationTags.find((x) => x.etiquetaId.toString() === groupTag.key);
+        const existingTagIndex = allTags.findIndex(
+          (x) =>
+            x.etiquetaId === tag?.etiquetaId && x.destinoId === tag.destinoId
+        );
+
+        const tagStudies = items.map(
+          ({ estudioId, nombreEstudio, orden, cantidad }) => ({
+            estudioId,
+            nombreEstudio,
+            orden,
+            cantidad,
+          })
+        );
+
+        if (existingTagIndex === -1) {
+          allTags.push({
+            id: uuidv4(),
+            ...tag!,
+            clave: this.generateTagCode(tag!),
+            estudios: tagStudies,
+          });
+        } else {
+          allTags[existingTagIndex].estudios = getDistinct([
+            ...allTags[existingTagIndex].estudios,
+            ...tagStudies,
+          ]);
+        }
+      }
+    }
+
+    // this.availableTagStudies = getDistinct([
+    //   ...this.availableTagStudies,
+    //   ...this.allActiveStudies
+    //     .flatMap((x) => x.etiquetas)
+    //     .map(({ etiquetaId, estudioId, nombreEstudio, orden, cantidad }) => ({
+    //       etiquetaId,
+    //       estudioId,
+    //       nombreEstudio,
+    //       orden,
+    //       asignado: true,
+    //       cantidad,
+    //     })),
+    // ]);
+
+    consoleColor("ETIQUETAS DISPONIBLES:", "green");
+    console.log(toJS(this.availableTagStudies));
+
+    consoleColor("ETIQUETAS AGRUPADAS POR DESTINO Y ETIQUETA:", "blue");
+    console.log(allTags);
+    this.setTags(allTags);
+  };
+
+  updateAvailableTags = () => {
+    // etiquetaId: number;
+    // estudioId: number;
+    // nombreEstudio: string;
+    // orden: number;
+    // asignado: boolean;
+    // cantidad: number;
+
+    this.availableTagStudies = getDistinct(
+      this.allActiveStudies
+        .flatMap((x) => x.etiquetas)
+        .map(({ etiquetaId, estudioId, nombreEstudio, orden, cantidad }) => ({
+          etiquetaId,
+          estudioId,
+          nombreEstudio,
+          orden,
+          asignado: true,
+          cantidad,
+        }))
+    );
+
+    const avTags = this.availableTagStudies.map((x) => toJS(x));
+
+    for (const item of avTags) {
+      // prettier-ignore
+      item.asignado = this.tags.flatMap((x) => x.estudios).map((x) => x.nombreEstudio).includes(item.nombreEstudio);
+    }
+
+    this.availableTagStudies = avTags;
   };
 
   getPricePack = async (packId: number, filter: IPriceListInfoFilter) => {
@@ -489,8 +568,13 @@ export default class RequestStore {
   };
 
   addTag = (tag: ITag) => {
+    // prettier-ignore
     this.tags.push({
-      identificador: uuidv4(),
+      id: uuidv4(),
+      clave: this.generateTagCode(tag),
+      destino: uuidv4(),
+      destinoId: uuidv4(),
+      destinoTipo: 3,
       claveEtiqueta: tag.claveEtiqueta,
       nombreEtiqueta: tag.nombreEtiqueta,
       cantidad: 1,
@@ -501,14 +585,13 @@ export default class RequestStore {
     });
   };
 
-  deleteTag = (id: string) => {
+  deleteTag = (id: string | number) => {
     const tags = [...this.tags];
-    const index = tags.findIndex((x) => x.identificador === id);
+    const index = tags.findIndex((x) => x.id === id);
 
     if (index === -1) return;
 
-    tags[index].borrado = true;
-    this.setTags(tags);
+    this.setTags(tags.filter((x) => x.id !== id));
   };
 
   sendTestEmail = async (
@@ -680,6 +763,37 @@ export default class RequestStore {
       if (!autoSave) alerts.success(messages.updated);
       return true;
     } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    } finally {
+      if (!autoSave) this.loadingTabContentCount--;
+    }
+  };
+
+  updateTags = async (
+    recordId: string,
+    requestId: string,
+    tags: IRequestTag[],
+    autoSave: boolean
+  ) => {
+    try {
+      if (
+        //prettier-ignore
+        tags.some((x) => x.estudios.length === 0) || this.availableTagStudies.some((x) => !x.asignado)
+      ) {
+        alerts.warning("Las etiquetas deben tener por lo menos un estudio");
+        return;
+      }
+
+      if (!autoSave) this.loadingTabContentCount++;
+      const tagsToUpdate = tags.map((tag) => ({
+        ...tag,
+        id: typeof tag.id === "string" ? 0 : tag.id,
+      }));
+      this.tags = await Request.updateTags(recordId, requestId, tagsToUpdate);
+      if (!autoSave) alerts.success(messages.updated);
+      return true;
+    } catch (error) {
       alerts.warning(getErrors(error));
       return false;
     } finally {
@@ -1035,5 +1149,16 @@ export default class RequestStore {
       });
       return x;
     });
+  };
+
+  private generateTagCode = (tag: ITag) => {
+    if (!this.request) return "";
+
+    const intialCode = tag.claveInicial;
+    // prettier-ignore
+    const final = intialCode.includes("año") || intialCode === "0" || intialCode==="X" ? moment().format("YY") : intialCode;
+    return (
+      final + moment().format("YYMM") + "0" + this.request.clave!.slice(-5)
+    );
   };
 }

@@ -345,16 +345,26 @@ export interface IRequestPack {
 }
 
 export interface IRequestTag {
-  id?: number;
-  identificador?: string;
+  id: string | number;
+  clave: string;
+  destinoId: string;
+  destino: string;
+  destinoTipo: number;
   etiquetaId: number;
   claveEtiqueta: string;
   claveInicial: string;
   nombreEtiqueta: string;
   cantidad: number;
   color: string;
-  estudios: IStudyTag[];
-  borrado?: boolean;
+  estudios: IRequestTagStudy[];
+}
+
+export interface IRequestTagStudy {
+  id?: number;
+  estudioId: number;
+  nombreEstudio: string;
+  orden: number;
+  cantidad: number;
 }
 
 export interface IRequestTotal extends IRequestBase {

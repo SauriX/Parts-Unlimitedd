@@ -47,7 +47,9 @@ export interface IStudyForm {
 }
 
 export interface IStudyTag {
-  id: number;
+  destinoId: string;
+  destino: string;
+  destinoTipo: number;
   etiquetaId: number;
   estudioId: number;
   claveEtiqueta: string;
@@ -56,23 +58,8 @@ export interface IStudyTag {
   cantidad: number;
   orden: number;
   color: string;
-  manual: boolean;
-  borrado: boolean;
   nombreEstudio: string;
-  identificador: string;
-  identificadorEtiqueta: string;
-  // estudios: IStudyTagList[];
 }
-
-// export interface IStudyTagList {
-//   id: number;
-//   clave: string;
-//   claveInicial: string;
-//   estudioId: number;
-//   etiquetaId: number;
-//   cantidad: number;
-//   color: string;
-// }
 
 export class StudyFormValues implements IStudyForm {
   id = 0;

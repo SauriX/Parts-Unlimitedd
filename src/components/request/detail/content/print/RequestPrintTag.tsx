@@ -8,6 +8,7 @@ import {
   Select,
   Spin,
   Table,
+  Typography,
 } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
@@ -17,30 +18,45 @@ import {
   IColumns,
   getDefaultColumnProps,
 } from "../../../../../app/common/table/utils";
-import { IRequestStudy, IRequestTag } from "../../../../../app/models/request";
+import {
+  IRequestStudy,
+  IRequestTag,
+  IRequestTagStudy,
+} from "../../../../../app/models/request";
 import { IOptions } from "../../../../../app/models/shared";
 import { useStore } from "../../../../../app/stores/store";
 import alerts from "../../../../../app/util/alerts";
-import { formItemLayout } from "../../../../../app/util/utils";
+import { formItemLayout, getDistinct } from "../../../../../app/util/utils";
 import { v4 as uuid } from "uuid";
 import { IStudyTag } from "../../../../../app/models/study";
 import IconButton from "../../../../../app/common/button/IconButton";
 import { DeleteOutlined, DeleteTwoTone } from "@ant-design/icons";
+import { ITagStudy } from "../../../../../app/models/tag";
+
+const { Option } = Select;
+const { Text } = Typography;
 
 const RequestPrintTag = () => {
   const { requestStore, optionStore } = useStore();
-  const { request, allActiveStudies, printTags, tags, setTags, deleteTag } =
-    requestStore;
+  const {
+    request,
+    allActiveStudies,
+    availableTagStudies: availableStudyTags,
+    printTags,
+    tags,
+    setTags,
+    deleteTag,
+  } = requestStore;
 
   const [labels, setLabels] = useState<IRequestTag[]>([]);
   const [options, setOptions] = useState<IOptions[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<(string | number)[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [studyTags, setStudyTags] = useState<IStudyTag[]>([]);
+  // const [studyTags, setStudyTags] = useState<IStudyTag[]>([]);
 
-  useEffect(() => {
-    setStudyTags(allActiveStudies.flatMap((x) => x.etiquetas));
-  }, [allActiveStudies]);
+  // useEffect(() => {
+  //   setStudyTags(getDistinct(allActiveStudies.flatMap((x) => x.etiquetas)));
+  // }, [allActiveStudies]);
 
   // useEffect(() => {
   //   const tags = allStudies
@@ -114,9 +130,7 @@ const RequestPrintTag = () => {
   // }, [request, studyOptions]);
 
   const changeQty = (qty: number, record: IRequestTag) => {
-    let index = tags.findIndex(
-      (x) => x.id === record.id && x.identificador === record.identificador
-    );
+    let index = tags.findIndex((x) => x.id === record.id);
     if (index > -1) {
       const lbls = [...tags];
       lbls[index] = { ...lbls[index], cantidad: qty };
@@ -125,82 +139,33 @@ const RequestPrintTag = () => {
   };
 
   const print = async () => {
-    // if (request) {
-    //   setLoading(true);
-    //   const toPrint = tags.filter((x) => selectedKeys.includes(x.id));
-    //   if (toPrint.length === 0) {
-    //     alerts.warning("No se ha seleccionado ningún estudio");
-    //     setLoading(false);
-    //     return;
-    //   }
-    //   const groupBySumCantidad = toJS(toPrint).reduce(
-    //     (group: IRequestTag[], study) => {
-    //       const index = group.findIndex((x) => x.estudios === study.estudios);
-    //       if (index === -1) {
-    //         group.push({
-    //           id: uuid(),
-    //           taponClave: study.taponClave ?? "",
-    //           taponNombre: study.taponNombre ?? "",
-    //           estudios: study.estudios,
-    //           cantidad: study.cantidad,
-    //         });
-    //       } else {
-    //         group[index].cantidad += study.cantidad;
-    //       }
-    //       return group;
-    //     },
-    //     []
-    //   );
-    //   const groupToPrintBySumCantidad = groupBySumCantidad.map((x) => {
-    //     const index = toPrint.findIndex(
-    //       (y) => y.cantidad === 1 && y.estudios === x.estudios
-    //     );
-    //     if (index > -1) {
-    //       toPrint[index].cantidad = x.cantidad;
-    //     }
-    //     return x;
-    //   });
-    //   console.log("toPrint", toPrint);
-    //   console.log("groupBySumEqualToOne", groupToPrintBySumCantidad);
-    //   console.log("groupBySumEqualToOne", groupBySumCantidad);
-    //   // await printTags(request.expedienteId, request.solicitudId!, groupBySumEqualToOne);
-    //   // await printTags(request.expedienteId, request.solicitudId!, toPrint);
-    //   setLoading(false);
-    // }
+    if (request) {
+      const toPrint = tags.filter((x) => selectedKeys.includes(x.id));
+
+      if (toPrint.length === 0) {
+        alerts.warning("No se ha seleccionado ningúna etiqueta");
+        return;
+      }
+
+      setLoading(true);
+      await printTags(request.expedienteId, request.solicitudId!, toPrint);
+      setLoading(false);
+    }
   };
 
-  const handleAdd = () => {
-    const newStudy: IRequestTag = {
-      identificador: uuid(),
-      claveEtiqueta: tags[0].claveEtiqueta ?? "",
-      nombreEtiqueta: tags[0].nombreEtiqueta ?? "",
-      estudios: [],
-      cantidad: 0,
-      etiquetaId: tags[0].etiquetaId,
-      claveInicial: tags[0].claveInicial,
-      color: tags[0].color,
-    };
-    setTags([...tags, newStudy]);
-  };
-
-  const onSelectStudy = (value: string, tag: IRequestTag) => {
-    const newTags = toJS(tags);
-    const index = newTags.findIndex(
-      (x) => x.id === tag.id && x.identificador === tag.identificador
-    );
+  const onChangeStudies = (values: string[], tag: IRequestTag) => {
+    const newTags = [...tags];
+    const index = newTags.findIndex((x) => x.id === tag.id);
 
     if (index === -1) return;
 
-    const selectedStudyTag = studyTags.find((x) => value === x.identificador);
-    if (!selectedStudyTag) return;
+    const selectedStudyTag = availableStudyTags.filter(
+      (x) => values.includes(x.nombreEstudio) //&& tag.destinoId === x.destinoId
+    );
 
-    selectedStudyTag.manual = true;
-    selectedStudyTag.borrado = false;
-    selectedStudyTag.identificadorEtiqueta = tag.identificador!;
-    newTags[index].estudios = [
-      ...newTags[index].estudios.filter((x) => value !== x.identificador),
-      selectedStudyTag,
-    ];
+    // selectedStudyTag.manual = true;
+    // selectedStudyTag.borrado = false;
+    newTags[index].estudios = selectedStudyTag;
 
     console.log("%conSelectStudy", "color:green");
     console.log(newTags);
@@ -208,37 +173,59 @@ const RequestPrintTag = () => {
     setTags(newTags);
   };
 
-  const onDeselectStudy = (value: string, tag: IRequestTag) => {
-    const newTags = toJS(tags);
-    const index = newTags.findIndex(
-      (x) => x.id === tag.id && x.identificador === tag.identificador
-    );
+  // const onSelectStudy = (value: number, tag: IRequestTag) => {
+  //   const newTags = [...tags];
+  //   const index = newTags.findIndex((x) => x.id === tag.id);
 
-    if (index === -1) return;
+  //   if (index === -1) return;
 
-    const selectedStudyTag = studyTags.find((x) => value === x.identificador);
-    if (!selectedStudyTag) return;
+  //   const selectedStudyTag = studyTags.find(
+  //     (x) => value === x.estudioId && tag.destinoId === x.destinoId
+  //   );
+  //   if (!selectedStudyTag) return;
 
-    selectedStudyTag.borrado = true;
-    newTags[index].estudios = [
-      ...newTags[index].estudios.filter((x) => value !== x.identificador),
-      selectedStudyTag,
-    ];
+  //   // selectedStudyTag.manual = true;
+  //   // selectedStudyTag.borrado = false;
+  //   newTags[index].estudios = [
+  //     ...newTags[index].estudios.filter((x) => value !== x.estudioId),
+  //     selectedStudyTag,
+  //   ];
 
-    // if (newTags[index].estudios.filter((x) => !x.borrado).length === 0) {
-    //   alerts.warning("La etiqueta debe tener al menos un estudio");
-    //   return;
-    // }
+  //   console.log("%conSelectStudy", "color:green");
+  //   console.log(newTags);
 
-    console.log("%conDeselectStudy", "color:green");
-    console.log(newTags);
+  //   setTags(newTags);
+  // };
 
-    setTags(newTags);
-  };
+  // const onDeselectStudy = (value: number, tag: IRequestTag) => {
+  //   const newTags = toJS(tags);
+  //   const index = newTags.findIndex((x) => x.id === tag.id);
 
-  useEffect(() => {
-    console.log(studyTags);
-  }, [studyTags]);
+  //   if (index === -1) return;
+
+  //   const selectedStudyTag = studyTags.find((x) => value === x.estudioId);
+  //   if (!selectedStudyTag) return;
+
+  //   // selectedStudyTag.borrado = true;
+  //   newTags[index].estudios = [
+  //     // ...newTags[index].estudios.filter((x) => value !== x.identificador),
+  //     selectedStudyTag,
+  //   ];
+
+  //   // if (newTags[index].estudios.filter((x) => !x.borrado).length === 0) {
+  //   //   alerts.warning("La etiqueta debe tener al menos un estudio");
+  //   //   return;
+  //   // }
+
+  //   console.log("%conDeselectStudy", "color:green");
+  //   console.log(newTags);
+
+  //   setTags(newTags);
+  // };
+
+  // useEffect(() => {
+  //   console.log(studyTags);
+  // }, [studyTags]);
 
   // const confirmDeleteTag = (id: string) => {
   //   alerts.confirm(
@@ -270,38 +257,18 @@ const RequestPrintTag = () => {
         searchable: false,
         width: "45%",
       }),
-      render(value: IStudyTag[], record) {
+      render(value: IRequestTagStudy[], record) {
         return (
           <RequestTag
-            tags={value.filter((x) => !x.borrado)}
-            onSelect={(value) => onSelectStudy(value, record)}
-            onDeselect={(value) => onDeselectStudy(value, record)}
+            tags={value}
+            // onSelect={(value) => onSelectStudy(value, record)}
+            // onDeselect={(value) => onDeselectStudy(value, record)}
+            onChange={(values) => onChangeStudies(values, record)}
             loading={loading}
-            studyOptions={studyTags
-              .filter((x) => x.etiquetaId === record.etiquetaId)
-              .filter(
-                (x) =>
-                  record.estudios
-                    .map((y) => y.identificador)
-                    .includes(x.identificador) ||
-                  !record.estudios
-                    .map((y) => y.nombreEstudio)
-                    .includes(x.nombreEstudio)
-              )
-              .filter(
-                (v, i, a) =>
-                  a.map((x) => x.nombreEstudio).indexOf(v.nombreEstudio) ===
-                    i ||
-                  record.estudios
-                    .map((y) => y.identificador)
-                    .includes(v.identificador)
-              )
-              .filter((x) => !x.borrado)
-              .map((x) => ({
-                key: x.identificador,
-                value: x.identificador,
-                label: x.nombreEstudio + ` (${x.cantidad})`,
-              }))}
+            studyOptions={availableStudyTags.filter(
+              (x) => x.etiquetaId === record.etiquetaId
+              // && x.destinoId === record.destinoId
+            )}
           />
         );
       },
@@ -330,23 +297,24 @@ const RequestPrintTag = () => {
       title: "",
       width: "5%",
       align: "center",
-      render: (value, item) => (
-        <Popconfirm
-          title="¿Desea eliminar la etiqueta?"
-          okText="Sí"
-          cancelText="No"
-          trigger="hover"
-          onConfirm={() => deleteTag(item.identificador!)}
-        >
-          <DeleteTwoTone twoToneColor="red" />
-        </Popconfirm>
-        // <IconButton
-        //   danger
-        //   title="Eliminar"
-        //   icon={<DeleteOutlined />}
-        //   onClick={() => confirmDeleteTag(item.identificador!)}
-        // />
-      ),
+      render: (value, item) =>
+        item.destinoTipo === 3 && (
+          <Popconfirm
+            title="¿Desea eliminar la etiqueta?"
+            okText="Sí"
+            cancelText="No"
+            trigger="hover"
+            onConfirm={() => deleteTag(item.id)}
+          >
+            <DeleteTwoTone twoToneColor="red" />
+          </Popconfirm>
+          // <IconButton
+          //   danger
+          //   title="Eliminar"
+          //   icon={<DeleteOutlined />}
+          //   onClick={() => confirmDeleteTag(item.identificador!)}
+          // />
+        ),
     },
     Table.SELECTION_COLUMN,
   ];
@@ -354,18 +322,29 @@ const RequestPrintTag = () => {
   return (
     <Spin spinning={loading}>
       <Row gutter={[8, 12]}>
+        {availableStudyTags.some((x) => !x.asignado) && (
+          <Col span={24}>
+            <Text type="danger">
+              Pendientes por asignar:{" "}
+              {availableStudyTags
+                .filter((x) => !x.asignado)
+                .map((x) => x.nombreEstudio)
+                .join(", ")}
+            </Text>
+          </Col>
+        )}
         <Col span={24}>
           <Table<IRequestTag>
             size="small"
-            rowKey={(x) => x.id ?? x.identificador!}
+            rowKey={(x) => x.id}
             columns={columns}
-            dataSource={[...tags.filter((x) => !x.borrado)]}
+            dataSource={[...tags]}
             pagination={false}
             rowSelection={{
               fixed: "right",
               selectedRowKeys: selectedKeys,
-              onSelect: (r, s, selected) => {
-                setSelectedKeys(selected.map((x) => x.id ?? x.identificador!));
+              onChange: (keys) => {
+                setSelectedKeys(keys);
               },
             }}
             sticky
@@ -389,29 +368,38 @@ const RequestPrintTag = () => {
 export default observer(RequestPrintTag);
 
 type RequestTagProps = {
-  tags: IStudyTag[];
-  onSelect: (value: string) => void;
-  onDeselect: (value: string) => void;
-  studyOptions: IOptions[];
+  tags: IRequestTagStudy[];
+  // onSelect: (value: number) => void;
+  // onDeselect: (value: number) => void;
+  onChange: (values: string[]) => void;
+  studyOptions: ITagStudy[];
   loading: boolean;
 };
 
 const RequestTag = ({
   tags,
-  onSelect,
-  onDeselect,
+  // onSelect,
+  // onDeselect,
+  onChange,
   loading,
   studyOptions,
 }: RequestTagProps) => {
   return (
     <Select
       bordered={false}
-      options={studyOptions}
-      onSelect={onSelect}
-      onDeselect={onDeselect}
+      // options={studyOptions}
+      onChange={onChange}
       style={{ width: "100%" }}
       mode="multiple"
-      value={tags.map((x) => x.identificador)}
-    />
+      value={tags.map((x) => x.nombreEstudio)}
+    >
+      {studyOptions.map((x) => (
+        <Option key={x.nombreEstudio} value={x.nombreEstudio}>
+          <span className={x.asignado ? "" : "option-not-assigned"}>
+            {x.nombreEstudio}
+          </span>
+        </Option>
+      ))}
+    </Select>
   );
 };
