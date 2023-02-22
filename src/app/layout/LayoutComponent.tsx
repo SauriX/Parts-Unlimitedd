@@ -14,6 +14,8 @@ import {
   Tooltip,
   List,
   Divider,
+  Badge,
+  Card,
 } from "antd";
 import React, {
   Fragment,
@@ -202,20 +204,23 @@ const LayoutComponent = () => {
   const renderShortCuts = () => {
     return (
       <Fragment>
-        <Title level={5} style={{ color: "white" }}>
-          ATAJOS DEL TECLADO
-        </Title>
         <List
+          header={
+            <Title level={5} style={{ textAlign: "center", color: "#1677ff" }}>
+              ATAJOS DEL TECLADO
+            </Title>
+          }
           bordered={false}
           dataSource={shortCuts}
           renderItem={(item) => (
             <List.Item>
               <Row>
                 <Col span={24}>
-                  <Text style={{ color: "white" }} strong>
-                    {item.shortCut}
-                  </Text>
-                  <Text style={{ color: "white" }}>{item.description}</Text>
+                  <Badge.Ribbon text={item.shortCut} placement="start">
+                    <Card title="  " className="shortcut-card">
+                      {item.description}
+                    </Card>
+                  </Badge.Ribbon>
                 </Col>
               </Row>
             </List.Item>
@@ -263,7 +268,7 @@ const LayoutComponent = () => {
             <Tooltip
               placement="bottomRight"
               title={renderShortCuts}
-              color="#3FA3FF"
+              color="#E7F6FD"
             >
               <QuestionCircleTwoTone />
             </Tooltip>
