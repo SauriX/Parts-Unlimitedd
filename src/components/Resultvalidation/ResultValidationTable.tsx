@@ -229,38 +229,38 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     }
   );
  }
-  const verfiy  = (e: CheckboxChangeEvent, id: number, solicitud: string) =>{
-    let request =  studys.find(x => x.solicitud == solicitud);
-    let updatedata = updateData.find(x=>x.solicitudId == request?.id);
-    let totalStudios = request?.estudios.length;
-    let estudiosxliberar = request?.estudios.filter(x=>x.estatus != 4 && x.estatus != 7).length;
-    if(activiti=="cancel"){
-      onChange(e,id,solicitud);
-    }else{
-      
-      if(updatedata != null || updatedata != undefined){
-        if((updatedata?.estudioId.length + 1) == totalStudios){
-          alerta(e,id,solicitud);
-        }else{
-          if(estudiosxliberar == (updatedata?.estudioId.length + 1)){
-            alerta(e,id,solicitud);
-          }else{
-            onChange(e,id,solicitud);
-          }
-          
-        }    
+ const verfiy  = (e: CheckboxChangeEvent, id: number, solicitud: string) =>{
+  let request =  studys.find(x => x.solicitud === solicitud);
+  let updatedata = updateData.find(x=>x.solicitudId === request?.id);
+  let totalStudios = request?.estudios.length;
+  let estudiosxliberar = request?.estudios.filter(x=>x.estatus !== 4 && x.estatus !== 7).length;
+  if(activiti=="cancel"){
+    onChange(e,id,solicitud);
+  }else{
+    
+    if(updatedata != null || updatedata != undefined){
+      if((updatedata?.estudioId.length + 1) === totalStudios){
+        alerta(e,id,solicitud);
       }else{
-        if(totalStudios ==1 ){
+        if(estudiosxliberar === (updatedata?.estudioId.length + 1)){
           alerta(e,id,solicitud);
         }else{
-        onChange(e,id,solicitud);}
-      }
+          onChange(e,id,solicitud);
+        }
+        
+      }    
+    }else{
+      if(totalStudios ===1 ){
+        alerta(e,id,solicitud);
+      }else{
+      onChange(e,id,solicitud);}
     }
-  
-  
-  
-  
   }
+
+
+
+
+}
 
   const updatedata = async () => {
     setLoading(true);
