@@ -35,6 +35,8 @@ const Request = {
     requestId: string
   ): Promise<IRequestPayment[]> =>
     requests.get(`request/payments/${recordId}/${requestId}`),
+  getTags: (recordId: string, requestId: string): Promise<IRequestTag[]> =>
+    requests.get(`request/tags/${recordId}/${requestId}`),
   getImages: (recordId: string, requestId: string): Promise<string[]> =>
     requests.get(`request/images/${recordId}/${requestId}`),
   getNextPaymentCode: (serie: string): Promise<string> =>
@@ -67,6 +69,12 @@ const Request = {
     requests.put("request/totals", request),
   updateStudies: (request: IRequestStudyUpdate): Promise<IRequestStudyUpdate> =>
     requests.post("request/studies", request),
+  updateTags: (
+    recordId: string,
+    requestId: string,
+    tags: IRequestTag[]
+  ): Promise<IRequestTag[]> =>
+    requests.post(`request/tags/${recordId}/${requestId}`, tags),
   cancelRequest: (recordId: string, requestId: string): Promise<void> =>
     requests.put(`request/cancel/${recordId}/${requestId}`, {}),
   deleteRequest: (recordId: string, requestId: string): Promise<void> =>
@@ -97,7 +105,7 @@ const Request = {
     requestId: string,
     tags: IRequestTag[]
   ): Promise<void> =>
-    requests.print(`request/tags/${recordId}/${requestId}`, tags),
+    requests.print(`request/print/tags/${recordId}/${requestId}`, tags),
   saveImage: (formData: FormData): Promise<string> =>
     requests.put("request/images", formData),
   deleteImage: (
