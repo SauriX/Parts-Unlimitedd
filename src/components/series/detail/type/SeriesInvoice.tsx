@@ -188,7 +188,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
   };
 
   return (
-    <Spin spinning={loading} tip={"Guardando"}>
+    <Spin spinning={loading} tip={"Cargando"}>
       <Row gutter={[24, 12]}>
         {!readonly && (
           <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>

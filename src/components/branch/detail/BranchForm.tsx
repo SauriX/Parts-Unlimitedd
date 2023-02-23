@@ -259,8 +259,6 @@ const BranchForm: FC<BranchFormProps> = ({
               type="primary"
               htmlType="submit"
               onClick={() => {
-                // e.preventDefault();
-                // console.log("form", form.getFieldsValue());
                 form.submit();
               }}
             >
@@ -499,13 +497,6 @@ const BranchForm: FC<BranchFormProps> = ({
               <Col md={12} sm={24} xs={12}>
                 <SwitchInput
                   name="matriz"
-                  onChange={(value) => {
-                    /*                   if (value) {
-                    alerts.info(messages.confirmations.enable);
-                  } else {
-                    alerts.info(messages.confirmations.disable);
-                  } */
-                  }}
                   label="Matriz"
                   readonly={CheckReadOnly()}
                 />
@@ -534,58 +525,6 @@ const BranchForm: FC<BranchFormProps> = ({
         loading={loading}
         size="small"
       />
-      {/* <List<IBranchDepartment>
-        header={
-          <div>
-            <Col md={12} sm={24} style={{ marginRight: 20 }}>
-              Nombre Departamento
-              <Select
-                options={departmentOptions}
-                onChange={(value, option: any) => {
-                  if (value) {
-                    setDepartment({
-                      departamentoId: value,
-                      departamento: option.label,
-                    });
-                  } else {
-                    setDepartment(undefined);
-                  }
-                }}
-                style={{ width: 240, marginRight: 20, marginLeft: 10 }}
-              />
-              {!CheckReadOnly() && (
-                <ImageButton
-                  key="agregar"
-                  title="Agregar Clinica"
-                  image="agregar-archivo"
-                  onClick={addClinic}
-                />
-              )}
-            </Col>
-          </div>
-        }
-        footer={<div></div>}
-        bordered
-        dataSource={values.departamentos}
-        renderItem={(item) => (
-          <List.Item>
-            <Col md={12} sm={24} style={{ textAlign: "left" }}>
-              <Typography.Text mark></Typography.Text>
-              {item.departamento}
-            </Col>
-            <Col md={12} sm={24} style={{ textAlign: "left" }}>
-              <ImageButton
-                key="Eliminar"
-                title="Eliminar Clinica"
-                image="Eliminar_Clinica"
-                onClick={() => {
-                  deleteClinic(item.departamentoId);
-                }}
-              />
-            </Col>
-          </List.Item>
-        )}
-      /> */}
     </Spin>
   );
 };
