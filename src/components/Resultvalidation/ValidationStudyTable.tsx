@@ -20,7 +20,7 @@ const { Link, Text } = Typography;
 
 type expandableProps = {
   activiti: string;
-  onChange: (e: CheckboxChangeEvent, id: number, solicitud: string) => void;
+  verfiy: (e: CheckboxChangeEvent, id: number, solicitud: string) => void;
   viewTicket: (recordId: any) => Promise<void>;
   visto: checked[];
   setvisto: React.Dispatch<React.SetStateAction<checked[]>>;
@@ -128,7 +128,7 @@ const ValidationStudyColumns = ({ printTicket }: tableProps) => {
 
 export const ValidationStudyExpandable = ({
   activiti,
-  onChange,
+  verfiy,
   viewTicket,
   visto,
   setvisto,
@@ -193,7 +193,7 @@ expandableProps) => {
               activiti == "cancel")) && (
             <Checkbox
               onChange={(e) => {
-                onChange(e, record.id, record.solicitudId);
+                verfiy(e, record.id, record.solicitudId);
                 stcambio(!cambio);
               }}
               checked={
@@ -221,7 +221,7 @@ expandableProps) => {
             <Checkbox
               onChange={(e) => {
                 {
-                  onChange(e, record.id, record.solicitudId);
+                  verfiy(e, record.id, record.solicitudId);
                   stcambio(!cambio);
                 }
               }}
