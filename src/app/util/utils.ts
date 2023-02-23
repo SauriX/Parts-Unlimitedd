@@ -186,3 +186,38 @@ export const toolBarOptions = {
     ],
   },
 };
+
+export const shortCuts = [
+  {
+    title: "CONSULTA",
+    shortCut: "CTRL + SHIFT + E",
+    description: " CONSULTA DE EXPEDIENTE",
+  },
+  {
+    title: "CREACIÓN",
+    shortCut: "CTRL + SHIFT + X",
+    description: " CREACIÓN DE EXPEDIENTE",
+  },
+  {
+    title: "CONSULTA",
+    shortCut: "CTRL + SHIFT + V",
+    description: " NUEVA SOLICITUD (ENCONTRANDOSE EN DETALLE DE EXPEDIENTE)",
+  },
+  {
+    title: "GUARDAR",
+    shortCut: "CTRL + SHIFT + L",
+    description: " GUARDAR (PARA TODAS LAS PANTALLAS QUE TENGAN LA OPCIÓN GUARDAR O FILTRAR)",
+  },
+  {
+    title: "CONSULTA",
+    shortCut: "CTRL + SHIFT + S",
+    description: " CONSULTA DE SOLICITUDES" 
+  },
+  {
+    title: "CREACIÓN",
+    shortCut: "CTRL + SHIFT + U",
+    description: " CREACIÓN DE CITA",
+  },
+]
+
+
