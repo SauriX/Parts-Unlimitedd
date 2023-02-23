@@ -13,6 +13,8 @@ import {
 import { moneyFormatter } from "../../../app/util/utils";
 import { useStore } from "../../../app/stores/store";
 import moment from "moment";
+import IconButton from "../../../app/common/button/IconButton";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const CostosFijosColumns = () => {
   const [searchState, setSearchState] = useState<ISearch>({
@@ -21,7 +23,7 @@ const CostosFijosColumns = () => {
   });
 
   const { indicatorsStore, optionStore } = useStore();
-  const { setServicesCost, servicesCost } = indicatorsStore;
+  const { setServicesCost, servicesCost, deleteServiceCost } = indicatorsStore;
   const { branchCityOptions } = optionStore;
 
   const onFinish = async (service: IServicesCost) => {
@@ -134,14 +136,13 @@ const CostosFijosColumns = () => {
       },
     },
     {
-      ...getDefaultColumnProps("fechaAlta", "Fecha Alta", {
+      ...getDefaultColumnProps("fechaAlta", "Aplica para", {
         searchState,
         setSearchState,
-        width: "25%",
+        width: "20%",
       }),
       render: (value: moment.Moment, record) => {
-        const selectedDate =
-          moment(value) ?? moment(Date.now()).utcOffset(0, true);
+        const selectedDate = moment(value) ?? moment(Date.now());
 
         return (
           <DatePicker
@@ -162,6 +163,22 @@ const CostosFijosColumns = () => {
           />
         );
       },
+    },
+    {
+      key: "Eliminar",
+      dataIndex: "Eliminar",
+      title: "",
+      width: "5%",
+      align: "center",
+      render: (value, item) =>
+        !item.id ? (
+          <IconButton
+            danger
+            title="Eliminar"
+            icon={<DeleteOutlined />}
+            onClick={() => deleteServiceCost(item.identificador!)}
+          />
+        ) : null,
     },
   ];
   return columns;
