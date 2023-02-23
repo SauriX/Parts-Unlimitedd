@@ -10,7 +10,7 @@ import {
   Tag,
 } from "antd";
 import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
 import {
   IServicesCost,
@@ -41,14 +41,14 @@ const CostosFijos = ({ data, loading }: CostosFijosProps) => {
     updateService,
     modalFilter,
     getServicesCost,
-    services
+    services,
   } = indicatorsStore;
   const { servicesOptions, getServicesOptions } = optionStore;
 
   useEffect(() => {
     setServicesCost(services.servicios!);
-    console.log(toJS(services.servicios))
-    console.log("servicesCost", toJS(servicesCost))
+    console.log(toJS(services.servicios));
+    console.log("servicesCost", toJS(servicesCost));
   }, [services]);
 
   useEffect(() => {
@@ -109,8 +109,14 @@ const CostosFijos = ({ data, loading }: CostosFijosProps) => {
       servicios: servicesCost,
       filtros: modalFilter,
     };
-    await updateService(newService);
-    await getServicesCost(modalFilter);
+    alerts.confirm(
+      "Guardar costos fijos",
+      "¿Estás seguro de guardar los cambios?",
+      async () => {
+        await updateService(newService);
+        await getServicesCost(modalFilter);
+      }
+    );
   };
 
   return (
