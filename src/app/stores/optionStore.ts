@@ -729,7 +729,7 @@ export default class OptionStore {
     try {
       const service = await Catalog.getActive<ICatalogBudgetList>("costofijo");
       this.servicesOptions = service.map((x) => ({
-        key: x.nombre,
+        key: x.id,
         value: x.nombre,
         label: x.nombre,
       }));

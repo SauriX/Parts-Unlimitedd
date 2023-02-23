@@ -86,7 +86,9 @@ const InvoiceCompanyInfo = ({
     form.setFieldsValue(taxData);
     form.setFieldValue(
       "direccionFiscal",
-      `${taxData.calle} ${taxData.municipio} ${taxData.estado} ${taxData.cp}`.trim()
+      `${taxData?.calle ?? ""} ${taxData?.municipio} ${taxData?.estado} ${
+        taxData?.cp
+      }`.trim()
     );
     setTaxData(taxData);
   };
@@ -95,8 +97,9 @@ const InvoiceCompanyInfo = ({
   }, []);
   useEffect(() => {
     if (company && tipo === "company") {
-      company.direccionFiscal =
-        `${company.estado} ${company.ciudad} ${company.codigoPostal} ${company.colonia} `.trim();
+      company.direccionFiscal = `${company?.estado ?? ""} ${
+        company?.ciudad ?? ""
+      } ${company?.codigoPostal ?? ""} ${company?.colonia ?? ""} `.trim();
       form.setFieldsValue(company);
     }
   }, [company]);

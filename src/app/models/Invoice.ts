@@ -155,10 +155,10 @@ export interface IMotivo {
   motivo: "01" | "02" | "03" | "04";
 }
 export interface IInvoiceDeliveryInfo {
-  contacto: IContact;
+  contactos: IContact[] | any[];
   mediosEnvio: string[];
   facturapiId: string;
-  usuarioId: string;
+  usuarioId?: string;
   esPrueba: boolean;
 }
 export interface IContact {

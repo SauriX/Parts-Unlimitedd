@@ -5,6 +5,7 @@ import {
   ISamplesCost,
   IServicesCost,
   IServicesInvoice,
+  IUpdateService,
 } from "../models/indicators";
 import { IScopes } from "../models/shared";
 import requests from "./agent";
@@ -21,8 +22,8 @@ const Indicators = {
     requests.put(`report/indicadores`, indicators),
   updateSampleCost: (samples: ISamplesCost): Promise<void> =>
     requests.put(`report/indicadores/toma`, samples),
-  updateServiceCost: (services: IServicesCost): Promise<void> =>
-    requests.put(`report/indicadores/fijo`, services),
+  updateServiceCost: (updateService: IUpdateService): Promise<void> =>
+    requests.put(`report/indicadores/fijo`, updateService),
   getForm: (indicators: IReportIndicators): Promise<void> =>
     requests.post(`report/indicadores/getForm`, indicators),
   getSamplesCostsByFilter: (
