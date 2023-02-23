@@ -1,13 +1,4 @@
-import {
-  Button,
-  Checkbox,
-  Col,
-  Row,
-  Select,
-  Table,
-  Tooltip,
-  Typography,
-} from "antd";
+import { Button, Col, Row, Select, Table, Tooltip, Typography } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
@@ -40,8 +31,6 @@ const RequestStudy = () => {
     studies,
     packs,
     studyFilter,
-    setStudy,
-    setPack,
     getPriceStudy,
     getPricePack,
     deleteStudy,
@@ -268,27 +257,26 @@ const RequestStudy = () => {
 
   return (
     <Row gutter={[8, 8]}>
-      <Col span={18}>
+      <Col span={24} style={{ textAlign: "end" }}>
         <Select
           showSearch
           value={[]}
           mode="multiple"
           placeholder="Buscar Estudios"
           optionFilterProp="children"
-          style={{ width: "100%" }}
+          style={{ width: "45%", textAlign: "left" }}
           onChange={(_, option) => {
             addStudy((option as IOptions[])[0]);
           }}
-          filterOption={(input: any, option: any) =>
-            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }
+          filterOption={(input: string, option: any) => {
+            if (input.indexOf("-") > -1) {
+              const value = input.split("-")[0];
+              return option.label.toLowerCase().split("-")[0] === value + " ";
+            }
+            return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+          }}
           options={options}
         />
-      </Col>
-      <Col span={6} style={{ textAlign: "end" }}>
-        <Button danger onClick={cancel}>
-          Cancelar estudios
-        </Button>
       </Col>
       <Col span={24}>
         <Table<IRequestStudy | IRequestPack>
@@ -329,6 +317,11 @@ const RequestStudy = () => {
           sticky
           scroll={{ x: "fit-content" }}
         />
+      </Col>
+      <Col span={24} style={{ textAlign: "end" }}>
+        <Button danger onClick={cancel}>
+          Cancelar estudios
+        </Button>
       </Col>
     </Row>
   );

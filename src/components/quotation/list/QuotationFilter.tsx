@@ -38,11 +38,16 @@ const QuotationFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
-    );
-    form.setFieldValue("sucursales", []);
+    if(selectedCity!=undefined && selectedCity !=null){
+      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
+    var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
+      setBranchOptions(
+        options
+      );
+    }
+    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
+
 
   useEffect(() => {
     form.setFieldsValue(filter);
@@ -99,6 +104,7 @@ const QuotationFilter = () => {
                 name: "expediente",
                 label: "Buscar",
               }}
+              autoFocus
               placeholder="Clave cotización / Nombre"
             />
           </Col>
@@ -156,11 +162,13 @@ const QuotationFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
+                    form={form}
                       formProps={{
                         name: "ciudad",
                         label: "Ciudad",
                         noStyle: true,
                       }}
+                      multiple
                       options={cityOptions}
                     />
                   </Col>

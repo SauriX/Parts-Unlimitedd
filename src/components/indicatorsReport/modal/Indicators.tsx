@@ -24,6 +24,8 @@ const Indicators = ({ getResult }: Props) => {
     modalFilter,
     getSamplesCostsByFilter,
     getServicesCost,
+    servicesCost,
+    setServicesCost,
     loadingReport
   } = indicatorsStore;
   const [loading, setLoading] = useState(false);

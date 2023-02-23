@@ -1,5 +1,14 @@
-import { useNavigate } from "react-router-dom";
-import { Button, Checkbox, Table, Typography } from "antd";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  Button,
+  Checkbox,
+  Col,
+  Form,
+  Radio,
+  Row,
+  Table,
+  Typography,
+} from "antd";
 import { observer } from "mobx-react-lite";
 import {
   getDefaultColumnProps,
@@ -12,10 +21,19 @@ import { useEffect, useState } from "react";
 import { toJS } from "mobx";
 import { moneyFormatter } from "../../../app/util/utils";
 import { status } from "../../../app/util/catalogs";
+import alerts from "../../../app/util/alerts";
+import { formItemLayout } from "../../../app/util/utils";
+import moment from "moment";
 const { Link, Text } = Typography;
-
+type UrlParams = {
+  id: string;
+  tipo: string;
+};
 const InvoiceCompanyTable = () => {
+  let { id, tipo } = useParams<UrlParams>();
   const navigate = useNavigate();
+  const [formCreate] = Form.useForm();
+  const isInvoice = Form.useWatch("isInvoice", formCreate);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -26,7 +44,14 @@ const InvoiceCompanyTable = () => {
   const { invoiceCompanyStore } = useStore();
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
   const [openRows, setOpenRows] = useState<boolean>(false);
-  const { invoices, setSelectedRows, isLoading } = invoiceCompanyStore;
+  const {
+    invoices,
+    setSelectedRows,
+    isLoading,
+    selectedRows,
+    printReceipt,
+    isSameCommpany: mismaCompania,
+  } = invoiceCompanyStore;
   const columns: IColumns = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
@@ -99,39 +124,41 @@ const InvoiceCompanyTable = () => {
       render(value, record: any, index) {
         return (
           <>
-            {value.map((factura: any) => {
-              return (
-                <>
-                  <div style={{ display: "flex", flexDirection: "row" }}>
-                    <Link
-                      onClick={() => {
-                        console.log("row", toJS(value));
-                        console.log("record", toJS(record));
-                        navigate(`/invoice/create/${record.solicitudId}`);
-                      }}
-                    >
-                      {factura.facturapiId}
-                    </Link>
-                    <span>
-                      <small>
-                        <Text type="secondary">
-                          <Text
-                            strong
-                            type={
-                              factura.estatus.nombre === "Cancelado"
-                                ? "danger"
-                                : "secondary"
-                            }
-                          >
-                            {`(${factura.estatus?.clave})`}
+            {value
+              .filter((factura: any) => factura.tipo === tipo)
+              .map((factura: any) => {
+                return (
+                  <>
+                    <div style={{ display: "flex", flexDirection: "row" }}>
+                      <Link
+                        onClick={() => {
+                          console.log("row", toJS(value));
+                          console.log("record", toJS(record));
+                          navigate(`/invoice/${tipo}/${factura.facturapiId}`);
+                        }}
+                      >
+                        {factura.serie}
+                      </Link>
+                      <span>
+                        <small>
+                          <Text type="secondary">
+                            <Text
+                              strong
+                              type={
+                                factura.estatus.nombre === "Cancelado"
+                                  ? "danger"
+                                  : "secondary"
+                              }
+                            >
+                              {`(${factura.estatus?.clave})`}
+                            </Text>
                           </Text>
-                        </Text>
-                      </small>
-                    </span>
-                  </div>
-                </>
-              );
-            })}
+                        </small>
+                      </span>
+                    </div>
+                  </>
+                );
+              })}
           </>
         );
       },
@@ -176,6 +203,77 @@ const InvoiceCompanyTable = () => {
       setExpandedRowKeys(invoices.solicitudes?.map((x: any) => x.solicitudId));
     }
   };
+  const createInvoice = async (formValues: any) => {
+    if (!selectedRows.length) {
+      alerts.warning("No solicitudes seleccionadas");
+      return;
+    }
+    if (!mismaCompania) {
+      alerts.warning(
+        "Las solicitudes seleccionadas no tienen la misma procedencia"
+      );
+      return;
+    }
+
+    let requestsWithInvoiceCompany: any[] = [];
+    selectedRows.forEach((request) => {
+      if (request.facturas.some((invoice: any) => invoice.tipo === tipo)) {
+        requestsWithInvoiceCompany.push(request);
+      }
+    });
+
+    if (!!requestsWithInvoiceCompany.length && isInvoice === "Factura") {
+      // if (false) {
+      alerts.confirmInfo(
+        "Solicitudes facturadas",
+        <>
+          <Col>
+            <div>
+              Alguna de las solicitudes seleccionadas ya se encuentran
+              procesadas en una factura:
+            </div>
+            {requestsWithInvoiceCompany.map((request) => {
+              return (
+                <div>
+                  {request?.clave} -{" "}
+                  {
+                    request?.facturas.find(
+                      (invoice: any) => invoice.tipo === tipo
+                    )?.facturapiId
+                  }
+                </div>
+              );
+            })}
+          </Col>
+        </>,
+        async () => {}
+      );
+    }
+
+    if (!requestsWithInvoiceCompany.length || isInvoice === "Recibo") {
+      // if (true) {
+      if (formValues.isInvoice === "Factura") {
+        if (tipo === "company") {
+          navigate(`/invoice/company/new`);
+        }
+        if (tipo === "request") {
+          navigate(`/invoice/request/new`);
+        }
+      } else {
+        let solicitudesId = selectedRows.map((row) => row.solicitudId);
+        let receiptCompanyData = {
+          sucursal: "MONTERREY", // "SUCURSAL MONTERREY"
+          folio: "",
+          atiende: "",
+          usuario: "",
+          Contraseña: "",
+          ContactoTelefono: "",
+          SolicitudesId: solicitudesId,
+        };
+        printReceipt(receiptCompanyData);
+      }
+    }
+  };
   return (
     <>
       {/* <Button
@@ -187,13 +285,55 @@ const InvoiceCompanyTable = () => {
       </Button> */}
       {invoices.solicitudes?.length > 0 && (
         <div style={{ textAlign: "right", marginBottom: 10 }}>
-          <Button
-            type="primary"
-            onClick={toggleRow}
-            style={{ marginRight: 10 }}
+          <Form<any>
+            {...formItemLayout}
+            form={formCreate}
+            name="invoiceCompanyCreate"
+            onFinish={createInvoice}
+            size="small"
+            initialValues={{ fechas: [moment(), moment()] }}
+            // onFieldsChange={() => {
+            //   setDisabled(
+            //     (!form.isFieldsTouched() ||
+            //       form.getFieldsError().filter(({ errors }) => errors.length)
+            //         .length > 0) &&
+            //       isSameCommpany
+            //   );
+            // }}
           >
-            {!openRows ? "Abrir tabla" : "Cerrar tabla"}
-          </Button>
+            <Row justify="center">
+              <Col span={8}>
+                <Form.Item name="isInvoice" required>
+                  <Row justify="center">
+                    <Radio.Group>
+                      <Radio value={"Factura"}>Factura</Radio>
+                      <Radio value={"Recibo"}>Recibo</Radio>
+                    </Radio.Group>
+                  </Row>
+                </Form.Item>
+              </Col>
+              <Col span={2}>
+                <Button
+                  onClick={() => {
+                    formCreate.submit();
+                  }}
+                  type="primary"
+                  // disabled={disabled}
+                >
+                  Generar
+                </Button>
+              </Col>
+              <Col span={2}>
+                <Button
+                  type="primary"
+                  onClick={toggleRow}
+                  style={{ marginRight: 10 }}
+                >
+                  {!openRows ? "Abrir tabla" : "Cerrar tabla"}
+                </Button>
+              </Col>
+            </Row>
+          </Form>
         </div>
       )}
       <Table<any>

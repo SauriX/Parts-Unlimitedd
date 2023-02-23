@@ -1,5 +1,6 @@
+import { ITaxData } from "./../models/taxdata";
 import { IOptions } from "./../models/shared";
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, toJS } from "mobx";
 import alerts from "../util/alerts";
 import { getErrors } from "../util/utils";
 import InvoiceCompany from "../api/invoiceCompany";
@@ -14,11 +15,28 @@ export class InvoiceCompanyStore {
   isSameCommpany: boolean = false;
   setSelectedRows = (rows: any[]) => {
     this.selectedRows = rows;
+
     this.isSameCommpany = !!rows.length
       ? this.selectedRows.every(
           (request) => request.compania === rows[0].compania
         )
       : false;
+  };
+
+  selectedRequests: any[] = [];
+  setSelectedRequests = (user: string) => {
+    this.selectedRequests = this.selectedRows.filter(
+      (x) => x.expedienteId === user
+    );
+    console.log("seletedRequests", this.selectedRequests);
+  };
+  detailInvoice: any = [];
+  setDetailInvoice = (detailInvoice: any) => {
+    this.detailInvoice = detailInvoice;
+  };
+  configurationInvoice: any = "";
+  setConfigurationInvoice = (config: any) => {
+    this.configurationInvoice = config;
   };
 
   invoices: any = {};
@@ -68,6 +86,16 @@ export class InvoiceCompanyStore {
       alerts.warning(getErrors(error));
     }
   };
+  invoice: any = null;
+  getInvoice = async (id: string) => {
+    try {
+      const invoiceData = await InvoiceCompany.getInvoice(id);
+      this.invoice = invoiceData;
+      return invoiceData;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
 
   checkIn = async (invoiceData: any) => {
     try {
@@ -78,7 +106,14 @@ export class InvoiceCompanyStore {
       alerts.warning(getErrors(error));
     }
   };
-
+  taxData: any = {};
+  setTaxData = (data: ITaxData) => {
+    this.taxData = data;
+  };
+  nombreSeleccionado: string = "";
+  setNombre = (nombre: string) => {
+    this.nombreSeleccionado = nombre;
+  };
   downloadPdf = async (facturapiId: string) => {
     try {
       const invoiceInfo = await InvoiceCompany.downloadPdf(facturapiId);

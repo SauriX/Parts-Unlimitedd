@@ -1,11 +1,12 @@
 import { Button, Col, Form, Input, Row } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
+import { useKeyPress } from "../../../app/hooks/useKeyPress";
 import { IRequestFilter } from "../../../app/models/request";
 import { IOptions } from "../../../app/models/shared";
 import {
@@ -18,7 +19,7 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const RequestFilter = () => {
-  const { requestStore, optionStore, profileStore } = useStore();
+  const { requestStore, optionStore } = useStore();
   const {
     branchCityOptions,
     medicOptions,
@@ -37,6 +38,8 @@ const RequestFilter = () => {
 
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
+
+  useKeyPress("L", form.submit);
 
   useEffect(() => {
     getBranchCityOptions();
@@ -57,10 +60,16 @@ const RequestFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
-    );
-    form.setFieldValue("sucursales", []);
+    if (selectedCity != undefined && selectedCity != null) {
+      var branhces = branchCityOptions.filter((x) =>
+        selectedCity.includes(x.value.toString())
+      );
+      var options = branhces.flatMap((x) =>
+        x.options == undefined ? [] : x.options
+      );
+      setBranchOptions(options);
+    }
+    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
@@ -85,6 +94,7 @@ const RequestFilter = () => {
         {...formItemLayout}
         form={form}
         onFinish={onFinish}
+        initialValues={{ tipoFecha: 1, fechas: [moment(), moment()] }}
         size="small"
       >
         <Row gutter={[0, 12]}>
@@ -107,7 +117,10 @@ const RequestFilter = () => {
             />
           </Col>
           <Col span={8}>
-            <TextInput formProps={{ name: "clave", label: "Clave/Paciente" }} />
+            <TextInput
+              formProps={{ name: "clave", label: "Clave/Paciente" }}
+              autoFocus
+            />
           </Col>
           <Col span={8}>
             <SelectInput
@@ -147,11 +160,13 @@ const RequestFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
+                      form={form}
                       formProps={{
                         name: "ciudad",
                         label: "Ciudad",
                         noStyle: true,
                       }}
+                      multiple
                       options={cityOptions}
                     />
                   </Col>

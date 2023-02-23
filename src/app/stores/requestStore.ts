@@ -1,4 +1,4 @@
-import { makeAutoObservable, reaction } from "mobx";
+import { makeAutoObservable, reaction, toJS } from "mobx";
 import PriceList from "../api/priceList";
 import Request from "../api/request";
 import { IPriceListInfoFilter } from "../models/priceList";
@@ -21,11 +21,15 @@ import {
   RequestFilterForm,
 } from "../models/request";
 import alerts from "../util/alerts";
-import { catalog, status, statusName } from "../util/catalogs";
+import { catalog, paymentForms, status, statusName } from "../util/catalogs";
 import history from "../util/history";
 import messages from "../util/messages";
-import { getErrors } from "../util/utils";
+import { getDistinct, getErrors, groupBy } from "../util/utils";
 import { v4 as uuidv4 } from "uuid";
+import { store } from "./store";
+import NetPay from "../api/netPay";
+import { ITag, ITagStudy } from "../models/tag";
+import moment from "moment";
 
 export default class RequestStore {
   constructor() {
@@ -65,6 +69,20 @@ export default class RequestStore {
         this.calculateTotals();
       }
     );
+
+    reaction(
+      () => this.tags.slice(),
+      () => {
+        this.updateAvailableTags();
+      }
+    );
+
+    reaction(
+      () => this.allActiveStudies.length,
+      () => {
+        this.updateAvailableTags();
+      }
+    );
   }
 
   filter: IRequestFilter = new RequestFilterForm();
@@ -78,7 +96,13 @@ export default class RequestStore {
   payments: IRequestPayment[] = [];
   loadingRequests: boolean = false;
   loadingTabContentCount: number = 0;
-  lastViewedCode?: string;
+  lastViewedFrom?: { from: "requests" | "results"; code: string };
+  tags: IRequestTag[] = [];
+  availableTagStudies: ITagStudy[] = [];
+
+  setTags = (tags: IRequestTag[]) => {
+    this.tags = tags;
+  };
 
   get loadingTabContent() {
     return this.loadingTabContentCount > 0;
@@ -117,11 +141,36 @@ export default class RequestStore {
     return [...studies, ...packStudies];
   }
 
+  get allActiveStudies() {
+    return this.allStudies.filter(
+      (x) => x.estatusId !== status.requestStudy.cancelado && x.asignado
+    );
+  }
+
+  get distinctTags() {
+    return getDistinct(
+      this.allActiveStudies
+        .flatMap((x) => x.etiquetas)
+        .map((x) => ({
+          etiquetaId: x.etiquetaId,
+          claveEtiqueta: x.claveEtiqueta,
+          nombreEtiqueta: x.nombreEtiqueta,
+          color: x.color,
+          claveInicial: x.claveInicial,
+        }))
+    );
+  }
+
   clearDetailData = () => {
     this.request = undefined;
     this.studies = [];
     this.packs = [];
     this.totals = new RequestTotal();
+  };
+
+  clearStudies = () => {
+    this.studies = [];
+    this.packs = [];
   };
 
   setOriginalTotal = (totals: IRequestTotal) => {
@@ -140,8 +189,15 @@ export default class RequestStore {
     this.filter = { ...filter };
   };
 
-  setLastViewedCode = (code: string | undefined) => {
-    this.lastViewedCode = code;
+  setLastViewedCode = (
+    data:
+      | {
+          from: "requests" | "results";
+          code: string;
+        }
+      | undefined
+  ) => {
+    this.lastViewedFrom = data;
   };
 
   setStudyFilter = (
@@ -186,10 +242,14 @@ export default class RequestStore {
     }
   };
 
-  getById = async (recordId: string, requestId: string) => {
+  getById = async (
+    recordId: string,
+    requestId: string,
+    from: "requests" | "results"
+  ) => {
     try {
       const request = await Request.getById(recordId, requestId);
-      this.lastViewedCode = request.clave;
+      this.lastViewedFrom = { from: from, code: request.clave! };
       this.request = request;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -244,6 +304,7 @@ export default class RequestStore {
         identificador: uuidv4(),
       }));
       this.totals = data.total ?? new RequestTotal();
+
       return data;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -259,7 +320,15 @@ export default class RequestStore {
       this.payments = payments;
     } catch (error) {
       alerts.warning(getErrors(error));
-      return [];
+    }
+  };
+
+  getTags = async (recordId: string, requestId: string) => {
+    try {
+      const tags = await Request.getTags(recordId, requestId);
+      this.tags = tags;
+    } catch (error) {
+      alerts.warning(getErrors(error));
     }
   };
 
@@ -312,10 +381,12 @@ export default class RequestStore {
             repeated.map((x) => x.clave).join(", "),
           async () => {
             this.studies.unshift(study);
+            this.updateTagsStudy(study);
           }
         );
       } else {
         this.studies.unshift(study);
+        this.updateTagsStudy(study);
       }
 
       return true;
@@ -323,6 +394,105 @@ export default class RequestStore {
       alerts.warning(getErrors(error));
       return false;
     }
+  };
+
+  updateTagsStudy = (study: IRequestStudy) => {
+    // prettier-ignore
+    const groupedStudies = groupBy(this.allActiveStudies, "destinoId", "destino", "destinoTipo");
+    const allTags: IRequestTag[] = this.tags.map((x) => toJS(x));
+
+    for (const group of groupedStudies) {
+      const keyArr = group.key.split(":");
+      // prettier-ignore
+      const keyData = { destinoId: keyArr[0], destino: keyArr[1], destinoTipo: keyArr[2] };
+
+      const groupTags = getDistinct(
+        group.items
+          .flatMap((x) => x.etiquetas)
+          .filter((x) => {
+            const t = allTags
+              .flatMap((s) => s.estudios)
+              .find((s) => s.nombreEstudio === x.nombreEstudio);
+            return !t;
+          })
+      );
+
+      // prettier-ignore
+      const destinationTags = groupTags.map(
+        ({ etiquetaId, claveEtiqueta, claveInicial, nombreEtiqueta, color }) => ({
+          destinoId: keyData.destinoId,
+          destino: keyData.destino,
+          destinoTipo: Number(keyData.destinoTipo),
+          etiquetaId,
+          claveEtiqueta,
+          claveInicial,
+          nombreEtiqueta,
+          color,
+          cantidad: 1
+        })
+      );
+
+      const groupedByTags = groupBy(groupTags, "etiquetaId");
+      for (const groupTag of groupedByTags) {
+        const items = getDistinct(groupTag.items);
+
+        // prettier-ignore
+        const tag = destinationTags.find((x) => x.etiquetaId.toString() === groupTag.key);
+        const existingTagIndex = allTags.findIndex(
+          (x) =>
+            x.etiquetaId === tag?.etiquetaId && x.destinoId === tag.destinoId
+        );
+
+        const tagStudies = items.map(
+          ({ estudioId, nombreEstudio, orden, cantidad }) => ({
+            estudioId,
+            nombreEstudio,
+            orden,
+            cantidad,
+          })
+        );
+
+        if (existingTagIndex === -1) {
+          allTags.push({
+            id: uuidv4(),
+            ...tag!,
+            clave: this.generateTagCode(tag!),
+            estudios: tagStudies,
+          });
+        } else {
+          allTags[existingTagIndex].estudios = getDistinct([
+            ...allTags[existingTagIndex].estudios,
+            ...tagStudies,
+          ]);
+        }
+      }
+    }
+
+    this.setTags(allTags);
+  };
+
+  updateAvailableTags = () => {
+    this.availableTagStudies = getDistinct(
+      this.allActiveStudies
+        .flatMap((x) => x.etiquetas)
+        .map(({ etiquetaId, estudioId, nombreEstudio, orden, cantidad }) => ({
+          etiquetaId,
+          estudioId,
+          nombreEstudio,
+          orden,
+          asignado: true,
+          cantidad,
+        }))
+    );
+
+    const avTags = this.availableTagStudies.map((x) => toJS(x));
+
+    for (const item of avTags) {
+      // prettier-ignore
+      item.asignado = this.tags.flatMap((x) => x.estudios).map((x) => x.nombreEstudio).includes(item.nombreEstudio);
+    }
+
+    this.availableTagStudies = avTags;
   };
 
   getPricePack = async (packId: number, filter: IPriceListInfoFilter) => {
@@ -346,13 +516,39 @@ export default class RequestStore {
         })),
       };
 
-      console.log(pack);
       this.packs.unshift(pack);
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
       return false;
     }
+  };
+
+  addTag = (tag: ITag) => {
+    // prettier-ignore
+    this.tags.push({
+      id: uuidv4(),
+      clave: this.generateTagCode(tag),
+      destino: uuidv4(),
+      destinoId: uuidv4(),
+      destinoTipo: 3,
+      claveEtiqueta: tag.claveEtiqueta,
+      nombreEtiqueta: tag.nombreEtiqueta,
+      cantidad: 1,
+      claveInicial: tag.claveInicial,
+      color: tag.color,
+      etiquetaId: tag.etiquetaId,
+      estudios: [],
+    });
+  };
+
+  deleteTag = (id: string | number) => {
+    const tags = [...this.tags];
+    const index = tags.findIndex((x) => x.id === id);
+
+    if (index === -1) return;
+
+    this.setTags(tags.filter((x) => x.id !== id));
   };
 
   sendTestEmail = async (
@@ -404,8 +600,17 @@ export default class RequestStore {
   createPayment = async (request: IRequestPayment) => {
     try {
       this.loadingTabContentCount++;
-      const payment = await Request.createPayment(request);
-      this.payments.push(payment);
+
+      if (
+        request.formaPagoId !== paymentForms.tarjetaDebito &&
+        request.formaPagoId !== paymentForms.tarjetaCredito
+      ) {
+        const payment = await Request.createPayment(request);
+        this.payments.push(payment);
+      } else {
+        this.chargePayPalPayment(request);
+      }
+
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -413,6 +618,27 @@ export default class RequestStore {
     } finally {
       this.loadingTabContentCount--;
     }
+  };
+
+  chargePayPalPayment = (payment: IRequestPayment) => {
+    const guid = uuidv4();
+    payment.notificacionId = guid;
+
+    const res = NetPay.paymentCharge(payment);
+    if (!res) return;
+
+    const connection = store.notificationStore.hubConnection;
+    if (!connection) return;
+
+    if (connection.state === "Connected") {
+      connection.invoke("SubscribeWithName", guid);
+    }
+
+    connection.on("NotifyPaymentResponse", (payment: IRequestPayment) => {
+      this.payments = [...this.payments, payment];
+      connection.invoke("RemoveWithName", guid);
+      connection.off("NotifyPaymentResponse");
+    });
   };
 
   checkInPayment = async (request: IRequestCheckIn) => {
@@ -456,6 +682,9 @@ export default class RequestStore {
         this.request.urgencia = request.urgencia;
         this.request.procedencia = request.procedencia;
       }
+      if (request.cambioCompañia) {
+        this.clearStudies();
+      }
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -492,6 +721,37 @@ export default class RequestStore {
     }
   };
 
+  updateTags = async (
+    recordId: string,
+    requestId: string,
+    tags: IRequestTag[],
+    autoSave: boolean
+  ) => {
+    try {
+      if (
+        //prettier-ignore
+        tags.some((x) => x.estudios.length === 0) || this.availableTagStudies.some((x) => !x.asignado)
+      ) {
+        alerts.warning("Las etiquetas deben tener por lo menos un estudio");
+        return;
+      }
+
+      if (!autoSave) this.loadingTabContentCount++;
+      const tagsToUpdate = tags.map((tag) => ({
+        ...tag,
+        id: typeof tag.id === "string" ? 0 : tag.id,
+      }));
+      this.tags = await Request.updateTags(recordId, requestId, tagsToUpdate);
+      if (!autoSave) alerts.success(messages.updated);
+      return true;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return false;
+    } finally {
+      if (!autoSave) this.loadingTabContentCount--;
+    }
+  };
+
   changeStudyPromotion = (study: IRequestStudy, promoId?: number) => {
     const index = this.studies.findIndex(
       (x) => x.id === study.id && x.identificador === study.identificador
@@ -509,7 +769,6 @@ export default class RequestStore {
         descuentoPorcentaje: promo?.descuentoPorcentaje,
         precioFinal: _study.precio - (promo?.descuento ?? 0),
       };
-      // this.calculateTotals();
     }
   };
 
@@ -528,7 +787,6 @@ export default class RequestStore {
         promocionDescuento: promo?.descuento,
         promocionDescuentoPorcentaje: promo?.descuentoPorcentaje,
       };
-      // this.calculateTotals();
     }
   };
 
@@ -840,5 +1098,16 @@ export default class RequestStore {
       });
       return x;
     });
+  };
+
+  private generateTagCode = (tag: ITag) => {
+    if (!this.request) return "";
+
+    const intialCode = tag.claveInicial;
+    // prettier-ignore
+    const final = intialCode.includes("año") || intialCode === "0" || intialCode==="X" ? moment().format("YY") : intialCode;
+    return (
+      final + moment().format("YYMM") + "0" + this.request.clave!.slice(-5)
+    );
   };
 }

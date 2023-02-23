@@ -332,8 +332,8 @@ export default class OptionStore {
     try {
       const tapon = await Tapon.getAll();
       this.taponOption = tapon.map((x) => ({
-        value: x.id,
-        label: x.name,
+        value: x.id ?? "",
+        label: x.nombre ?? "",
       }));
     } catch (error) {
       this.taponOption = [];
@@ -729,7 +729,7 @@ export default class OptionStore {
     try {
       const service = await Catalog.getActive<ICatalogBudgetList>("costofijo");
       this.servicesOptions = service.map((x) => ({
-        key: x.nombre,
+        key: x.id,
         value: x.nombre,
         label: x.nombre,
       }));

@@ -60,11 +60,16 @@ const RequestedStudyFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
-    );
+    if(selectedCity!=undefined && selectedCity !=null){
+      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
+    var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
+      setBranchOptions(
+        options
+      );
+    }
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
+
 
   useEffect(() => {
     setDepartmentOptions(
@@ -117,6 +122,7 @@ const RequestedStudyFilter = () => {
                 name: "buscar",
                 label: "Buscar",
               }}
+              autoFocus
             />
           </Col>
           <Col span={8}>
@@ -158,11 +164,13 @@ const RequestedStudyFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
+                    form={form}
                       formProps={{
                         name: "departament",
                         label: "Departamento",
                         noStyle: true,
                       }}
+                      multiple
                       options={departmentOptions}
                     />
                   </Col>
@@ -199,11 +207,13 @@ const RequestedStudyFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
+                    form={form}
                       formProps={{
                         name: "ciudad",
                         label: "Ciudad",
                         noStyle: true,
                       }}
+                      multiple
                       options={cityOptions}
                     />
                   </Col>

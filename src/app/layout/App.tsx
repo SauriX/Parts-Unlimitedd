@@ -1,4 +1,10 @@
-import { Route, Routes, useLocation, useSearchParams } from "react-router-dom";
+import {
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import "../../App.less";
 import ReagentDetail from "../../components/reagent/detail/ReagentDetail";
 import MedicsDetail from "../../components/medics/detail/MedicsDetail";
@@ -85,6 +91,8 @@ import Test1 from "../../Test1";
 import Series from "../../views/Series";
 import SeriesDetail from "../../components/series/detail/SeriesDetail";
 import InvoiceCatalog from "../../views/InvoiceCatalog";
+import ReportStudy from "../../views/ReportStudy";
+import { useKeyPress } from "../hooks/useKeyPress";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -92,6 +100,7 @@ function App() {
   const { getGeneral } = configurationStore;
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [lastLocation, setLastLocation] = useState<string>();
@@ -112,18 +121,41 @@ function App() {
   }, [token, setLoading, loadUser]);
 
   useEffect(() => {
-    if (
-      lastLocation &&
-      !lastLocation.match(/\/requests\/([a-zA-Z0-9-]+)\/([a-zA-Z0-9-]+)/g) &&
-      !lastLocation.match(
-        /\/clinicResultsDetails\/([a-zA-Z0-9-]+)\/([a-zA-Z0-9-]+)/g
-      )
-    ) {
+    if (!lastLocation) {
+      setLastLocation(location.pathname);
+      return;
+    }
+
+    const isRequestDetail = lastLocation.match(
+      /\/requests\/([a-zA-Z0-9-]+)\/([a-zA-Z0-9-]+)/g
+    );
+    const isResultsDetail = lastLocation.match(
+      /\/clinicResultsDetails\/([a-zA-Z0-9-]+)\/([a-zA-Z0-9-]+)/g
+    );
+
+    if (!isRequestDetail && !isResultsDetail) {
       store.requestStore.setLastViewedCode(undefined);
     }
+
     setLastLocation(location.pathname);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
+
+  useKeyPress("E", () => {
+    navigate(`/${views.proceeding}`);
+  });
+
+  useKeyPress("X", () => {
+    navigate(`/${views.proceeding}/new`);
+  });
+
+  useKeyPress("S", () => {
+    navigate(`/${views.request}`);
+  });
+
+  useKeyPress("U", () => {
+    navigate(`/${views.appointment}`);
+  });
 
   if (loading)
     return (
@@ -183,9 +215,9 @@ function App() {
             <Route path="companies/new" element={<CompanyDetail />} />
             <Route path="indications" element={<Indication />} />
             <Route path="indications/:id" element={<IndicationDetail />} />
-            <Route path="invoice" element={<Invoice />} />
+            <Route path="invoice/:tipo" element={<Invoice />} />
             <Route
-              path="invoice/create/:id"
+              path="invoice/:tipo/:id"
               element={<InvoiceCompanyCreate />}
             />
             <Route path="series" element={<Series />} />
@@ -254,6 +286,7 @@ function App() {
               element={<ApointmentDetail />}
             />
             <Route path={`${views.request}`} element={<Request />} />
+            <Route path={`${views.reportStudy}`} element={<ReportStudy />} />
             <Route
               path={`${views.request}/:recordId`}
               element={<RequestDetail />}

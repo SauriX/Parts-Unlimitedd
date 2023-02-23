@@ -69,6 +69,23 @@ export default class ClinicResultsStores {
     this.studiesSelectedToPrint.push(estudio);
   };
 
+  getDeliveryHistory = async (solicitudId: string) => {
+    try {
+      const historial = await ClinicResults.getDeliveryHistory(solicitudId);
+      return historial;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  createNoteDeliveryHistory = async (nota: any) => {
+    try {
+      const historial = await ClinicResults.createNoteDeliveryHistory(nota);
+      return historial;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
+
   clearSelectedStudies = () => {
     this.studiesSelectedToPrint = [];
   };
@@ -193,6 +210,7 @@ export default class ClinicResultsStores {
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
+      return false
     }
   };
   getResultPathological = async (result: number) => {
@@ -213,6 +231,7 @@ export default class ClinicResultsStores {
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
+      return false
     }
   };
   sendResultFile = async (listResult: any) => {
@@ -257,10 +276,13 @@ export default class ClinicResultsStores {
 
   exportGlucose = async (results: IClinicResultCaptureForm) => {
     try {
+      this.loadingStudies = true;
       await ClinicResults.exportGlucose(results);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
+    } finally {
+      this.loadingStudies = false;
     }
   };
 

@@ -2,6 +2,8 @@ import { RcFile, UploadChangeParam, UploadFile } from "antd/lib/upload";
 import alerts from "./alerts";
 import messages from "./messages";
 import { UploadRequestOption } from "rc-upload/lib/interface";
+import { IGrouped } from "../models/shared";
+import { toJS } from "mobx";
 
 export const tokenName = "lab-ramos-token";
 
@@ -95,6 +97,18 @@ export const beforeUploadValidation = (
   return isValidType && isValidSize;
 };
 
+export const generateRandomHex = (length: number): string => {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let result = "";
+  const charLength = characters.length;
+
+  for (let i = 0; i < length; i++) {
+    result += characters[Math.floor(Math.random() * charLength)];
+  }
+
+  return result;
+};
+
 export const getBase64 = (
   file: RcFile | File | Blob | undefined,
   callback: (url: string | ArrayBuffer | null) => void
@@ -112,6 +126,85 @@ export const uploadFakeRequest = ({ onSuccess }: UploadRequestOption) => {
       onSuccess("ok");
     }
   }, 0);
+};
+
+type KeyFunc<T> = (obj: T) => string;
+type KeyOrFunc<T> = keyof T | KeyFunc<T>;
+
+export const groupBy = <T>(
+  arr: T[],
+  ...keys: KeyOrFunc<T>[]
+): IGrouped<T>[] => {
+  const groups: Map<string, T[]> = arr.reduce((map, obj) => {
+    const groupKey = keys
+      .map((key) =>
+        typeof key === "string" ? obj[key] : (key as KeyFunc<T>)(obj)
+      )
+      .join(":");
+    const group = map.get(groupKey) || [];
+    group.push(toJS(obj));
+    map.set(groupKey, group);
+    return map;
+  }, new Map<string, T[]>());
+
+  const result: IGrouped<T>[] = [];
+  groups.forEach((value, key) => {
+    result.push({ key, items: value });
+  });
+  return result;
+};
+
+export const getDistinct = <T>(list: T[]): T[] => {
+  const distinctValues = new Set<string>();
+  const distinctObjects: T[] = [];
+
+  for (let obj of list) {
+    obj = toJS(obj);
+    const jsonStr = JSON.stringify(obj);
+    if (!distinctValues.has(jsonStr)) {
+      distinctValues.add(jsonStr);
+      distinctObjects.push(obj);
+    }
+  }
+
+  return distinctObjects;
+};
+
+export const isEqualObject = <T extends Record<string, any>>(
+  a: T,
+  b: T
+): boolean => {
+  if (a === b) {
+    return true;
+  }
+
+  if (
+    a == null ||
+    typeof a !== "object" ||
+    b == null ||
+    typeof b !== "object"
+  ) {
+    return false;
+  }
+
+  const aProps = Object.getOwnPropertyNames(a);
+  const bProps = Object.getOwnPropertyNames(b);
+
+  if (aProps.length !== bProps.length) {
+    return false;
+  }
+
+  for (const propName of aProps) {
+    if (a[propName] !== b[propName]) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+export const consoleColor = (msg: string, color: string) => {
+  console.log(`%c${msg}`, `color: ${color}`);
 };
 
 export const formItemLayout = {
@@ -186,3 +279,38 @@ export const toolBarOptions = {
     ],
   },
 };
+
+export const shortCuts = [
+  {
+    title: "CONSULTA",
+    shortCut: "CTRL + SHIFT + E",
+    description: " CONSULTA DE EXPEDIENTE",
+  },
+  {
+    title: "CREACIÓN",
+    shortCut: "CTRL + SHIFT + X",
+    description: " CREACIÓN DE EXPEDIENTE",
+  },
+  {
+    title: "CONSULTA",
+    shortCut: "CTRL + SHIFT + V",
+    description: " NUEVA SOLICITUD (ENCONTRANDOSE EN DETALLE DE EXPEDIENTE)",
+  },
+  {
+    title: "GUARDAR",
+    shortCut: "CTRL + SHIFT + L",
+    description: " GUARDAR (PARA TODAS LAS PANTALLAS QUE TENGAN LA OPCIÓN GUARDAR O FILTRAR)",
+  },
+  {
+    title: "CONSULTA",
+    shortCut: "CTRL + SHIFT + S",
+    description: " CONSULTA DE SOLICITUDES" 
+  },
+  {
+    title: "CREACIÓN",
+    shortCut: "CTRL + SHIFT + U",
+    description: " CREACIÓN DE CITA",
+  },
+]
+
+

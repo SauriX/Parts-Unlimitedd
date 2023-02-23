@@ -39,6 +39,7 @@ import DateInput from "../../app/common/form/proposal/DateInput";
 import { IOptions } from "../../app/models/shared";
 import MaskInput from "../../app/common/form/proposal/MaskInput";
 import { includes } from "lodash";
+import moment from "moment";
 const { Panel } = Collapse;
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -49,8 +50,9 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
   componentRef,
   printing,
 }) => {
-  const { procedingStore, optionStore, locationStore, profileStore } =
-    useStore();
+  const { procedingStore, optionStore, locationStore, profileStore, requestStore } =
+  useStore();
+  const { lastViewedFrom } = requestStore;
   const { expedientes, getAll, getnow, setSearch, search } = procedingStore;
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const { getCity } = locationStore;
@@ -80,7 +82,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
 
   useEffect(() => {
     setBranchOptions(
-      branchCityOptions.find((x: any) => selectedCity.includes(x.value))
+      branchCityOptions.find((x: any) => selectedCity?.includes(x.value))
         ?.options ?? []
     );
     form.setFieldValue("sucursal", []);
@@ -249,6 +251,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
           onFinish={onfinish}
           size="small"
           initialValues={new SearchMedicalFormValues()}
+          scrollToFirstError
         >
           <Row justify="space-between" gutter={[0, 12]}>
             <Col span={8}>
@@ -257,6 +260,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
                   name: "expediente",
                   label: "Expediente/Nombre",
                 }}
+                autoFocus
               />
             </Col>
             <Col span={8}>
@@ -335,7 +339,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
                 </Input.Group>
               </Form.Item>
             </Col>
-            <Col span={24} style={{ textAlign: "right" }}>
+            <Col span={8} style={{ textAlign: "right" }}>
               <Button key="clean" htmlType="reset">
                 Limpiar
               </Button>

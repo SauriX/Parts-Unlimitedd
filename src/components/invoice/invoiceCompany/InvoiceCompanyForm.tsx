@@ -11,13 +11,19 @@ import { formItemLayout } from "../../../app/util/utils";
 import { useNavigate } from "react-router-dom";
 import alerts from "../../../app/util/alerts";
 import { toJS } from "mobx";
+import { useParams } from "react-router-dom";
 
 const { Search } = Input;
 
+type UrlParams = {
+  id: string;
+  tipo: string;
+};
 const InvoiceComapnyForm = () => {
+  let { id, tipo } = useParams<UrlParams>();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const { optionStore, invoiceCompanyStore,profileStore } = useStore();
+  const { optionStore, invoiceCompanyStore, profileStore } = useStore();
   const [formCreate] = Form.useForm();
   const selectedCity = Form.useWatch("ciudad", form);
   const isInvoice = Form.useWatch("isInvoice", formCreate);
@@ -28,12 +34,14 @@ const InvoiceComapnyForm = () => {
   const [disabled, setDisabled] = useState<boolean>(true);
   const [requiredValues, setRequiredValues] = useState<boolean>(true);
 
-  const {profile}=profileStore;
+  const { profile } = profileStore;
   const {
     branchCityOptions,
     getBranchCityOptions,
     companyOptions,
     getCompanyOptions,
+    invoiceSeriesOptions,
+    getInvoiceSeriesOptions,
   } = optionStore;
   const {
     getInvoicesCompany,
@@ -45,32 +53,31 @@ const InvoiceComapnyForm = () => {
   } = invoiceCompanyStore;
 
   useEffect(() => {
-    console.log("isnvoice", isInvoice);
-    if (isInvoice === "Factura") {
-      setRequiredValues(true);
-    } else {
-      setRequiredValues(false);
-    }
-  }, [isInvoice]);
+    onFinish(form.getFieldsValue());
+  }, [tipo]);
   useEffect(() => {
-    // formCreate.setFieldValue("serie",); //TODO: validar la nueva tabla de series y como se relaciona
-  }, [isSameCommpany, selectedRows]);
-  useEffect(() => {
+    getInvoiceSeriesOptions(profile?.sucursal!);
     getBranchCityOptions();
     getCompanyOptions();
+    onFinish(form.getFieldsValue());
   }, []);
 
   useEffect(() => {
-
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
-    setBranchOptions(
-      branchCityOptions.find((x) => x.value === selectedCity)?.options ?? []
-    );
+    if (selectedCity != undefined && selectedCity != null) {
+      var branhces = branchCityOptions.filter((x) =>
+        selectedCity.includes(x.value.toString())
+      );
+      var options = branhces.flatMap((x) =>
+        x.options == undefined ? [] : x.options
+      );
+      setBranchOptions(options);
+    }
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
@@ -91,6 +98,7 @@ const InvoiceComapnyForm = () => {
       tipoFactura: checkedValues,
       fechaFinal: newFormValues.fechas[1].utcOffset(0, true),
       fechaInicial: newFormValues.fechas[0].utcOffset(0, true),
+      facturaMetodo: tipo,
     };
     saveFilterDate(newFormValues.fechas);
     getInvoicesCompany(formValues);
@@ -109,14 +117,13 @@ const InvoiceComapnyForm = () => {
 
     let requestsWithInvoiceCompany: any[] = [];
     selectedRows.forEach((request) => {
-      if (
-        request.facturas.some((invoice: any) => invoice.tipo === "Compañia")
-      ) {
+      if (request.facturas.some((invoice: any) => invoice.tipo === tipo)) {
         requestsWithInvoiceCompany.push(request);
       }
     });
 
     if (!!requestsWithInvoiceCompany.length && isInvoice === "Factura") {
+      // if (false) {
       alerts.confirmInfo(
         "Solicitudes facturadas",
         <>
@@ -131,7 +138,7 @@ const InvoiceComapnyForm = () => {
                   {request?.clave} -{" "}
                   {
                     request?.facturas.find(
-                      (invoice: any) => invoice.tipo === "Compañia"
+                      (invoice: any) => invoice.tipo === tipo
                     )?.facturapiId
                   }
                 </div>
@@ -144,9 +151,13 @@ const InvoiceComapnyForm = () => {
     }
 
     if (!requestsWithInvoiceCompany.length || isInvoice === "Recibo") {
+      // if (true) {
       if (formValues.isInvoice === "Factura") {
-        if (formValues.tipoDesglose === "detalle") {
-          navigate(`/invoice/create/new`);
+        if (tipo === "company") {
+          navigate(`/invoice/company/new`);
+        }
+        if (tipo === "request") {
+          navigate(`/invoice/request/new`);
         }
       } else {
         let solicitudesId = selectedRows.map((row) => row.solicitudId);
@@ -165,23 +176,6 @@ const InvoiceComapnyForm = () => {
   };
   return (
     <>
-      <Row justify="end" style={{ marginBottom: 10 }}>
-        <Col>
-          <Button key="clean" onClick={(e) => {}}>
-            Limpiar
-          </Button>
-          <Button
-            key="filter"
-            type="primary"
-            onClick={(e) => {
-              form.submit();
-            }}
-          >
-            Filtrar
-          </Button>
-        </Col>
-      </Row>
-
       <div className="status-container" style={{ marginBottom: 12 }}>
         <Form<any>
           {...formItemLayout}
@@ -191,75 +185,73 @@ const InvoiceComapnyForm = () => {
           size="small"
           initialValues={{ fechas: [moment(), moment()] }}
         >
-          <Row>
-            <Col span={20}>
-              <Row gutter={[0, 12]}>
-                <Col span={8}>
-                  <DateRangeInput
-                    formProps={{ label: "Fechas", name: "fechas" }}
-                    disableAfterDates
-                  />
-                </Col>
-                <Col span={8}>
-                  <TextInput formProps={{ name: "buscar", label: "Buscar" }} />
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    form={form}
-                    multiple
-                    formProps={{ label: "Compañias", name: "companias" }}
-                    options={companyOptions}
-                  />
-                </Col>
-                <Col span={8}>
-                  <Form.Item label="Sucursal" className="no-error-text" help="">
-                    <Input.Group>
-                      <Row gutter={8}>
-                        <Col span={12}>
-                          <SelectInput
-                            formProps={{
-                              name: "ciudad",
-                              label: "Ciudad",
-                              noStyle: true,
-                            }}
-                            options={cityOptions}
-                          />
-                        </Col>
-                        <Col span={12}>
-                          <SelectInput
-                            form={form}
-                            formProps={{
-                              name: "sucursalId",
-                              label: "Sucursales",
-                              noStyle: true,
-                            }}
-                            multiple
-                            options={branchOptions}
-                          />
-                        </Col>
-                      </Row>
-                    </Input.Group>
-                  </Form.Item>
-                </Col>
-              </Row>
+          <Row gutter={[0, 12]}>
+            <Col span={8}>
+              <DateRangeInput
+                formProps={{ label: "Fechas", name: "fechas" }}
+                disableAfterDates
+              />
             </Col>
-            <Col span={4}>
-              <Row justify="center">
-                <Row gutter={8} justify="center">
-                  <Col span={12}>
-                    <Checkbox.Group
-                      options={facturasOptions}
-                      onChange={(newChekedValues) => {
-                        setCheckedValues(newChekedValues);
-                      }}
-                    />
-                  </Col>
-                </Row>
-              </Row>
+
+            {tipo === "company" && (
+              <Col span={8}>
+                <SelectInput
+                  form={form}
+                  multiple
+                  formProps={{ label: "Compañias", name: "companias" }}
+                  options={companyOptions}
+                />
+              </Col>
+            )}
+            <Col span={8}>
+              <Form.Item label="Sucursal" className="no-error-text" help="">
+                <Input.Group>
+                  <Row gutter={8}>
+                    <Col span={12}>
+                      <SelectInput
+                        formProps={{
+                          name: "ciudad",
+                          label: "Ciudad",
+                          noStyle: true,
+                        }}
+                        options={cityOptions}
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <SelectInput
+                        form={form}
+                        formProps={{
+                          name: "sucursalId",
+                          label: "Sucursales",
+                          noStyle: true,
+                        }}
+                        multiple
+                        options={branchOptions}
+                      />
+                    </Col>
+                  </Row>
+                </Input.Group>
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <TextInput
+                formProps={{ name: "buscar", label: "Buscar" }}
+                autoFocus
+              />
+            </Col>
+          </Row>
+          <Row gutter={[0, 12]} style={{ paddingLeft: 60, paddingTop: 10 }}>
+            <Col span={12}>
+              <Checkbox.Group
+                options={facturasOptions}
+                onChange={(newChekedValues) => {
+                  setCheckedValues(newChekedValues);
+                }}
+              />
             </Col>
           </Row>
         </Form>
-        <Divider></Divider>
+
         <Form<any>
           {...formItemLayout}
           form={formCreate}
@@ -275,54 +267,25 @@ const InvoiceComapnyForm = () => {
                 isSameCommpany
             );
           }}
-        >
-          <Row justify="center">
-            <Col span={20}>
-              <Row gutter={[0, 12]} justify="center">
-                <Col span={8}>
-                  <Form.Item name="isInvoice" required>
-                    <Row justify="center">
-                      <Radio.Group>
-                        <Radio value={"Factura"}>Factura</Radio>
-                        <Radio value={"Recibo"}>Recibo</Radio>
-                      </Radio.Group>
-                    </Row>
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{
-                      label: "Desglose por",
-                      name: "tipoDesglose",
-                    }}
-                    options={desgloceOptions}
-                    required={requiredValues}
-                  />
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{ label: "Serie", name: "serie" }}
-                    options={[{ key: "MT", value: "MT", label: "MT" }]}
-                    onChange={(serie: any) => {
-                      console.log("sereie", serie);
-                      setSerie(serie);
-                    }}
-                    required={requiredValues}
-                  />
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Form>
-        <Row justify="end" style={{ marginTop: 10 }}>
-          <Col span={2}>
+        ></Form>
+        <Row justify="end" style={{ marginBottom: 10 }}>
+          <Col>
             <Button
-              onClick={() => {
-                formCreate.submit();
+              key="clean"
+              onClick={(e) => {
+                form.resetFields();
               }}
-              // disabled={disabled}
             >
-              Generar
+              Limpiar
+            </Button>
+            <Button
+              key="filter"
+              type="primary"
+              onClick={(e) => {
+                form.submit();
+              }}
+            >
+              Filtrar
             </Button>
           </Col>
         </Row>

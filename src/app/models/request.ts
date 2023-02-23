@@ -2,6 +2,7 @@ import moment from "moment";
 import { IIndicationList } from "./indication";
 import { IParameterList } from "./parameter";
 import { IPriceListInfoPromo } from "./priceList";
+import { IStudyTag } from "./study";
 
 export interface IRequestBase {
   solicitudId: string;
@@ -45,7 +46,7 @@ export interface IRequestFilter {
   estatus?: number[];
   urgencias?: number[];
   departamentos?: number[];
-  ciudad?: string;
+  ciudad?: string[];
   sucursales?: string[];
   compañias?: string[];
   medicos?: string[];
@@ -142,6 +143,7 @@ export interface IRequestGeneral extends IRequestBase {
   observaciones: string;
   correoMedico?: string;
   telefonoMedico?: string;
+  cambioCompañia?: boolean;
 }
 
 export interface IRequestPayment extends IRequestBase {
@@ -158,6 +160,7 @@ export interface IRequestPayment extends IRequestBase {
   facturapiId: string;
   usuarioRegistra?: string;
   fechaPago: moment.Moment;
+  notificacionId?: string;
 }
 
 export interface IRequestCheckIn extends IRequestBase {
@@ -222,10 +225,6 @@ export interface IRequestStudy {
   estudioId: number;
   clave: string;
   nombre: string;
-  taponId?: number;
-  taponColor?: string;
-  taponClave?: string;
-  taponNombre?: string;
   paqueteId?: number;
   paquete?: string;
   listaPrecioId: string;
@@ -249,6 +248,7 @@ export interface IRequestStudy {
   promociones: IPriceListInfoPromo[];
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
+  etiquetas: IStudyTag[];
   fechaActualizacion?: string;
   usuarioActualizacion?: string;
   solicitudEstudioId?: number;
@@ -266,6 +266,9 @@ export interface IRequestStudy {
   usuarioLiberado?: string;
   usuarioEnviado?: string;
   tipo?: string;
+  destinoTipo: number;
+  destinoId: string;
+  destino: string;
 }
 
 export class RequestStudyValues implements IRequestStudy {
@@ -300,9 +303,13 @@ export class RequestStudyValues implements IRequestStudy {
   asignado = true;
   parametros: IParameterList[] = [];
   indicaciones: IIndicationList[] = [];
+  etiquetas: IStudyTag[] = [];
   promociones = [];
   fechaActualizacion = "";
   usuarioActualizacion = "";
+  destinoTipo = 1;
+  destinoId = "";
+  destino = "";
 
   constructor(init?: IRequestStudy) {
     Object.assign(this, init);
@@ -338,9 +345,25 @@ export interface IRequestPack {
 }
 
 export interface IRequestTag {
-  taponClave: string;
-  taponNombre: string;
-  estudios: string;
+  id: string | number;
+  clave: string;
+  destinoId: string;
+  destino: string;
+  destinoTipo: number;
+  etiquetaId: number;
+  claveEtiqueta: string;
+  claveInicial: string;
+  nombreEtiqueta: string;
+  cantidad: number;
+  color: string;
+  estudios: IRequestTagStudy[];
+}
+
+export interface IRequestTagStudy {
+  id?: number;
+  estudioId: number;
+  nombreEstudio: string;
+  orden: number;
   cantidad: number;
 }
 

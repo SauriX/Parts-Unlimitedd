@@ -11,8 +11,19 @@ import {
   Form,
   Spin,
   Button,
+  Tooltip,
+  List,
+  Divider,
+  Badge,
+  Card,
 } from "antd";
-import React, { ReactNode, useCallback, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import IconSelector from "../common/icons/IconSelector";
 import { IMenu, IOptions } from "../models/shared";
@@ -23,13 +34,14 @@ import {
   NotificationOutlined,
   SettingOutlined,
   BgColorsOutlined,
+  QuestionCircleTwoTone,
 } from "@ant-design/icons";
 import { v4 as uuid } from "uuid";
 import DropdownOption from "../common/header/DropdownOption";
 import { useStore } from "../stores/store";
 import { observer } from "mobx-react-lite";
 import { IChangePasswordForm } from "../models/user";
-import { formItemLayout } from "../util/utils";
+import { formItemLayout, shortCuts } from "../util/utils";
 import PasswordInput from "../common/form/PasswordInput";
 import HeaderTitle from "../common/header/HeaderTitle";
 import Notifications from "./Notifications";
@@ -40,7 +52,7 @@ import getMenuIcon from "../common/icons/menuIcon";
 import SelectInput from "../common/form/proposal/SelectInput";
 import { useForm } from "antd/es/form/Form";
 const { Header, Sider, Content } = Layout;
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 interface IItem {
   key: string;
@@ -188,6 +200,36 @@ const LayoutComponent = () => {
     });
   };
   const navigate = useNavigate();
+
+  const renderShortCuts = () => {
+    return (
+      <Fragment>
+        <List
+          header={
+            <Title level={5} className="title-shortcut">
+              ATAJOS DEL TECLADO
+            </Title>
+          }
+          bordered={false}
+          dataSource={shortCuts}
+          renderItem={(item) => (
+            <List.Item>
+              <Row>
+                <Col span={24}>
+                  <Badge.Ribbon text={item.shortCut} placement="start" className="badge-shortcut">
+                    <Card title="  " className="shortcut-card">
+                      {item.description}
+                    </Card>
+                  </Badge.Ribbon>
+                </Col>
+              </Row>
+            </List.Item>
+          )}
+        />
+      </Fragment>
+    );
+  };
+
   return (
     <Layout id="app-layout">
       <Header className="header">
@@ -223,6 +265,13 @@ const LayoutComponent = () => {
           <Col span={6} className="header-data" style={{ textAlign: "right" }}>
             <Avatar icon={<UserOutlined />} />
             <Text>{profile?.nombre}</Text>
+            <Tooltip
+              placement="bottomRight"
+              title={renderShortCuts}
+              className="tooltip-shortcuts"
+            >
+              <QuestionCircleTwoTone />
+            </Tooltip>
             <NotificationOutlined
               className="trigger"
               onClick={openNotifications}

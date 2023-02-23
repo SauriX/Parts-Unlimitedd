@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { Tab } from "rc-tabs/lib/interface";
 import { useCallback, useEffect, useState } from "react";
+import { useKeyPress } from "../../../app/hooks/useKeyPress";
 import { IRequestGeneral } from "../../../app/models/request";
 import { useStore } from "../../../app/stores/store";
 import alerts from "../../../app/util/alerts";
@@ -49,10 +50,13 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     studyUpdate,
     loadingTabContent,
     allStudies,
+    tags,
     getStudies,
     getPayments,
+    getTags,
     updateGeneral,
     updateStudies,
+    updateTags,
     cancelRequest,
     studyFilter,
     totals,
@@ -71,7 +75,8 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     if (
       currentKey === "general" ||
       currentKey === "studies" ||
-      currentKey === "request"
+      currentKey === "request" ||
+      currentKey === "print"
     ) {
       submit(true);
     }
@@ -140,11 +145,25 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
         return;
       }
     }
+    if (currentKey === "print" || currentKey === "studies") {
+      const ok = await updateTags(
+        request!.expedienteId,
+        request!.solicitudId!,
+        tags,
+        autoSave
+      );
+      if (!ok) {
+        setCurrentKey("print");
+        return;
+      }
+    }
 
     if (autoSave) {
       showAutoSaveMessage();
     }
   };
+
+  useKeyPress("L", submit);
 
   const cancel = () => {
     alerts.confirm(
@@ -168,12 +187,13 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     const readData = async () => {
       if (request) {
         await getStudies(request.expedienteId, request.solicitudId!);
-        await getPayments(request.expedienteId, request.solicitudId!);
+        getPayments(request.expedienteId, request.solicitudId!);
+        getTags(request.expedienteId, request.solicitudId!);
       }
     };
 
     readData();
-  }, [getStudies, getPayments, request]);
+  }, [getStudies, getPayments, request, getTags]);
 
   const operations = (
     <Space>
@@ -192,10 +212,13 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
         <RequestGeneral
           branchId={branchId}
           form={formGeneral}
-          onSubmit={(request, showLoader) => {
-            onSubmitGeneral(request, showLoader, updateGeneral).then((ok) => {
-              if (!ok) setCurrentKey("general");
-            });
+          onSubmit={async (request, showLoader) => {
+            const ok = await onSubmitGeneral(
+              request,
+              showLoader,
+              updateGeneral
+            );
+            if (!ok) setCurrentKey("general");
           }}
         />
       );

@@ -21,7 +21,7 @@ import { formItemLayout } from "../../app/util/utils";
 const ClinicResultsFilter = () => {
   const { requestStore, optionStore, clinicResultsStore, profileStore } =
     useStore();
-  const { lastViewedCode } = requestStore;
+  const { lastViewedFrom } = requestStore;
   const { getAll, setFormValues, clearFilter } = clinicResultsStore;
   const {
     branchCityOptions,
@@ -123,7 +123,10 @@ const ClinicResultsFilter = () => {
             moment(Date.now()).utcOffset(0, true),
             moment(Date.now()).utcOffset(0, true),
           ],
-          buscar: lastViewedCode,
+          buscar:
+            lastViewedFrom?.from === "results"
+              ? undefined
+              : lastViewedFrom?.code,
         }}
         scrollToFirstError
       >
@@ -141,6 +144,7 @@ const ClinicResultsFilter = () => {
                 name: "buscar",
                 label: "Buscar",
               }}
+              autoFocus
             />
           </Col>
           <Col span={8}>
