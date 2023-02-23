@@ -206,7 +206,7 @@ const LayoutComponent = () => {
       <Fragment>
         <List
           header={
-            <Title level={5} style={{ textAlign: "center", color: "#1677ff" }}>
+            <Title level={5} className="title-shortcut">
               ATAJOS DEL TECLADO
             </Title>
           }
@@ -216,7 +216,7 @@ const LayoutComponent = () => {
             <List.Item>
               <Row>
                 <Col span={24}>
-                  <Badge.Ribbon text={item.shortCut} placement="start">
+                  <Badge.Ribbon text={item.shortCut} placement="start" className="badge-shortcut">
                     <Card title="  " className="shortcut-card">
                       {item.description}
                     </Card>
@@ -268,7 +268,7 @@ const LayoutComponent = () => {
             <Tooltip
               placement="bottomRight"
               title={renderShortCuts}
-              color="#E7F6FD"
+              className="tooltip-shortcuts"
             >
               <QuestionCircleTwoTone />
             </Tooltip>
