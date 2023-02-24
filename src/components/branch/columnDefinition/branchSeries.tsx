@@ -74,9 +74,11 @@ const BranchSeriesColumns = ({onChange}: ColumnProps) => {
           : "Caducado",
     },
     {
-      ...getDefaultColumnProps("relacion", "Usar", {
-        width: "10%",
-      }),
+      key: "relacion",
+      dataIndex: "relacion",
+      title: "Usar",
+      align: "center",
+      width: "10%",
       render: (_value, record) => (
         <Checkbox checked={record.relacion} onChange={(e) => onChange(e, record.id)}  />
       ),

@@ -186,7 +186,7 @@ const BranchForm: FC<BranchFormProps> = ({
   const onChange = (e: CheckboxChangeEvent, id: number) => {
     const index = series.findIndex((x) => x.id === id);
     const newSeries = [...series];
-    newSeries[index].activo = e.target.checked;
+    newSeries[index].relacion = e.target.checked;
     setSeries(newSeries);
   };
 
@@ -194,6 +194,8 @@ const BranchForm: FC<BranchFormProps> = ({
     setLoading(true);
 
     const User = { ...values, ...newValues };
+    console.log(User);
+
     let success = false;
 
     if (!User.idSucursal) {
@@ -321,6 +323,38 @@ const BranchForm: FC<BranchFormProps> = ({
                   readonly={CheckReadOnly()}
                 />
               </Col>
+              <Col md={12} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "codigoPostal",
+                    label: "Código postal",
+                  }}
+                  max={100}
+                  readonly={CheckReadOnly()}
+                />
+              </Col>
+              <Col md={12} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "nombre",
+                    label: "Nombre",
+                  }}
+                  max={100}
+                  required
+                  readonly={CheckReadOnly()}
+                />
+              </Col>
+              <Col md={12} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "estado",
+                    label: "Estado",
+                  }}
+                  max={100}
+                  required
+                  readonly={CheckReadOnly()}
+                />
+              </Col>
               <Col md={12} sm={24} xs={12}>
                 <TextInput
                   formProps={{
@@ -336,8 +370,8 @@ const BranchForm: FC<BranchFormProps> = ({
               <Col md={12} sm={24}>
                 <TextInput
                   formProps={{
-                    name: "nombre",
-                    label: "Nombre",
+                    name: "ciudad",
+                    label: "Ciudad",
                   }}
                   max={100}
                   required
@@ -375,68 +409,6 @@ const BranchForm: FC<BranchFormProps> = ({
                 />
               </Col>
               <Col md={12} sm={24}>
-                <TextInput
-                  formProps={{
-                    name: "codigoPostal",
-                    label: "Código postal",
-                  }}
-                  max={100}
-                  readonly={CheckReadOnly()}
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "clinicosId",
-                    label: "Clínicos",
-                  }}
-                  max={100}
-                  readonly={true}
-                />
-              </Col>
-              <Col md={12} sm={24}>
-                <TextInput
-                  formProps={{
-                    name: "estado",
-                    label: "Estado",
-                  }}
-                  max={100}
-                  required
-                  readonly={CheckReadOnly()}
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "presupuestosId",
-                    label: "Presupuestos",
-                  }}
-                  max={100}
-                  readonly={true}
-                />
-              </Col>
-              <Col md={12} sm={24}>
-                <TextInput
-                  formProps={{
-                    name: "ciudad",
-                    label: "Ciudad",
-                  }}
-                  max={100}
-                  required
-                  readonly={CheckReadOnly()}
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "facturaciónId",
-                    label: "Facturación",
-                  }}
-                  max={100}
-                  readonly={true}
-                />
-              </Col>
-              <Col md={12} sm={24}>
                 <SelectInput
                   formProps={{
                     name: "coloniaId",
@@ -459,17 +431,19 @@ const BranchForm: FC<BranchFormProps> = ({
                   readonly={CheckReadOnly()}
                 />
               </Col>
+
               <Col md={12} sm={24}>
                 <TextInput
                   formProps={{
-                    name: "numeroExt",
-                    label: "Número Exterior",
+                    name: "calle",
+                    label: "Calle",
                   }}
-                  max={20}
-                  readonly={CheckReadOnly()}
+                  max={100}
                   required
+                  readonly={CheckReadOnly()}
                 />
               </Col>
+
               <Col md={12} sm={24} xs={12}>
                 <SwitchInput
                   name="activo"
@@ -487,11 +461,12 @@ const BranchForm: FC<BranchFormProps> = ({
               <Col md={12} sm={24}>
                 <TextInput
                   formProps={{
-                    name: "numeroInt",
-                    label: "Número interior",
+                    name: "numeroExt",
+                    label: "Número Exterior",
                   }}
                   max={20}
                   readonly={CheckReadOnly()}
+                  required
                 />
               </Col>
               <Col md={12} sm={24} xs={12}>
@@ -504,11 +479,10 @@ const BranchForm: FC<BranchFormProps> = ({
               <Col md={12} sm={24}>
                 <TextInput
                   formProps={{
-                    name: "calle",
-                    label: "Calle",
+                    name: "numeroInt",
+                    label: "Número interior",
                   }}
-                  max={100}
-                  required
+                  max={20}
                   readonly={CheckReadOnly()}
                 />
               </Col>
