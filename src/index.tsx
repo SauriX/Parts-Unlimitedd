@@ -37,7 +37,7 @@ const themes = {
 };
 
 root.render(
-  <BrowserRouter basename={`${process.env.REACT_APP_NAME}/`}>
+  <BrowserRouter basename={`${process.env.REACT_APP_NAME!.substring(1)}/`}>
     <ThemeSwitcherProvider themeMap={themes} defaultTheme="light">
       <ConfigProvider
         locale={es_ES}
