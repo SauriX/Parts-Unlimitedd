@@ -1,4 +1,4 @@
-import { Button, Col, Row, Form } from "antd";
+import { Button, Col, Row, Form, Spin } from "antd";
 import form from "antd/lib/form";
 import { observer } from "mobx-react-lite";
 import React, { FC, Fragment, useEffect, useState } from "react";
@@ -90,77 +90,79 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id, tipoSerie }) => {
 
   return (
     <Fragment>
-      <Row gutter={[24, 12]}>
-        {!readonly && (
-          <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
-            <Button onClick={goBack}>Cancelar</Button>
-            <Button
-              type="primary"
-              htmlType="submit"
-              onClick={() => {
-                form.submit();
-              }}
-            >
-              Guardar
-            </Button>
-          </Col>
-        )}
-        {readonly && (
-          <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
-            <ImageButton
-              key="edit"
-              title="Editar"
-              image="editar"
-              onClick={setEditMode}
-            />
-          </Col>
-        )}
-      </Row>
-      <Form<ITicketSerie>
-        {...formItemLayout}
-        form={form}
-        name="seriesTicket"
-        onFinish={onFinish}
-        initialValues={values}
-        scrollToFirstError
-      >
-        <Row
-          justify={"space-between"}
-          gutter={[0, 12]}
-          style={{ marginTop: 10 }}
-        >
-          <Col md={8} sm={24} xs={12}>
-            <TextInput
-              formProps={{
-                name: "clave",
-                label: "Clave",
-              }}
-              required
-              readonly={readonly}
-            />
-          </Col>
-          <Col md={16} sm={24} xs={12}>
-            <TextInput
-              formProps={{
-                name: "nombre",
-                label: "Nombre",
-              }}
-              required
-              readonly={readonly}
-            />
-          </Col>
-          <Col md={8} sm={24} xs={12}>
-            <SelectInput
-              form={form}
-              formProps={{ name: "tipoSerie", label: "Tipo" }}
-              options={[{ value: 2, label: "Recibo" }]}
-              required
-              readonly={true}
-            />
-          </Col>
-          <Col md={16}></Col>
+      <Spin spinning={loading} tip={"Cargando"}>
+        <Row gutter={[24, 12]}>
+          {!readonly && (
+            <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
+              <Button onClick={goBack}>Cancelar</Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                onClick={() => {
+                  form.submit();
+                }}
+              >
+                Guardar
+              </Button>
+            </Col>
+          )}
+          {readonly && (
+            <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
+              <ImageButton
+                key="edit"
+                title="Editar"
+                image="editar"
+                onClick={setEditMode}
+              />
+            </Col>
+          )}
         </Row>
-      </Form>
+        <Form<ITicketSerie>
+          {...formItemLayout}
+          form={form}
+          name="seriesTicket"
+          onFinish={onFinish}
+          initialValues={values}
+          scrollToFirstError
+        >
+          <Row
+            justify={"space-between"}
+            gutter={[0, 12]}
+            style={{ marginTop: 10 }}
+          >
+            <Col md={8} sm={24} xs={12}>
+              <TextInput
+                formProps={{
+                  name: "clave",
+                  label: "Clave",
+                }}
+                required
+                readonly={readonly}
+              />
+            </Col>
+            <Col md={16} sm={24} xs={12}>
+              <TextInput
+                formProps={{
+                  name: "nombre",
+                  label: "Nombre",
+                }}
+                required
+                readonly={readonly}
+              />
+            </Col>
+            <Col md={8} sm={24} xs={12}>
+              <SelectInput
+                form={form}
+                formProps={{ name: "tipoSerie", label: "Tipo" }}
+                options={[{ value: 2, label: "Recibo" }]}
+                required
+                readonly={true}
+              />
+            </Col>
+            <Col md={16}></Col>
+          </Row>
+        </Form>
+      </Spin>
     </Fragment>
   );
 };

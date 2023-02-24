@@ -9,10 +9,11 @@ import {
   PageHeader,
   Divider,
   Select,
+  Table,
 } from "antd";
 import { List, Typography } from "antd";
 import { formItemLayout } from "../../../app/util/utils";
-import TextInput from "../../../app/common/form/TextInput";
+import TextInput from "../../../app/common/form/proposal/TextInput";
 import { useStore } from "../../../app/stores/store";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
@@ -24,12 +25,15 @@ import {
   IBranchDepartment,
 } from "../../../app/models/branch";
 import { IOptions } from "../../../app/models/shared";
-import SwitchInput from "../../../app/common/form/SwitchInput";
-import SelectInput from "../../../app/common/form/SelectInput";
+import SwitchInput from "../../../app/common/form/proposal/SwitchInput";
+import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
-import MaskInput from "../../../app/common/form/MaskInput";
-import { ISeriesList } from "../../../app/models/series";
+import MaskInput from "../../../app/common/form/proposal/MaskInput";
+import { ISeries, ISeriesList } from "../../../app/models/series";
+import BranchSeriesColumns from "../columnDefinition/branchSeries";
+import { v4 as uuid } from "uuid";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
 
 type BranchFormProps = {
   componentRef: React.MutableRefObject<any>;
@@ -44,11 +48,17 @@ const BranchForm: FC<BranchFormProps> = ({
   load,
   isPrinting,
 }) => {
-  const { locationStore, branchStore, optionStore } = useStore();
+  const { locationStore, branchStore, optionStore, seriesStore } = useStore();
   const { getColoniesByZipCode } = locationStore;
   const { create, update, getAll, sucursales, getById } = branchStore;
+  const { getSeries } = seriesStore;
   const [searchParams] = useSearchParams();
-  const { getDepartmentOptions, departmentOptions } = optionStore;
+  const {
+    getDepartmentOptions,
+    departmentOptions,
+    seriesOptions,
+    getSeriesOptions,
+  } = optionStore;
   const [department, setDepartment] = useState<IBranchDepartment>();
 
   const navigate = useNavigate();
@@ -57,6 +67,7 @@ const BranchForm: FC<BranchFormProps> = ({
   const [disabled, setDisabled] = useState(true);
   const [colonies, setColonies] = useState<IOptions[]>([]);
   const [values, setValues] = useState<IBranchForm>(new BranchFormValues());
+  const [series, setSeries] = useState<ISeriesList[]>([]);
   let { id } = useParams<UrlParams>();
   const CheckReadOnly = () => {
     let result = false;
@@ -67,8 +78,9 @@ const BranchForm: FC<BranchFormProps> = ({
     return result;
   };
   useEffect(() => {
+    getSeriesOptions(id!);
     getDepartmentOptions();
-  }, [getDepartmentOptions]);
+  }, [getDepartmentOptions, getSeriesOptions]);
 
   const deleteClinic = (id: number) => {
     const clinics = values.departamentos.filter((x) => x.departamentoId !== id);
@@ -88,11 +100,11 @@ const BranchForm: FC<BranchFormProps> = ({
   useEffect(() => {
     const readuser = async (idUser: string) => {
       setLoading(true);
-      console.log("here");
-      const all = await getAll("all");
-      console.log(all);
+
       const user = await getById(idUser);
       form.setFieldsValue(user!);
+
+      setSeries(user?.series!);
 
       setValues(user!);
       if (user?.codigoPostal && user?.codigoPostal.trim().length === 5) {
@@ -158,8 +170,7 @@ const BranchForm: FC<BranchFormProps> = ({
         alerts.warning("Ya esta agregada este departamento");
         return;
       }
-      console.log("this the clinics");
-      console.log(department);
+
       const departments: IBranchDepartment[] = [
         ...values.departamentos,
         {
@@ -169,17 +180,24 @@ const BranchForm: FC<BranchFormProps> = ({
       ];
 
       setValues((prev) => ({ ...prev, departamentos: departments }));
-      console.log(values);
     }
   };
-  useEffect(() => {
-    console.log(values);
-  }, [values]);
-  console.log("Table");
+
+  const onChange = (e: CheckboxChangeEvent, id: number) => {
+    const index = series.findIndex((x) => x.id === id);
+    const newSeries = [...series];
+    newSeries[index].relacion = e.target.checked;
+    setSeries(newSeries);
+  };
+
   const onFinish = async (newValues: IBranchForm) => {
     setLoading(true);
+
     const User = { ...values, ...newValues };
+    console.log(User);
+
     let success = false;
+
     if (!User.idSucursal) {
       success = await create(User);
     } else {
@@ -187,10 +205,12 @@ const BranchForm: FC<BranchFormProps> = ({
     }
 
     setLoading(false);
+
     if (success) {
       navigate(`/branches?search=${searchParams.get("search") || "all"}`);
     }
   };
+
   const actualUser = () => {
     if (id) {
       const index = sucursales.findIndex((x) => x.idSucursal === id);
@@ -207,9 +227,11 @@ const BranchForm: FC<BranchFormProps> = ({
       }`
     );
   };
+
   const spinnerText = () => {
     return isPrinting ? "Imprimiendo..." : "Descargando...";
   };
+
   return (
     <Spin spinning={loading || load} tip={load ? spinnerText() : ""}>
       <Row style={{ marginBottom: 24 }}>
@@ -239,8 +261,6 @@ const BranchForm: FC<BranchFormProps> = ({
               type="primary"
               htmlType="submit"
               onClick={() => {
-                // e.preventDefault();
-                // console.log("form", form.getFieldsValue());
                 form.submit();
               }}
             >
@@ -291,7 +311,7 @@ const BranchForm: FC<BranchFormProps> = ({
             }}
             onValuesChange={onValuesChange}
           >
-            <Row>
+            <Row gutter={[12, 24]}>
               <Col md={12} sm={24}>
                 <TextInput
                   formProps={{
@@ -302,7 +322,18 @@ const BranchForm: FC<BranchFormProps> = ({
                   required
                   readonly={CheckReadOnly()}
                 />
-
+              </Col>
+              <Col md={12} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "codigoPostal",
+                    label: "Código postal",
+                  }}
+                  max={100}
+                  readonly={CheckReadOnly()}
+                />
+              </Col>
+              <Col md={12} sm={24}>
                 <TextInput
                   formProps={{
                     name: "nombre",
@@ -312,62 +343,12 @@ const BranchForm: FC<BranchFormProps> = ({
                   required
                   readonly={CheckReadOnly()}
                 />
-                <TextInput
-                  formProps={{
-                    name: "codigoPostal",
-                    label: "Código postal",
-                  }}
-                  max={100}
-                  readonly={CheckReadOnly()}
-                />
+              </Col>
+              <Col md={12} sm={24}>
                 <TextInput
                   formProps={{
                     name: "estado",
                     label: "Estado",
-                  }}
-                  max={100}
-                  required
-                  readonly={CheckReadOnly()}
-                />
-                <TextInput
-                  formProps={{
-                    name: "ciudad",
-                    label: "Ciudad",
-                  }}
-                  max={100}
-                  required
-                  readonly={CheckReadOnly()}
-                />
-                <SelectInput
-                  formProps={{
-                    name: "coloniaId",
-                    label: "Colonia",
-                  }}
-                  required
-                  options={colonies}
-                  readonly={CheckReadOnly()}
-                />
-                <TextInput
-                  formProps={{
-                    name: "numeroExt",
-                    label: "Número Exterior",
-                  }}
-                  max={20}
-                  readonly={CheckReadOnly()}
-                  required
-                />
-                <TextInput
-                  formProps={{
-                    name: "numeroInt",
-                    label: "Número interior",
-                  }}
-                  max={20}
-                  readonly={CheckReadOnly()}
-                />
-                <TextInput
-                  formProps={{
-                    name: "calle",
-                    label: "Calle",
                   }}
                   max={100}
                   required
@@ -385,6 +366,19 @@ const BranchForm: FC<BranchFormProps> = ({
                   readonly={CheckReadOnly()}
                   type="email"
                 />
+              </Col>
+              <Col md={12} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "ciudad",
+                    label: "Ciudad",
+                  }}
+                  max={100}
+                  required
+                  readonly={CheckReadOnly()}
+                />
+              </Col>
+              <Col md={12} sm={24} xs={12}>
                 <MaskInput
                   formProps={{
                     name: "telefono",
@@ -413,30 +407,44 @@ const BranchForm: FC<BranchFormProps> = ({
                   }}
                   readonly={CheckReadOnly()}
                 />
+              </Col>
+              <Col md={12} sm={24}>
+                <SelectInput
+                  formProps={{
+                    name: "coloniaId",
+                    label: "Colonia",
+                  }}
+                  required
+                  options={colonies}
+                  readonly={CheckReadOnly()}
+                />
+              </Col>
+              <Col md={12} sm={24} xs={12}>
+                <SelectInput
+                  form={form}
+                  formProps={{
+                    name: "departamentos",
+                    label: "Departamentos",
+                  }}
+                  multiple
+                  options={departmentOptions}
+                  readonly={CheckReadOnly()}
+                />
+              </Col>
+
+              <Col md={12} sm={24}>
                 <TextInput
                   formProps={{
-                    name: "clinicosId",
-                    label: "Clínicos",
+                    name: "calle",
+                    label: "Calle",
                   }}
                   max={100}
-                  readonly={true}
+                  required
+                  readonly={CheckReadOnly()}
                 />
-                <TextInput
-                  formProps={{
-                    name: "presupuestosId",
-                    label: "Presupuestos",
-                  }}
-                  max={100}
-                  readonly={true}
-                />
-                <TextInput
-                  formProps={{
-                    name: "facturaciónId",
-                    label: "Facturación",
-                  }}
-                  max={100}
-                  readonly={true}
-                />
+              </Col>
+
+              <Col md={12} sm={24} xs={12}>
                 <SwitchInput
                   name="activo"
                   onChange={(value) => {
@@ -449,16 +457,32 @@ const BranchForm: FC<BranchFormProps> = ({
                   label="Activo"
                   readonly={CheckReadOnly()}
                 />
+              </Col>
+              <Col md={12} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "numeroExt",
+                    label: "Número Exterior",
+                  }}
+                  max={20}
+                  readonly={CheckReadOnly()}
+                  required
+                />
+              </Col>
+              <Col md={12} sm={24} xs={12}>
                 <SwitchInput
                   name="matriz"
-                  onChange={(value) => {
-                    /*                   if (value) {
-                    alerts.info(messages.confirmations.enable);
-                  } else {
-                    alerts.info(messages.confirmations.disable);
-                  } */
-                  }}
                   label="Matriz"
+                  readonly={CheckReadOnly()}
+                />
+              </Col>
+              <Col md={12} sm={24}>
+                <TextInput
+                  formProps={{
+                    name: "numeroInt",
+                    label: "Número interior",
+                  }}
+                  max={20}
                   readonly={CheckReadOnly()}
                 />
               </Col>
@@ -466,75 +490,14 @@ const BranchForm: FC<BranchFormProps> = ({
           </Form>
         </div>
       </div>
-      <div>
-        <div></div>
-      </div>
-      <Divider orientation="left">Departamentos</Divider>
-      <List<IBranchDepartment>
-        header={
-          <div>
-            <Col md={12} sm={24} style={{ marginRight: 20 }}>
-              Nombre Departamento
-              <Select
-                options={departmentOptions}
-                onChange={(value, option: any) => {
-                  if (value) {
-                    setDepartment({
-                      departamentoId: value,
-                      departamento: option.label,
-                    });
-                  } else {
-                    setDepartment(undefined);
-                  }
-                }}
-                style={{ width: 240, marginRight: 20, marginLeft: 10 }}
-              />
-              {!CheckReadOnly() && (
-                <ImageButton
-                  key="agregar"
-                  title="Agregar Clinica"
-                  image="agregar-archivo"
-                  onClick={addClinic}
-                />
-              )}
-            </Col>
-          </div>
-        }
-        footer={<div></div>}
-        bordered
-        dataSource={values.departamentos}
-        renderItem={(item) => (
-          <List.Item>
-            <Col md={12} sm={24} style={{ textAlign: "left" }}>
-              <Typography.Text mark></Typography.Text>
-              {item.departamento}
-            </Col>
-            <Col md={12} sm={24} style={{ textAlign: "left" }}>
-              <ImageButton
-                key="Eliminar"
-                title="Eliminar Clinica"
-                image="Eliminar_Clinica"
-                onClick={() => {
-                  deleteClinic(item.departamentoId);
-                }}
-              />
-            </Col>
-          </List.Item>
-        )}
-      />
       <Divider orientation="left">Series</Divider>
-      <List<ISeriesList>
-        header={"Listado de series que se pueden utilizar en esta sucursal"}
-        footer={<div></div>}
-        bordered
-        dataSource={values.series}
-        renderItem={(item) => (
-          <List.Item>
-            <Col span={24}>
-              <Typography.Text mark>{item.clave}</Typography.Text>
-            </Col>
-          </List.Item>
-        )}
+      <Table<ISeriesList>
+        columns={BranchSeriesColumns({ onChange })}
+        dataSource={series}
+        rowKey={uuid()}
+        pagination={false}
+        loading={loading}
+        size="small"
       />
     </Spin>
   );
