@@ -52,7 +52,8 @@
   "scripts": {
     "start": "env-cmd -f .env.development craco start",
     "build:qa": "env-cmd -f .env.qa craco build",
-    "build:uat": "env-cmd -f .env.uat craco build"
+    "build:uat": "env-cmd -f .env.uat craco build",
+    "build:prod": "env-cmd -f .env.prod craco build"
   },
   "eslintConfig": {
     "extends": [
