@@ -52,7 +52,7 @@ const UnCheck= (  {
                                         width={100}
                                         height={100}
                                         src="origen"
-                                        fallback={`/${process.env.REACT_APP_NAME}/admin/assets/danger.png`}
+                                        fallback={`${process.env.REACT_APP_NAME}/assets/danger.png`}
                                         style={{marginLeft:"170%"}}
                                 />
                                 <br />
