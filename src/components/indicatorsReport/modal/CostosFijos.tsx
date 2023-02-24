@@ -10,7 +10,7 @@ import {
   Tag,
 } from "antd";
 import { observer } from "mobx-react-lite";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
 import {
   IServicesCost,
@@ -26,6 +26,7 @@ import { DownOutlined } from "@ant-design/icons";
 import { ItemType } from "antd/lib/menu/hooks/useItems";
 import { MenuInfo } from "rc-menu/lib/interface";
 import alerts from "../../../app/util/alerts";
+import { toJS } from "mobx";
 
 type CostosFijosProps = {
   data: IServicesInvoice;
@@ -40,13 +41,15 @@ const CostosFijos = ({ data, loading }: CostosFijosProps) => {
     updateService,
     modalFilter,
     getServicesCost,
+    services,
   } = indicatorsStore;
   const { servicesOptions, getServicesOptions } = optionStore;
-  const [api, contextHolder] = notification.useNotification();
 
   useEffect(() => {
-    setServicesCost(data.servicios ?? []);
-  }, [data, servicesCost]);
+    setServicesCost(services.servicios!);
+    console.log(toJS(services.servicios));
+    console.log("servicesCost", toJS(servicesCost));
+  }, [services]);
 
   useEffect(() => {
     getServicesOptions();
@@ -93,7 +96,8 @@ const CostosFijos = ({ data, loading }: CostosFijosProps) => {
 
   const onFinish = async () => {
     const serviceWithDataNull = servicesCost.find(
-      (x) => x.costoFijo === 0 || x.sucursales?.length === 0 || x.fechaAlta === null
+      (x) =>
+        x.costoFijo === 0 || x.sucursales?.length === 0 || x.fechaAlta === null
     );
 
     if (serviceWithDataNull) {
@@ -105,8 +109,14 @@ const CostosFijos = ({ data, loading }: CostosFijosProps) => {
       servicios: servicesCost,
       filtros: modalFilter,
     };
-    await updateService(newService);
-    await getServicesCost(modalFilter);
+    alerts.confirm(
+      "Guardar costos fijos",
+      "¿Estás seguro de guardar los cambios?",
+      async () => {
+        await updateService(newService);
+        await getServicesCost(modalFilter);
+      }
+    );
   };
 
   return (
@@ -136,7 +146,7 @@ const CostosFijos = ({ data, loading }: CostosFijosProps) => {
           rowKey={uuid()}
           columns={CostosFijosColumns()}
           pagination={false}
-          dataSource={servicesCost}
+          dataSource={services.servicios! as IServicesCost[]}
           scroll={{ y: 500 }}
           bordered
           rowClassName={"row-search"}

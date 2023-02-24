@@ -49,6 +49,10 @@ export default class IndicatorStore {
     this.modalFilter = modalFilter;
   };
 
+  deleteServiceCost = async (id: string) => {
+    this.servicesCost = this.servicesCost.filter((x) => x.identificador !== id);
+  };
+
   access = async () => {
     try {
       const scopes = await Indicators.access();
@@ -153,6 +157,7 @@ export default class IndicatorStore {
   getServicesCost = async (filter: IModalIndicatorsFilter) => {
     try {
       this.loadingReport = true;
+      this.services = new ServiceInvoice();
       const services = await Indicators.getServicesCost(filter);
       this.services = services;
     } catch (error: any) {

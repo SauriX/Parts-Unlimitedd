@@ -526,7 +526,9 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                   formProps={{
                     name: "sucursalOrigenId",
                     label: "Sucursal Origen ",
+                    
                   }}
+                  
                   readonly={readonly}
                   required
                   options={BranchOptions}
@@ -553,7 +555,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                     // value={value}
                     dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                     treeData={treeData}
-                    placeholder="Please select"
+                    placeholder="Por favor seleccione"
                     treeDefaultExpandAll
                     // defaultValue={}
                     onSelect={(value: any, node: any) => {

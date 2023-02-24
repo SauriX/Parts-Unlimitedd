@@ -92,7 +92,7 @@ export class ServicesCost implements IServicesCost {
   costoFijo = 0;
   nombre = "";
   sucursales = [];
-  fechaAlta = moment(Date.now()).utcOffset(0, true);
+  fechaAlta = moment(Date.now());
 
   constructor(init?: IServicesCost) {
     Object.assign(this, init);
@@ -144,8 +144,8 @@ export class IndicatorsFormValues implements IReportIndicators {
 export class ModalIndicatorFilterValues implements IModalIndicatorsFilter {
   sucursalId = [];
   fecha = [
-    moment(Date.now()).utcOffset(0, true),
-    moment(Date.now()).utcOffset(0, true),
+    moment(Date.now()),
+    moment(Date.now()),
   ];
   servicio = [];
   ciudad = [];

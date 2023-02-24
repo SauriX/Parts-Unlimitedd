@@ -52,6 +52,7 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
     getServicesCost: getServicesCostsByFilter,
     saveFile,
     setModalFilter,
+    setServicesCost,
     exportServiceListExample,
   } = indicatorsStore;
   const { closeModal } = modalStore;
