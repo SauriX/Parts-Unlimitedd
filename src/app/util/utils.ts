@@ -5,7 +5,7 @@ import { UploadRequestOption } from "rc-upload/lib/interface";
 import { IGrouped } from "../models/shared";
 import { toJS } from "mobx";
 
-export const tokenName = "lab-ramos-token";
+export const tokenName = process.env.REACT_APP_TOKEN_NAME!;
 
 export const getErrors = (error: any) => {
   try {
@@ -299,18 +299,17 @@ export const shortCuts = [
   {
     title: "GUARDAR",
     shortCut: "CTRL + SHIFT + L",
-    description: " GUARDAR (PARA TODAS LAS PANTALLAS QUE TENGAN LA OPCIÓN GUARDAR O FILTRAR)",
+    description:
+      " GUARDAR (PARA TODAS LAS PANTALLAS QUE TENGAN LA OPCIÓN GUARDAR O FILTRAR)",
   },
   {
     title: "CONSULTA",
     shortCut: "CTRL + SHIFT + S",
-    description: " CONSULTA DE SOLICITUDES" 
+    description: " CONSULTA DE SOLICITUDES",
   },
   {
     title: "CREACIÓN",
     shortCut: "CTRL + SHIFT + U",
     description: " CREACIÓN DE CITA",
   },
-]
-
-
+];
