@@ -286,7 +286,7 @@ const Home = () => {
                     <Col span={12} style={{ textAlign: "right" }}>
                       <Image
                         width={30}
-                        src={`/${process.env.REACT_APP_NAME}/admin/assets/citas.png`}
+                        src={`${process.env.REACT_APP_NAME}/assets/citas.png`}
                         preview={false}
                       />
                     </Col>
@@ -314,7 +314,7 @@ const Home = () => {
                     <Col span={12} style={{ textAlign: "right" }}>
                       <Image
                         width={30}
-                        src={`/${process.env.REACT_APP_NAME}/admin/assets/solicitud.png`}
+                        src={`${process.env.REACT_APP_NAME}/assets/solicitud.png`}
                         preview={false}
                       />
                     </Col>
@@ -344,7 +344,7 @@ const Home = () => {
                     <Col span={12} style={{ textAlign: "right" }}>
                       <Image
                         width={30}
-                        src={`/${process.env.REACT_APP_NAME}/admin/assets/cierre.png`}
+                        src={`${process.env.REACT_APP_NAME}/assets/cierre.png`}
                         preview={false}
                       />
                     </Col>
@@ -402,7 +402,7 @@ const Home = () => {
                     <Col span={12} style={{ textAlign: "right" }}>
                       <Image
                         width={30}
-                        src={`/${process.env.REACT_APP_NAME}/admin/assets/enviar.png`}
+                        src={`${process.env.REACT_APP_NAME}/assets/enviar.png`}
                         preview={false}
                       />
                     </Col>
@@ -430,7 +430,7 @@ const Home = () => {
                     <Col span={12} style={{ textAlign: "right" }}>
                       <Image
                         width={30}
-                        src={`/${process.env.REACT_APP_NAME}/admin/assets/recibir.png`}
+                        src={`${process.env.REACT_APP_NAME}/assets/recibir.png`}
                         preview={false}
                       />
                     </Col>
@@ -464,7 +464,7 @@ const Home = () => {
                 <Image
                   width={40}
                   style={{ marginLeft: "270%" }}
-                  src={`/${process.env.REACT_APP_NAME}/admin/assets/enviadas.png`}
+                  src={`${process.env.REACT_APP_NAME}/assets/enviadas.png`}
                   preview={false}
                 />
               </b>
@@ -505,7 +505,7 @@ const Home = () => {
                 <Image
                   width={40}
                   style={{ marginLeft: "220%" }}
-                  src={`/${process.env.REACT_APP_NAME}/admin/assets/recibidas.png`}
+                  src={`${process.env.REACT_APP_NAME}/assets/recibidas.png`}
                   preview={false}
                 />
               </b>

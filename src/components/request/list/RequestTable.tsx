@@ -15,7 +15,7 @@ import views from "../../../app/util/view";
 
 const { Link, Text } = Typography;
 
-const logoWee = `/${process.env.REACT_APP_NAME}/admin/assets/logos/weeclinic.png`;
+const logoWee = `${process.env.REACT_APP_NAME}/assets/logos/weeclinic.png`;
 
 const RequestTable = () => {
   const { requestStore } = useStore();
