@@ -1,5 +1,5 @@
 import { Button, Input, PageHeader, Typography } from "antd";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../app/common/button/ImageButton";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
@@ -7,6 +7,7 @@ import { useStore } from "../../app/stores/store";
 import { PlusOutlined } from "@ant-design/icons";
 import PrintIcon from "../../app/common/icons/PrintIcon";
 import DownloadIcon from "../../app/common/icons/DownloadIcon";
+import { observer } from "mobx-react-lite";
 
 const { Text } = Typography;
 
@@ -26,13 +27,20 @@ const RouteTrackingHeader: FC<RouteHeaderProps> = ({
   const { profile } = profileStore;
   const { BranchOptions, getBranchOptions } = optionStore;
 
+  const [currentBranch, setCurrentBranch] = useState<string | undefined>("");
+
   useEffect(() => {
     getBranchOptions();
-  }, [getBranchOptions]);
+  }, []);
 
-  const branchName = BranchOptions.find(
-    (x) => x.value === profile?.sucursal
-  )?.label;
+  useEffect(() => {
+    if (profile && !!BranchOptions.length) {
+      const branch = BranchOptions.find((x) => x.value === profile?.sucursal);
+      setCurrentBranch(branch?.label as string);
+    }
+  }, [BranchOptions, profile]);
+
+
 
   const navigate = useNavigate();
 
@@ -63,7 +71,7 @@ const RouteTrackingHeader: FC<RouteHeaderProps> = ({
           <DownloadIcon key="doc" onClick={handleDownload} />
         ),
         <Text>
-          Sucursal activa: {" "} <strong>{branchName}</strong>
+          Sucursal activa: <strong>{currentBranch}</strong>
         </Text>,
         scopes?.crear && (
           <Button
@@ -82,4 +90,4 @@ const RouteTrackingHeader: FC<RouteHeaderProps> = ({
   );
 };
 
-export default RouteTrackingHeader;
+export default observer(RouteTrackingHeader);
