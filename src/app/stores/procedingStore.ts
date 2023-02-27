@@ -177,10 +177,9 @@ export default class ProcedingStore {
       return [];
     }
   };
+  
   create = async (parameter: IProceedingForm) => {
     try {
-      console.log(parameter);
-      console.log("here");
       const record = await Proceding.create(parameter);
       alerts.success(messages.created);
       return record.id;

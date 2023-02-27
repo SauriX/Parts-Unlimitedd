@@ -43,10 +43,7 @@ import {
 } from "../../../app/models/appointmen";
 import {
   IQuotationFilter,
-  IQuotationGeneral,
-  IQuotationInfo,
 } from "../../../app/models/quotation";
-import { toJS } from "mobx";
 import ProceedingRequests from "./ProceedingRequests";
 import ProceedingQuotations from "./ProceedingQuotations";
 import ProceedingAppointments from "./ProceedingAppointments";
@@ -99,7 +96,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
-  const [modeNew, setModeNew] = useState(searchParams.get("mode") === "new");
   const [citas, SetCitas] = useState<IAppointmentList[]>([]);
   const [form] = Form.useForm<IProceedingForm>();
   const [values, setValues] = useState<IProceedingForm>(
@@ -117,6 +113,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     clearTax();
     closeModal();
   };
+
   const convertSolicitud = (dataC: IAppointmentForm) => {
     var request: ISolicitud = {
       Id: dataC.id,
@@ -142,34 +139,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     };
     createsolictud(request);
   };
-  const convertSolicitudCot = (
-    dataC: IQuotationInfo,
-    dataG: IQuotationGeneral
-  ) => {
-    var request: ISolicitud = {
-      Id: dataC.cotizacionId,
-      ExpedienteId: values.expediente,
-      SucursalId: profile?.sucursal!,
-      Clave: dataC.paciente,
-      ClavePatologica: "",
-      UsuarioId: "00000000-0000-0000-0000-000000000000",
-      General: {
-        solicitudId: "00000000-0000-0000-0000-000000000000",
-        expedienteId: values.expediente!,
-        procedencia: 0,
-        compañiaId: dataG.compañiaId,
-        medicoId: dataG.medicoId,
-        afiliacion: "",
-        urgencia: 0,
-        metodoEnvio: [],
-        correo: dataG.correo,
-        whatsapp: dataG.whatsapp,
-        observaciones: dataG.observaciones,
-      },
-      Estudios: [],
-    };
-    createsolictud(request);
-  };
+
   const clearLocation = () => {
     form.setFieldsValue({
       estado: undefined,
@@ -219,7 +189,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
         ...expediente!,
         fechaNacimiento: moment(expediente?.fechaNacimiento),
       });
-      console.log("expediente", toJS(expediente));
+      
       setTax(expediente?.taxData!);
       setValues(expediente!);
       setLoading(false);
@@ -329,13 +299,12 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     setLoading(true);
     var coincidencia = await coincidencias(newValues);
     const reagent = { ...values, ...newValues };
+    let success = false;
 
     if (reagent.nombre == "" || reagent.apellido == "" || reagent.sexo == "") {
       alerts.warning("El nombre y sexo no pueden estar vacíos");
     }
-    console.log("REAGENT NEW ", toJS(reagent));
-    if (reagent.colonia) {
-    }
+
     if (coincidencia.length > 0 && !reagent.id!) {
       openModal({
         title: "Se encuentran coincidencias con los siguientes expedientes",
@@ -343,9 +312,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           <Concidencias
             handle={async () => {
               setLoading(true);
-              let success = false;
-              console.log(tax, "tax");
-              var taxdata: ITaxData[] = [];
+              let taxdata: ITaxData[] = [];
 
               for (let element of tax) {
                 if (!element.id || element.id.startsWith("tempId")) {
@@ -355,15 +322,12 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   taxdata.push(element);
                 }
               }
-              reagent.taxData = taxdata;
-              console.log("taxData", taxdata);
 
-              if (!reagent.id) {
-                success = (await create(reagent)) != null;
-              } else {
-                success = await update(reagent);
-              }
+              reagent.taxData = taxdata;
+              success = !reagent.id ? !!await create(reagent) : await update(reagent);
+
               setLoading(false);
+
               if (success) {
                 goBack();
               }
@@ -385,8 +349,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
         },
       });
     } else {
-      let success = false;
-      var taxdata: ITaxData[] = [];
+      let taxdata: ITaxData[] = [];
 
       for (let element of tax) {
         if (!element.id || element.id.startsWith("tempId")) {
@@ -396,14 +359,14 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           taxdata.push(element);
         }
       }
-      console.log("taxData", toJS(tax));
+
       reagent.taxData = taxdata;
-      console.log("taxData", taxdata);
-      if (!reagent.id) {
-        success = (await create(reagent)) != null;
-      } else {
-        success = await update(reagent);
+      success = !reagent.id ? !!await create(reagent) : await update(reagent);
+
+      if(success){
+        goBack()
       }
+
       setLoading(false);
     }
   };
