@@ -7,32 +7,24 @@ import {
   Button,
   PageHeader,
   Divider,
-  Table,
   Input,
-  Tooltip,
   Card,
   Tag,
   Tabs,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
-import { formItemLayout, moneyFormatter } from "../../../app/util/utils";
+import { formItemLayout } from "../../../app/util/utils";
 import { useStore } from "../../../app/stores/store";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
-import { EditOutlined } from "@ant-design/icons";
 import TextInput from "../../../app/common/form/proposal/TextInput";
-import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import DateInput from "../../../app/common/form/proposal/DateInput";
 import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import alerts from "../../../app/util/alerts";
-import {
-  getDefaultColumnProps,
-  IColumns,
-} from "../../../app/common/table/utils";
 import { IFormError, IOptions } from "../../../app/models/shared";
 import DatosFiscalesForm from "./DatosFiscalesForm";
 import Concidencias from "./Concidencias";
@@ -43,21 +35,13 @@ import {
 } from "../../../app/models/Proceeding";
 import moment, { Moment } from "moment";
 import { ITaxData } from "../../../app/models/taxdata";
-import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
-import IconButton from "../../../app/common/button/IconButton";
-import Link from "antd/lib/typography/Link";
-import { IRequestInfo } from "../../../app/models/request";
 import {
-  AppointmentFormValues,
   IAppointmentForm,
   IAppointmentList,
   ISearchAppointment,
   ISolicitud,
-  IConvertToRequest,
-  SearchAppointmentValues,
 } from "../../../app/models/appointmen";
 import {
-  IQuotation,
   IQuotationFilter,
   IQuotationGeneral,
   IQuotationInfo,
@@ -79,7 +63,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   printing,
   isPrinting,
 }) => {
-  const { width: windowWidth } = useWindowDimensions();
   const navigate = useNavigate();
   const {
     modalStore,
@@ -91,22 +74,9 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     appointmentStore,
     quotationStore,
   } = useStore();
-  const { getQuotations, quotations, convertToRequest, cancelQuotation } =
-    quotationStore;
-  const {
-    getAllDom,
-    getAllLab,
-    sucursales,
-    getByIdDom,
-    getByIdLab,
-    sucursal,
-    updateDom,
-    updateLab,
-    createsolictud,
-    convertirASolicitud,
-  } = appointmentStore;
-  // const { createsolictud } = quotationStore;
-  const { loadingRequests, requests, getRequests: getByFilter } = requestStore;
+  const { getQuotations } = quotationStore;
+  const { getAllDom, getAllLab, createsolictud } = appointmentStore;
+  const { requests, getRequests: getByFilter } = requestStore;
   const {
     getById,
     update,
@@ -120,8 +90,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     tax,
     activateWallet,
     getAllQ,
-    quotatios,
-    getByIdQ,
+
   } = procedingStore;
   const { profile } = profileStore;
   const { BranchOptions, getBranchOptions } = optionStore;
@@ -130,6 +99,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
+  const [modeNew, setModeNew] = useState(searchParams.get("mode") === "new");
   const [citas, SetCitas] = useState<IAppointmentList[]>([]);
   const [form] = Form.useForm<IProceedingForm>();
   const [values, setValues] = useState<IProceedingForm>(
@@ -790,6 +760,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     navigate(`/requests/${id}`);
                   }}
                   type="primary"
+                  disabled={!id}
                 >
                   Agregar solicitud
                 </Button>
@@ -800,6 +771,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
                   }}
                   type="primary"
+                  disabled={!id}
                 >
                   Agregar cotización
                 </Button>
@@ -810,6 +782,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     navigate(`/appointments`);
                   }}
                   type="primary"
+                  disabled={!id}
                 >
                   Agregar cita
                 </Button>
@@ -823,7 +796,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     activarMonedero();
                   }}
                   type="primary"
-                  disabled={values.hasWallet}
+                  disabled={values.hasWallet || !id}
                 >
                   Activar monedero
                 </Button>
@@ -838,11 +811,11 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     })
                   }
                   style={{
-                    backgroundColor: "#6EAA46",
-                    color: "white",
-                    borderColor: "#6EAA46",
+                    backgroundColor: !id || readonly ? "" : "#6EAA46",
+                    color: !id || readonly ? "" : "white",
+                    borderColor: !id || readonly ? "" : "#6EAA46",
                   }}
-                  disabled={readonly}
+                  disabled={!id || readonly}
                 >
                   Datos Fiscales
                 </Button>
