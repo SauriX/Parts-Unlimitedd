@@ -303,6 +303,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
 
     if (reagent.nombre == "" || reagent.apellido == "" || reagent.sexo == "") {
       alerts.warning("El nombre y sexo no pueden estar vacíos");
+      return;
     }
 
     if (coincidencia.length > 0 && !reagent.id!) {
