@@ -2,7 +2,7 @@ import moment from "moment";
 
 export interface SearchTracking {
   fechas: moment.Moment[];
-  sucursal: string;
+  destino: string;
   origen: string;
   buscar: string;
 }
@@ -11,12 +11,15 @@ export interface IRouteList {
   id: string;
   seguimiento: string;
   clave: string;
+  etiqueta: string;
+  cantidad: number;
+  estudios: string;
   solicitud: string;
-  Estudio: string;
-  status: string;
-  sucursal: string;
-  fecha: string;
+  estatus: string;
+  ruta: string;
+  entrega: string;
 }
+
 export interface IstudyRoute {
   id: number;
   nombre: string;
@@ -35,7 +38,7 @@ export interface IstudyRoute {
 export class TrackingFormValues implements SearchTracking {
   fechas = [moment(), moment()];
   buscar = "";
-  sucursal = "";
+  destino = "";
   origen = "";
 
   constructor(init?: SearchTracking) {

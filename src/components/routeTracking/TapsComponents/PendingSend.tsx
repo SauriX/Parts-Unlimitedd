@@ -197,7 +197,7 @@ const PendingSend = () => {
               <SelectInput
                 options={branchCityOptions}
                 formProps={{
-                  name: "sucursal",
+                  name: "destino",
                   label: "Destino",
                 }}
               ></SelectInput>
