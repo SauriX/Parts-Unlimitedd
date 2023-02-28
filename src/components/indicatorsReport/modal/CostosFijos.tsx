@@ -47,8 +47,6 @@ const CostosFijos = ({ data, loading }: CostosFijosProps) => {
 
   useEffect(() => {
     setServicesCost(services.servicios!);
-    console.log(toJS(services.servicios));
-    console.log("servicesCost", toJS(servicesCost));
   }, [services]);
 
   useEffect(() => {
@@ -146,7 +144,7 @@ const CostosFijos = ({ data, loading }: CostosFijosProps) => {
           rowKey={uuid()}
           columns={CostosFijosColumns()}
           pagination={false}
-          dataSource={services.servicios! as IServicesCost[]}
+          dataSource={servicesCost}
           scroll={{ y: 500 }}
           bordered
           rowClassName={"row-search"}
