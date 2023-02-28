@@ -161,6 +161,10 @@ export default class RequestStore {
     );
   }
 
+  get hasStudies() {
+    return this.allActiveStudies.length > 0;
+  }
+
   clearDetailData = () => {
     this.request = undefined;
     this.studies = [];

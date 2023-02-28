@@ -48,6 +48,7 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
   const {
     request,
     clearStudies,
+    hasStudies,
     setStudyFilter,
     getGeneral,
     sendTestEmail,
@@ -169,7 +170,7 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
     request.correo = !isValidEmail ? undefined : emails?.join(",");
     request.whatsapp = !isValidWhatsapp ? undefined : whatsapps?.join(",");
 
-    if (requestGeneral?.compañiaId !== request.compañiaId) {
+    if (requestGeneral?.compañiaId !== request.compañiaId && hasStudies) {
       alerts.confirm(
         "Hubo un cambio de compañía",
         "Al cambiar la compañía los estudios serán eliminados",
