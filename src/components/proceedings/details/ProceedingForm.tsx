@@ -7,32 +7,24 @@ import {
   Button,
   PageHeader,
   Divider,
-  Table,
   Input,
-  Tooltip,
   Card,
   Tag,
   Tabs,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
-import { formItemLayout, moneyFormatter } from "../../../app/util/utils";
+import { formItemLayout } from "../../../app/util/utils";
 import { useStore } from "../../../app/stores/store";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
-import { EditOutlined } from "@ant-design/icons";
 import TextInput from "../../../app/common/form/proposal/TextInput";
-import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import DateInput from "../../../app/common/form/proposal/DateInput";
 import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import alerts from "../../../app/util/alerts";
-import {
-  getDefaultColumnProps,
-  IColumns,
-} from "../../../app/common/table/utils";
 import { IFormError, IOptions } from "../../../app/models/shared";
 import DatosFiscalesForm from "./DatosFiscalesForm";
 import Concidencias from "./Concidencias";
@@ -43,26 +35,15 @@ import {
 } from "../../../app/models/Proceeding";
 import moment, { Moment } from "moment";
 import { ITaxData } from "../../../app/models/taxdata";
-import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
-import IconButton from "../../../app/common/button/IconButton";
-import Link from "antd/lib/typography/Link";
-import { IRequestInfo } from "../../../app/models/request";
 import {
-  AppointmentFormValues,
   IAppointmentForm,
   IAppointmentList,
   ISearchAppointment,
   ISolicitud,
-  IConvertToRequest,
-  SearchAppointmentValues,
 } from "../../../app/models/appointmen";
 import {
-  IQuotation,
   IQuotationFilter,
-  IQuotationGeneral,
-  IQuotationInfo,
 } from "../../../app/models/quotation";
-import { toJS } from "mobx";
 import ProceedingRequests from "./ProceedingRequests";
 import ProceedingQuotations from "./ProceedingQuotations";
 import ProceedingAppointments from "./ProceedingAppointments";
@@ -79,7 +60,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   printing,
   isPrinting,
 }) => {
-  const { width: windowWidth } = useWindowDimensions();
   const navigate = useNavigate();
   const {
     modalStore,
@@ -91,22 +71,9 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     appointmentStore,
     quotationStore,
   } = useStore();
-  const { getQuotations, quotations, convertToRequest, cancelQuotation } =
-    quotationStore;
-  const {
-    getAllDom,
-    getAllLab,
-    sucursales,
-    getByIdDom,
-    getByIdLab,
-    sucursal,
-    updateDom,
-    updateLab,
-    createsolictud,
-    convertirASolicitud,
-  } = appointmentStore;
-  // const { createsolictud } = quotationStore;
-  const { loadingRequests, requests, getRequests: getByFilter } = requestStore;
+  const { getQuotations } = quotationStore;
+  const { getAllDom, getAllLab, createsolictud } = appointmentStore;
+  const { requests, getRequests: getByFilter } = requestStore;
   const {
     getById,
     update,
@@ -120,8 +87,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     tax,
     activateWallet,
     getAllQ,
-    quotatios,
-    getByIdQ,
+
   } = procedingStore;
   const { profile } = profileStore;
   const { BranchOptions, getBranchOptions } = optionStore;
@@ -147,6 +113,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     clearTax();
     closeModal();
   };
+
   const convertSolicitud = (dataC: IAppointmentForm) => {
     var request: ISolicitud = {
       Id: dataC.id,
@@ -172,34 +139,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     };
     createsolictud(request);
   };
-  const convertSolicitudCot = (
-    dataC: IQuotationInfo,
-    dataG: IQuotationGeneral
-  ) => {
-    var request: ISolicitud = {
-      Id: dataC.cotizacionId,
-      ExpedienteId: values.expediente,
-      SucursalId: profile?.sucursal!,
-      Clave: dataC.paciente,
-      ClavePatologica: "",
-      UsuarioId: "00000000-0000-0000-0000-000000000000",
-      General: {
-        solicitudId: "00000000-0000-0000-0000-000000000000",
-        expedienteId: values.expediente!,
-        procedencia: 0,
-        compañiaId: dataG.compañiaId,
-        medicoId: dataG.medicoId,
-        afiliacion: "",
-        urgencia: 0,
-        metodoEnvio: [],
-        correo: dataG.correo,
-        whatsapp: dataG.whatsapp,
-        observaciones: dataG.observaciones,
-      },
-      Estudios: [],
-    };
-    createsolictud(request);
-  };
+
   const clearLocation = () => {
     form.setFieldsValue({
       estado: undefined,
@@ -249,7 +189,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
         ...expediente!,
         fechaNacimiento: moment(expediente?.fechaNacimiento),
       });
-      console.log("expediente", toJS(expediente));
+      
       setTax(expediente?.taxData!);
       setValues(expediente!);
       setLoading(false);
@@ -359,13 +299,13 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     setLoading(true);
     var coincidencia = await coincidencias(newValues);
     const reagent = { ...values, ...newValues };
+    let success = false;
 
     if (reagent.nombre == "" || reagent.apellido == "" || reagent.sexo == "") {
       alerts.warning("El nombre y sexo no pueden estar vacíos");
+      return;
     }
-    console.log("REAGENT NEW ", toJS(reagent));
-    if (reagent.colonia) {
-    }
+
     if (coincidencia.length > 0 && !reagent.id!) {
       openModal({
         title: "Se encuentran coincidencias con los siguientes expedientes",
@@ -373,9 +313,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           <Concidencias
             handle={async () => {
               setLoading(true);
-              let success = false;
-              console.log(tax, "tax");
-              var taxdata: ITaxData[] = [];
+              let taxdata: ITaxData[] = [];
 
               for (let element of tax) {
                 if (!element.id || element.id.startsWith("tempId")) {
@@ -385,15 +323,12 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                   taxdata.push(element);
                 }
               }
-              reagent.taxData = taxdata;
-              console.log("taxData", taxdata);
 
-              if (!reagent.id) {
-                success = (await create(reagent)) != null;
-              } else {
-                success = await update(reagent);
-              }
+              reagent.taxData = taxdata;
+              success = !reagent.id ? !!await create(reagent) : await update(reagent);
+
               setLoading(false);
+
               if (success) {
                 goBack();
               }
@@ -415,8 +350,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
         },
       });
     } else {
-      let success = false;
-      var taxdata: ITaxData[] = [];
+      let taxdata: ITaxData[] = [];
 
       for (let element of tax) {
         if (!element.id || element.id.startsWith("tempId")) {
@@ -426,14 +360,14 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           taxdata.push(element);
         }
       }
-      console.log("taxData", toJS(tax));
+
       reagent.taxData = taxdata;
-      console.log("taxData", taxdata);
-      if (!reagent.id) {
-        success = (await create(reagent)) != null;
-      } else {
-        success = await update(reagent);
+      success = !reagent.id ? !!await create(reagent) : await update(reagent);
+
+      if(success){
+        goBack()
       }
+
       setLoading(false);
     }
   };
@@ -790,6 +724,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     navigate(`/requests/${id}`);
                   }}
                   type="primary"
+                  disabled={!id}
                 >
                   Agregar solicitud
                 </Button>
@@ -800,6 +735,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
                   }}
                   type="primary"
+                  disabled={!id}
                 >
                   Agregar cotización
                 </Button>
@@ -810,6 +746,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     navigate(`/appointments`);
                   }}
                   type="primary"
+                  disabled={!id}
                 >
                   Agregar cita
                 </Button>
@@ -823,7 +760,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     activarMonedero();
                   }}
                   type="primary"
-                  disabled={values.hasWallet}
+                  disabled={values.hasWallet || !id}
                 >
                   Activar monedero
                 </Button>
@@ -838,11 +775,11 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     })
                   }
                   style={{
-                    backgroundColor: "#6EAA46",
-                    color: "white",
-                    borderColor: "#6EAA46",
+                    backgroundColor: !id || readonly ? "" : "#6EAA46",
+                    color: !id || readonly ? "" : "white",
+                    borderColor: !id || readonly ? "" : "#6EAA46",
                   }}
-                  disabled={readonly}
+                  disabled={!id || readonly}
                 >
                   Datos Fiscales
                 </Button>

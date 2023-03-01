@@ -20,7 +20,7 @@ const HeaderTitle: FC<Props> = ({
     <Title level={4} className="header-title">
       {image ? (
         <Image
-          src={`/${process.env.REACT_APP_NAME}/admin/assets/${folder}/${image}.png`}
+          src={`${process.env.REACT_APP_NAME}/assets/${folder}/${image}.png`}
           preview={false}
         />
       ) : null}

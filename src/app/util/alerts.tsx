@@ -41,7 +41,7 @@ const alerts = {
     title: string,
     text: React.ReactNode,
     onOk: () => Promise<void>,
-    okText: string | null = null,
+    okText: string | null = null
   ) {
     info({
       title,
@@ -52,7 +52,7 @@ const alerts = {
       },
       okText: okText || "Volver",
     });
-  }
+  },
 };
 
 export default alerts;

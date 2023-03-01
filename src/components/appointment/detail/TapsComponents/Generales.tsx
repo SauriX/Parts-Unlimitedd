@@ -243,7 +243,7 @@ const GeneralesForm: FC<GeneralesFormProps> = ({
             </Checkbox>{" "}
             <Image
               width={15}
-              src={`/${process.env.REACT_APP_NAME}/admin/assets/correo.png`}
+              src={`${process.env.REACT_APP_NAME}/assets/correo.png`}
               preview={false}
             />
             <Checkbox
@@ -257,7 +257,7 @@ const GeneralesForm: FC<GeneralesFormProps> = ({
             </Checkbox>
             <Image
               width={15}
-              src={`/${process.env.REACT_APP_NAME}/admin/assets/whats.png`}
+              src={`${process.env.REACT_APP_NAME}/assets/whats.png`}
               preview={false}
             />
             <Checkbox
@@ -271,7 +271,7 @@ const GeneralesForm: FC<GeneralesFormProps> = ({
             </Checkbox>
             <Image
               width={20}
-              src={`/${process.env.REACT_APP_NAME}/admin/assets/all.png`}
+              src={`${process.env.REACT_APP_NAME}/assets/all.png`}
               preview={false}
             />
           </Col>

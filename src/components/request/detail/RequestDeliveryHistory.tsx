@@ -29,9 +29,11 @@ const RequestDeliveryHistory = () => {
   useEffect(() => {
     const consultarHistorial = async () => {
       setLoading(true);
-      const h = await getDeliveryHistory(request?.solicitudId!);
+      if (request) {
+        const h = await getDeliveryHistory(request?.solicitudId!);
+        setHistorial(h);
+      }
 
-      setHistorial(h);
       setLoading(false);
     };
     consultarHistorial();

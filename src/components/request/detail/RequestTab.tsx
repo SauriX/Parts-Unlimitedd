@@ -135,7 +135,6 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     } else if (currentKey === "studies") {
       const ok = await updateStudies(studyUpdate, autoSave);
       if (!ok) {
-        setCurrentKey("studies");
         return;
       }
     } else if (currentKey === "request") {
