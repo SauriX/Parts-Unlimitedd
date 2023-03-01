@@ -20,27 +20,7 @@ import {
 const { Link, Text } = Typography;
 
 const logoWee = `/${process.env.REACT_APP_NAME}/admin/assets/logos/weeclinic.png`;
-const data:IReportRequestInfo[] = [{
-  expedienteId:"string",
-  solicitudId:"string",
-  solicitud:"string",
-  paciente:"string",
-  edad:"string",
-  sexo:"string",
-  sucursal:"string",
-  medico:"string",
-  tipo :"string",
-  compañia:"string",
-  entrega:"12-02-2023 - 14-02-2023",
-  estudios:[{
-    idStudio:"string",
-    nombre:"string",
-    estatus:"string",
-    fecha:"12-02-2023",
-  }],
-  estatus:"uregente"
 
-}]
 const ReportTable = () => {
   const { reportStudyStore } = useStore();
   const {
@@ -186,7 +166,7 @@ const ReportTable = () => {
               key={x.clave + x.estatus}
               style={{ display: "flex", alignItems: "center" }}
             >
-              <ContainerBadge color={"#FF9F40"} text={x.estatus[0]} />
+              <ContainerBadge color={x.color} text={x.estatus[0]} />
             </Col>
           ))}
         </Row>
