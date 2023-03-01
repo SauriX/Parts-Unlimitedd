@@ -5,6 +5,7 @@ import alerts from "../util/alerts";
 import { getErrors } from "../util/utils";
 import InvoiceCompany from "../api/invoiceCompany";
 import Company from "../api/company";
+import { IInvoicesFreeFilter } from "../models/Invoice";
 
 export class InvoiceCompanyStore {
   constructor() {
@@ -46,6 +47,18 @@ export class InvoiceCompanyStore {
       this.isLoading = true;
       const result = await InvoiceCompany.getInvoicesCompany(filter);
       this.invoices = result;
+      this.isLoading = false;
+    } catch (error: any) {
+      this.isLoading = false;
+      alerts.warning(getErrors(error));
+    }
+  };
+  invoicesFree: any[] = [];
+  getInvoicesFree = async (filter: IInvoicesFreeFilter) => {
+    try {
+      this.isLoading = true;
+      const result = await InvoiceCompany.getInvoicesFree(filter);
+      this.invoicesFree = result;
       this.isLoading = false;
     } catch (error: any) {
       this.isLoading = false;
@@ -111,7 +124,7 @@ export class InvoiceCompanyStore {
     this.taxData = data;
   };
   nombreSeleccionado: string = "";
-  setNombre = (nombre: string) => {
+  setNombreSeleccionado = (nombre: string) => {
     this.nombreSeleccionado = nombre;
   };
   downloadPdf = async (facturapiId: string) => {

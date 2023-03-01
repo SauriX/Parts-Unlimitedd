@@ -2,6 +2,7 @@ import {
   IInvoiceData,
   IInvoiceDeliveryInfo,
   IInvoiceFilter,
+  IInvoicesFreeFilter,
   IMotivo,
   IReceiptData,
   IRequestsInvoices,
@@ -11,6 +12,8 @@ import requests from "./agent";
 const InvoiceCompany = {
   getInvoicesCompany: (filter: IInvoiceFilter): Promise<IRequestsInvoices> =>
     requests.post("invoiceCompany/filter", filter),
+  getInvoicesFree: (filter: IInvoicesFreeFilter): Promise<any> =>
+    requests.post("invoiceCompany/filter/free", filter),
   getConsecutiveBySerie: (serie: string): Promise<string> =>
     requests.get(`invoiceCompany/getConsecutiveBySerie/${serie}`),
   getInvoice: (id: string): Promise<IInvoiceData> =>

@@ -12,6 +12,9 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import alerts from "../../../../app/util/alerts";
 import history from "../../../../app/util/history";
+import InvoiceFreeInfo from "../../InvoiceFree/InvoiceFreeInfo";
+import InvoiceFreeData from "../../InvoiceFree/InvoiceFreeData";
+import InvoiceFreeDetail from "../../InvoiceFree/InvoiceFreeDetail";
 
 type UrlParams = {
   id: string;
@@ -59,18 +62,17 @@ const InvoiceCompanyCreate = () => {
     getpaymentMethodOptions();
     getPaymentOptions();
     if (tipo === "company") {
-      if (id !== "new") {
-        let selectedRequestInvoice = invoices.solicitudes
-          .find((invoice: any) => invoice.solicitudId === id)
-          .facturas.find(
-            (invoice: any) => invoice.tipo === "Compañia"
-          )?.solicitudesId;
-        let filterRequests = invoices.solicitudes.filter((invoice: any) =>
-          selectedRequestInvoice.includes(invoice.solicitudId)
-        );
-
-        setSelectedRequests([...filterRequests]);
-      }
+      // if (id !== "new") {
+      //   let selectedRequestInvoice = invoices.solicitudes
+      //     .find((invoice: any) => invoice.solicitudId === id)
+      //     .facturas.find(
+      //       (invoice: any) => invoice.tipo === "Compañia"
+      //     )?.solicitudesId;
+      //   let filterRequests = invoices.solicitudes.filter((invoice: any) =>
+      //     selectedRequestInvoice.includes(invoice.solicitudId)
+      //   );
+      //   setSelectedRequests([...filterRequests]);
+      // }
     }
     if (id !== "new") {
       getInvoice(id!);
@@ -128,6 +130,7 @@ const InvoiceCompanyCreate = () => {
   }, [selectedRows, selectRequests]);
 
   const createInvoice = async (formDataValues: any) => {
+    console.log("datos", formDataValues);
     if (tipo === "company") {
       const use = cfdiOptions.find((x) => x.value === company?.cfdiId);
       const method = paymentOptions.find(
@@ -137,12 +140,26 @@ const InvoiceCompanyCreate = () => {
         tipoFactura: tipo,
         companyId: selectedRows[0]?.companiaId,
         solicitudesId: selectedRows.map((row: any) => row.solicitudId),
-        estudios: estudios,
-        // formaPago: "" + company?.formaDePagoId,
+        detalles: detailInvoice,
+        serie: formDataValues.serieCFDI,
+        bancoId: formDataValues.bancoId,
+        diasCredito: formDataValues.diasCredito,
+        formaPagoId: formDataValues.formaDePagoId,
+        numeroCuenta: formDataValues.numeroDeCuenta,
         formaPago: method,
+        tipoPago: "PUE",
         tipo: "PUE",
         claveExterna: company?.clave,
         usoCFDI: use?.label,
+
+        tipoDesgloce: configurationInvoice,
+        cantidadTotal: total,
+        subtotal: total - (total * 16) / 100,
+        IVA: (total * 16) / 100,
+        consecutivo: +consecutiveBySerie,
+        usuario: "",
+        fecha: "",
+        hora: "",
         cliente: {
           razonSocial: company?.razonSocial,
           RFC: company?.rfc,
@@ -162,7 +179,9 @@ const InvoiceCompanyCreate = () => {
       };
 
       const invoiceInfo = await checkIn(invoiceData);
-      if (invoiceInfo) {
+      if (!!invoiceInfo?.facturapiId) {
+        alerts.success("Factura creada conrrectamente");
+        history.push(`/invoice/${tipo}/${invoiceInfo?.facturapiId}`);
       }
     }
     if (tipo === "request") {
@@ -192,16 +211,7 @@ const InvoiceCompanyCreate = () => {
         companyId: selectedRows[0]?.companiaId,
         nombre: selectedRequests[0].nombre,
         solicitudesId: selectedRows.map((row: any) => row.solicitudId),
-        detalles:
-          configurationInvoice === "desglozado"
-            ? estudios.map((estudio) => ({
-                estudioClave: estudio.clave,
-                concepto: estudio.estudio,
-                importe: estudio.precio,
-                descuento: estudio.descuento,
-                cantidad: 1,
-              }))
-            : detailInvoice,
+        detalles: detailInvoice,
         taxDataId: taxData.id,
         expedienteId: nombreSeleccionado,
         formaPagoId: "",
@@ -218,6 +228,7 @@ const InvoiceCompanyCreate = () => {
         fecha: "",
         hora: "",
 
+        tipoPago: "PUE",
         tipo: "PUE",
         claveExterna: company?.clave,
         cliente: {
@@ -244,6 +255,51 @@ const InvoiceCompanyCreate = () => {
         history.push(`/invoice/${tipo}/${invoiceInfo?.facturapiId}`);
       }
     }
+    if (tipo === "free") {
+      const invoiceData = {
+        tipoFactura: tipo,
+        companyId: selectedRows[0]?.companiaId,
+        nombre: selectedRequests[0].nombre,
+        solicitudesId: selectedRows.map((row: any) => row.solicitudId),
+        detalles: detailInvoice,
+        taxDataId: taxData.id,
+        expedienteId: nombreSeleccionado,
+        formaPagoId: "",
+        formaPago: formDataValues?.formaDePagoId,
+        numeroCuenta: "",
+        serie: formDataValues.serieCFDI,
+        // usoCFDI: use?.label,
+        usoCFDI: "",
+        tipoDesgloce: configurationInvoice,
+        cantidadTotal: total,
+        subtotal: total - (total * 16) / 100,
+        IVA: (total * 16) / 100,
+        consecutivo: +consecutiveBySerie,
+        usuario: "",
+        fecha: "",
+        hora: "",
+
+        tipoPago: "PUE",
+        tipo: "PUE",
+        claveExterna: company?.clave,
+        cliente: {
+          razonSocial: taxData?.razonSocial,
+          RFC: taxData?.rfc,
+          regimenFiscal: taxData?.regimenFiscal,
+          correo: taxData?.correo,
+          telefono: "1234567890", // => tomarlo de expdientes
+          codigoPostal: taxData?.cp,
+          calle: taxData?.calle,
+          // numeroExterior: taxData?.numero,
+          // numeroInterior: "",
+          colonia: taxData?.colonian,
+          ciudad: taxData?.municipio,
+          municipio: taxData?.municipio,
+          estado: taxData?.estado,
+          pais: "MEX",
+        },
+      };
+    }
   };
   const getEstatusFactura = () => {
     if (!!selectRequests) {
@@ -263,21 +319,42 @@ const InvoiceCompanyCreate = () => {
     <>
       <InvoiceCompanyHeader handleDownload={() => {}} />
       <Divider />
-      <InvoiceCompanyInfo
-        company={company}
-        facturapiId={getFacturapi()}
-        estatusFactura={getEstatusFactura()}
-      />
-      <InvoiceCompanyData
-        company={company}
-        totalEstudios={total}
-        totalFinal={totalFinalEstudios}
-        createInvoice={createInvoice}
-        invoice={id!}
-        estatusFactura={getEstatusFactura()}
-        facturapiId={getFacturapi()}
-      />
-      <InvoiceCompanyDetail
+      {tipo !== "free" ? (
+        <InvoiceCompanyInfo
+          company={company}
+          facturapiId={getFacturapi()}
+          estatusFactura={getEstatusFactura()}
+        />
+      ) : (
+        <InvoiceFreeInfo />
+      )}
+      {tipo !== "free" ? (
+        <InvoiceCompanyData
+          company={company}
+          totalEstudios={total}
+          totalFinal={totalFinalEstudios}
+          createInvoice={createInvoice}
+          invoice={id!}
+          estatusFactura={getEstatusFactura()}
+          facturapiId={getFacturapi()}
+        />
+      ) : (
+        <InvoiceFreeData />
+      )}
+      {/* {tipo !== "free" ? (
+        <InvoiceCompanyDetail
+          estudios={estudios}
+          totalEstudios={totalFinalEstudios}
+        />
+      ) : (
+        <InvoiceFreeDetail />
+      )} */}
+
+      {/* <InvoiceCompanyDetail
+        estudios={estudios}
+        totalEstudios={totalFinalEstudios}
+      /> */}
+      <InvoiceFreeDetail
         estudios={estudios}
         totalEstudios={totalFinalEstudios}
       />

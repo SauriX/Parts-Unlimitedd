@@ -217,7 +217,12 @@ const InvoiceCompanyTable = () => {
 
     let requestsWithInvoiceCompany: any[] = [];
     selectedRows.forEach((request) => {
-      if (request.facturas.some((invoice: any) => invoice.tipo === tipo)) {
+      if (
+        request.facturas.some(
+          (invoice: any) =>
+            invoice.tipo === tipo && invoice.estatus.nombre !== "Cancelado"
+        )
+      ) {
         requestsWithInvoiceCompany.push(request);
       }
     });
@@ -301,8 +306,8 @@ const InvoiceCompanyTable = () => {
             //   );
             // }}
           >
-            <Row justify="center">
-              <Col span={8}>
+            <Row justify="end">
+              {/* <Col span={8}>
                 <Form.Item name="isInvoice" required>
                   <Row justify="center">
                     <Radio.Group>
@@ -322,7 +327,7 @@ const InvoiceCompanyTable = () => {
                 >
                   Generar
                 </Button>
-              </Col>
+              </Col> */}
               <Col span={2}>
                 <Button
                   type="primary"

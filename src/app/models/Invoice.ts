@@ -152,6 +152,7 @@ export interface IInvoiceDetailInfo {
 }
 
 export interface IMotivo {
+  facturapiId: string;
   motivo: "01" | "02" | "03" | "04";
 }
 export interface IInvoiceDeliveryInfo {
@@ -175,4 +176,15 @@ export interface IReceiptData {
   Contraseña: string;
   ContactoTelefono: string;
   SolicitudesId: string[];
+}
+//////////////////////////////////////////////////////////////////////// INVOICES FREE 🤑🥵
+export interface IInvoicesFreeFilter {
+  buscar: string;
+  compania: string;
+  sucursal: string;
+  estatus: string[];
+  fechaInicial: moment.Moment;
+  fechaFinal: moment.Moment;
+  fechas: moment.Moment[];
+  tipo: string[];
 }

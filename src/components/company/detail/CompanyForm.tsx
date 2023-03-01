@@ -29,6 +29,7 @@ import messages from "../../../app/util/messages";
 import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import { regimenFiscal } from "../../../app/util/catalogs";
+
 import {
   getDefaultColumnProps,
   IColumns,
@@ -132,7 +133,7 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
         setContacts(company.contacts);
         setFilteredContacts(company.contacts);
         company.regimenFiscal = company.regimenFiscal?.slice(0, 3);
-        if(company.codigoPostal) {
+        if (company.codigoPostal) {
           getLocation(company.codigoPostal?.toString());
         }
         form.setFieldsValue(company);
