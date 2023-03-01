@@ -55,6 +55,7 @@ import moment from "moment";
 import PriceList from "../../../views/PriceList";
 import Medics from "../../../views/Medics";
 import { use } from "echarts";
+import { VList } from "virtual-table-ant-design";
 type ReagentFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
@@ -1421,6 +1422,10 @@ const PromotionForm: FC<ReagentFormProps> = ({
                 pagination={false}
                 // dataSource={[...values.estudio]}
                 dataSource={[...estudiosT]}
+
+                components={VList({
+                  height: 500,
+                })}
                 scroll={{
                   x: "max-content",
                   y: 350,

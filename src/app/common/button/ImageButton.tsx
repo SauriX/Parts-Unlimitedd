@@ -13,7 +13,8 @@ interface IProps {
     | "Eliminar_Clinica"
     | "eliminar-configuracion"
     | "agregar-configuracion"
-    | "catalog";
+    | "catalog"
+    |"archivo-excel";
   title?: string;
   onClick?: React.MouseEventHandler<HTMLElement>;
 }

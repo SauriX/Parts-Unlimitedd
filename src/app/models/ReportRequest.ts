@@ -19,4 +19,5 @@ export interface IStudyReportInfo{
     nombre:string
     estatus:string
     fecha:string
+    color:string
 }
