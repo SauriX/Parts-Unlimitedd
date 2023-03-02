@@ -7,7 +7,7 @@ import { getErrors } from "../util/utils";
 import Sampling from "../api/sampling";
 import { ISamplingForm, ISamplingList, IUpdate } from "../models/sampling";
 import {
-  IRouteList,
+  IRouteTrackingList,
   SearchTracking,
   TrackingFormValues,
 } from "../models/routeTracking";
@@ -21,7 +21,7 @@ export default class RouteTrackingStore {
   }
 
   scopes?: IScopes;
-  studys: IRouteList[] = [];
+  studys: IRouteTrackingList[] = [];
   pendings?: IRecibe[] = [];
   ventana: string = "enviar";
   searchPending?: ISearchPending = new searchValues();

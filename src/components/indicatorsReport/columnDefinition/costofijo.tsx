@@ -1,22 +1,20 @@
-import { Form, Spin, Input, InputNumber, Button } from "antd";
-import React, { useEffect, useState } from "react";
+import { DatePicker, InputNumber, Select } from "antd";
+import { useEffect, useState } from "react";
 import {
   ISearch,
   IColumns,
   getDefaultColumnProps,
 } from "../../../app/common/table/utils";
 import {
-  IModalInvoice,
-  IReportIndicators,
+  IBranchService,
   IServicesCost,
   IServicesInvoice,
 } from "../../../app/models/indicators";
-import { CheckOutlined } from "@ant-design/icons";
-import { formItemLayout, moneyFormatter } from "../../../app/util/utils";
-import { IOptions } from "../../../app/models/shared";
+import { moneyFormatter } from "../../../app/util/utils";
 import { useStore } from "../../../app/stores/store";
-import alerts from "../../../app/util/alerts";
 import moment from "moment";
+import IconButton from "../../../app/common/button/IconButton";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const CostosFijosColumns = () => {
   const [searchState, setSearchState] = useState<ISearch>({
@@ -25,29 +23,21 @@ const CostosFijosColumns = () => {
   });
 
   const { indicatorsStore, optionStore } = useStore();
-  const { modalFilter, updateService, getServicesCost,  } = indicatorsStore;
+  const { setServicesCost, servicesCost, deleteServiceCost } = indicatorsStore;
   const { branchCityOptions } = optionStore;
 
-  const [loading, setLoading] = useState(false);
-  const [branches, setBranches] = useState<IOptions[]>([]);
-
-  useEffect(() => {
-    setBranches(branchCityOptions.flatMap((x) => x.options ?? []));
-  }, [branchCityOptions]);
-
   const onFinish = async (service: IServicesCost) => {
-    setLoading(true);
+    const serviceExists = servicesCost.findIndex(
+      (x) =>
+        x.nombre === service.nombre && x.identificador === service.identificador
+    );
 
-    if (!service) {
-      alerts.warning("Servicio invalido");
-      setLoading(false);
-      return;
+    if (serviceExists > -1) {
+      servicesCost[serviceExists] = service;
+    } else {
+      servicesCost.push(service);
     }
-
-    await updateService(service);
-    await getServicesCost(modalFilter);
-
-    setLoading(false);
+    setServicesCost(servicesCost);
   };
 
   const columns: IColumns<IServicesCost> = [
@@ -57,12 +47,18 @@ const CostosFijosColumns = () => {
         setSearchState,
         width: "25%",
       }),
-      render: (text: string, record: IServicesCost) => {
+      render: (value: number, record: IServicesCost) => {
         return (
-          <ServiceCostInput
-            loading={loading}
-            defaultValue={record}
-            onFinish={(service) => onFinish(service)}
+          <InputNumber
+            min={0}
+            defaultValue={value ?? 0}
+            bordered={false}
+            onChange={(costo) => {
+              let findRecord = servicesCost.find(
+                (x) => x.identificador === record.identificador
+              );
+              onFinish({ ...findRecord!, costoFijo: costo! });
+            }}
           />
         );
       },
@@ -75,19 +71,114 @@ const CostosFijosColumns = () => {
       }),
     },
     {
-      ...getDefaultColumnProps("sucursal", "Sucursal", {
+      ...getDefaultColumnProps("sucursales", "Sucursal", {
         searchState,
         setSearchState,
         width: "25%",
       }),
+      render: (value: IBranchService[], record) => {
+        const selectedBranches = value?.map((x) => x.sucursalId);
+
+        return (
+          <Select
+            defaultValue={selectedBranches}
+            options={branchCityOptions}
+            mode="multiple"
+            bordered={false}
+            onSelect={(value: string) => {
+              let findRecord = servicesCost.findIndex(
+                (x) => x.identificador === record.identificador
+              );
+
+              if (findRecord === -1) return;
+
+              let branchServices = [
+                ...(servicesCost[findRecord].sucursales ?? []),
+              ];
+              const getCity = branchCityOptions.find((x) =>
+                x.options?.map((x) => x.value).includes(value)
+              );
+
+              branchServices.push({
+                sucursalId: value,
+                ciudad: getCity?.value as string,
+              });
+
+              onFinish({
+                ...servicesCost[findRecord],
+                sucursales: branchServices,
+              });
+            }}
+            onDeselect={(value: string) => {
+              let findRecord = servicesCost.findIndex(
+                (x) => x.identificador === record.identificador
+              );
+
+              if (findRecord === -1) return;
+
+              let branchServices = [
+                ...(servicesCost[findRecord].sucursales ?? []),
+              ];
+
+              branchServices = branchServices.filter(
+                (x) => x.sucursalId !== value
+              );
+
+              onFinish({
+                ...servicesCost[findRecord],
+                sucursales: branchServices,
+              });
+            }}
+            style={{ width: "100%" }}
+            allowClear
+          />
+        );
+      },
     },
     {
-      ...getDefaultColumnProps("fechaAlta", "Fecha Alta", {
+      ...getDefaultColumnProps("fechaAlta", "Aplica para", {
         searchState,
         setSearchState,
-        width: "25%",
+        width: "20%",
       }),
-      render: (value) => moment(value).format("DD/MM/YYYY"),
+      render: (value: moment.Moment, record) => {
+        const selectedDate = moment(value) ?? moment(Date.now());
+
+        return (
+          <DatePicker
+            bordered={false}
+            defaultValue={selectedDate}
+            picker="month"
+            allowClear={false}
+            onChange={(date) => {
+              let findRecord = servicesCost.find(
+                (x) => x.identificador === record.identificador
+              );
+
+              onFinish({
+                ...findRecord!,
+                fechaAlta: date!,
+              });
+            }}
+          />
+        );
+      },
+    },
+    {
+      key: "Eliminar",
+      dataIndex: "Eliminar",
+      title: "",
+      width: "5%",
+      align: "center",
+      render: (value, item) =>
+        !item.id ? (
+          <IconButton
+            danger
+            title="Eliminar"
+            icon={<DeleteOutlined />}
+            onClick={() => deleteServiceCost(item.identificador!)}
+          />
+        ) : null,
     },
   ];
   return columns;
@@ -119,44 +210,3 @@ export const CostosFijosInvoice = () => {
 };
 
 export default CostosFijosColumns;
-
-type ServiceCostInputProps = {
-  defaultValue: IServicesCost;
-  onFinish: (service: IServicesCost) => void;
-  loading: boolean;
-};
-
-const ServiceCostInput = ({
-  defaultValue,
-  onFinish,
-  loading,
-}: ServiceCostInputProps) => {
-  const [form] = Form.useForm<IServicesCost>();
-
-  return (
-    <Spin spinning={loading}>
-      <Form<IServicesCost>
-        {...formItemLayout}
-        form={form}
-        name="service"
-        initialValues={defaultValue}
-        onFinish={(values) => {
-          console.log(values);
-          onFinish({ ...defaultValue, costoFijo: values.costoFijo });
-        }}
-        scrollToFirstError
-      >
-        <Form.Item className="no-error-text" help="">
-          <Input.Group compact>
-            <Form.Item name={"costoFijo"} className="no-error-text">
-              <InputNumber min={0} bordered={false} />
-            </Form.Item>
-            <Button type="primary" htmlType="submit">
-              <CheckOutlined style={{ color: "white" }} />
-            </Button>
-          </Input.Group>
-        </Form.Item>
-      </Form>
-    </Spin>
-  );
-};

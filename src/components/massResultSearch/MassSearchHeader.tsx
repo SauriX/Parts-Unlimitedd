@@ -15,7 +15,7 @@ const MassSearchHeader: FC<MassSearchHeaderProps> = ({ handleDownload }) => {
         ghost={false}
         title={
           <HeaderTitle
-            title={`Tabla de validación de resultados`}
+            title={`Tablas de captura de resultados`}
             image="massSearch"
           />
         }

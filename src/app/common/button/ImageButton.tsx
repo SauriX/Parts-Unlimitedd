@@ -13,7 +13,8 @@ interface IProps {
     | "Eliminar_Clinica"
     | "eliminar-configuracion"
     | "agregar-configuracion"
-    | "catalog";
+    | "catalog"
+    |"archivo-excel";
   title?: string;
   onClick?: React.MouseEventHandler<HTMLElement>;
 }
@@ -23,7 +24,7 @@ const ImageButton: FC<IProps> = ({ title, image, onClick }) => {
     <Tooltip title={title}>
       <Image
         style={{ height: 20, cursor: "pointer" }}
-        src={`/${process.env.REACT_APP_NAME}/admin/assets/${image}.png`}
+        src={`${process.env.REACT_APP_NAME}/assets/${image}.png`}
         preview={false}
         onClick={onClick}
       />

@@ -31,6 +31,7 @@ import { v4 as uuid } from "uuid";
 import { ProceedingFormValues } from "../../app/models/Proceeding";
 import moment from "moment";
 import React from "react";
+import ClinicalResultsXRay from "./desglose/ClinicalResultsXRay";
 
 const { Text } = Typography;
 const { Panel } = Collapse;
@@ -115,7 +116,7 @@ const ClinicalResultsInfo = () => {
       imprimirCriticos: printCritics,
       imprimirPrevios: printPrevious,
     };
-    console.log("sendToPrintSelectedStudies", toJS(studiesSelectedToPrint));
+
     await printSelectedStudies(studiesToPrint);
     setPrinting(false);
   };
@@ -274,7 +275,6 @@ const ClinicalResultsInfo = () => {
             </Col>
             <Radio.Group
               onChange={(value) => {
-                console.log("checked", value.target.value);
                 if (value.target.value === "unmarked") {
                   setMarkAll(false);
                   clearSelectedStudies();
@@ -319,16 +319,9 @@ const ClinicalResultsInfo = () => {
       <Row>
         <Col span={24}>
           {studies.map((req: IRequestStudy, index: any) => {
-            console.log("req", req.tipo);
-            // const idPatologia = departmentOptions.find(
-            //   (dep) => dep.label === "PATOLOGÍA"
-            // )?.value;
-
-            // if (idPatologia === req.departamentoId) {
             if (req.tipo === "PATOLOGICO") {
               return (
                 <div key={req.identificador}>
-                  <Divider orientation="left"></Divider>
                   <ClinicalResultsForm
                     estudio={req}
                     estudioId={req.estudioId}
@@ -341,7 +334,7 @@ const ClinicalResultsInfo = () => {
                   />
                 </div>
               );
-            } else {
+            } else if (req.tipo === "LABORATORIO") {
               return (
                 <ClinicalResultsDetails
                   key={req.identificador}
@@ -354,6 +347,15 @@ const ClinicalResultsInfo = () => {
                   isMarked={markAll}
                   printing={loading}
                   showHeaderTable={index === 0}
+                />
+              );
+            } else {
+              return (
+                <ClinicalResultsXRay
+                  key={req.identificador}
+                  study={req}
+                  request={request!}
+                  record={procedingCurrent}
                 />
               );
             }

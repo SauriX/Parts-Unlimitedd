@@ -176,9 +176,9 @@ const GeneralesDomForm:FC<GeneralesFormProps> = ({  printing,generales,data,bran
                     </Col>
                     <Col sm={12}>
                         <label style={{marginLeft:"100px",marginTop:"20px"}} htmlFor="">Enviar por: </label>
-                        <Checkbox checked={type=="Email"||type=="Ambos"} onChange={(values)=>{values.target.checked?SetType("Email"):SetType("")}} style={{marginLeft:"5px",marginTop:"20px"}}>Email</Checkbox>   <Image width={15} src={`/${process.env.REACT_APP_NAME}/admin/assets/correo.png`} preview={false}/>
-                        <Checkbox checked={type=="Whatsapp" ||  type=="Ambos"} onChange={(values)=>{values.target.checked?SetType("Whatsapp"):SetType("")}} style={{marginLeft:"5px",marginTop:"20px"}}>Whatsapp</Checkbox><Image width={15} src={`/${process.env.REACT_APP_NAME}/admin/assets/whats.png`} preview={false}/>
-                        <Checkbox checked={type=="Ambos"} onChange={(values)=>{values.target.checked?SetType("Ambos"):SetType("")}} style={{marginLeft:"10px",marginTop:"20px"}}>Ambos</Checkbox><Image width={20} src={`/${process.env.REACT_APP_NAME}/admin/assets/all.png`} preview={false}/>
+                        <Checkbox checked={type=="Email"||type=="Ambos"} onChange={(values)=>{values.target.checked?SetType("Email"):SetType("")}} style={{marginLeft:"5px",marginTop:"20px"}}>Email</Checkbox>   <Image width={15} src={`${process.env.REACT_APP_NAME}/assets/correo.png`} preview={false}/>
+                        <Checkbox checked={type=="Whatsapp" ||  type=="Ambos"} onChange={(values)=>{values.target.checked?SetType("Whatsapp"):SetType("")}} style={{marginLeft:"5px",marginTop:"20px"}}>Whatsapp</Checkbox><Image width={15} src={`${process.env.REACT_APP_NAME}/assets/whats.png`} preview={false}/>
+                        <Checkbox checked={type=="Ambos"} onChange={(values)=>{values.target.checked?SetType("Ambos"):SetType("")}} style={{marginLeft:"10px",marginTop:"20px"}}>Ambos</Checkbox><Image width={20} src={`${process.env.REACT_APP_NAME}/assets/all.png`} preview={false}/>
                     </Col>
                     <Col sm={12}>
                     <SwitchInput style={{marginLeft:"100px",marginTop:"10px"}}

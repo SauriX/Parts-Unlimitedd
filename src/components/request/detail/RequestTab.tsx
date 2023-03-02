@@ -50,10 +50,13 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     studyUpdate,
     loadingTabContent,
     allStudies,
+    tags,
     getStudies,
     getPayments,
+    getTags,
     updateGeneral,
     updateStudies,
+    updateTags,
     cancelRequest,
     studyFilter,
     totals,
@@ -72,7 +75,8 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     if (
       currentKey === "general" ||
       currentKey === "studies" ||
-      currentKey === "request"
+      currentKey === "request" ||
+      currentKey === "print"
     ) {
       submit(true);
     }
@@ -131,13 +135,24 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     } else if (currentKey === "studies") {
       const ok = await updateStudies(studyUpdate, autoSave);
       if (!ok) {
-        setCurrentKey("studies");
         return;
       }
     } else if (currentKey === "request") {
       const ok = await updateStudies(studyUpdate, autoSave);
       if (!ok) {
         setCurrentKey("request");
+        return;
+      }
+    }
+    if (currentKey === "print" || currentKey === "studies") {
+      const ok = await updateTags(
+        request!.expedienteId,
+        request!.solicitudId!,
+        tags,
+        autoSave
+      );
+      if (!ok) {
+        setCurrentKey("print");
         return;
       }
     }
@@ -171,12 +186,13 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     const readData = async () => {
       if (request) {
         await getStudies(request.expedienteId, request.solicitudId!);
-        await getPayments(request.expedienteId, request.solicitudId!);
+        getPayments(request.expedienteId, request.solicitudId!);
+        getTags(request.expedienteId, request.solicitudId!);
       }
     };
 
     readData();
-  }, [getStudies, getPayments, request]);
+  }, [getStudies, getPayments, request, getTags]);
 
   const operations = (
     <Space>

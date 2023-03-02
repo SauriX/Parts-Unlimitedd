@@ -188,7 +188,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
   };
 
   return (
-    <Spin spinning={loading} tip={"Guardando"}>
+    <Spin spinning={loading} tip={"Cargando"}>
       <Row gutter={[24, 12]}>
         {!readonly && (
           <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
@@ -339,7 +339,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
                       </Button>
                     </Upload>
                   </Col>
-                  {id && (
+                  {id && values.factura.claveKey && (
                     <Col span={12}>
                       <Tag color="green">{values.factura.claveKey}</Tag>
                     </Col>
@@ -367,7 +367,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
                       </Button>
                     </Upload>
                   </Col>
-                  {id && (
+                  {id && values.factura.claveCer && (
                     <Col span={12}>
                       <Tag color="green">{values.factura.claveCer}</Tag>
                     </Col>
@@ -510,7 +510,6 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
               onChange={(value) => {
                 onChangeBranch(value);
               }}
-              required
               readonly={readonly}
             />
           </Col>

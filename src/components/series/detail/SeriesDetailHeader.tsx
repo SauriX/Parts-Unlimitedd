@@ -6,7 +6,11 @@ import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import GoBackIcon from "../../../app/common/icons/GoBackIcon";
 import { useStore } from "../../../app/stores/store";
 
-const SeriesDetailHeader = () => {
+type SeriesDetailHeaderProps = {
+  tipoSerie: string;
+};
+
+const SeriesDetailHeader = ({ tipoSerie }: SeriesDetailHeaderProps) => {
   const { seriesStore } = useStore();
   const { seriesType, setSeriesType } = seriesStore;
 
@@ -23,9 +27,9 @@ const SeriesDetailHeader = () => {
       title={
         <HeaderTitle
           title={
-            seriesType === 1 ? "Catálogo de Facturas" : "Catálogo de Recibos"
+            tipoSerie === "1" ? "Catálogo de Facturas" : "Catálogo de Recibos"
           }
-          image={seriesType === 1 ? "cuenta" : "recibo"}
+          image={tipoSerie === "1" ? "cuenta" : "recibo"}
         />
       }
       className="header-container"

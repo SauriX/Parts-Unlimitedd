@@ -52,7 +52,7 @@ const Check= (  {
                                         width={50}
                                         height={50}
                                         src="origen"
-                                        fallback={`/${process.env.REACT_APP_NAME}/admin/assets/check.png`}
+                                        fallback={`${process.env.REACT_APP_NAME}/assets/check.png`}
                                         style={{marginLeft:"400%"}}
                                 />
                                 <br />

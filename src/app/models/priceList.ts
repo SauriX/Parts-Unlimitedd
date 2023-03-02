@@ -2,6 +2,7 @@ import React from "react";
 import { IIndicationList } from "./indication";
 import { IPackEstudioList } from "./packet";
 import { IParameterList } from "./parameter";
+import { IStudyTag } from "./study";
 
 export interface IPriceListList {
   id: number | string;
@@ -78,8 +79,8 @@ export interface IPriceListEstudioList {
   descuenNum?: number;
   precioFinal?: number;
   pack?: IPackEstudioList[];
-  form?:React.ReactNode
-  check?:React.ReactNode
+  form?: React.ReactNode;
+  check?: React.ReactNode;
 }
 
 export interface IPriceListInfoFilter {
@@ -114,6 +115,10 @@ export interface IPriceListInfoStudy {
   promociones: IPriceListInfoPromo[];
   parametros: IParameterList[];
   indicaciones: IIndicationList[];
+  destinoTipo: number;
+  destinoId: string;
+  destino: string;
+  etiquetas: IStudyTag[];
 }
 
 export interface IPriceListInfoPack {

@@ -1,4 +1,4 @@
-import { Button, Col, Row, Segmented } from "antd";
+import { Button, Col, Dropdown, Row, Segmented, Space } from "antd";
 import React, { useEffect, useState } from "react";
 import {
   TagsOutlined,
@@ -12,6 +12,7 @@ import RequestPrintConsent from "./print/RequestPrintConsent";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../../../app/stores/store";
 import { catalog } from "../../../../app/util/catalogs";
+import { DownOutlined } from "@ant-design/icons";
 
 const segmentOptions = [
   {
@@ -28,7 +29,7 @@ const segmentOptions = [
 
 const RequestPrint = () => {
   const { requestStore } = useStore();
-  const { allStudies } = requestStore;
+  const { allStudies, distinctTags, addTag } = requestStore;
 
   const [tabs, setTabs] = useState(segmentOptions);
   const [view, setView] = useState<"tags" | "order" | "format">("tags");
@@ -62,9 +63,33 @@ const RequestPrint = () => {
 
   return (
     <Row gutter={[12, 12]}>
-      <Col span={24}>
-        <Segmented options={tabs} onChange={onChange} />
+      <Col span={12}>
+        <Segmented size="small" options={tabs} onChange={onChange} />
       </Col>
+      {view === "tags" && (
+        <Col span={12} style={{ textAlign: "right" }}>
+          <Dropdown
+            placement="bottomRight"
+            menu={{
+              items: distinctTags.map((x) => ({
+                key: x.etiquetaId,
+                label: x.claveEtiqueta + " " + x.nombreEtiqueta,
+              })),
+              onClick: ({ key }) =>
+                addTag(
+                  distinctTags.find((x) => x.etiquetaId.toString() === key)!
+                ),
+            }}
+          >
+            <Button type="primary">
+              <Space>
+                Agregar etiqueta
+                <DownOutlined />
+              </Space>
+            </Button>
+          </Dropdown>
+        </Col>
+      )}
       <Col span={24}>
         {view === "tags" ? (
           <RequestPrintTag />

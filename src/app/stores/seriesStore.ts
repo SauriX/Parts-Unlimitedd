@@ -100,6 +100,18 @@ export default class SeriesStore {
     }
   };
 
+  getSeries = async(branchId: string) => {
+    try {
+      this.loading = true;
+      const serie = await Series.getSeries(branchId);
+      return serie;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    } finally {
+      this.loading = false;
+    }
+  };
+
   createInvoice = async (serie: FormData) => {
     try {
       await Series.createInvoice(serie);

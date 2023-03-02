@@ -315,7 +315,7 @@ import End from "./alerts/end";
                                         width={50}
                                         height={50}
                                         src="origen"
-                                        fallback={`/${process.env.REACT_APP_NAME}/admin/assets/origen.png`}
+                                        fallback={`${process.env.REACT_APP_NAME}/assets/origen.png`}
                                         style={{marginLeft:"0%"}}
                                 />
                             </Col>
@@ -356,7 +356,7 @@ import End from "./alerts/end";
                                         width={50}
                                         height={50}
                                         src="origen"
-                                        fallback={`/${process.env.REACT_APP_NAME}/admin/assets/destino.png`}
+                                        fallback={`${process.env.REACT_APP_NAME}/assets/destino.png`}
                                         style={{marginLeft:"0%"}}
                                 />
                             </Col>
@@ -402,7 +402,7 @@ import End from "./alerts/end";
                                         width={50}
                                         height={50}
                                         src="origen"
-                                        fallback={`/${process.env.REACT_APP_NAME}/admin/assets/danger.png`}
+                                        fallback={`${process.env.REACT_APP_NAME}/assets/danger.png`}
                                         style={{marginLeft:"290%"}}
                                 />
                                 <br />

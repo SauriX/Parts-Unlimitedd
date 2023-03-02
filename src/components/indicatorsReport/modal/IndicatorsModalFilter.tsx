@@ -16,7 +16,6 @@ import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { Fragment, useEffect, useState } from "react";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
-import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import {
   IModalIndicatorsFilter,
@@ -26,7 +25,6 @@ import { IOptions } from "../../../app/models/shared";
 import { useStore } from "../../../app/stores/store";
 import {
   formItemLayout,
-  getBase64,
   objectToFormData,
   uploadFakeRequest,
 } from "../../../app/util/utils";
@@ -54,6 +52,7 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
     getServicesCost: getServicesCostsByFilter,
     saveFile,
     setModalFilter,
+    setServicesCost,
     exportServiceListExample,
   } = indicatorsStore;
   const { closeModal } = modalStore;
@@ -192,6 +191,7 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
           <Col span={10}>
             <DateRangeInput
               formProps={{ label: "Fecha", name: "fecha" }}
+              pickerType="month"
               required={true}
               disableAfterDates
             />

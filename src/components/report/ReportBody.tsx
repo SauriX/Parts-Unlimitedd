@@ -60,7 +60,6 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
       setImage(data.image);
       setHasFooterRow(data.hasFooterRow);
       setSummary(data.summary);
-      console.log(getInputs(currentReport));
     } else {
       setInputs([]);
       setTitle("");
@@ -74,7 +73,6 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
     if (currentReport) {
       setColumns(getColumns(currentReport, searchState, setSearchState));
       setExpandable(getExpandableConfig(currentReport));
-      console.log(currentReport);
     } else {
       setColumns([]);
       setExpandable(undefined);

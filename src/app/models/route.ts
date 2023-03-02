@@ -11,7 +11,7 @@ export interface IRouteForm {
     id: string,
     clave: string,
     nombre: string,
-    sucursalOrigenId: string,
+    sucursalOrigenId?: string,
     sucursalDestinoId?:	string,
     maquiladorId?:	string|number,
     requierePaqueteria: boolean,
@@ -61,7 +61,7 @@ export class RouteFormValues implements IRouteForm {
     cantidadDescuento = 0;
     cantidad = 0;
     activo = true;
-    sucursalOrigenId = "";
+    sucursalOrigenId = undefined;
     sucursalDestinoId = undefined;
     maquiladorId = undefined;
     requierePaqueteria = false;

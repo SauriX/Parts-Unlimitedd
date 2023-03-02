@@ -31,6 +31,7 @@ export interface IParameterList {
   editable: boolean;
   index?: number;
   tipoValores?: ItipoValorForm[];
+  tipo:string;
 }
 
 export interface IParameterValueListDto {

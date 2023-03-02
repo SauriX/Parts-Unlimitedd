@@ -10,6 +10,7 @@ export interface ISeriesList {
   activo: boolean;
   cfdi: boolean;
   año: string;
+  relacion: boolean;
 }
 
 export interface ITicketList {
@@ -77,7 +78,7 @@ export interface ISeriesExpedition {
   estado: string;
   pais: string;
   telefono: string;
-  sucursalId: string;
+  sucursalId?: string;
 }
 
 export interface ISeriesFilter {

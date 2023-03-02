@@ -40,7 +40,7 @@ const SeriesDetail = () => {
 
   return (
     <Fragment>
-      <SeriesDetailHeader />
+      <SeriesDetailHeader tipoSerie={tipoSerie!} />
       <Divider className="header-divider" />
       <SeriesForm id={Number(id)} tipoSerie={Number(tipoSerie)} />
     </Fragment>

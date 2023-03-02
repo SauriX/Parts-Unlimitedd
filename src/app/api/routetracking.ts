@@ -1,12 +1,12 @@
 import { IBranchCity, IBranchForm, IBranchInfo } from "../models/branch";
 import { ISearchPending,IRecibe } from "../models/pendingRecive";
-import { IRouteList, SearchTracking } from "../models/routeTracking";
+import { IRouteTrackingList, SearchTracking } from "../models/routeTracking";
 import { IUpdate } from "../models/sampling";
 import requests from "./agent";
 
 const RouteTracking = {
   access: (): Promise<void> => requests.get("/user/scopes"),
-    getAll: (search: SearchTracking): Promise<IRouteList[]> => requests.post(`RouteTracking/all`,search),
+    getAll: (search: SearchTracking): Promise<IRouteTrackingList[]> => requests.post(`RouteTracking/all`,search),
     update: (update: IUpdate[]): Promise<void> => requests.put("RouteTracking", update),
     exportForm: (id: string): Promise<void> =>
     requests.print(`RouteTracking/exportOrder/${id}`,),

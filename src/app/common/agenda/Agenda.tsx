@@ -3,7 +3,13 @@ import { useState, useEffect } from "react";
 import AgendaBody from "./AgendaBody";
 import AgendaDatePicker from "./AgendaDatePicker";
 import AgendaHeader from "./AgendaHeader";
-import { IAgenda, IAgendaColumn, Days, getTimeHours, getWeekDates } from "./utils";
+import {
+  IAgenda,
+  IAgendaColumn,
+  Days,
+  getTimeHours,
+  getWeekDates,
+} from "./utils";
 import "./agenda.less";
 
 type AgendaProps<T extends IAgenda> = {
@@ -17,16 +23,21 @@ type AgendaProps<T extends IAgenda> = {
   calendarHeight?: number | string;
   defaultType?: "date" | "week";
   timeFormat?: "HH:mm" | "hh:mm a";
-  showDatePicker?:boolean;
-  type?:"date" | "week";
+  showDatePicker?: boolean;
+  type?: "date" | "week";
   render: (event?: T) => React.ReactNode;
   renderDate?: (date: moment.Moment, column?: IAgendaColumn) => React.ReactNode;
-  renderHeader?: (date: moment.Moment, column?: IAgendaColumn) => React.ReactNode;
+  renderHeader?: (
+    date: moment.Moment,
+    column?: IAgendaColumn
+  ) => React.ReactNode;
   onTypeChange?: (type: "date" | "week") => void;
   onClick?: (date: moment.Moment, event?: T, column?: IAgendaColumn) => void;
-  onDropEvent?: (date: moment.Moment, event?: T, column?: IAgendaColumn) => void;
-  
-  
+  onDropEvent?: (
+    date: moment.Moment,
+    event?: T,
+    column?: IAgendaColumn
+  ) => void;
 };
 
 const Agenda = <T extends IAgenda>({
@@ -40,8 +51,8 @@ const Agenda = <T extends IAgenda>({
   calendarHeight,
   defaultType,
   timeFormat,
-  showDatePicker=true,
-  type="date",
+  showDatePicker = true,
+  type = "date",
   render,
   renderDate,
   renderHeader,
@@ -51,7 +62,9 @@ const Agenda = <T extends IAgenda>({
 }: AgendaProps<T>) => {
   const timeHours = getTimeHours(interval, startTime, endTime);
 
-  const [calendarType, setCalendarType] = useState<"week" | "date">(defaultType ?? "date");
+  const [calendarType, setCalendarType] = useState<"week" | "date">(
+    defaultType ?? "date"
+  );
   const [selectedDate, setSelectedDate] = useState<moment.Moment>(moment());
   const [selectedDates, setSelectedDates] = useState<moment.Moment[]>([]);
 
@@ -64,25 +77,30 @@ const Agenda = <T extends IAgenda>({
     setSelectedDates(dates);
   }, [calendarType, excludeDays, selectedDate]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setCalendarType(type);
-  },[type]);
+  }, [type]);
   if (selectedDates.length === 0) {
     return null;
   }
 
   return (
     <div style={{ display: "flex", flexDirection: "row", alignItems: "start" }}>
-{  showDatePicker&&    <AgendaDatePicker
-        calendarType={calendarType}
-        excludeDays={excludeDays ?? []}
-        selectedDate={selectedDate}
-        selectedDates={selectedDates}
-        setCalendarType={setCalendarType}
-        setSelectedDate={setSelectedDate}
-        onTypeChange={onTypeChange}
-      />}
-      <div className="agenda-table" style={{ height: calendarHeight, overflow: "auto" }}>
+      {showDatePicker && (
+        <AgendaDatePicker
+          calendarType={calendarType}
+          excludeDays={excludeDays ?? []}
+          selectedDate={selectedDate}
+          selectedDates={selectedDates}
+          setCalendarType={setCalendarType}
+          setSelectedDate={setSelectedDate}
+          onTypeChange={onTypeChange}
+        />
+      )}
+      <div
+        className="agenda-table"
+        style={{ height: calendarHeight, overflow: "auto" }}
+      >
         <table>
           <AgendaHeader
             columns={columns}

@@ -8,8 +8,10 @@ import {
   ISamplesCost,
   IServicesCost,
   IServicesInvoice,
+  IUpdateService,
   ModalIndicatorFilterValues,
   ServiceInvoice,
+  ServicesCost,
 } from "../models/indicators";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -27,11 +29,16 @@ export default class IndicatorStore {
   modalFilter: IModalIndicatorsFilter = new ModalIndicatorFilterValues();
   data: IReportIndicators[] = [];
   samples: ISamplesCost[] = [];
+  servicesCost: IServicesCost[] = [];
   services: IServicesInvoice = new ServiceInvoice();
   loadingReport: boolean = false;
 
   clearScopes = () => {
     this.scopes = undefined;
+  };
+
+  setServicesCost = (servicesCost: IServicesCost[]) => {
+    this.servicesCost = servicesCost;
   };
 
   setFilter = (filter: IReportIndicatorsFilter) => {
@@ -40,6 +47,10 @@ export default class IndicatorStore {
 
   setModalFilter = (modalFilter: IModalIndicatorsFilter) => {
     this.modalFilter = modalFilter;
+  };
+
+  deleteServiceCost = async (id: string) => {
+    this.servicesCost = this.servicesCost.filter((x) => x.identificador !== id);
   };
 
   access = async () => {
@@ -117,15 +128,17 @@ export default class IndicatorStore {
     }
   };
 
-  updateService = async (services: IServicesCost) => {
+  updateService = async (updateService: IUpdateService) => {
     try {
-      await Indicators.updateServiceCost(services);
+      this.loadingReport = true;
+      await Indicators.updateServiceCost(updateService);
       alerts.success(messages.created);
-
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
       return false;
+    } finally {
+      this.loadingReport = false;
     }
   };
 
@@ -144,6 +157,7 @@ export default class IndicatorStore {
   getServicesCost = async (filter: IModalIndicatorsFilter) => {
     try {
       this.loadingReport = true;
+      this.services = new ServiceInvoice();
       const services = await Indicators.getServicesCost(filter);
       this.services = services;
     } catch (error: any) {

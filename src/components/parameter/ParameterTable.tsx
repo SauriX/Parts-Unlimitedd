@@ -43,8 +43,7 @@ const ParameterTable = () => {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "10%",
-        minWidth: 150,
+        width: "20%",
         windowSize: windowWidth,
       }),
       render: (value, parameter) => (
@@ -67,8 +66,15 @@ const ParameterTable = () => {
       ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
+        width: "20%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("tipo", "Tipo", {
+        searchState,
+        setSearchState,
         width: "15%",
-        minWidth: 150,
         windowSize: windowWidth,
       }),
     },
@@ -78,27 +84,6 @@ const ParameterTable = () => {
         searchState,
         setSearchState,
         width: "15%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-    },
-    //area
-    {
-      ...getDefaultColumnProps("area", "Área", {
-        searchState,
-        setSearchState,
-        width: "20%",
-        minWidth: 150,
-        windowSize: windowWidth,
-      }),
-    },
-    //departamento
-    {
-      ...getDefaultColumnProps("departamento", "Departamento", {
-        searchState,
-        setSearchState,
-        width: "15%",
-        minWidth: 150,
         windowSize: windowWidth,
       }),
     },
@@ -107,7 +92,7 @@ const ParameterTable = () => {
       dataIndex: "activo",
       title: "Activo",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: "10%",
       render: (value) => (value ? "Sí" : "No"),
     },
     {
@@ -115,7 +100,7 @@ const ParameterTable = () => {
       dataIndex: "requerido",
       title: "Requerido",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: "10%",
       render: (value) => (value ? "Sí" : "No"),
     },
     //editar
@@ -124,7 +109,7 @@ const ParameterTable = () => {
       dataIndex: "id",
       title: "Editar",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: "10%",
       render: (value, parameter) => (
         <IconButton
           title="Editar parámetro"
