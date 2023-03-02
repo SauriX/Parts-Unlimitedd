@@ -126,7 +126,7 @@ const InvoiceCompanyDeliver = ({
         <Col span={9}>
           <Text>Seleccionar contacto de agenda</Text>
         </Col>
-        {tipo !== "request" && (
+        {tipo !== "request" && tipo !== "free" && (
           <Col>
             <Switch
               defaultChecked
@@ -150,7 +150,7 @@ const InvoiceCompanyDeliver = ({
         />
       </Row>
       <Row>
-        {isSelectedContacts && tipo !== "request" ? (
+        {isSelectedContacts && tipo !== "request" && tipo !== "free" ? (
           <Col span={24}>
             <Table
               rowKey={(record) => record.id}
@@ -323,7 +323,7 @@ const InvoiceCompanyDeliver = ({
             onClick={() => {
               let sendInvoiceData: IInvoiceDeliveryInfo = {
                 contactos:
-                  isSelectedContacts && tipo !== "request"
+                  isSelectedContacts && tipo !== "request" && tipo !== "free"
                     ? contactos
                         .filter((contacto: any) =>
                           selectedRowKeys?.includes(contacto.id)

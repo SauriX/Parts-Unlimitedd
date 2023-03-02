@@ -41,7 +41,8 @@ const InvoiceCompanyTable = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>();
   const [selectedRequests, setSelectedRequests] = useState<any[]>();
   const [isSameCommpany, setIsSameCompany] = useState<boolean>(false);
-  const { invoiceCompanyStore } = useStore();
+  const { invoiceCompanyStore, optionStore } = useStore();
+  const { areas, getareaOptions } = optionStore;
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
   const [openRows, setOpenRows] = useState<boolean>(false);
   const {
@@ -179,6 +180,9 @@ const InvoiceCompanyTable = () => {
     },
   ];
   useEffect(() => {
+    getareaOptions(0);
+  }, []);
+  useEffect(() => {
     setExpandedRowKeys(invoices.solicitudes?.map((x: any) => x.solicitudId));
     setOpenRows(true);
   }, [invoices]);
@@ -217,7 +221,12 @@ const InvoiceCompanyTable = () => {
 
     let requestsWithInvoiceCompany: any[] = [];
     selectedRows.forEach((request) => {
-      if (request.facturas.some((invoice: any) => invoice.tipo === tipo)) {
+      if (
+        request.facturas.some(
+          (invoice: any) =>
+            invoice.tipo === tipo && invoice.estatus.nombre !== "Cancelado"
+        )
+      ) {
         requestsWithInvoiceCompany.push(request);
       }
     });
@@ -301,8 +310,8 @@ const InvoiceCompanyTable = () => {
             //   );
             // }}
           >
-            <Row justify="center">
-              <Col span={8}>
+            <Row justify="end">
+              {/* <Col span={8}>
                 <Form.Item name="isInvoice" required>
                   <Row justify="center">
                     <Radio.Group>
@@ -322,7 +331,7 @@ const InvoiceCompanyTable = () => {
                 >
                   Generar
                 </Button>
-              </Col>
+              </Col> */}
               <Col span={2}>
                 <Button
                   type="primary"
@@ -363,6 +372,7 @@ const InvoiceCompanyTable = () => {
             return (
               <>
                 <InvoiceCompanyStudyTable
+                  areas={areas}
                   studies={data.estudios ?? []}
                   indice={index ?? 0}
                 />

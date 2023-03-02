@@ -44,7 +44,7 @@ const TextInput = ({
   onKeyUp,
   onChange,
   onPressEnter,
-autoFocus
+  autoFocus,
 }: // onChange,
 IProps) => {
   let ref = useRef<HTMLDivElement>(null);

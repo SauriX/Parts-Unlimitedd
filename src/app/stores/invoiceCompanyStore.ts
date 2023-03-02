@@ -5,6 +5,8 @@ import alerts from "../util/alerts";
 import { getErrors } from "../util/utils";
 import InvoiceCompany from "../api/invoiceCompany";
 import Company from "../api/company";
+import Invoice from "../api/invoice";
+import { IInvoicesFreeFilter } from "../models/Invoice";
 
 export class InvoiceCompanyStore {
   constructor() {
@@ -52,6 +54,18 @@ export class InvoiceCompanyStore {
       alerts.warning(getErrors(error));
     }
   };
+  invoicesFree: any[] = [];
+  getInvoicesFree = async (filter: IInvoicesFreeFilter) => {
+    try {
+      this.isLoading = true;
+      const result = await InvoiceCompany.getInvoicesFree(filter);
+      this.invoicesFree = result;
+      this.isLoading = false;
+    } catch (error: any) {
+      this.isLoading = false;
+      alerts.warning(getErrors(error));
+    }
+  };
 
   getCompanyById = async (id: string) => {
     try {
@@ -77,7 +91,7 @@ export class InvoiceCompanyStore {
   consecutiveBySerie: string = "";
   getConsecutive = async (serie: string) => {
     try {
-      const consecutiveSerie = await InvoiceCompany.getConsecutiveBySerie(
+      const consecutiveSerie = await Invoice.GetNextInvoiceSerieNumber(
         serie ?? this.serie
       );
       this.consecutiveBySerie = consecutiveSerie;
@@ -111,12 +125,21 @@ export class InvoiceCompanyStore {
     this.taxData = data;
   };
   nombreSeleccionado: string = "";
-  setNombre = (nombre: string) => {
+  setNombreSeleccionado = (nombre: string) => {
     this.nombreSeleccionado = nombre;
   };
   downloadPdf = async (facturapiId: string) => {
     try {
       const invoiceInfo = await InvoiceCompany.downloadPdf(facturapiId);
+      console.log("conse", invoiceInfo);
+      return invoiceInfo;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  downloadXML = async (facturapiId: string) => {
+    try {
+      const invoiceInfo = await InvoiceCompany.downloadXML(facturapiId);
       console.log("conse", invoiceInfo);
       return invoiceInfo;
     } catch (error: any) {

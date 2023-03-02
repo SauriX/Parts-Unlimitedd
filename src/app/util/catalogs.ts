@@ -16,6 +16,11 @@ export const catalogs: IOptionsCatalog[] = [
   { value: "sampleType", label: "Tipos de Muestra", type: "normal" },
   { value: "useOfCFDI", label: "Uso de CFDI", type: "description" },
   { value: "costofijo", label: "Serv. Costos Fijos", type: "costofijo" },
+  {
+    value: "invoiceconcepts",
+    label: "Conceptos de facturas",
+    type: "description",
+  },
 ];
 
 export const paymentForms = {
