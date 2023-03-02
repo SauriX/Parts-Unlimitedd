@@ -1124,8 +1124,9 @@ const PriceListForm: FC<PriceListFormProps> = ({
                 columns={
                   printing ? columnsEstudiosP.slice(0, 4) : columnsEstudiosP
                 }
-                pagination={false}
+                
                 dataSource={[...(values.table?.filter((x) => x.paqute) ?? [])]}
+                pagination={false}
                 scroll={{
                   y: "50vh",
                   x:

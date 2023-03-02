@@ -14,9 +14,10 @@ import "moment/locale/es-mx";
 
 moment.utc().local();
 
-var meses = "Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre".split(
-  "_"
-);
+var meses =
+  "Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre".split(
+    "_"
+  );
 var semanas = "Domingo_Lunes_Martes_Miércoles_Jueves_Viernes_Sábado".split("_");
 
 moment.updateLocale("es-mx", {
@@ -36,9 +37,17 @@ const themes = {
 };
 
 root.render(
-  <BrowserRouter basename={`${process.env.REACT_APP_NAME}/admin/`}>
+  <BrowserRouter
+    basename={`${(!process.env.REACT_APP_NAME
+      ? "/"
+      : process.env.REACT_APP_NAME)!.substring(1)}/`}
+  >
     <ThemeSwitcherProvider themeMap={themes} defaultTheme="light">
-      <ConfigProvider locale={es_ES} renderEmpty={() => <Empty />} componentSize="small">
+      <ConfigProvider
+        locale={es_ES}
+        renderEmpty={() => <Empty />}
+        componentSize="small"
+      >
         <StoreContext.Provider value={store}>
           <NavigateSetter />
           <App />

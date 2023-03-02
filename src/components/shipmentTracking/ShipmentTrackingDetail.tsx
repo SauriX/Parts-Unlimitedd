@@ -195,7 +195,7 @@ import { TrackingFormValues,IRouteTrackingList } from "../../app/models/routeTra
                                         width={50}
                                         height={50}
                                         src="origen"
-                                        fallback={`/${process.env.REACT_APP_NAME}/admin/assets/origen.png`}
+                                        fallback={`${process.env.REACT_APP_NAME}/assets/origen.png`}
                                         style={{marginLeft:"0%"}}
                                 />
                             </Col>
@@ -236,7 +236,7 @@ import { TrackingFormValues,IRouteTrackingList } from "../../app/models/routeTra
                                         width={50}
                                         height={50}
                                         src="origen"
-                                        fallback={`/${process.env.REACT_APP_NAME}/admin/assets/destino.png`}
+                                        fallback={`${process.env.REACT_APP_NAME}/assets/destino.png`}
                                         style={{marginLeft:"0%"}}
                                 />
                             </Col>

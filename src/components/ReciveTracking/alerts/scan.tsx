@@ -55,7 +55,7 @@ const Scan= ( {
                       width={50}
                       height={50}
                       src="origen"
-                      fallback={`/${process.env.REACT_APP_NAME}/admin/assets/scaner.png`}
+                      fallback={`${process.env.REACT_APP_NAME}/assets/scaner.png`}
                       style={{marginLeft:"400%"}}
               />
               <br />

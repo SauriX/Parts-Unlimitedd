@@ -11,7 +11,11 @@ export const getErrors = (error: any) => {
   try {
     let errors = messages.systemError;
     if (error?.data?.errors) {
-      errors = error.data.errors;
+      if (typeof error.data.errors === "object") {
+        errors = Object.values(error.data.errors).join(", ");
+      } else {
+        errors = error.data.errors;
+      }
     } else {
       errors = error.message || error.statusText;
     }

@@ -72,6 +72,15 @@ const ParameterTable = () => {
         windowSize: windowWidth,
       }),
     },
+    {
+      ...getDefaultColumnProps("tipo", "Tipo", {
+        searchState,
+        setSearchState,
+        width: "15%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
     //nombre corto
     {
       ...getDefaultColumnProps("nombreCorto", "Nombre corto", {
