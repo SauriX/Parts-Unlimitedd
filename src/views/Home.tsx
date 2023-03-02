@@ -203,15 +203,15 @@ const Home = () => {
       if (vista == 2) {
         envia = envia?.filter(
           (x) =>
-            Date.parse(moment(x.fecha).format("YYYY MM DD")) >
+            Date.parse(moment(x.entrega).format("YYYY MM DD")) >
               Date.parse(moment(primer).format("YYYY MM DD")) &&
-            Date.parse(moment(x.fecha).format("YYYY MM DD")) <
+            Date.parse(moment(x.entrega).format("YYYY MM DD")) <
               Date.parse(moment(final).format("YYYY MM DD"))
         );
       } else {
         envia = envia?.filter(
           (x) =>
-            moment(x.fecha).format("YYYY MM DD") ==
+            moment(x.entrega).format("YYYY MM DD") ==
             moment(moment.now()).format("YYYY MM DD")
         );
       }
