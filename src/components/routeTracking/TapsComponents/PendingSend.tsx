@@ -13,7 +13,7 @@ import {
   ISearch,
 } from "../../../app/common/table/utils";
 import {
-  IRouteList,
+  IRouteTrackingList,
   SearchTracking,
   TrackingFormValues,
 } from "../../../app/models/routeTracking";
@@ -69,7 +69,7 @@ const PendingSend = () => {
     searchedColumn: "",
   });
 
-  const columns: IColumns<IRouteList> = [
+  const columns: IColumns<IRouteTrackingList> = [
     {
       ...getDefaultColumnProps("seguimiento", "No. seguimiento", {
         searchState,
@@ -89,14 +89,14 @@ const PendingSend = () => {
       ),
     },
     {
-      ...getDefaultColumnProps("clave", "Clave muestra", {
+      ...getDefaultColumnProps("claveEtiqueta", "Clave muestra", {
         searchState,
         setSearchState,
         width: "10%",
       }),
     },
     {
-      ...getDefaultColumnProps("etiqueta", "Recipiente", {
+      ...getDefaultColumnProps("recipiente", "Recipiente", {
         searchState,
         setSearchState,
         width: "10%",
@@ -136,6 +136,7 @@ const PendingSend = () => {
         setSearchState,
         width: "10%",
       }),
+      render: (value, route) => value === 2 ? "Toma de Muestra" : "En ruta",
     },
     {
       ...getDefaultColumnProps("entrega", "Fecha de entrega", {
@@ -150,7 +151,7 @@ const PendingSend = () => {
       title: "Editar",
       align: "center",
       width: "10%",
-      render: (value) => (
+      render: (value, route) => route.seguimiento && (
         <IconButton
           title="Editar ruta"
           icon={<EditOutlined />}
@@ -162,6 +163,7 @@ const PendingSend = () => {
     },
   ];
   const onFinish = async (newValues: SearchTracking) => {
+    newValues.origen = profile?.sucursal!;
     const search = { ...searchrecive, ...newValues };
 
     setSearchRecive(search);
@@ -235,7 +237,7 @@ const PendingSend = () => {
       </div>
 
       <div style={{ marginTop: "2%" }}>
-        <Table<IRouteList>
+        <Table<IRouteTrackingList>
           loading={loadingRoutes}
           size="small"
           rowKey={(record) => record.id}

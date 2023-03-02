@@ -30,7 +30,7 @@ import {
   import { IStudyList } from "../../app/models/study";
   import views from "../../app/util/view";
 import {shipmentStudy, shipmenttracking} from "../../app/models/shipmentTracking";
-import { TrackingFormValues,IRouteList } from "../../app/models/routeTracking";
+import { TrackingFormValues,IRouteTrackingList } from "../../app/models/routeTracking";
 
   type StudyTableProps = {
     componentRef: React.MutableRefObject<any>;
@@ -43,7 +43,7 @@ import { TrackingFormValues,IRouteList } from "../../app/models/routeTracking";
     const [loading, setLoading] = useState(false);
     const [shipments,setShipments] = useState<shipmenttracking>();
     const [estudios,setEstudios] = useState<shipmentStudy[]>([]);
-    const [estudioslist,setEstudioslist] = useState<IRouteList[]>([]);
+    const [estudioslist,setEstudioslist] = useState<IRouteTrackingList[]>([]);
     let navigate = useNavigate();
     const { id } = useParams<UrlParams>();
     const { routeTrackingStore,shipmentTracking} = useStore();
@@ -69,7 +69,7 @@ import { TrackingFormValues,IRouteList } from "../../app/models/routeTracking";
         let estudiosrute =  await getAll(searchrecive);
 
         let pivote = estudiosrute![0];
-        let result:IRouteList[]=[];
+        let result:IRouteTrackingList[]=[];
         result.push(pivote);
         estudiosrute!.forEach(element => {
             if(element.seguimiento != pivote.seguimiento){

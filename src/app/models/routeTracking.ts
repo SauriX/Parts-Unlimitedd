@@ -7,11 +7,11 @@ export interface SearchTracking {
   buscar: string;
 }
 
-export interface IRouteList {
+export interface IRouteTrackingList {
   id: string;
   seguimiento: string;
-  clave: string;
-  etiqueta: string;
+  claveEtiqueta: string;
+  recipiente: string;
   cantidad: number;
   estudios: string;
   solicitud: string;
