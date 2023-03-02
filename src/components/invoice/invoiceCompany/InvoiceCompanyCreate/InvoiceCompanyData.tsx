@@ -1,7 +1,7 @@
-import { Button, Col, Descriptions, Form, Row, Typography } from "antd";
+import { Button, Col, Descriptions, Form, Row, Select, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import SelectInput from "../../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../../app/common/form/proposal/TextInput";
 import { useStore } from "../../../../app/stores/store";
@@ -60,6 +60,7 @@ const InvoiceCompanyData = ({
     getInvoiceSeriesOptions,
   } = optionStore;
   const [form] = Form.useForm();
+  const [tipoDescarga, setTipoDescarga] = useState<"pdf" | "xml">("pdf");
   useEffect(() => {
     getbankOptions();
     getpaymentMethodOptions();
@@ -132,6 +133,27 @@ const InvoiceCompanyData = ({
               </Button>
               {/* </Row>
                 <Row style={{ justifyContent: "center", paddingTop: 10 }}> */}
+              <Select
+                showArrow
+                placeholder="Descarga"
+                style={{ marginLeft: 10 }}
+                options={[
+                  {
+                    label: "PDF",
+                    value: "pdf",
+                  },
+                  {
+                    label: "XML",
+                    value: "xml",
+                  },
+                ]}
+                allowClear
+                defaultValue="pdf"
+                disabled={id === "new"}
+                onChange={(value: any) => {
+                  setTipoDescarga(value);
+                }}
+              ></Select>
               <Button
                 type="primary"
                 onClick={() => {

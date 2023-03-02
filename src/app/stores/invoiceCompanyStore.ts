@@ -5,6 +5,7 @@ import alerts from "../util/alerts";
 import { getErrors } from "../util/utils";
 import InvoiceCompany from "../api/invoiceCompany";
 import Company from "../api/company";
+import Invoice from "../api/invoice";
 import { IInvoicesFreeFilter } from "../models/Invoice";
 
 export class InvoiceCompanyStore {
@@ -90,7 +91,7 @@ export class InvoiceCompanyStore {
   consecutiveBySerie: string = "";
   getConsecutive = async (serie: string) => {
     try {
-      const consecutiveSerie = await InvoiceCompany.getConsecutiveBySerie(
+      const consecutiveSerie = await Invoice.GetNextInvoiceSerieNumber(
         serie ?? this.serie
       );
       this.consecutiveBySerie = consecutiveSerie;
@@ -130,6 +131,15 @@ export class InvoiceCompanyStore {
   downloadPdf = async (facturapiId: string) => {
     try {
       const invoiceInfo = await InvoiceCompany.downloadPdf(facturapiId);
+      console.log("conse", invoiceInfo);
+      return invoiceInfo;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  downloadXML = async (facturapiId: string) => {
+    try {
+      const invoiceInfo = await InvoiceCompany.downloadXML(facturapiId);
       console.log("conse", invoiceInfo);
       return invoiceInfo;
     } catch (error: any) {

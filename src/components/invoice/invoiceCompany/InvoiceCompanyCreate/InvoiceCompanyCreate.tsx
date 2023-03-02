@@ -1,4 +1,4 @@
-import { Col, Divider, Form, Row } from "antd";
+import { Col, Divider, Form, Row, Spin } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
@@ -23,7 +23,7 @@ type UrlParams = {
 
 const InvoiceCompanyCreate = () => {
   const navigate = useNavigate();
-  const { invoiceCompanyStore, optionStore } = useStore();
+  const { invoiceCompanyStore, optionStore, invoiceFreeStore } = useStore();
   const {
     getcfdiOptions,
     cfdiOptions,
@@ -47,6 +47,7 @@ const InvoiceCompanyCreate = () => {
     invoice,
     selectedRequests,
   } = invoiceCompanyStore;
+  const { isLoadingFree } = invoiceFreeStore;
   const [company, setCompany] = useState<ICompanyForm>();
   const [totalFinalEstudios, setTotalFinalEstudios] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
@@ -54,9 +55,12 @@ const InvoiceCompanyCreate = () => {
   const [estudios, setEstudios] = useState<any[]>([]);
   const [currentPaymentMethod, setCurrenPaymentMethod] = useState<any>();
   const [selectRequests, setSelectedRequests] = useState<any>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   let { id, tipo } = useParams<UrlParams>();
-
+  useEffect(() => {
+    setIsLoading(isLoadingFree);
+  }, [isLoadingFree]);
   useEffect(() => {
     getcfdiOptions();
     getpaymentMethodOptions();
@@ -138,6 +142,7 @@ const InvoiceCompanyCreate = () => {
       )?.label;
       const invoiceData = {
         tipoFactura: tipo,
+        origenFactura: tipo,
         companyId: selectedRows[0]?.companiaId,
         solicitudesId: selectedRows.map((row: any) => row.solicitudId),
         detalles: detailInvoice,
@@ -208,6 +213,7 @@ const InvoiceCompanyCreate = () => {
 
       const invoiceData = {
         tipoFactura: tipo,
+        origenFactura: tipo,
         companyId: selectedRows[0]?.companiaId,
         nombre: selectedRequests[0].nombre,
         solicitudesId: selectedRows.map((row: any) => row.solicitudId),
@@ -255,52 +261,8 @@ const InvoiceCompanyCreate = () => {
         history.push(`/invoice/${tipo}/${invoiceInfo?.facturapiId}`);
       }
     }
-    if (tipo === "free") {
-      const invoiceData = {
-        tipoFactura: tipo,
-        companyId: selectedRows[0]?.companiaId,
-        nombre: selectedRequests[0].nombre,
-        solicitudesId: selectedRows.map((row: any) => row.solicitudId),
-        detalles: detailInvoice,
-        taxDataId: taxData.id,
-        expedienteId: nombreSeleccionado,
-        formaPagoId: "",
-        formaPago: formDataValues?.formaDePagoId,
-        numeroCuenta: "",
-        serie: formDataValues.serieCFDI,
-        // usoCFDI: use?.label,
-        usoCFDI: "",
-        tipoDesgloce: configurationInvoice,
-        cantidadTotal: total,
-        subtotal: total - (total * 16) / 100,
-        IVA: (total * 16) / 100,
-        consecutivo: +consecutiveBySerie,
-        usuario: "",
-        fecha: "",
-        hora: "",
-
-        tipoPago: "PUE",
-        tipo: "PUE",
-        claveExterna: company?.clave,
-        cliente: {
-          razonSocial: taxData?.razonSocial,
-          RFC: taxData?.rfc,
-          regimenFiscal: taxData?.regimenFiscal,
-          correo: taxData?.correo,
-          telefono: "1234567890", // => tomarlo de expdientes
-          codigoPostal: taxData?.cp,
-          calle: taxData?.calle,
-          // numeroExterior: taxData?.numero,
-          // numeroInterior: "",
-          colonia: taxData?.colonian,
-          ciudad: taxData?.municipio,
-          municipio: taxData?.municipio,
-          estado: taxData?.estado,
-          pais: "MEX",
-        },
-      };
-    }
   };
+
   const getEstatusFactura = () => {
     if (!!selectRequests) {
       if (id !== "new") {
@@ -318,30 +280,31 @@ const InvoiceCompanyCreate = () => {
   return (
     <>
       <InvoiceCompanyHeader handleDownload={() => {}} />
-      <Divider />
-      {tipo !== "free" ? (
-        <InvoiceCompanyInfo
-          company={company}
-          facturapiId={getFacturapi()}
-          estatusFactura={getEstatusFactura()}
-        />
-      ) : (
-        <InvoiceFreeInfo />
-      )}
-      {tipo !== "free" ? (
-        <InvoiceCompanyData
-          company={company}
-          totalEstudios={total}
-          totalFinal={totalFinalEstudios}
-          createInvoice={createInvoice}
-          invoice={id!}
-          estatusFactura={getEstatusFactura()}
-          facturapiId={getFacturapi()}
-        />
-      ) : (
-        <InvoiceFreeData />
-      )}
-      {/* {tipo !== "free" ? (
+      <Spin spinning={isLoading}>
+        <Divider />
+        {tipo !== "free" ? (
+          <InvoiceCompanyInfo
+            company={company}
+            facturapiId={getFacturapi()}
+            estatusFactura={getEstatusFactura()}
+          />
+        ) : (
+          <InvoiceFreeInfo />
+        )}
+        {tipo !== "free" ? (
+          <InvoiceCompanyData
+            company={company}
+            totalEstudios={total}
+            totalFinal={totalFinalEstudios}
+            createInvoice={createInvoice}
+            invoice={id!}
+            estatusFactura={getEstatusFactura()}
+            facturapiId={getFacturapi()}
+          />
+        ) : (
+          <InvoiceFreeData />
+        )}
+        {/* {tipo !== "free" ? (
         <InvoiceCompanyDetail
           estudios={estudios}
           totalEstudios={totalFinalEstudios}
@@ -350,14 +313,15 @@ const InvoiceCompanyCreate = () => {
         <InvoiceFreeDetail />
       )} */}
 
-      {/* <InvoiceCompanyDetail
+        {/* <InvoiceCompanyDetail
         estudios={estudios}
         totalEstudios={totalFinalEstudios}
       /> */}
-      <InvoiceFreeDetail
-        estudios={estudios}
-        totalEstudios={totalFinalEstudios}
-      />
+        <InvoiceFreeDetail
+          estudios={estudios}
+          totalEstudios={totalFinalEstudios}
+        />
+      </Spin>
     </>
   );
 };

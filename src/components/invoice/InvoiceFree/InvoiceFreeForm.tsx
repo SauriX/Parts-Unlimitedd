@@ -1,6 +1,7 @@
 import { Button, Checkbox, Col, Form, Row } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
@@ -25,6 +26,10 @@ const InvoiceFreeForm = () => {
     getSucursalesOptions();
     getCompanyOptions();
   }, []);
+  useEffect(() => {
+    form.resetFields();
+    form.submit();
+  }, []);
   const onFinish = (newFormValues: IInvoicesFreeFilter) => {
     console.log("FORMULARIO", toJS(newFormValues));
     console.log("CHECKED VALUES", toJS(checkedValues));
@@ -43,6 +48,7 @@ const InvoiceFreeForm = () => {
           name="invoiceFree"
           onFinish={onFinish}
           size="small"
+          initialValues={{ fechas: [moment(), moment()] }}
         >
           <Row justify="center" align="middle">
             <Col span={8}>

@@ -78,7 +78,13 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
                   {
                     request?.facturas.find(
                       (invoice: any) => invoice.tipo === tipo
-                    )?.facturapiId
+                    )?.serie
+                  }
+                  {"-"}
+                  {
+                    request?.facturas.find(
+                      (invoice: any) => invoice.tipo === tipo
+                    )?.consecutivo
                   }
                 </div>
               );

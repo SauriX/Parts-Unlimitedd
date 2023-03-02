@@ -202,6 +202,23 @@ export default class OptionStore {
     }
   };
 
+  invoiceConceptsOptions: IOptions[] = [];
+
+  getInvoiceConceptsOptions = async () => {
+    try {
+      const invoiceConcepts = await Catalog.getActive<ICatalogDescriptionList>(
+        "invoiceconcepts"
+      );
+      console.log(invoiceConcepts);
+      this.invoiceConceptsOptions = invoiceConcepts.map((x) => ({
+        value: x.descripcion,
+        label: x.nombre,
+      }));
+    } catch (error) {
+      this.bankOptions = [];
+    }
+  };
+
   cfdiOptions: IOptions[] = [];
 
   getcfdiOptions = async () => {

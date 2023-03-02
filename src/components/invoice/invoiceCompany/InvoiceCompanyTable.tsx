@@ -41,7 +41,8 @@ const InvoiceCompanyTable = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>();
   const [selectedRequests, setSelectedRequests] = useState<any[]>();
   const [isSameCommpany, setIsSameCompany] = useState<boolean>(false);
-  const { invoiceCompanyStore } = useStore();
+  const { invoiceCompanyStore, optionStore } = useStore();
+  const { areas, getareaOptions } = optionStore;
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
   const [openRows, setOpenRows] = useState<boolean>(false);
   const {
@@ -178,6 +179,9 @@ const InvoiceCompanyTable = () => {
       }),
     },
   ];
+  useEffect(() => {
+    getareaOptions(0);
+  }, []);
   useEffect(() => {
     setExpandedRowKeys(invoices.solicitudes?.map((x: any) => x.solicitudId));
     setOpenRows(true);
@@ -368,6 +372,7 @@ const InvoiceCompanyTable = () => {
             return (
               <>
                 <InvoiceCompanyStudyTable
+                  areas={areas}
                   studies={data.estudios ?? []}
                   indice={index ?? 0}
                 />

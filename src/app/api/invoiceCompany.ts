@@ -26,6 +26,8 @@ const InvoiceCompany = {
     requests.post(`invoiceCompany/cancel`, cancelInvoiceData),
   downloadPdf: (facturapiId: string): Promise<any> =>
     requests.download(`invoiceCompany/download/pdf/${facturapiId}`),
+  downloadXML: (facturapiId: string): Promise<any> =>
+    requests.download(`invoiceCompany/print/xml/${facturapiId}`),
   printPdf: (facturapiId: string): Promise<any> =>
     requests.print(`invoiceCompany/print/pdf/${facturapiId}`),
   printReceipt: (receiptCompanyData: IReceiptData): Promise<any> =>

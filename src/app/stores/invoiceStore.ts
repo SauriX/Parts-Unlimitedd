@@ -11,7 +11,14 @@ export default class InvoiceStore {
   constructor() {
     makeAutoObservable(this);
   }
-
+  GetNextInvoiceSerieNumber = async (serie: string) => {
+    try {
+      const consecutivo = await Invoice.GetNextInvoiceSerieNumber(serie);
+      return consecutivo;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
   printXML = async (invoiceId: string) => {
     try {
       await Invoice.printXML(invoiceId);

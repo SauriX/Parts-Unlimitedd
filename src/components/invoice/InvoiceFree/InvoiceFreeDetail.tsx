@@ -33,6 +33,7 @@ import { IOptions } from "../../../app/models/shared";
 import { v4 as uuid } from "uuid";
 import { toJS } from "mobx";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
+import { ICatalogDescriptionForm } from "../../../app/models/catalog";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -71,8 +72,25 @@ const InvoiceFreeDetail = ({
   const cantidad = Form.useWatch("cantidad", form);
   const iva = Form.useWatch("iva", form);
 
-  const { invoiceCompanyStore, profileStore, requestStore } = useStore();
+  const {
+    branchStore,
+    invoiceCompanyStore,
+    profileStore,
+    requestStore,
+    invoiceFreeStore,
+    optionStore,
+    catalogStore,
+  } = useStore();
+  const { getById } = branchStore;
+  const { create } = catalogStore;
+  const {
+    BranchOptions,
+    getBranchOptions,
+    invoiceConceptsOptions,
+    getInvoiceConceptsOptions,
+  } = optionStore;
   const { profile } = profileStore;
+  const { setTotalDetailInvoiceFree, receptor } = invoiceFreeStore;
   const {
     serie,
     consecutiveBySerie,
@@ -90,6 +108,10 @@ const InvoiceFreeDetail = ({
   const [currentTime, setCurrentTime] = useState<string>();
   let timer: any = null;
   useEffect(() => {
+    getInvoiceConceptsOptions();
+    getBranchOptions();
+  }, []);
+  useEffect(() => {
     timer = window.setInterval(() => {
       setCurrentTime(moment().format("hh:mm:ss a"));
     }, 1000);
@@ -106,6 +128,7 @@ const InvoiceFreeDetail = ({
   useEffect(() => {
     const total = detailData.reduce((acc, obj) => acc + obj.importe, 0);
     setTotalFinal(total);
+    setTotalDetailInvoiceFree(total);
     setDetailInvoice(detailData);
   }, [detailData]);
   useEffect(() => {
@@ -203,7 +226,7 @@ const InvoiceFreeDetail = ({
       key: "cup",
       // description: "COPAGO TOTAL [total]",
       value: "COPAGO TOTAL [total]",
-      disabled: configuration === "company" ? false : true,
+      // disabled: configuration === "company" ? false : true,
     },
     {
       label: "Consulta",
@@ -212,8 +235,21 @@ const InvoiceFreeDetail = ({
       value: "CONSULTA MEDICA",
     },
   ];
-  const [allItems, setAllItems] = useState<IOptions[]>(items);
-
+  const [allItems, setAllItems] = useState<IOptions[]>([]);
+  useEffect(() => {
+    const itemsAll = [...items, ...invoiceConceptsOptions];
+    setAllItems(itemsAll);
+  }, [invoiceConceptsOptions]);
+  const getTextDescription = (seleccion: string[]) => {
+    const branch = BranchOptions.find((x) => x.value === profile?.sucursal!);
+    const nuevaSeleccion = seleccion
+      .join("|")
+      .replace("[branch]", "" + branch?.label!)
+      .replace("[patient]", receptor?.nombreComercial)
+      .replace("[total]", moneyFormatter.format(totalFinal * 0.25))
+      .split("|");
+    return nuevaSeleccion;
+  };
   const detailColumns: IColumns<IDetailInvoice> = [
     {
       key: "claveProdServ",
@@ -288,7 +324,7 @@ const InvoiceFreeDetail = ({
                     if (detalle.id === row.id) {
                       return {
                         ...detalle,
-                        concepto: seleccion.join("\n"),
+                        concepto: getTextDescription(seleccion).join("\n"),
                       };
                     }
                     return detalle;
@@ -301,14 +337,28 @@ const InvoiceFreeDetail = ({
                     {menu}
                     <Form
                       form={formConcepts}
-                      onFinish={(newFormValues: any) => {
-                        setAllItems((allItems) => [
-                          ...allItems,
-                          {
-                            label: newFormValues.alias,
-                            value: newFormValues.descripcion,
-                          },
-                        ]);
+                      onFinish={async (newFormValues: any) => {
+                        const descriptionInvoice: ICatalogDescriptionForm = {
+                          activo: true,
+                          clave: newFormValues.alias,
+                          nombre: newFormValues.alias,
+                          descripcion: newFormValues.descripcion,
+                          id: 0,
+                        };
+                        const success = await create(
+                          "invoiceconcepts",
+                          descriptionInvoice
+                        );
+                        if (success) {
+                          getInvoiceConceptsOptions();
+                        }
+                        // setAllItems((allItems) => [
+                        //   ...allItems,
+                        //   {
+                        //     label: newFormValues.alias,
+                        //     value: newFormValues.descripcion,
+                        //   },
+                        // ]);
                         formConcepts.resetFields();
                       }}
                     >
@@ -346,6 +396,7 @@ const InvoiceFreeDetail = ({
             </Col>
             <Col span={15}>
               <TextArea
+                disabled={soloLectura}
                 value={value}
                 autoSize
                 bordered={false}
@@ -392,6 +443,7 @@ const InvoiceFreeDetail = ({
           {" "}
           {fullRow.redondeo ?? (
             <Button
+              disabled={soloLectura}
               size="small"
               shape="circle"
               type="primary"
@@ -522,6 +574,7 @@ const InvoiceFreeDetail = ({
               iva: 16,
               unidades: 1,
             }}
+            disabled={soloLectura}
           >
             <Row>
               <Col>
@@ -600,7 +653,7 @@ const InvoiceFreeDetail = ({
                 checkedChildren={<CheckOutlined />}
                 unCheckedChildren={<CloseOutlined />}
                 size="default"
-                disabled={!detailData.length}
+                disabled={!detailData.length || soloLectura}
               />
             </Form.Item>
           </Form>

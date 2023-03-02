@@ -99,6 +99,7 @@ export interface ICliente {
   razonSocial: string;
   RFC: string;
   regimenFiscal: string;
+  direccionFiscal: string;
   correo: string;
   telefono: string;
   codigoPostal: string;

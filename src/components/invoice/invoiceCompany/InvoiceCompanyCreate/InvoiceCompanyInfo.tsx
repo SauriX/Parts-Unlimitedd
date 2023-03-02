@@ -202,6 +202,7 @@ const InvoiceCompanyInfo = ({
                 formProps={{ label: "Selecciona motivo", name: "motivo" }}
                 options={reasonCancelation}
                 readonly={id === "new"}
+                required
               />
             </Col>
           </Row>

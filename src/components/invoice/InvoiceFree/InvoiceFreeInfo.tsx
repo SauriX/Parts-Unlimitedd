@@ -11,7 +11,7 @@ import {
 } from "antd";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { useStore } from "../../../app/stores/store";
 import InvoiceFreeSearchCompany from "./InvoiceFreeSearchCompany";
 import { regimenFiscal } from "../../../app/util/catalogs";
+import { IMotivo } from "../../../app/models/Invoice";
 
 const { Title, Text } = Typography;
 const { Search } = Input;
@@ -32,27 +33,58 @@ type UrlParams = {
 };
 
 const InvoiceFreeInfo = () => {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [formCancel] = Form.useForm();
   const tipoFactura = Form.useWatch("tipoFactura", form);
   let { id, tipo } = useParams<UrlParams>();
-  const { modalStore } = useStore();
+  const { modalStore, invoiceFreeStore, invoiceCompanyStore } = useStore();
   const { openModal } = modalStore;
-  const [receptor, setReceptor] = useState<any>();
+  const { setReceptor, setTipoFacturaLibre } = invoiceFreeStore;
+  const { invoice, cancelInvoice } = invoiceCompanyStore;
+  const [receptorLocal, setReceptorLocal] = useState<any>();
 
   const onFinish = (newFormValues: any) => {
     console.log("onFinish", newFormValues);
+  };
+  const onFinishCancel = async (newFormValues: any) => {
+    let cancelationInvoiceData: IMotivo = {
+      facturapiId: invoice?.facturapiId!,
+      motivo: newFormValues.motivo,
+    };
+
+    await cancelInvoice(cancelationInvoiceData);
+    if (tipo === "company") {
+      navigate(`/invoice/company`);
+    }
+    if (tipo === "request") {
+      navigate(`/invoice/request`);
+    }
   };
 
   useEffect(() => {
     console.log("tipoFactura", tipoFactura);
     form.setFieldValue("fechas", [(moment(), moment())]);
-    setReceptor({});
+
+    setTipoFacturaLibre(tipoFactura);
   }, [tipoFactura]);
   useEffect(() => {
-    form.setFieldsValue(receptor);
+    form.setFieldsValue(receptorLocal);
     form.submit();
-  }, [receptor]);
+    setReceptor(receptorLocal);
+  }, [receptorLocal]);
+  useEffect(() => {
+    if (id !== "new" && !!invoice) {
+      console.log("SI ES DIFERNETE DE NEW");
+      form.setFieldsValue(invoice);
+      form.setFieldValue("clave", invoice.claveExterna);
+      form.setFieldValue("nombreComercial", invoice.nombre);
+      form.setFieldValue("direccionFiscal", invoice.direccionFiscal);
+      form.setFieldValue("rfc", invoice.rfc);
+      form.setFieldValue("razonSocial", invoice.razonSocial);
+      form.setFieldValue("regimenFiscal", invoice.regimenFiscal);
+    }
+  }, [invoice]);
 
   const reasonCancelation: IOptions[] = [
     {
@@ -79,7 +111,7 @@ const InvoiceFreeInfo = () => {
     } ${compañiaSeleccionada?.ciudad ?? ""} ${
       compañiaSeleccionada?.codigoPostal ?? ""
     } ${compañiaSeleccionada?.colonia ?? ""}`.trim();
-    setReceptor(compañiaSeleccionada);
+    setReceptorLocal(compañiaSeleccionada);
   };
 
   return (
@@ -96,7 +128,7 @@ const InvoiceFreeInfo = () => {
               {...formItemLayout}
               form={formCancel}
               name="invoiceCancel"
-              onFinish={onFinish}
+              onFinish={onFinishCancel}
               size="small"
               initialValues={{ fechas: [moment(), moment()] }}
             >
@@ -106,13 +138,20 @@ const InvoiceFreeInfo = () => {
                     formProps={{ label: "Selecciona motivo", name: "motivo" }}
                     options={reasonCancelation}
                     readonly={id === "new"}
+                    required
                   />
                 </Col>
               </Row>
             </Form>
           </Col>
           <Col span={2}>
-            <Button type="primary">Cancelar</Button>
+            <Button
+              type="primary"
+              disabled={id === "new"}
+              onClick={() => formCancel.submit()}
+            >
+              Cancelar
+            </Button>
           </Col>
         </Row>
         <Row gutter={[24, 8]}>
@@ -170,7 +209,7 @@ const InvoiceFreeInfo = () => {
                         width: 800,
                       });
                     }}
-                    disabled={!tipoFactura}
+                    disabled={id !== "new" || !tipoFactura}
                   >
                     Buscar
                   </Button>
@@ -196,11 +235,14 @@ const InvoiceFreeInfo = () => {
                     form={form}
                     formProps={{
                       label: "Régimen fiscal",
-                      name: "regimenFiscalTest",
+                      name: "regimenFiscal",
                     }}
                     options={regimenFiscal}
                     readonly={id !== "new" || tipoFactura}
                     style={{ marginBottom: 10 }}
+                    onChange={() => {
+                      form.submit();
+                    }}
                   />
                 </Col>
                 <Col span={7} style={{ alignItems: "center" }}>
@@ -213,6 +255,7 @@ const InvoiceFreeInfo = () => {
                       unCheckedChildren="Solicitud"
                       defaultChecked
                       size="default"
+                      disabled={id !== "new"}
                     />
                   </Form.Item>
                 </Col>

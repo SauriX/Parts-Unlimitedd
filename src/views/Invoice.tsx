@@ -15,6 +15,7 @@ type UrlParams = {
 };
 const Invoice = () => {
   let { tipo } = useParams<UrlParams>();
+
   return (
     <>
       <InvoiceCompanyHeader
