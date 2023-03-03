@@ -269,7 +269,7 @@ const LayoutComponent = () => {
           <Col span={6} className="header-data" style={{ textAlign: "right" }}>
             <Avatar icon={<UserOutlined />} />
             <Text>{profile?.nombre}</Text>
-            <Tooltip placement="bottomRight" title={renderShortCuts}  overlayClassName="tooltip-shortcuts" open>
+            <Tooltip placement="bottomRight" title={renderShortCuts}  overlayClassName="tooltip-shortcuts">
               <QuestionCircleTwoTone />
             </Tooltip>
             <NotificationOutlined
