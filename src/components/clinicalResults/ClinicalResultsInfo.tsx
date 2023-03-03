@@ -12,25 +12,20 @@ import {
   Radio,
 } from "antd";
 import { observer } from "mobx-react-lite";
-import DateInput from "../../app/common/form/proposal/DateInput";
 import SelectInput from "../../app/common/form/SelectInput";
 import TextAreaInput from "../../app/common/form/TextAreaInput";
 import TextInput from "../../app/common/form/TextInput";
-import { FC, useState, useEffect, Fragment } from "react";
+import { useState, useEffect } from "react";
 
 import ClinicalResultsForm from "./observaciones/ClinicalResultsForm";
 import ClinicalResultsDetails from "./desglose/ClinicalResultsDetail";
-import { useNavigate } from "react-router";
 import ClinicalResultsHeader from "./ClinicalResultsHeader";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
-import { toJS } from "mobx";
-import { IRequest, IRequestStudy } from "../../app/models/request";
-import { v4 as uuid } from "uuid";
+import { IRequestStudy } from "../../app/models/request";
 
 import { ProceedingFormValues } from "../../app/models/Proceeding";
 import moment from "moment";
-import React from "react";
 import ClinicalResultsXRay from "./desglose/ClinicalResultsXRay";
 
 const { Text } = Typography;
@@ -52,7 +47,7 @@ const ClinicalResultsInfo = () => {
   const { request, getById, studies, getStudies } = requestStore;
   const { getById: procedingById } = procedingStore;
   const { printOrder } = requestedStudyStore;
-  const { departmentOptions, getDepartmentOptions } = optionStore;
+  const { getDepartmentOptions } = optionStore;
   const {
     studiesSelectedToPrint,
     printSelectedStudies,
@@ -94,9 +89,7 @@ const ClinicalResultsInfo = () => {
     };
     searchRequest();
   }, [getById, procedingById, expedienteId, requestId]);
-  useEffect(() => {
-    console.log("ESTUDIOS GENERALES DE LA SOLICITUF", toJS(studies));
-  }, [studies]);
+
   useEffect(() => {
     form.setFieldsValue({
       ...dataClinicalResult,
