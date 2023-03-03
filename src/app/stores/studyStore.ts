@@ -87,7 +87,6 @@ export default class StudyStore {
       const study = await Study.getStudyInfoById(id);
       return study;
     } catch (error) {
-      console.log(error);
       alerts.warning(getErrors(error));
     }
   };

@@ -1,61 +1,45 @@
-import { Row, Col, Divider, Spin } from "antd";
-import React, { Fragment, useEffect, useState } from "react";
-
+import { Row, Col, Divider, Spin, Typography } from "antd";
+import  { Fragment, useEffect, useState } from "react";
 import { useStore } from "../../../../app/stores/store";
-
 import { observer } from "mobx-react-lite";
-
 import InfoStudyHeader from "./InfoStudyHeader";
-import { IInfoTecStudy } from "../../../../app/models/study";
+import { IStudyTec } from "../../../../app/models/study";
 import TextArea from "antd/lib/input/TextArea";
 import { Link } from "react-router-dom";
-
-
-
 type Props = {
     id: number,
     sucursal: string;
     sucursalDestino: string;
     estudio: string;
+    study: IStudyTec | undefined;
+    setStudy: React.Dispatch<React.SetStateAction<IStudyTec | undefined>>
 };
-
-const InfoStudy = ({ id, sucursal, sucursalDestino, estudio }: Props) => {
+const InfoStudy = ({ id, sucursal, sucursalDestino, estudio,study,setStudy }: Props) => {
     const { studyStore } = useStore();
-
     const { getTecInfoById } = studyStore;
-
-
-
     const [loading, setLoading] = useState(false);
-    const [study, setStudy] = useState<IInfoTecStudy>();
-
+    const { Text } = Typography;
     useEffect(() => {
-        const readReagents = async () => {
+        const readInfoStudy= async () => {
             setLoading(true);
             var studys = await getTecInfoById(id);
             setStudy(studys);
             setLoading(false);
         };
-
-        readReagents();
+        readInfoStudy();
     }, [getTecInfoById, id]);
-
-
-
-
-
     return (
         <Fragment>
             <InfoStudyHeader></InfoStudyHeader>
-            <Link to={""} style={{ fontSize: 13 }}>{estudio}</Link>
+            <Text type="secondary" style={{color:"blue"}}>{estudio}</Text>
             <Divider className="header-divider" />
             <Spin spinning={loading} tip={""}>
                 <Row gutter={[12, 12]}>
                     <Col span={8} style={{ textAlign: "center" }}>
-                        Sucursal: {sucursal != null || sucursal !== undefined ? sucursal : ""}
+                        Sucursal: {sucursal}
                     </Col>
                     <Col span={8} style={{ textAlign: "center" }}>
-                        Sucursal destino: {sucursalDestino != null || sucursalDestino !== undefined ? sucursalDestino : ""}
+                        Sucursal destino: {sucursalDestino}
                     </Col>
                     <Col span={8} style={{ textAlign: "center" }}>
                         Días de entrega: {study?.diasEntrega}
@@ -64,7 +48,7 @@ const InfoStudy = ({ id, sucursal, sucursalDestino, estudio }: Props) => {
                         Tipo de muestra: {study?.tipoMuestra}
                     </Col>
                     <Col span={12}>
-                        Días de estabilidad en medio ambiente: {study?.diaEstabilidad}
+                        Días de estabilidad en medio ambiente: {study?.diasEstabilidad}
                     </Col>
                     <Col span={12}>
                         Tubo de muestra: {study?.tapon}
@@ -78,9 +62,7 @@ const InfoStudy = ({ id, sucursal, sucursalDestino, estudio }: Props) => {
                     </Col>
                 </Row>
             </Spin>
-
         </Fragment>
     );
 };
-
 export default observer(InfoStudy);

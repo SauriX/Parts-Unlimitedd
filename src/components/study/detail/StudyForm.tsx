@@ -242,10 +242,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   }, []);
 
   useEffect(() => {
-    form.setFieldValue("activo", true);
-  }, [getsampleTypeOptions]);
-  useEffect(() => {
-    const readuser = async (id: number) => {
+    const readStudy = async (id: number) => {
       setLoading(true);
       const all = await getAll("all");
       const user = await getById(id);
@@ -263,7 +260,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       setLoading(false);
     };
     if (id) {
-      readuser(Number(id));
+      readStudy(Number(id));
     }
   }, [form, getById, id]);
   useEffect(() => {
@@ -341,8 +338,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     const estudio = study[index];
 
     navigate(
-      `/${views.study}/${estudio?.id}?mode=${searchParams.get("mode")}&search=${
-        searchParams.get("search") ?? "all"
+      `/${views.study}/${estudio?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search") ?? "all"
       }`
     );
   };
@@ -527,8 +523,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
               onClick={() => {
                 setDisabled(false);
                 navigate(
-                  `/${views.study}/${id}?mode=edit&search=${
-                    searchParams.get("search") ?? "all"
+                  `/${views.study}/${id}?mode=edit&search=${searchParams.get("search") ?? "all"
                   }`
                 );
               }}
@@ -610,7 +605,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                     label: "Cantidad",
                   }}
                   min={1}
-                  max={9999999999999999}
+                  max={999999}
                   readonly={disabled}
                   required
                 />
@@ -664,7 +659,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                     label: "Días de respuesta",
                   }}
                   min={0}
-                  max={9999999999999999}
+                  max={9}
                   readonly={disabled}
                 />
               </Col>
@@ -687,7 +682,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                     label: "Tiempo de respuesta",
                   }}
                   min={1}
-                  max={9999999999999999}
+                  max={999999}
                   readonly={disabled}
                 />
               </Col>
@@ -698,8 +693,8 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                     label: "Días de estabilidad",
                   }}
                   min={0}
-                  max={9999999999999999}
-                  readonly={ disabled}
+                  max={999999}
+                  readonly={disabled}
                 />
               </Col>
               <Col md={8} sm={24} xs={8}>
@@ -709,8 +704,8 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                     label: "Días de refrigeración",
                   }}
                   min={0}
-                  max={9999999999999999}
-                  readonly={ disabled}
+                  max={999999}
+                  readonly={disabled}
                 />
               </Col>
 
@@ -768,12 +763,12 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
               <Col md={8} sm={24} xs={8}></Col>
               <Col md={8} sm={24} xs={8}>
                 <TextAreaInput
-               formProps={{
-                name: "instrucciones",
-                label: "Instrucciones",
-                
-              }}
-              rows={6}
+                  formProps={{
+                    name: "instrucciones",
+                    label: "Instrucciones",
+
+                  }}
+                  rows={6}
                 />
               </Col>
 

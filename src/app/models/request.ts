@@ -319,7 +319,6 @@ export class RequestStudyValues implements IRequestStudy {
 
 export interface IRequestPack {
   type: "study" | "pack";
-  estudioId?: number;
   id?: number;
   identificador?: string;
   paqueteId: number;

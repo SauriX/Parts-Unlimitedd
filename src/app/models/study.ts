@@ -63,10 +63,10 @@ export interface IStudyTag {
   color: string;
   nombreEstudio: string;
 }
-export interface IInfoTecStudy{
+export interface IStudyTec{
   instrucciones: string,
   tipoMuestra: string,
-  diaEstabilidad: number,
+  diasEstabilidad: number,
   diasRefrigeracion: number,
   diasEntrega:number,
   tapon:string

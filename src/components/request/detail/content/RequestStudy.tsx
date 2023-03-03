@@ -18,13 +18,13 @@ import { useStore } from "../../../../app/stores/store";
 import alerts from "../../../../app/util/alerts";
 import { moneyFormatter } from "../../../../app/util/utils";
 import { status } from "../../../../app/util/catalogs";
-import InfoStudyHeader from "../InfoModal/InfoStudyHeader";
 import InfoStudy from "../InfoModal/InfoStudy";
+import { IStudyTec } from "../../../../app/models/study";
 
 const { Link } = Typography;
 
 const RequestStudy = () => {
-  const { requestStore, optionStore,modalStore } = useStore();
+  const { requestStore, optionStore, modalStore } = useStore();
   const { studyOptions, packOptions, getStudyOptions, getPackOptions } =
     optionStore;
   const {
@@ -43,7 +43,8 @@ const RequestStudy = () => {
     changePackPromotion,
     totals,
   } = requestStore;
-  const {openModal}=modalStore;
+  const [study, setStudy] = useState<IStudyTec>();
+  const { openModal } = modalStore;
   const [selectedStudies, setSelectedStudies] = useState<IRequestStudy[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [options, setOptions] = useState<IOptions[]>([]);
@@ -87,7 +88,11 @@ const RequestStudy = () => {
         setSearchState,
         width: 100,
       }),
-      render: (value,item) => <Link onClick={()=>{infoModal(item.estudioId!,request?.sucursal!,request?.destino!,item.nombre)}}>{value}</Link>,
+      render: (value, item) => <Link onClick={() => {
+        if (isStudy(item)) {
+          showStudyDetails(item.estudioId!, item.nombre)
+        } 
+      }}>{value}</Link>,
     },
     {
       ...getDefaultColumnProps("nombre", "Estudio", {
@@ -205,16 +210,16 @@ const RequestStudy = () => {
         ) : null,
     },
   ];
-    const infoModal = async (id:number,suscursal:string,sucursalDestino:string,estudio:string)=>{
+  const showStudyDetails = async (id: number, estudio: string) => {
 
-      openModal({
-        title: "",
-        body:<InfoStudy id={id} sucursal={suscursal} sucursalDestino={sucursalDestino} estudio={estudio}></InfoStudy>,
-        width: 1000,
-        
-      })
+    openModal({
+      title: "",
+      body: <InfoStudy id={id} sucursal={request!.sucursal!} sucursalDestino={request!.destino!} estudio={estudio} study={study} setStudy={setStudy}></InfoStudy>,
+      width: 1000,
+      onClose: () => { setStudy(undefined) }
+    })
 
-    }
+  }
   const addStudy = async (option: IOptions) => {
     const value = parseInt(option.value.toString().split("-")[1]);
 
@@ -232,8 +237,7 @@ const RequestStudy = () => {
   const deleteStudyOrPack = (item: IRequestStudy | IRequestPack) => {
     alerts.confirm(
       "Eliminar estudio",
-      `¿Desea eliminar el ${isStudy(item) ? "estudio" : "paquete"} ${
-        item.nombre
+      `¿Desea eliminar el ${isStudy(item) ? "estudio" : "paquete"} ${item.nombre
       }?`,
       async () => {
         if (isStudy(item)) {
@@ -320,8 +324,8 @@ const RequestStudy = () => {
                 (isStudy(item)
                   ? item.estatusId !== status.requestStudy.pendiente
                   : item.estudios.some(
-                      (x) => x.estatusId !== status.requestStudy.pendiente
-                    )),
+                    (x) => x.estatusId !== status.requestStudy.pendiente
+                  )),
             }),
             selectedRowKeys: selectedRowKeys,
           }}
