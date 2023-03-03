@@ -198,3 +198,23 @@ export const catalog = {
     particulares: "1b84fa7e-9b41-41fa-b8e0-f1d029bb94d4",
   },
 };
+
+export const parameters = {
+  valueType: {
+    sinValor: "0",
+    numerico: "1",
+    numericoSexo: "2",
+    numericoEdad: "3",
+    numericoEdadSexo: "4",
+    opcionMultiple: "5",
+    unaColumna: "6",
+    texto: "7",
+    parrafo: "8",
+    etiqueta: "9",
+    observacion: "10",
+    dosColumnas: "11",
+    tresColumnas: "12",
+    cuatroColumnas: "13",
+    cincoColumnas: "14",
+  },
+};

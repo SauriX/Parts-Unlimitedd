@@ -716,7 +716,7 @@ export default class OptionStore {
       const type = Parameter.getAllValues(id, tipo);
       this.typeValue = (await type).map((x) => ({
         value: x.id!,
-        label: x.descripcionTexto as string,
+        label: x.descripcionTexto as string || x.descripcionParrafo as string,
       }));
     } catch (error) {
       this.typeValue = [];

@@ -81,15 +81,3 @@ export const referenceValues = (
       return `${primeraColumna} \t ${segundaColumna} \t ${terceraColumna} \t ${cuartaColumna} \t ${quintaColumna}`;
     }
   };
-
-// export const cancelation = async (
-//   estado: number,
-//   updateStatusStudy: (id: number, status: number) => Promise<void>,
-//   cancelResults: (id: number) => Promise<boolean>,
-//   currentStudy: IRequestStudy
-// ) => {
-//   await updateStatusStudy(currentStudy.id!, estado);
-//   if (estado === status.requestStudy.solicitado) {
-//     return cancelResults(currentStudy.id!);
-//   }
-// };

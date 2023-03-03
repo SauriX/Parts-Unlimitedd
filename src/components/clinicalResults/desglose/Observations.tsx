@@ -60,7 +60,6 @@ const Observations = ({
         searchState,
         setSearchState,
         width: "100%",
-        minWidth: 150,
         windowSize: windowWidth,
       }),
     },
