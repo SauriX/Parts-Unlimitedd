@@ -34,6 +34,7 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   serie?: string;
   serieNumero?: string;
   estudios?: IRequestStudyInfo[];
+  destino?:string;
 }
 
 export interface IRequestFilter {
@@ -318,6 +319,7 @@ export class RequestStudyValues implements IRequestStudy {
 
 export interface IRequestPack {
   type: "study" | "pack";
+  estudioId?: number;
   id?: number;
   identificador?: string;
   paqueteId: number;

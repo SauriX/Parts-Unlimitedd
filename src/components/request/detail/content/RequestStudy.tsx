@@ -18,11 +18,13 @@ import { useStore } from "../../../../app/stores/store";
 import alerts from "../../../../app/util/alerts";
 import { moneyFormatter } from "../../../../app/util/utils";
 import { status } from "../../../../app/util/catalogs";
+import InfoStudyHeader from "../InfoModal/InfoStudyHeader";
+import InfoStudy from "../InfoModal/InfoStudy";
 
 const { Link } = Typography;
 
 const RequestStudy = () => {
-  const { requestStore, optionStore } = useStore();
+  const { requestStore, optionStore,modalStore } = useStore();
   const { studyOptions, packOptions, getStudyOptions, getPackOptions } =
     optionStore;
   const {
@@ -41,7 +43,7 @@ const RequestStudy = () => {
     changePackPromotion,
     totals,
   } = requestStore;
-
+  const {openModal}=modalStore;
   const [selectedStudies, setSelectedStudies] = useState<IRequestStudy[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [options, setOptions] = useState<IOptions[]>([]);
@@ -85,7 +87,7 @@ const RequestStudy = () => {
         setSearchState,
         width: 100,
       }),
-      render: (value) => <Link>{value}</Link>,
+      render: (value,item) => <Link onClick={()=>{infoModal(item.estudioId!,request?.sucursal!,request?.destino!,item.nombre)}}>{value}</Link>,
     },
     {
       ...getDefaultColumnProps("nombre", "Estudio", {
@@ -203,7 +205,16 @@ const RequestStudy = () => {
         ) : null,
     },
   ];
+    const infoModal = async (id:number,suscursal:string,sucursalDestino:string,estudio:string)=>{
 
+      openModal({
+        title: "",
+        body:<InfoStudy id={id} sucursal={suscursal} sucursalDestino={sucursalDestino} estudio={estudio}></InfoStudy>,
+        width: 1000,
+        
+      })
+
+    }
   const addStudy = async (option: IOptions) => {
     const value = parseInt(option.value.toString().split("-")[1]);
 
