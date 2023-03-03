@@ -21,7 +21,7 @@ import { status } from "../../../../app/util/catalogs";
 import InfoStudy from "../InfoModal/InfoStudy";
 import { IStudyTec } from "../../../../app/models/study";
 
-const { Link } = Typography;
+const { Link, Text } = Typography;
 
 const RequestStudy = () => {
   const { requestStore, optionStore, modalStore } = useStore();
@@ -88,11 +88,16 @@ const RequestStudy = () => {
         setSearchState,
         width: 100,
       }),
-      render: (value, item) => <Link onClick={() => {
+      render: (value, item) => {
         if (isStudy(item)) {
-          showStudyDetails(item.estudioId!, item.nombre)
-        } 
-      }}>{value}</Link>,
+          return <Link onClick={() => {
+            showStudyDetails(item.estudioId!, item.nombre)
+          }}>{value}</Link>
+        } else {
+          return <Text>{value}</Text>
+        }
+
+      },
     },
     {
       ...getDefaultColumnProps("nombre", "Estudio", {
