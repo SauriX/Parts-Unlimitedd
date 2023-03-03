@@ -41,9 +41,7 @@ import {
   ISearchAppointment,
   ISolicitud,
 } from "../../../app/models/appointmen";
-import {
-  IQuotationFilter,
-} from "../../../app/models/quotation";
+import { IQuotationFilter } from "../../../app/models/quotation";
 import ProceedingRequests from "./ProceedingRequests";
 import ProceedingQuotations from "./ProceedingQuotations";
 import ProceedingAppointments from "./ProceedingAppointments";
@@ -87,7 +85,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     tax,
     activateWallet,
     getAllQ,
-
   } = procedingStore;
   const { profile } = profileStore;
   const { BranchOptions, getBranchOptions } = optionStore;
@@ -106,10 +103,13 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   const { openModal, closeModal } = modalStore;
   const [colonies, setColonies] = useState<IOptions[]>([]);
   const [continuar, SetContinuar] = useState<boolean>(true);
-  const goBack = () => {
+
+  const goBack = (samePage: boolean) => {
     searchParams.delete("mode");
     setSearchParams(searchParams);
-    navigate(`/${views.proceeding}?${searchParams}`);
+    if (samePage) {
+      navigate(`/${views.proceeding}?${searchParams}`);
+    }
     clearTax();
     closeModal();
   };
@@ -150,7 +150,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   };
 
   useEffect(() => {
-    const readExpedinte = async (id: string) => {
+    const readExpediente = async (id: string) => {
       setLoading(true);
 
       var expediente = await getById(id);
@@ -189,16 +189,16 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
         ...expediente!,
         fechaNacimiento: moment(expediente?.fechaNacimiento),
       });
-      
+
       setTax(expediente?.taxData!);
       setValues(expediente!);
       setLoading(false);
     };
 
     if (id) {
-      readExpedinte(id);
+      readExpediente(id);
     }
-  }, [id, getById]);
+  }, [id, getById, expedientes]);
 
   useEffect(() => {
     if (profile) {
@@ -220,10 +220,12 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
 
     readData(search);
   }, [getBranchOptions]);
+
   const setEditMode = () => {
     navigate(`/${views.proceeding}/${id}?${searchParams}&mode=edit`);
     setReadonly(false);
   };
+
   const calcularEdad = (fecha: Moment) => {
     var hoy = new Date();
     var cumpleanos = fecha.toDate();
@@ -284,9 +286,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   const getPage = (id: string) => {
     return expedientes.findIndex((x) => x.id === id) + 1;
   };
-  const continues = async (cont: boolean) => {
-    SetContinuar(cont);
-  };
+
   const activarMonedero = async () => {
     // setMonedero(true);
     if (values.id) {
@@ -295,6 +295,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       setLoading(false);
     }
   };
+
   const onFinish = async (newValues: IProceedingForm) => {
     setLoading(true);
     var coincidencia = await coincidencias(newValues);
@@ -315,22 +316,33 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               setLoading(true);
               let taxdata: ITaxData[] = [];
 
-              for (let element of tax) {
-                if (!element.id || element.id.startsWith("tempId")) {
-                  delete element.id;
-                  taxdata.push(element);
-                } else {
-                  taxdata.push(element);
+              if (tax) {
+                for (let element of tax) {
+                  if (!element.id || element.id.startsWith("tempId")) {
+                    delete element.id;
+                    taxdata.push(element);
+                  } else {
+                    taxdata.push(element);
+                  }
                 }
               }
 
               reagent.taxData = taxdata;
-              success = !reagent.id ? !!await create(reagent) : await update(reagent);
+              let record = "";
+              if (reagent.id) {
+                success = await update(reagent);
+              } else {
+                record = (await create(reagent)) as string;
+                success = record ? true : false;
+              }
 
               setLoading(false);
 
               if (success) {
-                goBack();
+                goBack(false);
+                navigate(
+                  `/${views.proceeding}/${record}?${searchParams}&mode=readonly`
+                );
               }
             }}
             expedientes={coincidencia}
@@ -362,10 +374,19 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       }
 
       reagent.taxData = taxdata;
-      success = !reagent.id ? !!await create(reagent) : await update(reagent);
+      let record = "";
+      if (reagent.id) {
+        success = await update(reagent);
+      } else {
+        record = (await create(reagent)) as string;
+        success = record ? true : false;
+      }
 
-      if(success){
-        goBack()
+      if (success) {
+        goBack(false);
+        navigate(
+          `/${views.proceeding}/${record}?${searchParams}&mode=readonly`
+        );
       }
 
       setLoading(false);
@@ -392,7 +413,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
         )}
         {!readonly && (
           <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
-            <Button onClick={goBack}>Cancelar</Button>
+            <Button onClick={() => goBack(true)}>Cancelar</Button>
             <Button
               type="primary"
               htmlType="submit"
@@ -760,7 +781,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                     activarMonedero();
                   }}
                   type="primary"
-                  disabled={values.hasWallet || !id}
+                  disabled={values?.hasWallet || !id}
                 >
                   Activar monedero
                 </Button>
@@ -799,12 +820,13 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               </Col>
             </Row>
           </Form>
-          {searchParams.get("mode") === "edit" ||
+          {id ||
+          (searchParams.get("mode") === "edit") ||
           searchParams.get("mode") === "readonly" ? (
             <>
               <Row justify="end">
                 <Col span={4}>
-                  {values.hasWallet ? (
+                  {values?.hasWallet ? (
                     <Card
                       style={{
                         marginTop: "20px",
@@ -874,10 +896,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       </div>
     </Spin>
   );
-};
-
-const ContainerBadge = ({ color, text }: { color: string; text?: string }) => {
-  return <Tag color={color}>{text}</Tag>;
 };
 
 export default observer(ProceedingForm);
