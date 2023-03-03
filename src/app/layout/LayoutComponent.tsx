@@ -216,7 +216,11 @@ const LayoutComponent = () => {
             <List.Item>
               <Row>
                 <Col span={24}>
-                  <Badge.Ribbon text={item.shortCut} placement="start" className="badge-shortcut">
+                  <Badge.Ribbon
+                    text={item.shortCut}
+                    placement="start"
+                    className="badge-shortcut"
+                  >
                     <Card title="  " className="shortcut-card">
                       {item.description}
                     </Card>
@@ -265,11 +269,7 @@ const LayoutComponent = () => {
           <Col span={6} className="header-data" style={{ textAlign: "right" }}>
             <Avatar icon={<UserOutlined />} />
             <Text>{profile?.nombre}</Text>
-            <Tooltip
-              placement="bottomRight"
-              title={renderShortCuts}
-              className="tooltip-shortcuts"
-            >
+            <Tooltip placement="bottomRight" title={renderShortCuts}  overlayClassName="tooltip-shortcuts" open>
               <QuestionCircleTwoTone />
             </Tooltip>
             <NotificationOutlined
