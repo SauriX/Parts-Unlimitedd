@@ -43,7 +43,7 @@ const RequestStudy = () => {
     changePackPromotion,
     totals,
   } = requestStore;
-  const [study, setStudy] = useState<IStudyTec>();
+
   const { openModal } = modalStore;
   const [selectedStudies, setSelectedStudies] = useState<IRequestStudy[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
@@ -219,9 +219,9 @@ const RequestStudy = () => {
 
     openModal({
       title: "",
-      body: <InfoStudy id={id} sucursal={request!.sucursal!} sucursalDestino={request!.destino!} estudio={estudio} study={study} setStudy={setStudy}></InfoStudy>,
+      body: <InfoStudy id={id} sucursal={request!.sucursal!} sucursalDestino={request!.destino!} estudio={estudio}></InfoStudy>,
       width: 1000,
-      onClose: () => { setStudy(undefined) }
+      
     })
 
   }

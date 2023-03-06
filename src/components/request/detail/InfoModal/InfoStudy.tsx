@@ -11,10 +11,10 @@ type Props = {
     sucursal: string;
     sucursalDestino: string;
     estudio: string;
-    study: IStudyTec | undefined;
-    setStudy: React.Dispatch<React.SetStateAction<IStudyTec | undefined>>
 };
-const InfoStudy = ({ id, sucursal, sucursalDestino, estudio,study,setStudy }: Props) => {
+
+const InfoStudy = ({ id, sucursal, sucursalDestino, estudio }: Props) => {
+    const [study, setStudy] = useState<IStudyTec>();
     const { studyStore } = useStore();
     const { getTecInfoById } = studyStore;
     const [loading, setLoading] = useState(false);
@@ -27,7 +27,7 @@ const InfoStudy = ({ id, sucursal, sucursalDestino, estudio,study,setStudy }: Pr
             setLoading(false);
         };
         readInfoStudy();
-    }, [getTecInfoById, id]);
+    }, [getTecInfoById, id, setStudy]);
     return (
         <Fragment>
             <InfoStudyHeader></InfoStudyHeader>
