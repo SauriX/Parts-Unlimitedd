@@ -11,20 +11,17 @@ import {
   Table,
   TreeSelect,
   Typography,
-  Dropdown,
   Select,
   Space,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
-import { formItemLayout, formItemProps } from "../../../app/util/utils";
-import TextInput from "../../../app/common/form/proposal/TextInput";
+import { formItemLayout } from "../../../app/util/utils";
 import { useStore } from "../../../app/stores/store";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
-import SwitchInput from "../../../app/common/form/proposal/SwitchInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import {
@@ -40,15 +37,15 @@ import {
 } from "../../../app/common/table/utils";
 import useWindowDimensions from "../../../app/util/window";
 import { IOptions } from "../../../app/models/shared";
-import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
-import NumberInput from "../../../app/common/form/proposal/NumberInput";
-import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import CheckableTag from "antd/lib/tag/CheckableTag";
+import TextInput from "../../../app/common/form/proposal/TextInput";
+import SwitchInput from "../../../app/common/form/proposal/SwitchInput";
+import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
+import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TimeInput from "../../../app/common/form/proposal/TimeInput";
-import "../../../index.css";
 
 const { Search } = Input;
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 type RouteFormProps = {
   id: string;
@@ -436,208 +433,178 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
           </Col>
         )}
       </Row>
-      <div style={{ display: printing ? "" : "none" }}></div>
-      <div style={{ display: printing ? "none" : "" }}>
-        <div ref={componentRef}>
-          {printing && (
-            <PageHeader
-              ghost={false}
-              title={<HeaderTitle title="Catálogo de Rutas" image="ruta" />}
-              className="header-container"
-            ></PageHeader>
-          )}
-          {printing && <Divider className="header-divider" />}
-          <Form<IRouteForm>
-            {...formItemLayout}
-            form={form}
-            name="reagent"
-            initialValues={values}
-            onFinish={onFinish}
-            scrollToFirstError
-            onValuesChange={onValuesChange}
-          >
-            <Row gutter={[4, 8]} justify="space-between" align="middle">
-              <Col md={8} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "clave",
-                    label: "Clave",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
+      <div ref={componentRef} style={{ display: printing ? "none" : "" }}>
+        {printing && (
+          <PageHeader
+            ghost={false}
+            title={<HeaderTitle title="Catálogo de Rutas" image="ruta" />}
+            className="header-container"
+          ></PageHeader>
+        )}
+        {printing && <Divider className="header-divider" />}
+        <Form<IRouteForm>
+          {...formItemLayout}
+          form={form}
+          name="reagent"
+          initialValues={values}
+          onFinish={onFinish}
+          scrollToFirstError
+          onValuesChange={onValuesChange}
+        >
+          <Row justify="space-between">
+            <Col md={8} sm={24} xs={12}>
+              <TextInput
+                formProps={{
+                  name: "clave",
+                  label: "Clave",
+                }}
+                max={100}
+                required
+                readonly={readonly}
+              />
+            </Col>
+            <Col md={8} sm={24} xs={12}>
+              <SelectInput
+                formProps={{
+                  name: "sucursalOrigenId",
+                  label: "Origen",
+                }}
+                readonly={readonly}
+                required
+                options={BranchOptions}
+              />
+            </Col>
+            <Col md={8} sm={24} xs={12}>
+              <Form.Item name="sucursalDestinoId" label="Destino">
+                <TreeSelect
+                  dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                  treeData={treeData}
+                  placeholder="Seleccione un destino"
+                  treeDefaultExpandAll
                 />
-              </Col>
-              <Col md={8} sm={24} xs={12}>
-                <SelectInput
-                  formProps={{
-                    name: "sucursalOrigenId",
-                    label: "Origen ",
-                  }}
-                  readonly={readonly}
-                  required
-                  options={BranchOptions}
-                />
-              </Col>
-              <Col md={8} sm={24} xs={12}>
-                <Form.Item name="sucursalDestinoId" label="Destino">
-                  <TreeSelect
-                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                    treeData={treeData}
-                    placeholder="Por favor seleccione"
-                    treeDefaultExpandAll
+              </Form.Item>
+            </Col>
+            <Col md={8} sm={24} xs={12}>
+              <TextInput
+                formProps={{
+                  name: "nombre",
+                  label: "Nombre",
+                }}
+                max={100}
+                required
+                readonly={readonly}
+              />
+            </Col>
+            <Col md={8} sm={24} xs={12}>
+              <SelectInput
+                formProps={{
+                  name: "paqueteriaId",
+                  label: "Paquetería ",
+                }}
+                defaultValue={0}
+                readonly={readonly}
+                required
+                options={DeliveryOptions}
+              />
+            </Col>
+            <Col md={8} sm={24} xs={12}>
+              <Form.Item label="Aplica para días:" name="diasDeEntrega">
+                <Space size={[12, 0]} wrap>
+                  {tagsData.map((tag) => (
+                    <CheckableTag
+                      key={tag.id}
+                      checked={
+                        selectedTags.filter((x) => x.id === tag.id).length > 0
+                      }
+                      onChange={(checked) => handleChange(tag, checked)}
+                    >
+                      {tag.dia}
+                    </CheckableTag>
+                  ))}
+                </Space>
+              </Form.Item>
+            </Col>
+
+            <Col md={8} sm={24} xs={12}>
+              <TimeInput
+                formProps={{
+                  name: "horaDeRecoleccion",
+                  label: "Hora de salida",
+                }}
+                readonly={readonly}
+                required
+              />
+            </Col>
+
+            <Col md={8} sm={24} xs={12}>
+              <Form.Item
+                label="Tiempo de Entrega"
+                required
+              >
+                <Input.Group compact>
+                  <Input
+                    style={{ width: "80%" }}
+                    name="tiempoDeEntrega"
+                    min={1}
+                    max={31}
+                    type="number"
                   />
-                </Form.Item>
-              </Col>
-              <Col md={8} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "nombre",
-                    label: "Nombre",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={8} sm={24} xs={12}>
-                <SelectInput
-                  formProps={{
-                    name: "paqueteriaId",
-                    label: "Paquetería ",
-                  }}
-                  defaultValue={0}
-                  readonly={readonly}
-                  required
-                  options={DeliveryOptions}
-                />
-              </Col>
-              <Col md={8} sm={24} xs={12}>
-                <Form.Item label="Aplica para días:">
-                  <Space size={[12, 8]} wrap>
-                    {tagsData.map((tag) => (
-                      <CheckableTag
-                        key={tag.id}
-                        checked={
-                          selectedTags.filter((x) => x.id === tag.id).length > 0
-                        }
-                        onChange={(checked) => handleChange(tag, checked)}
-                      >
-                        {tag.dia}
-                      </CheckableTag>
-                    ))}
-                  </Space>
-                </Form.Item>
-              </Col>
-
-              <Col md={8} sm={24} xs={12}>
-                <TimeInput
-                  formProps={{
-                    name: "horaDeRecoleccion",
-                    label: "Hora de salida",
-                  }}
-                  readonly={readonly}
-                  required
-                />
-              </Col>
-
-              <Col md={8} sm={24} xs={12}>
-                <Form.Item label="Tiempo de Entrega" required>
-                  <Input.Group compact>
-                    <Input
-                      style={{ width: "80%" }}
-                      name="tiempoDeEntrega"
-                      min={1}
-                      max={31}
-                      type="number"
-                    />
-                    <Select
-                      style={{ width: "20%" }}
-                      defaultValue="horas"
-                      options={[
-                        {
-                          label: "Horas",
-                          value: "horas",
-                        },
-                        {
-                          label: "Días",
-                          value: "dias",
-                        },
-                      ]}
-                    ></Select>
-                  </Input.Group>
-                </Form.Item>
-              </Col>
-              <Col md={8} sm={24} xs={12}>
-                <SwitchInput
-                  name="activo"
-                  onChange={(value) => {
-                    if (value) {
-                      alerts.info(messages.confirmations.enable);
-                    } else {
-                      alerts.info(messages.confirmations.disable);
-                    }
-                  }}
-                  label="Activo"
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={8} sm={24} xs={12}>
-                <TextAreaInput
-                  formProps={{
-                    name: "comentarios",
-                    label: "Comentarios",
-                  }}
-                  max={500}
-                  rows={4}
-                  autoSize
-                  readonly={readonly}
-                />
-              </Col>
-            </Row>
-          </Form>
-        </div>
+                  <Select
+                    style={{ width: "20%" }}
+                    defaultValue="horas"
+                    options={[
+                      {
+                        label: "Horas",
+                        value: "horas",
+                      },
+                      {
+                        label: "Días",
+                        value: "dias",
+                      },
+                    ]}
+                  ></Select>
+                </Input.Group>
+              </Form.Item>
+            </Col>
+            <Col md={8} sm={24} xs={12}>
+              <SwitchInput
+                name="activo"
+                onChange={(value) => {
+                  if (value) {
+                    alerts.info(messages.confirmations.enable);
+                  } else {
+                    alerts.info(messages.confirmations.disable);
+                  }
+                }}
+                label="Activo"
+                required
+                readonly={readonly}
+              />
+            </Col>
+            <Col md={8} sm={24} xs={12}>
+              <TextAreaInput
+                formProps={{
+                  name: "comentarios",
+                  label: "Comentarios",
+                }}
+                max={500}
+                rows={4}
+                autoSize
+                readonly={readonly}
+              />
+            </Col>
+          </Row>
+        </Form>
       </div>
       <Divider orientation="left">Asignación de Estudios</Divider>
-      <Row>
-        <Col md={4} sm={24} xs={12}>
-          <h3>Búsqueda por</h3>
-        </Col>
-      </Row>
-
-      <Row justify="space-between" gutter={[8, 12]} align="middle">
-        <Col md={8} sm={24} xs={12}>
-          <SelectInput
-            formProps={{
-              name: "departamento",
-              label: "Departamentos",
-            }}
-            options={departmentOptions}
-            onChange={(value) => {
-              setAreaId(undefined);
-              setDepId(value);
-              filterByDepartament(value);
-            }}
-            value={depId}
-            placeholder={"Departamentos"}
-          />
+      <Row gutter={[12, 0]} align="middle">
+        <Col md={24} sm={24} xs={12}>
+          <Title level={5}>Búsqueda por</Title>
         </Col>
         <Col md={8} sm={24} xs={12}>
-          <SelectInput
-            formProps={{ name: "areaSearch", label: "Área" }}
-            options={aeraSearch}
-            onChange={(value) => {
-              setAreaId(value);
-              filterByArea(value);
-            }}
-            value={areaId}
-            placeholder={"Área"}
-          />
-        </Col>
-        <Col md={8} sm={24} xs={12}>
-          <Form.Item name="search" label="" labelAlign="right">
+          <Form.Item label="">
             <Search
+              name="search"
               key="search"
               placeholder="Buscar"
               onSearch={(value) => {
@@ -651,18 +618,47 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
             />
           </Form.Item>
         </Col>
+        <Col md={8} sm={24} xs={12}>
+          <SelectInput
+            formProps={{ name: "areaSearch", label: "Área" }}
+            options={aeraSearch}
+            onChange={(value) => {
+              setAreaId(value);
+              filterByArea(value);
+            }}
+            value={areaId}
+            placeholder={"Seleccionar área"}
+          />
+        </Col>
+        <Col md={8} sm={24} xs={12}>
+          <SelectInput
+            formProps={{
+              name: "departamento",
+              label: "Departamentos",
+            }}
+            options={departmentOptions}
+            onChange={(value) => {
+              setAreaId(undefined);
+              setDepId(value);
+              filterByDepartament(value);
+            }}
+            value={depId}
+            placeholder={"Seleccionar departamentos"}
+          />
+        </Col>
       </Row>
       <Row>
-        <Table<IRouteEstudioList>
-          size="small"
-          rowKey={(record) => record.id}
-          columns={columnsEstudios.slice(0, 6)}
-          pagination={false}
-          dataSource={[...(values.estudio ?? [])]}
-          rowSelection={rowSelection}
-          // scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
-          scroll={{ y: 240 }}
-        />
+      <Col md={24} sm={24} xs={24}>
+          <Table<IRouteEstudioList>
+            size="small"
+            rowKey={(record) => record.id}
+            columns={columnsEstudios.slice(0, 6)}
+            pagination={false}
+            dataSource={[...(values.estudio ?? [])]}
+            rowSelection={rowSelection}
+            scroll={{ y: 240 }}
+          />
+        </Col>
       </Row>
     </Spin>
   );
