@@ -10,7 +10,7 @@ import TrackingOrder from "../api/trackingOrder";
 import {
   ITrackingOrderForm,
   ITrackingOrderList,
-  IEstudiosList,
+  IStudyTrackList,
 } from "../models/trackingOrder";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -25,9 +25,9 @@ export default class TrackingOrdertStore {
   }
 
   scopes?: IScopes;
-  trackingOrder: IEstudiosList[] = [];
+  trackingOrder: IStudyTrackList[] = [];
   trackingOrderStudies: ITrackingOrderList[] = [];
-  estudios: IEstudiosList[] = [];
+  estudios: IStudyTrackList[] = [];
   temperatura: number = 0;
   TranckingOrderSend: ITrackingOrderForm = new TrackingOrderFormValues();
   setSendData = (tranckingOrderSend: ITrackingOrderForm) => {
@@ -54,18 +54,11 @@ export default class TrackingOrdertStore {
       alerts.warning(getErrors(error));
     }
   };
-  setEscaneado = (escaneado: boolean, id: string) => {
+  setEscaneado = (escaneo: boolean, id: string) => {
     try {
       const estudios = this.trackingOrder.map((estudio) => {
         let a = new TrackingOrderListValues(estudio);
-        if (a.id === id) {
-          a.escaneado = escaneado;
-          if (!escaneado) {
-            a.temperatura = 0;
-          } else {
-            a.temperatura = this.temperatura!;
-          }
-        }
+
         return a;
       });
       console.log(estudios);
@@ -82,14 +75,12 @@ export default class TrackingOrdertStore {
           const trackingOrder = this.trackingOrder[index];
           this.trackingOrder[index] = {
             ...trackingOrder,
-            temperatura: temperature,
+
           };
         }
       } else {
         const estudios = this.trackingOrder.map((estudio) => {
-          if (estudio.escaneado) {
-            estudio.temperatura = temperature;
-          }
+
 
           return estudio;
         });
@@ -148,7 +139,7 @@ export default class TrackingOrdertStore {
       this.OrderId = trackingOrder.id!;
       this.trackingOrder = trackingOrder.estudiosAgrupados!.map((x: any) => {
         let a = new TrackingOrderListValues(x);
-        a.escaneado = true;
+        a.escaneo = true;
         return a;
       });
       return trackingOrder;

@@ -41,9 +41,7 @@ export default class RouteStore {
   find = async (route: IRouteForm) => {
     try {
       const foundRoutes = await Route.find(route);
-      console.log("found routes", foundRoutes);
       this.foundRoutes = foundRoutes;
-      //   this.routes = foundRoutes;
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -63,9 +61,7 @@ export default class RouteStore {
   getAllStudy = async () => {
     try {
       const roles = await Study.getAll("all");
-      console.log(roles, "studies");
       const activos = roles.filter((x) => x.activo);
-      console.log(roles);
       var studies = activos.map((x) => {
         let data: IRouteEstudioList = {
           id: x.id,

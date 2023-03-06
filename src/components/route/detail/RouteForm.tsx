@@ -7,28 +7,30 @@ import {
   Button,
   PageHeader,
   Divider,
-  Select,
   Input,
   Table,
   TreeSelect,
+  Typography,
+  Dropdown,
+  Select,
+  Space,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
-import { formItemLayout } from "../../../app/util/utils";
-import TextInput from "../../../app/common/form/TextInput";
+import { formItemLayout, formItemProps } from "../../../app/util/utils";
+import TextInput from "../../../app/common/form/proposal/TextInput";
 import { useStore } from "../../../app/stores/store";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
-import SwitchInput from "../../../app/common/form/SwitchInput";
+import SwitchInput from "../../../app/common/form/proposal/SwitchInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import {
   IDias,
   IRouteEstudioList,
   IRouteForm,
-  IRouteList,
   RouteFormValues,
 } from "../../../app/models/route";
 import {
@@ -36,14 +38,18 @@ import {
   IColumns,
   ISearch,
 } from "../../../app/common/table/utils";
-import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
+import useWindowDimensions from "../../../app/util/window";
 import { IOptions } from "../../../app/models/shared";
-import TextAreaInput from "../../../app/common/form/TextAreaInput";
-import NumberInput from "../../../app/common/form/NumberInput";
-import SelectInput from "../../../app/common/form/SelectInput";
+import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
+import NumberInput from "../../../app/common/form/proposal/NumberInput";
+import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import CheckableTag from "antd/lib/tag/CheckableTag";
+import TimeInput from "../../../app/common/form/proposal/TimeInput";
+import "../../../index.css";
 
 const { Search } = Input;
+const { Text } = Typography;
+
 type RouteFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
@@ -86,7 +92,6 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   );
   const [values, setValues] = useState<IRouteForm>(new RouteFormValues());
   const [value, setValue] = useState<string>();
-  const [estudios, setEstudios] = useState<IRouteEstudioList[]>([]);
   let { id } = useParams<UrlParams>();
   const { width: windowWidth } = useWindowDimensions();
   const [selectedTags, setSelectedTags] = useState<IDias[]>([]);
@@ -99,8 +104,6 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     { id: 6, dia: "S" },
     { id: 7, dia: "D" },
   ];
-  const [formTP] = Form.useForm<{ tiempoDeEntrega: string }>();
-  const nameValue = Form.useWatch("tiempoDeEntrega", formTP);
 
   useEffect(() => {
     const studys = async () => {
@@ -136,12 +139,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     const readuser = async (idUser: string) => {
       try {
         setLoading(true);
-        //console.log("here");
-        const all = await getAll("all");
-        //console.log(all);
         var studis = await getAllStudy();
-        //console.log(studies, "estudios");
-        //console.log("checks seleccionados" ,selectedRowKeys);
         var areaForm = await getareaOptions(values.idDepartamento);
         const user = await getById(idUser);
         if (user?.sucursalDestinoId == null) {
@@ -238,11 +236,9 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   });
 
   const handleChange = (tag: IDias, checked: Boolean) => {
-    //console.log(tag, "el tag");
     const nextSelectedTags = checked
       ? [...selectedTags!, tag]
       : selectedTags.filter((t) => t.id !== tag.id);
-    //console.log("You are interested in: ", nextSelectedTags);
     setSelectedTags(nextSelectedTags!);
   };
 
@@ -264,11 +260,6 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
       })),
     },
   ];
-
-  const onChange = (newDestinoValue: string) => {
-    //console.log("Aqui esta el destino", newDestinoValue);
-    setValue(newDestinoValue);
-  };
 
   const columnsEstudios: IColumns<IRouteEstudioList> = [
     {
@@ -327,8 +318,6 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     },
   };
 
-  const hasSelected = selectedRowKeys.length > 0;
-
   const onValuesChange = async (changedValues: any) => {
     const field = Object.keys(changedValues)[0];
 
@@ -378,10 +367,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         (x) => x.value === departament
       )[0].label;
       var areaSearch = await getareaOptions(departament);
-      //console.log(departamento, "departamento");
       var estudios = lista.filter((x) => x.departamento === departamento);
-      //console.log(lista, "lista");
-      //console.log(estudios, "estudios filtro dep");
       setValues((prev) => ({ ...prev, estudio: estudios }));
       setAreaSearch(areaSearch!);
     } else {
@@ -471,8 +457,8 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
             scrollToFirstError
             onValuesChange={onValuesChange}
           >
-            <Row>
-              <Col md={12} sm={24} xs={12}>
+            <Row gutter={[4, 8]} justify="space-between" align="middle">
+              <Col md={8} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "clave",
@@ -483,18 +469,28 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                   readonly={readonly}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
                 <SelectInput
                   formProps={{
-                    name: "paqueteriaId",
-                    label: "Paquetería ",
+                    name: "sucursalOrigenId",
+                    label: "Origen ",
                   }}
                   readonly={readonly}
                   required
-                  options={DeliveryOptions}
+                  options={BranchOptions}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
+                <Form.Item name="sucursalDestinoId" label="Destino">
+                  <TreeSelect
+                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                    treeData={treeData}
+                    placeholder="Por favor seleccione"
+                    treeDefaultExpandAll
+                  />
+                </Form.Item>
+              </Col>
+              <Col md={8} sm={24} xs={12}>
                 <TextInput
                   formProps={{
                     name: "nombre",
@@ -505,93 +501,74 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                   readonly={readonly}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
-                <div style={{ marginLeft: "145px", marginBottom: "20px" }}>
-                  <span style={{ marginRight: 10 }}>Aplicar días:</span>
-                  {tagsData.map((tag) => (
-                    <CheckableTag
-                      key={tag.id}
-                      checked={
-                        selectedTags.filter((x) => x.id === tag.id).length > 0
-                      }
-                      onChange={(checked) => handleChange(tag, checked)}
-                    >
-                      {tag.dia}
-                    </CheckableTag>
-                  ))}
-                </div>
-              </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={12}>
                 <SelectInput
                   formProps={{
-                    name: "sucursalOrigenId",
-                    label: "Sucursal Origen ",
-                    
+                    name: "paqueteriaId",
+                    label: "Paquetería ",
                   }}
-                  
                   readonly={readonly}
                   required
-                  options={BranchOptions}
-                />
-                {/* <div style={{ marginLeft: "170px", marginBottom: "20px" }}>
-                  <span style={{ marginRight: 10 }}>Destino:</span> */}
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <NumberInput
-                  formProps={{
-                    name: "horaDeRecoleccion",
-                    label: "Hora de Recolección",
-                  }}
-                  min={7}
-                  max={23}
-                  required
-                  readonly={readonly}
+                  options={DeliveryOptions}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
-                <Form.Item name="sucursalDestinoId" label="Destino">
-                  <TreeSelect
-                    // style={{ width: "80%" }}
-                    // value={value}
-                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                    treeData={treeData}
-                    placeholder="Por favor seleccione"
-                    treeDefaultExpandAll
-                    // defaultValue={}
-                    onSelect={(value: any, node: any) => {
-                      console.log("valor", value);
-                      console.log("nodo", node);
-
-                      const parent = treeData.find((x) =>
-                        x.children.map((x) => x.value).includes(value)
-                      );
-                      console.log("parent", parent);
-                    }}
-                  />
+              <Col md={8} sm={24} xs={12}>
+                <Form.Item label="Aplica para días:">
+                  <Space size={[12, 8]} wrap>
+                    {tagsData.map((tag) => (
+                      <CheckableTag
+                        key={tag.id}
+                        checked={
+                          selectedTags.filter((x) => x.id === tag.id).length > 0
+                        }
+                        onChange={(checked) => handleChange(tag, checked)}
+                      >
+                        {tag.dia}
+                      </CheckableTag>
+                    ))}
+                  </Space>
                 </Form.Item>
               </Col>
-              <Col md={12} sm={24} xs={12}>
-                <NumberInput
+
+              <Col md={8} sm={24} xs={12}>
+                <TimeInput
                   formProps={{
-                    name: "tiempoDeEntrega",
-                    label: "Tiempo de Entrega",
+                    name: "horaDeRecoleccion",
+                    label: "Hora de salida",
                   }}
-                  min={1}
-                  max={9999999999999999}
-                  required
                   readonly={readonly}
+                  required
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
-                <TextAreaInput
-                  formProps={{
-                    name: "comentarios",
-                    label: "Comentarios",
-                  }}
-                  max={500}
-                  rows={5}
-                  readonly={readonly}
-                />
+
+              <Col md={8} sm={24} xs={12}>
+                <Form.Item label="Tiempo de Entrega" required>
+                  <Input.Group compact>
+                    <Input
+                      style={{ width: "80%" }}
+                      name="tiempoDeEntrega"
+                      min={1}
+                      max={31}
+                      type="number"
+                    />
+                    <Select
+                      style={{ width: "20%" }}
+                      defaultValue="horas"
+                      options={[
+                        {
+                          label: "Horas",
+                          value: "horas",
+                        },
+                        {
+                          label: "Días",
+                          value: "dias",
+                        },
+                      ]}
+                    ></Select>
+                  </Input.Group>
+                </Form.Item>
+              </Col>
+              <Col md={8} sm={24} xs={12}>
                 <SwitchInput
                   name="activo"
                   onChange={(value) => {
@@ -603,6 +580,18 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                   }}
                   label="Activo"
                   required
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={8} sm={24} xs={12}>
+                <TextAreaInput
+                  formProps={{
+                    name: "comentarios",
+                    label: "Comentarios",
+                  }}
+                  max={500}
+                  rows={4}
+                  autoSize
                   readonly={readonly}
                 />
               </Col>
@@ -646,7 +635,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
             placeholder={"Área"}
           />
         </Col>
-        <Col md={6} sm={24} xs={12}>
+        <Col md={8} sm={24} xs={12}>
           <Form.Item name="search" label="" labelAlign="right">
             <Search
               key="search"

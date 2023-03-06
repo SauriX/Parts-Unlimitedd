@@ -1,33 +1,33 @@
 import { uniqueId } from "lodash";
 import moment from "moment";
 
-export interface IEstudiosList {
-  taponNombre: string;
-  estudio?: ITrackingOrderList;
-  escaneado: boolean;
-  temperatura: number;
-  solicitud: string;
-  nombrePaciente: string;
+export interface IStudyTrackList {
   id?: string;
-  solicitudId: string;
-  IsInRute?: boolean;
-  isExtra?:boolean;
+  claveEtiqueta: string;
+  recipiente: string;
+  cantidad: number;
+  estudios: string;
+  solicitud: string;
+  ruta: string;
+  estatus: string;
+  escaneo: boolean;
 }
 
 export interface searchstudies {
+  estudios: number[];
+  solicitud: string;
+}
 
-estudios:number[];
-solicitud :string;
-}
 export interface IRequestStudyOrder {
-  id:number;
-  clave:string;
-  estudio:string;
-  estatus:string;
-  dias:string;
-  fecha:string;
-  estatusId:number;
+  id: number;
+  clave: string;
+  estudio: string;
+  estatus: string;
+  dias: string;
+  fecha: string;
+  estatusId: number;
 }
+
 export interface ITrackingOrderList {
   id?: number;
   clave: string;
@@ -39,7 +39,7 @@ export interface ITrackingOrderList {
   solicitudId: string;
   estudioId: number;
   expedienteId: string;
-  isExtra?:boolean;
+  isExtra?: boolean;
 }
 
 export interface ITrackingOrderForm {
@@ -57,7 +57,7 @@ export interface ITrackingOrderForm {
   activo: boolean;
   clave: string;
   isInRute: boolean;
-  estudiosAgrupados?: IEstudiosList[];
+  estudiosAgrupados?: IStudyTrackList[];
   estudios: ITrackingOrderList[];
   horaDeRecoleccion: number | undefined;
   fecha: moment.Moment;
@@ -67,15 +67,17 @@ export interface ITrackingOrderForm {
   pacienteId: string;
   escaneado: boolean;
 }
-export class TrackingOrderListValues implements IEstudiosList {
-  taponNombre = "";
-  escaneado = false;
-  temperatura = 0;
+export class TrackingOrderListValues implements IStudyTrackList {
+  claveEtiqueta = "";
+  recipiente = "";
+  cantidad = 0;
+  estudios = "";
   solicitud = "";
-  nombrePaciente = "";
-  solicitudId = "";
-  id = uniqueId();
-  constructor(init?: IEstudiosList) {
+  ruta = "";
+  estatus = "";
+  escaneo = false;
+
+  constructor(init?: IStudyTrackList) {
     Object.assign(this, init);
   }
 }

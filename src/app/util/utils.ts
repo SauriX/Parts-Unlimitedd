@@ -4,6 +4,7 @@ import messages from "./messages";
 import { UploadRequestOption } from "rc-upload/lib/interface";
 import { IGrouped } from "../models/shared";
 import { toJS } from "mobx";
+import { FormItemProps } from "antd";
 
 export const tokenName = process.env.REACT_APP_TOKEN_NAME!;
 
@@ -212,6 +213,18 @@ export const consoleColor = (msg: string, color: string) => {
 };
 
 export const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 8 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16 },
+  },
+};
+
+export const formItemProps: FormItemProps<any> = {
+  labelAlign: "right",
   labelCol: {
     xs: { span: 24 },
     sm: { span: 8 },

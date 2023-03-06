@@ -11,7 +11,7 @@ import {
 } from "../../../../app/common/table/utils";
 import useWindowDimensions from "../../../../app/util/window";
 import { VList } from "virtual-table-ant-design";
-import { IEstudiosList, IRequestStudyOrder, searchstudies } from "../../../../app/models/trackingOrder";
+import { IStudyTrackList, IRequestStudyOrder, searchstudies } from "../../../../app/models/trackingOrder";
 
 const { Paragraph } = Typography;
 

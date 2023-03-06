@@ -1,6 +1,6 @@
 import StudyTable from "./StudyTable";
 import { store, useStore } from "../../../../app/stores/store";
-import { IEstudiosList, IRequestStudyOrder } from "../../../../app/models/trackingOrder";
+import { IStudyTrackList, IRequestStudyOrder } from "../../../../app/models/trackingOrder";
 
 
 export const StudyModal = (selectedRowKeys: IRequestStudyOrder[],solicitud:string) => {

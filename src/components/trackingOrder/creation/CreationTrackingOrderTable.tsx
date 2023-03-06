@@ -1,15 +1,5 @@
-import {
-  Button,
-  Divider,
-  PageHeader,
-  Spin,
-  Table,
-  List,
-  Typography,
-  Input,
-  Switch,
-} from "antd";
-import React, { FC, Fragment, useEffect, useRef, useState } from "react";
+import { Table, Switch } from "antd";
+import { FC, Fragment, useState } from "react";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
@@ -17,39 +7,22 @@ import {
   ISearch,
 } from "../../../app/common/table/utils";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
-import { EditOutlined } from "@ant-design/icons";
-import IconButton from "../../../app/common/button/IconButton";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import {
-  IEstudiosList,
-  ITrackingOrderList,
-} from "../../../app/models/trackingOrder";
+import { useNavigate } from "react-router-dom";
+import { IStudyTrackList as IStudyTrackList } from "../../../app/models/trackingOrder";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import { useReactToPrint } from "react-to-print";
-import HeaderTitle from "../../../app/common/header/HeaderTitle";
-import SwitchInput from "../../../app/common/form/SwitchInput";
-import TextInput from "../../../app/common/form/TextInput";
-import { toJS } from "mobx";
-import { uniqueId } from "lodash";
-import views from "../../../app/util/view";
 
 type TrackingOrderTableProps = {
-  // componentRef: React.MutableRefObject<any>;
   id: string;
   printing: boolean;
 };
 
 const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
-  // componentRef,
   id,
   printing,
 }) => {
   const { trackingOrderStore } = useStore();
-  const { temperatura, trackingOrder, setEscaneado, setTemperature } =
-    trackingOrderStore;
-
-  const [searchParams] = useSearchParams();
+  const { trackingOrder } = trackingOrderStore;
 
   let navigate = useNavigate();
 
@@ -62,143 +35,78 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
     searchedColumn: "",
   });
 
-  // console.log("Table");
-
-  // useEffect(() => {
-  //   console.log("estudios", toJS(trackingOrder));
-  // }, [trackingOrder]);
-
-  const columns: IColumns<IEstudiosList> = [
+  const columns: IColumns<IStudyTrackList> = [
     {
-      ...getDefaultColumnProps("clave", "Clave Estudio", {
+      ...getDefaultColumnProps("claveEtiqueta", "Clave muestra", {
         searchState,
         setSearchState,
         width: "15%",
-        minWidth: 150,
-        windowSize: windowWidth,
       }),
-      align: "center",
-      render: (text, record) => {
-        return record.estudio?.clave;
-      },
     },
     {
-      ...getDefaultColumnProps("estudios", "Estudio", {
+      ...getDefaultColumnProps("recipiente", "Recipiente", {
         searchState,
         setSearchState,
-        width: "20%",
-        minWidth: 150,
-        windowSize: windowWidth,
+        width: "10%",
       }),
-      render: (text, record) => {
-        return record.estudio?.estudio;
-      },
+    },
+    {
+      ...getDefaultColumnProps("cantidad", "Cantidad", {
+        searchState,
+        setSearchState,
+        width: "10%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("estudios", "Estudios", {
+        searchState,
+        setSearchState,
+        width: "25%",
+      }),
     },
     {
       ...getDefaultColumnProps("solicitud", "Solicitud", {
         searchState,
         setSearchState,
-        width: "15%",
-        minWidth: 150,
-        windowSize: windowWidth,
+        width: "10%",
       }),
-      align: "center",
-
-      render: (value, record) => (
-        <Button
-          type="link"
-          onClick={() => {
-            
-            navigate(
-              `/${views.request}/${record.estudio?.expedienteId }/${ record.estudio?.solicitudId}` 
-            );
-          }}
-        >
-          {record.estudio?.solicitud}
-        </Button>
-      ),
-    },
-
-    {
-      key: "nombrePaciente",
-      dataIndex: "nombrePaciente",
-      title: "Paciente",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value,record) => (
-        <>{record.estudio?.nombrePaciente}</>)
-      ,
     },
     {
-      key: "escaneado",
-      dataIndex: "escaneado",
-      title: "Escaneado",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value, fullrow) => (
-        <Switch
-          checked={fullrow.escaneado}
-          onChange={(value) => {
-            console.log("escaneado", value, fullrow);
-            setEscaneado(value, fullrow.id!);
-
-            //  else {
-            //   alerts.info(messages.confirmations.disable);
-            // }
-          }}
-        />
-      ),
+      ...getDefaultColumnProps("ruta", "Clave ruta", {
+        searchState,
+        setSearchState,
+        width: "10%",
+      }),
     },
     {
-      key: "temperatura",
-      dataIndex: "temperatura",
-      title: "Temperatura",
-      align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value, fullrow) => (
-        <Input
-          max={100}
-          required
-          value={fullrow.estudio?.temperatura ? fullrow.estudio?.temperatura : temperatura}
-          type={"number"}
-          onChange={(newValue) => {
-            setTemperature(+newValue.target.value, fullrow.id);
-          }}
-        />
-      ),
+      ...getDefaultColumnProps("estatus", "Estatus", {
+        searchState,
+        setSearchState,
+        width: "10%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("escaneo", "Escaneo", {
+        searchState,
+        setSearchState,
+        width: "10%",
+      }),
+      render: (value, record) => {
+        return (
+          <Switch
+            checked={value}
+            onChange={(checked) => {
+              record.escaneo = checked;
+            }}
+          />
+        );
+      },
     },
   ];
 
-  const TrackingOrderTablePrint = () => {
-    return (
-      // <div ref={componentRef}>
-      <>
-        <PageHeader
-          ghost={false}
-          title={
-            <HeaderTitle
-              title="Orden de Seguimiento"
-              image="ordenseguimiento"
-            />
-          }
-          className="header-container"
-        ></PageHeader>
-        <Divider className="header-divider" />
-        <Table<IEstudiosList>
-          size="large"
-          rowKey={(record) => record.id!}
-          columns={columns}
-          pagination={false}
-          dataSource={[...trackingOrder]}
-        />
-      </>
-      // </div>
-    );
-  };
-
   return (
     <Fragment>
-      <Table<any>
+      <Table<IStudyTrackList>
         loading={loading || printing}
         size="small"
         rowKey={(record) => record.id!}
@@ -208,7 +116,6 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />
-      {/* <div style={{ display: "none" }}>{<TrackingOrderTablePrint />}</div> */}
     </Fragment>
   );
 };

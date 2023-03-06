@@ -118,7 +118,6 @@ export default class OptionStore {
   getClinicOptions = async () => {
     try {
       const clinics = await Catalog.getActive<ICatalogNormalList>("clinic");
-      console.log(clinics);
       this.clinicOptions = clinics.map((x) => ({
         value: x.id,
         label: x.nombre,
@@ -131,7 +130,6 @@ export default class OptionStore {
   getReagentOptions = async () => {
     try {
       const reagent = await Reagent.getAll("all");
-      console.log(reagent);
       this.reagents = reagent.map((x) => ({
         value: x.id,
         label: x.nombre,
@@ -163,16 +161,12 @@ export default class OptionStore {
 
   printFormat: IOptions[] = [];
   getPrintFormatsOptions = async (id?: number) => {
-    console.log(id);
     try {
       const department = await Catalog.getActive<ICatalogNormalList>("format");
-      console.log("el depa optionStore");
-      console.log(department);
       this.printFormat = department.map((x) => ({
         value: x.id,
         label: x.nombre,
       }));
-      console.log("los depas mapeados");
     } catch (error) {
       this.printFormat = [];
     }
@@ -183,7 +177,6 @@ export default class OptionStore {
   getfieldsOptions = async () => {
     try {
       const field = await Catalog.getActive<ICatalogNormalList>("field");
-      console.log(field);
       this.fieldOptions = field.map((x) => ({ value: x.id, label: x.nombre }));
     } catch (error) {
       this.fieldOptions = [];
@@ -195,7 +188,6 @@ export default class OptionStore {
   getbankOptions = async () => {
     try {
       const bank = await Catalog.getActive<ICatalogNormalList>("bank");
-      console.log(bank);
       this.bankOptions = bank.map((x) => ({ value: x.id, label: x.nombre }));
     } catch (error) {
       this.bankOptions = [];
@@ -209,7 +201,6 @@ export default class OptionStore {
       const invoiceConcepts = await Catalog.getActive<ICatalogDescriptionList>(
         "invoiceconcepts"
       );
-      console.log(invoiceConcepts);
       this.invoiceConceptsOptions = invoiceConcepts.map((x) => ({
         value: x.descripcion,
         label: x.nombre,
@@ -274,7 +265,6 @@ export default class OptionStore {
       const procedencia = await Catalog.getActive<ICatalogNormalList>(
         "provenance"
       );
-      console.log(procedencia);
       this.provenanceOptions = procedencia.map((x) => ({
         value: x.id,
         label: x.nombre,
@@ -300,8 +290,6 @@ export default class OptionStore {
   getParameterOptions = async () => {
     try {
       const parameter = await Parameter.getAll("all");
-      console.log("parameters");
-      console.log(parameter);
       this.parameterOptions = parameter.map((x) => ({
         value: x.id,
         label: x.nombre,
@@ -334,7 +322,6 @@ export default class OptionStore {
   getMethodOptions = async () => {
     try {
       const Method = await Catalog.getActive<ICatalogNormalList>("Method");
-      console.log(Method);
       this.MethodOptions = Method.map((x) => ({
         value: x.id,
         label: x.nombre,
@@ -360,7 +347,6 @@ export default class OptionStore {
   getIndication = async () => {
     try {
       const indication = await Indication.getAll("");
-      console.log(indication);
       this.indicationOptions = indication.map((x) => ({
         value: x.id,
         label: x.nombre,
@@ -375,7 +361,6 @@ export default class OptionStore {
   getworkListOptions = async () => {
     try {
       const workList = await Catalog.getActive<ICatalogNormalList>("workList");
-      console.log(workList);
       this.workListOptions = workList.map((x) => ({
         value: x.id,
         label: x.nombre,
@@ -389,7 +374,6 @@ export default class OptionStore {
   getworkListOptions2 = async () => {
     try {
       const workList = await Catalog.getActive<ICatalogNormalList>("workList");
-      console.log(workList);
       this.workListOptions2 = workList.map((x) => ({
         id: x.id,
         nombre: x.nombre,
@@ -407,7 +391,6 @@ export default class OptionStore {
       const sampleType = await Catalog.getActive<ICatalogNormalList>(
         "sampleType"
       );
-      console.log(sampleType);
       this.sampleTypeOptions = sampleType.map((x) => ({
         value: x.id,
         label: x.nombre,
@@ -422,7 +405,6 @@ export default class OptionStore {
   getPriceListOptions = async () => {
     try {
       const priceListOptions = await PriceList.getActive();
-      console.log(priceListOptions);
       this.priceListOptions = priceListOptions.map((x) => ({
         value: x.id,
         label: x.nombre,
@@ -439,7 +421,6 @@ export default class OptionStore {
     try {
       const profile = store.profileStore.profile;
       const priceListOptions1 = await branch.getAll("all");
-      console.log(priceListOptions1);
       this.sucursales = priceListOptions1
         .filter((x) => profile?.sucursales.includes(x.idSucursal))
         .map((x) => ({
@@ -486,7 +467,6 @@ export default class OptionStore {
   getDeliveryOptions = async () => {
     try {
       const Delivery = await Catalog.getActive<ICatalogNormalList>("Delivery");
-      console.log(Delivery);
       this.DeliveryOptions = Delivery.map((x) => ({
         value: x.id,
         label: x.nombre,
@@ -598,7 +578,6 @@ export default class OptionStore {
   getCompanyOptions = async () => {
     try {
       const CompanyOptions = await Company.getActive();
-      console.log(CompanyOptions);
       this.companyOptions = CompanyOptions.map((x) => ({
         value: x.id,
         label: x.nombreComercial,

@@ -1,13 +1,5 @@
-import {
-  DatePicker,
-  DatePickerProps,
-  Form,
-  FormItemProps,
-  Space,
-  Tooltip,
-} from "antd";
+import { Form, FormItemProps, Space, TimePicker, Tooltip } from "antd";
 import { Rule } from "antd/lib/form";
-import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
 import { InfoCircleTwoTone } from "@ant-design/icons";
 import "./index.less";
@@ -21,30 +13,14 @@ interface IProps {
   style?: React.CSSProperties;
   isGroup?: boolean;
   errors?: any[];
-  disabledDates?: (current: moment.Moment) => boolean;
-  disableBeforeDates?: boolean;
-  disableAfterDates?: boolean;
-  pickerType?:
-    | "time"
-    | "date"
-    | "week"
-    | "month"
-    | "quarter"
-    | "year"
-    | undefined;
+  format?: string;
+  use12Hours?: boolean;
+  hourStep?: number;
+  minuteStep?: number;
+  secondStep?: number;
 }
 
-const dateFormat = "DD/MM/YYYY";
-const weekFormat = "DD/MM";
-const monthFormat = "MM/YYYY";
-const yearFormat = "YYYY";
-
-const customWeekStartEndFormat: DatePickerProps["format"] = (value) =>
-  `${moment(value).startOf("week").format(weekFormat)} - ${moment(value)
-    .endOf("week")
-    .format(weekFormat)}`;
-
-const DateInput = ({
+const TimeInput = ({
   formProps: itemProps,
   required,
   readonly,
@@ -53,10 +29,11 @@ const DateInput = ({
   style,
   isGroup,
   errors,
-  disabledDates,
-  disableBeforeDates,
-  disableAfterDates,
-  pickerType,
+  format,
+  use12Hours,
+  hourStep,
+  minuteStep,
+  secondStep,
 }: IProps) => {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -87,13 +64,6 @@ const DateInput = ({
     });
   }
 
-  function disabledBeforeDate(current: moment.Moment) {
-    return disableBeforeDates ? current.isBefore(moment(), "day") : false;
-  }
-  function disabledAfterDate(current: moment.Moment) {
-    return disableAfterDates ? current.isAfter(moment(), "day") : false;
-  }
-
   return (
     <div className="custom-input">
       <Form.Item
@@ -105,30 +75,18 @@ const DateInput = ({
         help=""
         className="no-error-text"
       >
-        <DatePicker
-          disabledDate={
-            disableAfterDates
-              ? disabledAfterDate
-              : disableBeforeDates
-              ? disabledBeforeDate
-              : disabledDates
-          }
+        <TimePicker
           disabled={readonly}
-          format={
-            pickerType === "week"
-              ? customWeekStartEndFormat
-              : pickerType === "month"
-              ? monthFormat
-              : pickerType === "year"
-              ? yearFormat
-              : dateFormat
-          }
           style={{
             paddingRight: paddingRight,
             width: width ?? "100%",
             ...(style ?? {}),
           }}
-          picker={pickerType ?? "date"}
+          format={format ?? "HH:mm"}
+          use12Hours={use12Hours ?? false}
+          hourStep={hourStep ?? 1}
+          minuteStep={minuteStep ?? 1}
+          secondStep={secondStep ?? 1}
         />
       </Form.Item>
       <div
@@ -166,4 +124,4 @@ const DateInput = ({
   );
 };
 
-export default DateInput;
+export default TimeInput;
