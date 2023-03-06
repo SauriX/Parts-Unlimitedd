@@ -41,8 +41,8 @@ const ReportHeader: FC<HeaderProps> = ({
           Estudios:{" "}
           <Text strong>{requests.flatMap((x) => x.estudios).length}</Text>
         </Text>,
-        <ImageButton image="archivo-excel"  onClick={handleDownload} />,
-        <DownloadIcon key="doc" onClick={handleDownloadList} />,
+        <DownloadIcon key="doc" onClick={handleDownload} />,
+        <ImageButton image="archivo-excel"  onClick={handleDownloadList} />,
       ]}
     ></PageHeader>
   );
