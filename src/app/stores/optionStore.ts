@@ -471,6 +471,10 @@ export default class OptionStore {
         value: x.id,
         label: x.nombre,
       }));
+      this.DeliveryOptions.unshift({
+        value: 0,
+        label: "Sin paquetería",
+      });
     } catch (error) {
       this.DeliveryOptions = [];
     }
@@ -695,7 +699,8 @@ export default class OptionStore {
       const type = Parameter.getAllValues(id, tipo);
       this.typeValue = (await type).map((x) => ({
         value: x.id!,
-        label: x.descripcionTexto as string || x.descripcionParrafo as string,
+        label:
+          (x.descripcionTexto as string) || (x.descripcionParrafo as string),
       }));
     } catch (error) {
       this.typeValue = [];

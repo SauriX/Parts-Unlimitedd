@@ -30,6 +30,7 @@ import DateInput from "../../../app/common/form/proposal/DateInput";
 import { IDias, IRouteForm, RouteFormValues } from "../../../app/models/route";
 import _ from "lodash";
 import { IOptions } from "../../../app/models/shared";
+import TextInput from "../../../app/common/form/proposal/TextInput";
 
 type TrackingOrderFormProps = {
   id: string;
@@ -375,6 +376,16 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                       form.setFieldValue("rutaId", value);
                     }
                   }}
+                  readonly={readonly}
+                />
+              </Col>
+              <Col md={6} sm={12} style={{ textAlign: "left" }}>
+                <TextInput
+                  formProps={{
+                    name: "muestraId",
+                    label: "Muestra",
+                  }}
+                  max={100}
                   readonly={readonly}
                 />
               </Col>

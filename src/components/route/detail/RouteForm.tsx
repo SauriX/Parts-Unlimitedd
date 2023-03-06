@@ -158,7 +158,6 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         setLista(studis!);
         setLoading(false);
 
-        // user!.maquiladorId = value!;
         setSelectedTags(user?.dias!);
       } catch {
       } finally {
@@ -507,6 +506,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                     name: "paqueteriaId",
                     label: "Paquetería ",
                   }}
+                  defaultValue={0}
                   readonly={readonly}
                   required
                   options={DeliveryOptions}
