@@ -6,6 +6,7 @@ import InvoiceCompanyTable from "../components/invoice/invoiceCompany/InvoiceCom
 import { useParams } from "react-router-dom";
 import InvoiceFreeForm from "../components/invoice/InvoiceFree/InvoiceFreeForm";
 import InvoiceFreeTable from "../components/invoice/InvoiceFree/InvoiceFreeTable";
+import InvoiceGlobalForm from "../components/invoice/InvoiceGlobal/InvoiceGlobalForm";
 
 const handleDownload = async () => {
   console.log("handleDownload");
@@ -22,8 +23,16 @@ const Invoice = () => {
         handleDownload={handleDownload}
       ></InvoiceCompanyHeader>
       <Divider className="header-divider" />
-      {tipo === "free" ? <InvoiceFreeForm /> : <InvoiceCompanyForm />}
+      {tipo === "free" ? (
+        <InvoiceFreeForm />
+      ) : tipo === "global" ? (
+        <InvoiceGlobalForm />
+      ) : (
+        <InvoiceCompanyForm />
+      )}
       {tipo === "free" ? <InvoiceFreeTable /> : <InvoiceCompanyTable />}
+
+      {/* {tipo === "global" ? <InvoiceFreeTable /> : <InvoiceCompanyTable />} */}
     </>
   );
 };

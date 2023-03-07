@@ -130,6 +130,8 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
                 ? "Crédito y cobranza (Facturación por solicitud)"
                 : tipo === "free"
                 ? "Crédito y cobranza (Facturación emitidas)"
+                : tipo === "global"
+                ? "Crédito y cobranza (Facturación global)"
                 : ""
             }
             image="invoice-company"
