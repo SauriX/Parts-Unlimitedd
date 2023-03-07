@@ -87,7 +87,6 @@ import InvoiceCompanyCreate from "../../components/invoice/invoiceCompany/Invoic
 import Notifications from "../../views/Notifications";
 import NotificationsDetail from "../../components/notifications/NotificationsDetail";
 import Relaseresult from "../../views/Relaseresult";
-import Test1 from "../../Test1";
 import Series from "../../views/Series";
 import SeriesDetail from "../../components/series/detail/SeriesDetail";
 import InvoiceCatalog from "../../views/InvoiceCatalog";
@@ -169,7 +168,6 @@ function App() {
       <ModalComponent />
       <DrawerComponent />
       <Routes>
-        <Route path="test1" element={<Test1 />} />
         <Route path="login" element={<Login />} />
         <Route element={<PrivateRoute />}>
           <Route element={<LayoutComponent />}>

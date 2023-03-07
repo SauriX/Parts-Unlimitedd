@@ -328,7 +328,6 @@ export default class ClinicResultsStores {
             parseFloat(y.resultado) >= y.criticoMaximo,
         })),
       }));
-      console.log("studies", toJS(this.studies));
       return params;
     } catch (error) {
       alerts.warning(getErrors(error));

@@ -21,6 +21,7 @@ const views = {
   relaseValidation: "RelaseResult",
   invoiceCatalog: "invoiceCatalog",
   reportStudy: "reportstudy",
+  parameters: "parameters",
 };
 
 export default views;
