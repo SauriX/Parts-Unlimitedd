@@ -26,7 +26,7 @@ const Proceding = {
   //getPermission: (): Promise<IRolePermission[]> => requests.get(`Rol/permisos`), */
   create: (pack: IProceedingForm): Promise<IProceedingList> =>
     requests.post("/MedicalRecord", pack),
-  updateWallet: (id: string, saldo: number, activo: boolean): Promise<void> =>
+  updateWallet: (id: string, saldo: number, activo: boolean): Promise<boolean> =>
     requests.post("/MedicalRecord/updateWallet", { id, saldo, activo }),
   createTaxData: (taxData: ITaxData): Promise<string> =>
     requests.post("/MedicalRecord/taxData", taxData),
