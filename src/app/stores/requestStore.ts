@@ -644,7 +644,7 @@ export default class RequestStore {
       connection.off("NotifyPaymentResponse");
     });
   };
-
+ 
   checkInPayment = async (request: IRequestCheckIn) => {
     try {
       const checkedIn = await Request.checkInPayment(request);
