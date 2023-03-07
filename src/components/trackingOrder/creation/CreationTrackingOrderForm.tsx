@@ -31,6 +31,7 @@ import { IDias, IRouteForm, RouteFormValues } from "../../../app/models/route";
 import _ from "lodash";
 import { IOptions } from "../../../app/models/shared";
 import TextInput from "../../../app/common/form/proposal/TextInput";
+import NumberInput from "../../../app/common/form/proposal/NumberInput";
 
 type TrackingOrderFormProps = {
   id: string;
@@ -389,6 +390,19 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                   readonly={readonly}
                 />
               </Col>
+              <Col md={6} sm={12} style={{ textAlign: "left" }}>
+                <NumberInput
+                  formProps={{
+                    name: "temperatura",
+                    label: "Temperatura",
+                  }}
+                  type="number"
+                  suffix="°C"
+                  required
+                  readonly={false}
+                  controls={false}
+                />
+              </Col>
               <Col md={6} sm={12}>
                 <SwitchInput
                   name="escaneoCodigoBarras"
@@ -410,12 +424,12 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                   readonly={readonly}
                 />
               </Col>
-              {!readonly && (
+              {/* {!readonly && (
                 <Col
                   md={6}
                   sm={24}
                   xs={12}
-                  offset={6}
+                  offset={18}
                   style={{ textAlign: "right" }}
                 >
                   <Button
@@ -446,7 +460,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                     Guardar orden
                   </Button>
                 </Col>
-              )}
+              )} */}
             </Row>
           </Form>
 

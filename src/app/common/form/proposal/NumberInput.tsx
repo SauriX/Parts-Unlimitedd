@@ -27,6 +27,7 @@ interface IProps {
       ) => string)
     | undefined;
   parser?: ((displayValue: string | undefined) => number) | undefined;
+  controls?: boolean;
 }
 
 const NumberInput = ({
@@ -43,6 +44,7 @@ const NumberInput = ({
   errors,
   formatter,
   parser,
+  controls
 }: IProps) => {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -101,8 +103,6 @@ const NumberInput = ({
         className="no-error-text"
       >
         <InputNumber<number>
-          // style={{ width: "100%" }}
-          // autoComplete={itemProps.name?.toString()}
           autoComplete="off"
           placeholder={placeholder ?? itemProps.label?.toString()}
           disabled={readonly}
@@ -113,11 +113,12 @@ const NumberInput = ({
           }}
           formatter={formatter}
           parser={parser}
+          controls={controls}
         />
       </Form.Item>
       {/* {(!!suffix || isGroup || !!errors) && ( */}
       <div
-        className={`suffix-container ${readonly ? "disabled" : ""}`}
+        className={`suffix-number-container ${readonly ? "disabled" : ""}`}
         style={{ display: !!suffix || isGroup || !!errors ? "" : "none" }}
         ref={ref}
       >
