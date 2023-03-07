@@ -1,4 +1,4 @@
-import { Button, Col, Divider, Form, Row, Typography } from "antd";
+import { Button, Col, Divider, Form, Row, Switch, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -15,6 +15,8 @@ import { useParams } from "react-router-dom";
 import DatosFiscalesForm from "../../../proceedings/details/DatosFiscalesForm";
 import { ITaxData } from "../../../../app/models/taxdata";
 import { IMotivo } from "../../../../app/models/Invoice";
+import { EditOutlined } from "@ant-design/icons";
+import { regimenFiscal } from "../../../../app/util/catalogs";
 import { toJS } from "mobx";
 
 const { Title, Text } = Typography;
@@ -46,6 +48,8 @@ const InvoiceCompanyInfo = ({
     setNombreSeleccionado,
     invoice,
     getCompanyById,
+    changeEditInfo,
+    editInfo,
   } = invoiceCompanyStore;
   const { getById, getTaxData } = procedingStore;
 
@@ -57,9 +61,12 @@ const InvoiceCompanyInfo = ({
   const [nameOptions, setNameOptions] = useState<IOptions[]>([]);
   const [companyLocal, setCompanyLocal] = useState<any>();
   // const [taxData, setTaxData] = useState<ITaxData>();
+  const [deshabilitar, setDeshabilitar] = useState<boolean>(false);
+  useEffect(() => {
+    setDeshabilitar(tipo !== "request");
+  }, [tipo]);
   useEffect(() => {
     if (companyLocal && tipo === "company") {
-      console.log("COMPAÑIA LOCAL", companyLocal);
       companyLocal.direccionFiscal = `${companyLocal?.estado ?? ""} ${
         companyLocal?.ciudad ?? ""
       } ${companyLocal?.codigoPostal ?? ""} ${
@@ -70,7 +77,6 @@ const InvoiceCompanyInfo = ({
   }, [companyLocal]);
   useEffect(() => {
     if (company) {
-      console.log("COMPAÑIA", toJS(company));
       setCompanyLocal(company);
     }
   }, [company]);
@@ -91,7 +97,6 @@ const InvoiceCompanyInfo = ({
       if (tipo === "company") {
         const loadCompany = async () => {
           const companyResult = await getCompanyById(invoice.compañiaId);
-          console.log("COMPAÑIA", toJS(companyResult));
           setCompanyLocal(companyResult);
         };
         loadCompany();
@@ -114,7 +119,6 @@ const InvoiceCompanyInfo = ({
   };
 
   const onSelectTaxData = (taxData: ITaxData) => {
-    console.log("TAXDATA", taxData);
     form.setFieldsValue(taxData);
     form.setFieldValue(
       "direccionFiscal",
@@ -141,9 +145,6 @@ const InvoiceCompanyInfo = ({
   }, [selectedRows]);
 
   useEffect(() => {
-    console.log("NOMBRE", nombre);
-    if (true) {
-    }
     setSelectedRequests(nombre);
     setNombreSeleccionado(nombre);
   }, [nombre, razonSocial]);
@@ -265,35 +266,63 @@ const InvoiceCompanyInfo = ({
               </Row>
             </Col>
             <Col span={8}>
-              <TextInput formProps={{ name: "rfc", label: "RFC" }} readonly />
+              <TextInput
+                formProps={{ name: "rfc", label: "RFC" }}
+                readonly={!deshabilitar && !editInfo}
+              />
             </Col>
-            <Col span={14}>
+            <Col span={2}>
               {tipo === "request" && (
-                <Button
-                  onClick={() =>
-                    openModal({
-                      title: "Seleccionar o Ingresar Datos Fiscales",
-                      body: (
-                        <DatosFiscalesForm
-                          local={true}
-                          recordId={nombre}
-                          onSelectRow={onSelectTaxData}
-                        />
-                      ),
-                      width: 900,
-                    })
-                  }
-                  style={{
-                    backgroundColor: "#6EAA46",
-                    color: "white",
-                    borderColor: "#6EAA46",
-                  }}
-                  disabled={!nombre}
-                >
-                  Datos Fiscales
-                </Button>
+                <>
+                  <Button
+                    onClick={() =>
+                      openModal({
+                        title: "Seleccionar o Ingresar Datos Fiscales",
+                        body: (
+                          <DatosFiscalesForm
+                            local={true}
+                            recordId={nombre}
+                            onSelectRow={onSelectTaxData}
+                          />
+                        ),
+                        width: 900,
+                      })
+                    }
+                    style={{
+                      backgroundColor: "#6EAA46",
+                      color: "white",
+                      borderColor: "#6EAA46",
+                    }}
+                    disabled={!nombre}
+                  >
+                    Datos Fiscales
+                  </Button>
+                </>
               )}
             </Col>
+            <Col span={12}>
+              {tipo === "request" && (
+                <Switch
+                  size="default"
+                  checkedChildren={
+                    <>
+                      Editar
+                      <EditOutlined />
+                    </>
+                  }
+                  unCheckedChildren={
+                    <>
+                      Editar
+                      <EditOutlined />
+                    </>
+                  }
+                  onChange={() => {
+                    changeEditInfo();
+                  }}
+                ></Switch>
+              )}
+            </Col>
+
             <Col span={24}>
               <Row style={{ paddingBottom: 10 }}>
                 <Col span={8}>
@@ -303,15 +332,32 @@ const InvoiceCompanyInfo = ({
                       label: "Dirección fiscal",
                     }}
                     rows={3}
-                    readonly
+                    readonly={!deshabilitar && !editInfo}
+                  />
+                </Col>
+              </Row>
+              <Row style={{ paddingBottom: 10 }}>
+                <Col span={8}>
+                  <TextInput
+                    formProps={{ name: "razonSocial", label: "Razón social" }}
+                    readonly={!deshabilitar && !editInfo}
                   />
                 </Col>
               </Row>
               <Row>
                 <Col span={8}>
-                  <TextInput
-                    formProps={{ name: "razonSocial", label: "Razón social" }}
-                    readonly
+                  <SelectInput
+                    form={form}
+                    formProps={{
+                      label: "Régimen fiscal",
+                      name: "regimenFiscal",
+                    }}
+                    options={regimenFiscal}
+                    readonly={id !== "new"}
+                    style={{ marginBottom: 10 }}
+                    onChange={() => {
+                      form.submit();
+                    }}
                   />
                 </Col>
               </Row>

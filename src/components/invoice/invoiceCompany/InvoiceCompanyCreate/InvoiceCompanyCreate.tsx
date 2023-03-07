@@ -65,19 +65,7 @@ const InvoiceCompanyCreate = () => {
     getcfdiOptions();
     getpaymentMethodOptions();
     getPaymentOptions();
-    if (tipo === "company") {
-      // if (id !== "new") {
-      //   let selectedRequestInvoice = invoices.solicitudes
-      //     .find((invoice: any) => invoice.solicitudId === id)
-      //     .facturas.find(
-      //       (invoice: any) => invoice.tipo === "Compañia"
-      //     )?.solicitudesId;
-      //   let filterRequests = invoices.solicitudes.filter((invoice: any) =>
-      //     selectedRequestInvoice.includes(invoice.solicitudId)
-      //   );
-      //   setSelectedRequests([...filterRequests]);
-      // }
-    }
+
     if (id !== "new") {
       getInvoice(id!);
     }
@@ -130,11 +118,12 @@ const InvoiceCompanyCreate = () => {
 
       setCompany(companyResult);
     };
-    loadCompany();
+    if (!!selectedRows.length) {
+      loadCompany();
+    }
   }, [selectedRows, selectRequests]);
 
   const createInvoice = async (formDataValues: any) => {
-    console.log("datos", formDataValues);
     if (tipo === "company") {
       const use = cfdiOptions.find((x) => x.value === company?.cfdiId);
       const method = paymentOptions.find(
@@ -304,19 +293,7 @@ const InvoiceCompanyCreate = () => {
         ) : (
           <InvoiceFreeData />
         )}
-        {/* {tipo !== "free" ? (
-        <InvoiceCompanyDetail
-          estudios={estudios}
-          totalEstudios={totalFinalEstudios}
-        />
-      ) : (
-        <InvoiceFreeDetail />
-      )} */}
 
-        {/* <InvoiceCompanyDetail
-        estudios={estudios}
-        totalEstudios={totalFinalEstudios}
-      /> */}
         <InvoiceFreeDetail
           estudios={estudios}
           totalEstudios={totalFinalEstudios}

@@ -100,6 +100,11 @@ export class InvoiceCompanyStore {
       alerts.warning(getErrors(error));
     }
   };
+
+  editInfo: boolean = false;
+  changeEditInfo = () => {
+    this.editInfo = !this.editInfo;
+  };
   invoice: any = null;
   getInvoice = async (id: string) => {
     try {

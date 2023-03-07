@@ -133,8 +133,6 @@ const InvoiceCompanyTable = () => {
                     <div style={{ display: "flex", flexDirection: "row" }}>
                       <Link
                         onClick={() => {
-                          console.log("row", toJS(value));
-                          console.log("record", toJS(record));
                           navigate(`/invoice/${tipo}/${factura.facturapiId}`);
                         }}
                       >
@@ -285,13 +283,6 @@ const InvoiceCompanyTable = () => {
   };
   return (
     <>
-      {/* <Button
-        onClick={() => {
-          console.log("selectedRowKeys", selectedRequests);
-        }}
-      >
-        AAA
-      </Button> */}
       {invoices.solicitudes?.length > 0 && (
         <div style={{ textAlign: "right", marginBottom: 10 }}>
           <Form<any>

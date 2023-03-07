@@ -44,9 +44,7 @@ const InvoiceFreeInfo = () => {
   const { invoice, cancelInvoice } = invoiceCompanyStore;
   const [receptorLocal, setReceptorLocal] = useState<any>();
 
-  const onFinish = (newFormValues: any) => {
-    console.log("onFinish", newFormValues);
-  };
+  const onFinish = (newFormValues: any) => {};
   const onFinishCancel = async (newFormValues: any) => {
     let cancelationInvoiceData: IMotivo = {
       facturapiId: invoice?.facturapiId!,
@@ -63,7 +61,6 @@ const InvoiceFreeInfo = () => {
   };
 
   useEffect(() => {
-    console.log("tipoFactura", tipoFactura);
     form.setFieldValue("fechas", [(moment(), moment())]);
 
     setTipoFacturaLibre(tipoFactura);
@@ -75,7 +72,6 @@ const InvoiceFreeInfo = () => {
   }, [receptorLocal]);
   useEffect(() => {
     if (id !== "new" && !!invoice) {
-      console.log("SI ES DIFERNETE DE NEW");
       form.setFieldsValue(invoice);
       form.setFieldValue("clave", invoice.claveExterna);
       form.setFieldValue("nombreComercial", invoice.nombre);
@@ -225,12 +221,7 @@ const InvoiceFreeInfo = () => {
                     readonly={id !== "new" || tipoFactura}
                     style={{ marginBottom: 10 }}
                   />
-                  {/* <Form.Item name="regimenFiscalTest" label="Régimen fiscal">
-                    <Select
-                      options={regimenFiscal}
-                      disabled={id !== "new" || tipoFactura}
-                    ></Select>
-                  </Form.Item> */}
+
                   <SelectInput
                     form={form}
                     formProps={{
