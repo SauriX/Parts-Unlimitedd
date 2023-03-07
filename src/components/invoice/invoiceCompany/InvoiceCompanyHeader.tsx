@@ -33,9 +33,6 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
     { label: "RECIBO", value: "Recibo" },
   ];
   const [tipoFactura, setTipoFactura] = useState<string>();
-  useEffect(() => {
-    console.log("tipo factura", tipoFactura);
-  }, [tipoFactura]);
 
   const createInvoice = async () => {
     if (!selectedRows.length) {
@@ -142,36 +139,40 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
           navigate(-1);
         }}
         className="header-container"
-        extra={[
-          <DownloadIcon key="doc" onClick={handleDownload} />,
-          tipo === "free" ? (
-            ""
-          ) : (
-            <SelectInput
-              formProps={{
-                name: "generar",
-                label: "",
-              }}
-              placeholder="Tipo factura"
-              options={invoiceOptions}
-              onChange={setTipoFactura}
-            />
-          ),
-          <Button
-            key="new"
-            type="primary"
-            onClick={() => {
-              if (tipo === "free") {
-                navigate(`/invoice/${tipo}/new`);
-              } else {
-                createInvoice();
-              }
-            }}
-            icon={<PlusOutlined />}
-          >
-            Generar
-          </Button>,
-        ]}
+        extra={
+          id
+            ? [<DownloadIcon key="doc" onClick={handleDownload} />]
+            : [
+                <DownloadIcon key="doc" onClick={handleDownload} />,
+                tipo === "free" ? (
+                  ""
+                ) : (
+                  <SelectInput
+                    formProps={{
+                      name: "generar",
+                      label: "",
+                    }}
+                    placeholder="Tipo factura"
+                    options={invoiceOptions}
+                    onChange={setTipoFactura}
+                  />
+                ),
+                <Button
+                  key="new"
+                  type="primary"
+                  onClick={() => {
+                    if (tipo === "free") {
+                      navigate(`/invoice/${tipo}/new`);
+                    } else {
+                      createInvoice();
+                    }
+                  }}
+                  icon={<PlusOutlined />}
+                >
+                  Generar
+                </Button>,
+              ]
+        }
       ></PageHeader>
     </>
   );

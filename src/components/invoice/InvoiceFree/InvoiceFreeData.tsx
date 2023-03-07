@@ -81,7 +81,6 @@ const InvoiceFreeData = () => {
     getInvoiceSeriesOptions(profile?.sucursal!);
   }, [profile]);
   useEffect(() => {
-    console.log("receptor EN DATA :D", toJS(receptor));
     form.setFieldsValue(receptor);
   }, [receptor]);
   useEffect(() => {
@@ -95,14 +94,11 @@ const InvoiceFreeData = () => {
       form.setFieldValue("cfdiId", invoice?.usoCFDI);
     }
   }, [invoice]);
-  // const onFinish = (newFormValues: any) => {
-  //   console.log("new FormValues", toJS(newFormValues));
-  // };
+
   const [tipoDescarga, setTipoDescarga] = useState<"pdf" | "xml">("pdf");
   const createInvoiceFree = async (newFormValues: any) => {
     setIsLoadingFree(true);
     const invoiceData: any = {};
-    console.log("new FormValues", toJS(newFormValues));
 
     // if (tipoFacturaLibre) {
     invoiceData.tipoFactura = tipoFacturaLibre ? "company" : "request";
@@ -157,14 +153,12 @@ const InvoiceFreeData = () => {
       pais: "MEX",
     };
     // }
-    console.log("Invoice data: ", invoiceData);
     const invoiceInfo = await checkIn(invoiceData);
     if (!!invoiceInfo?.facturapiId) {
       alerts.success("Factura creada conrrectamente");
       history.push(`/invoice/${tipo}/${invoiceInfo?.facturapiId}`);
     }
     setIsLoadingFree(false);
-    console.log("enviando factura", invoiceInfo);
   };
   const items = [
     {
@@ -180,9 +174,7 @@ const InvoiceFreeData = () => {
       label: "3rd item",
     },
   ];
-  const onMenuClick: MenuProps["onClick"] = (e) => {
-    console.log("click", e);
-  };
+
   return (
     <>
       <Form
@@ -228,14 +220,12 @@ const InvoiceFreeData = () => {
                 defaultValue="pdf"
                 disabled={id === "new"}
                 onChange={(value: any) => {
-                  console.log("PDF", value);
                   setTipoDescarga(value);
                 }}
               ></Select>
               <Button
                 type="primary"
                 onClick={() => {
-                  console.log("tipoDescarga", tipoDescarga);
                   if (tipoDescarga === "pdf") {
                     downloadPdf(invoice?.facturaId);
                   }
@@ -261,7 +251,6 @@ const InvoiceFreeData = () => {
               <Button
                 type="primary"
                 onClick={() => {
-                  console.log("tipoFacturaLibre", tipoFacturaLibre);
                   openModal({
                     title: "Configuración de envío",
                     body: (
@@ -271,7 +260,6 @@ const InvoiceFreeData = () => {
                         id={id!}
                         tipo={tipoFacturaLibre!}
                       />
-                      // <div>a</div>
                     ),
                     width: 800,
                   });
@@ -290,9 +278,6 @@ const InvoiceFreeData = () => {
               options={paymentOptions}
               style={{ marginBottom: 10 }}
               readonly={id !== "new" || tipoFacturaLibre}
-              // onChange={() => {
-              //   form.submit();
-              // }}
             />
             <TextInput
               formProps={{ label: "Numero de cuenta", name: "numeroDeCuenta" }}
@@ -305,7 +290,6 @@ const InvoiceFreeData = () => {
               required
               onChange={(serie: any) => {
                 setSerie(serie);
-                // form.submit();
               }}
             />
           </Col>
@@ -315,26 +299,17 @@ const InvoiceFreeData = () => {
               options={paymentMethodOptions}
               style={{ marginBottom: 10 }}
               readonly={id !== "new" || tipoFacturaLibre}
-              // onChange={() => {
-              //   form.submit();
-              // }}
             />
             <SelectInput
               formProps={{ label: "Banco", name: "bancoId" }}
               options={bankOptions}
               style={{ marginBottom: 10 }}
               readonly={id !== "new" || tipoFacturaLibre}
-              // onChange={() => {
-              //   form.submit();
-              // }}
             />
             <SelectInput
               formProps={{ label: "uso CFDI", name: "cfdiId" }}
               readonly={id !== "new" || tipoFacturaLibre}
               options={cfdiOptions}
-              // onChange={() => {
-              //   form.submit();
-              // }}
             />
           </Col>
         </Row>

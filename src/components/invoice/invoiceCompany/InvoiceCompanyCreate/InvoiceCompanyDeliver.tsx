@@ -140,7 +140,6 @@ const InvoiceCompanyDeliver = ({
           options={sendOptions}
           defaultValue={mediosEnvios}
           onChange={(checkedValues) => {
-            console.log("checkd", toJS(checkedValues));
             if (checkedValues.includes("ambos")) {
               setMediosEnvios(["correo", "whatsapp", "ambos"]);
               return;
@@ -288,22 +287,6 @@ const InvoiceCompanyDeliver = ({
                             esPrueba: true,
                           };
                           sendInvoice(sendInvoiceData);
-                        }}
-                        onChange={() => {
-                          console.log(
-                            "che1",
-                            !mediosEnvios?.includes("whatsapp") ||
-                              !isValidWhatsapp
-                          );
-                          console.log(
-                            "che2",
-                            !mediosEnvios?.includes("whatsapp")
-                          );
-                          console.log(
-                            "che3",
-
-                            !isValidWhatsapp
-                          );
                         }}
                       >
                         Prueba

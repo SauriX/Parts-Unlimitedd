@@ -115,7 +115,6 @@ const InvoiceComapnyForm = () => {
       return;
     }
 
-    console.log("SOLICITUDES CON FACTURAAAAAAAAAAAAA");
     let requestsWithInvoiceCompany: any[] = [];
     selectedRows.forEach((request) => {
       if (
@@ -242,6 +241,9 @@ const InvoiceComapnyForm = () => {
             <Col span={8}>
               <TextInput
                 formProps={{ name: "buscar", label: "Buscar" }}
+                onPressEnter={() => {
+                  form.submit();
+                }}
                 autoFocus
               />
             </Col>

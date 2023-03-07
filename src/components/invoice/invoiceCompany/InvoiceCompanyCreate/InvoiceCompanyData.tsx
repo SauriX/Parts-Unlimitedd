@@ -45,6 +45,7 @@ const InvoiceCompanyData = ({
     selectedRequests,
     invoice: invoiceExisting,
     setSerie,
+    editInfo,
   } = invoiceCompanyStore;
   const { profile } = profileStore;
   const {
@@ -69,7 +70,6 @@ const InvoiceCompanyData = ({
     getInvoiceSeriesOptions(profile?.sucursal!);
   }, [profile]);
   useEffect(() => {
-    console.log("factura lista", invoiceExisting);
     if (invoiceExisting) {
       if (tipo === "request") {
         form.setFieldValue("formaDePagoId", invoiceExisting.formaPago);
@@ -82,13 +82,11 @@ const InvoiceCompanyData = ({
   const onFinish = () => {};
   useEffect(() => {
     if (tipo === "company") {
-      console.log("COMPAÑIA datos de factura", toJS(company));
       form.setFieldsValue(company);
     }
   }, [company]);
 
   useEffect(() => {
-    console.log("INVOICE EXISTING", toJS(invoiceExisting));
     form.setFieldsValue(invoiceExisting);
     if (tipo === "company") {
       form.setFieldValue("numeroDeCuenta", invoiceExisting?.numeroCuenta);
@@ -221,7 +219,7 @@ const InvoiceCompanyData = ({
                             label: x,
                           }))
                   }
-                  readonly={id !== "new"}
+                  readonly={id !== "new" || !editInfo}
                   required={tipo !== "company"}
                 />
               </Col>
@@ -245,7 +243,7 @@ const InvoiceCompanyData = ({
                       name: "numeroDeCuenta",
                       label: "Número de cuenta",
                     }}
-                    readonly={id !== "new"}
+                    readonly={id !== "new" || !editInfo}
                   />
                 )}
                 {tipo === "request" && (
@@ -264,7 +262,7 @@ const InvoiceCompanyData = ({
                         value: x,
                         label: x,
                       }))}
-                    readonly
+                    readonly={!editInfo}
                   />
                 )}
               </Col>
