@@ -117,7 +117,12 @@ const InvoiceComapnyForm = () => {
 
     let requestsWithInvoiceCompany: any[] = [];
     selectedRows.forEach((request) => {
-      if (request.facturas.some((invoice: any) => invoice.tipo === tipo)) {
+      if (
+        request.facturas.some(
+          (invoice: any) =>
+            invoice.tipo === tipo && invoice.estatus.nombre !== "Cancelado"
+        )
+      ) {
         requestsWithInvoiceCompany.push(request);
       }
     });
@@ -236,12 +241,13 @@ const InvoiceComapnyForm = () => {
             <Col span={8}>
               <TextInput
                 formProps={{ name: "buscar", label: "Buscar" }}
+                onPressEnter={() => {
+                  form.submit();
+                }}
                 autoFocus
               />
             </Col>
-          </Row>
-          <Row gutter={[0, 12]} style={{ paddingLeft: 60, paddingTop: 10 }}>
-            <Col span={12}>
+            <Col span={14} style={{ paddingLeft: 60 }}>
               <Checkbox.Group
                 options={facturasOptions}
                 onChange={(newChekedValues) => {
@@ -250,6 +256,10 @@ const InvoiceComapnyForm = () => {
               />
             </Col>
           </Row>
+          <Row
+            gutter={[0, 12]}
+            style={{ paddingLeft: 60, paddingTop: 10 }}
+          ></Row>
         </Form>
 
         <Form<any>

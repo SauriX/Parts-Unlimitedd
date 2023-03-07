@@ -9,6 +9,8 @@ import {
   Table,
   Typography,
   MenuProps,
+  Switch,
+  Button,
 } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
@@ -28,6 +30,10 @@ import { ICompanyForm } from "../../../../app/models/company";
 import branch from "../../../../app/api/branch";
 import { useParams } from "react-router-dom";
 import { IInvoiceDetail } from "../../../../app/models/Invoice";
+import TextInput from "../../../../app/common/form/proposal/TextInput";
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import NumberInput from "../../../../app/common/form/proposal/NumberInput";
+import { PlusOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 type InvoiceCompanyDetailProps = {
@@ -83,7 +89,10 @@ const InvoiceCompanyDetail = ({
   const { studies } = requestStore;
   const { profile } = profileStore;
   const [form] = Form.useForm<any>();
+  const [formConcepto] = Form.useForm<any>();
   let { id, tipo } = useParams<UrlParams>();
+
+  // const cantidad = formConcepto.useW;
 
   const configuration = Form.useWatch("configuracion", form);
   const items: MenuPropsExt["items"] = [
@@ -137,6 +146,9 @@ const InvoiceCompanyDetail = ({
         setTotalEstudiosFinal(invoice.cantidadTotal);
       }
     }
+    if (tipo === "free") {
+      form.setFieldValue("configuracion", "concepto");
+    }
   }, [invoice]);
   useEffect(() => {
     setEstudiosDetalle(estudios);
@@ -167,9 +179,11 @@ const InvoiceCompanyDetail = ({
       ]);
     } else {
       setSimpleConcept("");
-      setDetailData([
-        { id: uuid(), concepto: "", precioFinal: totalEstudios, cantidad: 1 },
-      ]);
+      if (tipo !== "free") {
+        setDetailData([
+          { id: uuid(), concepto: "", precioFinal: totalEstudios, cantidad: 1 },
+        ]);
+      }
     }
     setConfigurationInvoice(configuration);
   }, [configuration]);
@@ -298,6 +312,7 @@ const InvoiceCompanyDetail = ({
       <Row>
         <Title level={5}>Detalle de la factura</Title>
       </Row>
+
       <Row>
         <Col span={24}>
           <Form

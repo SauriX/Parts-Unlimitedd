@@ -24,7 +24,6 @@ export interface ISeries {
   id?: number;
   factura: ISeriesInvoice;
   expedicion: ISeriesExpedition;
-  emisor: ISeriesOwner;
 }
 
 export interface ITicketSerie {
@@ -69,6 +68,7 @@ export interface ISeriesOwner {
 
 export interface ISeriesExpedition {
   id: number;
+  sucursalKey: string;
   calle: string;
   numeroExterior: string;
   numeroInterior: string;
@@ -78,6 +78,7 @@ export interface ISeriesExpedition {
   estado: string;
   pais: string;
   telefono: string;
+  correo: string;
   sucursalId?: string;
 }
 
@@ -123,7 +124,6 @@ export class SeriesValues implements ISeries {
   id = 0;
   factura = new SeriesInvoiceValues();
   expedicion = new SeriesExpeditionValues();
-  emisor = new SeriesOwnerValues();
 
   constructor(init?: ISeries) {
     Object.assign(this, init);
@@ -148,29 +148,9 @@ export class SeriesInvoiceValues implements ISeriesInvoice {
   }
 }
 
-export class SeriesOwnerValues implements ISeriesOwner {
-  id = 0;
-  nombre = '';
-  rfc = '';
-  calle = '';
-  numeroExterior = '';
-  numeroInterior = '';
-  colonia = '';
-  codigoPostal = '';
-  ciudad = '';
-  estado = '';
-  pais = '';
-  correo = '';
-  telefono = '';
-  website = '';
-
-  constructor(init?: ISeriesOwner) {
-    Object.assign(this, init);
-  }
-}
-
 export class SeriesExpeditionValues implements ISeriesExpedition {
   id = 0;
+  sucursalKey = '';
   calle = '';
   numeroExterior = '';
   numeroInterior = '';
@@ -180,6 +160,7 @@ export class SeriesExpeditionValues implements ISeriesExpedition {
   estado = '';
   pais = '';
   telefono = '';
+  correo = '';
   sucursalId = '';
 
   constructor(init?: ISeriesExpedition) {

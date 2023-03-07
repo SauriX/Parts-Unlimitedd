@@ -1,13 +1,14 @@
-import { Button, Col, Descriptions, Form, Row, Typography } from "antd";
+import { Button, Col, Descriptions, Form, Row, Select, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import SelectInput from "../../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../../app/common/form/proposal/TextInput";
 import { useStore } from "../../../../app/stores/store";
 import { formItemLayout, moneyFormatter } from "../../../../app/util/utils";
 import InvoiceCompanyDeliver from "./InvoiceCompanyDeliver";
 import { useParams } from "react-router-dom";
+import { toJS } from "mobx";
 
 const { Title, Text } = Typography;
 
@@ -44,6 +45,7 @@ const InvoiceCompanyData = ({
     selectedRequests,
     invoice: invoiceExisting,
     setSerie,
+    editInfo,
   } = invoiceCompanyStore;
   const { profile } = profileStore;
   const {
@@ -59,6 +61,7 @@ const InvoiceCompanyData = ({
     getInvoiceSeriesOptions,
   } = optionStore;
   const [form] = Form.useForm();
+  const [tipoDescarga, setTipoDescarga] = useState<"pdf" | "xml">("pdf");
   useEffect(() => {
     getbankOptions();
     getpaymentMethodOptions();
@@ -67,7 +70,6 @@ const InvoiceCompanyData = ({
     getInvoiceSeriesOptions(profile?.sucursal!);
   }, [profile]);
   useEffect(() => {
-    console.log("factura lista", invoiceExisting);
     if (invoiceExisting) {
       if (tipo === "request") {
         form.setFieldValue("formaDePagoId", invoiceExisting.formaPago);
@@ -83,6 +85,18 @@ const InvoiceCompanyData = ({
       form.setFieldsValue(company);
     }
   }, [company]);
+
+  useEffect(() => {
+    form.setFieldsValue(invoiceExisting);
+    if (tipo === "company") {
+      form.setFieldValue("numeroDeCuenta", invoiceExisting?.numeroCuenta);
+      form.setFieldValue("formaDePagoId", invoiceExisting?.formaPago);
+      form.setFieldValue("limiteDeCredito", invoiceExisting?.diasCredito);
+      form.setFieldValue("serieCFDI", invoiceExisting?.serie);
+      form.setFieldValue("metodoDePagoId", invoiceExisting?.tipoPago);
+      form.setFieldValue("cfdiId", invoiceExisting?.usoCFDI);
+    }
+  }, [invoiceExisting]);
 
   return (
     <>
@@ -102,7 +116,7 @@ const InvoiceCompanyData = ({
         </Row>
         <Row>
           <Col span={24}>
-            <Row style={{ justifyContent: "space-around" }}>
+            <Row style={{ justifyContent: "start" }}>
               {/* //BOTONES DE FACTURACION */}
               {/* <Col span={24}> */}
               {/* <Row style={{ justifyContent: "center" }}> */}
@@ -117,6 +131,27 @@ const InvoiceCompanyData = ({
               </Button>
               {/* </Row>
                 <Row style={{ justifyContent: "center", paddingTop: 10 }}> */}
+              <Select
+                showArrow
+                placeholder="Descarga"
+                style={{ marginLeft: 10 }}
+                options={[
+                  {
+                    label: "PDF",
+                    value: "pdf",
+                  },
+                  {
+                    label: "XML",
+                    value: "xml",
+                  },
+                ]}
+                allowClear
+                defaultValue="pdf"
+                disabled={id === "new"}
+                onChange={(value: any) => {
+                  setTipoDescarga(value);
+                }}
+              ></Select>
               <Button
                 type="primary"
                 onClick={() => {
@@ -184,7 +219,7 @@ const InvoiceCompanyData = ({
                             label: x,
                           }))
                   }
-                  readonly={id !== "new"}
+                  readonly={id !== "new" || !editInfo}
                   required={tipo !== "company"}
                 />
               </Col>
@@ -196,6 +231,8 @@ const InvoiceCompanyData = ({
                           ? totalEstudios
                           : invoiceExisting?.cantidadTotal
                       )
+                    : id !== "new"
+                    ? moneyFormatter.format(invoiceExisting?.cantidadTotal)
                     : moneyFormatter.format(totalEstudios)
                 } (IVA incluido)`}</Text>
               </Col>
@@ -206,6 +243,7 @@ const InvoiceCompanyData = ({
                       name: "numeroDeCuenta",
                       label: "Número de cuenta",
                     }}
+                    readonly={id !== "new" || !editInfo}
                   />
                 )}
                 {tipo === "request" && (
@@ -224,7 +262,7 @@ const InvoiceCompanyData = ({
                         value: x,
                         label: x,
                       }))}
-                    readonly
+                    readonly={!editInfo}
                   />
                 )}
               </Col>
@@ -237,6 +275,8 @@ const InvoiceCompanyData = ({
                             ? (totalEstudios * 16) / 100
                             : invoiceExisting?.iva
                         )
+                      : id !== "new"
+                      ? moneyFormatter.format(invoiceExisting?.iva)
                       : moneyFormatter.format((totalEstudios * 16) / 100)
                   }`}</Text>
                 </div>
@@ -249,6 +289,7 @@ const InvoiceCompanyData = ({
                       name: "diasCredito",
                       label: "Días de crédito",
                     }}
+                    readonly={id !== "new"}
                   />
                 </Col>
               )}
@@ -260,6 +301,7 @@ const InvoiceCompanyData = ({
                       label: "Método de pago",
                     }}
                     options={paymentMethodOptions}
+                    readonly={id !== "new"}
                   />
                 </Col>
               )}
@@ -269,6 +311,7 @@ const InvoiceCompanyData = ({
                   <SelectInput
                     formProps={{ name: "bancoId", label: "Banco" }}
                     options={bankOptions}
+                    readonly={id !== "new"}
                   />
                 </Col>
               )}
@@ -287,6 +330,7 @@ const InvoiceCompanyData = ({
                       name: "limiteDeCredito",
                       label: "Límite de crédito",
                     }}
+                    readonly={id !== "new"}
                   />
                 </Col>
               )}
@@ -299,6 +343,8 @@ const InvoiceCompanyData = ({
                             ? totalEstudios - (totalEstudios * 16) / 100
                             : invoiceExisting?.subtotal
                         )
+                      : id !== "new"
+                      ? moneyFormatter.format(invoiceExisting?.subtotal)
                       : moneyFormatter.format(
                           totalEstudios - (totalEstudios * 16) / 100
                         )

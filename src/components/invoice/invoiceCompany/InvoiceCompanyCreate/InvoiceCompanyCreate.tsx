@@ -1,4 +1,4 @@
-import { Col, Divider, Form, Row } from "antd";
+import { Col, Divider, Form, Row, Spin } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
@@ -12,6 +12,9 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import alerts from "../../../../app/util/alerts";
 import history from "../../../../app/util/history";
+import InvoiceFreeInfo from "../../InvoiceFree/InvoiceFreeInfo";
+import InvoiceFreeData from "../../InvoiceFree/InvoiceFreeData";
+import InvoiceFreeDetail from "../../InvoiceFree/InvoiceFreeDetail";
 
 type UrlParams = {
   id: string;
@@ -20,7 +23,7 @@ type UrlParams = {
 
 const InvoiceCompanyCreate = () => {
   const navigate = useNavigate();
-  const { invoiceCompanyStore, optionStore } = useStore();
+  const { invoiceCompanyStore, optionStore, invoiceFreeStore } = useStore();
   const {
     getcfdiOptions,
     cfdiOptions,
@@ -44,6 +47,7 @@ const InvoiceCompanyCreate = () => {
     invoice,
     selectedRequests,
   } = invoiceCompanyStore;
+  const { isLoadingFree } = invoiceFreeStore;
   const [company, setCompany] = useState<ICompanyForm>();
   const [totalFinalEstudios, setTotalFinalEstudios] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
@@ -51,27 +55,17 @@ const InvoiceCompanyCreate = () => {
   const [estudios, setEstudios] = useState<any[]>([]);
   const [currentPaymentMethod, setCurrenPaymentMethod] = useState<any>();
   const [selectRequests, setSelectedRequests] = useState<any>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   let { id, tipo } = useParams<UrlParams>();
-
+  useEffect(() => {
+    setIsLoading(isLoadingFree);
+  }, [isLoadingFree]);
   useEffect(() => {
     getcfdiOptions();
     getpaymentMethodOptions();
     getPaymentOptions();
-    if (tipo === "company") {
-      if (id !== "new") {
-        let selectedRequestInvoice = invoices.solicitudes
-          .find((invoice: any) => invoice.solicitudId === id)
-          .facturas.find(
-            (invoice: any) => invoice.tipo === "Compañia"
-          )?.solicitudesId;
-        let filterRequests = invoices.solicitudes.filter((invoice: any) =>
-          selectedRequestInvoice.includes(invoice.solicitudId)
-        );
 
-        setSelectedRequests([...filterRequests]);
-      }
-    }
     if (id !== "new") {
       getInvoice(id!);
     }
@@ -124,7 +118,9 @@ const InvoiceCompanyCreate = () => {
 
       setCompany(companyResult);
     };
-    loadCompany();
+    if (!!selectedRows.length) {
+      loadCompany();
+    }
   }, [selectedRows, selectRequests]);
 
   const createInvoice = async (formDataValues: any) => {
@@ -135,14 +131,29 @@ const InvoiceCompanyCreate = () => {
       )?.label;
       const invoiceData = {
         tipoFactura: tipo,
+        origenFactura: tipo,
         companyId: selectedRows[0]?.companiaId,
         solicitudesId: selectedRows.map((row: any) => row.solicitudId),
-        estudios: estudios,
-        // formaPago: "" + company?.formaDePagoId,
+        detalles: detailInvoice,
+        serie: formDataValues.serieCFDI,
+        bancoId: formDataValues.bancoId,
+        diasCredito: formDataValues.diasCredito,
+        formaPagoId: formDataValues.formaDePagoId,
+        numeroCuenta: formDataValues.numeroDeCuenta,
         formaPago: method,
+        tipoPago: "PUE",
         tipo: "PUE",
         claveExterna: company?.clave,
         usoCFDI: use?.label,
+
+        tipoDesgloce: configurationInvoice,
+        cantidadTotal: total,
+        subtotal: total - (total * 16) / 100,
+        IVA: (total * 16) / 100,
+        consecutivo: +consecutiveBySerie,
+        usuario: "",
+        fecha: "",
+        hora: "",
         cliente: {
           razonSocial: company?.razonSocial,
           RFC: company?.rfc,
@@ -162,7 +173,9 @@ const InvoiceCompanyCreate = () => {
       };
 
       const invoiceInfo = await checkIn(invoiceData);
-      if (invoiceInfo) {
+      if (!!invoiceInfo?.facturapiId) {
+        alerts.success("Factura creada conrrectamente");
+        history.push(`/invoice/${tipo}/${invoiceInfo?.facturapiId}`);
       }
     }
     if (tipo === "request") {
@@ -189,19 +202,11 @@ const InvoiceCompanyCreate = () => {
 
       const invoiceData = {
         tipoFactura: tipo,
+        origenFactura: tipo,
         companyId: selectedRows[0]?.companiaId,
         nombre: selectedRequests[0].nombre,
         solicitudesId: selectedRows.map((row: any) => row.solicitudId),
-        detalles:
-          configurationInvoice === "desglozado"
-            ? estudios.map((estudio) => ({
-                estudioClave: estudio.clave,
-                concepto: estudio.estudio,
-                importe: estudio.precio,
-                descuento: estudio.descuento,
-                cantidad: 1,
-              }))
-            : detailInvoice,
+        detalles: detailInvoice,
         taxDataId: taxData.id,
         expedienteId: nombreSeleccionado,
         formaPagoId: "",
@@ -218,6 +223,7 @@ const InvoiceCompanyCreate = () => {
         fecha: "",
         hora: "",
 
+        tipoPago: "PUE",
         tipo: "PUE",
         claveExterna: company?.clave,
         cliente: {
@@ -245,6 +251,7 @@ const InvoiceCompanyCreate = () => {
       }
     }
   };
+
   const getEstatusFactura = () => {
     if (!!selectRequests) {
       if (id !== "new") {
@@ -262,25 +269,36 @@ const InvoiceCompanyCreate = () => {
   return (
     <>
       <InvoiceCompanyHeader handleDownload={() => {}} />
-      <Divider />
-      <InvoiceCompanyInfo
-        company={company}
-        facturapiId={getFacturapi()}
-        estatusFactura={getEstatusFactura()}
-      />
-      <InvoiceCompanyData
-        company={company}
-        totalEstudios={total}
-        totalFinal={totalFinalEstudios}
-        createInvoice={createInvoice}
-        invoice={id!}
-        estatusFactura={getEstatusFactura()}
-        facturapiId={getFacturapi()}
-      />
-      <InvoiceCompanyDetail
-        estudios={estudios}
-        totalEstudios={totalFinalEstudios}
-      />
+      <Spin spinning={isLoading}>
+        <Divider />
+        {tipo !== "free" ? (
+          <InvoiceCompanyInfo
+            company={company}
+            facturapiId={getFacturapi()}
+            estatusFactura={getEstatusFactura()}
+          />
+        ) : (
+          <InvoiceFreeInfo />
+        )}
+        {tipo !== "free" ? (
+          <InvoiceCompanyData
+            company={company}
+            totalEstudios={total}
+            totalFinal={totalFinalEstudios}
+            createInvoice={createInvoice}
+            invoice={id!}
+            estatusFactura={getEstatusFactura()}
+            facturapiId={getFacturapi()}
+          />
+        ) : (
+          <InvoiceFreeData />
+        )}
+
+        <InvoiceFreeDetail
+          estudios={estudios}
+          totalEstudios={totalFinalEstudios}
+        />
+      </Spin>
     </>
   );
 };

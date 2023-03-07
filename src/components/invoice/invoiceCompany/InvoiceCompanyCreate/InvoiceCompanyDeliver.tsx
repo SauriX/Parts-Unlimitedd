@@ -126,7 +126,7 @@ const InvoiceCompanyDeliver = ({
         <Col span={9}>
           <Text>Seleccionar contacto de agenda</Text>
         </Col>
-        {tipo !== "request" && (
+        {tipo !== "request" && tipo !== "free" && (
           <Col>
             <Switch
               defaultChecked
@@ -140,7 +140,6 @@ const InvoiceCompanyDeliver = ({
           options={sendOptions}
           defaultValue={mediosEnvios}
           onChange={(checkedValues) => {
-            console.log("checkd", toJS(checkedValues));
             if (checkedValues.includes("ambos")) {
               setMediosEnvios(["correo", "whatsapp", "ambos"]);
               return;
@@ -150,7 +149,7 @@ const InvoiceCompanyDeliver = ({
         />
       </Row>
       <Row>
-        {isSelectedContacts && tipo !== "request" ? (
+        {isSelectedContacts && tipo !== "request" && tipo !== "free" ? (
           <Col span={24}>
             <Table
               rowKey={(record) => record.id}
@@ -289,22 +288,6 @@ const InvoiceCompanyDeliver = ({
                           };
                           sendInvoice(sendInvoiceData);
                         }}
-                        onChange={() => {
-                          console.log(
-                            "che1",
-                            !mediosEnvios?.includes("whatsapp") ||
-                              !isValidWhatsapp
-                          );
-                          console.log(
-                            "che2",
-                            !mediosEnvios?.includes("whatsapp")
-                          );
-                          console.log(
-                            "che3",
-
-                            !isValidWhatsapp
-                          );
-                        }}
                       >
                         Prueba
                       </Button>
@@ -323,7 +306,7 @@ const InvoiceCompanyDeliver = ({
             onClick={() => {
               let sendInvoiceData: IInvoiceDeliveryInfo = {
                 contactos:
-                  isSelectedContacts && tipo !== "request"
+                  isSelectedContacts && tipo !== "request" && tipo !== "free"
                     ? contactos
                         .filter((contacto: any) =>
                           selectedRowKeys?.includes(contacto.id)

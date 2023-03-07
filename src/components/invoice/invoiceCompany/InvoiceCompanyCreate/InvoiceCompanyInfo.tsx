@@ -1,4 +1,4 @@
-import { Button, Col, Divider, Form, Row, Typography } from "antd";
+import { Button, Col, Divider, Form, Row, Switch, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -14,6 +14,10 @@ import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import DatosFiscalesForm from "../../../proceedings/details/DatosFiscalesForm";
 import { ITaxData } from "../../../../app/models/taxdata";
+import { IMotivo } from "../../../../app/models/Invoice";
+import { EditOutlined } from "@ant-design/icons";
+import { regimenFiscal } from "../../../../app/util/catalogs";
+import { toJS } from "mobx";
 
 const { Title, Text } = Typography;
 type InvoiceCompanyInfoProps = {
@@ -41,37 +45,70 @@ const InvoiceCompanyInfo = ({
     selectedRows,
     setSelectedRequests,
     setTaxData,
-    setNombre,
+    setNombreSeleccionado,
     invoice,
+    getCompanyById,
+    changeEditInfo,
+    editInfo,
   } = invoiceCompanyStore;
   const { getById, getTaxData } = procedingStore;
 
   const nombre = Form.useWatch("nombre", form);
+  const razonSocial = Form.useWatch("razonSocial", form);
   const { openModal, closeModal } = modalStore;
   const navigate = useNavigate();
 
   const [nameOptions, setNameOptions] = useState<IOptions[]>([]);
+  const [companyLocal, setCompanyLocal] = useState<any>();
   // const [taxData, setTaxData] = useState<ITaxData>();
+  const [deshabilitar, setDeshabilitar] = useState<boolean>(false);
+  useEffect(() => {
+    setDeshabilitar(tipo !== "request");
+  }, [tipo]);
+  useEffect(() => {
+    if (companyLocal && tipo === "company") {
+      companyLocal.direccionFiscal = `${companyLocal?.estado ?? ""} ${
+        companyLocal?.ciudad ?? ""
+      } ${companyLocal?.codigoPostal ?? ""} ${
+        companyLocal?.colonia ?? ""
+      } `.trim();
+      form.setFieldsValue(companyLocal);
+    }
+  }, [companyLocal]);
+  useEffect(() => {
+    if (company) {
+      setCompanyLocal(company);
+    }
+  }, [company]);
   useEffect(() => {
     if (invoice) {
       // getTaxData(invoice.taxDataId);
-      const consultarInformacionFiscal = async () => {
-        const generalDataRequest = await getById(invoice.expedienteId);
-        const taxDataInfo = generalDataRequest?.taxData?.find(
-          (x) => x.id === invoice.taxDataId
-        );
-        onSelectTaxData(taxDataInfo!);
-      };
-      consultarInformacionFiscal();
-      form.setFieldValue("nombre", invoice.nombre);
+      if (tipo === "request") {
+        const consultarInformacionFiscal = async () => {
+          const generalDataRequest = await getById(invoice.expedienteId);
+          const taxDataInfo = generalDataRequest?.taxData?.find(
+            (x) => x.id === invoice.taxDataId
+          );
+          onSelectTaxData(taxDataInfo!);
+        };
+        consultarInformacionFiscal();
+        form.setFieldValue("nombre", invoice.nombre);
+      }
+      if (tipo === "company") {
+        const loadCompany = async () => {
+          const companyResult = await getCompanyById(invoice.compañiaId);
+          setCompanyLocal(companyResult);
+        };
+        loadCompany();
+      }
     }
   }, [invoice]);
   const onFinish = async (newFormValues: any) => {
-    console.log("Invoice cancelled", facturapiId, newFormValues);
-    let cancelationInvoiceData = {
-      facturapiId: facturapiId,
+    let cancelationInvoiceData: IMotivo = {
+      facturapiId: invoice?.facturapiId!,
       motivo: newFormValues.motivo,
     };
+
     await cancelInvoice(cancelationInvoiceData);
     if (tipo === "company") {
       navigate(`/invoice/company`);
@@ -82,7 +119,6 @@ const InvoiceCompanyInfo = ({
   };
 
   const onSelectTaxData = (taxData: ITaxData) => {
-    console.log("TAXDATA", taxData);
     form.setFieldsValue(taxData);
     form.setFieldValue(
       "direccionFiscal",
@@ -95,14 +131,6 @@ const InvoiceCompanyInfo = ({
   useEffect(() => {
     form.setFieldValue("fechas", fechas);
   }, []);
-  useEffect(() => {
-    if (company && tipo === "company") {
-      company.direccionFiscal = `${company?.estado ?? ""} ${
-        company?.ciudad ?? ""
-      } ${company?.codigoPostal ?? ""} ${company?.colonia ?? ""} `.trim();
-      form.setFieldsValue(company);
-    }
-  }, [company]);
 
   useEffect(() => {
     if (tipo === "request") {
@@ -117,10 +145,9 @@ const InvoiceCompanyInfo = ({
   }, [selectedRows]);
 
   useEffect(() => {
-    console.log("NOMBRE", nombre);
     setSelectedRequests(nombre);
-    setNombre(nombre);
-  }, [nombre]);
+    setNombreSeleccionado(nombre);
+  }, [nombre, razonSocial]);
 
   const reasonCancelation: IOptions[] = [
     {
@@ -157,14 +184,18 @@ const InvoiceCompanyInfo = ({
         <Form<any>
           {...formItemLayout}
           form={formCancel}
-          name="invoiceCompany"
+          name="invoiceCancel"
           onFinish={onFinish}
           size="small"
           initialValues={{ fechas: [moment(), moment()] }}
         >
           <Row justify="space-between" gutter={[0, 12]}>
             <Col span={16}>
-              <Title level={5}>Datos de la compañia</Title>
+              <Title level={5}>
+                {tipo === "company"
+                  ? "Datos de la compañia"
+                  : "Datos del cliente"}
+              </Title>
             </Col>
             <Col span={8}>
               <SelectInput
@@ -172,6 +203,7 @@ const InvoiceCompanyInfo = ({
                 formProps={{ label: "Selecciona motivo", name: "motivo" }}
                 options={reasonCancelation}
                 readonly={id === "new"}
+                required
               />
             </Col>
           </Row>
@@ -234,35 +266,63 @@ const InvoiceCompanyInfo = ({
               </Row>
             </Col>
             <Col span={8}>
-              <TextInput formProps={{ name: "rfc", label: "RFC" }} readonly />
+              <TextInput
+                formProps={{ name: "rfc", label: "RFC" }}
+                readonly={!deshabilitar && !editInfo}
+              />
             </Col>
-            <Col span={14}>
+            <Col span={2}>
               {tipo === "request" && (
-                <Button
-                  onClick={() =>
-                    openModal({
-                      title: "Seleccionar o Ingresar Datos Fiscales",
-                      body: (
-                        <DatosFiscalesForm
-                          local={true}
-                          recordId={nombre}
-                          onSelectRow={onSelectTaxData}
-                        />
-                      ),
-                      width: 900,
-                    })
-                  }
-                  style={{
-                    backgroundColor: "#6EAA46",
-                    color: "white",
-                    borderColor: "#6EAA46",
-                  }}
-                  disabled={!nombre}
-                >
-                  Datos Fiscales
-                </Button>
+                <>
+                  <Button
+                    onClick={() =>
+                      openModal({
+                        title: "Seleccionar o Ingresar Datos Fiscales",
+                        body: (
+                          <DatosFiscalesForm
+                            local={true}
+                            recordId={nombre}
+                            onSelectRow={onSelectTaxData}
+                          />
+                        ),
+                        width: 900,
+                      })
+                    }
+                    style={{
+                      backgroundColor: "#6EAA46",
+                      color: "white",
+                      borderColor: "#6EAA46",
+                    }}
+                    disabled={!nombre}
+                  >
+                    Datos Fiscales
+                  </Button>
+                </>
               )}
             </Col>
+            <Col span={12}>
+              {tipo === "request" && (
+                <Switch
+                  size="default"
+                  checkedChildren={
+                    <>
+                      Editar
+                      <EditOutlined />
+                    </>
+                  }
+                  unCheckedChildren={
+                    <>
+                      Editar
+                      <EditOutlined />
+                    </>
+                  }
+                  onChange={() => {
+                    changeEditInfo();
+                  }}
+                ></Switch>
+              )}
+            </Col>
+
             <Col span={24}>
               <Row style={{ paddingBottom: 10 }}>
                 <Col span={8}>
@@ -272,15 +332,32 @@ const InvoiceCompanyInfo = ({
                       label: "Dirección fiscal",
                     }}
                     rows={3}
-                    readonly
+                    readonly={!deshabilitar && !editInfo}
+                  />
+                </Col>
+              </Row>
+              <Row style={{ paddingBottom: 10 }}>
+                <Col span={8}>
+                  <TextInput
+                    formProps={{ name: "razonSocial", label: "Razón social" }}
+                    readonly={!deshabilitar && !editInfo}
                   />
                 </Col>
               </Row>
               <Row>
                 <Col span={8}>
-                  <TextInput
-                    formProps={{ name: "razonSocial", label: "Razón social" }}
-                    readonly
+                  <SelectInput
+                    form={form}
+                    formProps={{
+                      label: "Régimen fiscal",
+                      name: "regimenFiscal",
+                    }}
+                    options={regimenFiscal}
+                    readonly={id !== "new"}
+                    style={{ marginBottom: 10 }}
+                    onChange={() => {
+                      form.submit();
+                    }}
                   />
                 </Col>
               </Row>

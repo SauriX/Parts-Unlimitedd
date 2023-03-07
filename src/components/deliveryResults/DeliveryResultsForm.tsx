@@ -12,8 +12,6 @@ import {
   studyStatusOptions,
   urgencyOptions,
 } from "../../app/stores/optionStore";
-import { IDeliverResultsForm } from "../../app/models/massResultSearch";
-import React from "react";
 import { IOptions } from "../../app/models/shared";
 
 const DeliveryResultsForm = () => {

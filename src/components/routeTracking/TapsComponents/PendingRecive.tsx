@@ -35,7 +35,7 @@ import { ExpandableConfig } from "antd/lib/table/interface";
 import ImageButton from "../../../app/common/button/ImageButton";
 import { getExpandableConfig } from "../../report/utils";
 import {
-  IRouteList,
+  IRouteTrackingList,
   SearchTracking,
   TrackingFormValues,
 } from "../../../app/models/routeTracking";

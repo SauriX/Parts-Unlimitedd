@@ -94,6 +94,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
     };
     readData();
   }, [getCity]);
+
   useEffect(() => {
     const readPriceList = async () => {
       setLoading(true);
@@ -101,16 +102,15 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       setLoading(false);
     };
 
-    if (expedientes.length === 0) {
-      readPriceList();
-    }
+    readPriceList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getnow]);
   useEffect(() => {
     onfinish(new SearchMedicalFormValues());
   }, []);
+
   const onfinish = async (values: ISearchMedical) => {
-    console.log(values);
+    setLoading(true);
     if (values.fechaNacimiento === null) {
       delete values.fechaNacimiento;
     }
@@ -127,7 +127,9 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
     }
     setSearch(values);
     await getnow(values!);
+    setLoading(false);
   };
+
   const columns: IColumns<IProceedingList> = [
     {
       ...getDefaultColumnProps("expediente", "Expediente", {
@@ -365,34 +367,5 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
     </Fragment>
   );
 };
-interface DescriptionItemProps {
-  title: string;
-  content: React.ReactNode;
-  contentWidth?: string;
-}
-const DescriptionItem = ({
-  title,
-  content,
-  contentWidth,
-}: DescriptionItemProps) => (
-  <div className="site-description-item-profile-wrapper">
-    <p
-      className="site-description-item-profile-p-label"
-      style={{
-        width: contentWidth
-          ? (100 - Number(contentWidth.slice(0, -1))).toString() + "%"
-          : "20%",
-      }}
-    >
-      {title}:
-    </p>
-    <div
-      className="site-description-item-profile-p-label"
-      style={{ width: contentWidth ?? "80%" }}
-    >
-      {content}
-    </div>
-  </div>
-);
 
 export default observer(ProceedingTable);

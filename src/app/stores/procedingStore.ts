@@ -29,6 +29,8 @@ export default class ProcedingStore {
   tax: ITaxData[] = [];
   searchQ: any;
   quotatios: IQuotationInfo[] = [];
+  recordId: string = "";
+
   getAllQ = async (searchQ: IQuotationFilter) => {
     try {
       const reagents = await Proceding.getNowQ(searchQ);
@@ -52,21 +54,8 @@ export default class ProcedingStore {
     }
   };
   getByIdQ = async (id: string) => {
-    console.log("getbyid");
     try {
       const reagent = await quotation.getGeneral(id);
-      /*        reagent.fechaNacimiento = moment(reagent.fechaNacimiento);
-       reagent.estudy?.map(async (x) => {
-         var parametros = await this.getParameter(x.estudioId!);
-         x.parametros = parametros!.parameters;
-         x.nombre = parametros!.nombre;
-         x.indicaciones = parametros?.indicaciones!;
-         x.clave = parametros?.clave!;
-         x.areaId = parametros?.area!;
-         x.departamentoId = parametros?.departamento!;
-         x.taponId = Number(parametros?.tapon!);
-       }); */
-      console.log(reagent, "cotizacion");
       return reagent;
     } catch (error: any) {
       if (error.status === responses.notFound) {
@@ -91,7 +80,6 @@ export default class ProcedingStore {
 
   getAll = async (search: string = "all") => {
     try {
-      console.log(search);
       const parameters = await Proceding.getAll(search);
       this.expedientes = parameters;
     } catch (error: any) {
@@ -102,7 +90,6 @@ export default class ProcedingStore {
 
   getnow = async (search: ISearchMedical) => {
     try {
-      console.log(search);
       const parameters = await Proceding.getNow(search);
       this.expedientes = parameters;
     } catch (error: any) {
@@ -124,39 +111,28 @@ export default class ProcedingStore {
   getById = async (id: string) => {
     try {
       const rol = await Proceding.getById(id);
-      // rol.colonia = rol.colonia ?? null;
       rol.edad = "" + rol.edad;
-      console.log(rol);
-      // this.expediente = rol; // Comentado porque no se usa
       return rol;
     } catch (error: any) {
       if (error.status === responses.notFound) {
-        //history.push("/notFound");
       } else {
         alerts.warning(getErrors(error));
       }
-      //this.roles = [];
     }
   };
   getByIdQuote = async (id: string) => {
     try {
       const rol = await Proceding.getById(id);
-      console.log(rol);
-      // this.expediente = rol; // Comentado porque no se usa
       return rol;
     } catch (error: any) {
       if (error.status === responses.notFound) {
-        //history.push("/notFound");
       } else {
         alerts.warning(getErrors(error));
       }
-      //this.roles = [];
     }
   };
   coincidencias = async (parameter: IProceedingForm) => {
     try {
-      console.log(parameter);
-      console.log("here");
       var coincidencias = await Proceding.getcoincidencia(parameter);
       return coincidencias;
     } catch (error: any) {
@@ -181,9 +157,11 @@ export default class ProcedingStore {
   create = async (parameter: IProceedingForm) => {
     try {
       const record = await Proceding.create(parameter);
+      this.expedientes.push(record);
       alerts.success(messages.created);
       return record.id;
     } catch (error: any) {
+      this.recordId = "";
       alerts.warning(getErrors(error));
     }
   };

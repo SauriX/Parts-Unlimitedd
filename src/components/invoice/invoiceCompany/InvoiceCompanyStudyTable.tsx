@@ -1,14 +1,18 @@
 import { Checkbox, Table } from "antd";
 import { observer } from "mobx-react-lite";
+import { useEffect } from "react";
 import { IColumns } from "../../../app/common/table/utils";
+import { useStore } from "../../../app/stores/store";
 import { moneyFormatter } from "../../../app/util/utils";
 type InvoiceCompanyStudyTableProps = {
   studies: any[];
   indice: number;
+  areas: any[];
 };
 const InvoiceCompanyStudyTable = ({
   studies,
   indice,
+  areas,
 }: InvoiceCompanyStudyTableProps) => {
   const columns: IColumns = [
     {
@@ -23,6 +27,9 @@ const InvoiceCompanyStudyTable = ({
       dataIndex: "area",
       title: "Área",
       align: "center",
+      render: (value) => {
+        return <>{areas.find((x) => x.value === value)?.label}</>;
+      },
     },
     {
       key: "precioFinal",

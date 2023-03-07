@@ -37,6 +37,7 @@ import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import { IReagentList } from "../../../app/models/reagent";
 import { ParameterReagentModal } from "../ParameterReagentModal";
+import views from "../../../app/util/view";
 type ParameterFormProps = {
   componentRef: React.MutableRefObject<any>;
   load: boolean;
@@ -176,7 +177,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     }
     return result;
   };
-  
+
   const onFinish = async (newValues: IParameterForm) => {
     setLoading(true);
 
@@ -204,7 +205,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
       values.id = id;
       setValueType(value);
 
-      setValues(prev => ({...prev, tipoValor: values.tipoValor}));
+      setValues((prev) => ({ ...prev, tipoValor: values.tipoValor }));
       setFlag(1);
     }
 
@@ -230,7 +231,7 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
       form.setFieldsValue({ formula: newString, parametros: undefined });
     }
   };
-  
+
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -303,11 +304,34 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
     setSelectedRowKeys([]);
   };
 
+  const onPageChange = (page: number) => {
+    const parameter = parameters[page - 1];
+    navigate(
+      `/${views.parameters}/${parameter.id}?mode=${searchParams.get(
+        "mode"
+      )}&search=${searchParams.get("search") ?? "all"}`
+    );
+  };
+
+  const getPage = (parameterId?: string) => {
+    return parameters.findIndex((x) => x.id === parameterId) + 1;
+  };
+
   return (
     <Spin spinning={loading || load}>
       <Row style={{ marginBottom: 24 }}>
+        <Col md={12} sm={24} xs={24}>
+          <Pagination
+            size="small"
+            pageSize={1}
+            total={parameters.length}
+            current={getPage(id)}
+            onChange={onPageChange}
+            showSizeChanger={false}
+          />
+        </Col>
         {!CheckReadOnly() && (
-          <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
+          <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
             <Button
               onClick={() => {
                 navigate(`/parameters`);
