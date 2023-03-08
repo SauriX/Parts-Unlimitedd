@@ -254,11 +254,7 @@ const LayoutComponent = () => {
               />
             </div>
           </Col>
-          <Col
-            span={3}
-            className="header-data"
-            style={{ paddingTop: 20 }}
-          >
+          <Col span={3} className="header-data" style={{ paddingTop: 20 }}>
             <Form form={form} onValuesChange={updateUserBranch}>
               <SelectInput
                 formProps={{ label: "Sucursal", name: "sucursal" }}
@@ -269,7 +265,8 @@ const LayoutComponent = () => {
           <Col span={6} className="header-data" style={{ textAlign: "right" }}>
             <Avatar icon={<UserOutlined />} />
             <Text>{profile?.nombre}</Text>
-            <Tooltip placement="bottomRight" title={renderShortCuts}  overlayClassName="tooltip-shortcuts">
+
+            <Tooltip placement="bottomRight" title={renderShortCuts} open>
               <QuestionCircleTwoTone />
             </Tooltip>
             <NotificationOutlined
