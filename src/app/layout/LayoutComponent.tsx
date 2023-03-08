@@ -257,7 +257,7 @@ const LayoutComponent = () => {
           <Col
             span={3}
             className="header-data"
-            style={{ textAlign: "right", paddingTop: 20 }}
+            style={{ paddingTop: 20 }}
           >
             <Form form={form} onValuesChange={updateUserBranch}>
               <SelectInput
