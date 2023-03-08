@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export interface IRouteList {
     id: string;
     clave: string;
@@ -21,7 +23,7 @@ export interface IRouteForm {
     diasDeEntrega: number,
     horaDeEntregaEstimada: number,
     horaDeEntrega:	number,
-    horaDeRecoleccion?:	number,
+    horaDeRecoleccion?:	moment.Moment,
     tiempoDeEntrega?:	number,
     formatoDeTiempoId?:	number,
     estudioId:	string,
@@ -71,7 +73,7 @@ export class RouteFormValues implements IRouteForm {
     diasDeEntrega = 0;
     horaDeEntregaEstimada = 0;
     horaDeEntrega = 0;
-    horaDeRecoleccion = undefined;
+    horaDeRecoleccion = moment();
     tiempoDeEntrega = undefined;
     formatoDeTiempoId = 0;
     estudioId = "";

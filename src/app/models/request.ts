@@ -266,7 +266,7 @@ export interface IRequestStudy {
   usuarioLiberado?: string;
   usuarioEnviado?: string;
   tipo?: string;
-  destinoTipo: number;
+  destinoTipo?: number;
   destinoId: string;
   destino: string;
 }

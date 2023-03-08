@@ -602,7 +602,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
           <Title level={5}>Búsqueda por</Title>
         </Col>
         <Col md={8} sm={24} xs={12}>
-          <Form.Item label="">
+          <Form.Item label="Buscar">
             <Search
               name="search"
               key="search"

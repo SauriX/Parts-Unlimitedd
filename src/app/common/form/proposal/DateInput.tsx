@@ -34,6 +34,7 @@ interface IProps {
     | undefined;
 }
 
+const dateTimeFormat = "DD/MM/YYYY HH:mm";
 const dateFormat = "DD/MM/YYYY";
 const weekFormat = "DD/MM";
 const monthFormat = "MM/YYYY";
@@ -121,6 +122,8 @@ const DateInput = ({
               ? monthFormat
               : pickerType === "year"
               ? yearFormat
+              : pickerType === "time"
+              ? dateTimeFormat
               : dateFormat
           }
           style={{

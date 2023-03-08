@@ -7,6 +7,7 @@ import {
   PageHeader,
   Divider,
   TreeSelect,
+  DatePicker,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
@@ -32,6 +33,7 @@ import _ from "lodash";
 import { IOptions } from "../../../app/models/shared";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import NumberInput from "../../../app/common/form/proposal/NumberInput";
+import { daysOfWeek } from "../../../app/util/catalogs";
 
 type TrackingOrderFormProps = {
   id: string;
@@ -51,9 +53,8 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   const {
     getSucursalesOptions,
     sucursales,
-    sucursalesClave,
     BranchOptions,
-    getBranchOptions,
+    getAllBranchOptions,
     MaquiladorOptions,
     getMaquiladorOptions,
     profileOptions,
@@ -123,13 +124,13 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
 
   useEffect(() => {
     getSucursalesOptions();
-    getBranchOptions();
+    getAllBranchOptions();
     getMaquiladorOptions();
     setSucursalOrigenInicial();
     getProfileOptions();
   }, [
     getSucursalesOptions,
-    getBranchOptions,
+    getAllBranchOptions,
     getMaquiladorOptions,
     profile,
     getProfileOptions,
@@ -155,15 +156,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     }
   }, [id]);
 
-  const dias: IDias[] = [
-    { id: 1, dia: "L" },
-    { id: 2, dia: "M" },
-    { id: 3, dia: "M" },
-    { id: 4, dia: "J" },
-    { id: 5, dia: "V" },
-    { id: 6, dia: "S" },
-    { id: 7, dia: "D" },
-  ];
+
   const [routeFoundOptions, setRouteFoundOptions] = useState<IOptions[]>([]);
   const selecteddestino = Form.useWatch("sucursalDestinoId", form);
 
@@ -193,18 +186,18 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   useEffect(() => {
     getrutes(selecteddestino);
   }, [foundRoutes]);
+
   const initialSerachRoutes = async (
     initial = true,
-    hora = moment().hours() + 1
+    hora = moment().hours()
   ) => {
     let formValues = form.getFieldsValue();
     formValues = { ...formValues };
 
     let routeForms: IRouteForm = new RouteFormValues();
-    routeForms.horaDeRecoleccion = hora;
     routeForms.sucursalOrigenId = formValues.sucursalOrigenId!;
 
-    routeForms.dias = dias.filter((x) => x.id === moment().day());
+    routeForms.dias = daysOfWeek.filter((x) => x.id === moment().day());
 
     var rutes = await find(routeForms);
     return rutes;
@@ -292,188 +285,149 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
         )}
       </Row>
 
-      <div style={{ display: printing ? "none" : "" }}>
-        <div ref={componentRef}>
-          {printing && (
-            <PageHeader
-              ghost={false}
-              title={
-                <HeaderTitle
-                  title="Creación de orden de seguimiento"
-                  image="ordenseguimiento"
+      <div ref={componentRef} style={{ display: printing ? "none" : "" }}>
+        {printing && (
+          <PageHeader
+            ghost={false}
+            title={
+              <HeaderTitle
+                title="Creación de orden de seguimiento"
+                image="ordenseguimiento"
+              />
+            }
+            className="header-container"
+          ></PageHeader>
+        )}
+        {printing && <Divider className="header-divider" />}
+        <Form<ITrackingOrderForm>
+          {...formItemLayout}
+          form={form}
+          name="trackingOrder"
+          initialValues={values}
+          onFinish={onFinish}
+          scrollToFirstError
+          labelWrap
+          onValuesChange={async (changes_values: any) => {
+            const propertyForm = Object.keys(changes_values)[0];
+            if (propertyForm == "temperatura") {
+              setTemperatura(changes_values[propertyForm]);
+              setTemperature(changes_values[propertyForm]);
+              console.log(changes_values[propertyForm]);
+            }
+            if (propertyForm === "fecha") {
+              var date = changes_values[propertyForm];
+              setRouteFoundOptions([]);
+              if (moment().diff(date) < 0) {
+                await initialSerachRoutes(true, 0);
+              } else {
+                await initialSerachRoutes(true);
+              }
+            }
+          }}
+        >
+          <Row gutter={[24, 8]}>
+            <Col md={6} sm={12}>
+              <Form.Item label="Destino" name="sucursalDestinoId">
+                <TreeSelect
+                  dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                  treeData={treeData}
+                  treeDefaultExpandAll
+                  allowClear
                 />
-              }
-              className="header-container"
-            ></PageHeader>
-          )}
-          {printing && <Divider className="header-divider" />}
-          <Form<ITrackingOrderForm>
-            {...formItemLayout}
-            form={form}
-            name="trackingOrder"
-            initialValues={values}
-            onFinish={onFinish}
-            scrollToFirstError
-            labelWrap
-            onValuesChange={async (changes_values: any) => {
-              const propertyForm = Object.keys(changes_values)[0];
-              if (propertyForm == "temperatura") {
-                setTemperatura(changes_values[propertyForm]);
-                setTemperature(changes_values[propertyForm]);
-                console.log(changes_values[propertyForm]);
-              }
-              if (propertyForm === "fecha") {
-                var date = changes_values[propertyForm];
-                setRouteFoundOptions([]);
-                if (moment().diff(date) < 0) {
-                  await initialSerachRoutes(true, 0);
-                } else {
-                  await initialSerachRoutes(true);
-                }
-              }
-            }}
-          >
-            <Row gutter={[24, 8]}>
-              <Col md={6} sm={12}>
-                <Form.Item label="Destino" name="sucursalDestinoId">
-                  <TreeSelect
-                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                    treeData={treeData}
-                    treeDefaultExpandAll
-                  />
-                </Form.Item>
-              </Col>
-              <Col md={6} sm={12}>
-                <SelectInput
-                  formProps={{
-                    name: "sucursalOrigenId",
-                    label: "Origen",
-                  }}
-                  required
-                  readonly={true}
-                  options={sucursales}
+              </Form.Item>
+            </Col>
+            <Col md={6} sm={12}>
+              <SelectInput
+                formProps={{
+                  name: "sucursalOrigenId",
+                  label: "Origen",
+                }}
+                required
+                options={sucursales}
+              />
+            </Col>
+            <Col md={6} sm={12}>
+              <Form.Item label="Fecha recolección" required>
+                <DatePicker
+                  style={{ width: "100%" }}
+                  defaultValue={moment()}
+                  name="fecha"
+                  format="DD/MM/YYYY HH:mm"
+                  minuteStep={1}
+                  showTime
+                  allowClear
+                  disabledDate={(current) => current.isBefore(moment())}
                 />
-              </Col>
-              <Col md={6} sm={12}>
-                <DateInput
-                  formProps={{ label: "Fecha recolección", name: "fecha" }}
-                  required
-                  readonly={readonly}
-                  disabledDates={(current: moment.Moment) =>
-                    current.isBefore(moment(), "day")
+              </Form.Item>
+            </Col>
+            <Col md={6} sm={12}>
+              <SelectInput
+                options={routeFoundOptions}
+                formProps={{
+                  name: "rutaId",
+                  label: "Ruta",
+                }}
+                onChange={(value) => {
+                  if (value) {
+                    findStudiesByStudiesRoute(value);
+                    form.setFieldValue("rutaId", value);
                   }
-                />
-              </Col>
-              <Col md={6} sm={12}>
-                <SelectInput
-                  options={routeFoundOptions}
-                  formProps={{
-                    name: "rutaId",
-                    label: "Ruta",
-                  }}
-                  onChange={(value) => {
-                    if (value) {
-                      findStudiesByStudiesRoute(value);
-                      form.setFieldValue("rutaId", value);
-                    }
-                  }}
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={6} sm={12} style={{ textAlign: "left" }}>
-                <TextInput
-                  formProps={{
-                    name: "muestraId",
-                    label: "Muestra",
-                  }}
-                  max={100}
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={6} sm={12} style={{ textAlign: "left" }}>
-                <NumberInput
-                  formProps={{
-                    name: "temperatura",
-                    label: "Temperatura",
-                  }}
-                  type="number"
-                  suffix="°C"
-                  required
-                  readonly={false}
-                  controls={false}
-                />
-              </Col>
-              <Col md={6} sm={12}>
-                <SwitchInput
-                  name="escaneoCodigoBarras"
-                  label="Escaneo"
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={6} sm={12}>
-                <SwitchInput
-                  name="activo"
-                  onChange={(value) => {
-                    if (value) {
-                      alerts.info(messages.confirmations.enable);
-                    } else {
-                      alerts.info(messages.confirmations.disable);
-                    }
-                  }}
-                  label="Activo"
-                  readonly={readonly}
-                />
-              </Col>
-              {/* {!readonly && (
-                <Col
-                  md={6}
-                  sm={24}
-                  xs={12}
-                  offset={18}
-                  style={{ textAlign: "right" }}
-                >
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    onClick={async (e) => {
-                      let noEscaneados = trackingOrder.some(
-                        (order) => !order.escaneo
-                      );
-                      if (noEscaneados) {
-                        await alerts.confirm(
-                          "",
-                          "Se detectaron faltante de muestras sin confirmación de escaneo",
-                          async () => {
-                            setConfirmCreationOrder(true);
-                            form.submit();
-                          },
-                          () => setConfirmCreationOrder(false),
-                          null,
-                          "Cancelar captura de orden"
-                        );
-                      } else {
-                        setConfirmCreationOrder(true);
-                        form.submit();
-                      }
-                    }}
-                  >
-                    Guardar orden
-                  </Button>
-                </Col>
-              )} */}
-            </Row>
-          </Form>
-
-          <Row>
-            <Col
-              md={24}
-              sm={12}
-              style={{ marginRight: 20, textAlign: "center" }}
-            >
-              <CreationTrackingOrderTable id={id} printing={printing} />
+                }}
+                readonly={readonly}
+              />
+            </Col>
+            <Col md={6} sm={12} style={{ textAlign: "left" }}>
+              <TextInput
+                formProps={{
+                  name: "muestraId",
+                  label: "Muestra",
+                }}
+                max={100}
+                readonly={readonly}
+              />
+            </Col>
+            <Col md={6} sm={12} style={{ textAlign: "left" }}>
+              <NumberInput
+                formProps={{
+                  name: "temperatura",
+                  label: "Temperatura",
+                }}
+                type="number"
+                suffix="°C"
+                required
+                readonly={false}
+                controls={false}
+              />
+            </Col>
+            <Col md={6} sm={12}>
+              <SwitchInput
+                name="escaneoCodigoBarras"
+                label="Escaneo"
+                readonly={readonly}
+              />
+            </Col>
+            <Col md={6} sm={12}>
+              <SwitchInput
+                name="activo"
+                onChange={(value) => {
+                  if (value) {
+                    alerts.info(messages.confirmations.enable);
+                  } else {
+                    alerts.info(messages.confirmations.disable);
+                  }
+                }}
+                label="Activo"
+                readonly={readonly}
+              />
             </Col>
           </Row>
-        </div>
+        </Form>
+
+        <Row>
+          <Col md={24} sm={12}>
+            <CreationTrackingOrderTable id={id} printing={printing} />
+          </Col>
+        </Row>
       </div>
     </Spin>
   );

@@ -1,3 +1,4 @@
+import { IDias } from "../models/route";
 import { IOptions, IOptionsCatalog, IOptionsReport } from "../models/shared";
 
 export const catalogs: IOptionsCatalog[] = [
@@ -218,3 +219,13 @@ export const parameters = {
     cincoColumnas: "14",
   },
 };
+
+export const daysOfWeek: IDias[] = [
+  { id: 1, dia: "L" },
+  { id: 2, dia: "M" },
+  { id: 3, dia: "M" },
+  { id: 4, dia: "J" },
+  { id: 5, dia: "V" },
+  { id: 6, dia: "S" },
+  { id: 7, dia: "D" },
+];
