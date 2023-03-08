@@ -266,7 +266,7 @@ const LayoutComponent = () => {
             <Avatar icon={<UserOutlined />} />
             <Text>{profile?.nombre}</Text>
 
-            <Tooltip placement="bottomRight" title={renderShortCuts} open>
+            <Tooltip placement="bottomRight" title={renderShortCuts}>
               <QuestionCircleTwoTone />
             </Tooltip>
             <NotificationOutlined
