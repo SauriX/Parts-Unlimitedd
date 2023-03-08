@@ -21,7 +21,7 @@ const InvoiceGlobalForm = () => {
     getSucursalesOptions,
     getCompanyOptions,
   } = optionStore;
-  const { getInvoicesFree } = invoiceCompanyStore;
+  const { getInvoicesCompany } = invoiceCompanyStore;
   useEffect(() => {
     getSucursalesOptions();
     getCompanyOptions();
@@ -30,11 +30,18 @@ const InvoiceGlobalForm = () => {
     form.resetFields();
     form.submit();
   }, []);
-  const onFinish = (newFormValues: IInvoicesFreeFilter) => {
-    newFormValues.tipo = checkedValues;
-    newFormValues.fechaInicial = newFormValues.fechas[0];
-    newFormValues.fechaFinal = newFormValues.fechas[1];
-    getInvoicesFree(newFormValues);
+  const onFinish = async (newFormValues: any) => {
+    const formValues = {
+      ...newFormValues,
+
+      fechaFinal: newFormValues.fechas[1].utcOffset(0, true),
+      fechaInicial: newFormValues.fechas[0].utcOffset(0, true),
+      facturaMetodo: "request",
+      sucursalId: [],
+      tipoFactura: [],
+    };
+
+    getInvoicesCompany(formValues);
   };
 
   return (

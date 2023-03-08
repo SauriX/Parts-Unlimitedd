@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import InvoiceFreeForm from "../components/invoice/InvoiceFree/InvoiceFreeForm";
 import InvoiceFreeTable from "../components/invoice/InvoiceFree/InvoiceFreeTable";
 import InvoiceGlobalForm from "../components/invoice/InvoiceGlobal/InvoiceGlobalForm";
+import InvoiceGlobalTable from "../components/invoice/InvoiceGlobal/InvoiceGlobalTable";
 
 const handleDownload = async () => {
   console.log("handleDownload");
@@ -30,7 +31,13 @@ const Invoice = () => {
       ) : (
         <InvoiceCompanyForm />
       )}
-      {tipo === "free" ? <InvoiceFreeTable /> : <InvoiceCompanyTable />}
+      {tipo === "free" ? (
+        <InvoiceFreeTable />
+      ) : tipo === "global" ? (
+        <InvoiceGlobalTable />
+      ) : (
+        <InvoiceCompanyTable />
+      )}
 
       {/* {tipo === "global" ? <InvoiceFreeTable /> : <InvoiceCompanyTable />} */}
     </>
