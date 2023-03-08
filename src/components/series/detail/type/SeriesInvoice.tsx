@@ -373,7 +373,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
                         icon={<UploadOutlined />}
                         disabled={readonly}
                         onClick={() => {
-                          setOriginFile("key");
+                          setOriginFile("cer");
                         }}
                       >
                         Subir archivo
