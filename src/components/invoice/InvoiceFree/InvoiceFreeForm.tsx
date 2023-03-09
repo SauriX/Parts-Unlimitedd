@@ -31,8 +31,6 @@ const InvoiceFreeForm = () => {
     form.submit();
   }, []);
   const onFinish = (newFormValues: IInvoicesFreeFilter) => {
-    console.log("FORMULARIO", toJS(newFormValues));
-    console.log("CHECKED VALUES", toJS(checkedValues));
     newFormValues.tipo = checkedValues;
     newFormValues.fechaInicial = newFormValues.fechas[0];
     newFormValues.fechaFinal = newFormValues.fechas[1];

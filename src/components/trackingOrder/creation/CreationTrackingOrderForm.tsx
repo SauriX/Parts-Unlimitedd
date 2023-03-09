@@ -164,7 +164,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     const findedRoutes = [...foundRoutes];
     let filterRoutes: IRouteForm[] = [];
     findedRoutes.forEach((x) => {
-      if (x.sucursalDestinoId == id || x.maquiladorId == id) {
+      if (x.destinoId == id || x.maquiladorId == id) {
         filterRoutes.push(x);
       }
     });
@@ -195,7 +195,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     formValues = { ...formValues };
 
     let routeForms: IRouteForm = new RouteFormValues();
-    routeForms.sucursalOrigenId = formValues.sucursalOrigenId!;
+    routeForms.origenId = formValues.sucursalOrigenId!;
 
     routeForms.dias = daysOfWeek.filter((x) => x.id === moment().day());
 

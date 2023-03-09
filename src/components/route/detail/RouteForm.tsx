@@ -26,7 +26,7 @@ import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import {
   IDias,
-  IRouteEstudioList,
+  IRouteEstudioList as IStudyRouteList,
   IRouteForm,
   RouteFormValues,
 } from "../../../app/models/route";
@@ -45,6 +45,7 @@ import SwitchInput from "../../../app/common/form/proposal/SwitchInput";
 import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TimeInput from "../../../app/common/form/proposal/TimeInput";
+import NumberInput from "../../../app/common/form/proposal/NumberInput";
 
 const { Search } = Input;
 const { Title } = Typography;
@@ -90,6 +91,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   let { id } = useParams<UrlParams>();
   const { width: windowWidth } = useWindowDimensions();
   const [selectedTags, setSelectedTags] = useState<IDias[]>([]);
+  const [timeType, setTimeType] = useState<number>(1);
 
   const selectedDepartment = Form.useWatch(
     "departamento",
@@ -143,8 +145,8 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         setLoading(true);
         var studis = await getAllStudy();
         const user = await getById(idUser);
-        if (user?.sucursalDestinoId == null) {
-          user!.sucursalDestinoId = user?.maquiladorId!.toString();
+        if (user?.destinoId == null) {
+          user!.destinoId = user?.maquiladorId!.toString();
         }
         form.setFieldsValue(user!);
         studis = studis?.map((x) => {
@@ -181,13 +183,13 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     route.estudio = lista.filter((x) => x.activo === true);
     route.dias = selectedTags;
     const parent = treeData.find((x) =>
-      x.children.map((x) => x.value).includes(newValues.sucursalDestinoId!)
+      x.children.map((x) => x.value).includes(newValues.destinoId!)
     );
     if (parent?.title === "Sucursales") {
       route.maquiladorId = undefined;
     } else {
-      route.maquiladorId = newValues.sucursalDestinoId;
-      route.sucursalDestinoId = undefined;
+      route.maquiladorId = newValues.destinoId;
+      route.destinoId = undefined;
     }
     let success = false;
     if (!route.id) {
@@ -253,7 +255,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     },
   ];
 
-  const columnsEstudios: IColumns<IRouteEstudioList> = [
+  const columnsEstudios: IColumns<IStudyRouteList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
@@ -296,17 +298,17 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
-    onSelect: (record: IRouteEstudioList, selected: boolean) => {
+    onSelect: (record: IStudyRouteList, selected: boolean) => {
       setStudy(selected, record);
     },
-    onSelectAll: (selected: boolean, _: any, studies: IRouteEstudioList[]) => {
+    onSelectAll: (selected: boolean, _: any, studies: IStudyRouteList[]) => {
       for (const study of studies) {
         setStudy(selected, study);
       }
     },
   };
 
-  const setStudy = (active: boolean, item: IRouteEstudioList) => {
+  const setStudy = (active: boolean, item: IStudyRouteList) => {
     var index = lista.findIndex((x) => x.id === item.id);
     var list = lista;
     item.activo = active;
@@ -397,7 +399,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
             <Col md={8} sm={24} xs={12}>
               <SelectInput
                 formProps={{
-                  name: "sucursalOrigenId",
+                  name: "origenId",
                   label: "Origen",
                 }}
                 readonly={readonly}
@@ -406,7 +408,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
               />
             </Col>
             <Col md={8} sm={24} xs={12}>
-              <Form.Item name="sucursalDestinoId" label="Destino">
+              <Form.Item name="destinoId" label="Destino">
                 <TreeSelect
                   dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                   treeData={treeData}
@@ -470,27 +472,33 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
             <Col md={8} sm={24} xs={12}>
               <Form.Item label="Tiempo de Entrega" required>
                 <Input.Group compact>
-                  <Input
-                    style={{ width: "80%" }}
-                    name="tiempoDeEntrega"
+                  <NumberInput 
+                    formProps={{
+                      name: "tiempoDeEntrega",
+                      label: "",
+                    }}
                     min={1}
-                    max={31}
-                    type="number"
+                    max={timeType === 2 ? 365 : 24}
+                    readonly={readonly}
                   />
-                  <Select
-                    style={{ width: "20%" }}
-                    defaultValue="horas"
+                  <SelectInput
+                    formProps={{
+                      name: "tiempoDeEntregaTipo",
+                      label: "",
+                    }}
+                    defaultValue={1}
                     options={[
                       {
                         label: "Horas",
-                        value: "horas",
+                        value: 1,
                       },
                       {
                         label: "Días",
-                        value: "dias",
+                        value: 2,
                       },
                     ]}
-                  ></Select>
+                    readonly={readonly}
+                  />
                 </Input.Group>
               </Form.Item>
             </Col>
@@ -579,7 +587,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
       <br />
       <Row>
         <Col md={24} sm={24} xs={24}>
-          <Table<IRouteEstudioList>
+          <Table<IStudyRouteList>
             size="small"
             rowKey={(record) => record.id}
             columns={columnsEstudios.slice(0, 6)}

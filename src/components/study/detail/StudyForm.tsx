@@ -48,6 +48,7 @@ import {
   SortableContainer,
 } from "react-sortable-hoc";
 import { arrayMoveImmutable } from "array-move";
+import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
 
 type StudyFormProps = {
   componentRef: React.MutableRefObject<any>;
@@ -239,8 +240,9 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   useEffect(() => {
     form.setFieldValue("activo", true);
   }, []);
+
   useEffect(() => {
-    const readuser = async (id: number) => {
+    const readStudy = async (id: number) => {
       setLoading(true);
       const all = await getAll("all");
       const user = await getById(id);
@@ -258,7 +260,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       setLoading(false);
     };
     if (id) {
-      readuser(Number(id));
+      readStudy(Number(id));
     }
   }, [form, getById, id]);
   useEffect(() => {
@@ -336,8 +338,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     const estudio = study[index];
 
     navigate(
-      `/${views.study}/${estudio?.id}?mode=${searchParams.get("mode")}&search=${
-        searchParams.get("search") ?? "all"
+      `/${views.study}/${estudio?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search") ?? "all"
       }`
     );
   };
@@ -522,8 +523,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
               onClick={() => {
                 setDisabled(false);
                 navigate(
-                  `/${views.study}/${id}?mode=edit&search=${
-                    searchParams.get("search") ?? "all"
+                  `/${views.study}/${id}?mode=edit&search=${searchParams.get("search") ?? "all"
                   }`
                 );
               }}
@@ -605,7 +605,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                     label: "Cantidad",
                   }}
                   min={1}
-                  max={9999999999999999}
+                  max={999999}
                   readonly={disabled}
                   required
                 />
@@ -659,7 +659,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                     label: "Días de respuesta",
                   }}
                   min={0}
-                  max={9999999999999999}
+                  max={9}
                   readonly={disabled}
                 />
               </Col>
@@ -674,6 +674,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
+
               <Col md={8} sm={24} xs={8}>
                 <NumberInput
                   formProps={{
@@ -681,10 +682,33 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                     label: "Tiempo de respuesta",
                   }}
                   min={1}
-                  max={9999999999999999}
+                  max={999999}
                   readonly={disabled}
                 />
               </Col>
+              <Col md={8} sm={24} xs={8}>
+                <NumberInput
+                  formProps={{
+                    name: "diasEstabilidad",
+                    label: "Días de estabilidad",
+                  }}
+                  min={0}
+                  max={999999}
+                  readonly={disabled}
+                />
+              </Col>
+              <Col md={8} sm={24} xs={8}>
+                <NumberInput
+                  formProps={{
+                    name: "diasRefrigeracion",
+                    label: "Días de refrigeración",
+                  }}
+                  min={0}
+                  max={999999}
+                  readonly={disabled}
+                />
+              </Col>
+
               <Col md={4} sm={24} xs={6}>
                 <SwitchInput
                   name="visible"
@@ -696,7 +720,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
-              <Col md={4} sm={24} xs={8}>
+              <Col md={3} sm={24} xs={8}>
                 <NumberInput
                   formProps={{
                     name: "dias",
@@ -707,21 +731,22 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={!visible || disabled}
                 />
               </Col>
-              <Col md={6} sm={24} xs={6}>
+
+              <Col md={3} sm={24} xs={6}>
                 <SwitchInput
                   name="prioridad"
                   label="Prioridad"
                   readonly={disabled}
                 />
               </Col>
-              <Col md={6} xs={6}>
+              <Col md={3} xs={6}>
                 <SwitchInput
                   name="urgencia"
                   label="Urgencia"
                   readonly={disabled}
                 />
               </Col>
-              <Col md={6} sm={24} xs={6}>
+              <Col md={3} sm={24} xs={6}>
                 <SwitchInput
                   name="activo"
                   label="Activo"
@@ -735,7 +760,21 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
+              <Col md={8} sm={24} xs={8}></Col>
+              <Col md={8} sm={24} xs={8}>
+                <TextAreaInput
+                  formProps={{
+                    name: "instrucciones",
+                    label: "Instrucciones",
+
+                  }}
+                  rows={6}
+                />
+              </Col>
+
+
             </Row>
+
           </Form>
           <div></div>
           <PageHeader

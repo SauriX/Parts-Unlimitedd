@@ -34,6 +34,7 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   serie?: string;
   serieNumero?: string;
   estudios?: IRequestStudyInfo[];
+  destino?:string;
 }
 
 export interface IRequestFilter {
@@ -241,6 +242,7 @@ export interface IRequestStudy {
   precio: number;
   descuento?: number;
   descuentoPorcentaje?: number;
+  ordenEstudioId?: number;
   copago?: number;
   precioFinal: number;
   nuevo: boolean;

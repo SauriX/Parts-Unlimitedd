@@ -85,7 +85,7 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-      ...getDefaultColumnProps("sucursalOrigen", "Sucursal Origen", {
+      ...getDefaultColumnProps("origen", "Sucursal Origen", {
         searchState,
         setSearchState,
         width: "20%",
@@ -94,7 +94,7 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-        ...getDefaultColumnProps("sucursalDestino", "Destino", {
+        ...getDefaultColumnProps("destino", "Destino", {
           searchState,
           setSearchState,
           width: "20%",

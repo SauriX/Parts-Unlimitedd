@@ -12,6 +12,7 @@ import {
   Typography,
   Space,
   Divider,
+  InputNumber,
 } from "antd";
 // import TextArea from "antd/lib/input/TextArea";
 import { observer } from "mobx-react-lite";
@@ -103,6 +104,8 @@ const InvoiceFreeDetail = ({
   const [estudiosDetalle, setEstudiosDetalle] = useState<any[]>([]);
   const [ivaFinal, setIvaFinal] = useState<any>();
   const [totalFinal, setTotalFinal] = useState<number>(0);
+  const [canRound, setCanRound] = useState<boolean>(false);
+  const [hasRounded, setHasRounded] = useState<boolean>(false);
   const soloLectura = id !== "new";
 
   const [currentTime, setCurrentTime] = useState<string>();
@@ -127,18 +130,26 @@ const InvoiceFreeDetail = ({
   useEffect(() => {}, [estudios, totalEstudios]);
   useEffect(() => {
     const total = detailData.reduce((acc, obj) => acc + obj.importe, 0);
+    const hasRoundedRow = detailData.some((obj) => obj.redondeo);
+
+    setHasRounded(hasRoundedRow);
     setTotalFinal(total);
     setTotalDetailInvoiceFree(total);
     setDetailInvoice(detailData);
   }, [detailData]);
+  useEffect(() => {
+    const decimales = 1 - (totalFinal - Math.trunc(totalFinal));
+    setCanRound(
+      (decimales > 0 && decimales < 1) || detailData.some((obj) => obj.redondeo)
+    );
+  }, [totalFinal]);
   useEffect(() => {
     if (redondeo) {
       setDetailData((detailData) => [
         ...detailData,
         {
           id: uuid(),
-          concepto: "",
-          importe: Math.trunc(totalFinal + 1) - totalFinal,
+          importe: 1 - (totalFinal - Math.trunc(totalFinal)),
           cantidad: 1,
           redondeo: true,
         },
@@ -270,7 +281,6 @@ const InvoiceFreeDetail = ({
               placeholder="Prod/Serv"
               defaultValue={value}
               onChange={(seleccion: string[]) => {
-                console.log("Prod/Serv", seleccion);
                 const final = detailData.map((detalle: any) => {
                   if (detalle.id === row.id) {
                     return {
@@ -281,7 +291,6 @@ const InvoiceFreeDetail = ({
                   return detalle;
                 });
                 setDetailData(final);
-                console.log("FINAL", final);
               }}
               options={[
                 {
@@ -430,7 +439,28 @@ const InvoiceFreeDetail = ({
       title: "Importe final",
       width: "10%",
       align: "right",
-      render: (value) => moneyFormatter.format(value),
+      render: (importeFinal, row) => {
+        return (
+          <Input
+            defaultValue={moneyFormatter.format(importeFinal)}
+            onChange={(e) => {
+              const final = detailData.map((detalle: any) => {
+                if (detalle.id === row.id) {
+                  return {
+                    ...detalle,
+                    importe: +e.target.value.replace("$", "").trim(),
+                  };
+                }
+                return detalle;
+              });
+              setDetailData(final);
+            }}
+            bordered={false}
+          />
+        );
+
+        // moneyFormatter.format(value)
+      },
     },
     {
       dataIndex: "quitar",
@@ -440,7 +470,6 @@ const InvoiceFreeDetail = ({
       align: "center",
       render: (value, fullRow) => (
         <>
-          {" "}
           {fullRow.redondeo ?? (
             <Button
               disabled={soloLectura}
@@ -480,7 +509,6 @@ const InvoiceFreeDetail = ({
               placeholder="Prod/Serv"
               defaultValue={value}
               onChange={(seleccion: string[]) => {
-                console.log("Prod/Serv", seleccion);
                 const final = detailData.map((detalle: any) => {
                   if (detalle.id === row.id) {
                     return {
@@ -491,7 +519,6 @@ const InvoiceFreeDetail = ({
                   return detalle;
                 });
                 setDetailData(final);
-                console.log("FINAL", final);
               }}
               options={[
                 {
@@ -645,15 +672,15 @@ const InvoiceFreeDetail = ({
             </Row>
           </Form>
         </Col>
-
         <Col span={3} style={{ margin: 0, padding: 0 }}>
           <Form {...formItemLayout} form={formRedondeo} name="invoice">
             <Form.Item name="redondeo" label="Redondeo">
               <Switch
+                // checked={hasRounded}
                 checkedChildren={<CheckOutlined />}
                 unCheckedChildren={<CloseOutlined />}
                 size="default"
-                disabled={!detailData.length || soloLectura}
+                disabled={!detailData.length || soloLectura || !canRound}
               />
             </Form.Item>
           </Form>

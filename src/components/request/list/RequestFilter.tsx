@@ -19,7 +19,7 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const RequestFilter = () => {
-  const { requestStore, optionStore } = useStore();
+  const { requestStore, optionStore, profileStore } = useStore();
   const {
     branchCityOptions,
     medicOptions,
@@ -29,7 +29,9 @@ const RequestFilter = () => {
     getMedicOptions,
     getCompanyOptions,
     getDepartmentOptions,
+    BranchOptions,
   } = optionStore;
+  const { profile, getProfile } = profileStore;
   const { filter, setFilter, getRequests } = requestStore;
 
   const [form] = useForm<IRequestFilter>();
@@ -46,11 +48,13 @@ const RequestFilter = () => {
     getMedicOptions();
     getCompanyOptions();
     getDepartmentOptions();
+    getProfile();
   }, [
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
     getDepartmentOptions,
+    getProfile,
   ]);
 
   useEffect(() => {
@@ -61,16 +65,29 @@ const RequestFilter = () => {
 
   useEffect(() => {
     if (selectedCity != undefined && selectedCity != null) {
-      var branhces = branchCityOptions.filter((x) =>
+      var branches = branchCityOptions.filter((x) =>
         selectedCity.includes(x.value.toString())
       );
-      var options = branhces.flatMap((x) =>
+      var options = branches.flatMap((x) =>
         x.options == undefined ? [] : x.options
       );
       setBranchOptions(options);
     }
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
+
+  useEffect(() => {
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value == profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
+      }
+      form.setFieldValue("sucursales", [profileBranch]);
+    }
+  }, [BranchOptions, form, profile]);
 
   useEffect(() => {
     form.setFieldsValue(filter);

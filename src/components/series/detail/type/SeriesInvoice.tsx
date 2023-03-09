@@ -72,6 +72,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
 
   const [keyFile, setKeyFile] = useState<RcFile>();
   const [cerFile, setCerFile] = useState<RcFile>();
+  const [originFile, setOriginFile] = useState<"cer" | "key">();
   const [branch, setBranch] = useState<string>("");
 
   useEffect(() => {
@@ -122,7 +123,24 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
       `¿Está seguro que desea cargar el archivo ${fileName}?`,
       async () => {
         // await saveFile(file);
-        fileName.split(".")[1] === "key" ? setKeyFile(file) : setCerFile(file);
+        if (fileName.split(".")[1] === "key" && originFile === "key") {
+          setKeyFile(file);
+        }
+        if (fileName.split(".")[1] === "cer" && originFile === "cer") {
+          setCerFile(file);
+        }
+        if (fileName.split(".")[1] !== "key" && originFile === "key") {
+          alerts.error("El archivo debe ser un archivo .key");
+          setLoading(false);
+          return;
+        }
+
+        if (fileName.split(".")[1] !== "cer" && originFile === "cer") {
+          alerts.error("El archivo debe ser un archivo .cer");
+          setLoading(false);
+          return;
+        }
+
         message.success(`${fileName} cargado existosamente.`);
         setLoading(false);
       },
@@ -136,6 +154,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
     if (status === "uploading") {
       return;
     } else if (status === "done") {
+
       submitFile(info.file.originFileObj!, info.file.name);
     } else if (status === "error") {
       message.error(`Error al cargar el archivo ${info.file.name}.`);
@@ -259,7 +278,6 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
             <SwitchInput
               name={["factura", "cfdi"]}
               label="Crear CFDI"
-              required
               readonly={readonly}
             />
           </Col>
@@ -283,16 +301,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
               readonly={readonly}
             />
           </Col>
-          <Col md={6} sm={24} xs={12}>
-            <TextInput
-              formProps={{
-                name: ["factura", "sucursalKey"],
-                label: "Key Sucursal",
-              }}
-              required
-              readonly={readonly}
-            />
-          </Col>
+          <Col md={6} sm={24} xs={12}></Col>
           <Col md={6} sm={24} xs={12}>
             <SwitchInput
               name={["factura", "estatus"]}
@@ -304,7 +313,6 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
                   alerts.info(messages.confirmations.invoiceDisabled);
                 }
               }}
-              required
               readonly={readonly}
             />
           </Col>
@@ -316,7 +324,6 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
               }}
               rows={4}
               autoSize
-              required
               readonly={readonly}
             />
           </Col>
@@ -334,16 +341,19 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
                         type="primary"
                         icon={<UploadOutlined />}
                         disabled={readonly}
+                        onClick={() => {
+                          setOriginFile("key");
+                        }}
                       >
                         Subir archivo
                       </Button>
                     </Upload>
                   </Col>
-                  {id && values.factura.claveKey && (
+                  {id && values.factura.claveKey ? (
                     <Col span={12}>
                       <Tag color="green">{values.factura.claveKey}</Tag>
                     </Col>
-                  )}
+                  ) : null}
                 </Row>
               </Input.Group>
             </Form.Item>
@@ -362,145 +372,36 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
                         type="primary"
                         icon={<UploadOutlined />}
                         disabled={readonly}
+                        onClick={() => {
+                          setOriginFile("cer");
+                        }}
                       >
                         Subir archivo
                       </Button>
                     </Upload>
                   </Col>
-                  {id && values.factura.claveCer && (
+                  {id && values.factura.claveCer ? (
                     <Col span={12}>
                       <Tag color="green">{values.factura.claveCer}</Tag>
                     </Col>
-                  )}
+                  ) : null}
                 </Row>
               </Input.Group>
             </Form.Item>
           </Col>
         </Row>
-
         <Divider orientation="left">Datos del emisor</Divider>
-        <Row gutter={[24, 12]}>
-          <Col md={12} sm={24} xs={12}>
-            <TextInput
-              formProps={{
-                name: ["emisor", "rfc"],
-                label: "RFC",
-              }}
-              readonly={true}
-            />
-          </Col>
-          <Col md={12} sm={24} xs={12}>
-            <TextInput
-              formProps={{
-                name: ["emisor", "razonSocial"],
-                label: "Nombre",
-              }}
-              readonly={true}
-            />
-          </Col>
-          <Col md={6} sm={24} xs={12}>
-            <TextInput
-              formProps={{
-                name: ["emisor", "codigoPostal"],
-                label: "Código postal",
-              }}
-              readonly={true}
-            />
-          </Col>
-          <Col md={6} sm={24} xs={12}>
-            <TextInput
-              formProps={{
-                name: ["emisor", "calle"],
-                label: "Calle",
-              }}
-              readonly={true}
-            />
-          </Col>
-          <Col md={6} sm={24} xs={12}>
-            <TextInput
-              formProps={{
-                name: ["emisor", "colonia"],
-                label: "Colonia",
-              }}
-              readonly={true}
-            />
-          </Col>
-          <Col md={6} sm={24} xs={12}>
-            <TextInput
-              formProps={{
-                name: ["emisor", "ciudad"],
-                label: "Municipio",
-              }}
-              readonly={true}
-            />
-          </Col>
-          <Col md={6} sm={24} xs={12}>
-            <TextInput
-              formProps={{
-                name: ["emisor", "estado"],
-                label: "Estado",
-              }}
-              readonly={true}
-            />
-          </Col>
-          <Col md={6} sm={24} xs={12}>
-            <TextInput
-              formProps={{
-                name: ["emisor", "pais"],
-                label: "País",
-              }}
-              readonly={true}
-            />
-          </Col>
-          <Col md={6} sm={24} xs={12}>
-            <TextInput
-              formProps={{
-                name: ["emisor", "numeroExterior"],
-                label: "No. Ext.",
-              }}
-              readonly={true}
-            />
-          </Col>
-          <Col md={6} sm={24} xs={12}>
-            <TextInput
-              formProps={{
-                name: ["emisor", "numeroInterior"],
-                label: "No. Int.",
-              }}
-              readonly={true}
-            />
-          </Col>
-          <Col md={6} sm={24} xs={12}>
-            <TextInput
-              formProps={{
-                name: ["emisor", "telefono"],
-                label: "Teléfono",
-              }}
-              readonly={true}
-            />
-          </Col>
-          <Col md={6} sm={24} xs={12}>
-            <TextInput
-              formProps={{
-                name: ["emisor", "webSite"],
-                label: "WebSite",
-              }}
-              readonly={true}
-            />
-          </Col>
-          <Col md={6} sm={24} xs={12}>
-            <TextInput
-              formProps={{
-                name: ["emisor", "correo"],
-                label: "E-mail",
-              }}
-              readonly={true}
-            />
-          </Col>
-        </Row>
-        <Divider orientation="left">Lugar de expedición</Divider>
         <Row gutter={[24, 12]} style={{ marginBottom: 12 }}>
-          <Col span={6} offset={18}>
+          <Col md={12} sm={24} xs={12}>
+            <PasswordInput
+              formProps={{
+                name: ["expedicion", "sucursalKey"],
+                label: "Facturación Key",
+              }}
+              readonly={true}
+            />
+          </Col>
+          <Col span={12}>
             <SelectInput
               formProps={{
                 name: ["expedicion", "sucursalId"],
@@ -592,6 +493,15 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
               formProps={{
                 name: ["expedicion", "telefono"],
                 label: "Teléfono",
+              }}
+              readonly={true}
+            />
+          </Col>
+          <Col md={6} sm={24} xs={12}>
+            <TextInput
+              formProps={{
+                name: ["expedicion", "correo"],
+                label: "Correo",
               }}
               readonly={true}
             />

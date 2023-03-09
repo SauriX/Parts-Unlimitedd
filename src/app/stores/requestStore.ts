@@ -472,6 +472,8 @@ export default class RequestStore {
       }
     }
 
+    console.log(allTags);
+
     this.setTags(allTags);
   };
 
@@ -795,7 +797,21 @@ export default class RequestStore {
   };
 
   deleteStudy = async (id: string) => {
+    const study = this.studies.find((x) => x.identificador === id);
     this.studies = this.studies.filter((x) => x.identificador !== id);
+
+    if (study) {
+      if (
+        !this.studies.some((x) => x.estudioId === study.estudioId)
+      ) {
+        this.tags = this.tags.map((tag) => ({
+          ...tag,
+          estudios: tag.estudios.filter(
+            (x) => x.estudioId !== study?.estudioId
+          ),
+        }));
+      }
+    }
   };
 
   deletePack = async (id: number | string) => {
