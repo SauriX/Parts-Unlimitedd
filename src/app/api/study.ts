@@ -1,4 +1,4 @@
-import { IStudyForm, IStudyList } from "../models/study";
+import { IStudyTec, IStudyForm, IStudyList } from "../models/study";
 import { IScopes } from "../models/shared";
 import requests from "./agent";
 import { IPriceListEstudioList } from "../models/priceList";
@@ -9,6 +9,7 @@ const Study = {
   getAllPrice: (search: string): Promise<IPriceListEstudioList[]> => requests.get(`study/allprice/${!search ? "all" : search}`),
   getActive: (): Promise<IStudyList[]> => requests.get(`study/active`),
   getById: (id: number): Promise<IStudyForm> => requests.get(`study/${id}`),
+  getStudyInfoById: (id: number): Promise<IStudyTec> => requests.get(`study/tecinfo/${id}`),
   create: (study: IStudyForm): Promise<boolean> => requests.post("/study", study),
   update: (study: IStudyForm): Promise<boolean> => requests.put("/study", study),
   exportList: (search: string): Promise<void> =>

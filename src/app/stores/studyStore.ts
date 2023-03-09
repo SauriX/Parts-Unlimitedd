@@ -82,6 +82,14 @@ export default class StudyStore {
       alerts.warning(getErrors(error));
     }
   };
+  getTecInfoById = async (id: number) => {
+    try {
+      const study = await Study.getStudyInfoById(id);
+      return study;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    }
+  };
 
   create = async (study: IStudyForm) => {
     try {

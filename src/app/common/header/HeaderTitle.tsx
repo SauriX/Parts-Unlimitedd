@@ -86,4 +86,5 @@ export type imagesType =
   | "recibo"
   | "enviar-datos"
   |"facturas"
-  |"studyreport";
+  |"studyreport"
+  |"infoStudy";
