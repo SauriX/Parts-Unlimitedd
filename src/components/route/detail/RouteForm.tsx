@@ -35,6 +35,8 @@ import {
   IColumns,
   ISearch,
 } from "../../../app/common/table/utils";
+import { daysOfWeek } from "../../../app/util/catalogs";
+import { SearchOutlined } from "@ant-design/icons";
 import useWindowDimensions from "../../../app/util/window";
 import { IOptions } from "../../../app/models/shared";
 import CheckableTag from "antd/lib/tag/CheckableTag";
@@ -45,7 +47,7 @@ import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TimeInput from "../../../app/common/form/proposal/TimeInput";
 
 const { Search } = Input;
-const { Text, Title } = Typography;
+const { Title } = Typography;
 
 type RouteFormProps = {
   id: string;
@@ -63,24 +65,21 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     routeStore;
   const [lista, setLista] = useState(studies);
   const {
-    getDepartmentOptions,
-    departmentOptions,
-    getareaOptions,
-    areas,
     BranchOptions,
     getBranchOptions,
     DeliveryOptions,
     getDeliveryOptions,
     MaquiladorOptions,
     getMaquiladorOptions,
+    areaByDeparmentOptions,
+    getAreaByDeparmentOptions,
   } = optionStore;
+
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [form] = Form.useForm<IRouteForm>();
-  const [aeraSearch, setAreaSearch] = useState(areas);
-  const [areaForm, setAreaForm] = useState<IOptions[]>([]);
-  const [areaId, setAreaId] = useState<number>();
-  const [depId, setDepId] = useState<number>();
+  const [formAreaByDepartment] = Form.useForm<any>();
+
   const [searchvalue, setSearchvalue] = useState<string>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [loading, setLoading] = useState(false);
@@ -88,19 +87,17 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     searchParams.get("mode") === "readonly"
   );
   const [values, setValues] = useState<IRouteForm>(new RouteFormValues());
-  const [value, setValue] = useState<string>();
   let { id } = useParams<UrlParams>();
   const { width: windowWidth } = useWindowDimensions();
   const [selectedTags, setSelectedTags] = useState<IDias[]>([]);
-  const tagsData: IDias[] = [
-    { id: 1, dia: "L" },
-    { id: 2, dia: "M" },
-    { id: 3, dia: "M" },
-    { id: 4, dia: "J" },
-    { id: 5, dia: "V" },
-    { id: 6, dia: "S" },
-    { id: 7, dia: "D" },
-  ];
+
+  const selectedDepartment = Form.useWatch(
+    "departamento",
+    formAreaByDepartment
+  );
+  const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
+  const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
+  const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
     const studys = async () => {
@@ -114,30 +111,37 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   }, [getAllStudy]);
 
   useEffect(() => {
-    getDepartmentOptions();
-  }, [getDepartmentOptions]);
-  useEffect(() => {
-    const areareader = async () => {
-      await getareaOptions(0);
-      setAreaSearch(areas);
-      setAreaForm(areas);
-    };
-    areareader();
-  }, [getareaOptions]);
-
-  useEffect(() => {
     getBranchOptions();
     getDeliveryOptions();
     getMaquiladorOptions();
-  }, [getBranchOptions, getDeliveryOptions, getMaquiladorOptions]);
-  // const [discunt, setDiscunt] = useState<string|number>();
+    getAreaByDeparmentOptions();
+  }, [
+    getBranchOptions,
+    getDeliveryOptions,
+    getMaquiladorOptions,
+    getAreaByDeparmentOptions,
+  ]);
+
   useEffect(() => {
-    //console.log("use");
+    setDepartmentOptions(
+      areaByDeparmentOptions?.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [areaByDeparmentOptions]);
+
+  useEffect(() => {
+    setAreaOptions(
+      areaByDeparmentOptions
+        .filter((x) => selectedDepartment?.includes(x.value as number))
+        .flatMap((x) => x.options ?? [])
+    );
+    formAreaByDepartment.setFieldValue("area", []);
+  }, [selectedDepartment, areaByDeparmentOptions, formAreaByDepartment]);
+
+  useEffect(() => {
     const readuser = async (idUser: string) => {
       try {
         setLoading(true);
         var studis = await getAllStudy();
-        var areaForm = await getareaOptions(values.idDepartamento);
         const user = await getById(idUser);
         if (user?.sucursalDestinoId == null) {
           user!.sucursalDestinoId = user?.maquiladorId!.toString();
@@ -149,8 +153,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         });
         setSelectedRowKeys(
           studis?.filter((x) => x.activo)?.map((x) => x.id) ?? []
-        ); //aqui
-        setAreaForm(areaForm!);
+        ); 
         setValues(user!);
         setLista(studis!);
         setLoading(false);
@@ -162,10 +165,8 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
       }
     };
     if (id) {
-      readuser(String(id));
-    } else {
-      form.setFieldsValue({ idDepartamento: undefined, idArea: undefined });
-    }
+      readuser(id);
+    } 
   }, [form, getById, id]);
 
   useEffect(() => {
@@ -184,17 +185,12 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     );
     if (parent?.title === "Sucursales") {
       route.maquiladorId = undefined;
-      console.log("Llega el valor a SucursalDestino?", route.sucursalDestinoId);
     } else {
       route.maquiladorId = newValues.sucursalDestinoId;
       route.sucursalDestinoId = undefined;
-      console.log("Llega el valor a Maquilador?", route.maquiladorId);
     }
-    //console.log("checks seleccionados" ,selectedRowKeys);
     let success = false;
     if (!route.id) {
-      //console.log(route.id, "Valor del id");
-
       success = await create(route);
     } else {
       success = await update(route);
@@ -294,55 +290,20 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   ];
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    //console.log("selectedRowKeys changed: ", selectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys); //console.log("checks seleccionados" ,selectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
   };
 
   const rowSelection = {
     selectedRowKeys,
-
     onChange: onSelectChange,
-
     onSelect: (record: IRouteEstudioList, selected: boolean) => {
       setStudy(selected, record);
-      //console.log("checks seleccionados" ,selectedRowKeys);
     },
     onSelectAll: (selected: boolean, _: any, studies: IRouteEstudioList[]) => {
       for (const study of studies) {
         setStudy(selected, study);
-      } //console.log("checks seleccionados" ,selectedRowKeys);
-    },
-  };
-
-  const onValuesChange = async (changedValues: any) => {
-    const field = Object.keys(changedValues)[0];
-
-    if (field === "idDepartamento") {
-      //console.log("deparatemento");
-      const value = changedValues[field];
-      var areaForm = await getareaOptions(value);
-      setAreaForm(areaForm!);
-      form.setFieldsValue({ idArea: undefined });
-    }
-
-    if (field === "formatoDeTiempoId") {
-      const value = changedValues[field];
-      let horas = value * 24;
-      horas = Math.round(horas * 100) / 100;
-      form.setFieldsValue({ tiempoDeEntrega: horas });
-    }
-    if (field === "tiempoDeEntrega") {
-      const value = changedValues[field];
-      let dias = value / 24;
-      if (dias < 1) {
-        dias = 0;
-      } else {
-        dias = Math.round(dias * 100) / 100;
       }
-
-      //console.log(dias);
-      form.setFieldsValue({ formatoDeTiempoId: dias });
-    }
+    },
   };
 
   const setStudy = (active: boolean, item: IRouteEstudioList) => {
@@ -355,36 +316,6 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     var val = values.estudio;
     val[indexVal] = item;
     setValues((prev) => ({ ...prev, estudio: val }));
-  };
-
-  const filterByDepartament = async (departament: number) => {
-    if (departament) {
-      var departamento = departmentOptions.filter(
-        (x) => x.value === departament
-      )[0].label;
-      var areaSearch = await getareaOptions(departament);
-      var estudios = lista.filter((x) => x.departamento === departamento);
-      setValues((prev) => ({ ...prev, estudio: estudios }));
-      setAreaSearch(areaSearch!);
-    } else {
-      estudios = lista;
-      if (estudios.length <= 0) {
-        estudios = lista;
-      }
-      setValues((prev) => ({ ...prev, estudio: estudios }));
-    }
-  };
-
-  const filterByArea = (area?: number) => {
-    if (area) {
-      var areaActive = areas.filter((x) => x.value === area)[0].label;
-      var estudios = lista.filter((x) => x.area === areaActive);
-      setValues((prev) => ({ ...prev, estudio: estudios }));
-    } else {
-      const dep = departmentOptions.find((x) => x.value === depId)?.label;
-      estudios = lista.filter((x) => x.departamento === dep);
-      setValues((prev) => ({ ...prev, estudio: estudios }));
-    }
   };
 
   const filterBySearch = (search: string) => {
@@ -405,6 +336,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
               pageSize={1}
               current={getPage(id)}
               onChange={setPage}
+              showSizeChanger={false}
             />
           </Col>
         )}
@@ -449,7 +381,6 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
           initialValues={values}
           onFinish={onFinish}
           scrollToFirstError
-          onValuesChange={onValuesChange}
         >
           <Row justify="space-between">
             <Col md={8} sm={24} xs={12}>
@@ -510,7 +441,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
             <Col md={8} sm={24} xs={12}>
               <Form.Item label="Aplica para días:" name="diasDeEntrega">
                 <Space size={[12, 0]} wrap>
-                  {tagsData.map((tag) => (
+                  {daysOfWeek.map((tag) => (
                     <CheckableTag
                       key={tag.id}
                       checked={
@@ -537,10 +468,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
             </Col>
 
             <Col md={8} sm={24} xs={12}>
-              <Form.Item
-                label="Tiempo de Entrega"
-                required
-              >
+              <Form.Item label="Tiempo de Entrega" required>
                 <Input.Group compact>
                   <Input
                     style={{ width: "80%" }}
@@ -597,12 +525,17 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         </Form>
       </div>
       <Divider orientation="left">Asignación de Estudios</Divider>
-      <Row gutter={[12, 0]} align="middle">
-        <Col md={24} sm={24} xs={12}>
-          <Title level={5}>Búsqueda por</Title>
-        </Col>
-        <Col md={8} sm={24} xs={12}>
-          <Form.Item label="Buscar">
+      <Form<any>
+        {...formItemLayout}
+        form={formAreaByDepartment}
+        name="areaByDepartment"
+        scrollToFirstError
+      >
+        <Row gutter={[12, 0]} align="middle">
+          <Col md={24} sm={24} xs={12}>
+            <Title level={5}>Búsqueda por</Title>
+          </Col>
+          <Col md={8} sm={24} xs={12}>
             <Search
               name="search"
               key="search"
@@ -616,39 +549,36 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
               }}
               value={searchvalue}
             />
-          </Form.Item>
-        </Col>
-        <Col md={8} sm={24} xs={12}>
-          <SelectInput
-            formProps={{ name: "areaSearch", label: "Área" }}
-            options={aeraSearch}
-            onChange={(value) => {
-              setAreaId(value);
-              filterByArea(value);
-            }}
-            value={areaId}
-            placeholder={"Seleccionar área"}
-          />
-        </Col>
-        <Col md={8} sm={24} xs={12}>
-          <SelectInput
-            formProps={{
-              name: "departamento",
-              label: "Departamentos",
-            }}
-            options={departmentOptions}
-            onChange={(value) => {
-              setAreaId(undefined);
-              setDepId(value);
-              filterByDepartament(value);
-            }}
-            value={depId}
-            placeholder={"Seleccionar departamentos"}
-          />
-        </Col>
-      </Row>
+          </Col>
+          <Col md={8} sm={24} xs={12}>
+            <SelectInput
+              form={formAreaByDepartment}
+              formProps={{
+                name: "departamento",
+                label: "Departamento",
+                noStyle: true,
+              }}
+              multiple
+              options={departmentOptions}
+            />
+          </Col>
+          <Col md={8} sm={24} xs={12}>
+            <SelectInput
+              form={formAreaByDepartment}
+              formProps={{
+                name: "area",
+                label: "Área",
+                noStyle: true,
+              }}
+              multiple
+              options={areaOptions}
+            />
+          </Col>
+        </Row>
+      </Form>
+      <br />
       <Row>
-      <Col md={24} sm={24} xs={24}>
+        <Col md={24} sm={24} xs={24}>
           <Table<IRouteEstudioList>
             size="small"
             rowKey={(record) => record.id}

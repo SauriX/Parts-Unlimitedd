@@ -99,7 +99,6 @@ const ClinicResultsFilter = () => {
         .flatMap((x) => x.options ?? [])
     );
     form.setFieldValue("area", []);
-    console.log("areaByDeparmentOptions", areaByDeparmentOptions);
   }, [areaByDeparmentOptions, form, selectedDepartment]);
 
   const onFinish = async (newFormValues: IClinicResultForm) => {
