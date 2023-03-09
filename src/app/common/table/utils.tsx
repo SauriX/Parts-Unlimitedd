@@ -16,6 +16,13 @@ export const defaultPaginationProperties: TablePaginationConfig = {
   showSizeChanger: true,
 };
 
+export const defaultRecordRequestPagination: TablePaginationConfig = {
+  size: "small",
+  pageSizeOptions: ["25", "50", "100"],
+  showSizeChanger: true,
+  defaultPageSize: 25,
+};
+
 let searchInput: any;
 
 export interface ISearch {
