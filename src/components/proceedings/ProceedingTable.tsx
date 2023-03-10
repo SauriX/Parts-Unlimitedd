@@ -50,6 +50,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
   const { procedingStore, optionStore, locationStore, profileStore } =
     useStore();
   const { expedientes, getnow, setSearch, search } = procedingStore;
+  const { profile } = profileStore;
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const { getCity } = locationStore;
   const [searchParams] = useSearchParams();
@@ -81,8 +82,20 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       branchCityOptions.find((x: any) => selectedCity?.includes(x.value))
         ?.options ?? []
     );
-    form.setFieldValue("sucursal", []);
   }, [branchCityOptions, form, selectedCity]);
+
+  useEffect(() => {
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value == profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
+      }
+      form.setFieldValue("sucursal", [profileBranch]);
+    }
+  }, [branchCityOptions, form, profile]);
 
   useEffect(() => {
     const readData = async () => {

@@ -52,7 +52,6 @@ const DeliveryResultsForm = () => {
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
 
-  const { getRequests } = requestStore;
   useEffect(() => {
     getBranchCityOptions();
     getMedicOptions();
@@ -67,6 +66,7 @@ const DeliveryResultsForm = () => {
     getCompanyOptions,
     getDepartmentOptions,
   ]);
+
   useEffect(() => {
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
@@ -74,14 +74,15 @@ const DeliveryResultsForm = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    if(selectedCity!=undefined && selectedCity !=null){
-      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
-    var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
-      setBranchOptions(
-        options
+    if (selectedCity != undefined && selectedCity != null) {
+      var branhces = branchCityOptions.filter((x) =>
+        selectedCity.includes(x.value.toString())
       );
+      var options = branhces.flatMap((x) =>
+        x.options == undefined ? [] : x.options
+      );
+      setBranchOptions(options);
     }
-    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
@@ -97,6 +98,20 @@ const DeliveryResultsForm = () => {
     );
     form.setFieldValue("area", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
+
+  useEffect(() => {
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value == profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
+      }
+      form.setFieldValue("sucursalId", [profileBranch]);
+    }
+  }, [branchCityOptions, form, profile]);
+
   useEffect(() => {
     const formValues = form.getFieldsValue();
     formValues.fechaInicial = formValues.fechas[0].utcOffset(0, true);
@@ -240,7 +255,7 @@ const DeliveryResultsForm = () => {
                   <Row gutter={8}>
                     <Col span={12}>
                       <SelectInput
-                      form={form}
+                        form={form}
                         formProps={{
                           name: "ciudad",
                           label: "Ciudad",

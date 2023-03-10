@@ -59,8 +59,9 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     optionStore,
     locationStore,
     resultValidationStore,
+    profileStore,
   } = useStore();
-
+  const { profile } = profileStore;
   const { expedientes } = procedingStore;
   const {
     branchCityOptions,
@@ -132,8 +133,20 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
       departmentAreaOptions.find((x) => x.value === selectedDepartment)
         ?.options ?? []
     );
-    form.setFieldValue("sucursalId", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
+
+  useEffect(() => {
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value == profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
+      }
+      form.setFieldValue("sucursal", [profileBranch]);
+    }
+  }, [branchCityOptions, form, profile]);
 
   useEffect(() => {
     const readStudy = async () => {
@@ -216,51 +229,45 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
 
     setUpdateDate(dataupdate);
   };
- const alerta = (e: CheckboxChangeEvent, id: number, solicitud: string)=>{
-
-  alerts.confirm(
-    "",
-    `“Al liberar este estudio se realizará el envío automático por lo cual no puede cancelarse su liberación, ¿Esta de acuerdo con la liberación?`,
-    async () => {
-        onChange(e,id,solicitud);
-    },
-    () => {
-      
-    }
-  );
- }
- const verfiy  = (e: CheckboxChangeEvent, id: number, solicitud: string) =>{
-  let request =  studys.find(x => x.solicitud === solicitud);
-  let updatedata = updateData.find(x=>x.solicitudId === request?.id);
-  let totalStudios = request?.estudios.length;
-  let estudiosxliberar = request?.estudios.filter(x=>x.estatus !== 4 && x.estatus !== 7).length;
-  if(activiti=="cancel"){
-    onChange(e,id,solicitud);
-  }else{
-    
-    if(updatedata != null || updatedata != undefined){
-      if((updatedata?.estudioId.length + 1) === totalStudios){
-        alerta(e,id,solicitud);
-      }else{
-        if(estudiosxliberar === (updatedata?.estudioId.length + 1)){
-          alerta(e,id,solicitud);
-        }else{
-          onChange(e,id,solicitud);
+  const alerta = (e: CheckboxChangeEvent, id: number, solicitud: string) => {
+    alerts.confirm(
+      "",
+      `“Al liberar este estudio se realizará el envío automático por lo cual no puede cancelarse su liberación, ¿Esta de acuerdo con la liberación?`,
+      async () => {
+        onChange(e, id, solicitud);
+      },
+      () => {}
+    );
+  };
+  const verfiy = (e: CheckboxChangeEvent, id: number, solicitud: string) => {
+    let request = studys.find((x) => x.solicitud === solicitud);
+    let updatedata = updateData.find((x) => x.solicitudId === request?.id);
+    let totalStudios = request?.estudios.length;
+    let estudiosxliberar = request?.estudios.filter(
+      (x) => x.estatus !== 4 && x.estatus !== 7
+    ).length;
+    if (activiti == "cancel") {
+      onChange(e, id, solicitud);
+    } else {
+      if (updatedata != null || updatedata != undefined) {
+        if (updatedata?.estudioId.length + 1 === totalStudios) {
+          alerta(e, id, solicitud);
+        } else {
+          if (estudiosxliberar === updatedata?.estudioId.length + 1) {
+            alerta(e, id, solicitud);
+          } else {
+            onChange(e, id, solicitud);
+          }
         }
-        
-      }    
-    }else{
-      if(totalStudios ===1 ){
-        alerta(e,id,solicitud);
-      }else{
-      onChange(e,id,solicitud);}
+      } else {
+        if (totalStudios === 1) {
+          alerta(e, id, solicitud);
+        } else {
+          onChange(e, id, solicitud);
+        }
+      }
     }
-  }
-
-
-
-
-}
+  };
 
   const updatedata = async () => {
     setLoading(true);
