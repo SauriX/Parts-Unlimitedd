@@ -18,8 +18,8 @@ export interface IRouteForm {
   maquiladorId?: string | number;
   paqueteriaId: number;
   comentarios: string;
-  horaDeRecoleccion?: moment.Moment;
-  tiempoDeEntrega?: number;
+  horaDeRecoleccion: moment.Moment;
+  tiempoDeEntrega: number;
   tipoTiempo?: number;
   activo: boolean;
   estudio: IRouteEstudioList[];
@@ -50,7 +50,7 @@ export class RouteFormValues implements IRouteForm {
   maquiladorId = 0;
   paqueteriaId = 0;
   comentarios = "";
-  horaDeRecoleccion = moment();
+  horaDeRecoleccion = moment(Date.now()).utcOffset(0, true);
   tiempoDeEntrega = 0;
   tipoTiempo = 1;
   estudio: IRouteEstudioList[] = [];

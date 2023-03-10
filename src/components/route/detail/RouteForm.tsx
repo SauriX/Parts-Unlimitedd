@@ -46,6 +46,8 @@ import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TimeInput from "../../../app/common/form/proposal/TimeInput";
 import NumberInput from "../../../app/common/form/proposal/NumberInput";
+import { profile } from "console";
+import moment from "moment";
 
 const { Search } = Input;
 const { Title } = Typography;
@@ -61,7 +63,7 @@ type UrlParams = {
 };
 
 const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
-  const { optionStore, routeStore } = useStore();
+  const { optionStore, routeStore, profileStore } = useStore();
   const { routes, getById, getAll, create, update, getAllStudy, studies } =
     routeStore;
   const [lista, setLista] = useState(studies);
@@ -75,6 +77,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     areaByDeparmentOptions,
     getAreaByDeparmentOptions,
   } = optionStore;
+  const { profile } = profileStore;
 
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -97,7 +100,6 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     "departamento",
     formAreaByDepartment
   );
-  const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
 
@@ -141,34 +143,59 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
 
   useEffect(() => {
     const readuser = async (idUser: string) => {
-      try {
-        setLoading(true);
-        var studis = await getAllStudy();
-        const user = await getById(idUser);
-        if (user?.destinoId == null) {
-          user!.destinoId = user?.maquiladorId!.toString();
-        }
-        form.setFieldsValue(user!);
-        studis = studis?.map((x) => {
+      setLoading(true);
+      var studies = await getAllStudy();
+      const user = await getById(idUser);
+
+      if (user) {
+        setTimeType(user.tipoTiempo ?? 1);
+
+        studies = studies?.map((x) => {
           var activo = user?.estudio.find((y) => y.id === x.id) != null;
           return { ...x, activo };
         });
         setSelectedRowKeys(
-          studis?.filter((x) => x.activo)?.map((x) => x.id) ?? []
-        ); 
-        setValues(user!);
-        setLista(studis!);
-        setLoading(false);
+          studies?.filter((x) => x.activo)?.map((x) => x.id) ?? []
+        );
 
-        setSelectedTags(user?.dias!);
-      } catch {
-      } finally {
-        setLoading(false);
+        setValues(user);
+        setLista(studies!);
+
+        if (user.destinoId || user.maquiladorId) {
+          const branch = treeData
+            .map((x) => x.children)
+            .flat()
+            .find((x) => x.value === user.destinoId);
+          const maquila = treeData
+            .map((x) => x.children)
+            .flat()
+            .find((x) => x.value === user.maquiladorId);
+
+          if (branch) {
+           user.destinoId = branch.value as string;
+          }
+          if (maquila) {
+            user.destinoId = maquila.value as string;
+          }
+        }
+
+        user.horaDeRecoleccion = moment(
+          user.horaDeRecoleccion,
+          "HH:mm"
+        ).utcOffset(0, true);
       }
+
+      setLoading(false);
+      setSelectedTags(user?.dias!);
+      form.setFieldsValue(user!);
+
+      setLoading(false);
     };
     if (id) {
       readuser(id);
-    } 
+    } else {
+      form.setFieldValue("origenId", profile?.sucursal);
+    }
   }, [form, getById, id]);
 
   useEffect(() => {
@@ -182,9 +209,11 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     const route = { ...values, ...newValues };
     route.estudio = lista.filter((x) => x.activo === true);
     route.dias = selectedTags;
+
     const parent = treeData.find((x) =>
       x.children.map((x) => x.value).includes(newValues.destinoId!)
     );
+
     if (parent?.title === "Sucursales") {
       route.maquiladorId = undefined;
     } else {
@@ -414,6 +443,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                   treeData={treeData}
                   placeholder="Seleccione un destino"
                   treeDefaultExpandAll
+                  allowClear
                 />
               </Form.Item>
             </Col>
@@ -472,7 +502,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
             <Col md={8} sm={24} xs={12}>
               <Form.Item label="Tiempo de Entrega" required>
                 <Input.Group compact>
-                  <NumberInput 
+                  <NumberInput
                     formProps={{
                       name: "tiempoDeEntrega",
                       label: "",
