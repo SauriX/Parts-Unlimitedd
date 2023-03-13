@@ -73,8 +73,8 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
   const {
     getDepartmentOptions,
     departmentOptions,
-    getareaOptions,
-    areas,
+    getAreaOptions: getareaOptions,
+    areaOptions: areas,
     getPrintFormatsOptions,
     getMaquiladorOptions,
     MaquiladorOptions,

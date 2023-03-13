@@ -65,7 +65,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   const {
     branchCityOptions,
     getBranchCityOptions,
-    getareaOptions,
+    getAreaOptions: getareaOptions,
     medicOptions,
     getMedicOptions,
     getCityOptions,

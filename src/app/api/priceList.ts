@@ -6,8 +6,8 @@ import {
   IPriceListList,
   ISucMedComList,
 } from "../models/priceList";
-import { IPromotionEstudioList } from "../models/promotion";
-import { IScopes } from "../models/shared";
+import { IPromotionStudyPack } from "../models/promotion";
+import { IOptions, IScopes } from "../models/shared";
 import requests from "./agent";
 
 const PriceList = {
@@ -22,8 +22,11 @@ const PriceList = {
 
   getActive: <Type extends IPriceListList>(): Promise<Type[]> =>
     requests.get(`price/active`),
+  getOptions: (): Promise<IOptions[]> => requests.get(`price/options`),
+  getBranchesOptionsByPriceListId: (id: string): Promise<IOptions[]> =>
+    requests.get(`price/branches/options/${id}`),
   getById: (id: string): Promise<IPriceListForm> => requests.get(`price/${id}`),
-  getStudiesById: (filter: any): Promise<IPromotionEstudioList[]> =>
+  getStudiesById: (filter: any): Promise<IPromotionStudyPack[]> =>
     requests.post(`price/studies`, filter),
   getPriceStudy: (
     filter?: IPriceListInfoFilter

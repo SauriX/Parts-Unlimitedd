@@ -271,7 +271,10 @@ const RequestStudy = () => {
           filterOption={(input: string, option: any) => {
             if (input.indexOf("-") > -1) {
               const value = input.split("-")[0];
-              return option.label.toLowerCase().split("-")[0] === value + " ";
+              return (
+                option.label.toLowerCase().split("-")[0] ===
+                value.toLowerCase() + " "
+              );
             }
             return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
           }}

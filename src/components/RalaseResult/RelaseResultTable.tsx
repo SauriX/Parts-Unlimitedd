@@ -70,8 +70,8 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   const {
     branchCityOptions,
     getBranchCityOptions,
-    areas,
-    getareaOptions,
+    areaOptions: areas,
+    getAreaOptions: getareaOptions,
     medicOptions,
     getMedicOptions,
     CityOptions,
