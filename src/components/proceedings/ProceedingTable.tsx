@@ -10,7 +10,7 @@ import {
 } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {
-  defaultRecordRequestPagination,
+  defaultPaginationProperties,
   getDefaultColumnProps,
   IColumns,
   ISearch,
@@ -368,7 +368,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
         rowKey={(record) => record.id}
         columns={columns}
         dataSource={expedientes}
-        pagination={defaultRecordRequestPagination}
+        pagination={defaultPaginationProperties}
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />
