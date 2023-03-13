@@ -4,7 +4,9 @@ import { useState } from "react";
 import AvisosTable from "../components/notifications/AvisosTable";
 import NotificationsHeader from "../components/notifications/NotificationsHeader";
 import NotificationsTable from "../components/notifications/NotificationsTable";
-
+type UrlParams = {
+  id: string;
+};
 const Notifications = () => {
   const [type,setType] = useState<number>(1);
   const handleDownload = () => {

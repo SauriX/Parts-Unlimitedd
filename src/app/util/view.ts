@@ -22,6 +22,7 @@ const views = {
   invoiceCatalog: "invoiceCatalog",
   reportStudy: "reportstudy",
   parameters: "parameters",
+  notifications:"notifications",
 };
 
 export default views;

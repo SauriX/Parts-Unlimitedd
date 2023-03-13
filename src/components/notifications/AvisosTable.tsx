@@ -1,7 +1,7 @@
 import { Button, Switch, Table } from "antd";
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import IconButton from "../../app/common/button/IconButton";
 import { EditOutlined } from "@ant-design/icons";
 import {
@@ -9,6 +9,8 @@ import {
   IColumns,
   ISearch,
 } from "../../app/common/table/utils";
+import { useStore } from "../../app/stores/store";
+import { INotificationsList } from "../../app/models/notifications";
 const dummyData = [
   {
     key: "1",
@@ -73,23 +75,40 @@ const dummyData = [
 ];
 const AvisosTable = () => {
   const navigate = useNavigate();
+  const { notificationsStore } = useStore();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const { getAllAvisos, avisos, updateStatus, changeStatusAvisos } = notificationsStore;
+  useEffect(() => {
+    const readAvisos = async () => {
+      await getAllAvisos(searchParams.get("search") || "all");
+    }
+    readAvisos();
+  }, [getAllAvisos, searchParams]);
+
+
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-  const columns: IColumns<any> = [
-    //cambiar tipo de dato
+  const onchangeStatus = async (id: string) => {
+    changeStatusAvisos(id);
+    await updateStatus(id);
+  }
+
+  const columns: IColumns<INotificationsList> = [
+    
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
         width: 60,
       }),
-      render: (value, role) => (
+      render: (value, item) => (
         <Button
           type="link"
           onClick={() => {
-            navigate(`/notifications/${value}`);
+            navigate(`/notifications/${item.id}?mode=readonly`);
           }}
         >
           {value}
@@ -98,7 +117,7 @@ const AvisosTable = () => {
       fixed: "left",
     },
     {
-      ...getDefaultColumnProps("fechaCreacion", "Fecha de creación", {
+      ...getDefaultColumnProps("fecha", "Fecha de creación", {
         searchState,
         setSearchState,
         width: 80,
@@ -117,58 +136,31 @@ const AvisosTable = () => {
         setSearchState,
         width: 1,
       }),
-      render: (value, role) => (
+      render: (value, item) => (
         <IconButton
           title="Editar notificación"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/#`);
+            navigate(`/notifications/${item.id}`);
           }}
         />
       ),
     },
-  ];
-  const columnsDetail: IColumns<any> = [
     {
-      ...getDefaultColumnProps("modulo", "Módulo", {
-        searchState,
-        setSearchState,
-        width: 120,
-      }),
-      render: (value, role) => (
-        <Button
-          type="link"
-          onClick={() => {
-            navigate(`/#`);
-          }}
-        >
-          {value}
-        </Button>
-      ),
-      fixed: "left",
-    },
-    {
-      ...getDefaultColumnProps("descripcion", "Descripción", {
+      ...getDefaultColumnProps("activo", "Activo", {
         searchState,
         setSearchState,
         width: 180,
       }),
-    },
-    {
-      ...getDefaultColumnProps("activos", "Activos", {
-        searchState,
-        setSearchState,
-        width: 180,
-      }),
-      render: (value, role) => (
-        <Switch defaultChecked onChange={() => console.log("changed")} />
+      render: (value, item) => (
+        <Switch checked={value} onChange={async () => { onchangeStatus(item.id) }} />
       ),
     },
   ];
+
   return (
     <>
-      <Table size="small" columns={columns} dataSource={dummyData} />
-      <Table size="small" columns={columnsDetail} dataSource={dummyData} />
+      <Table size="small" columns={columns} dataSource={avisos} />
     </>
   );
 };
