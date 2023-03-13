@@ -40,7 +40,7 @@ import TrackingOrderStore from "./trackingOrderStore";
 import shipmentTackingStore from "./shipmentTrackingStore";
 import WorkListStore from "./workListStore";
 import WeeClinicStore from "./weeClinicStore";
-import RouteTrackingStore from "./routeTracking";
+import RouteTrackingStore from "./routeTrackingStore";
 import MassResultSearchStore from "./massResultSearch";
 import ResultValidationStore from "./resultValidationStore";
 import RelaseResultStore from "./RelaseResultStore";

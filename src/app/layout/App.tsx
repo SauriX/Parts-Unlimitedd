@@ -92,6 +92,7 @@ import SeriesDetail from "../../components/series/detail/SeriesDetail";
 import InvoiceCatalog from "../../views/InvoiceCatalog";
 import ReportStudy from "../../views/ReportStudy";
 import { useKeyPress } from "../hooks/useKeyPress";
+import RouteTrackingCreate from "../../components/routeTracking/detail/RouteTrackingCreate";
 
 function App() {
   const { profileStore, configurationStore } = useStore();
@@ -176,14 +177,8 @@ function App() {
             <Route path="users" element={<User />} />
             <Route path="users/:id" element={<UserDetail />} />
             <Route path="new-user" element={<NewUser />} />
-            <Route
-              path="trackingOrder/new"
-              element={<CreationTrackingOrder />}
-            />
-            <Route
-              path="trackingOrder/:id"
-              element={<CreationTrackingOrder />}
-            />
+            <Route path="trackingOrder/new" element={<RouteTrackingCreate />} />
+            <Route path="trackingOrder/:id" element={<RouteTrackingCreate />} />
             <Route
               path="clinicResultsDetails/:expedienteId/:requestId"
               element={<ClinicalResults />}

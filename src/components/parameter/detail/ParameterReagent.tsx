@@ -100,10 +100,6 @@ const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
     onSelect: onSelectKeys,
   };
 
-  useEffect(() => {
-    console.log(selectedReagentKeys);
-  }, [selectedReagentKeys]);
-
   const acceptChanges = () => {
     setReagentSelected(selectedReagentKeys);
     closeModal();

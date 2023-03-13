@@ -20,6 +20,17 @@ export interface IRouteTrackingList {
   entrega: string;
 }
 
+export interface ITagTrackingOrder{
+  id: number;
+  claveEtiqueta: string;
+  recipiente: string;
+  cantidad: number;
+  estudios: string;
+  solicitud: string;
+  estatus: string;
+  escaneo: boolean;
+}
+
 export interface IstudyRoute {
   id: number;
   nombre: string;

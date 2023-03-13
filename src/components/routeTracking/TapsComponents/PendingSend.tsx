@@ -133,7 +133,7 @@ const PendingSend = () => {
         setSearchState,
         width: "10%",
       }),
-      render: (value, route) => value === 2 ? "Toma de Muestra" : "En ruta",
+      render: (value, route) => (value === 2 ? "Toma de Muestra" : "En ruta"),
     },
     {
       ...getDefaultColumnProps("entrega", "Fecha de entrega", {
@@ -148,15 +148,16 @@ const PendingSend = () => {
       title: "Editar",
       align: "center",
       width: "10%",
-      render: (value, route) => route.seguimiento && (
-        <IconButton
-          title="Editar ruta"
-          icon={<EditOutlined />}
-          onClick={() => {
-            navigate(`/trackingOrder/${value}`);
-          }}
-        />
-      ),
+      render: (value, route) =>
+        route.seguimiento && (
+          <IconButton
+            title="Editar ruta"
+            icon={<EditOutlined />}
+            onClick={() => {
+              navigate(`/trackingOrder/${value}`);
+            }}
+          />
+        ),
     },
   ];
   const onFinish = async (newValues: SearchTracking) => {
@@ -167,7 +168,6 @@ const PendingSend = () => {
     let studios = [];
     var datas = await getAll(search!);
     datas?.forEach((x: any) => studios.push(x.pendings));
-    let success = false;
   };
 
   return (
@@ -233,16 +233,14 @@ const PendingSend = () => {
         </Form>
       </div>
 
-      <div style={{ marginTop: "2%" }}>
-        <Table<IRouteTrackingList>
-          loading={loadingRoutes}
-          size="small"
-          rowKey={(record) => record.id}
-          columns={columns}
-          dataSource={[...studys]}
-          bordered
-        ></Table>
-      </div>
+      <Table<IRouteTrackingList>
+        loading={loadingRoutes}
+        size="small"
+        rowKey={(record) => record.id}
+        columns={columns}
+        dataSource={[...studys]}
+        bordered
+      ></Table>
     </Fragment>
   );
 };

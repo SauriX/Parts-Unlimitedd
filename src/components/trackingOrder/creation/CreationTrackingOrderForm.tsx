@@ -118,7 +118,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   ];
 
   const setSucursalOrigenInicial = () => {
-    values.sucursalOrigenId = profileOptions?.sucursal;
+    values.origenId = profileOptions?.sucursal;
     form.setFieldsValue(values!);
   };
 
@@ -195,7 +195,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     formValues = { ...formValues };
 
     let routeForms: IRouteForm = new RouteFormValues();
-    routeForms.origenId = formValues.sucursalOrigenId!;
+    routeForms.origenId = formValues.origenId!;
 
     routeForms.dias = daysOfWeek.filter((x) => x.id === moment().day());
 

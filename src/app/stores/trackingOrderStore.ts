@@ -54,6 +54,7 @@ export default class TrackingOrdertStore {
       alerts.warning(getErrors(error));
     }
   };
+
   setEscaneado = (escaneo: boolean, id: string) => {
     try {
       const estudios = this.trackingOrder.map((estudio) => {
@@ -75,13 +76,10 @@ export default class TrackingOrdertStore {
           const trackingOrder = this.trackingOrder[index];
           this.trackingOrder[index] = {
             ...trackingOrder,
-
           };
         }
       } else {
         const estudios = this.trackingOrder.map((estudio) => {
-
-
           return estudio;
         });
         this.trackingOrder = estudios;
@@ -197,17 +195,14 @@ export default class TrackingOrdertStore {
   RequestStudi = async (solicitud: string) => {
     try {
       console.log(solicitud);
-      let studies =await TrackingOrder.findRequestStudies(solicitud);
-      return studies
+      let studies = await TrackingOrder.findRequestStudies(solicitud);
+      return studies;
     } catch (error: any) {
-
-        alerts.warning(getErrors(error));
-      
+      alerts.warning(getErrors(error));
     }
   };
   getStudiesByRequest = async (study: searchstudies) => {
     try {
-
       const studies = await TrackingOrder.findStudiesAll(study);
 
       let studiesR = studies.map((x) => {
@@ -216,12 +211,12 @@ export default class TrackingOrdertStore {
         console.log(x);
         return a;
       });
-      if(this.trackingOrder.length<=0){
+      if (this.trackingOrder.length <= 0) {
         this.trackingOrder = studiesR;
-      }else{
-         let studiescopi = [... this.trackingOrder];    
-         studiescopi= studiescopi.concat(studiesR);
-         this.trackingOrder = studiescopi;
+      } else {
+        let studiescopi = [...this.trackingOrder];
+        studiescopi = studiescopi.concat(studiesR);
+        this.trackingOrder = studiescopi;
       }
     } catch (error) {
       alerts.warning(getErrors(error));

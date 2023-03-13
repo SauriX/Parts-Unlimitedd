@@ -8,6 +8,7 @@ import Sampling from "../api/sampling";
 import { ISamplingForm, ISamplingList, IUpdate } from "../models/sampling";
 import {
   IRouteTrackingList,
+  ITagTrackingOrder,
   SearchTracking,
   TrackingFormValues,
 } from "../models/routeTracking";
@@ -22,11 +23,18 @@ export default class RouteTrackingStore {
 
   scopes?: IScopes;
   studys: IRouteTrackingList[] = [];
+  tags: ITagTrackingOrder[] = [];
   pendings?: IRecibe[] = [];
   ventana: string = "enviar";
   searchPending?: ISearchPending = new searchValues();
   searchrecive: SearchTracking = new TrackingFormValues();
   loadingRoutes: boolean = false;
+
+  tagsSelected: ITagTrackingOrder[] = [];
+
+  setTagsSelected = (tagsSelected: ITagTrackingOrder[]) => {
+    this.tagsSelected = tagsSelected;
+  };
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -70,6 +78,21 @@ export default class RouteTrackingStore {
       this.loadingRoutes = false;
     }
   };
+
+  getAllTags = async (search: string) => {
+    try {
+      this.loadingRoutes = true;
+      const tags = await RouteTracking.getAllTags(search);
+      this.tags = tags;
+      return tags;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      this.tags = [];
+    } finally {
+      this.loadingRoutes = false;
+    }
+  };
+
   getAllRecive = async (search: ISearchPending) => {
     try {
       const study = await RouteTracking.getRecive(search);
@@ -80,6 +103,18 @@ export default class RouteTrackingStore {
       this.pendings = [];
     }
   };
+
+  getFindTags = async (routeId: string) => {
+    try {
+      const tags = await RouteTracking.getFindTags(routeId);
+      this.tags = tags;
+      return tags;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return [];
+    }
+  };
+
   exportFormPending = async (id: ISearchPending) => {
     try {
       await RouteTracking.exportFormpending(id);

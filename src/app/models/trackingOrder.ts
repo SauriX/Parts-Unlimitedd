@@ -44,15 +44,15 @@ export interface ITrackingOrderList {
 
 export interface ITrackingOrderForm {
   id?: string;
-  sucursalOrigenId?: string;
-  SucursalDestinoNombre: string;
-  sucursalDestinoId: string;
-  SucrusalOrigenNombre: string;
+  origen: string;
+  origenId?: string;
+  destino: string;
+  destinoId: string;
   maquiladorId: number;
   rutaId: string;
-  RutaNombre: string;
+  ruta: string;
   muestraId: string;
-  escaneoCodigoBarras: boolean;
+  escaneo: boolean;
   temperatura: number;
   activo: boolean;
   clave: string;
@@ -84,14 +84,14 @@ export class TrackingOrderListValues implements IStudyTrackList {
 export class TrackingOrderFormValues implements ITrackingOrderForm {
   fecha = moment();
   rutaId = "";
-  RutaNombre = "";
-  sucursalDestinoId = "";
-  SucursalDestinoNombre = "";
-  sucursalOrigenId = "";
-  SucrusalOrigenNombre = "";
+  ruta = "";
+  destino = "";
+  destinoId = "";
+  origenId = "";
+  origen = "";
   muestraId = "";
   solicitudId = "";
-  escaneoCodigoBarras = false;
+  escaneo = false;
   temperatura = 0;
   claveEstudio = "";
   estudio = "";
