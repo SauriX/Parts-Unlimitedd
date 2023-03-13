@@ -9,6 +9,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import { useStore } from "../../../app/stores/store";
 import alerts from "../../../app/util/alerts";
+import { toJS } from "mobx";
 
 type InvoiceCompanyHeaderProps = {
   handleDownload: () => void;
@@ -26,6 +27,8 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
     selectedRows,
     isSameCommpany: mismaCompania,
     printReceipt,
+    selectedRequestGlobal,
+    createInvoiceGlobal,
   } = invoiceCompanyStore;
   let { id, tipo } = useParams<UrlParams>();
   const invoiceOptions = [
@@ -146,7 +149,7 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
             ? [<DownloadIcon key="doc" onClick={handleDownload} />]
             : [
                 <DownloadIcon key="doc" onClick={handleDownload} />,
-                tipo === "free" ? (
+                tipo === "free" || tipo === "global" ? (
                   ""
                 ) : (
                   <SelectInput
@@ -163,6 +166,14 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
                   key="new"
                   type="primary"
                   onClick={() => {
+                    if (tipo === "global") {
+                      console.log(
+                        "solicitudes global",
+                        toJS(selectedRequestGlobal)
+                      );
+                      createInvoiceGlobal();
+                      return;
+                    }
                     if (tipo === "free") {
                       navigate(`/invoice/${tipo}/new`);
                     } else {

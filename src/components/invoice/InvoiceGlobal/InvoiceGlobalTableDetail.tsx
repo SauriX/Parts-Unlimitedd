@@ -1,15 +1,20 @@
-import { Table } from "antd";
+import { Button, Table, Typography } from "antd";
 import { observer } from "mobx-react-lite";
 import { IColumns } from "../../../app/common/table/utils";
 import { useStore } from "../../../app/stores/store";
 import { moneyFormatter } from "../../../app/util/utils";
+import { DeleteOutlined } from "@ant-design/icons";
+import InvoiceGlobalCancelModal from "./InvoiceGlobalCancelModal";
+const { Text, Link } = Typography;
 
 type InvoiceGlobalTableProps = {
   indice: number;
   facturas: any[];
 };
 
-const InvoiceGlobalTable = ({ indice }: InvoiceGlobalTableProps) => {
+const InvoiceGlobalTable = ({ indice, facturas }: InvoiceGlobalTableProps) => {
+  const { modalStore } = useStore();
+  const { openModal } = modalStore;
   const columns: IColumns<any> = [
     {
       key: "id",
@@ -17,6 +22,33 @@ const InvoiceGlobalTable = ({ indice }: InvoiceGlobalTableProps) => {
       title: "Clave de factura",
       align: "left",
       width: "15%",
+      render: (_, fullRow) => {
+        return (
+          <>
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <Link onClick={() => {}}>
+                {fullRow?.serie}-{fullRow?.consecutivo}
+              </Link>
+              <span>
+                <small>
+                  <Text type="secondary">
+                    <Text
+                      strong
+                      type={
+                        fullRow.estatus.nombre === "Cancelado"
+                          ? "danger"
+                          : "secondary"
+                      }
+                    >
+                      {`(${fullRow.estatus?.clave})`}
+                    </Text>
+                  </Text>
+                </small>
+              </span>
+            </div>
+          </>
+        );
+      },
     },
     {
       key: "id",
@@ -32,30 +64,13 @@ const InvoiceGlobalTable = ({ indice }: InvoiceGlobalTableProps) => {
       align: "center",
       width: "15%",
     },
-
     {
       key: "id",
-      dataIndex: "descuento",
-      title: "Descuento",
-      align: "center",
-      width: "15%",
-      render: (value) => `${moneyFormatter.format(value)} (IVA Incluido)`,
-    },
-    {
-      key: "id",
-      dataIndex: "cargo",
-      title: "Cargo",
-      align: "center",
-      width: "15%",
-      render: (value) => `${moneyFormatter.format(value)} (IVA Incluido)`,
-    },
-    {
-      key: "id",
-      dataIndex: "monto",
+      dataIndex: "cantidadTotal",
       title: "Monto",
       align: "center",
       width: "15%",
-      render: (value) => `${moneyFormatter.format(value)} (IVA Incluido)`,
+      render: (value) => `${moneyFormatter.format(value)}`,
     },
     {
       key: "id",
@@ -66,22 +81,58 @@ const InvoiceGlobalTable = ({ indice }: InvoiceGlobalTableProps) => {
     },
     {
       key: "id",
-      dataIndex: "fecha",
+      dataIndex: "fechaCreo",
       title: "Hora/Usuario",
       align: "center",
       width: "15%",
+      render: (_, fullRow) => {
+        return (
+          <>
+            <Text>{fullRow.fechaCreo}</Text>
+          </>
+        );
+      },
+    },
+    {
+      key: "id",
+      dataIndex: "facturapiId",
+      title: "Cancelar",
+      align: "center",
+      width: "15%",
+      render: (facturapiId, fullRow) => {
+        return (
+          <>
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<DeleteOutlined />}
+              onClick={() => {
+                console.log("Cancelar");
+                openModal({
+                  title: `Cancelar factura ${fullRow?.serie}-${fullRow?.consecutivo}`,
+                  body: (
+                    <InvoiceGlobalCancelModal
+                      facturapiId={fullRow.facturapiId}
+                    />
+                  ),
+                });
+              }}
+              disabled={fullRow.estatus.nombre === "Cancelado"}
+            />
+          </>
+        );
+      },
     },
   ];
-  const { invoiceCompanyStore } = useStore();
-  const { isLoading, invoicesFree } = invoiceCompanyStore;
+
   return (
     <>
       <Table
         bordered
+        rowKey={(record) => record.facturaId}
         columns={columns}
         pagination={false}
-        loading={isLoading}
-        dataSource={invoicesFree}
+        dataSource={facturas}
         showHeader={indice === 0}
       ></Table>
     </>

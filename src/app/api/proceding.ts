@@ -34,6 +34,8 @@ const Proceding = {
     requests.put("/MedicalRecord", pack),
   updateTaxData: (taxData: ITaxData): Promise<void> =>
     requests.put("/MedicalRecord/taxData", taxData),
+  updateObservation: (observation: any): Promise<void> =>
+    requests.put("/MedicalRecord/observations", observation),
   exportList: (search: ISearchMedical): Promise<void> =>
     requests.download(`MedicalRecord/export/list`, search), //, "Catálogo de Sucursales.xlsx"
   exportForm: (id: string): Promise<void> =>

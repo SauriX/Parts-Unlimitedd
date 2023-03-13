@@ -355,9 +355,6 @@ const InvoiceCompanyInfo = ({
                     options={regimenFiscal}
                     readonly={id !== "new"}
                     style={{ marginBottom: 10 }}
-                    onChange={() => {
-                      form.submit();
-                    }}
                   />
                 </Col>
               </Row>

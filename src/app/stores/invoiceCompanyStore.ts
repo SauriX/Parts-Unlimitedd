@@ -195,4 +195,24 @@ export class InvoiceCompanyStore {
       alerts.warning(getErrors(error));
     }
   };
+  selectedRequestGlobal: any[] = [];
+  setSelectedRequestGlobal = async (selectedRequestGlobal: any[]) => {
+    this.selectedRequestGlobal = selectedRequestGlobal;
+  };
+
+  createInvoiceGlobal = async () => {
+    if (!this.selectedRequestGlobal.length) {
+      alerts.info("Sin solicitudes seleccionadas");
+      return;
+    }
+    try {
+      const response = await InvoiceCompany.checkInGlobal(
+        this.selectedRequestGlobal
+      );
+      console.log("conse", response);
+      return response;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
 }

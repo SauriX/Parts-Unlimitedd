@@ -1,17 +1,18 @@
-import { Table } from "antd";
+import { Button, Col, Form, Row, Table } from "antd";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { IColumns } from "../../../app/common/table/utils";
 import { useStore } from "../../../app/stores/store";
-import { moneyFormatter } from "../../../app/util/utils";
+import { formItemLayout, moneyFormatter } from "../../../app/util/utils";
 import InvoiceGlobalTableDetail from "./InvoiceGlobalTableDetail";
 
 const InvoiceGlobalTable = () => {
   const { invoiceCompanyStore } = useStore();
-  const { isLoading, invoicesFree, invoices } = invoiceCompanyStore;
+  const { isLoading, invoices, setSelectedRequestGlobal } = invoiceCompanyStore;
+  const [formCreate] = Form.useForm();
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>();
+  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [openRows, setOpenRows] = useState<boolean>(false);
   const onExpand = (isExpanded: boolean, record: any) => {
     let expandRows: string[] = expandedRowKeys;
@@ -26,15 +27,21 @@ const InvoiceGlobalTable = () => {
     setExpandedRowKeys(expandRows);
   };
   useEffect(() => {
-    console.log("SELECTED ROWS KEYS", toJS(selectedRowKeys));
+    setSelectedRequestGlobal(selectedRowKeys);
   }, [selectedRowKeys]);
-  useEffect(() => {
-    console.log("EXPANDED ROWS KEYS", toJS(expandedRowKeys));
-  }, [expandedRowKeys]);
   useEffect(() => {
     setExpandedRowKeys(invoices.solicitudes?.map((x: any) => x.solicitudId));
     setOpenRows(true);
   }, [invoices]);
+  const toggleRow = () => {
+    if (openRows) {
+      setOpenRows(false);
+      setExpandedRowKeys([]);
+    } else {
+      setOpenRows(true);
+      setExpandedRowKeys(invoices.solicitudes?.map((x: any) => x.solicitudId));
+    }
+  };
   const columns: IColumns<any> = [
     {
       key: "id",
@@ -47,6 +54,29 @@ const InvoiceGlobalTable = () => {
   ];
   return (
     <>
+      {invoices.solicitudes?.length > 0 && (
+        <div style={{ textAlign: "right", marginBottom: 10 }}>
+          <Form<any>
+            {...formItemLayout}
+            form={formCreate}
+            name="open"
+            onFinish={() => {}}
+            size="small"
+          >
+            <Row justify="end">
+              <Col span={2}>
+                <Button
+                  type="primary"
+                  onClick={toggleRow}
+                  style={{ marginRight: 10 }}
+                >
+                  {!openRows ? "Abrir tabla" : "Cerrar tabla"}
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        </div>
+      )}
       <Table<any>
         bordered
         rowKey={(record) => record.solicitudId}
@@ -63,6 +93,13 @@ const InvoiceGlobalTable = () => {
           onChange: (newSelectedRowKeys) => {
             setSelectedRowKeys(newSelectedRowKeys);
           },
+          getCheckboxProps: (record) => {
+            return {
+              disabled: record.facturas.some(
+                (factura: any) => factura.estatus.nombre === "Facturado"
+              ),
+            };
+          },
         }}
         // scroll={{ y: 450 }}
         expandable={{
@@ -74,8 +111,8 @@ const InvoiceGlobalTable = () => {
             return (
               <>
                 <InvoiceGlobalTableDetail
-                  indice={0}
-                  facturas={data.facturas ?? []}
+                  indice={index}
+                  facturas={data.facturas}
                 />
               </>
             );

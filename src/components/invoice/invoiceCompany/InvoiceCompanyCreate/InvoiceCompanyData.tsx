@@ -205,20 +205,21 @@ const InvoiceCompanyData = ({
               <Col span={10}>
                 <SelectInput
                   formProps={{ name: "formaDePagoId", label: "Forma de pago" }}
-                  options={
-                    tipo === "company"
-                      ? paymentOptions
-                      : selectedRequests
-                          .flatMap((x) => x.formasPagos)
-                          .filter(
-                            (value, index, arreglo) =>
-                              arreglo.map((arr) => arr).indexOf(value) === index
-                          )
-                          .map((x) => ({
-                            value: x,
-                            label: x,
-                          }))
-                  }
+                  // options={
+                  //   tipo === "company"
+                  //     ? paymentOptions
+                  //     : selectedRequests
+                  //         .flatMap((x) => x.formasPagos)
+                  //         .filter(
+                  //           (value, index, arreglo) =>
+                  //             arreglo.map((arr) => arr).indexOf(value) === index
+                  //         )
+                  //         .map((x) => ({
+                  //           value: x,
+                  //           label: x,
+                  //         }))
+                  // }
+                  options={paymentOptions}
                   readonly={id !== "new" || !editInfo}
                   required={tipo !== "company"}
                 />

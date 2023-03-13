@@ -45,6 +45,7 @@ import { IQuotationFilter } from "../../../app/models/quotation";
 import ProceedingRequests from "./ProceedingRequests";
 import ProceedingQuotations from "./ProceedingQuotations";
 import ProceedingAppointments from "./ProceedingAppointments";
+import ProceedingObservations from "./ProceedingObservations";
 
 type ProceedingFormProps = {
   id: string;
@@ -821,7 +822,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
             </Row>
           </Form>
           {id ||
-          (searchParams.get("mode") === "edit") ||
+          searchParams.get("mode") === "edit" ||
           searchParams.get("mode") === "readonly" ? (
             <>
               <Row justify="end">
@@ -847,46 +848,60 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 </Col>
               </Row>
               <Row style={{ paddingTop: 10 }}>
-                <Tabs
-                  items={[
-                    {
-                      label: "Solicitudes",
-                      key: "1",
-                      children: (
-                        <ProceedingRequests
-                          loading={loading}
-                          printing={printing}
-                          requests={requests}
-                        />
-                      ),
-                    },
-                    {
-                      label: "Presupuestos",
-                      key: "2",
-                      children: (
-                        <ProceedingQuotations
-                          loading={loading}
-                          printing={printing}
-                          readonly={readonly}
-                          searchParams={searchParams}
-                        />
-                      ),
-                    },
-                    {
-                      label: "Citas",
-                      key: "3",
-                      children: (
-                        <ProceedingAppointments
-                          loading={loading}
-                          printing={printing}
-                          readonly={readonly}
-                          citas={citas}
-                          convertSolicitud={convertSolicitud}
-                        />
-                      ),
-                    },
-                  ]}
-                />
+                <Col span={24}>
+                  <Tabs
+                    items={[
+                      {
+                        label: "Solicitudes",
+                        key: "1",
+                        children: (
+                          <ProceedingRequests
+                            loading={loading}
+                            printing={printing}
+                            requests={requests}
+                          />
+                        ),
+                      },
+                      {
+                        label: "Presupuestos",
+                        key: "2",
+                        children: (
+                          <ProceedingQuotations
+                            loading={loading}
+                            printing={printing}
+                            readonly={readonly}
+                            searchParams={searchParams}
+                          />
+                        ),
+                      },
+                      {
+                        label: "Citas",
+                        key: "3",
+                        children: (
+                          <ProceedingAppointments
+                            loading={loading}
+                            printing={printing}
+                            readonly={readonly}
+                            citas={citas}
+                            convertSolicitud={convertSolicitud}
+                          />
+                        ),
+                      },
+                      {
+                        label: "Observaciones",
+                        key: "4",
+                        children: (
+                          <>
+                            <ProceedingObservations
+                              proceedingId={values.id}
+                              observaciones={values.observaciones!}
+                            />
+                          </>
+                        ),
+                      },
+                    ]}
+                  />
+                </Col>
               </Row>
             </>
           ) : (
