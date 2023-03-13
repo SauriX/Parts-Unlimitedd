@@ -83,7 +83,6 @@ const ClinicResultsFilter = () => {
         .filter((x) => selectedCity?.includes(x.value as string))
         .flatMap((x) => x.options ?? [])
     );
-    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
@@ -99,8 +98,20 @@ const ClinicResultsFilter = () => {
         .flatMap((x) => x.options ?? [])
     );
     form.setFieldValue("area", []);
-    console.log("areaByDeparmentOptions", areaByDeparmentOptions);
   }, [areaByDeparmentOptions, form, selectedDepartment]);
+
+  useEffect(() => {
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value == profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
+      }
+      form.setFieldValue("sucursalId", [profileBranch]);
+    }
+  }, [branchCityOptions, form, profile]);
 
   const onFinish = async (newFormValues: IClinicResultForm) => {
     setLoading(true);

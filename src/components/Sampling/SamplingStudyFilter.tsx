@@ -60,6 +60,19 @@ const SamplingStudyFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value == profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
+      }
+      form.setFieldValue("sucursalId", [profileBranch]);
+    }
+  }, [branchCityOptions, form, profile]);
+
+  useEffect(() => {
     if(selectedCity!=undefined && selectedCity !=null){
       var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
     var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
@@ -67,7 +80,6 @@ const SamplingStudyFilter = () => {
         options
       );
     }
-    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {

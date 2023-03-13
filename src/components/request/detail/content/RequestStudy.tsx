@@ -18,11 +18,13 @@ import { useStore } from "../../../../app/stores/store";
 import alerts from "../../../../app/util/alerts";
 import { moneyFormatter } from "../../../../app/util/utils";
 import { status } from "../../../../app/util/catalogs";
+import InfoStudy from "../InfoModal/InfoStudy";
+import { IStudyTec } from "../../../../app/models/study";
 
-const { Link } = Typography;
+const { Link, Text } = Typography;
 
 const RequestStudy = () => {
-  const { requestStore, optionStore } = useStore();
+  const { requestStore, optionStore, modalStore } = useStore();
   const { studyOptions, packOptions, getStudyOptions, getPackOptions } =
     optionStore;
   const {
@@ -42,6 +44,7 @@ const RequestStudy = () => {
     totals,
   } = requestStore;
 
+  const { openModal } = modalStore;
   const [selectedStudies, setSelectedStudies] = useState<IRequestStudy[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
   const [options, setOptions] = useState<IOptions[]>([]);
@@ -85,7 +88,16 @@ const RequestStudy = () => {
         setSearchState,
         width: 100,
       }),
-      render: (value) => <Link>{value}</Link>,
+      render: (value, item) => {
+        if (isStudy(item)) {
+          return <Link onClick={() => {
+            showStudyDetails(item.estudioId!, item.nombre)
+          }}>{value}</Link>
+        } else {
+          return <Text>{value}</Text>
+        }
+
+      },
     },
     {
       ...getDefaultColumnProps("nombre", "Estudio", {
@@ -203,7 +215,16 @@ const RequestStudy = () => {
         ) : null,
     },
   ];
+  const showStudyDetails = async (id: number, estudio: string) => {
 
+    openModal({
+      title: "",
+      body: <InfoStudy id={id} sucursal={request!.sucursal!} sucursalDestino={request!.destino!} estudio={estudio}></InfoStudy>,
+      width: 1000,
+      
+    })
+
+  }
   const addStudy = async (option: IOptions) => {
     const value = parseInt(option.value.toString().split("-")[1]);
 
@@ -221,8 +242,7 @@ const RequestStudy = () => {
   const deleteStudyOrPack = (item: IRequestStudy | IRequestPack) => {
     alerts.confirm(
       "Eliminar estudio",
-      `¿Desea eliminar el ${isStudy(item) ? "estudio" : "paquete"} ${
-        item.nombre
+      `¿Desea eliminar el ${isStudy(item) ? "estudio" : "paquete"} ${item.nombre
       }?`,
       async () => {
         if (isStudy(item)) {
@@ -312,8 +332,8 @@ const RequestStudy = () => {
                 (isStudy(item)
                   ? item.estatusId !== status.requestStudy.pendiente
                   : item.estudios.some(
-                      (x) => x.estatusId !== status.requestStudy.pendiente
-                    )),
+                    (x) => x.estatusId !== status.requestStudy.pendiente
+                  )),
             }),
             selectedRowKeys: selectedRowKeys,
           }}

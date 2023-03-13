@@ -1,7 +1,6 @@
 import {
   Button,
   Col,
-  Collapse,
   Divider,
   Form,
   Input,
@@ -11,7 +10,7 @@ import {
 } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {
-  defaultPaginationProperties,
+  defaultRecordRequestPagination,
   getDefaultColumnProps,
   IColumns,
   ISearch,
@@ -38,9 +37,7 @@ import { useForm } from "antd/lib/form/Form";
 import DateInput from "../../app/common/form/proposal/DateInput";
 import { IOptions } from "../../app/models/shared";
 import MaskInput from "../../app/common/form/proposal/MaskInput";
-import { includes } from "lodash";
-import moment from "moment";
-const { Panel } = Collapse;
+
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
@@ -50,10 +47,10 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
   componentRef,
   printing,
 }) => {
-  const { procedingStore, optionStore, locationStore, profileStore, requestStore } =
-  useStore();
-  const { lastViewedFrom } = requestStore;
-  const { expedientes, getAll, getnow, setSearch, search } = procedingStore;
+  const { procedingStore, optionStore, locationStore, profileStore } =
+    useStore();
+  const { expedientes, getnow, setSearch, search } = procedingStore;
+  const { profile } = profileStore;
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const { getCity } = locationStore;
   const [searchParams] = useSearchParams();
@@ -69,7 +66,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
     searchedColumn: "",
   });
   const selectedCity = Form.useWatch("ciudad", form);
-  const { profile } = profileStore;
+
   useEffect(() => {
     getBranchCityOptions();
   }, [getBranchCityOptions]);
@@ -85,8 +82,20 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       branchCityOptions.find((x: any) => selectedCity?.includes(x.value))
         ?.options ?? []
     );
-    form.setFieldValue("sucursal", []);
   }, [branchCityOptions, form, selectedCity]);
+
+  useEffect(() => {
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value == profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
+      }
+      form.setFieldValue("sucursal", [profileBranch]);
+    }
+  }, [branchCityOptions, form, profile]);
 
   useEffect(() => {
     const readData = async () => {
@@ -103,8 +112,8 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
     };
 
     readPriceList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getnow]);
+
   useEffect(() => {
     onfinish(new SearchMedicalFormValues());
   }, []);
@@ -359,7 +368,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
         rowKey={(record) => record.id}
         columns={columns}
         dataSource={expedientes}
-        pagination={defaultPaginationProperties}
+        pagination={defaultRecordRequestPagination}
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />

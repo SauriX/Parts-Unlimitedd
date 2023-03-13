@@ -1,12 +1,12 @@
 import { Col, Image, Row, Table, Typography } from "antd";
 import { useEffect, useState } from "react";
 import {
-  defaultPaginationProperties,
+  defaultRecordRequestPagination,
   getDefaultColumnProps,
   IColumns,
   ISearch,
 } from "../../../app/common/table/utils";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import { IRequestInfo, IRequestStudyInfo } from "../../../app/models/request";
@@ -182,7 +182,7 @@ const RequestTable = () => {
       rowKey={(record) => record.solicitudId}
       columns={columns}
       dataSource={[...requests]}
-      pagination={defaultPaginationProperties}
+      pagination={defaultRecordRequestPagination}
       sticky
       scroll={{ x: "fit-content" }}
       expandable={{
