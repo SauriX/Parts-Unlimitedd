@@ -1,9 +1,8 @@
 import { makeAutoObservable } from "mobx";
-import PriceList from "../api/priceList";
+import moment from "moment";
 import Promotion from "../api/promotion";
-import Study from "../api/study";
-import { IPriceListEstudioList, IPriceListForm, IPriceListList, ISucMedComList } from "../models/priceList";
-import { IDias, IPromotionForm, IPromotionList } from "../models/promotion";
+import { IPriceListEstudioList, ISucMedComList } from "../models/priceList";
+import { IPromotionForm, IPromotionList } from "../models/promotion";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
@@ -17,22 +16,21 @@ export default class PromotionStore {
   }
 
   scopes?: IScopes;
-  promotionLists: IPromotionList[] = [];
+  promotions: IPromotionList[] = [];
   sucMedCom: ISucMedComList[] = [];
-  studies:IPriceListEstudioList[]=[];
+  studies: IPriceListEstudioList[] = [];
 
   clearScopes = () => {
     this.scopes = undefined;
   };
 
   clearPriceList = () => {
-    this.promotionLists = [];
+    this.promotions = [];
   };
 
   access = async () => {
     try {
       const scopes = await Promotion.access();
-      console.log(scopes);
       this.scopes = scopes;
       return scopes;
     } catch (error: any) {
@@ -40,78 +38,24 @@ export default class PromotionStore {
       history.push("/forbidden");
     }
   };
-  getAllStudy = async () =>{
-    try {
-        
-        const roles= await Study.getAll("all");
-        console.log(roles);
-        const activos = roles.filter(x => x.activo);
-        console.log(roles);
-        var studies= activos.map((x) => {
-            let data:IPriceListEstudioList = {
-                id: x.id,
-                clave: x.clave,
-                estudioId: x.id,
-                nombre: x.nombre,
-                area:x.area,
-                departamento:x.departamento,
-                activo: false,
-                precio: 0,
-                paqute:false
-            }
-            return data;});
-            this.studies=studies;
-            return studies
-            console.log("estudios");
-            console.log(this.studies);
-      } catch (error: any) {
-        alerts.warning(getErrors(error));
-        this.studies = [];
-      }
-  };
 
   getAll = async (search: string) => {
     try {
-      const priceLists = await Promotion.getAll(search);
-      this.promotionLists = priceLists;
+      const promotions = await Promotion.getAll(search);
+      this.promotions = promotions;
     } catch (error: any) {
       alerts.warning(getErrors(error));
-      this.promotionLists = [];
+      this.promotions = [];
     }
   };
 
   getById = async (id: number) => {
     try {
       const priceList = await Promotion.getById(id);
-     var estudios= priceList.estudio.map((x)=>{
-        var dia: IDias[]=[];
-        if(x.lunes){
-          dia.push({id:1,dia:"L"});
-        }
-        if(x.martes){
-          dia.push({id:2,dia:"M"});
-        }
-        if(x.miercoles){
-          dia.push({id:3,dia:"M"});
-        }
-        if(x.jueves){
-          dia.push({id:4,dia:"J"});
-        }
-        if(x.viernes){
-          dia.push({id:5,dia:"V"});
-        }
-        if(x.sabado){
-          dia.push({id:6,dia:"S"});
-        }
-        if(x.domingo){
-          dia.push({id:7,dia:"D"});
-        }
-        x.selectedTags = dia;
-        return x;
-      }); 
-      console.log("estudios");
-      console.log(estudios);
-      priceList.estudio=estudios;
+      priceList.fechaDescuento = [
+        moment(priceList.fechaInicial).utcOffset(0, false),
+        moment(priceList.fechaFinal).utcOffset(0, false),
+      ];
       return priceList;
     } catch (error: any) {
       if (error.status === responses.notFound) {
@@ -122,67 +66,20 @@ export default class PromotionStore {
     }
   };
 
-  getPriceById = async (id: string) => {
+  getStudies = async (promo: IPromotionForm, initial: boolean) => {
     try {
-      const priceList = await PriceList.getById(id);
-      console.log(priceList,"pricelist");
-      return priceList;
+      const studies = await Promotion.getStudies(promo, initial);
+      return studies;
     } catch (error: any) {
-      if (error.status === responses.notFound) {
-        history.push("/notFound");
-      } else {
-        alerts.warning(getErrors(error));
-      }
+      return [];
     }
   };
 
-  create = async (priceList: IPromotionForm) => {
+  create = async (promotion: IPromotionForm) => {
     try {
-     var estudios = priceList.estudio.map(x=>{
-        x.selectedTags.map(t=>{
-          if(t.id==1){
-            x.lunes= true;
-          }
-        });
-        x.selectedTags.map(t=>{
-          if(t.id==2){
-            x.martes= true;
-          }
-        });
-        x.selectedTags.map(t=>{
-          if(t.id==3){
-            x.miercoles= true;
-          }
-        });
-        x.selectedTags.map(t=>{
-          if(t.id==4){
-            x.jueves= true;
-          }
-        });
-        x.selectedTags.map(t=>{
-          if(t.id==5){
-            x.viernes= true;
-          }
-        });
-        x.selectedTags.map(t=>{
-          if(t.id==6){
-            x.sabado= true;
-          }
-        });
-        x.selectedTags.map(t=>{
-          if(t.id== 7){
-            x.domingo= true;
-          }
-        });
-
-        return x;
-      });
-
-      priceList.estudio = estudios;
-      console.log(priceList);
-      const newPriceList = await Promotion.create(priceList);
+      const newPromotion = await Promotion.create(promotion);
       alerts.success(messages.created);
-      this.promotionLists.push(newPriceList);
+      this.promotions.push(newPromotion);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -192,57 +89,14 @@ export default class PromotionStore {
 
   update = async (priceList: IPromotionForm) => {
     try {
-      console.log("fallo");
-      var estudios = priceList.estudio.map(x=>{
-        x.selectedTags.map(t=>{
-          if(t.id==1){
-            x.lunes= true;
-          }
-        });
-        x.selectedTags.map(t=>{
-          if(t.id==2){
-            x.martes= true;
-          }
-        });
-        x.selectedTags.map(t=>{
-          if(t.id==3){
-            x.miercoles= true;
-          }
-        });
-        x.selectedTags.map(t=>{
-          if(t.id==4){
-            x.jueves= true;
-          }
-        });
-        x.selectedTags.map(t=>{
-          if(t.id==5){
-            x.viernes= true;
-          }
-        });
-        x.selectedTags.map(t=>{
-          if(t.id==6){
-            x.sabado= true;
-          }
-        });
-        x.selectedTags.map(t=>{
-          if(t.id== 7){
-            x.domingo= true;
-          }
-        });
-
-        return x;
-      });
-      priceList.estudio = estudios;
-      const updatedPriceList = await Promotion.update(priceList);
-      
-      const id = this.promotionLists.findIndex((x) => x.id === priceList.id);
-      if (id !== -1) {
-        this.promotionLists[id] = updatedPriceList;
-      }
+      const updatedPromotion = await Promotion.update(priceList);
       alerts.success(messages.updated);
+      const id = this.promotions.findIndex((x) => x.id === priceList.id);
+      if (id !== -1) {
+        this.promotions[id] = updatedPromotion;
+      }
       return true;
     } catch (error: any) {
-      console.log("fallo",getErrors(error));
       alerts.warning(getErrors(error));
       return false;
     }
@@ -256,7 +110,7 @@ export default class PromotionStore {
     }
   };
 
-  exportForm = async (id: string) => {
+  exportForm = async (id: number) => {
     try {
       await Promotion.exportForm(id);
     } catch (error: any) {
@@ -267,6 +121,4 @@ export default class PromotionStore {
       }
     }
   };
-
-
 }

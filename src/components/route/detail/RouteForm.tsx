@@ -62,8 +62,8 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   const {
     getDepartmentOptions,
     departmentOptions,
-    getareaOptions,
-    areas,
+    getAreaOptions: getareaOptions,
+    areaOptions: areas,
     BranchOptions,
     getBranchOptions,
     DeliveryOptions,

@@ -65,8 +65,8 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
   const {
     getDepartmentOptions,
     departmentOptions,
-    getareaOptions,
-    areas,
+    getAreaOptions: getareaOptions,
+    areaOptions: areas,
     getReagentOptions,
     reagents,
     getPrintFormatsOptions,

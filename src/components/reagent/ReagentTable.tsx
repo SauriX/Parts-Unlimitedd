@@ -1,5 +1,5 @@
-import { Button, Divider, PageHeader, Spin, Table } from "antd";
-import React, { FC, Fragment, useEffect, useRef, useState } from "react";
+import { Button, Divider, PageHeader, Table } from "antd";
+import React, { FC, Fragment, useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
@@ -7,16 +7,12 @@ import {
   ISearch,
 } from "../../app/common/table/utils";
 import useWindowDimensions, { resizeWidth } from "../../app/util/window";
-import { EditOutlined } from "@ant-design/icons";
-import IconButton from "../../app/common/button/IconButton";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { IReagentList } from "../../app/models/reagent";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import { useReactToPrint } from "react-to-print";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import views from "../../app/util/view";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil } from "@fortawesome/free-solid-svg-icons";
 import FontIconButton from "../../app/common/button/FontIconButton";
 
@@ -41,8 +37,6 @@ const ReagentTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
     searchedText: "",
     searchedColumn: "",
   });
-
-  console.log("Table");
 
   useEffect(() => {
     const readReagents = async () => {
@@ -70,7 +64,9 @@ const ReagentTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/${views.reagent}/${reagent.id}?${searchParams}&mode=readonly`);
+            navigate(
+              `/${views.reagent}/${reagent.id}?${searchParams}&mode=readonly`
+            );
           }}
         >
           {value}

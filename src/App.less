@@ -1,5 +1,9 @@
 @import "~antd/dist/antd.less";
 
+@light-primary: #1890ff;
+@dark-primary: #1890ff;
+@yellow-primary: "#92783f";
+
 // Mover
 .ant-form-item-label
   > label.ant-form-item-required:not(
@@ -159,6 +163,19 @@
     cursor: default !important;
     color: rgba(0, 0, 0, 0.85) !important;
   }
+
+  .ant-radio.ant-radio-disabled .ant-radio-inner {
+    border-color: @light-primary;
+  }
+
+  .ant-radio-disabled .ant-radio-inner::after {
+    background-color: @light-primary;
+  }
+
+  .ant-radio-disabled + span {
+    color: rgba(0, 0, 0, 0.85);
+    cursor: default;
+  }
 }
 
 [data-theme="dark"] {
@@ -175,6 +192,19 @@
     cursor: default !important;
     color: rgba(255, 255, 255, 0.85) !important;
   }
+
+  .ant-radio.ant-radio-disabled .ant-radio-inner {
+    border-color: @dark-primary;
+  }
+
+  .ant-radio-disabled .ant-radio-inner::after {
+    background-color: @dark-primary;
+  }
+
+  .ant-radio-disabled + span {
+    color: rgba(255, 255, 255, 0.85);
+    cursor: default;
+  }
 }
 
 [data-theme="yellow"] {
@@ -190,6 +220,19 @@
     .ant-select-selector {
     cursor: default !important;
     color: rgba(55, 46, 25, 1) !important;
+  }
+
+  .ant-radio.ant-radio-disabled .ant-radio-inner {
+    border-color: @yellow-primary;
+  }
+
+  .ant-radio-disabled .ant-radio-inner::after {
+    background-color: @yellow-primary;
+  }
+
+  .ant-radio-disabled + span {
+    color: rgba(55, 46, 25, 1);
+    cursor: default;
   }
 }
 
@@ -539,3 +582,7 @@ tr.ant-table-row.custom-selected-row:hover > td.ant-table-cell-row-hover {
 //   text-align: center;
 //   color: #aaa;
 // }
+
+.unclickable {
+  pointer-events: none;
+}

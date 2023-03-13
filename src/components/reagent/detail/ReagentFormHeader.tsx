@@ -1,7 +1,6 @@
 import { PageHeader } from "antd";
 import React, { FC } from "react";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
-import ImageButton from "../../../app/common/button/ImageButton";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
@@ -16,7 +15,11 @@ type ReagentFormHeaderProps = {
   handleDownload: () => Promise<void>;
 };
 
-const ReagentFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint, handleDownload }) => {
+const ReagentFormHeader: FC<ReagentFormHeaderProps> = ({
+  id,
+  handlePrint,
+  handleDownload,
+}) => {
   const { reagentStore } = useStore();
   const { scopes } = reagentStore;
 
@@ -36,8 +39,12 @@ const ReagentFormHeader: FC<ReagentFormHeaderProps> = ({ id, handlePrint, handle
       title={<HeaderTitle title="Catálogo de Reactivos" image="reactivo" />}
       className="header-container"
       extra={[
-        !!id && scopes?.imprimir && <PrintIcon key="print" onClick={handlePrint} />,
-        !!id && scopes?.descargar && <DownloadIcon key="download" onClick={handleDownload} />,
+        !!id && scopes?.imprimir && (
+          <PrintIcon key="print" onClick={handlePrint} />
+        ),
+        !!id && scopes?.descargar && (
+          <DownloadIcon key="download" onClick={handleDownload} />
+        ),
         <GoBackIcon key="back" onClick={getBack} />,
       ]}
     ></PageHeader>
