@@ -27,7 +27,7 @@ const QuotationDetail = () => {
   } = quotationStore;
 
   const navigate = useNavigate();
-  
+
   const { quotationId } = useParams();
   const [searchParams] = useSearchParams();
 
@@ -69,6 +69,7 @@ const QuotationDetail = () => {
       await getById(quotationId!);
     };
 
+    clearDetailData();
     if (!quotationId) {
       createQuotation();
     } else if (quotationId) {
