@@ -15,7 +15,7 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const QuotationFilter = () => {
-  const { quotationStore, optionStore,profileStore } = useStore();
+  const { quotationStore, optionStore, profileStore } = useStore();
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const { filter, setFilter, getQuotations } = quotationStore;
   const { profile } = profileStore;
@@ -38,16 +38,30 @@ const QuotationFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    if(selectedCity!=undefined && selectedCity !=null){
-      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
-    var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
-      setBranchOptions(
-        options
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value == profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
+      }
+      form.setFieldValue("sucursales", [profileBranch]);
+    }
+  }, [branchCityOptions, form, profile]);
+
+  useEffect(() => {
+    if (selectedCity != undefined && selectedCity != null) {
+      var branhces = branchCityOptions.filter((x) =>
+        selectedCity.includes(x.value.toString())
       );
+      var options = branhces.flatMap((x) =>
+        x.options == undefined ? [] : x.options
+      );
+      setBranchOptions(options);
     }
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
-
 
   useEffect(() => {
     form.setFieldsValue(filter);
@@ -162,7 +176,7 @@ const QuotationFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
-                    form={form}
+                      form={form}
                       formProps={{
                         name: "ciudad",
                         label: "Ciudad",

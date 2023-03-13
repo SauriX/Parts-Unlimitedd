@@ -9,15 +9,9 @@ import {
   Input,
   Row,
   Spin,
-  Table,
-  Tag,
 } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
-import {
-  getDefaultColumnProps,
-  IColumns,
-  ISearch,
-} from "../../app/common/table/utils";
+import { ISearch } from "../../app/common/table/utils";
 import useWindowDimensions from "../../app/util/window";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
@@ -27,16 +21,13 @@ import { formItemLayout } from "../../app/util/utils";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
-import { getExpandableConfig } from "../report/utils";
 import { ExpandableConfig } from "antd/lib/table/interface";
-import ImageButton from "../../app/common/button/ImageButton";
-import { originOptions, urgencyOptions } from "../../app/stores/optionStore";
+import { urgencyOptions } from "../../app/stores/optionStore";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../app/util/alerts";
 import PrintIcon from "../../app/common/icons/PrintIcon";
 
 import moment from "moment";
-import ValidationTableStudy from "./RelaseTableStudy";
 import ValidationStudyColumns, {
   ValidationStudyExpandable,
 } from "./RelaseStudyTable";
@@ -48,8 +39,7 @@ import {
   searchrelase,
 } from "../../app/models/relaseresult";
 import RelaseTableStudy from "./RelaseTableStudy";
-import ProfileStore from "../../app/stores/profileStore";
-const { Panel } = Collapse;
+
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
@@ -64,17 +54,15 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     optionStore,
     locationStore,
     relaseResultStore,
-    profileStore
+    profileStore,
   } = useStore();
   const { expedientes, getnow } = procedingStore;
   const {
     branchCityOptions,
     getBranchCityOptions,
-    areas,
     getareaOptions,
     medicOptions,
     getMedicOptions,
-    CityOptions,
     getCityOptions,
     getDepartmentOptions,
     companyOptions,
@@ -91,36 +79,28 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     update,
     setSoliCont,
     setStudyCont,
-    soliCont,
-    studyCont,
     viewTicket,
     setSearch,
   } = relaseResultStore;
+  const { profile } = profileStore;
 
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
   const { getCity } = locationStore;
-  const [searchParams] = useSearchParams();
+
   const [form] = Form.useForm<ISearchRelase>();
-  let navigate = useNavigate();
   const [values, setValues] = useState<ISearchRelase>(new searchrelase());
   const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
   const [ids, setIds] = useState<number[]>([]);
   const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
-  const { width: windowWidth } = useWindowDimensions();
   const [expandable, setExpandable] = useState<ExpandableConfig<Irelacelist>>();
   const [expandedRowKeys, setexpandedRowKeys] = useState<string[]>([]);
   const [visto, setvisto] = useState<checked[]>([]);
-  const hasFooterRow = true;
   const [activar, setActivar] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [activiti, setActiviti] = useState<string>("");
   const [openRows, setOpenRows] = useState<boolean>(false);
-  //const [search,SetSearch] = useState<ISearchMedical>(new SearchMedicalFormValues())
   const selectedDepartment = Form.useWatch("departament", form);
-  const [searchState, setSearchState] = useState<ISearch>({
-    searchedText: "",
-    searchedColumn: "",
-  });
+
   useEffect(() => {
     getDepartmentAreaOptions();
   }, [getDepartmentAreaOptions]);
@@ -298,7 +278,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
-  
+
   useEffect(() => {
     setDepartmentOptions(
       departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
@@ -356,35 +336,35 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
 
   useEffect(() => {
     setAreaOptions(
-      branchCityOptions.find((x) => x.value === selectedDepartment)
-        ?.options ?? []
+      branchCityOptions.find((x) => x.value === selectedDepartment)?.options ??
+        []
     );
-    form.setFieldValue("sucursalId", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
 
   useEffect(() => {
-    if(selectedCity!=undefined && selectedCity !=null){
-      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
-    var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
-      setBranchOptions(
-        options
-      );
-    }
-    form.setFieldValue("sucursalId", []);
-  }, [branchCityOptions, form, selectedCity]);
-
-  const onExpand = (isExpanded: boolean, record: Irelacelist) => {
-    let expandRows: string[] = expandedRowKeys;
-    if (isExpanded) {
-      expandRows.push(record.id);
-    } else {
-      const index = expandRows.findIndex((x) => x === record.id);
-      if (index > -1) {
-        expandRows.splice(index, 1);
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value == profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
       }
+      form.setFieldValue("sucursal", [profileBranch]);
     }
-    setexpandedRowKeys(expandRows);
-  };
+  }, [branchCityOptions, form, profile]);
+
+  useEffect(() => {
+    if (selectedCity != undefined && selectedCity != null) {
+      var branhces = branchCityOptions.filter((x) =>
+        selectedCity.includes(x.value.toString())
+      );
+      var options = branhces.flatMap((x) =>
+        x.options == undefined ? [] : x.options
+      );
+      setBranchOptions(options);
+    }
+  }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
     setExpandable(expandableStudyConfig);
@@ -424,13 +404,12 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   return (
     <Fragment>
       <Spin spinning={loading} tip={printing ? "Imprimiendo" : ""}>
-
         <div className="status-container">
           <Form<ISearchRelase>
             {...formItemLayout}
             form={form}
             name="sampling"
-            initialValues={values}
+            initialValues={{ fechas: [moment(), moment()], tipoFecha: 1 }}
             onFinish={onFinish}
             scrollToFirstError
           >
@@ -537,7 +516,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
                         <Row gutter={8}>
                           <Col span={12}>
                             <SelectInput
-                            form={form}
+                              form={form}
                               formProps={{
                                 name: "ciudad",
                                 label: "Ciudad",
@@ -580,28 +559,28 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
             </Row>
           </Form>
           <Row justify="end" gutter={[24, 12]} className="filter-buttons">
-          <Col span={24}>
-            <Button
-              key="clean"
-              onClick={(e) => {
-                form.setFieldsValue(new searchrelase());
-                setValues(new searchrelase());
-              }}
-            >
-              Limpiar
-            </Button>
-            <Button
-              key="filter"
-              type="primary"
-              onClick={(e) => {
-                e.stopPropagation();
-                form.submit();
-              }}
-            >
-              Filtrar
-            </Button>
-          </Col>
-        </Row>
+            <Col span={24}>
+              <Button
+                key="clean"
+                onClick={(e) => {
+                  form.setFieldsValue(new searchrelase());
+                  setValues(new searchrelase());
+                }}
+              >
+                Limpiar
+              </Button>
+              <Button
+                key="filter"
+                type="primary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  form.submit();
+                }}
+              >
+                Filtrar
+              </Button>
+            </Col>
+          </Row>
         </div>
         <Row>
           <Col md={8}>
