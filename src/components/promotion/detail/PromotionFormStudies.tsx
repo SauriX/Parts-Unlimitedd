@@ -78,6 +78,7 @@ const PromotionFormStudies = ({
   const areaId = Form.useWatch("areaId", filterForm);
   const code = Form.useWatch("clave", filterForm);
 
+  const [loading, setLoading] = useState(false);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -92,7 +93,9 @@ const PromotionFormStudies = ({
       filter.fechaInicial = filter.fechaDescuento ? filter.fechaDescuento[0].utcOffset(0, false).toDate() : new Date();
       // prettier-ignore
       filter.fechaFinal = filter.fechaDescuento ? filter.fechaDescuento[1].utcOffset(0, false).toDate() : new Date();
+      setLoading(true);
       const studies = await getStudies(filter, false);
+      setLoading(false);
       setStudies(studies);
     };
 
@@ -365,6 +368,7 @@ const PromotionFormStudies = ({
         </Row>
       </Form>
       <Table<IPromotionStudyPack>
+        loading={loading}
         size="small"
         rowKey={(record) =>
           record.tipo + "-" + record.estudioId ?? record.paqueteId
