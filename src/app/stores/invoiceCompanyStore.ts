@@ -66,6 +66,10 @@ export class InvoiceCompanyStore {
       alerts.warning(getErrors(error));
     }
   };
+  formValues: any = {};
+  setFormValues = (filter: any) => {
+    this.formValues = filter;
+  };
 
   getCompanyById = async (id: string) => {
     try {
@@ -191,6 +195,26 @@ export class InvoiceCompanyStore {
       const reciptInfo = await InvoiceCompany.printReceipt(receiptCompanyData);
       console.log("conse", reciptInfo);
       return reciptInfo;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    }
+  };
+  selectedRequestGlobal: any[] = [];
+  setSelectedRequestGlobal = async (selectedRequestGlobal: any[]) => {
+    this.selectedRequestGlobal = selectedRequestGlobal;
+  };
+
+  createInvoiceGlobal = async () => {
+    if (!this.selectedRequestGlobal.length) {
+      alerts.info("Sin solicitudes seleccionadas");
+      return;
+    }
+    try {
+      const response = await InvoiceCompany.checkInGlobal(
+        this.selectedRequestGlobal
+      );
+      console.log("conse", response);
+      return response;
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }

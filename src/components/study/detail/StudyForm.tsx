@@ -12,6 +12,7 @@ import {
   Table,
   InputRef,
   Input,
+  Typography,
 } from "antd";
 import React, { FC, useEffect, useRef, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
@@ -49,6 +50,8 @@ import {
 } from "react-sortable-hoc";
 import { arrayMoveImmutable } from "array-move";
 import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
+
+const { Link } = Typography;
 
 type StudyFormProps = {
   componentRef: React.MutableRefObject<any>;
@@ -203,6 +206,24 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
         width: "40%",
         windowSize: windowWidth,
       }),
+      render: (value: any, row: any) => {
+        console.log("row", row);
+        return (
+          <>
+            <Link
+              onClick={() => {
+                navigate(
+                  `/parameters/${row?.id}?mode=${searchParams.get(
+                    "mode"
+                  )}&search=${searchParams.get("search") ?? "all"}`
+                );
+              }}
+            >
+              {value}
+            </Link>
+          </>
+        );
+      },
     },
     {
       title: "Aparición",
@@ -338,7 +359,8 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     const estudio = study[index];
 
     navigate(
-      `/${views.study}/${estudio?.id}?mode=${searchParams.get("mode")}&search=${searchParams.get("search") ?? "all"
+      `/${views.study}/${estudio?.id}?mode=${searchParams.get("mode")}&search=${
+        searchParams.get("search") ?? "all"
       }`
     );
   };
@@ -523,7 +545,8 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
               onClick={() => {
                 setDisabled(false);
                 navigate(
-                  `/${views.study}/${id}?mode=edit&search=${searchParams.get("search") ?? "all"
+                  `/${views.study}/${id}?mode=edit&search=${
+                    searchParams.get("search") ?? "all"
                   }`
                 );
               }}
@@ -766,15 +789,11 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   formProps={{
                     name: "instrucciones",
                     label: "Instrucciones",
-
                   }}
                   rows={6}
                 />
               </Col>
-
-
             </Row>
-
           </Form>
           <div></div>
           <PageHeader

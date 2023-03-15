@@ -5,9 +5,15 @@ import moment from "moment";
 import { Tab } from "rc-tabs/lib/interface";
 import { useCallback, useEffect, useState } from "react";
 import { useKeyPress } from "../../../app/hooks/useKeyPress";
+import { ProcedenciaFormValues } from "../../../app/models/catalog";
+import {
+  IProceedingForm,
+  ProceedingFormValues,
+} from "../../../app/models/Proceeding";
 import { IRequestGeneral } from "../../../app/models/request";
 import { useStore } from "../../../app/stores/store";
 import alerts from "../../../app/util/alerts";
+import ProceedingObservations from "../../proceedings/details/ProceedingObservations";
 import RequestGeneral from "./content/RequestGeneral";
 import RequestImage from "./content/RequestImage";
 import RequestIndication from "./content/RequestIndication";
@@ -236,6 +242,8 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
         component = <RequestRequest formGeneral={formGeneral} />;
       } else if (tabName === "images") {
         component = <RequestImage />;
+      } else if (tabName === "observaciones") {
+        component = <ProceedingObservations proceedingId={recordId} />;
       }
 
       return (
@@ -296,6 +304,11 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
         key: "images",
         label: "Imágenes",
         children: tabRender("images"),
+      },
+      {
+        key: "observaciones",
+        label: "Observaciones expediente",
+        children: tabRender("observaciones"),
       },
     ]);
   }, [allStudies.length, tabRender]);

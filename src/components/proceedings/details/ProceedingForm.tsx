@@ -48,6 +48,7 @@ import ProceedingRequests from "./ProceedingRequests";
 import ProceedingQuotations from "./ProceedingQuotations";
 import ProceedingAppointments from "./ProceedingAppointments";
 import { faLaptopHouse } from "@fortawesome/free-solid-svg-icons";
+import ProceedingObservations from "./ProceedingObservations";
 
 const { Text, Title } = Typography;
 
@@ -406,7 +407,9 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
             `/${views.proceeding}/${record}?${searchParams}&mode=readonly`
           );
         } else {
-          navigate(`/${views.proceeding}/${reagent.id}?${searchParams}&mode=edit`);
+          navigate(
+            `/${views.proceeding}/${reagent.id}?${searchParams}&mode=edit`
+          );
         }
       }
 
@@ -860,46 +863,60 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
         searchParams.get("mode") === "readonly" ? (
           <>
             <Row style={{ paddingTop: 10 }}>
-              <Tabs
-                items={[
-                  {
-                    label: "Solicitudes",
-                    key: "1",
-                    children: (
-                      <ProceedingRequests
-                        loading={loading}
-                        printing={printing}
-                        requests={requests}
-                      />
-                    ),
-                  },
-                  {
-                    label: "Presupuestos",
-                    key: "2",
-                    children: (
-                      <ProceedingQuotations
-                        loading={loading}
-                        printing={printing}
-                        readonly={readonly}
-                        searchParams={searchParams}
-                      />
-                    ),
-                  },
-                  {
-                    label: "Citas",
-                    key: "3",
-                    children: (
-                      <ProceedingAppointments
-                        loading={loading}
-                        printing={printing}
-                        readonly={readonly}
-                        citas={citas}
-                        convertSolicitud={convertSolicitud}
-                      />
-                    ),
-                  },
-                ]}
-              />
+              <Col span={24}>
+                <Tabs
+                  items={[
+                    {
+                      label: "Solicitudes",
+                      key: "1",
+                      children: (
+                        <ProceedingRequests
+                          loading={loading}
+                          printing={printing}
+                          requests={requests}
+                        />
+                      ),
+                    },
+                    {
+                      label: "Presupuestos",
+                      key: "2",
+                      children: (
+                        <ProceedingQuotations
+                          loading={loading}
+                          printing={printing}
+                          readonly={readonly}
+                          searchParams={searchParams}
+                        />
+                      ),
+                    },
+                    {
+                      label: "Citas",
+                      key: "3",
+                      children: (
+                        <ProceedingAppointments
+                          loading={loading}
+                          printing={printing}
+                          readonly={readonly}
+                          citas={citas}
+                          convertSolicitud={convertSolicitud}
+                        />
+                      ),
+                    },
+                    {
+                      label: "Observaciones",
+                      key: "4",
+                      children: (
+                        <>
+                          <ProceedingObservations
+                            proceedingId={values.id}
+                            observaciones={values.observaciones!}
+                          />
+                        </>
+                      ),
+                    },
+                  ]}
+                />
+              </Col>
             </Row>
           </>
         ) : (

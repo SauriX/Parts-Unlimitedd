@@ -8,6 +8,9 @@ export interface IInvoiceFilter {
   fechaFinal: string;
   fechaInicial: string;
   facturaMetodo: "request";
+  departamentos?: number[];
+  medicos?: string[];
+  urgencias?: number[];
 }
 
 export interface IRequestsInvoices {

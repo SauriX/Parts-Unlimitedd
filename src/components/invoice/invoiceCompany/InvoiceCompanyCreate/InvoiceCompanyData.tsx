@@ -9,6 +9,7 @@ import { formItemLayout, moneyFormatter } from "../../../../app/util/utils";
 import InvoiceCompanyDeliver from "./InvoiceCompanyDeliver";
 import { useParams } from "react-router-dom";
 import { toJS } from "mobx";
+import NumberInput from "../../../../app/common/form/proposal/NumberInput";
 
 const { Title, Text } = Typography;
 
@@ -205,20 +206,21 @@ const InvoiceCompanyData = ({
               <Col span={10}>
                 <SelectInput
                   formProps={{ name: "formaDePagoId", label: "Forma de pago" }}
-                  options={
-                    tipo === "company"
-                      ? paymentOptions
-                      : selectedRequests
-                          .flatMap((x) => x.formasPagos)
-                          .filter(
-                            (value, index, arreglo) =>
-                              arreglo.map((arr) => arr).indexOf(value) === index
-                          )
-                          .map((x) => ({
-                            value: x,
-                            label: x,
-                          }))
-                  }
+                  // options={
+                  //   tipo === "company"
+                  //     ? paymentOptions
+                  //     : selectedRequests
+                  //         .flatMap((x) => x.formasPagos)
+                  //         .filter(
+                  //           (value, index, arreglo) =>
+                  //             arreglo.map((arr) => arr).indexOf(value) === index
+                  //         )
+                  //         .map((x) => ({
+                  //           value: x,
+                  //           label: x,
+                  //         }))
+                  // }
+                  options={paymentOptions}
                   readonly={id !== "new" || !editInfo}
                   required={tipo !== "company"}
                 />
@@ -284,7 +286,7 @@ const InvoiceCompanyData = ({
 
               {tipo === "company" && (
                 <Col span={10}>
-                  <TextInput
+                  <NumberInput
                     formProps={{
                       name: "diasCredito",
                       label: "Días de crédito",

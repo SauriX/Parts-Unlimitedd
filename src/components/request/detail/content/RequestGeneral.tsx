@@ -422,7 +422,8 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
             errors={errors.find((x) => x.name === "observaciones")?.errors}
           />
         </Col>
-        <Col span={24}>
+
+        <Col span={20}>
           <RequestDeliveryHistory />
         </Col>
       </Row>

@@ -81,6 +81,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     setStudyCont,
     viewTicket,
     setSearch,
+    search,
   } = relaseResultStore;
   const { profile } = profileStore;
 
@@ -113,6 +114,10 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   }, [getStudiesOptions]);
 
   useEffect(() => {}, [studiesOptions]);
+
+  useEffect(() => {
+    form.setFieldsValue(search);
+  }, [form, search]);
 
   useEffect(() => {
     setexpandedRowKeys(studys!.map((x) => x.id));

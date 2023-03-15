@@ -55,14 +55,18 @@ const ReportFilter = () => {
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
-
   useEffect(() => {
-    if(selectedCity!=undefined && selectedCity !=null){
-      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
-    var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
-      setBranchOptions(
-        options
+    form.setFieldsValue(filter);
+  }, [form, filter]);
+  useEffect(() => {
+    if (selectedCity != undefined && selectedCity != null) {
+      var branhces = branchCityOptions.filter((x) =>
+        selectedCity.includes(x.value.toString())
       );
+      var options = branhces.flatMap((x) =>
+        x.options == undefined ? [] : x.options
+      );
+      setBranchOptions(options);
     }
     form.setFieldValue("sucursales", []);
   }, [branchCityOptions, form, selectedCity]);
@@ -74,10 +78,10 @@ const ReportFilter = () => {
   }, [getRequests]);
   useEffect(() => {
     form.setFieldsValue(filter);
-  }, [ form]);
+  }, [form]);
   const onFinish = (values: IRequestFilter) => {
     const filtered = { ...values };
-      filtered.tipoFecha = 2;
+    filtered.tipoFecha = 2;
     if (filtered.fechas && filtered.fechas.length > 1) {
       filtered.fechaInicial = filtered.fechas[0].utcOffset(0, true);
       filtered.fechaFinal = filtered.fechas[1].utcOffset(0, true);
@@ -97,14 +101,14 @@ const ReportFilter = () => {
         size="small"
       >
         <Row gutter={[0, 12]}>
-          
           <Col span={8}>
-            <DateRangeInput
-              formProps={{ name: "fechas", label: "Fechas" }}
-            />
+            <DateRangeInput formProps={{ name: "fechas", label: "Fechas" }} />
           </Col>
           <Col span={8}>
-            <TextInput formProps={{ name: "clave", label: "Clave/Paciente" }} autoFocus={true}/>
+            <TextInput
+              formProps={{ name: "clave", label: "Clave/Paciente" }}
+              autoFocus={true}
+            />
           </Col>
           <Col span={8}>
             <SelectInput
@@ -144,7 +148,7 @@ const ReportFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
-                    form={form}
+                      form={form}
                       formProps={{
                         name: "ciudad",
                         label: "Ciudad",

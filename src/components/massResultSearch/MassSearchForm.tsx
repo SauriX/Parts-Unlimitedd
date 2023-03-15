@@ -37,6 +37,10 @@ const MassSearchForm = () => {
     massResultSearchStore;
 
   useEffect(() => {
+    form.setFieldsValue(search);
+  }, [form, search]);
+
+  useEffect(() => {
     getRequestResults({
       fechas: [
         moment(Date.now()).utcOffset(0, true),

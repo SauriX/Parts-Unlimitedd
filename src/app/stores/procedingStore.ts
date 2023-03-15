@@ -155,7 +155,7 @@ export default class ProcedingStore {
       return false;
     }
   };
-  
+
   create = async (parameter: IProceedingForm) => {
     try {
       const record = await Proceding.create(parameter);
@@ -192,6 +192,26 @@ export default class ProcedingStore {
   updateTaxData = async (taxData: ITaxData) => {
     try {
       await Proceding.updateTaxData(taxData);
+      alerts.success(messages.updated);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+  setDefaultTaxData = async (taxDataId: string) => {
+    try {
+      await Proceding.setDefaultTaxData(taxDataId);
+      alerts.success(messages.updated);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+  updateObservation = async (observation: any) => {
+    try {
+      await Proceding.updateObservation(observation);
       alerts.success(messages.updated);
       return true;
     } catch (error: any) {

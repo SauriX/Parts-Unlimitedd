@@ -19,4 +19,5 @@ export interface ITaxData {
   calle: string;
   colonia?: number;
   colonian?: string;
+  isDefaultTaxData?: boolean;
 }

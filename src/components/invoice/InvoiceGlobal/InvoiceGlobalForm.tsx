@@ -7,10 +7,11 @@ import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import { IInvoicesFreeFilter } from "../../../app/models/Invoice";
+import { urgencyOptions } from "../../../app/stores/optionStore";
 import { useStore } from "../../../app/stores/store";
 import { formItemLayout } from "../../../app/util/utils";
 
-const InvoiceFreeForm = () => {
+const InvoiceGlobalForm = () => {
   const [form] = Form.useForm();
   const { optionStore, invoiceCompanyStore } = useStore();
   const [checkedValues, setCheckedValues] = useState<any>();
@@ -20,25 +21,37 @@ const InvoiceFreeForm = () => {
     companyOptions,
     getSucursalesOptions,
     getCompanyOptions,
+    getMedicOptions,
+    medicOptions,
+    getDepartmentOptions,
+    departmentOptions,
   } = optionStore;
-  const { getInvoicesFree, setFormValues, formValues } = invoiceCompanyStore;
+  const { getInvoicesCompany, setFormValues, formValues } = invoiceCompanyStore;
   useEffect(() => {
     getSucursalesOptions();
     getCompanyOptions();
+    getMedicOptions();
+    getDepartmentOptions();
   }, []);
-  useEffect(() => {
-    form.setFieldsValue(formValues);
-  }, [form, formValues]);
   useEffect(() => {
     form.resetFields();
     form.submit();
   }, []);
-  const onFinish = (newFormValues: IInvoicesFreeFilter) => {
-    newFormValues.tipo = checkedValues;
-    newFormValues.fechaInicial = newFormValues.fechas[0];
-    newFormValues.fechaFinal = newFormValues.fechas[1];
+  useEffect(() => {
+    form.setFieldsValue(formValues);
+  }, [form, formValues]);
+  const onFinish = async (newFormValues: any) => {
+    const formValues = {
+      ...newFormValues,
+
+      fechaFinal: newFormValues.fechas[1].utcOffset(0, true),
+      fechaInicial: newFormValues.fechas[0].utcOffset(0, true),
+      facturaMetodo: "request",
+      sucursalId: [],
+      tipoFactura: [],
+    };
     setFormValues(newFormValues);
-    getInvoicesFree(newFormValues);
+    getInvoicesCompany(formValues);
   };
 
   return (
@@ -52,25 +65,7 @@ const InvoiceFreeForm = () => {
           size="small"
           initialValues={{ fechas: [moment(), moment()] }}
         >
-          <Row justify="center" align="middle">
-            <Col span={8}>
-              <SelectInput
-                formProps={{
-                  name: "sucursal",
-                  label: "Sucursal",
-                }}
-                options={sucursales}
-                style={{ marginBottom: 10 }}
-              />
-              <SelectInput
-                formProps={{
-                  name: "compania",
-                  label: "Compañia",
-                }}
-                options={companyOptions}
-                style={{ marginBottom: 10 }}
-              />
-            </Col>
+          <Row justify="center" align="top">
             <Col span={8}>
               <DateRangeInput
                 formProps={{
@@ -80,35 +75,90 @@ const InvoiceFreeForm = () => {
                 disableAfterDates
                 style={{ marginBottom: 10 }}
               />
+
+              {/* <SelectInput
+                formProps={{
+                  name: "procedencia",
+                  label: "Procedencia",
+                }}
+                options={sucursales}
+                style={{ marginBottom: 10 }}
+              /> */}
+              <SelectInput
+                form={form}
+                formProps={{
+                  name: "departamentos",
+                  label: "Departamento",
+                }}
+                multiple
+                options={departmentOptions}
+                style={{ marginBottom: 10 }}
+              />
+              <SelectInput
+                multiple
+                form={form}
+                formProps={{
+                  name: "medicos",
+                  label: "Médico",
+                }}
+                options={medicOptions}
+                style={{ marginBottom: 10 }}
+              />
+            </Col>
+            <Col span={8}>
               <TextInput
                 formProps={{
                   name: "buscar",
                   label: "Buscar",
                 }}
+                style={{ marginBottom: 10 }}
               />
+              <SelectInput
+                multiple
+                form={form}
+                formProps={{
+                  name: "sucursalId",
+                  label: "Sucursal",
+                }}
+                options={sucursales}
+                style={{ marginBottom: 10 }}
+              />
+              {/* <SelectInput
+                formProps={{
+                  name: "compania",
+                  label: "Compañia",
+                }}
+                options={companyOptions}
+                style={{ marginBottom: 10 }}
+              /> */}
             </Col>
             <Col span={8}>
+              <SelectInput
+                multiple
+                form={form}
+                formProps={{
+                  name: "urgencias",
+                  label: "Tipo de solicitud",
+                }}
+                options={urgencyOptions}
+                style={{ marginBottom: 10 }}
+              />
               <SelectInput
                 form={form}
                 multiple
                 formProps={{
-                  name: "estatus",
+                  name: "tipoFactura",
                   label: "Estatus",
                 }}
                 options={[
-                  {
-                    label: "Facturadas",
-                    value: "Facturado",
-                  },
-                  {
-                    label: "Canceladas",
-                    value: "Cancelado",
-                  },
+                  { label: "Facturadas", value: "facturadas" },
+                  { label: "No facturadas", value: "noFacturadas" },
+                  { label: "Canceladas", value: "canceladas" },
                 ]}
                 style={{ marginBottom: 10 }}
               />
 
-              <Row justify="center">
+              {/* <Row justify="center">
                 <Checkbox.Group
                   options={[
                     { label: "Compañia", value: "company" },
@@ -118,7 +168,7 @@ const InvoiceFreeForm = () => {
                     setCheckedValues(newChekedValues);
                   }}
                 />
-              </Row>
+              </Row> */}
             </Col>
           </Row>
           <Row justify="end">
@@ -135,4 +185,4 @@ const InvoiceFreeForm = () => {
   );
 };
 
-export default observer(InvoiceFreeForm);
+export default observer(InvoiceGlobalForm);

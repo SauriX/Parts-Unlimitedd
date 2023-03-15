@@ -43,6 +43,7 @@ const DeliveryResultsForm = () => {
     getAllCaptureResults,
     requests,
     setFormDeliverResult,
+    formDeliverResult,
   } = massResultSearchStore;
 
   const selectedCity = Form.useWatch("ciudad", form);
@@ -66,7 +67,9 @@ const DeliveryResultsForm = () => {
     getCompanyOptions,
     getDepartmentOptions,
   ]);
-
+  useEffect(() => {
+    form.setFieldsValue(formDeliverResult);
+  }, [formDeliverResult, form]);
   useEffect(() => {
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))

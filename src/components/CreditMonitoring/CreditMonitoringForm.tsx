@@ -1,46 +1,14 @@
 import { Button, Checkbox, Col, Form, Row } from "antd";
-import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import { useEffect, useState } from "react";
-import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
-import SelectInput from "../../../app/common/form/proposal/SelectInput";
-import TextInput from "../../../app/common/form/proposal/TextInput";
-import { IInvoicesFreeFilter } from "../../../app/models/Invoice";
-import { useStore } from "../../../app/stores/store";
-import { formItemLayout } from "../../../app/util/utils";
+import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
+import SelectInput from "../../app/common/form/proposal/SelectInput";
+import TextInput from "../../app/common/form/proposal/TextInput";
+import { formItemLayout } from "../../app/util/utils";
 
-const InvoiceFreeForm = () => {
+const CreditMonitoringForm = () => {
+  const onFinish = () => {};
   const [form] = Form.useForm();
-  const { optionStore, invoiceCompanyStore } = useStore();
-  const [checkedValues, setCheckedValues] = useState<any>();
-
-  const {
-    sucursales,
-    companyOptions,
-    getSucursalesOptions,
-    getCompanyOptions,
-  } = optionStore;
-  const { getInvoicesFree, setFormValues, formValues } = invoiceCompanyStore;
-  useEffect(() => {
-    getSucursalesOptions();
-    getCompanyOptions();
-  }, []);
-  useEffect(() => {
-    form.setFieldsValue(formValues);
-  }, [form, formValues]);
-  useEffect(() => {
-    form.resetFields();
-    form.submit();
-  }, []);
-  const onFinish = (newFormValues: IInvoicesFreeFilter) => {
-    newFormValues.tipo = checkedValues;
-    newFormValues.fechaInicial = newFormValues.fechas[0];
-    newFormValues.fechaFinal = newFormValues.fechas[1];
-    setFormValues(newFormValues);
-    getInvoicesFree(newFormValues);
-  };
-
   return (
     <>
       <div className="status-container">
@@ -59,7 +27,7 @@ const InvoiceFreeForm = () => {
                   name: "sucursal",
                   label: "Sucursal",
                 }}
-                options={sucursales}
+                options={[]}
                 style={{ marginBottom: 10 }}
               />
               <SelectInput
@@ -67,7 +35,7 @@ const InvoiceFreeForm = () => {
                   name: "compania",
                   label: "Compañia",
                 }}
-                options={companyOptions}
+                options={[]}
                 style={{ marginBottom: 10 }}
               />
             </Col>
@@ -115,7 +83,7 @@ const InvoiceFreeForm = () => {
                     { label: "Solicitud", value: "request" },
                   ]}
                   onChange={(newChekedValues) => {
-                    setCheckedValues(newChekedValues);
+                    // setCheckedValues(newChekedValues);
                   }}
                 />
               </Row>
@@ -135,4 +103,4 @@ const InvoiceFreeForm = () => {
   );
 };
 
-export default observer(InvoiceFreeForm);
+export default observer(CreditMonitoringForm);

@@ -19,7 +19,7 @@ import { ISamplingForm } from "../../app/models/sampling";
 
 const SamplingStudyFilter = () => {
   const { optionStore, samplingStudyStore, profileStore } = useStore();
-  const { getAll, setFormValues } = samplingStudyStore;
+  const { getAll, setFormValues, formValues } = samplingStudyStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -52,6 +52,9 @@ const SamplingStudyFilter = () => {
     getCompanyOptions,
     getDepartmentAreaOptions,
   ]);
+  useEffect(() => {
+    form.setFieldsValue(formValues);
+  }, [formValues, form]);
 
   useEffect(() => {
     setCityOptions(
@@ -73,12 +76,14 @@ const SamplingStudyFilter = () => {
   }, [branchCityOptions, form, profile]);
 
   useEffect(() => {
-    if(selectedCity!=undefined && selectedCity !=null){
-      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
-    var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
-      setBranchOptions(
-        options
+    if (selectedCity != undefined && selectedCity != null) {
+      var branhces = branchCityOptions.filter((x) =>
+        selectedCity.includes(x.value.toString())
       );
+      var options = branhces.flatMap((x) =>
+        x.options == undefined ? [] : x.options
+      );
+      setBranchOptions(options);
     }
   }, [branchCityOptions, form, selectedCity]);
 
@@ -216,7 +221,7 @@ const SamplingStudyFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
-                    form={form}
+                      form={form}
                       formProps={{
                         name: "ciudad",
                         label: "Ciudad",

@@ -22,7 +22,7 @@ const ClinicResultsFilter = () => {
   const { requestStore, optionStore, clinicResultsStore, profileStore } =
     useStore();
   const { lastViewedFrom } = requestStore;
-  const { getAll, setFormValues, clearFilter } = clinicResultsStore;
+  const { getAll, setFormValues, clearFilter, formValues } = clinicResultsStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -46,7 +46,9 @@ const ClinicResultsFilter = () => {
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
-
+  useEffect(() => {
+    form.setFieldsValue(formValues);
+  }, [form, formValues]);
   useEffect(() => {
     const update = async () => {
       getBranchCityOptions();

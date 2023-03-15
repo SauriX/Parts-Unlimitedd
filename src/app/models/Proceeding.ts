@@ -45,6 +45,8 @@ export interface IProceedingForm {
   hasWallet: boolean;
   wallet: number;
   fechaActivacionMonedero?: Date;
+
+  observaciones?: string;
 }
 
 export class SearchMedicalFormValues implements ISearchMedical {
@@ -79,6 +81,7 @@ export class ProceedingFormValues implements IProceedingForm {
 
   hasWallet = false;
   wallet = 0;
+  observaciones = "";
   constructor(init?: IProceedingForm) {
     Object.assign(this, init);
   }

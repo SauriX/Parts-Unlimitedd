@@ -292,37 +292,8 @@ const InvoiceCompanyTable = () => {
             onFinish={createInvoice}
             size="small"
             initialValues={{ fechas: [moment(), moment()] }}
-            // onFieldsChange={() => {
-            //   setDisabled(
-            //     (!form.isFieldsTouched() ||
-            //       form.getFieldsError().filter(({ errors }) => errors.length)
-            //         .length > 0) &&
-            //       isSameCommpany
-            //   );
-            // }}
           >
             <Row justify="end">
-              {/* <Col span={8}>
-                <Form.Item name="isInvoice" required>
-                  <Row justify="center">
-                    <Radio.Group>
-                      <Radio value={"Factura"}>Factura</Radio>
-                      <Radio value={"Recibo"}>Recibo</Radio>
-                    </Radio.Group>
-                  </Row>
-                </Form.Item>
-              </Col>
-              <Col span={2}>
-                <Button
-                  onClick={() => {
-                    formCreate.submit();
-                  }}
-                  type="primary"
-                  // disabled={disabled}
-                >
-                  Generar
-                </Button>
-              </Col> */}
               <Col span={2}>
                 <Button
                   type="primary"
