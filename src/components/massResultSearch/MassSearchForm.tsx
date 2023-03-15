@@ -27,8 +27,8 @@ const MassSearchForm = () => {
   const {
     branchCityOptions,
     getBranchCityOptions,
-    areas,
-    getareaOptions,
+    areaOptions: areas,
+    getAreaOptions: getareaOptions,
     studiesOptions,
     getStudiesOptions,
   } = optionStore;

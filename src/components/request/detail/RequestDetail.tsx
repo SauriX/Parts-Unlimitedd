@@ -135,6 +135,7 @@ const RequestDetail = () => {
       await getById(recordId!, requestId!, "requests");
     };
 
+    clearDetailData();
     if (recordId && !requestId) {
       createRequest();
     } else if (recordId && requestId) {

@@ -140,17 +140,19 @@ export default class ProcedingStore {
       return [];
     }
   };
+
   activateWallet = async (
     id: string,
     saldo: number = 0,
     activo: boolean = true
   ) => {
     try {
-      const response = await Proceding.updateWallet(id, saldo, activo);
-      return response;
+      await Proceding.updateWallet(id, saldo, activo);
+      alerts.success(messages.activeWallet);
+      return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
-      return [];
+      return false;
     }
   };
   

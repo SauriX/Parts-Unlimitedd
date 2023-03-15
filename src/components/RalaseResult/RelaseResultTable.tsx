@@ -60,7 +60,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   const {
     branchCityOptions,
     getBranchCityOptions,
-    getareaOptions,
+    getAreaOptions,
     medicOptions,
     getMedicOptions,
     getCityOptions,
@@ -288,7 +288,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   useEffect(() => {
     const readData = async () => {
       await getBranchCityOptions();
-      await getareaOptions(0);
+      await getAreaOptions(0);
       await getMedicOptions();
       await getCityOptions();
       await getDepartmentOptions();

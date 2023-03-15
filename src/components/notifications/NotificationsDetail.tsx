@@ -19,7 +19,7 @@ import { useNavigate } from "react-router-dom";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import CheckableTag from "antd/lib/tag/CheckableTag";
 import { useState } from "react";
-import { IDias } from "../../app/models/promotion";
+import { IDay } from "../../app/models/shared";
 
 const { Text } = Typography;
 
@@ -27,13 +27,13 @@ const NotificationsDetail = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  const [selectedTags, setSelectedTags] = useState<IDias[]>([]);
+  const [selectedTags, setSelectedTags] = useState<IDay[]>([]);
 
   const onFinish = (values: any) => {
     console.log("Success:", values);
   };
 
-  const handleChange = (tag: IDias, checked: Boolean) => {
+  const handleChange = (tag: IDay, checked: Boolean) => {
     //console.log(tag, "el tag");
     const nextSelectedTags = checked
       ? [...selectedTags!, tag]
@@ -41,7 +41,7 @@ const NotificationsDetail = () => {
     //console.log("You are interested in: ", nextSelectedTags);
     setSelectedTags(nextSelectedTags!);
   };
-  const tagsData: IDias[] = [
+  const tagsData: IDay[] = [
     { id: 1, dia: "L" },
     { id: 2, dia: "M" },
     { id: 3, dia: "M" },

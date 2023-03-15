@@ -801,9 +801,7 @@ export default class RequestStore {
     this.studies = this.studies.filter((x) => x.identificador !== id);
 
     if (study) {
-      if (
-        !this.studies.some((x) => x.estudioId === study.estudioId)
-      ) {
+      if (!this.studies.some((x) => x.estudioId === study.estudioId)) {
         this.tags = this.tags.map((tag) => ({
           ...tag,
           estudios: tag.estudios.filter(
@@ -1071,7 +1069,7 @@ export default class RequestStore {
     const studyAndPack = studies.map((x) => ({ descuento: x.descuento ?? 0, precio: x.precio, precioFinal: x.precioFinal, copago: x.copago ?? 0 }))
       .concat(packs.map((x) => ({ descuento: x.descuento, precio: x.precio, precioFinal: x.precioFinal, copago: 0 })));
 
-    const totalStudies = studyAndPack.reduce((acc, obj) => acc + obj.precioFinal, 0);
+    const totalStudies = studyAndPack.reduce((acc, obj) => acc + obj.precio, 0);
 
     const discount = totalStudies === 0 ? 0 : studyAndPack.reduce((acc, obj) => acc + obj.descuento, 0);
     const charge = totalStudies === 0 ? 0

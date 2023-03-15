@@ -1,3 +1,4 @@
+import "../css/proceeding.less";
 import {
   Spin,
   Form,
@@ -9,7 +10,7 @@ import {
   Divider,
   Input,
   Card,
-  Tag,
+  Typography,
   Tabs,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
@@ -41,11 +42,14 @@ import {
   ISearchAppointment,
   ISolicitud,
 } from "../../../app/models/appointmen";
+import { WalletOutlined } from "@ant-design/icons";
 import { IQuotationFilter } from "../../../app/models/quotation";
 import ProceedingRequests from "./ProceedingRequests";
 import ProceedingQuotations from "./ProceedingQuotations";
 import ProceedingAppointments from "./ProceedingAppointments";
 import { faLaptopHouse } from "@fortawesome/free-solid-svg-icons";
+
+const { Text, Title } = Typography;
 
 type ProceedingFormProps = {
   id: string;
@@ -69,7 +73,9 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     requestStore,
     appointmentStore,
     quotationStore,
+    drawerStore,
   } = useStore();
+  const { openDrawer } = drawerStore;
   const { getQuotations } = quotationStore;
   const { getAllDom, getAllLab, createsolictud } = appointmentStore;
   const { requests, getRequests: getByFilter } = requestStore;
@@ -288,12 +294,14 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   };
 
   const activarMonedero = async () => {
-    // setMonedero(true);
+    setLoading(true);
+
     if (values.id) {
-      setLoading(true);
       await activateWallet(values.id);
-      setLoading(false);
+      values.hasWallet = true;
     }
+
+    setLoading(false);
   };
 
   const onFinish = async (newValues: IProceedingForm) => {
@@ -410,6 +418,25 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     return isPrinting ? "Imprimiendo..." : "Cargando...";
   };
 
+  const openWallet = () => {
+    openDrawer({
+      title: (
+        <HeaderTitle
+          title="Monedero Electrónico"
+          icon={<WalletOutlined className="header-title-icon" />}
+        />
+      ),
+      body: (
+        <Card className="record-wallet">
+          <Text className="wallet-title">Balance de puntos</Text>
+          <Title className="wallet-text" level={4}>
+            {values.wallet}
+          </Title>
+        </Card>
+      ),
+    });
+  };
+
   return (
     <Spin spinning={loading || printing} tip={printing ? spinnerText() : ""}>
       <Row style={{ marginBottom: 24 }}>
@@ -449,463 +476,435 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
           </Col>
         )}
       </Row>
-      <div style={{ display: printing ? "" : "none", height: 300 }}></div>
-      <div style={{ display: printing ? "none" : "" }}>
-        <div ref={componentRef}>
-          {printing && (
-            <PageHeader
-              ghost={false}
-              title={<HeaderTitle title="Expediente" />}
-              className="header-container"
-            ></PageHeader>
-          )}
-          {printing && <Divider className="header-divider" />}
-          <Form<IProceedingForm>
-            {...formItemLayout}
-            onFinish={onFinish}
-            onValuesChange={onValuesChange}
-            form={form}
-            size="small"
-            onFinishFailed={({ errorFields }) => {
-              const errors = errorFields.map((x) => ({
-                name: x.name[0].toString(),
-                errors: x.errors,
-              }));
-              setErrors(errors);
-            }}
-          >
-            <Row gutter={[0, 12]}>
-              <Col span={12}>
-                <Form.Item
-                  label="Nombre"
-                  labelCol={{ span: 4 }}
-                  wrapperCol={{ span: 20 }}
-                  className="no-error-text"
-                  help=""
-                  required
-                >
-                  <Input.Group>
-                    <Row gutter={8}>
-                      <Col span={12}>
-                        <TextInput
-                          formProps={{
-                            name: "nombre",
-                            label: "Nombre(s)",
-                            noStyle: true,
-                          }}
-                          max={500}
-                          showLabel
-                          readonly={readonly}
-                          required
-                        />
-                      </Col>
-                      <Col span={12}>
-                        <TextInput
-                          formProps={{
-                            name: "apellido",
-                            label: "Apellido(s)",
-                            noStyle: true,
-                          }}
-                          max={500}
-                          showLabel
-                          readonly={readonly}
-                          required
-                        />
-                      </Col>
-                    </Row>
-                  </Input.Group>
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <TextInput
-                  formProps={{
-                    name: "correo",
-                    label: "E-Mail",
-                    labelCol: { span: 6 },
-                    wrapperCol: { span: 18 },
-                  }}
-                  type="email"
-                  max={100}
-                  errors={errors.find((x) => x.name === "correo")?.errors}
-                  readonly={readonly}
-                />
-              </Col>
-              <Col span={4}>
-                <TextInput
-                  formProps={{
-                    name: "expediente",
-                    label: "Exp",
-                  }}
-                  max={500}
-                  // readonly={readonly}
-                  readonly={true}
-                />
-              </Col>
-              <Col span={4}>
-                <SelectInput
-                  formProps={{
-                    name: "sexo",
-                    label: "Sexo",
-                    labelCol: { span: 12 },
-                    wrapperCol: { span: 12 },
-                  }}
-                  options={[
-                    { label: "F", value: "F" },
-                    { label: "M", value: "M" },
-                  ]}
-                  readonly={readonly}
-                  required
-                />
-              </Col>
-              <Col span={8}>
-                <DateInput
-                  formProps={{
-                    name: "fechaNacimiento",
-                    label: "Fecha Nacimiento",
-                    labelCol: { span: 12 },
-                    wrapperCol: { span: 12 },
-                  }}
-                  disableAfterDates={true}
-                  readonly={readonly}
-                  required
-                />
-              </Col>
-              <Col span={4}>
-                <TextInput
-                  formProps={{
-                    name: "edad",
-                    label: "Edad",
-                    labelCol: { span: 12 },
-                    wrapperCol: { span: 12 },
-                  }}
-                  max={3}
-                  suffix="años"
-                  readonly={readonly}
-                  required
-                />
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  label="Contacto"
-                  labelCol={{ span: 6 }}
-                  wrapperCol={{ span: 18 }}
-                  help=""
-                  className="no-error-text"
-                >
-                  <Input.Group>
-                    <Row gutter={8}>
-                      <Col span={12}>
-                        <MaskInput
-                          formProps={{
-                            name: "telefono",
-                            label: "Teléfono",
-                            noStyle: true,
-                          }}
-                          mask={[
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                          ]}
-                          validator={(_, value: any) => {
-                            if (!value || value.indexOf("_") === -1) {
-                              return Promise.resolve();
-                            }
-                            return Promise.reject(
-                              "El campo debe contener 10 dígitos"
-                            );
-                          }}
-                          readonly={readonly}
-                        />
-                      </Col>
-                      <Col span={12}>
-                        <MaskInput
-                          formProps={{
-                            name: "celular",
-                            label: "Celular",
-                          }}
-                          mask={[
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                            "-",
-                            /[0-9]/,
-                            /[0-9]/,
-                          ]}
-                          validator={(_, value: any) => {
-                            if (!value || value.indexOf("_") === -1) {
-                              return Promise.resolve();
-                            }
-                            return Promise.reject(
-                              "El campo debe contener 10 dígitos"
-                            );
-                          }}
-                          readonly={readonly}
-                        />
-                      </Col>
-                    </Row>
-                  </Input.Group>
-                </Form.Item>
-              </Col>
-              <Col span={24}>
-                <Form.Item
-                  label="Dirección"
-                  labelCol={{ span: 2 }}
-                  wrapperCol={{ span: 22 }}
-                  help=""
-                  className="no-error-text"
-                >
-                  <Input.Group>
-                    <Row gutter={8}>
-                      <Col span={2}>
-                        <TextInput
-                          formProps={{
-                            name: "cp",
-                            label: "CP",
-                            noStyle: true,
-                          }}
-                          max={5}
-                          min={5}
-                          onChange={(e) => {
-                            let valu = e.target.value;
-                            if (!Number(valu)) {
-                              form.setFieldValue(
-                                "cp",
-                                valu.substring(0, valu.length - 1)
-                              );
-
-                              return;
-                            }
-                            form.setFieldValue("cp", valu);
-                          }}
-                          showLabel
-                          readonly={readonly}
-                          errors={errors.find((x) => x.name === "cp")?.errors}
-                        />
-                      </Col>
-                      <Col span={4}>
-                        <TextInput
-                          formProps={{
-                            name: "estado",
-                            label: "Estado",
-                            noStyle: true,
-                          }}
-                          max={500}
-                          showLabel
-                          readonly={readonly}
-                        />
-                      </Col>
-                      <Col span={5}>
-                        <TextInput
-                          formProps={{
-                            name: "municipio",
-                            label: "Municipio",
-                            noStyle: true,
-                          }}
-                          max={500}
-                          showLabel
-                          readonly={readonly}
-                        />
-                      </Col>
-                      <Col span={6}>
-                        <SelectInput
-                          formProps={{
-                            name: "colonia",
-                            label: "Colonia",
-                            noStyle: true,
-                          }}
-                          showLabel
-                          options={colonies}
-                          readonly={readonly}
-                        />
-                      </Col>
-                      <Col span={7}>
-                        <TextInput
-                          formProps={{
-                            name: "calle",
-                            label: "Calle",
-                            noStyle: true,
-                          }}
-                          max={500}
-                          showLabel
-                          readonly={readonly}
-                        />
-                      </Col>
-                    </Row>
-                  </Input.Group>
-                </Form.Item>
-              </Col>
-
-              <Col span={2} style={{ textAlign: "center" }}>
-                <Button
-                  onClick={() => {
-                    navigate(`/requests/${id}`);
-                  }}
-                  type="primary"
-                  disabled={!id}
-                >
-                  Agregar solicitud
-                </Button>
-              </Col>
-              <Col span={2} style={{ textAlign: "center" }}>
-                <Button
-                  onClick={() => {
-                    navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
-                  }}
-                  type="primary"
-                  disabled={!id}
-                >
-                  Agregar cotización
-                </Button>
-              </Col>
-              <Col span={2} style={{ textAlign: "center" }}>
-                <Button
-                  onClick={() => {
-                    navigate(`/appointments`);
-                  }}
-                  type="primary"
-                  disabled={!id}
-                >
-                  Agregar cita
-                </Button>
-              </Col>
-              <Col
-                span={2}
-                style={{ textAlign: "center", marginLeft: 0, paddingLeft: 0 }}
+      <div ref={componentRef} style={{ display: printing ? "none" : "" }}>
+        {printing && (
+          <PageHeader
+            ghost={false}
+            title={<HeaderTitle title="Expediente" />}
+            className="header-container"
+          ></PageHeader>
+        )}
+        {printing && <Divider className="header-divider" />}
+        <Form<IProceedingForm>
+          {...formItemLayout}
+          onFinish={onFinish}
+          onValuesChange={onValuesChange}
+          form={form}
+          size="small"
+          onFinishFailed={({ errorFields }) => {
+            const errors = errorFields.map((x) => ({
+              name: x.name[0].toString(),
+              errors: x.errors,
+            }));
+            setErrors(errors);
+          }}
+        >
+          <Row gutter={[0, 12]}>
+            <Col span={12}>
+              <Form.Item
+                label="Nombre"
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 20 }}
+                className="no-error-text"
+                help=""
+                required
               >
-                <Button
-                  onClick={() => {
-                    activarMonedero();
-                  }}
-                  type="primary"
-                  disabled={values?.hasWallet || !id}
-                >
-                  Activar monedero
-                </Button>
-              </Col>
-              <Col span={7} style={{ textAlign: "end" }}>
-                <Button
-                  onClick={() =>
-                    openModal({
-                      title: "Seleccionar o Ingresar Datos Fiscales",
-                      body: <DatosFiscalesForm />,
-                      width: 900,
-                    })
-                  }
-                  style={{
-                    backgroundColor: !id || readonly ? "" : "#6EAA46",
-                    color: !id || readonly ? "" : "white",
-                    borderColor: !id || readonly ? "" : "#6EAA46",
-                  }}
-                  disabled={!id || readonly}
-                >
-                  Datos Fiscales
-                </Button>
-              </Col>
-              <Col span={8}>
-                <SelectInput
-                  formProps={{
-                    name: "sucursal",
-                    label: "Sucursal",
-                    labelCol: { span: 6 },
-                    wrapperCol: { span: 18 },
-                  }}
-                  options={BranchOptions}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
+                <Input.Group>
+                  <Row gutter={8}>
+                    <Col span={12}>
+                      <TextInput
+                        formProps={{
+                          name: "nombre",
+                          label: "Nombre(s)",
+                          noStyle: true,
+                        }}
+                        max={500}
+                        showLabel
+                        readonly={readonly}
+                        required
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <TextInput
+                        formProps={{
+                          name: "apellido",
+                          label: "Apellido(s)",
+                          noStyle: true,
+                        }}
+                        max={500}
+                        showLabel
+                        readonly={readonly}
+                        required
+                      />
+                    </Col>
+                  </Row>
+                </Input.Group>
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <TextInput
+                formProps={{
+                  name: "correo",
+                  label: "E-Mail",
+                  labelCol: { span: 6 },
+                  wrapperCol: { span: 18 },
+                }}
+                type="email"
+                max={100}
+                errors={errors.find((x) => x.name === "correo")?.errors}
+                readonly={readonly}
+              />
+            </Col>
+            <Col span={4}>
+              <TextInput
+                formProps={{
+                  name: "expediente",
+                  label: "Exp",
+                }}
+                max={500}
+                // readonly={readonly}
+                readonly={true}
+              />
+            </Col>
+            <Col span={4}>
+              <SelectInput
+                formProps={{
+                  name: "sexo",
+                  label: "Sexo",
+                  labelCol: { span: 12 },
+                  wrapperCol: { span: 12 },
+                }}
+                options={[
+                  { label: "F", value: "F" },
+                  { label: "M", value: "M" },
+                ]}
+                readonly={readonly}
+                required
+              />
+            </Col>
+            <Col span={8}>
+              <DateInput
+                formProps={{
+                  name: "fechaNacimiento",
+                  label: "Fecha Nacimiento",
+                  labelCol: { span: 12 },
+                  wrapperCol: { span: 12 },
+                }}
+                disableAfterDates={true}
+                readonly={readonly}
+                required
+              />
+            </Col>
+            <Col span={4}>
+              <TextInput
+                formProps={{
+                  name: "edad",
+                  label: "Edad",
+                  labelCol: { span: 12 },
+                  wrapperCol: { span: 12 },
+                }}
+                max={3}
+                suffix="años"
+                readonly={readonly}
+                required
+              />
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label="Contacto"
+                labelCol={{ span: 6 }}
+                wrapperCol={{ span: 18 }}
+                help=""
+                className="no-error-text"
+              >
+                <Input.Group>
+                  <Row gutter={8}>
+                    <Col span={12}>
+                      <MaskInput
+                        formProps={{
+                          name: "telefono",
+                          label: "Teléfono",
+                          noStyle: true,
+                        }}
+                        mask={[
+                          /[0-9]/,
+                          /[0-9]/,
+                          /[0-9]/,
+                          "-",
+                          /[0-9]/,
+                          /[0-9]/,
+                          /[0-9]/,
+                          "-",
+                          /[0-9]/,
+                          /[0-9]/,
+                          "-",
+                          /[0-9]/,
+                          /[0-9]/,
+                        ]}
+                        validator={(_, value: any) => {
+                          if (!value || value.indexOf("_") === -1) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            "El campo debe contener 10 dígitos"
+                          );
+                        }}
+                        readonly={readonly}
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <MaskInput
+                        formProps={{
+                          name: "celular",
+                          label: "Celular",
+                        }}
+                        mask={[
+                          /[0-9]/,
+                          /[0-9]/,
+                          /[0-9]/,
+                          "-",
+                          /[0-9]/,
+                          /[0-9]/,
+                          /[0-9]/,
+                          "-",
+                          /[0-9]/,
+                          /[0-9]/,
+                          "-",
+                          /[0-9]/,
+                          /[0-9]/,
+                        ]}
+                        validator={(_, value: any) => {
+                          if (!value || value.indexOf("_") === -1) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            "El campo debe contener 10 dígitos"
+                          );
+                        }}
+                        readonly={readonly}
+                      />
+                    </Col>
+                  </Row>
+                </Input.Group>
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                label="Dirección"
+                labelCol={{ span: 2 }}
+                wrapperCol={{ span: 22 }}
+                help=""
+                className="no-error-text"
+              >
+                <Input.Group>
+                  <Row gutter={8}>
+                    <Col span={2}>
+                      <TextInput
+                        formProps={{
+                          name: "cp",
+                          label: "CP",
+                          noStyle: true,
+                        }}
+                        max={5}
+                        min={5}
+                        onChange={(e) => {
+                          let valu = e.target.value;
+                          if (!Number(valu)) {
+                            form.setFieldValue(
+                              "cp",
+                              valu.substring(0, valu.length - 1)
+                            );
+
+                            return;
+                          }
+                          form.setFieldValue("cp", valu);
+                        }}
+                        showLabel
+                        readonly={readonly}
+                        errors={errors.find((x) => x.name === "cp")?.errors}
+                      />
+                    </Col>
+                    <Col span={4}>
+                      <TextInput
+                        formProps={{
+                          name: "estado",
+                          label: "Estado",
+                          noStyle: true,
+                        }}
+                        max={500}
+                        showLabel
+                        readonly={readonly}
+                      />
+                    </Col>
+                    <Col span={5}>
+                      <TextInput
+                        formProps={{
+                          name: "municipio",
+                          label: "Municipio",
+                          noStyle: true,
+                        }}
+                        max={500}
+                        showLabel
+                        readonly={readonly}
+                      />
+                    </Col>
+                    <Col span={6}>
+                      <SelectInput
+                        formProps={{
+                          name: "colonia",
+                          label: "Colonia",
+                          noStyle: true,
+                        }}
+                        showLabel
+                        options={colonies}
+                        readonly={readonly}
+                      />
+                    </Col>
+                    <Col span={7}>
+                      <TextInput
+                        formProps={{
+                          name: "calle",
+                          label: "Calle",
+                          noStyle: true,
+                        }}
+                        max={500}
+                        showLabel
+                        readonly={readonly}
+                      />
+                    </Col>
+                  </Row>
+                </Input.Group>
+              </Form.Item>
+            </Col>
+
+            <Col span={2} style={{ textAlign: "center" }}>
+              <Button
+                onClick={() => {
+                  navigate(`/requests/${id}`);
+                }}
+                type="primary"
+                disabled={!id}
+              >
+                Agregar solicitud
+              </Button>
+            </Col>
+            <Col span={2} style={{ textAlign: "center" }}>
+              <Button
+                onClick={() => {
+                  navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
+                }}
+                type="primary"
+                disabled={!id}
+              >
+                Agregar cotización
+              </Button>
+            </Col>
+            <Col span={2} style={{ textAlign: "center" }}>
+              <Button
+                onClick={() => {
+                  navigate(`/appointments`);
+                }}
+                type="primary"
+                disabled={!id}
+              >
+                Agregar cita
+              </Button>
+            </Col>
+            <Col span={2} style={{ textAlign: "center" }}>
+              <Button
+                onClick={() => {
+                  values?.hasWallet ? openWallet() : activarMonedero();
+                }}
+                type="primary"
+                disabled={!id}
+              >
+                {values?.hasWallet ? "Ver monedero" : "Activar monedero"}
+              </Button>
+            </Col>
+            <Col span={8} style={{ textAlign: "end" }}>
+              <Button
+                onClick={() =>
+                  openModal({
+                    title: "Seleccionar o Ingresar Datos Fiscales",
+                    body: <DatosFiscalesForm />,
+                    width: 900,
+                  })
+                }
+                style={{
+                  backgroundColor: !id || readonly ? "" : "#6EAA46",
+                  color: !id || readonly ? "" : "white",
+                  borderColor: !id || readonly ? "" : "#6EAA46",
+                }}
+                disabled={!id || readonly}
+              >
+                Datos Fiscales
+              </Button>
+            </Col>
+            <Col span={8}>
+              <SelectInput
+                formProps={{
+                  name: "sucursal",
+                  label: "Sucursal",
+                  labelCol: { span: 6 },
+                  wrapperCol: { span: 18 },
+                }}
+                options={BranchOptions}
+                required
+                readonly={readonly}
+              />
+            </Col>
+          </Row>
+        </Form>
+        {id ||
+        searchParams.get("mode") === "edit" ||
+        searchParams.get("mode") === "readonly" ? (
+          <>
+            <Row style={{ paddingTop: 10 }}>
+              <Tabs
+                items={[
+                  {
+                    label: "Solicitudes",
+                    key: "1",
+                    children: (
+                      <ProceedingRequests
+                        loading={loading}
+                        printing={printing}
+                        requests={requests}
+                      />
+                    ),
+                  },
+                  {
+                    label: "Presupuestos",
+                    key: "2",
+                    children: (
+                      <ProceedingQuotations
+                        loading={loading}
+                        printing={printing}
+                        readonly={readonly}
+                        searchParams={searchParams}
+                      />
+                    ),
+                  },
+                  {
+                    label: "Citas",
+                    key: "3",
+                    children: (
+                      <ProceedingAppointments
+                        loading={loading}
+                        printing={printing}
+                        readonly={readonly}
+                        citas={citas}
+                        convertSolicitud={convertSolicitud}
+                      />
+                    ),
+                  },
+                ]}
+              />
             </Row>
-          </Form>
-          {id ||
-          searchParams.get("mode") === "edit" ||
-          searchParams.get("mode") === "readonly" ? (
-            <>
-              <Row justify="end">
-                <Col span={4}>
-                  {values?.hasWallet ? (
-                    <Card
-                      style={{
-                        marginTop: "20px",
-                        marginLeft: "10%",
-                        marginBottom: "20px",
-                        width: "150px",
-                      }}
-                      bodyStyle={{
-                        backgroundColor: "rgba(255, 255, 0, 1)",
-                        border: 0,
-                      }}
-                    >
-                      <p>Monedero Electronico: {values.wallet}</p>
-                    </Card>
-                  ) : (
-                    ""
-                  )}
-                </Col>
-              </Row>
-              <Row style={{ paddingTop: 10 }}>
-                <Tabs
-                  items={[
-                    {
-                      label: "Solicitudes",
-                      key: "1",
-                      children: (
-                        <ProceedingRequests
-                          loading={loading}
-                          printing={printing}
-                          requests={requests}
-                        />
-                      ),
-                    },
-                    {
-                      label: "Presupuestos",
-                      key: "2",
-                      children: (
-                        <ProceedingQuotations
-                          loading={loading}
-                          printing={printing}
-                          readonly={readonly}
-                          searchParams={searchParams}
-                        />
-                      ),
-                    },
-                    {
-                      label: "Citas",
-                      key: "3",
-                      children: (
-                        <ProceedingAppointments
-                          loading={loading}
-                          printing={printing}
-                          readonly={readonly}
-                          citas={citas}
-                          convertSolicitud={convertSolicitud}
-                        />
-                      ),
-                    },
-                  ]}
-                />
-              </Row>
-            </>
-          ) : (
-            ""
-          )}
-        </div>
+          </>
+        ) : (
+          ""
+        )}
       </div>
     </Spin>
   );

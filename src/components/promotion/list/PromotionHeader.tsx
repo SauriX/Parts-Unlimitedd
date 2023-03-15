@@ -1,14 +1,12 @@
 import { Button, PageHeader, Input } from "antd";
-import React, { FC } from "react";
-import HeaderTitle from "../../app/common/header/HeaderTitle";
+import { FC } from "react";
+import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import ImageButton from "../../app/common/button/ImageButton";
-import { observer } from "mobx-react-lite";
-import { useStore } from "../../app/stores/store";
-import views from "../../app/util/view";
-import PrintIcon from "../../app/common/icons/PrintIcon";
-import DownloadIcon from "../../app/common/icons/DownloadIcon";
+import { useStore } from "../../../app/stores/store";
+import views from "../../../app/util/view";
+import PrintIcon from "../../../app/common/icons/PrintIcon";
+import DownloadIcon from "../../../app/common/icons/DownloadIcon";
 
 const { Search } = Input;
 
@@ -22,7 +20,7 @@ const PromotionHeader: FC<PromotionHeaderProps> = ({
   handleDownload,
 }) => {
   const { promotionStore } = useStore();
-  const { scopes, getAll, exportList } = promotionStore;
+  const { scopes, getAll } = promotionStore;
 
   const navigate = useNavigate();
 

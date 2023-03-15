@@ -1,4 +1,13 @@
-import { Spin, Form, Row, Col, Pagination, Button, PageHeader, Divider } from "antd";
+import {
+  Spin,
+  Form,
+  Row,
+  Col,
+  Pagination,
+  Button,
+  PageHeader,
+  Divider,
+} from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/TextInput";
@@ -30,7 +39,9 @@ const ReagentForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
   const [form] = Form.useForm<IReagentForm>();
 
   const [loading, setLoading] = useState(false);
-  const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
+  const [readonly, setReadonly] = useState(
+    searchParams.get("mode") === "readonly"
+  );
   const [values, setValues] = useState<IReagentForm>(new ReagentFormValues());
 
   useEffect(() => {
@@ -80,6 +91,8 @@ const ReagentForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
   };
 
   const setEditMode = () => {
+    searchParams.delete("mode");
+    setSearchParams(searchParams);
     navigate(`/${views.reagent}/${id}?${searchParams}&mode=edit`);
     setReadonly(false);
   };
@@ -123,7 +136,12 @@ const ReagentForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
         )}
         {readonly && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
-            <ImageButton key="edit" title="Editar" image="editar" onClick={setEditMode} />
+            <ImageButton
+              key="edit"
+              title="Editar"
+              image="editar"
+              onClick={setEditMode}
+            />
           </Col>
         )}
       </Row>
@@ -133,7 +151,9 @@ const ReagentForm: FC<ReagentFormProps> = ({ id, componentRef, printing }) => {
           {printing && (
             <PageHeader
               ghost={false}
-              title={<HeaderTitle title="Catálogo de Reactivos" image="reactivo" />}
+              title={
+                <HeaderTitle title="Catálogo de Reactivos" image="reactivo" />
+              }
               className="header-container"
             ></PageHeader>
           )}

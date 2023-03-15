@@ -52,7 +52,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
     packStore;
   const [lista, setLista] = useState(studies);
   const [searchParams] = useSearchParams();
-  const { getDepartmentOptions, departmentOptions, getareaOptions, areas } =
+  const { getDepartmentOptions, departmentOptions, getAreaOptions: getareaOptions, areaOptions: areas } =
     optionStore;
   const navigate = useNavigate();
   const [form] = Form.useForm<IPackForm>();

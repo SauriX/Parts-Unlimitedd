@@ -15,9 +15,12 @@ type ReagentHeaderProps = {
   handleDownload: () => Promise<void>;
 };
 
-const ReagentHeader: FC<ReagentHeaderProps> = ({ handlePrint, handleDownload }) => {
+const ReagentHeader: FC<ReagentHeaderProps> = ({
+  handlePrint,
+  handleDownload,
+}) => {
   const { reagentStore } = useStore();
-  const { scopes, getAll, exportList } = reagentStore;
+  const { scopes, getAll } = reagentStore;
 
   const navigate = useNavigate();
 
@@ -44,7 +47,9 @@ const ReagentHeader: FC<ReagentHeaderProps> = ({ handlePrint, handleDownload }) 
       className="header-container"
       extra={[
         scopes?.imprimir && <PrintIcon key="print" onClick={handlePrint} />,
-        scopes?.descargar && <DownloadIcon key="download" onClick={handleDownload} />,
+        scopes?.descargar && (
+          <DownloadIcon key="download" onClick={handleDownload} />
+        ),
         <Search
           key="search"
           placeholder="Buscar"

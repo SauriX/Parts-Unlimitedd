@@ -109,3 +109,9 @@ export interface IGrouped<T> {
   key: string;
   items: T[];
 }
+
+export interface IDay {
+  id: number;
+  dia: string;
+  nombre?: string;
+}

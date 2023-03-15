@@ -11,7 +11,7 @@ const RouteFormStudies = () => {
   const { optionStore, routeStore } = useStore();
   const { studies } = routeStore;
   const [lista, setLista] = useState(studies);
-  const { departmentOptions, getareaOptions, areas } = optionStore;
+  const { departmentOptions, getAreaOptions: getareaOptions, areaOptions: areas } = optionStore;
 
   const [areaId, setAreaId] = useState<number>();
   const [depId, setDepId] = useState<number>();

@@ -127,7 +127,7 @@ IProps) => {
           maxLength={max ?? undefined}
           minLength={min ?? undefined}
           style={{
-            paddingRight: paddingRight,
+            // paddingRight: paddingRight,
             width: width ?? "100%",
             ...(style ?? {}),
           }}
