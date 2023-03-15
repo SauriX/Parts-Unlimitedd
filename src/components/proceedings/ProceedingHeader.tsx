@@ -1,15 +1,13 @@
-import { Button, PageHeader, Input } from "antd";
-import React, { FC } from "react";
+import { Button, PageHeader } from "antd";
+import { FC } from "react";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import ImageButton from "../../app/common/button/ImageButton";
 import { useStore } from "../../app/stores/store";
 import views from "../../app/util/view";
 import PrintIcon from "../../app/common/icons/PrintIcon";
 import DownloadIcon from "../../app/common/icons/DownloadIcon";
-
-const { Search } = Input;
+import { observer } from "mobx-react-lite";
 
 type ProceedingProps = {
   handlePrint: () => void;
@@ -21,25 +19,8 @@ const ProceedingHeader: FC<ProceedingProps> = ({
   handleDownload,
 }) => {
   const {} = useStore();
-  /*   const { scopes, getAll,} = ; */
-
   const navigate = useNavigate();
-
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const search = async (search: string | undefined) => {
-    search = search === "" ? undefined : search;
-
-    /*   await getAll(search ?? "all"); */
-
-    if (search) {
-      searchParams.set("search", search);
-    } else {
-      searchParams.delete("search");
-    }
-
-    setSearchParams(searchParams);
-  };
 
   return (
     <PageHeader
@@ -71,4 +52,4 @@ const ProceedingHeader: FC<ProceedingProps> = ({
   );
 };
 
-export default ProceedingHeader;
+export default observer(ProceedingHeader);

@@ -144,7 +144,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       ...getDefaultColumnProps("expediente", "Expediente", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -166,6 +166,15 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
         searchState,
         setSearchState,
         width: "25%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("sucursal", "Sucursal", {
+        searchState,
+        setSearchState,
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -220,7 +229,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       dataIndex: "id",
       title: "Editar",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: windowWidth < resizeWidth ? 100 : "5%",
       render: (value) => (
         <IconButton
           title="Editar Expediente"

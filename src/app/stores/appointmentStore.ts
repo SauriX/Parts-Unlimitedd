@@ -79,7 +79,6 @@ export default class AppoinmentStore {
   };
   createLab = async (reagent: IAppointmentForm) => {
     try {
-      console.log("here");
       await Appointment.createLab(reagent);
       alerts.success(messages.created);
       return true;
@@ -91,7 +90,6 @@ export default class AppoinmentStore {
 
   createDom = async (reagent: IAppointmentForm) => {
     try {
-      console.log("here");
       await Appointment.createLab(reagent);
       alerts.success(messages.created);
       return true;
@@ -121,11 +119,8 @@ export default class AppoinmentStore {
     }
   };
   getAllLab = async (search: ISearchAppointment) => {
-    console.log("use");
     try {
-      console.log(search);
       const roles = await Appointment.getLab(search);
-      console.log(roles);
       this.sucursales = roles;
       return roles;
     } catch (error: any) {
@@ -135,9 +130,7 @@ export default class AppoinmentStore {
   };
   getAllDom = async (search: ISearchAppointment) => {
     try {
-      console.log(search);
       const roles = await Appointment.getDom(search);
-      console.log(roles);
       this.sucursales = roles;
       return roles;
     } catch (error: any) {
@@ -167,32 +160,26 @@ export default class AppoinmentStore {
         x.indicaciones = parametros?.indicaciones!;
         x.clave = parametros?.clave!;
       });
-      console.log(rol);
       this.sucursal = rol;
       return rol;
     } catch (error: any) {
       if (error.status === responses.notFound) {
-        //history.push("/notFound");
       } else {
         alerts.warning(getErrors(error));
       }
-      //this.roles = [];
     }
   };
 
   getByIdDom = async (id: string) => {
     try {
       const rol = await Appointment.getByIdDom(id);
-      console.log(rol);
       this.sucursal = rol;
       return rol;
     } catch (error: any) {
       if (error.status === responses.notFound) {
-        //history.push("/notFound");
       } else {
         alerts.warning(getErrors(error));
       }
-      //this.roles = [];
     }
   };
   exportList = async (search: ISearchAppointment) => {
@@ -288,7 +275,6 @@ export default class AppoinmentStore {
           asignado: true,
         })),
       };
-      console.log(pack);
       this.packs.unshift(pack);
       return pack;
     } catch (error: any) {

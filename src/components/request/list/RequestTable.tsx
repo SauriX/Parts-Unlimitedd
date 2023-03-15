@@ -75,7 +75,7 @@ const RequestTable = () => {
       ),
     },
     {
-      ...getDefaultColumnProps("afiliacion", "Afiliación", {
+      ...getDefaultColumnProps("sucursal", "Sucursal", {
         searchState,
         setSearchState,
         width: 180,

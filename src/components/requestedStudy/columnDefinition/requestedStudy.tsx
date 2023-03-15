@@ -1,4 +1,4 @@
-import { Checkbox, Table, Typography } from "antd";
+import { Checkbox, Table, Tooltip, Typography } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { useState } from "react";
 import PrintIcon from "../../../app/common/icons/PrintIcon";
@@ -12,6 +12,7 @@ import {
   IRequestedStudyList,
   IUpdate,
 } from "../../../app/models/requestedStudy";
+import { EyeOutlined } from "@ant-design/icons";
 import { status } from "../../../app/util/catalogs";
 import { useNavigate } from "react-router-dom";
 const { Link, Text } = Typography;
@@ -95,15 +96,35 @@ const RequestedStudyColumns = ({ printOrder }: tableProps) => {
       ...getDefaultColumnProps("compañia", "Compañía", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "10%",
       }),
+    },
+    {
+      key: "observacion",
+      dataIndex: "observacion",
+      title: "Observación",
+      align: "center",
+      width: "10%",
+      render: (_value, record) => {
+        return (
+          <>
+            {record.observacion != null ? (
+                <Tooltip title={record.observacion} color="#108ee9">
+                <EyeOutlined style={{ cursor: "pointer" }} />
+              </Tooltip>
+            ) : (
+              "-"
+            )}
+          </>
+        );
+      },
     },
     {
       key: "imprimir",
       dataIndex: "imprimir",
-      title: "Imprimir orden",
+      title: "Orden",
       align: "center",
-      width: "10%",
+      width: "5%",
       render: (_value, record) => (
         <PrintIcon
           key="imprimir"

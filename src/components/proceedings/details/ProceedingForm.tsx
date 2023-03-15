@@ -45,6 +45,7 @@ import { IQuotationFilter } from "../../../app/models/quotation";
 import ProceedingRequests from "./ProceedingRequests";
 import ProceedingQuotations from "./ProceedingQuotations";
 import ProceedingAppointments from "./ProceedingAppointments";
+import { faLaptopHouse } from "@fortawesome/free-solid-svg-icons";
 
 type ProceedingFormProps = {
   id: string;
@@ -102,7 +103,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   const { getColoniesByZipCode } = locationStore;
   const { openModal, closeModal } = modalStore;
   const [colonies, setColonies] = useState<IOptions[]>([]);
-  const [continuar, SetContinuar] = useState<boolean>(true);
 
   const goBack = (samePage: boolean) => {
     searchParams.delete("mode");
@@ -301,6 +301,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     var coincidencia = await coincidencias(newValues);
     const reagent = { ...values, ...newValues };
     let success = false;
+    let isUpdated = false;
 
     if (reagent.nombre == "" || reagent.apellido == "" || reagent.sexo == "") {
       alerts.warning("El nombre y sexo no pueden estar vacíos");
@@ -331,24 +332,29 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               let record = "";
               if (reagent.id) {
                 success = await update(reagent);
+                isUpdated = true;
               } else {
                 record = (await create(reagent)) as string;
                 success = record ? true : false;
+                isUpdated = false;
               }
 
               setLoading(false);
 
               if (success) {
-                goBack(false);
-                navigate(
-                  `/${views.proceeding}/${record}?${searchParams}&mode=readonly`
-                );
+                if (!isUpdated)
+                  navigate(
+                    `/${views.proceeding}/${record}?${searchParams}&mode=readonly`
+                  );
+                else
+                  navigate(
+                    `/${views.proceeding}/${reagent.id}?${searchParams}&mode=edit`
+                  );
               }
             }}
             expedientes={coincidencia}
             handleclose={async () => {
               setReadonly(true);
-
               setLoading(false);
             }}
             printing={false}
@@ -377,16 +383,23 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       let record = "";
       if (reagent.id) {
         success = await update(reagent);
+        isUpdated = true;
       } else {
         record = (await create(reagent)) as string;
         success = record ? true : false;
+        isUpdated = false;
       }
 
       if (success) {
         goBack(false);
-        navigate(
-          `/${views.proceeding}/${record}?${searchParams}&mode=readonly`
-        );
+        console.log(isUpdated);
+        if (!isUpdated) {
+          navigate(
+            `/${views.proceeding}/${record}?${searchParams}&mode=readonly`
+          );
+        } else {
+          navigate(`/${views.proceeding}/${reagent.id}?${searchParams}&mode=edit`);
+        }
       }
 
       setLoading(false);
@@ -821,7 +834,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
             </Row>
           </Form>
           {id ||
-          (searchParams.get("mode") === "edit") ||
+          searchParams.get("mode") === "edit" ||
           searchParams.get("mode") === "readonly" ? (
             <>
               <Row justify="end">

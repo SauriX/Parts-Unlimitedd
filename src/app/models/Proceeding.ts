@@ -15,6 +15,7 @@ export interface IProceedingList {
   genero: string;
   edad: number;
   fechaNacimiento: string;
+  sucursal: string;
   monederoElectronico: number;
   telefono: string;
 }
