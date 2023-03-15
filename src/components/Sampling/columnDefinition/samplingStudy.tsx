@@ -1,6 +1,5 @@
-import { Checkbox, Input, Table, Tooltip, Typography } from "antd";
+import { Checkbox, Table, Tooltip, Typography } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import TextArea from "antd/lib/input/TextArea";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PrintIcon from "../../../app/common/icons/PrintIcon";
@@ -15,7 +14,6 @@ import {
   IStudySampling,
   IUpdate,
 } from "../../../app/models/sampling";
-import alerts from "../../../app/util/alerts";
 const { Link, Text } = Typography;
 
 type expandableProps = {
@@ -126,7 +124,7 @@ const SamplingStudyColumns = ({ printOrder }: tableProps) => {
     {
       key: "imprimir",
       dataIndex: "imprimir",
-      title: "Imprimir orden",
+      title: "Orden",
       align: "center",
       width: "5%",
       render: (_value, record) => {

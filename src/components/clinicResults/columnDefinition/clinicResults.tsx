@@ -1,4 +1,4 @@
-import { Table, Typography } from "antd";
+import { Table, Tooltip, Typography } from "antd";
 import { useState } from "react";
 import {
   IColumns,
@@ -10,6 +10,7 @@ import {
   IClinicStudy,
 } from "../../../app/models/clinicResults";
 import { useNavigate } from "react-router-dom";
+import { EyeOutlined } from "@ant-design/icons";
 
 const { Link, Text } = Typography;
 
@@ -19,6 +20,7 @@ const ClinicResultsColumns = () => {
     searchedColumn: "",
   });
   const navigate = useNavigate();
+  
   const columns: IColumns<IClinicResultList> = [
     {
       ...getDefaultColumnProps("solicitud", "Clave", {
@@ -89,7 +91,7 @@ const ClinicResultsColumns = () => {
       ...getDefaultColumnProps("usuarioCreo", "Usuario Registró", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "15%",
       }),
     },
 
@@ -97,12 +99,33 @@ const ClinicResultsColumns = () => {
       ...getDefaultColumnProps("compañia", "Compañía", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "15%",
       }),
       render: (_value, record) =>
         record.compañia == null
           ? "No pertenece a una compañía"
           : record.compañia,
+    },
+    
+    {
+      key: "observacion",
+      dataIndex: "observacion",
+      title: "Observación",
+      align: "center",
+      width: "10%",
+      render: (_value, record) => {
+        return (
+          <>
+            {record.observacion != null ? (
+              <Tooltip title={record.observacion} color="#108ee9">
+                <EyeOutlined style={{ cursor: "pointer" }} />
+              </Tooltip>
+            ) : (
+              "-"
+            )}
+          </>
+        );
+      },
     },
   ];
   return columns;
@@ -145,7 +168,7 @@ export const ClinicResultsExpandable = () => {
           </Text>
         </Typography>
       ),
-    },
+    }
   ];
 
   return {

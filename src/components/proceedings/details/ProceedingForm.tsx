@@ -47,6 +47,7 @@ import { IQuotationFilter } from "../../../app/models/quotation";
 import ProceedingRequests from "./ProceedingRequests";
 import ProceedingQuotations from "./ProceedingQuotations";
 import ProceedingAppointments from "./ProceedingAppointments";
+import { faLaptopHouse } from "@fortawesome/free-solid-svg-icons";
 
 const { Text, Title } = Typography;
 
@@ -308,6 +309,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     var coincidencia = await coincidencias(newValues);
     const reagent = { ...values, ...newValues };
     let success = false;
+    let isUpdated = false;
 
     if (reagent.nombre == "" || reagent.apellido == "" || reagent.sexo == "") {
       alerts.warning("El nombre y sexo no pueden estar vacíos");
@@ -338,24 +340,29 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               let record = "";
               if (reagent.id) {
                 success = await update(reagent);
+                isUpdated = true;
               } else {
                 record = (await create(reagent)) as string;
                 success = record ? true : false;
+                isUpdated = false;
               }
 
               setLoading(false);
 
               if (success) {
-                goBack(false);
-                navigate(
-                  `/${views.proceeding}/${record}?${searchParams}&mode=readonly`
-                );
+                if (!isUpdated)
+                  navigate(
+                    `/${views.proceeding}/${record}?${searchParams}&mode=readonly`
+                  );
+                else
+                  navigate(
+                    `/${views.proceeding}/${reagent.id}?${searchParams}&mode=edit`
+                  );
               }
             }}
             expedientes={coincidencia}
             handleclose={async () => {
               setReadonly(true);
-
               setLoading(false);
             }}
             printing={false}
@@ -384,16 +391,23 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       let record = "";
       if (reagent.id) {
         success = await update(reagent);
+        isUpdated = true;
       } else {
         record = (await create(reagent)) as string;
         success = record ? true : false;
+        isUpdated = false;
       }
 
       if (success) {
         goBack(false);
-        navigate(
-          `/${views.proceeding}/${record}?${searchParams}&mode=readonly`
-        );
+        console.log(isUpdated);
+        if (!isUpdated) {
+          navigate(
+            `/${views.proceeding}/${record}?${searchParams}&mode=readonly`
+          );
+        } else {
+          navigate(`/${views.proceeding}/${reagent.id}?${searchParams}&mode=edit`);
+        }
       }
 
       setLoading(false);
