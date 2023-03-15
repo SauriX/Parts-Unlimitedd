@@ -34,6 +34,7 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   serie?: string;
   serieNumero?: string;
   estudios?: IRequestStudyInfo[];
+  destino?:string;
 }
 
 export interface IRequestFilter {

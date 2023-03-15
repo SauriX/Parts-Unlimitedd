@@ -1,19 +1,23 @@
 import moment from "moment";
-import { Interface } from "readline";
-import { ISucMedComList } from "./priceList";
 
 export interface IPromotionList {
   id: number;
   clave: string;
   nombre: string;
   periodo: string;
-  nombreListaPrecio: string;
+  listaPrecio: string;
   activo: boolean;
 }
-export interface IPromotionEstudioList {
-  id: number;
+
+export interface IPromotionStudyPack {
+  estudioId?: number;
+  paqueteId?: number;
+  esEstudio: boolean;
+  tipo: string;
   clave: string;
   nombre: string;
+  departamentoId?: number;
+  areaId?: number;
   area?: string;
   descuentoPorcentaje: number;
   descuentoCantidad: number;
@@ -22,69 +26,74 @@ export interface IPromotionEstudioList {
   activo: boolean;
   precio: number;
   precioFinal: number;
-  paquete: boolean;
-  departamento?: string;
-  selectedTags: IDias[];
-  lunes?: boolean;
-  martes?: boolean;
-  miercoles?: boolean;
-  jueves?: boolean;
-  viernes?: boolean;
-  sabado?: boolean;
-  domingo?: boolean;
-}
-export interface IPromotionBranch {
-  id: string;
-  clave: string;
-  active: string;
-  nombre: string;
-  precio: number;
+  lunes: boolean;
+  martes: boolean;
+  miercoles: boolean;
+  jueves: boolean;
+  viernes: boolean;
+  sabado: boolean;
+  domingo: boolean;
 }
 
-export interface IDias {
-  id: number;
-  dia: string;
+export interface IPromotionDay {
+  lunes: boolean;
+  martes: boolean;
+  miercoles: boolean;
+  jueves: boolean;
+  viernes: boolean;
+  sabado: boolean;
+  domingo: boolean;
 }
+
+export class PromotionDay implements IPromotionDay {
+  lunes: boolean = false;
+  martes: boolean = false;
+  miercoles: boolean = false;
+  jueves: boolean = false;
+  viernes: boolean = false;
+  sabado: boolean = false;
+  domingo: boolean = false;
+
+  constructor(init?: IPromotionForm) {
+    Object.assign(this, init);
+  }
+}
+
 export interface IPromotionForm {
   id: number;
-  clave: string;
-  nombre: string;
+  clave?: string;
+  nombre?: string;
+  tipoDescuento: "p" | "q";
+  cantidad: number;
+  aplicaMedicos: boolean;
   fechaInicial: Date;
   fechaFinal: Date;
-  idListaPrecios: string;
-  tipoDescuento: string;
-  cantidad: number;
+  fechaDescuento: moment.Moment[];
+  listaPrecioId?: string;
   activo: boolean;
-  estudio: IPromotionEstudioList[];
-  branchs: ISucMedComList[];
-  dias: IDias[];
-  medics: Imedic[];
-  mediccheck: boolean;
-}
-
-export interface Imedic {
-  id: string;
-  clave: string;
-  activo: boolean;
-  nombre: string;
+  dias: IPromotionDay;
+  sucursales: string[];
+  medicos: string[];
+  estudios: IPromotionStudyPack[];
 }
 
 export class PromotionFormValues implements IPromotionForm {
-  id = 0;
-  clave = "";
-  nombre = "";
-  tipoDescuento = "";
-  cantidad = 0;
-  idListaPrecios = "";
-  activo = true;
-  lealtad = false;
-  fechaInicial = new Date(moment.now());
-  fechaFinal = new Date(moment.now());
-  estudio: IPromotionEstudioList[] = [];
-  branchs: ISucMedComList[] = [];
-  dias: IDias[] = [];
-  medics = [];
-  mediccheck = false;
+  id: number = 0;
+  clave?: string | undefined;
+  nombre?: string | undefined;
+  tipoDescuento: "p" | "q" = "p";
+  cantidad: number = 0;
+  aplicaMedicos: boolean = false;
+  fechaInicial = new Date();
+  fechaFinal = new Date();
+  fechaDescuento = [moment(), moment()];
+  listaPrecioId?: string | undefined;
+  activo: boolean = true;
+  dias: IPromotionDay = new PromotionDay();
+  sucursales: string[] = [];
+  medicos: string[] = [];
+  estudios: IPromotionStudyPack[] = [];
+
   constructor(init?: IPromotionForm) {
     Object.assign(this, init);
   }

@@ -26,7 +26,11 @@ const Proceding = {
   //getPermission: (): Promise<IRolePermission[]> => requests.get(`Rol/permisos`), */
   create: (pack: IProceedingForm): Promise<IProceedingList> =>
     requests.post("/MedicalRecord", pack),
-  updateWallet: (id: string, saldo: number, activo: boolean): Promise<void> =>
+  updateWallet: (
+    id: string,
+    saldo: number,
+    activo: boolean
+  ): Promise<boolean> =>
     requests.post("/MedicalRecord/updateWallet", { id, saldo, activo }),
   createTaxData: (taxData: ITaxData): Promise<string> =>
     requests.post("/MedicalRecord/taxData", taxData),
@@ -34,6 +38,8 @@ const Proceding = {
     requests.put("/MedicalRecord", pack),
   updateTaxData: (taxData: ITaxData): Promise<void> =>
     requests.put("/MedicalRecord/taxData", taxData),
+  setDefaultTaxData: (taxDataId: string): Promise<void> =>
+    requests.put("/MedicalRecord/taxData/default", taxDataId),
   updateObservation: (observation: any): Promise<void> =>
     requests.put("/MedicalRecord/observations", observation),
   exportList: (search: ISearchMedical): Promise<void> =>

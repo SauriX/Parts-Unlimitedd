@@ -9,6 +9,7 @@ import { formItemLayout, moneyFormatter } from "../../../../app/util/utils";
 import InvoiceCompanyDeliver from "./InvoiceCompanyDeliver";
 import { useParams } from "react-router-dom";
 import { toJS } from "mobx";
+import NumberInput from "../../../../app/common/form/proposal/NumberInput";
 
 const { Title, Text } = Typography;
 
@@ -285,7 +286,7 @@ const InvoiceCompanyData = ({
 
               {tipo === "company" && (
                 <Col span={10}>
-                  <TextInput
+                  <NumberInput
                     formProps={{
                       name: "diasCredito",
                       label: "Días de crédito",

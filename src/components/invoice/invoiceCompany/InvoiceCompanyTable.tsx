@@ -42,7 +42,7 @@ const InvoiceCompanyTable = () => {
   const [selectedRequests, setSelectedRequests] = useState<any[]>();
   const [isSameCommpany, setIsSameCompany] = useState<boolean>(false);
   const { invoiceCompanyStore, optionStore } = useStore();
-  const { areas, getareaOptions } = optionStore;
+  const { areaOptions: areas, getAreaOptions: getareaOptions } = optionStore;
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
   const [openRows, setOpenRows] = useState<boolean>(false);
   const {

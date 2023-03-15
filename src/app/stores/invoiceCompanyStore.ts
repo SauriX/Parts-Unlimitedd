@@ -66,6 +66,10 @@ export class InvoiceCompanyStore {
       alerts.warning(getErrors(error));
     }
   };
+  formValues: any = {};
+  setFormValues = (filter: any) => {
+    this.formValues = filter;
+  };
 
   getCompanyById = async (id: string) => {
     try {

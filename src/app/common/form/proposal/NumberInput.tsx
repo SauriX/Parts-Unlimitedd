@@ -120,6 +120,8 @@ const NumberInput = ({
           formatter={formatter}
           parser={parser}
           onChange={onChange}
+          min={min}
+          max={max}
         />
       </Form.Item>
       {/* {(!!suffix || isGroup || !!errors) && ( */}

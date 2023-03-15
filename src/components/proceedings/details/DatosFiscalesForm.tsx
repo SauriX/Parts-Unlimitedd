@@ -35,8 +35,14 @@ const DatosFiscalesForm = ({
   onSelectRow,
 }: DatosFiscalesFormProps) => {
   const { procedingStore, locationStore } = useStore();
-  const { setTax, tax, getTaxData, createTaxData, updateTaxData } =
-    procedingStore;
+  const {
+    setTax,
+    tax,
+    getTaxData,
+    createTaxData,
+    updateTaxData,
+    setDefaultTaxData: setDefaultTaxDataValue,
+  } = procedingStore;
   const { getColoniesByZipCode } = locationStore;
 
   const [form] = Form.useForm<ITaxData>();
@@ -46,6 +52,7 @@ const DatosFiscalesForm = ({
   const [localTaxData, setLocalTaxData] = useState<ITaxData[]>([]);
   const [colonies, setColonies] = useState<IOptions[]>([]);
   const [errors, setErrors] = useState<IFormError[]>([]);
+  const [defaultTaxData, setDefaultTaxData] = useState<any>([]);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -56,6 +63,10 @@ const DatosFiscalesForm = ({
     const readTaxData = async () => {
       setLoading(true);
       const taxData = await getTaxData(recordId!);
+      const defualtTX = taxData
+        .filter((tx) => tx.isDefaultTaxData)
+        .map((tx) => tx.id);
+      setDefaultTaxData(defualtTX);
       setLocalTaxData(taxData);
       setLoading(false);
     };
@@ -64,6 +75,12 @@ const DatosFiscalesForm = ({
       readTaxData();
     }
   }, [getTaxData, local, recordId]);
+
+  useEffect(() => {
+    if (!!defaultTaxData.length) {
+      setDefaultTaxDataValue(defaultTaxData[0]);
+    }
+  }, [defaultTaxData]);
 
   const clearLocation = () => {
     form.setFieldsValue({
@@ -472,6 +489,13 @@ const DatosFiscalesForm = ({
             rowClassName={(taxData) =>
               taxData.id === selectedRow ? "custom-selected-row" : ""
             }
+            rowSelection={{
+              selectedRowKeys: defaultTaxData,
+              type: "radio",
+              onChange: (selectedRowKey) => {
+                setDefaultTaxData(selectedRowKey);
+              },
+            }}
             onRow={(taxData) => {
               return {
                 onClick: () => {

@@ -7,6 +7,7 @@ import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import { IInvoicesFreeFilter } from "../../../app/models/Invoice";
+import { urgencyOptions } from "../../../app/stores/optionStore";
 import { useStore } from "../../../app/stores/store";
 import { formItemLayout } from "../../../app/util/utils";
 
@@ -20,16 +21,25 @@ const InvoiceGlobalForm = () => {
     companyOptions,
     getSucursalesOptions,
     getCompanyOptions,
+    getMedicOptions,
+    medicOptions,
+    getDepartmentOptions,
+    departmentOptions,
   } = optionStore;
-  const { getInvoicesCompany } = invoiceCompanyStore;
+  const { getInvoicesCompany, setFormValues, formValues } = invoiceCompanyStore;
   useEffect(() => {
     getSucursalesOptions();
     getCompanyOptions();
+    getMedicOptions();
+    getDepartmentOptions();
   }, []);
   useEffect(() => {
     form.resetFields();
     form.submit();
   }, []);
+  useEffect(() => {
+    form.setFieldsValue(formValues);
+  }, [form, formValues]);
   const onFinish = async (newFormValues: any) => {
     const formValues = {
       ...newFormValues,
@@ -40,7 +50,7 @@ const InvoiceGlobalForm = () => {
       sucursalId: [],
       tipoFactura: [],
     };
-
+    setFormValues(newFormValues);
     getInvoicesCompany(formValues);
   };
 
@@ -66,28 +76,32 @@ const InvoiceGlobalForm = () => {
                 style={{ marginBottom: 10 }}
               />
 
-              <SelectInput
+              {/* <SelectInput
                 formProps={{
                   name: "procedencia",
                   label: "Procedencia",
                 }}
                 options={sucursales}
                 style={{ marginBottom: 10 }}
-              />
+              /> */}
               <SelectInput
+                form={form}
                 formProps={{
-                  name: "departamento",
+                  name: "departamentos",
                   label: "Departamento",
                 }}
-                options={sucursales}
+                multiple
+                options={departmentOptions}
                 style={{ marginBottom: 10 }}
               />
               <SelectInput
+                multiple
+                form={form}
                 formProps={{
-                  name: "medico",
+                  name: "medicos",
                   label: "Médico",
                 }}
-                options={sucursales}
+                options={medicOptions}
                 style={{ marginBottom: 10 }}
               />
             </Col>
@@ -100,52 +114,51 @@ const InvoiceGlobalForm = () => {
                 style={{ marginBottom: 10 }}
               />
               <SelectInput
+                multiple
+                form={form}
                 formProps={{
-                  name: "sucursal",
+                  name: "sucursalId",
                   label: "Sucursal",
                 }}
                 options={sucursales}
                 style={{ marginBottom: 10 }}
               />
-              <SelectInput
+              {/* <SelectInput
                 formProps={{
                   name: "compania",
                   label: "Compañia",
                 }}
                 options={companyOptions}
                 style={{ marginBottom: 10 }}
-              />
+              /> */}
             </Col>
             <Col span={8}>
               <SelectInput
+                multiple
+                form={form}
                 formProps={{
-                  name: "tipoSolicitud",
+                  name: "urgencias",
                   label: "Tipo de solicitud",
                 }}
-                options={companyOptions}
+                options={urgencyOptions}
                 style={{ marginBottom: 10 }}
               />
               <SelectInput
                 form={form}
                 multiple
                 formProps={{
-                  name: "estatus",
+                  name: "tipoFactura",
                   label: "Estatus",
                 }}
                 options={[
-                  {
-                    label: "Facturadas",
-                    value: "Facturado",
-                  },
-                  {
-                    label: "Canceladas",
-                    value: "Cancelado",
-                  },
+                  { label: "Facturadas", value: "facturadas" },
+                  { label: "No facturadas", value: "noFacturadas" },
+                  { label: "Canceladas", value: "canceladas" },
                 ]}
                 style={{ marginBottom: 10 }}
               />
 
-              <Row justify="center">
+              {/* <Row justify="center">
                 <Checkbox.Group
                   options={[
                     { label: "Compañia", value: "company" },
@@ -155,12 +168,12 @@ const InvoiceGlobalForm = () => {
                     setCheckedValues(newChekedValues);
                   }}
                 />
-              </Row>
+              </Row> */}
             </Col>
           </Row>
           <Row justify="end">
             <Col span={4} offset={20}>
-              <Button>Limpiar</Button>
+              <Button onClick={() => form.resetFields()}>Limpiar</Button>
               <Button type="primary" onClick={() => form.submit()}>
                 Filtrar
               </Button>
