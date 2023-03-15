@@ -17,6 +17,7 @@ export interface IClinicResultList {
   sexo: string;
   compañia: string;
   seleccion: boolean;
+  observacion: string;
   estudios: IClinicStudy[];
   procedencia: number;
   clavePatologica: string;

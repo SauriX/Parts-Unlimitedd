@@ -13,6 +13,7 @@ export interface IRequestedStudyList {
   sexo: string;
   compañia: string;
   seleccion: boolean;
+  observacion: string;
   estudios: IRequestedStudy[];
 }
 

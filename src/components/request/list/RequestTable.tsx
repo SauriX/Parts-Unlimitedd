@@ -1,7 +1,7 @@
 import { Col, Image, Row, Table, Typography } from "antd";
 import { useEffect, useState } from "react";
 import {
-  defaultRecordRequestPagination,
+  defaultPaginationProperties,
   getDefaultColumnProps,
   IColumns,
   ISearch,
@@ -75,7 +75,7 @@ const RequestTable = () => {
       ),
     },
     {
-      ...getDefaultColumnProps("afiliacion", "Afiliación", {
+      ...getDefaultColumnProps("sucursal", "Sucursal", {
         searchState,
         setSearchState,
         width: 180,
@@ -182,7 +182,7 @@ const RequestTable = () => {
       rowKey={(record) => record.solicitudId}
       columns={columns}
       dataSource={[...requests]}
-      pagination={defaultRecordRequestPagination}
+      pagination={defaultPaginationProperties}
       sticky
       scroll={{ x: "fit-content" }}
       expandable={{

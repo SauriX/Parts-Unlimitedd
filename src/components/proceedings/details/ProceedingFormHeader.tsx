@@ -9,6 +9,7 @@ import views from "../../../app/util/view";
 import DownloadIcon from "../../../app/common/icons/DownloadIcon";
 import PrintIcon from "../../../app/common/icons/PrintIcon";
 import GoBackIcon from "../../../app/common/icons/GoBackIcon";
+import { observer } from "mobx-react-lite";
 
 const { Search } = Input;
 
@@ -25,8 +26,6 @@ const ProceedingFormHeader: FC<ProceedingProps> = ({
 }) => {
   const { procedingStore } = useStore();
   const { clearTax } = procedingStore;
-  console.log("el id de la promo");
-  console.log(id);
   let navigate = useNavigate();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -37,7 +36,7 @@ const ProceedingFormHeader: FC<ProceedingProps> = ({
     clearTax();
     navigate(`/${views.proceeding}?${searchParams}`);
   };
-  /*  console.log(scopes); */
+
   return (
     <PageHeader
       ghost={false}
@@ -62,4 +61,4 @@ const ProceedingFormHeader: FC<ProceedingProps> = ({
   );
 };
 
-export default ProceedingFormHeader;
+export default observer(ProceedingFormHeader);

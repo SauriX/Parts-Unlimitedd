@@ -68,7 +68,7 @@ export class RequestFilterForm implements IRequestFilter {
 export interface IRequestInfo extends IRequestBase {
   clave: string;
   clavePatologica: string;
-  afiliacion: string;
+  sucursal: string;
   paciente: string;
   compañia: string;
   procedencia: string;
