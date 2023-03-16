@@ -358,6 +358,7 @@ export interface IRequestTag {
   nombreEtiqueta: string;
   cantidad: number;
   color: string;
+  observaciones?: string
   estudios: IRequestTagStudy[];
 }
 

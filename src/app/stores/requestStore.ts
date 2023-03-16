@@ -384,12 +384,12 @@ export default class RequestStore {
           "Se encuentran coincidencias en parámetros de solicitud, en estudios: " +
             repeated.map((x) => x.clave).join(", "),
           async () => {
-            this.studies.unshift(study);
+            this.studies.push(study);
             this.updateTagsStudy(study);
           }
         );
       } else {
-        this.studies.unshift(study);
+        this.studies.push(study);
         this.updateTagsStudy(study);
       }
 
