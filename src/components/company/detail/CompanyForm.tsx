@@ -177,8 +177,6 @@ const CompanyForm: FC<CompanyFormProps> = ({ id, componentRef, printing }) => {
 
   const onFinish = async (newValues: ICompanyForm) => {
     const company = { ...values, ...newValues };
-    console.log(values);
-    console.log(newValues);
     company.contacts = contacts;
     const colonia = colonies.find((x) => x.value === company.coloniaId);
     company.colonia = "" + colonia?.label;
