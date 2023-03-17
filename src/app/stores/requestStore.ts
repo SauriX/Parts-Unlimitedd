@@ -613,6 +613,7 @@ export default class RequestStore {
       ) {
         const payment = await Request.createPayment(request);
         this.payments.push(payment);
+        if(payment.lealtad) alerts.success(messages.loyaltyWallet);
       } else {
         this.chargePayPalPayment(request);
       }

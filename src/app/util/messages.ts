@@ -16,6 +16,7 @@ const messages = {
   notFound: "El recurso que buscas no está disponible",
   emptyPermissions: "Debe seleccionar al menos un permiso",
   activeWallet: "El monedero electrónico ha sido activado exitosamente",
+  loyaltyWallet: "Monedero electrónico aplicado",
 
   confirmations: {
     enableTitle: "¿Desea activar el registro?",

@@ -162,6 +162,7 @@ export interface IRequestPayment extends IRequestBase {
   usuarioRegistra?: string;
   fechaPago: moment.Moment;
   notificacionId?: string;
+  lealtad: boolean;
 }
 
 export interface IRequestCheckIn extends IRequestBase {
