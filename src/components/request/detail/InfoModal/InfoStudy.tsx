@@ -23,6 +23,9 @@ const InfoStudy = ({ id, sucursal, sucursalDestino, estudio }: Props) => {
         const readInfoStudy = async () => {
             setLoading(true);
             var studys = await getTecInfoById(id);
+            if(Number(studys!.diasEntrega) <=0){
+                    studys!.diasEntrega = ""
+            }
             setStudy(studys);
             setLoading(false);
         };
@@ -41,9 +44,9 @@ const InfoStudy = ({ id, sucursal, sucursalDestino, estudio }: Props) => {
                     <Col span={8} style={{ textAlign: "center" }}>
                         Sucursal destino: {sucursalDestino}
                     </Col>
-                    {study!.diasEntrega > 0 ? (<Col span={8} style={{ textAlign: "center" }}>
+                   <Col span={8} style={{ textAlign: "center" }}>
                         Días de entrega: {study?.diasEntrega}
-                    </Col>) : ""}
+                    </Col>
 
                     <Col span={12}>
                         Tipo de muestra: {study?.tipoMuestra}
