@@ -66,9 +66,19 @@ const RequestPrintTag = () => {
     }
   };
 
+  const onChangeObservation = (observation: string, record: IRequestTag) => {
+    let index = tags.findIndex((x) => x.id === record.id);
+    if (index > -1) {
+      const lbls = [...tags];
+      lbls[index] = { ...lbls[index], observaciones: observation };
+      setTags(lbls);
+    }
+  };
+
   const onChangeStudies = (values: string[], tag: IRequestTag) => {
     const newTags = [...tags];
     const index = newTags.findIndex((x) => x.id === tag.id);
+
 
     if (index === -1) return;
 
@@ -127,6 +137,7 @@ const RequestPrintTag = () => {
           }}
           bordered={record ? true : false}
           rows={3}
+          onChange={(e) => onChangeObservation(e.target.value, record)}
           autoSize
         />
       ),

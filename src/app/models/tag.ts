@@ -6,6 +6,7 @@ export interface ITag {
   nombreEtiqueta: string;
   color: string;
   claveInicial: string;
+  observaciones?: string;
 }
 
 export interface ITagStudy {
