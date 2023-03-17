@@ -40,6 +40,7 @@ const RequestFilter = () => {
 
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
+  const [dateType, setDateType] = useState<number>(1);
 
   useKeyPress("L", form.submit);
 
@@ -121,6 +122,7 @@ const RequestFilter = () => {
                 name: "tipoFecha",
                 label: "Fecha de",
               }}
+              onChange={(value) => setDateType(value)}
               options={[
                 { value: 1, label: "Fecha de Creación" },
                 { value: 2, label: "Fecha de Entrega" },
@@ -130,7 +132,8 @@ const RequestFilter = () => {
           <Col span={8}>
             <DateRangeInput
               formProps={{ name: "fechas", label: "Fechas" }}
-              disableAfterDates
+              disableAfterDates={dateType == 1}
+              disableBeforeDates={dateType == 2}
             />
           </Col>
           <Col span={8}>

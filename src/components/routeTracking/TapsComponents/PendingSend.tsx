@@ -60,6 +60,9 @@ const PendingSend = () => {
       form.setFieldValue("origen", branch);
     }
   }, [BranchOptions, profile]);
+  useEffect(() => {
+    form.setFieldsValue(searchrecive);
+  }, [form, searchrecive]);
 
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",

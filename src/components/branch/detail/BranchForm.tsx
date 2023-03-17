@@ -330,7 +330,7 @@ const BranchForm: FC<BranchFormProps> = ({
                     name: "codigoPostal",
                     label: "Código postal",
                   }}
-                  max={100}
+                  max={5}
                   readonly={CheckReadOnly()}
                 />
               </Col>

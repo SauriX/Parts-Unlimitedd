@@ -72,7 +72,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
     studies,
     sucMedCom,
   } = priceListStore;
-  const { getDepartmentOptions, departmentOptions, getareaOptions, areas } =
+  const { getDepartmentOptions, departmentOptions, getAreaOptions: getareaOptions, areaOptions: areas } =
     optionStore;
   const { openModal, closeModal } = modalStore;
   const [areaId, setAreaId] = useState<number>();

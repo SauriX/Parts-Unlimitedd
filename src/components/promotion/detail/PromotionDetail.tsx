@@ -13,12 +13,14 @@ type UrlParams = {
 
 const PromotionDetail = () => {
   const { promotionStore } = useStore();
-  const { clearScopes, exportForm } = promotionStore; 
+  const { scopes, access, clearScopes, exportForm } = promotionStore;
+
+  const navigate = useNavigate();
 
   const [printing, setPrinting] = useState(false);
-  const [download, setDownload] = useState(false);
+
   const { id } = useParams<UrlParams>();
-  const reagentId = id;
+  const promoId = !id ? 0 : isNaN(Number(id)) ? undefined : Number(id);
 
   const componentRef = useRef<any>();
 
@@ -38,24 +40,53 @@ const PromotionDetail = () => {
   });
 
   const handleDownload = async () => {
-    if (reagentId) {
-      setDownload(true);
-      await exportForm(reagentId);
-      setDownload(false);
+    if (promoId) {
+      setPrinting(true);
+      await exportForm(promoId);
+      setPrinting(false);
     }
   };
 
-   useEffect(() => {
+  useEffect(() => {
+    const checkAccess = async () => {
+      const permissions = await access();
+
+      if (promoId === undefined) {
+        navigate("/notFound");
+      } else if (!permissions?.crear && promoId === 0) {
+        navigate(`/forbidden`);
+      } else if (!permissions?.modificar && promoId !== 0) {
+        navigate(`/forbidden`);
+      }
+    };
+
+    checkAccess();
+  }, [access, navigate, promoId]);
+
+  useEffect(() => {
     return () => {
       clearScopes();
     };
   }, [clearScopes]);
 
+  if (promoId == null) return null;
+
+  if (!scopes?.acceder) return null;
+
   return (
     <Fragment>
-      <PromotionFormHeader id={reagentId!} handlePrint={handlePrint} handleDownload={handleDownload} />
+      <PromotionFormHeader
+        id={promoId!}
+        handlePrint={handlePrint}
+        handleDownload={handleDownload}
+      />
       <Divider className="header-divider" />
-      <PromotionForm id={reagentId!} componentRef={componentRef} printing={printing} download={download}/>
+      <PromotionForm
+        id={promoId!}
+        componentRef={componentRef}
+        printing={printing}
+        download={printing}
+      />
     </Fragment>
   );
 };

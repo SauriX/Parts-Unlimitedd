@@ -92,6 +92,7 @@ import SeriesDetail from "../../components/series/detail/SeriesDetail";
 import InvoiceCatalog from "../../views/InvoiceCatalog";
 import ReportStudy from "../../views/ReportStudy";
 import { useKeyPress } from "../hooks/useKeyPress";
+import CreditMonitoring from "../../views/CreditMonitoring";
 import RouteTrackingCreate from "../../components/routeTracking/detail/RouteTrackingCreate";
 
 function App() {
@@ -213,6 +214,7 @@ function App() {
               path="invoice/:tipo/:id"
               element={<InvoiceCompanyCreate />}
             />
+            <Route path="credit/" element={<CreditMonitoring />} />
             <Route path="series" element={<Series />} />
             <Route path="series/:id/:tipoSerie" element={<SeriesDetail />} />
             <Route path="notifications" element={<Notifications />} />

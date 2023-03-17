@@ -23,6 +23,7 @@ import { useStore } from "../../../../../app/stores/store";
 import alerts from "../../../../../app/util/alerts";
 import { DeleteTwoTone } from "@ant-design/icons";
 import { ITagStudy } from "../../../../../app/models/tag";
+import TextAreaInput from "../../../../../app/common/form/proposal/TextAreaInput";
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -91,13 +92,13 @@ const RequestPrintTag = () => {
     {
       ...getDefaultColumnProps("nombreEtiqueta", "Tapón", {
         searchable: false,
-        width: "28%",
+        width: "25%",
       }),
     },
     {
       ...getDefaultColumnProps("estudios", "Estudios", {
         searchable: false,
-        width: "45%",
+        width: "35%",
       }),
       render(value: IRequestTagStudy[], record) {
         return (
@@ -113,9 +114,27 @@ const RequestPrintTag = () => {
       },
     },
     {
+      ...getDefaultColumnProps("observaciones", "Observación", {
+        searchable: false,
+        width: "20%",
+      }),
+      render: (value, record) => (
+        <TextAreaInput
+          formProps={{
+            name: "observaciones",
+            label: "",
+            noStyle: true,
+          }}
+          bordered={record ? true : false}
+          rows={3}
+          autoSize
+        />
+      ),
+    },
+    {
       ...getDefaultColumnProps("cantidad", "Cant.", {
         searchable: false,
-        width: "8%",
+        width: "5%",
       }),
       render: (_, record) => (
         <InputNumber

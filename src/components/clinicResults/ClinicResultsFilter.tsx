@@ -22,7 +22,7 @@ const ClinicResultsFilter = () => {
   const { requestStore, optionStore, clinicResultsStore, profileStore } =
     useStore();
   const { lastViewedFrom } = requestStore;
-  const { getAll, setFormValues, clearFilter } = clinicResultsStore;
+  const { getAll, setFormValues, clearFilter, formValues } = clinicResultsStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -46,7 +46,9 @@ const ClinicResultsFilter = () => {
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
-
+  useEffect(() => {
+    form.setFieldsValue(formValues);
+  }, [form, formValues]);
   useEffect(() => {
     const update = async () => {
       getBranchCityOptions();
@@ -83,7 +85,6 @@ const ClinicResultsFilter = () => {
         .filter((x) => selectedCity?.includes(x.value as string))
         .flatMap((x) => x.options ?? [])
     );
-    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
@@ -100,6 +101,19 @@ const ClinicResultsFilter = () => {
     );
     form.setFieldValue("area", []);
   }, [areaByDeparmentOptions, form, selectedDepartment]);
+
+  useEffect(() => {
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value == profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
+      }
+      form.setFieldValue("sucursalId", [profileBranch]);
+    }
+  }, [branchCityOptions, form, profile]);
 
   const onFinish = async (newFormValues: IClinicResultForm) => {
     setLoading(true);

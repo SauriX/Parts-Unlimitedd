@@ -10,7 +10,7 @@ import {
 } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {
-  defaultRecordRequestPagination,
+  defaultPaginationProperties,
   getDefaultColumnProps,
   IColumns,
   ISearch,
@@ -50,6 +50,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
   const { procedingStore, optionStore, locationStore, profileStore } =
     useStore();
   const { expedientes, getnow, setSearch, search } = procedingStore;
+  const { profile } = profileStore;
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const { getCity } = locationStore;
   const [searchParams] = useSearchParams();
@@ -81,8 +82,20 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       branchCityOptions.find((x: any) => selectedCity?.includes(x.value))
         ?.options ?? []
     );
-    form.setFieldValue("sucursal", []);
   }, [branchCityOptions, form, selectedCity]);
+
+  useEffect(() => {
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value == profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
+      }
+      form.setFieldValue("sucursal", [profileBranch]);
+    }
+  }, [branchCityOptions, form, profile]);
 
   useEffect(() => {
     const readData = async () => {
@@ -131,7 +144,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       ...getDefaultColumnProps("expediente", "Expediente", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -153,6 +166,15 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
         searchState,
         setSearchState,
         width: "25%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("sucursal", "Sucursal", {
+        searchState,
+        setSearchState,
+        width: "10%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -207,7 +229,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       dataIndex: "id",
       title: "Editar",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: windowWidth < resizeWidth ? 100 : "5%",
       render: (value) => (
         <IconButton
           title="Editar Expediente"
@@ -355,7 +377,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
         rowKey={(record) => record.id}
         columns={columns}
         dataSource={expedientes}
-        pagination={defaultRecordRequestPagination}
+        pagination={defaultPaginationProperties}
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />

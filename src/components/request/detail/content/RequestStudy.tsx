@@ -90,13 +90,18 @@ const RequestStudy = () => {
       }),
       render: (value, item) => {
         if (isStudy(item)) {
-          return <Link onClick={() => {
-            showStudyDetails(item.estudioId!, item.nombre)
-          }}>{value}</Link>
+          return (
+            <Link
+              onClick={() => {
+                showStudyDetails(item.estudioId!, item.nombre);
+              }}
+            >
+              {value}
+            </Link>
+          );
         } else {
-          return <Text>{value}</Text>
+          return <Text>{value}</Text>;
         }
-
       },
     },
     {
@@ -216,15 +221,19 @@ const RequestStudy = () => {
     },
   ];
   const showStudyDetails = async (id: number, estudio: string) => {
-
     openModal({
       title: "",
-      body: <InfoStudy id={id} sucursal={request!.sucursal!} sucursalDestino={request!.destino!} estudio={estudio}></InfoStudy>,
+      body: (
+        <InfoStudy
+          id={id}
+          sucursal={request!.sucursal!}
+          sucursalDestino={request!.destino!}
+          estudio={estudio}
+        ></InfoStudy>
+      ),
       width: 1000,
-      
-    })
-
-  }
+    });
+  };
   const addStudy = async (option: IOptions) => {
     const value = parseInt(option.value.toString().split("-")[1]);
 
@@ -242,7 +251,8 @@ const RequestStudy = () => {
   const deleteStudyOrPack = (item: IRequestStudy | IRequestPack) => {
     alerts.confirm(
       "Eliminar estudio",
-      `¿Desea eliminar el ${isStudy(item) ? "estudio" : "paquete"} ${item.nombre
+      `¿Desea eliminar el ${isStudy(item) ? "estudio" : "paquete"} ${
+        item.nombre
       }?`,
       async () => {
         if (isStudy(item)) {
@@ -291,7 +301,10 @@ const RequestStudy = () => {
           filterOption={(input: string, option: any) => {
             if (input.indexOf("-") > -1) {
               const value = input.split("-")[0];
-              return option.label.toLowerCase().split("-")[0] === value + " ";
+              return (
+                option.label.toLowerCase().split("-")[0] ===
+                value.toLowerCase() + " "
+              );
             }
             return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
           }}
@@ -329,8 +342,8 @@ const RequestStudy = () => {
                 (isStudy(item)
                   ? item.estatusId !== status.requestStudy.pendiente
                   : item.estudios.some(
-                    (x) => x.estatusId !== status.requestStudy.pendiente
-                  )),
+                      (x) => x.estatusId !== status.requestStudy.pendiente
+                    )),
             }),
             selectedRowKeys: selectedRowKeys,
           }}

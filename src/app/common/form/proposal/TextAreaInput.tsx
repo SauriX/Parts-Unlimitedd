@@ -12,6 +12,7 @@ interface IProps {
   placeholder?: string;
   readonly?: boolean;
   autoSize?: boolean;
+  bordered?: boolean;
   width?: string | number;
   suffix?: React.ReactNode;
   style?: React.CSSProperties;
@@ -27,6 +28,7 @@ const TextAreaInput = ({
   placeholder,
   readonly,
   autoSize,
+  bordered,
   width,
   suffix,
   style,
@@ -60,6 +62,7 @@ const TextAreaInput = ({
           autoComplete="off"
           placeholder={placeholder ?? itemProps.label?.toString()}
           autoSize={autoSize}
+          bordered={bordered}
         />
       </Form.Item>
       {/* {(!!suffix || isGroup || !!errors) && ( */}

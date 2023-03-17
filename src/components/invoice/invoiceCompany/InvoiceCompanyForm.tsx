@@ -50,6 +50,8 @@ const InvoiceComapnyForm = () => {
     setSerie,
     saveFilterDate,
     printReceipt,
+    setFormValues,
+    formValues,
   } = invoiceCompanyStore;
 
   useEffect(() => {
@@ -67,7 +69,9 @@ const InvoiceComapnyForm = () => {
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
-
+  useEffect(() => {
+    form.setFieldsValue(formValues);
+  }, [form, formValues]);
   useEffect(() => {
     if (selectedCity != undefined && selectedCity != null) {
       var branhces = branchCityOptions.filter((x) =>
@@ -100,6 +104,7 @@ const InvoiceComapnyForm = () => {
       fechaInicial: newFormValues.fechas[0].utcOffset(0, true),
       facturaMetodo: tipo,
     };
+    setFormValues(newFormValues);
     saveFilterDate(newFormValues.fechas);
     getInvoicesCompany(formValues);
   };

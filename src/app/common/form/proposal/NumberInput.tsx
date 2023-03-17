@@ -121,6 +121,8 @@ const NumberInput = ({
           parser={parser}
           controls={controls}
           onChange={onChange}
+          min={min}
+          max={max}
         />
       </Form.Item>
       {/* {(!!suffix || isGroup || !!errors) && ( */}

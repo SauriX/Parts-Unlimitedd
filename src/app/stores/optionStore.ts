@@ -139,8 +139,8 @@ export default class OptionStore {
     }
   };
 
-  areas: IOptions[] = [];
-  getareaOptions = async (id?: number) => {
+  areaOptions: IOptions[] = [];
+  getAreaOptions = async (id?: number) => {
     try {
       let ruta = `area/department/${id}`;
       if (id == 0) {
@@ -152,10 +152,10 @@ export default class OptionStore {
         value: x.id,
         label: x.nombre,
       }));
-      this.areas = areas;
+      this.areaOptions = areas;
       return areas;
     } catch (error) {
-      this.areas = [];
+      this.areaOptions = [];
     }
   };
 
@@ -401,14 +401,10 @@ export default class OptionStore {
   };
 
   priceListOptions: IOptions[] = [];
-
   getPriceListOptions = async () => {
     try {
-      const priceListOptions = await PriceList.getActive();
-      this.priceListOptions = priceListOptions.map((x) => ({
-        value: x.id,
-        label: x.nombre,
-      }));
+      const priceListOptions = await PriceList.getOptions();
+      this.priceListOptions = priceListOptions;
     } catch (error) {
       this.priceListOptions = [];
     }

@@ -1,4 +1,3 @@
-import { InputNumber } from "antd";
 import { makeAutoObservable } from "mobx";
 import Pack from "../api/pack";
 import PriceList from "../api/priceList";
@@ -10,8 +9,7 @@ import {
   IPriceListList,
   ISucMedComList,
 } from "../models/priceList";
-import { IDias, IPromotionEstudioList } from "../models/promotion";
-import { IScopes } from "../models/shared";
+import { IDay, IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import messages from "../util/messages";
@@ -61,7 +59,6 @@ export default class PriceListStore {
     try {
       const roles = await Pack.getAll("all");
 
-      console.log(roles);
       var studies = roles.map((x) => {
         let data: IPriceListEstudioList = {
           id: x.id,
@@ -99,7 +96,6 @@ export default class PriceListStore {
   getById = async (id: string) => {
     try {
       const priceList = await PriceList.getById(id);
-      console.log("se obtuvo la lista de precios");
       return priceList;
     } catch (error: any) {
       if (error.status === responses.notFound) {
@@ -126,11 +122,9 @@ export default class PriceListStore {
 
   getStudiesById = async (filter: any) => {
     try {
-      const priceList: IPromotionEstudioList[] = await PriceList.getStudiesById(
-        filter
-      );
+      const priceList: any[] = await PriceList.getStudiesById(filter);
       var estudios = priceList.map((x) => {
-        var dia: IDias[] = [];
+        var dia: IDay[] = [];
         if (x.lunes) {
           dia.push({ id: 1, dia: "L" });
         }
@@ -155,7 +149,6 @@ export default class PriceListStore {
         x.selectedTags = dia;
         return x;
       });
-      console.log("se obtuvo la lista de estudios");
       return estudios;
     } catch (error: any) {
       if (error.status === responses.notFound) {
@@ -259,7 +252,6 @@ export default class PriceListStore {
   getAllCompany = async () => {
     try {
       var compañias = await PriceList.getAllCompany();
-      console.log(compañias, "getall, compañi");
       return compañias.map((x) => {
         x.compañia = true;
         return x;

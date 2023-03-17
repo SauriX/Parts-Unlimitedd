@@ -68,7 +68,7 @@ export interface IStudyTec{
   tipoMuestra: string,
   diasEstabilidad: number,
   diasRefrigeracion: number,
-  diasEntrega:number,
+  diasEntrega:string,
   tapon:string
 }
 export class StudyFormValues implements IStudyForm {

@@ -1,5 +1,5 @@
 import { Row, Col, Divider, Spin, Typography } from "antd";
-import  { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useStore } from "../../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import InfoStudyHeader from "./InfoStudyHeader";
@@ -20,9 +20,12 @@ const InfoStudy = ({ id, sucursal, sucursalDestino, estudio }: Props) => {
     const [loading, setLoading] = useState(false);
     const { Text } = Typography;
     useEffect(() => {
-        const readInfoStudy= async () => {
+        const readInfoStudy = async () => {
             setLoading(true);
             var studys = await getTecInfoById(id);
+            if(Number(studys!.diasEntrega) <=0){
+                    studys!.diasEntrega = ""
+            }
             setStudy(studys);
             setLoading(false);
         };
@@ -31,7 +34,7 @@ const InfoStudy = ({ id, sucursal, sucursalDestino, estudio }: Props) => {
     return (
         <Fragment>
             <InfoStudyHeader></InfoStudyHeader>
-            <Text type="secondary" style={{color:"blue"}}>{estudio}</Text>
+            <Text type="secondary" style={{ color: "blue" }}>{estudio}</Text>
             <Divider className="header-divider" />
             <Spin spinning={loading} tip={""}>
                 <Row gutter={[12, 12]}>
@@ -41,9 +44,10 @@ const InfoStudy = ({ id, sucursal, sucursalDestino, estudio }: Props) => {
                     <Col span={8} style={{ textAlign: "center" }}>
                         Sucursal destino: {sucursalDestino}
                     </Col>
-                    <Col span={8} style={{ textAlign: "center" }}>
+                   <Col span={8} style={{ textAlign: "center" }}>
                         Días de entrega: {study?.diasEntrega}
                     </Col>
+
                     <Col span={12}>
                         Tipo de muestra: {study?.tipoMuestra}
                     </Col>
@@ -54,7 +58,7 @@ const InfoStudy = ({ id, sucursal, sucursalDestino, estudio }: Props) => {
                         Tubo de muestra: {study?.tapon}
                     </Col>
                     <Col span={12}>
-                        Días de refrigeración: {study?.diasRefrigeracion}
+                    Días de estabilidad en refrigeración: {study?.diasRefrigeracion}
                     </Col>
                     <Col span={24}>
                         <label htmlFor="">Instrucciones de toma:</label>

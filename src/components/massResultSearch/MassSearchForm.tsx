@@ -27,14 +27,18 @@ const MassSearchForm = () => {
   const {
     branchCityOptions,
     getBranchCityOptions,
-    areas,
-    getareaOptions,
+    areaOptions: areas,
+    getAreaOptions: getareaOptions,
     studiesOptions,
     getStudiesOptions,
   } = optionStore;
 
   const { setAreas, getRequestResults, search, setFilter } =
     massResultSearchStore;
+
+  useEffect(() => {
+    form.setFieldsValue(search);
+  }, [form, search]);
 
   useEffect(() => {
     getRequestResults({
