@@ -24,7 +24,6 @@ interface IProps {
   onChange?: React.ChangeEventHandler<HTMLInputElement> | undefined;
   onPressEnter?: React.KeyboardEventHandler<HTMLInputElement> | undefined;
   autoFocus?: boolean | undefined;
-  value?: string | undefined;
 }
 
 const TextInput = ({
@@ -46,7 +45,6 @@ const TextInput = ({
   onChange,
   onPressEnter,
   autoFocus,
-  value,
 }: // onChange,
 IProps) => {
   let ref = useRef<HTMLDivElement>(null);
@@ -128,7 +126,6 @@ IProps) => {
           onPressEnter={onPressEnter}
           maxLength={max ?? undefined}
           minLength={min ?? undefined}
-          value={value}
           style={{
             // paddingRight: paddingRight,
             width: width ?? "100%",

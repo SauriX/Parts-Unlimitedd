@@ -19,7 +19,6 @@ interface IProps {
   isGroup?: boolean;
   errors?: any[];
   onChange?: React.ChangeEventHandler<HTMLTextAreaElement> | undefined;
-  value?: string | undefined;
 }
 
 const TextAreaInput = ({
@@ -37,7 +36,6 @@ const TextAreaInput = ({
   isGroup,
   errors,
   onChange,
-  value,
 }: IProps) => {
   let rules: Rule[] = [];
 
@@ -68,7 +66,6 @@ const TextAreaInput = ({
           autoSize={autoSize}
           bordered={bordered}
           onChange={onChange}
-          value={value}
         />
       </Form.Item>
       {/* {(!!suffix || isGroup || !!errors) && ( */}
