@@ -52,6 +52,7 @@ const SamplingStudyFilter = () => {
     getCompanyOptions,
     getDepartmentAreaOptions,
   ]);
+  
   useEffect(() => {
     form.setFieldsValue(formValues);
   }, [formValues, form]);
