@@ -14,6 +14,7 @@ import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 import { status } from "../util/catalogs";
 import moment from "moment";
+import { IGeneralForm } from "../models/clinicResults";
 
 export default class RequestedStudyStore {
   constructor() {
@@ -48,7 +49,7 @@ export default class RequestedStudyStore {
     }
   };
 
-  getAll = async (search: IRequestedStudyForm) => {
+  getAll = async (search: IGeneralForm) => {
     try {
       this.loadingStudies = true;
       const study = await RequestedStudy.getAll(search);

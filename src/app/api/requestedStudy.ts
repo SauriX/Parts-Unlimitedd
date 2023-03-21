@@ -1,3 +1,4 @@
+import { IGeneralForm } from "../models/clinicResults";
 import {
   IRequestedStudyForm,
   IRequestedStudyList,
@@ -8,7 +9,7 @@ import requests from "./agent";
 
 const RequestedStudy = {
   access: (): Promise<IScopes> => requests.get("scopes/report"),
-  getAll: (search: IRequestedStudyForm): Promise<IRequestedStudyList[]> =>
+  getAll: (search: IGeneralForm): Promise<IRequestedStudyList[]> =>
     requests.post(`requestedstudy/getList`, search),
   update: (update: IUpdate[]): Promise<void> =>
     requests.put("requestedstudy", update),

@@ -9,12 +9,12 @@ import ClinicResultsColumns, {
 } from "./columnDefinition/clinicResults";
 import ClinicResultsFilter from "./ClinicResultsFilter";
 import ClinicResultsTable from "./ClinicResultsTable";
-import { IClinicResultForm } from "../../app/models/clinicResults";
+import { IGeneralForm } from "../../app/models/clinicResults";
 import moment from "moment";
 
 type CRDefaultProps = {
   printing: boolean;
-  formValues: IClinicResultForm;
+  formValues: IGeneralForm;
 };
 
 const ClinicResultsBody = ({ printing, formValues }: CRDefaultProps) => {
