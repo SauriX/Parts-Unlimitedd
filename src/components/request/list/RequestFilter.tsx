@@ -133,7 +133,6 @@ const RequestFilter = () => {
             <DateRangeInput
               formProps={{ name: "fechas", label: "Fechas" }}
               disableAfterDates={dateType == 1}
-              disableBeforeDates={dateType == 2}
             />
           </Col>
           <Col span={8}>
