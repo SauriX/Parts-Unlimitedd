@@ -41,7 +41,6 @@ const Report = () => {
 
   useEffect(() => {
     setCurrentReport((searchParams.get("report") as reportType) ?? undefined);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

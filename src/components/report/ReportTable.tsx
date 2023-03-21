@@ -1,7 +1,7 @@
 import { Button, Descriptions, Table, Tag } from "antd";
 import { observer } from "mobx-react-lite";
 import { Fragment, useEffect, useState } from "react";
-import { IColumns } from "../../app/common/table/utils";
+import { defaultPaginationProperties, IColumns } from "../../app/common/table/utils";
 import { InvoiceData, IReportData } from "../../app/models/report";
 import { ExpandableConfig } from "antd/lib/table/interface";
 import { useSearchParams } from "react-router-dom";
@@ -129,7 +129,7 @@ const ReportTable = ({
         size="small"
         rowKey={(record) => record.id}
         columns={columns}
-        pagination={false}
+        pagination={defaultPaginationProperties}
         dataSource={[...data]}
         scroll={{ y: 400 }}
         rowClassName={(item) =>

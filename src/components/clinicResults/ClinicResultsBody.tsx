@@ -19,21 +19,8 @@ type CRDefaultProps = {
 
 const ClinicResultsBody = ({ printing, formValues }: CRDefaultProps) => {
   const { clinicResultsStore } = useStore();
-  const { data, getAll } = clinicResultsStore;
-  const [loading, setLoading] = useState(false);
-
-  // useEffect(() => {
-  //   const readRequests = async () => {
-  //     await getAll({
-  //       fecha: [
-  //         moment(Date.now()).utcOffset(0, true),
-  //         moment(Date.now()).utcOffset(0, true),
-  //       ],
-  //     });
-  //   };
-
-  //   readRequests();
-  // }, []);
+  const { data } = clinicResultsStore;
+  const [loading] = useState(false);
 
   return (
     <Fragment>
