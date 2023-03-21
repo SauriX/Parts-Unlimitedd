@@ -86,7 +86,7 @@ export interface IClinicResultCaptureForm {
   tipoValores?: ItipoValorForm[];
 }
 
-export interface IClinicResultForm {
+export interface IGeneralForm {
   sucursalId?: string[];
   medicoId?: string[];
   compañiaId?: string[];
@@ -131,12 +131,12 @@ export class ResultPathologicalValues implements IResultPathological {
   listaImagenesCargadas = [];
   estatus = 0;
   departamentoEstudio = "";
-  constructor(init?: IClinicResultForm) {
+  constructor(init?: IGeneralForm) {
     Object.assign(this, init);
   }
 }
 
-export class ClinicResultsFormValues implements IClinicResultForm {
+export class ClinicResultsFormValues implements IGeneralForm {
   sucursalId = [];
   medicoId = [];
   compañiaId = [];
@@ -153,7 +153,7 @@ export class ClinicResultsFormValues implements IClinicResultForm {
   estatus = [];
   estudio = [];
 
-  constructor(init?: IClinicResultForm) {
+  constructor(init?: IGeneralForm) {
     Object.assign(this, init);
   }
 }
@@ -184,7 +184,7 @@ export class ClinicResultsCaptureForm implements IClinicResultCaptureForm {
   orden = 0;
   clave = "";
 
-  constructor(init?: IClinicResultForm) {
+  constructor(init?: IGeneralForm) {
     Object.assign(this, init);
   }
 }

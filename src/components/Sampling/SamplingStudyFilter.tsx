@@ -15,11 +15,12 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 import moment from "moment";
 import { IOptions } from "../../app/models/shared";
-import { ISamplingForm } from "../../app/models/sampling";
+import { IGeneralForm } from "../../app/models/clinicResults";
 
 const SamplingStudyFilter = () => {
-  const { optionStore, samplingStudyStore, profileStore } = useStore();
-  const { getAll, setFormValues, formValues } = samplingStudyStore;
+  const { optionStore, samplingStudyStore, profileStore, clinicResultsStore } = useStore();
+  const { getAll } = samplingStudyStore;
+  const { setFormValues, formValues } = clinicResultsStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -52,6 +53,7 @@ const SamplingStudyFilter = () => {
     getCompanyOptions,
     getDepartmentAreaOptions,
   ]);
+
   useEffect(() => {
     form.setFieldsValue(formValues);
   }, [formValues, form]);
@@ -101,7 +103,7 @@ const SamplingStudyFilter = () => {
     form.setFieldValue("area", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
 
-  const onFinish = async (newFormValues: ISamplingForm) => {
+  const onFinish = async (newFormValues: IGeneralForm) => {
     setLoading(true);
     const filter = { ...newFormValues };
     setFormValues(newFormValues);
@@ -111,7 +113,7 @@ const SamplingStudyFilter = () => {
 
   return (
     <div className="status-container">
-      <Form<ISamplingForm>
+      <Form<IGeneralForm>
         {...formItemLayout}
         form={form}
         name="requestedStudy"

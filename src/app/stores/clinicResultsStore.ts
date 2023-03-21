@@ -8,7 +8,7 @@ import moment from "moment";
 import {
   ClinicResultsFormValues,
   IClinicResultCaptureForm,
-  IClinicResultForm,
+  IGeneralForm,
   IClinicResultList,
   IClinicStudy,
   IPrintTypes,
@@ -25,7 +25,7 @@ export default class ClinicResultsStores {
   scopes?: IScopes;
   data: IClinicResultList[] = [];
   studies: IClinicStudy[] = [];
-  formValues: IClinicResultForm = new ClinicResultsFormValues();
+  formValues: IGeneralForm = new ClinicResultsFormValues();
   loadingStudies: boolean = false;
   clear: boolean = false;
   studiesSelectedToPrint: IPrintTypes[] = [];
@@ -96,12 +96,12 @@ export default class ClinicResultsStores {
     );
   };
 
-  setFormValues = (newFormValues: IClinicResultForm) => {
+  setFormValues = (newFormValues: IGeneralForm) => {
     this.formValues = newFormValues;
   };
 
   clearFilter = () => {
-    const emptyFilter: IClinicResultForm = {
+    const emptyFilter: IGeneralForm = {
       sucursalId: [],
       medicoId: [],
       compañiaId: [],
@@ -132,7 +132,7 @@ export default class ClinicResultsStores {
     }
   };
 
-  getAll = async (search: IClinicResultForm) => {
+  getAll = async (search: IGeneralForm) => {
     try {
       this.loadingStudies = true;
       const study = await ClinicResults.getAll(search);
@@ -265,7 +265,7 @@ export default class ClinicResultsStores {
     }
   };
 
-  exportList = async (search: IClinicResultForm) => {
+  exportList = async (search: IGeneralForm) => {
     try {
       await ClinicResults.exportList(search);
       return true;

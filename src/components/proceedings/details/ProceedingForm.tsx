@@ -502,7 +502,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
             setErrors(errors);
           }}
         >
-          <Row gutter={[0, 12]}>
+          <Row gutter={[0, 12]} justify="space-between">
             <Col span={12}>
               <Form.Item
                 label="Nombre"
@@ -779,8 +779,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 </Input.Group>
               </Form.Item>
             </Col>
-
-            <Col span={2} style={{ textAlign: "center" }}>
+            <Col span={12} style={{ textAlign: "left" }}>
               <Button
                 onClick={() => {
                   navigate(`/requests/${id}`);
@@ -790,8 +789,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               >
                 Agregar solicitud
               </Button>
-            </Col>
-            <Col span={2} style={{ textAlign: "center" }}>
               <Button
                 onClick={() => {
                   navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
@@ -801,8 +798,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               >
                 Agregar cotización
               </Button>
-            </Col>
-            <Col span={2} style={{ textAlign: "center" }}>
               <Button
                 onClick={() => {
                   navigate(`/appointments`);
@@ -812,8 +807,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               >
                 Agregar cita
               </Button>
-            </Col>
-            <Col span={2} style={{ textAlign: "center" }}>
               <Button
                 onClick={() => {
                   values?.hasWallet ? openWallet() : activarMonedero();
@@ -824,7 +817,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 {values?.hasWallet ? "Ver monedero" : "Activar monedero"}
               </Button>
             </Col>
-            <Col span={8} style={{ textAlign: "end" }}>
+            <Col span={6} style={{ textAlign: "end" }}>
               <Button
                 onClick={() =>
                   openModal({
@@ -843,7 +836,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 Datos Fiscales
               </Button>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <SelectInput
                 formProps={{
                   name: "sucursal",

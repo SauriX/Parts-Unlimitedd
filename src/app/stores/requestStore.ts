@@ -423,7 +423,7 @@ export default class RequestStore {
 
       // prettier-ignore
       const destinationTags = groupTags.map(
-        ({ etiquetaId, claveEtiqueta, claveInicial, nombreEtiqueta, color }) => ({
+        ({ etiquetaId, claveEtiqueta, claveInicial, nombreEtiqueta, color, observaciones }) => ({
           destinoId: keyData.destinoId,
           destino: keyData.destino,
           destinoTipo: Number(keyData.destinoTipo),
@@ -432,6 +432,7 @@ export default class RequestStore {
           claveInicial,
           nombreEtiqueta,
           color,
+          observaciones,
           cantidad: 1
         })
       );
@@ -544,6 +545,7 @@ export default class RequestStore {
       claveInicial: tag.claveInicial,
       color: tag.color,
       etiquetaId: tag.etiquetaId,
+      observaciones: tag.observaciones,
       estudios: [],
     });
   };

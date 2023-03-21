@@ -13,6 +13,7 @@ import {
 } from "../models/sampling";
 import { status } from "../util/catalogs";
 import { IRequestedStudy } from "../models/requestedStudy";
+import { IGeneralForm } from "../models/clinicResults";
 
 export default class SamplingStore {
   constructor() {
@@ -50,7 +51,7 @@ export default class SamplingStore {
     }
   };
 
-  getAll = async (search: ISamplingForm) => {
+  getAll = async (search: IGeneralForm) => {
     try {
       this.loadingStudies = true;
       const study = await Sampling.getAll(search);
