@@ -13,7 +13,7 @@ const getCashRegisterColumns = (
       ...getDefaultColumnProps("solicitud", "Clave", {
         searchState,
         setSearchState,
-        width: "35%",
+        width: 100,
       }),
       fixed: 'left',
     },
@@ -21,12 +21,12 @@ const getCashRegisterColumns = (
       ...getDefaultColumnProps("paciente", "Paciente", {
         searchState,
         setSearchState,
-        width: "60%",
+        width: 100,
       }),
     },
     {
       ...getDefaultColumnProps("total", "Total a pagar", {
-        width: "40%",
+        width: 100,
       }),
       render: (value) => moneyFormatter.format(value),
     },
@@ -34,83 +34,59 @@ const getCashRegisterColumns = (
       ...getDefaultColumnProps("factura", "Factura", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: 100,
       }),
     },
     {
       ...getDefaultColumnProps("aCuenta", "A Cuenta", {
         searchState,
         setSearchState,
-        width: "40%",
+        width: 100,
       }),
       render: (value) => moneyFormatter.format(value),
     },
     {
-      ...getDefaultColumnProps("efectivo", "Efectivo", {
-        width: "30%",
-      }),
-      render: (value) => moneyFormatter.format(value),
-    },
-    {
-      ...getDefaultColumnProps("tdc", "TDC", {
-        width: "30%",
-      }),
-      render: (value) => moneyFormatter.format(value),
-    },
-    {
-      ...getDefaultColumnProps("transferencia", "Transf. E", {
-        width: "40%",
-      }),
-      render: (value) => moneyFormatter.format(value),
-    },
-    {
-      ...getDefaultColumnProps("cheque", "Cheque", {
-        width: "30%",
-      }),
-      render: (value) => moneyFormatter.format(value),
-    },
-    {
-      ...getDefaultColumnProps("tdd", "TDD", {
-        width: "30%",
+      ...getDefaultColumnProps("formaPago", "Método de pago", {
+        width: 100,
       }),
       render: (value) => moneyFormatter.format(value),
     },
     {
       ...getDefaultColumnProps("subtotal", "Subtotal", {
-        width: "30%",
+        width: 100,
       }),
       render: (value) => moneyFormatter.format(value),
     },
     {
       ...getDefaultColumnProps("pp", "PP", {
-        width: "30%",
+        width: 100,
       }),
     },
     {
       ...getDefaultColumnProps("totalRecibido", "Total Recibido", {
-        width: "40%",
+        width: 100,
       }),
       render: (value) => moneyFormatter.format(value),
     },
     {
       ...getDefaultColumnProps("saldo", "Saldo", {
-        width: "30%",
+        width: 100,
       }),
       render: (value) => moneyFormatter.format(value),
     },
     {
       ...getDefaultColumnProps("fecha", "Hora", {
-        width: "30%",
+        width: 100,
       }),
     },
     {
       ...getDefaultColumnProps("usuarioModifico", "Usuario", {
-        width: "60%",
+        width: 100,
       }),
     },
     {
       ...getDefaultColumnProps("empresa", "Compañía", {
-        width: "30%",
+        width: 100,
       }),
       fixed: 'right',
     },

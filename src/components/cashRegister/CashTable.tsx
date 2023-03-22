@@ -25,7 +25,7 @@ const CashTable: FC<CashRegisterProps> = ({data, loading}) => {
         columns={getCashRegisterColumns(searchState, setSearchState)}
         pagination={false}
         dataSource={[...data]}
-        scroll={{ x: 1500 , y: 400 }}
+        scroll={{ x: "max-content" }}
         rowClassName={(item) =>
           item.factura == "Total" ? "Resumen Total" : ""
         }
