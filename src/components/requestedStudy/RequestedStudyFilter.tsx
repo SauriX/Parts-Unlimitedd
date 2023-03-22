@@ -16,10 +16,12 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 import moment from "moment";
 import { IOptions } from "../../app/models/shared";
+import { IGeneralForm } from "../../app/models/clinicResults";
 
 const RequestedStudyFilter = () => {
-  const { optionStore, requestedStudyStore, profileStore } = useStore();
-  const { getAll, setFormValues, formValues } = requestedStudyStore;
+  const { optionStore, requestedStudyStore, profileStore, clinicResultsStore } = useStore();
+  const { getAll } = requestedStudyStore;
+  const { setFormValues, formValues } = clinicResultsStore
   const {
     branchCityOptions,
     medicOptions,
@@ -100,7 +102,7 @@ const RequestedStudyFilter = () => {
     form.setFieldValue("area", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
 
-  const onFinish = async (newFormValues: IRequestedStudyForm) => {
+  const onFinish = async (newFormValues: IGeneralForm) => {
     setLoading(true);
     const filter = { ...newFormValues };
     setFormValues(newFormValues);
@@ -110,7 +112,7 @@ const RequestedStudyFilter = () => {
 
   return (
     <div className="status-container">
-      <Form<IRequestedStudyForm>
+      <Form<IGeneralForm>
         {...formItemLayout}
         form={form}
         name="requestedStudy"

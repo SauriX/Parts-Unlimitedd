@@ -1,11 +1,11 @@
-import { ISearchMedical } from "../models/Proceeding";
+import { IGeneralForm } from "../models/clinicResults";
 import { ISamplingForm, ISamplingList, IUpdate } from "../models/sampling";
 import { IScopes } from "../models/shared";
 import requests from "./agent";
 
 const Sampling = {
   access: (): Promise<IScopes> => requests.get("scopes/report"),
-  getAll: (search: ISamplingForm): Promise<ISamplingList[]> =>
+  getAll: (search: IGeneralForm): Promise<ISamplingList[]> =>
     requests.post(`sampling/getList`, search),
   update: (update: IUpdate[]): Promise<void> =>
     requests.put("sampling", update),

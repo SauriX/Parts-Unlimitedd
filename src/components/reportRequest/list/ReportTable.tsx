@@ -112,53 +112,47 @@ const ReportTable = () => {
       ...getDefaultColumnProps("sucursal", "Sucursal origen", {
         searchState,
         setSearchState,
-        width: 120,
+        width: 180,
       }),
-      align: "right",
       render: (value) => value,
     },
     {
-      ...getDefaultColumnProps("medico", "Nombre del  médico", {
+      ...getDefaultColumnProps("medico", "Médico", {
         searchState,
         setSearchState,
-        width: 120,
+        width: 240,
       }),
-      align: "right",
       render: (value) => value,
     },
     {
       ...getDefaultColumnProps("tipo", "Tipo de Solicitud", {
         searchState,
         setSearchState,
-        width: 120,
+        width: 200,
       }),
-      align: "right",
       render: (value) => value,
     },
     {
-      ...getDefaultColumnProps("compañia", "Compañia", {
+      ...getDefaultColumnProps("compañia", "Compañía", {
         searchState,
         setSearchState,
-        width: 120,
+        width: 180,
       }),
-      align: "right",
       render: (value) => value,
     },
     {
       ...getDefaultColumnProps("entrega", "Fecha de entrega", {
         searchState,
         setSearchState,
-        width: 120,
+        width: 180,
       }),
-      align: "right",
       render: (value) => value,
     },
      {
       key: "estudios",
       dataIndex: "estudios",
       title: "Estudios",
-      align: "center",
-      width: 180,
+      width: 240,
       render: (value: IRequestStudyInfo[]) => (
         <Row align="middle">
           {value.map((x, i) => (

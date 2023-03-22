@@ -61,6 +61,7 @@ export interface IStudyTag {
   cantidad: number;
   orden: number;
   color: string;
+  observaciones?: string;
   nombreEstudio: string;
 }
 export interface IStudyTec{
