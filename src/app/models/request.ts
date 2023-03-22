@@ -34,6 +34,7 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   serie?: string;
   serieNumero?: string;
   estudios?: IRequestStudyInfo[];
+  destino?:string;
 }
 
 export interface IRequestFilter {
@@ -67,7 +68,7 @@ export class RequestFilterForm implements IRequestFilter {
 export interface IRequestInfo extends IRequestBase {
   clave: string;
   clavePatologica: string;
-  afiliacion: string;
+  sucursal: string;
   paciente: string;
   compañia: string;
   procedencia: string;
@@ -161,6 +162,7 @@ export interface IRequestPayment extends IRequestBase {
   usuarioRegistra?: string;
   fechaPago: moment.Moment;
   notificacionId?: string;
+  lealtad: boolean;
 }
 
 export interface IRequestCheckIn extends IRequestBase {
@@ -357,6 +359,7 @@ export interface IRequestTag {
   nombreEtiqueta: string;
   cantidad: number;
   color: string;
+  observaciones?: string
   estudios: IRequestTagStudy[];
 }
 

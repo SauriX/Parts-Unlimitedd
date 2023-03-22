@@ -359,10 +359,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                   <Col>
                     <Text key="expediente">
                       {/* Estudio: <Text strong>{currentStudy.nombre}</Text> */}
-                      Estudio:{" "}
-                      <Text strong>
-                        {estudio.areaId === 30 ? "HISTOPATOLOGÍA" : "CITOLOGÍA"}
-                      </Text>
+                      Estudio: <Text strong>{estudio.nombre}</Text>
                     </Text>
                   </Col>
                 </Row>
@@ -370,10 +367,7 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                   <Col>
                     <Text key="expediente">
                       {/* Clave: <Text strong>{estudio.clave}</Text> */}
-                      Clave:{" "}
-                      <Text strong>
-                        {estudio.areaId === 30 ? "HP" : "CITO"}
-                      </Text>
+                      Clave: <Text strong>{estudio.clave}</Text>
                     </Text>
                   </Col>
                 </Row>
@@ -384,7 +378,6 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
                       {estudio.areaId === 30
                         ? " HISTOPATOLÓGICO "
                         : " CITOLÓGICO "}
-                      {currentStudy.id}
                     </Title>
                   </Col>
                 </Row>

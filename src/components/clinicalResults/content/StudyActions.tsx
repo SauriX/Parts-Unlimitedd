@@ -147,14 +147,7 @@ const StudyActions = ({
   };
 
   const studyTitle = (studyType: string, currentStudy: IRequestStudy) => {
-    if (studyType == "PATHOLOGICAL") {
-      let clave = currentStudy.areaId === 30 ? "HP" : "CITO";
-      let nombre = currentStudy.areaId === 30 ? "HISTOPATOLOGÍA" : "CITOLOGÍA";
-      return clave + " - " + nombre;
-    }
-    else {
-      return currentStudy.clave + " - " + currentStudy.nombre;
-    }
+    return currentStudy.clave + " - " + currentStudy.nombre;
   };
 
   return (

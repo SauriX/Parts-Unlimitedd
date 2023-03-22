@@ -19,8 +19,9 @@ type RSDefaultProps = {
 };
 
 const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
-  const { samplingStudyStore } = useStore();
-  const { data, update, printOrder, getAll, formValues } = samplingStudyStore;
+  const { samplingStudyStore, clinicResultsStore } = useStore();
+  const { data, update, printOrder, getAll } = samplingStudyStore;
+  const { formValues } = clinicResultsStore;
 
   const [form] = Form.useForm();
 

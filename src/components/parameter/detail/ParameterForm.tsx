@@ -8,6 +8,7 @@ import {
   Divider,
   PageHeader,
   Table,
+  Typography,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
@@ -38,6 +39,9 @@ import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import { IReagentList } from "../../../app/models/reagent";
 import { ParameterReagentModal } from "../ParameterReagentModal";
 import views from "../../../app/util/view";
+
+const { Link } = Typography;
+
 type ParameterFormProps = {
   componentRef: React.MutableRefObject<any>;
   load: boolean;
@@ -65,8 +69,8 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
   const {
     getDepartmentOptions,
     departmentOptions,
-    getareaOptions,
-    areas,
+    getAreaOptions: getareaOptions,
+    areaOptions: areas,
     getReagentOptions,
     reagents,
     getPrintFormatsOptions,
@@ -245,6 +249,24 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
         width: "30%",
         windowSize: windowWidth,
       }),
+      render: (value: any, row: any) => {
+        console.log("render", row);
+        return (
+          <>
+            <Link
+              onClick={() => {
+                navigate(
+                  `/studies/${row?.clave}?mode=${searchParams.get(
+                    "mode"
+                  )}&search=${searchParams.get("search") ?? "all"}`
+                );
+              }}
+            >
+              {value}
+            </Link>
+          </>
+        );
+      },
     },
     {
       ...getDefaultColumnProps("nombre", "Estudio", {

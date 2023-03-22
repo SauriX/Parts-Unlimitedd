@@ -42,7 +42,7 @@ const InvoiceCompanyTable = () => {
   const [selectedRequests, setSelectedRequests] = useState<any[]>();
   const [isSameCommpany, setIsSameCompany] = useState<boolean>(false);
   const { invoiceCompanyStore, optionStore } = useStore();
-  const { areas, getareaOptions } = optionStore;
+  const { areaOptions: areas, getAreaOptions: getareaOptions } = optionStore;
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
   const [openRows, setOpenRows] = useState<boolean>(false);
   const {
@@ -133,8 +133,6 @@ const InvoiceCompanyTable = () => {
                     <div style={{ display: "flex", flexDirection: "row" }}>
                       <Link
                         onClick={() => {
-                          console.log("row", toJS(value));
-                          console.log("record", toJS(record));
                           navigate(`/invoice/${tipo}/${factura.facturapiId}`);
                         }}
                       >
@@ -285,13 +283,6 @@ const InvoiceCompanyTable = () => {
   };
   return (
     <>
-      {/* <Button
-        onClick={() => {
-          console.log("selectedRowKeys", selectedRequests);
-        }}
-      >
-        AAA
-      </Button> */}
       {invoices.solicitudes?.length > 0 && (
         <div style={{ textAlign: "right", marginBottom: 10 }}>
           <Form<any>
@@ -301,37 +292,8 @@ const InvoiceCompanyTable = () => {
             onFinish={createInvoice}
             size="small"
             initialValues={{ fechas: [moment(), moment()] }}
-            // onFieldsChange={() => {
-            //   setDisabled(
-            //     (!form.isFieldsTouched() ||
-            //       form.getFieldsError().filter(({ errors }) => errors.length)
-            //         .length > 0) &&
-            //       isSameCommpany
-            //   );
-            // }}
           >
             <Row justify="end">
-              {/* <Col span={8}>
-                <Form.Item name="isInvoice" required>
-                  <Row justify="center">
-                    <Radio.Group>
-                      <Radio value={"Factura"}>Factura</Radio>
-                      <Radio value={"Recibo"}>Recibo</Radio>
-                    </Radio.Group>
-                  </Row>
-                </Form.Item>
-              </Col>
-              <Col span={2}>
-                <Button
-                  onClick={() => {
-                    formCreate.submit();
-                  }}
-                  type="primary"
-                  // disabled={disabled}
-                >
-                  Generar
-                </Button>
-              </Col> */}
               <Col span={2}>
                 <Button
                   type="primary"

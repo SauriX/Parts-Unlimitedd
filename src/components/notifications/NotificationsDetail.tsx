@@ -20,7 +20,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import CheckableTag from "antd/lib/tag/CheckableTag";
 import { useEffect, useState } from "react";
-import { IDias } from "../../app/models/promotion";
+import { IDay } from "../../app/models/shared";
 import { useStore } from "../../app/stores/store";
 import { INotificationForm, NotificationValues } from "../../app/models/notifications";
 import BranchesTransfer from "./BranchesTransfer";
@@ -46,7 +46,7 @@ const NotificationsDetail = () => {
   const { getRoleOptions, roleOptions } = optionStore
   const [searchParams, setSearchParams] = useSearchParams();
   const { getById, create, update } = notificationsStore;
-  const [selectedTags, setSelectedTags] = useState<IDias[]>([]);
+  const [selectedTags, setSelectedTags] = useState<IDay[]>([]);
   const [sucursales, setSucursales] = useState<string[]>([]);
   const [values, setValues] = useState<INotificationForm>(new NotificationValues());
   const [readonly, setReadonly] = useState(
@@ -107,7 +107,7 @@ const NotificationsDetail = () => {
     navigate(`/${views.notifications}/${id}?${searchParams}&mode=edit`);
     setReadonly(false);
   };
-  const handleChange = (tag: IDias, checked: Boolean) => {
+  const handleChange = (tag: IDay, checked: Boolean) => {
     const nextSelectedTags = checked
       ? [...selectedTags!, tag]
       : selectedTags.filter((t) => t.id !== tag.id);
@@ -136,7 +136,7 @@ const NotificationsDetail = () => {
   };
 
 
-  const tagsData: IDias[] = [
+  const tagsData: IDay[] = [
     { id: 1, dia: "L" },
     { id: 2, dia: "M" },
     { id: 3, dia: "M" },

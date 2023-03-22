@@ -16,10 +16,12 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 import moment from "moment";
 import { IOptions } from "../../app/models/shared";
+import { IGeneralForm } from "../../app/models/clinicResults";
 
 const RequestedStudyFilter = () => {
-  const { optionStore, requestedStudyStore, profileStore } = useStore();
-  const { getAll, setFormValues } = requestedStudyStore;
+  const { optionStore, requestedStudyStore, profileStore, clinicResultsStore } = useStore();
+  const { getAll } = requestedStudyStore;
+  const { setFormValues, formValues } = clinicResultsStore
   const {
     branchCityOptions,
     medicOptions,
@@ -60,16 +62,31 @@ const RequestedStudyFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    if(selectedCity!=undefined && selectedCity !=null){
-      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
-    var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
-      setBranchOptions(
-        options
-      );
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value == profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
+      }
+      form.setFieldValue("sucursalId", [profileBranch]);
     }
-    form.setFieldValue("sucursalId", []);
+  }, [branchCityOptions, form, profile]);
+  useEffect(() => {
+    if (selectedCity != undefined && selectedCity != null) {
+      var branhces = branchCityOptions.filter((x) =>
+        selectedCity.includes(x.value.toString())
+      );
+      var options = branhces.flatMap((x) =>
+        x.options == undefined ? [] : x.options
+      );
+      setBranchOptions(options);
+    }
   }, [branchCityOptions, form, selectedCity]);
-
+  useEffect(() => {
+    form.setFieldsValue(formValues);
+  }, [formValues, form]);
 
   useEffect(() => {
     setDepartmentOptions(
@@ -85,7 +102,7 @@ const RequestedStudyFilter = () => {
     form.setFieldValue("area", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
 
-  const onFinish = async (newFormValues: IRequestedStudyForm) => {
+  const onFinish = async (newFormValues: IGeneralForm) => {
     setLoading(true);
     const filter = { ...newFormValues };
     setFormValues(newFormValues);
@@ -95,7 +112,7 @@ const RequestedStudyFilter = () => {
 
   return (
     <div className="status-container">
-      <Form<IRequestedStudyForm>
+      <Form<IGeneralForm>
         {...formItemLayout}
         form={form}
         name="requestedStudy"
@@ -164,7 +181,7 @@ const RequestedStudyFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
-                    form={form}
+                      form={form}
                       formProps={{
                         name: "departament",
                         label: "Departamento",
@@ -207,7 +224,7 @@ const RequestedStudyFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
-                    form={form}
+                      form={form}
                       formProps={{
                         name: "ciudad",
                         label: "Ciudad",

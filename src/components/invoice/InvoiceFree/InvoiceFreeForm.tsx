@@ -21,21 +21,23 @@ const InvoiceFreeForm = () => {
     getSucursalesOptions,
     getCompanyOptions,
   } = optionStore;
-  const { getInvoicesFree } = invoiceCompanyStore;
+  const { getInvoicesFree, setFormValues, formValues } = invoiceCompanyStore;
   useEffect(() => {
     getSucursalesOptions();
     getCompanyOptions();
   }, []);
   useEffect(() => {
+    form.setFieldsValue(formValues);
+  }, [form, formValues]);
+  useEffect(() => {
     form.resetFields();
     form.submit();
   }, []);
   const onFinish = (newFormValues: IInvoicesFreeFilter) => {
-    console.log("FORMULARIO", toJS(newFormValues));
-    console.log("CHECKED VALUES", toJS(checkedValues));
     newFormValues.tipo = checkedValues;
     newFormValues.fechaInicial = newFormValues.fechas[0];
     newFormValues.fechaFinal = newFormValues.fechas[1];
+    setFormValues(newFormValues);
     getInvoicesFree(newFormValues);
   };
 
@@ -121,7 +123,7 @@ const InvoiceFreeForm = () => {
           </Row>
           <Row justify="end">
             <Col span={4} offset={20}>
-              <Button>Limpiar</Button>
+              <Button onClick={() => form.resetFields()}>Limpiar</Button>
               <Button type="primary" onClick={() => form.submit()}>
                 Filtrar
               </Button>

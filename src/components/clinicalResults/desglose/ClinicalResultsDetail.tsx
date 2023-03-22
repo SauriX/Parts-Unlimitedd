@@ -236,8 +236,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
 
   return (
     <Fragment key={estudio.id}>
-      {currentStudy.estatusId >= status.requestStudy.solicitado &&
-      currentStudy.estatusId != status.requestStudy.cancelado ? (
+      {currentStudy.estatusId != status.requestStudy.cancelado ? (
         <Spin spinning={loading}>
           <Row gutter={[24, 24]} className="study-divider">
             <Col span={24}>
@@ -264,7 +263,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
               form={form}
               onFinish={onFinish}
               name="dynamic_form_item"
-              disabled={currentStudy.estatusId > status.requestStudy.solicitado}
+              disabled={
+                currentStudy.estatusId > status.requestStudy.solicitado ||
+                currentStudy.estatusId < status.requestStudy.solicitado
+              }
             >
               <Row>
                 <Col span={24}>
@@ -454,6 +456,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                               disabled={
                                                 !fieldValue.editable ||
                                                 currentStudy.estatusId >
+                                                  status.requestStudy
+                                                    .solicitado ||
+                                                currentStudy.estatusId <
                                                   status.requestStudy.solicitado
                                               }
                                             />
@@ -478,7 +483,11 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                         <Title level={5}> Columna No.1 </Title>
                                         {fieldValue.tipoValores!.map((x) => (
                                           <Fragment key={uuid()}>
-                                            <Text>{!!x.primeraColumna ? x.primeraColumna : "-"}</Text>
+                                            <Text>
+                                              {!!x.primeraColumna
+                                                ? x.primeraColumna
+                                                : "-"}
+                                            </Text>
                                             <br />
                                           </Fragment>
                                         ))}
@@ -486,7 +495,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                       {parseInt(fieldValue.tipoValorId) >=
                                       13 ? (
                                         <Col span={4}>
-                                          <Title level={5}> Columna No.2 </Title>
+                                          <Title level={5}>
+                                            {" "}
+                                            Columna No.2{" "}
+                                          </Title>
                                           {fieldValue.tipoValores!.map((x) => (
                                             <Fragment key={uuid()}>
                                               <Text>{x.segundaColumna}</Text>
@@ -502,19 +514,26 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                   {parseInt(fieldValue.tipoValorId) >= 11 ? (
                                     <Fragment key={uuid()}>
                                       <Col span={4}>
-                                      <Title level={5}> {fieldValue.tipoValorId === parameters.valueType.tresColumnas
-                                                ? "Columna No.2"
-                                                : fieldValue.tipoValorId ===
-                                                parameters.valueType.cuatroColumnas
-                                                ? "Columna No.3"
-                                                : "Columna No.1"} </Title>
+                                        <Title level={5}>
+                                          {" "}
+                                          {fieldValue.tipoValorId ===
+                                          parameters.valueType.tresColumnas
+                                            ? "Columna No.2"
+                                            : fieldValue.tipoValorId ===
+                                              parameters.valueType
+                                                .cuatroColumnas
+                                            ? "Columna No.3"
+                                            : "Columna No.1"}{" "}
+                                        </Title>
                                         {fieldValue.tipoValores!.map((x) => (
                                           <Fragment key={uuid()}>
                                             <Text>
-                                              {fieldValue.tipoValorId === parameters.valueType.tresColumnas
+                                              {fieldValue.tipoValorId ===
+                                              parameters.valueType.tresColumnas
                                                 ? x.segundaColumna
                                                 : fieldValue.tipoValorId ===
-                                                parameters.valueType.cuatroColumnas
+                                                  parameters.valueType
+                                                    .cuatroColumnas
                                                 ? x.terceraColumna
                                                 : x.primeraColumna}
                                             </Text>
@@ -523,19 +542,26 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                         ))}
                                       </Col>
                                       <Col span={4}>
-                                      <Title level={5}> {fieldValue.tipoValorId === parameters.valueType.tresColumnas
-                                                ? "Columna No.3"
-                                                : fieldValue.tipoValorId ===
-                                                parameters.valueType.cuatroColumnas
-                                                ? "Columna No.4"
-                                                : "Columna No.2"} </Title>
+                                        <Title level={5}>
+                                          {" "}
+                                          {fieldValue.tipoValorId ===
+                                          parameters.valueType.tresColumnas
+                                            ? "Columna No.3"
+                                            : fieldValue.tipoValorId ===
+                                              parameters.valueType
+                                                .cuatroColumnas
+                                            ? "Columna No.4"
+                                            : "Columna No.2"}{" "}
+                                        </Title>
                                         {fieldValue.tipoValores!.map((x) => (
                                           <Fragment key={uuid()}>
                                             <Text>
-                                              {fieldValue.tipoValorId === parameters.valueType.tresColumnas
+                                              {fieldValue.tipoValorId ===
+                                              parameters.valueType.tresColumnas
                                                 ? x.terceraColumna
                                                 : fieldValue.tipoValorId ===
-                                                parameters.valueType.cuatroColumnas
+                                                  parameters.valueType
+                                                    .cuatroColumnas
                                                 ? x.cuartaColumna
                                                 : x.segundaColumna}
                                             </Text>
@@ -552,7 +578,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                               : 4
                                           }
                                         >
-                                          <Title level={5}> Columna No.5 </Title>
+                                          <Title level={5}>
+                                            {" "}
+                                            Columna No.5{" "}
+                                          </Title>
                                           {fieldValue.tipoValores!.map((x) => (
                                             <Fragment key={uuid()}>
                                               <Text>{x.quintaColumna}</Text>

@@ -4,12 +4,12 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
-import PromotionHeader from "../components/promotion/PromotionHeader";
-import PromotionTable from "../components/promotion/PromotionTable";
+import PromotionHeader from "../components/promotion/list/PromotionHeader";
+import PromotionTable from "../components/promotion/list/PromotionTable";
 
 const Promotion = () => {
   const { promotionStore } = useStore();
-  const { scopes, access, exportList } =promotionStore ;
+  const { scopes, access, clearScopes, exportList } = promotionStore;
 
   const [searchParams] = useSearchParams();
 
@@ -39,20 +39,22 @@ const Promotion = () => {
     };
 
     checkAccess();
-  }, [ access ]);
-  console.log("el escope en principal");
-  console.log(scopes);
-/*   useEffect(() => {
+  }, [access]);
+
+  useEffect(() => {
     return () => {
       clearScopes();
     };
-  }, [ clearScopes ]); */
+  }, [clearScopes]);
 
-  //if (!scopes?.acceder) return null;
+  if (!scopes?.acceder) return null;
 
   return (
     <Fragment>
-      <PromotionHeader handlePrint={handlePrint} handleDownload={handleDownload} />
+      <PromotionHeader
+        handlePrint={handlePrint}
+        handleDownload={handleDownload}
+      />
       <Divider className="header-divider" />
       <PromotionTable componentRef={componentRef} printing={loading} />
     </Fragment>

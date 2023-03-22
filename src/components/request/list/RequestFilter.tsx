@@ -19,7 +19,7 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const RequestFilter = () => {
-  const { requestStore, optionStore } = useStore();
+  const { requestStore, optionStore, profileStore } = useStore();
   const {
     branchCityOptions,
     medicOptions,
@@ -29,7 +29,9 @@ const RequestFilter = () => {
     getMedicOptions,
     getCompanyOptions,
     getDepartmentOptions,
+    BranchOptions,
   } = optionStore;
+  const { profile, getProfile } = profileStore;
   const { filter, setFilter, getRequests } = requestStore;
 
   const [form] = useForm<IRequestFilter>();
@@ -38,6 +40,7 @@ const RequestFilter = () => {
 
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
+  const [dateType, setDateType] = useState<number>(1);
 
   useKeyPress("L", form.submit);
 
@@ -46,11 +49,13 @@ const RequestFilter = () => {
     getMedicOptions();
     getCompanyOptions();
     getDepartmentOptions();
+    getProfile();
   }, [
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
     getDepartmentOptions,
+    getProfile,
   ]);
 
   useEffect(() => {
@@ -61,16 +66,29 @@ const RequestFilter = () => {
 
   useEffect(() => {
     if (selectedCity != undefined && selectedCity != null) {
-      var branhces = branchCityOptions.filter((x) =>
+      var branches = branchCityOptions.filter((x) =>
         selectedCity.includes(x.value.toString())
       );
-      var options = branhces.flatMap((x) =>
+      var options = branches.flatMap((x) =>
         x.options == undefined ? [] : x.options
       );
       setBranchOptions(options);
     }
     form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
+
+  useEffect(() => {
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value == profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
+      }
+      form.setFieldValue("sucursales", [profileBranch]);
+    }
+  }, [BranchOptions, form, profile]);
 
   useEffect(() => {
     form.setFieldsValue(filter);
@@ -104,6 +122,7 @@ const RequestFilter = () => {
                 name: "tipoFecha",
                 label: "Fecha de",
               }}
+              onChange={(value) => setDateType(value)}
               options={[
                 { value: 1, label: "Fecha de Creación" },
                 { value: 2, label: "Fecha de Entrega" },
@@ -113,7 +132,7 @@ const RequestFilter = () => {
           <Col span={8}>
             <DateRangeInput
               formProps={{ name: "fechas", label: "Fechas" }}
-              disableAfterDates
+              disableAfterDates={dateType == 1}
             />
           </Col>
           <Col span={8}>

@@ -15,7 +15,8 @@ import { useNavigate } from "react-router-dom";
 
 const SeriesFilter = () => {
   const { seriesStore, optionStore } = useStore();
-  const { getByFilter, setFormValues, setSeriesType, seriesType } = seriesStore;
+  const { getByFilter, setFormValues, setSeriesType, seriesType, formValues } =
+    seriesStore;
   const { branchCityOptions, getBranchCityOptions } = optionStore;
 
   const [form] = useForm();
@@ -25,6 +26,10 @@ const SeriesFilter = () => {
   const selectedCity = Form.useWatch("ciudad", form);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
+
+  useEffect(() => {
+    form.setFieldsValue(formValues);
+  }, [formValues, form]);
 
   useEffect(() => {
     getBranchCityOptions();
@@ -127,7 +132,7 @@ const SeriesFilter = () => {
                 options={seriesTypeOptions}
               ></SelectInput>
             </Col>
-            <Col span={4} style={{textAlign: "right"}}>
+            <Col span={4} style={{ textAlign: "right" }}>
               <Button key="clean" htmlType="reset">
                 Limpiar
               </Button>

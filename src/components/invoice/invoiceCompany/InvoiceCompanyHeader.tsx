@@ -9,6 +9,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import { useStore } from "../../../app/stores/store";
 import alerts from "../../../app/util/alerts";
+import { toJS } from "mobx";
 
 type InvoiceCompanyHeaderProps = {
   handleDownload: () => void;
@@ -26,6 +27,8 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
     selectedRows,
     isSameCommpany: mismaCompania,
     printReceipt,
+    selectedRequestGlobal,
+    createInvoiceGlobal,
   } = invoiceCompanyStore;
   let { id, tipo } = useParams<UrlParams>();
   const invoiceOptions = [
@@ -33,9 +36,6 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
     { label: "RECIBO", value: "Recibo" },
   ];
   const [tipoFactura, setTipoFactura] = useState<string>();
-  useEffect(() => {
-    console.log("tipo factura", tipoFactura);
-  }, [tipoFactura]);
 
   const createInvoice = async () => {
     if (!selectedRows.length) {
@@ -133,6 +133,8 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
                 ? "Crédito y cobranza (Facturación por solicitud)"
                 : tipo === "free"
                 ? "Crédito y cobranza (Facturación emitidas)"
+                : tipo === "global"
+                ? "Crédito y cobranza (Facturación global)"
                 : ""
             }
             image="invoice-company"
@@ -142,36 +144,48 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
           navigate(-1);
         }}
         className="header-container"
-        extra={[
-          <DownloadIcon key="doc" onClick={handleDownload} />,
-          tipo === "free" ? (
-            ""
-          ) : (
-            <SelectInput
-              formProps={{
-                name: "generar",
-                label: "",
-              }}
-              placeholder="Tipo factura"
-              options={invoiceOptions}
-              onChange={setTipoFactura}
-            />
-          ),
-          <Button
-            key="new"
-            type="primary"
-            onClick={() => {
-              if (tipo === "free") {
-                navigate(`/invoice/${tipo}/new`);
-              } else {
-                createInvoice();
-              }
-            }}
-            icon={<PlusOutlined />}
-          >
-            Generar
-          </Button>,
-        ]}
+        extra={
+          id
+            ? [<DownloadIcon key="doc" onClick={handleDownload} />]
+            : [
+                <DownloadIcon key="doc" onClick={handleDownload} />,
+                tipo === "free" || tipo === "global" ? (
+                  ""
+                ) : (
+                  <SelectInput
+                    formProps={{
+                      name: "generar",
+                      label: "",
+                    }}
+                    placeholder="Tipo factura"
+                    options={invoiceOptions}
+                    onChange={setTipoFactura}
+                  />
+                ),
+                <Button
+                  key="new"
+                  type="primary"
+                  onClick={() => {
+                    if (tipo === "global") {
+                      console.log(
+                        "solicitudes global",
+                        toJS(selectedRequestGlobal)
+                      );
+                      createInvoiceGlobal();
+                      return;
+                    }
+                    if (tipo === "free") {
+                      navigate(`/invoice/${tipo}/new`);
+                    } else {
+                      createInvoice();
+                    }
+                  }}
+                  icon={<PlusOutlined />}
+                >
+                  Generar
+                </Button>,
+              ]
+        }
       ></PageHeader>
     </>
   );

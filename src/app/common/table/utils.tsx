@@ -12,7 +12,7 @@ import { resizeWidth } from "../../util/window";
 
 export const defaultPaginationProperties: TablePaginationConfig = {
   size: "small",
-  pageSizeOptions: ["5", "10", "25", "50"],
+  pageSizeOptions: ["25", "50", "100"],
   showSizeChanger: true,
 };
 

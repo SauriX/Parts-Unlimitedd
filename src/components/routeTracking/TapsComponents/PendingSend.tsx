@@ -63,6 +63,9 @@ const PendingSend = () => {
       form.setFieldValue("origen", branch);
     }
   }, [BranchOptions, profile]);
+  useEffect(() => {
+    form.setFieldsValue(searchrecive);
+  }, [form, searchrecive]);
 
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
@@ -136,7 +139,7 @@ const PendingSend = () => {
         setSearchState,
         width: "10%",
       }),
-      render: (value, route) => value === 2 ? "Toma de Muestra" : "En ruta",
+      render: (value, route) => (value === 2 ? "Toma de Muestra" : "En ruta"),
     },
     {
       ...getDefaultColumnProps("entrega", "Fecha de entrega", {
@@ -151,15 +154,16 @@ const PendingSend = () => {
       title: "Editar",
       align: "center",
       width: "10%",
-      render: (value, route) => route.seguimiento && (
-        <IconButton
-          title="Editar ruta"
-          icon={<EditOutlined />}
-          onClick={() => {
-            navigate(`/trackingOrder/${value}`);
-          }}
-        />
-      ),
+      render: (value, route) =>
+        route.seguimiento && (
+          <IconButton
+            title="Editar ruta"
+            icon={<EditOutlined />}
+            onClick={() => {
+              navigate(`/trackingOrder/${value}`);
+            }}
+          />
+        ),
     },
   ];
   const onFinish = async (newValues: SearchTracking) => {

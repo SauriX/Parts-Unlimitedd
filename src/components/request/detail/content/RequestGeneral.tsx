@@ -319,7 +319,7 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
                       label: "E-Mail",
                       noStyle: true,
                     }}
-                    regex={/([a-z0-9_.-]+)@([\da-z.-]+)\.([a-z.]{2,6})$/}
+                    regex={/([A-Za-z0-9_.-]+)@([\dA-Za-z.-]+)\.([A-Za-z.]{2,6})$/}
                     readonly={!sendings?.includes("correo")}
                     required={sendings?.includes("correo")}
                     errors={errors.find((x) => x.name === "correos")?.errors}
@@ -422,7 +422,8 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
             errors={errors.find((x) => x.name === "observaciones")?.errors}
           />
         </Col>
-        <Col span={24}>
+
+        <Col span={20}>
           <RequestDeliveryHistory />
         </Col>
       </Row>

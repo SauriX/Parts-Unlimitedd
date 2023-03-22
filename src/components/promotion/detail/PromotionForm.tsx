@@ -8,976 +8,129 @@ import {
   PageHeader,
   Divider,
   Radio,
-  DatePicker,
-  List,
-  Typography,
-  Select,
-  Table,
-  Checkbox,
-  Input,
   Tag,
-  InputNumber,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
-import TextInput from "../../../app/common/form/TextInput";
 import { useStore } from "../../../app/stores/store";
-import { IReagentForm, ReagentFormValues } from "../../../app/models/reagent";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
-import NumberInput from "../../../app/common/form/NumberInput";
-import SelectInput from "../../../app/common/form/SelectInput";
-import SwitchInput from "../../../app/common/form/SwitchInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
-import { IBranchDepartment } from "../../../app/models/branch";
-import { IPackEstudioList } from "../../../app/models/packet";
-import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
+import { IDay, IFormError } from "../../../app/models/shared";
 import {
-  getDefaultColumnProps,
-  IColumns,
-  ISearch,
-} from "../../../app/common/table/utils";
-import { IOptions } from "../../../app/models/shared";
-import {
-  IDias,
-  Imedic,
-  IPromotionBranch,
-  IPromotionEstudioList,
+  IPromotionDay,
+  IPromotionStudyPack,
   IPromotionForm,
+  PromotionDay,
   PromotionFormValues,
 } from "../../../app/models/promotion";
-import { IPriceListForm, ISucMedComList } from "../../../app/models/priceList";
-import moment from "moment";
-import PriceList from "../../../views/PriceList";
-import Medics from "../../../views/Medics";
-import { use } from "echarts";
-import { VList } from "virtual-table-ant-design";
-type ReagentFormProps = {
-  id: string;
+import TextInput from "../../../app/common/form/proposal/TextInput";
+import SelectInput from "../../../app/common/form/proposal/SelectInput";
+import SwitchInput from "../../../app/common/form/proposal/SwitchInput";
+import NumberInput from "../../../app/common/form/proposal/NumberInput";
+import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
+import PromotionFormBranches from "./PromotionFormBranches";
+import PromotionFormDoctors from "./PromotionFormDoctors";
+import PromotionFormStudies from "./PromotionFormStudies";
+
+const tagsData: IDay[] = [
+  { id: 1, dia: "L", nombre: "lunes" },
+  { id: 2, dia: "M", nombre: "martes" },
+  { id: 3, dia: "M", nombre: "miercoles" },
+  { id: 4, dia: "J", nombre: "jueves" },
+  { id: 5, dia: "V", nombre: "viernes" },
+  { id: 6, dia: "S", nombre: "sabado" },
+  { id: 7, dia: "D", nombre: "domingo" },
+];
+
+const radioOptions = [
+  { label: "Porcentaje", value: "p" },
+  { label: "Cantidad", value: "q" },
+];
+
+type Props = {
+  id: number;
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
   download: boolean;
 };
-const { Search } = Input;
+
 const { CheckableTag } = Tag;
 
-const PromotionForm: FC<ReagentFormProps> = ({
-  id,
-  componentRef,
-  printing,
-  download,
-}) => {
-  const { optionStore, promotionStore, priceListStore } = useStore();
-  const { getPriceById, getById, getAll, create, update, promotionLists } =
+const PromotionForm: FC<Props> = ({ id, componentRef, printing, download }) => {
+  const { promotionStore, optionStore } = useStore();
+  const { promotions, getById, getStudies, getAll, create, update } =
     promotionStore;
-  const { getStudiesById, getSkip, skip, take, addSkip, resetSkip } =
-    priceListStore;
-  const {
-    priceListOptions,
-    getPriceListOptions,
-    getDepartmentOptions,
-    departmentOptions,
-    getareaOptions,
-    areas,
-    getMedicOptions,
-    medicOptions,
-  } = optionStore;
-  const { width: windowWidth } = useWindowDimensions();
+  const { priceListOptions, getPriceListOptions } = optionStore;
+
   const navigate = useNavigate();
-  const { RangePicker } = DatePicker;
-  const [lista, setLista] = useState(/* studies */);
+
   const [searchParams, setSearchParams] = useSearchParams();
-  const [areaId, setAreaId] = useState<number>();
-  const [discunt, setDiscunt] = useState<string>("");
-  const [branch, setBranch] = useState<IOptions[]>();
-  const [medic, setMedic] = useState<IOptions[]>([]);
-  const [sucursal, setSucursal] = useState<ISucMedComList>();
-  const [medico, setmedico] = useState<Imedic>();
-  const [sucursales, setSucursales] = useState<ISucMedComList[]>([]);
-  const [estudios, setEstudios] = useState<IPromotionEstudioList[]>([]);
+
   const [form] = Form.useForm<IPromotionForm>();
-  const [aeraSearch, setAreaSearch] = useState(areas);
-  const [selectedTags, setSelectedTags] = useState<IDias[]>([]);
+
+  const priceListId = Form.useWatch("listaPrecioId", form);
+  const showDoctors = Form.useWatch("aplicaMedicos", form);
+  const discountType = Form.useWatch("tipoDescuento", form);
+
   const [loading, setLoading] = useState(false);
-  const [flag, setFlag] = useState(false);
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
+  const [errors, setErrors] = useState<IFormError[]>([]);
+  const [selectedDoctors, setSelectedDoctors] = useState<string[]>([]);
+  const [selectedBranches, setSelectedBranches] = useState<string[]>([]);
+  const [studies, setStudies] = useState<IPromotionStudyPack[]>([]);
   const [values, setValues] = useState<IPromotionForm>(
     new PromotionFormValues()
   );
-  const [idListaPrecios, setIdListaPrecios] = useState<any>();
-  const [depId, setDepId] = useState<number>();
-
-  const tagsData: IDias[] = [
-    { id: 1, dia: "L" },
-    { id: 2, dia: "M" },
-    { id: 3, dia: "M" },
-    { id: 4, dia: "J" },
-    { id: 5, dia: "V" },
-    { id: 6, dia: "S" },
-    { id: 7, dia: "D" },
-  ];
-  const radioOptions = [
-    { label: "Porcentaje", value: "porcent" },
-    { label: "Cantidad", value: "number" },
-  ];
-  const [searchState, setSearchState] = useState<ISearch>({
-    searchedText: "",
-    searchedColumn: "",
-  });
-  const [loadingT, setLoadingT] = useState(false);
-  const [estudiosT, setEstudiosT] = useState<any[]>([]);
+  const [firstLoad, setFirstLoad] = useState(true);
 
   useEffect(() => {
-    resetSkip();
-  }, []);
-  const solicitarEstudios = async () => {
-    setLoadingT(true);
-    const reagent = await getById(Number(id));
-    console.log("SKIPT", skip);
-    const estudiosInfo: any = await getStudiesById({
-      id: reagent?.idListaPrecios,
-      skip: getSkip(),
-      take,
-    });
-    setEstudiosT((original) => [...original, ...estudiosInfo]);
-    addSkip();
-    setLoadingT(false);
-  };
-  useEffect(() => {
-    if (idListaPrecios) {
-      solicitarEstudios();
-    }
-  }, [idListaPrecios]);
-  useEffect(() => {
-    function scroll(event: any) {
-      let maxScroll = event.target.scrollHeight - event.target.clientHeight;
-      let currentScroll = event.target.scrollTop;
-
-      let scrollX = event.target.scrollLeft;
-      let delta = event.target.scrollLeft - scrollX;
-
-      if (currentScroll === maxScroll) {
-        solicitarEstudios();
-      }
-    }
-    let tableContent = document.querySelector(".ant-table-body");
-    tableContent!.addEventListener("scroll", scroll);
-    return () => {
-      tableContent?.addEventListener("scroll", scroll);
-    };
-  }, []);
-  useEffect(() => {
-    const getMedics = async () => {
-      await getMedicOptions();
-    };
-    getMedics();
-  }, [getMedicOptions]);
-  const setFechaInicial = (fecha: moment.Moment) => {
-    console.log(fecha.toDate(), "fecha");
-    console.log("fecha1");
-    let estudio = estudios.map((x) => {
-      let data: IPromotionEstudioList = {
-        id: x.id,
-        area: x.area,
-        clave: x.clave,
-        nombre: x.nombre,
-        descuentoPorcentaje: x.descuentoPorcentaje,
-        descuentoCantidad: x.descuentoPorcentaje,
-        precioFinal: x.precioFinal,
-        fechaInicial: fecha.toDate(),
-        fechaFinal: x.fechaFinal,
-        activo: x.activo,
-        precio: x.precio!,
-        paquete: x.paquete,
-        selectedTags: x.selectedTags,
-        departamento: x.departamento,
-      };
-      return data;
-    });
-    console.log(estudio, "estudio");
-    setEstudios(estudio!);
-    setValues((prev) => ({
-      ...prev,
-      estudio: estudio!,
-      fechaInicial: fecha.toDate(),
-    }));
-  };
-
-  const setFechaFinal = (fecha: moment.Moment) => {
-    let estudio = estudios.map((x) => {
-      let data: IPromotionEstudioList = {
-        id: x.id,
-        area: x.area,
-        clave: x.clave,
-        nombre: x.nombre,
-        descuentoPorcentaje: x.descuentoPorcentaje,
-        descuentoCantidad: x.descuentoPorcentaje,
-        precioFinal: x.precioFinal,
-        fechaInicial: x.fechaInicial,
-        fechaFinal: fecha.toDate(),
-        activo: x.activo,
-        precio: x.precio!,
-        paquete: x.paquete,
-        selectedTags: x.selectedTags,
-        departamento: x.departamento,
-      };
-      return data;
-    });
-
-    setEstudios(estudio!);
-    setValues((prev) => ({
-      ...prev,
-      estudio: estudio!,
-      fechaFinal: fecha.toDate(),
-    }));
-  };
-  const onValuesChange = async (changedValues: any) => {
-    const field = Object.keys(changedValues)[0];
-
-    if (field === "idListaPrecios") {
-      console.log("CAMBIO LISTA DE PRECIOS");
-      const id = changedValues[field] as string;
-      const priceList = await getPriceById(id);
-      var sucursales: ISucMedComList[] = priceList!.sucursales;
-      setSucursales(sucursales);
-      var sucursalesOptions: IOptions[] = sucursales.map((x) => ({
-        value: x.id,
-        label: x.nombre,
-      }));
-      setBranch(sucursalesOptions);
-      let estudio = priceList?.estudios.map((x) => {
-        let data: IPromotionEstudioList = {
-          id: x.id,
-          area: x.area,
-          clave: x.clave,
-          nombre: x.nombre,
-          descuentoPorcentaje:
-            values.tipoDescuento == "porcent" ? values.cantidad : 0,
-          descuentoCantidad:
-            values.tipoDescuento != "porcent" ? values.cantidad : 0,
-          precioFinal: 0,
-          fechaInicial: values.fechaInicial,
-          fechaFinal: values.fechaFinal,
-          activo: false,
-          precio: x.precio!,
-          paquete: false,
-          selectedTags: [],
-          departamento: x.departamento,
-        };
-        return data;
-      });
-      /* cambiar aqui*/
-      let paquetes = priceList?.paquete.map((x) => {
-        let data: IPromotionEstudioList = {
-          id: x.id,
-          area: x.area,
-          clave: x.clave,
-          nombre: x.nombre,
-          descuentoPorcentaje:
-            values.tipoDescuento == "porcent" ? values.cantidad : 0,
-          descuentoCantidad:
-            values.tipoDescuento != "porcent" ? values.cantidad : 0,
-          precioFinal: 0,
-          fechaInicial: values.fechaInicial,
-          fechaFinal: values.fechaFinal,
-          activo: false,
-          precio: x.precioFinal!,
-          paquete: true,
-          selectedTags: [],
-          departamento: x.departamento,
-        };
-
-        console.log(x);
-        return data;
-      });
-
-      estudio = estudio?.concat(paquetes!);
-
-      setEstudios(estudio!);
-
-      setValues((prev) => ({ ...prev, estudio: estudio! }));
-      setFlag(!flag);
-    }
-
-    if (field === "cantidad") {
-      let cantidad = changedValues[field] as number;
-      if (cantidad > 100 && values.tipoDescuento === "porcent") {
-        cantidad = 100;
-        form.setFieldValue("cantidad", 100);
-      }
-      console.log("cambio la cantidad");
-      console.log(values.tipoDescuento);
-      setValues((prev) => ({ ...prev, cantidad: cantidad! }));
-      let estudio: IPromotionEstudioList[] = estudios!.map((x) => {
-        let data: IPromotionEstudioList = {
-          id: x.id,
-          area: x.area,
-          clave: x.clave,
-          nombre: x.nombre,
-          descuentoPorcentaje:
-            values.tipoDescuento === "porcent"
-              ? cantidad
-              : (cantidad * 100) / x.precio,
-          descuentoCantidad:
-            values.tipoDescuento !== "porcent"
-              ? cantidad
-              : (cantidad * x.precio) / 100,
-          precioFinal:
-            values.tipoDescuento !== "porcent" && x.precio < cantidad
-              ? 0
-              : values.tipoDescuento !== "porcent"
-              ? x.precio - cantidad
-              : x.precio - (cantidad * x.precio) / 100,
-          fechaInicial: moment().toDate(),
-          fechaFinal: moment().toDate(),
-          activo: x.activo,
-          precio: x.precio!,
-          paquete: x.paquete,
-          selectedTags: x.selectedTags,
-          departamento: x.departamento,
-        };
-        return data;
-      });
-
-      setEstudios(estudio!);
-      setValues((prev) => ({ ...prev, estudio: estudio! }));
-    }
-  };
-  const editStudy = (typos: string) => {
-    var estudio: IPromotionEstudioList[] = estudios.map((x) => {
-      let data: IPromotionEstudioList = {
-        id: x.id,
-        area: x.area,
-        clave: x.clave,
-        nombre: x.nombre,
-        descuentoPorcentaje:
-          typos == "porcent"
-            ? values.cantidad
-            : (values.cantidad * 100) / x.precio,
-        descuentoCantidad:
-          typos != "porcent"
-            ? values.cantidad
-            : (values.cantidad * x.precio) / 100,
-        precioFinal:
-          typos != "porcent"
-            ? x.precio - values.cantidad
-            : x.precio - (values.cantidad * x.precio) / 100,
-        fechaInicial: moment().toDate(),
-        fechaFinal: moment().toDate(),
-        activo: x.activo,
-        precio: x.precio!,
-        paquete: x.paquete,
-        selectedTags: x.selectedTags,
-        departamento: x.departamento,
-      };
-      return data;
-    });
-
-    setEstudios(estudio!);
-    setValues((prev) => ({ ...prev, estudio: estudio! }));
-  };
-  const handleChange = (tag: IDias, checked: Boolean) => {
-    // setValues({...values, [tag.dia]: checked})
-    console.log(tag, "el tag");
-    const nextSelectedTags = checked
-      ? [...selectedTags!, tag]
-      : selectedTags.filter((t) => t.id !== tag.id);
-    console.log("You are interested in: ", nextSelectedTags);
-    let estudio: IPromotionEstudioList[] = estudios!.map((x) => {
-      if (x.selectedTags.length > 0) {
-        let nextSelectedTagsInStudy = checked
-          ? [...x.selectedTags!, tag]
-          : x.selectedTags.filter((t) => t.id !== tag.id);
-        let data: IPromotionEstudioList = {
-          id: x.id,
-          area: x.area,
-          clave: x.clave,
-          nombre: x.nombre,
-          descuentoPorcentaje: x.descuentoPorcentaje,
-          descuentoCantidad: x.descuentoCantidad,
-          precioFinal: x.precioFinal,
-          fechaInicial: x.fechaInicial,
-          fechaFinal: x.fechaFinal,
-          activo: x.activo,
-          precio: x.precio!,
-          paquete: x.paquete,
-          selectedTags: nextSelectedTagsInStudy,
-          departamento: x.departamento,
-        };
-        return data;
-      } else {
-        let data: IPromotionEstudioList = {
-          id: x.id,
-          area: x.area,
-          clave: x.clave,
-          nombre: x.nombre,
-          descuentoPorcentaje: x.descuentoPorcentaje,
-          descuentoCantidad: x.descuentoCantidad,
-          precioFinal: x.precioFinal,
-          fechaInicial: x.fechaInicial,
-          fechaFinal: x.fechaFinal,
-          activo: x.activo,
-          precio: x.precio!,
-          paquete: x.paquete,
-          selectedTags: nextSelectedTags,
-          departamento: x.departamento,
-        };
-        return data;
-      }
-    });
-
-    setEstudios(estudio!);
-    setValues((prev) => ({ ...prev, estudio: estudio! }));
-    setSelectedTags(nextSelectedTags!);
-  };
-  const setStudy = (
-    active: boolean,
-    item: IPromotionEstudioList,
-    type: boolean
-  ) => {
-    console.log(item, "item");
-    var index = estudios.findIndex(
-      (x) => x.id === item.id && x.paquete === type
-    );
-    var list = estudios;
-    item.activo = active;
-    list[index] = item;
-    // setLista(list);
-    // var indexVal = values.estudio.findIndex(
-    var indexVal = estudios.findIndex(
-      (x) => x.id === item.id && x.paquete === type
-    );
-    console.log(indexVal, "index");
-    // var val = values.estudio;
-    var val = estudios;
-    val[indexVal] = item;
-    setValues((prev) => ({ ...prev, estudio: val }));
-  };
-
-  const setStudyFi = (
-    fechainical: moment.Moment,
-    item: IPromotionEstudioList,
-    type: boolean
-  ) => {
-    var index = estudios.findIndex(
-      (x) => x.id == item.id && x.paquete === type
-    );
-    var list = estudios;
-    item.fechaInicial = fechainical.toDate();
-    list[index] = item;
-    // setLista(list);
-    // var indexVal = values.estudio.findIndex(
-    var indexVal = estudios.findIndex(
-      (x) => x.id == item.id && x.paquete === type
-    );
-    // var val = values.estudio;
-    var val = estudios;
-    val[indexVal] = item;
-    setValues((prev) => ({ ...prev, estudio: val }));
-  };
-  const setStudyFf = (
-    fechafinal: moment.Moment,
-    item: IPromotionEstudioList,
-    type: boolean
-  ) => {
-    var index = estudios.findIndex(
-      (x) => x.id == item.id && x.paquete === type
-    );
-    var list = estudios;
-    item.fechaFinal = fechafinal.toDate();
-    list[index] = item;
-    // setLista(list);
-    // var indexVal = values.estudio.findIndex(
-    var indexVal = estudios.findIndex(
-      (x) => x.id == item.id && x.paquete === type
-    );
-    // var val = values.estudio;
-    var val = estudios;
-    val[indexVal] = item;
-    setValues((prev) => ({ ...prev, estudio: val }));
-  };
-  const setStudydiscunt = (
-    decuento: number,
-    item: IPromotionEstudioList,
-    type: boolean
-  ) => {
-    var index = estudios.findIndex(
-      (x) => x.id === item.id && x.paquete === type
-    );
-    var list = estudios;
-    item.descuentoPorcentaje = decuento;
-    item.descuentoCantidad = (item.precio * decuento) / 100;
-    item.precioFinal = item.precio - item.descuentoCantidad;
-    list[index] = item;
-    // setLista(list);
-    // var indexVal = values.estudio.findIndex(
-    var indexVal = estudios.findIndex(
-      (x) => x.id == item.id && x.paquete === type
-    );
-    // var val = values.estudio;
-    var val = estudios;
-    val[indexVal] = item;
-    setValues((prev) => ({ ...prev, estudio: val }));
-  };
-
-  const setStudydiscuntc = (
-    decuento: number,
-    item: IPromotionEstudioList,
-    type: boolean
-  ) => {
-    var index = estudios.findIndex(
-      (x) => x.id === item.id && x.paquete === type
-    );
-    var list = estudios;
-    item.descuentoPorcentaje = (100 * decuento) / item.precio;
-    item.descuentoCantidad = decuento;
-    item.precioFinal = item.precio - decuento;
-    list[index] = item;
-    // setLista(list);
-    // var indexVal = values.estudio.findIndex(
-    var indexVal = estudios.findIndex(
-      (x) => x.id === item.id && x.paquete === type
-    );
-    // var val = values.estudio;
-    var val = estudios;
-    val[indexVal] = item;
-    setValues((prev) => ({ ...prev, estudio: val }));
-  };
-  const setStudyPricefinal = (
-    preciofinal: number,
-    item: IPromotionEstudioList,
-    type: boolean
-  ) => {
-    var index = estudios.findIndex(
-      (x) => x.id == item.id && x.paquete === type
-    );
-    var list = estudios;
-    item.descuentoCantidad = preciofinal - item.precio;
-    item.descuentoPorcentaje = (100 * item.descuentoCantidad) / item.precio;
-    item.precioFinal = preciofinal;
-    list[index] = item;
-    // setLista(list);
-    // var indexVal = values.estudio.findIndex(
-    var indexVal = estudios.findIndex(
-      (x) => x.id == item.id && x.paquete === type
-    );
-    // var val = values.estudio;
-    var val = estudios;
-    val[indexVal] = item;
-    setValues((prev) => ({ ...prev, estudio: val }));
-  };
-
-  const setStudyday = (
-    item: IPromotionEstudioList,
-    checked: boolean,
-    tag: IDias,
-    type: boolean
-  ) => {
-    var index = estudios.findIndex(
-      (x) => x.id == item.id && x.paquete === type
-    );
-    var list = estudios;
-
-    const nextSelectedTags = checked
-      ? [...item.selectedTags!, tag]
-      : item.selectedTags.filter((t) => t.id !== tag.id);
-    console.log("You are interested in: ", nextSelectedTags);
-    item.selectedTags = nextSelectedTags;
-    list[index] = item;
-    // setLista(list);
-    // var indexVal = values.estudio.findIndex(
-    var indexVal = estudios.findIndex(
-      (x) => x.id == item.id && x.paquete === type
-    );
-    // var val = values.estudio;
-    var val = estudios;
-    val[indexVal] = item;
-    setValues((prev) => ({ ...prev, estudio: val }));
-  };
-  useEffect(() => {
-    const readPriceList = async () => {
-      await getPriceListOptions();
-    };
-    readPriceList();
+    getPriceListOptions();
   }, [getPriceListOptions]);
-  useEffect(() => {
-    const readDepartaments = async () => {
-      var departaments = await getDepartmentOptions();
-    };
-    readDepartaments();
-  }, [getDepartmentOptions]);
-  useEffect(() => {
-    const areareader = async () => {
-      await getareaOptions(0);
-      setAreaSearch(areas);
-    };
-    areareader();
-  }, [getareaOptions]);
 
-  const columnsEstudios: IColumns<IPromotionEstudioList> = [
-    {
-      ...getDefaultColumnProps("clave", "Clave", {
-        searchState,
-        setSearchState,
-        width: 100,
-        windowSize: windowWidth,
-      }),
-      fixed: "left",
-    },
-    {
-      ...getDefaultColumnProps("nombre", "Nombre", {
-        searchState,
-        setSearchState,
-        width: 200,
-        windowSize: windowWidth,
-      }),
-    },
-    {
-      key: "editarp",
-      dataIndex: "id",
-      title: "Desc %",
-      align: "center",
-      width: 100,
-      render: (value, item) => (
-        <InputNumber
-          type={"number"}
-          min={0}
-          value={item.descuentoPorcentaje}
-          onChange={(value) => setStudydiscunt(value ?? 0, item, item.paquete!)}
-        ></InputNumber>
-      ),
-    },
-    {
-      key: "editarc",
-      dataIndex: "id",
-      title: "Desc cantidad",
-      align: "center",
-      width: 100,
-      render: (value, item) => (
-        <InputNumber
-          type={"number"}
-          min={0}
-          value={item.descuentoCantidad}
-          onChange={(value) =>
-            setStudydiscuntc(value ?? 0, item, item.paquete!)
-          }
-        ></InputNumber>
-      ),
-    },
-    {
-      key: "editarc",
-      dataIndex: "id",
-      title: "Precio final",
-      align: "center",
-      width: 100,
-      render: (value, item) => (
-        <InputNumber
-          type={"number"}
-          min={0}
-          value={item.precioFinal}
-          readOnly={true}
-          onChange={(value) =>
-            setStudyPricefinal(value ?? 0, item, item.paquete)
-          }
-        ></InputNumber>
-      ),
-    },
-    {
-      ...getDefaultColumnProps("area", "Área", {
-        searchState,
-        setSearchState,
-        width: 100,
-        windowSize: windowWidth,
-      }),
-    },
-
-    {
-      key: "editarc",
-      dataIndex: "id",
-      title: "Fecha inicio",
-      align: "center",
-      width: 200,
-      render: (value, item) => (
-        <DatePicker
-          style={{ marginLeft: "10px" }}
-          value={moment(item.fechaInicial)}
-          onChange={(value) => {
-            setStudyFi(value!, item, item.paquete);
-          }}
-        />
-      ),
-    },
-    {
-      key: "editarc",
-      dataIndex: "id",
-      title: "Fecha final",
-      align: "center",
-      width: 200,
-      render: (value, item) => (
-        <DatePicker
-          style={{ marginLeft: "10px" }}
-          value={moment(item.fechaFinal)}
-          onChange={(value) => {
-            setStudyFf(value!, item, item.paquete);
-          }}
-        />
-      ),
-    },
-    {
-      key: "editar",
-      dataIndex: "id",
-      title: "Activo",
-      align: "center",
-      width: 100,
-      render: (value, item) => (
-        <Checkbox
-          name="activo"
-          checked={item.activo}
-          onChange={(value) => {
-            console.log(value.target.checked);
-            var active = false;
-            if (value.target.checked) {
-              console.log("here");
-              active = true;
-            }
-            setStudy(active, item, item.paquete);
-          }}
-        />
-      ),
-    },
-    {
-      ...getDefaultColumnProps("precio", "Precio", {
-        searchState,
-        setSearchState,
-        width: 100,
-        windowSize: windowWidth,
-      }),
-    },
-    {
-      key: "editar",
-      dataIndex: "id",
-      title: "Dias",
-      align: "center",
-      width: 200,
-      render: (value, item) => (
-        <>
-          {tagsData.map((tag) => (
-            <CheckableTag
-              key={tag.id}
-              checked={
-                item.selectedTags.filter((x: IDias) => x.id === tag.id).length >
-                0
-              }
-              onChange={(checked) =>
-                setStudyday(item, checked, tag, item.paquete)
-              }
-            >
-              {tag.dia}
-            </CheckableTag>
-          ))}
-        </>
-      ),
-    },
-  ];
-  const filterByDepartament = async (departament: number) => {
-    if (departament) {
-      var departamento = departmentOptions.filter(
-        (x) => x.value === departament
-      )[0].label;
-      var areaSearch = await getareaOptions(departament);
-
-      var estudio = estudios!.filter(
-        (x: IPromotionEstudioList) => x.departamento === departamento
-      );
-      console.log(estudios, "estudios");
-      console.log(departamento, "2depa");
-      console.log(estudio, "estudios");
-      console.log(estudio);
-      setValues((prev) => ({ ...prev, estudio: estudio }));
-      setAreaSearch(areaSearch!);
-    } else {
-      var estudi = estudios!.filter((x) => x.activo === true);
-      setValues((prev) => ({ ...prev, estudio: estudi }));
-    }
-  };
-  const filterByArea = (area?: number) => {
-    if (area) {
-      var areaActive = areas.filter((x) => x.value === area)[0].label;
-      var estudi = estudios.filter((x) => x.area === areaActive);
-      setValues((prev) => ({ ...prev, estudio: estudi }));
-    } else {
-      const dep = departmentOptions.find((x) => x.value === depId)?.label;
-      estudi = estudios.filter((x) => x.departamento === dep);
-      if (depId == undefined || depId == 0) {
-        estudi = estudios;
-      }
-      setValues((prev) => ({ ...prev, estudio: estudi }));
-    }
-  };
-  const filterBySearch = (search: string) => {
-    var estudio = estudios.filter(
-      (x) =>
-        x.clave.toUpperCase().includes(search.toUpperCase()) ||
-        x.nombre.toUpperCase().includes(search.toUpperCase())
-    );
-    console.log(estudio);
-    setValues((prev) => ({ ...prev, estudio: estudio }));
-  };
   useEffect(() => {
-    const readReagent = async (id: number) => {
+    const readPromotion = async (id: number) => {
       setLoading(true);
-
-      const reagent = await getById(id);
-      //COLOCAR CONSULTA PARA ESTUDIOS Y PACKS
-      console.log("el promotion");
-      console.log(reagent);
-      const priceList = await getPriceById(reagent?.idListaPrecios!);
-      console.log(priceList, "pricelist");
-      var sucursales: ISucMedComList[] = priceList!.sucursales;
-      setSucursales(sucursales);
-      var sucursalesOptions: IOptions[] = sucursales.map((x) => ({
-        value: x.id,
-        label: x.nombre,
-      }));
-      if (reagent!.medics?.length > 0) {
-        reagent!.mediccheck = true;
-      }
-      setBranch(sucursalesOptions);
-      form.setFieldsValue(reagent!);
-      setValues(reagent!);
-      setSelectedTags(reagent?.dias!);
+      const promotion = await getById(id);
+      form.setFieldsValue(promotion!);
+      setValues(promotion!);
+      setSelectedBranches(promotion!.sucursales);
+      setSelectedDoctors(promotion!.medicos);
+      const studies = await getStudies(promotion!, true);
+      setStudies(studies);
       setLoading(false);
-      setDiscunt(reagent?.tipoDescuento!);
-      // setEstudios(reagent?.estudio!);
-      if (!!reagent?.idListaPrecios) {
-        setIdListaPrecios(reagent?.idListaPrecios!);
-        console.log("se ejecuto ", reagent);
-      }
     };
-    console.log("el id");
-    console.log(id);
+
     if (id) {
-      console.log(id, "id");
-      readReagent(Number(id));
-    } else {
-      setDiscunt("porcent");
-      setValues((prev) => ({ ...prev, tipoDescuento: "porcent" }));
+      readPromotion(id);
     }
-  }, [getById, id]);
+  }, [form, getById, getStudies, id]);
 
   useEffect(() => {
-    getAll(searchParams.get("search") ?? "all");
-  }, [getAll]);
-  const deleteClinic = (id: string) => {
-    const clinics = values.branchs.filter((x) => x.id !== id);
-
-    setValues((prev) => ({ ...prev, branchs: clinics }));
-  };
-  const deletemedico = (id: string) => {
-    const clinics = values.medics.filter((x) => x.id !== id);
-
-    setValues((prev) => ({ ...prev, medics: clinics }));
-  };
-  const addClinic = () => {
-    if (sucursal) {
-      if (values.branchs.findIndex((x) => x.id === sucursal.id) > -1) {
-        alerts.warning("Ya esta agregado este medico");
-        return;
-      }
-
-      const branchs: ISucMedComList[] = [
-        ...values.branchs,
-        {
-          id: sucursal.id,
-          clave: sucursal.clave,
-          nombre: sucursal.nombre,
-          area: sucursal.area,
-          activo: sucursal.activo,
-          departamento: sucursal.departamento,
-        },
-      ];
-
-      setValues((prev) => ({ ...prev, branchs: branchs }));
-      console.log(values);
+    if (promotions.length === 0) {
+      getAll(searchParams.get("search") ?? "all");
     }
-  };
-  const addmedic = () => {
-    console.log(medico, "medico");
-    if (medico) {
-      if (values.medics!.findIndex((x) => x.id === medico.id) > -1) {
-        alerts.warning("Ya esta agregada este departamento");
-        return;
-      }
-      console.log(medico);
-      const branchs: Imedic[] = [
-        ...values.medics,
-        {
-          id: medico.id,
-          clave: medico.clave,
-          activo: medico.activo,
-          nombre: medico.nombre,
-        },
-      ];
+  }, [getAll, promotions.length, searchParams]);
 
-      setValues((prev) => ({ ...prev, medics: branchs }));
-      console.log(values);
-    }
-  };
   const onFinish = async (newValues: IPromotionForm) => {
+    // prettier-ignore
+    newValues.fechaInicial = newValues.fechaDescuento ? newValues.fechaDescuento[0].utcOffset(0, false).toDate() : new Date();
+    // prettier-ignore
+    newValues.fechaFinal = newValues.fechaDescuento ? newValues.fechaDescuento[1].utcOffset(0, false).toDate() : new Date();
+    newValues.sucursales = selectedBranches;
+    newValues.medicos = selectedDoctors;
+    newValues.estudios = studies;
+
     setLoading(true);
 
     const reagent = { ...values, ...newValues };
-    var fechainicial = moment(reagent.fechaInicial).format("YYYY-MM-DD");
 
-    var fechafinal = moment(reagent.fechaFinal).format("YYYY-MM-DD");
-
-    if (fechafinal < fechainicial) {
-      setLoading(false);
-      alerts.warning("La fecha inicial debe ser menor a la final");
-      return;
-    }
-    var counter = 0;
-    var counterF = 0;
-    // values.estudio.forEach((x) => {
-    estudios.forEach((x) => {
-      if (x.precioFinal <= 0) {
-        counter++;
-      }
-
-      var fechainicial = moment(x.fechaInicial).format("YYYY-MM-DD");
-
-      var fechafinal = moment(x.fechaFinal).format("YYYY-MM-DD");
-      if (fechafinal < fechainicial) {
-        counterF++;
-      }
-    });
-
-    if (counter > 0) {
-      alerts.warning("El precio final debe ser mayor a 0");
-      setLoading(false);
-      return;
-    }
-    if (counterF > 0) {
-      alerts.warning(
-        "La fecha inicial debe ser menor a la final en los estudios"
-      );
-      setLoading(false);
-      return;
-    }
-    if (selectedTags == null || selectedTags.length <= 0) {
-      alerts.warning("Se deben seleccionar días a aplicar");
-      setLoading(false);
-      return;
-    }
-    reagent.dias = selectedTags;
-    console.log(reagent, "en el onfish");
-    console.log(reagent);
     let success = false;
 
     if (!reagent.id) {
@@ -1000,34 +153,58 @@ const PromotionForm: FC<ReagentFormProps> = ({
   };
 
   const setEditMode = () => {
+    searchParams.delete("mode");
+    setSearchParams(searchParams);
     navigate(`/${views.promo}/${id}?${searchParams}&mode=edit`);
     setReadonly(false);
   };
-  useEffect(() => {
-    if (values.tipoDescuento == "porcent") {
-      // values.estudio.forEach((x) => {
-      estudios.forEach((x) => {
-        setStudydiscunt(x.descuentoPorcentaje, x, x.paquete!);
-      });
-    } else {
-      // values.estudio.forEach((x) => {
-      estudios.forEach((x) => {
-        setStudydiscuntc(x.descuentoCantidad, x, x.paquete!);
-      });
-    }
-    selectedTags.forEach((x) => {
-      handleChange(x, true);
-    });
-  }, [flag]);
-  const getPage = (id: string) => {
-    return promotionLists.findIndex((x) => x.id === Number(id)) + 1;
+
+  const getPage = (id: number) => {
+    return promotions.findIndex((x) => x.id === id) + 1;
   };
 
   const setPage = (page: number) => {
-    const reagent = promotionLists[page - 1];
-    setAreaId(undefined);
-    setDepId(undefined);
-    navigate(`/${views.promo}/${reagent.id}?${searchParams}`);
+    const promo = promotions[page - 1];
+    navigate(`/${views.promo}/${promo.id}?${searchParams}`);
+  };
+
+  const onValuesChange = (changedValues: any, values: IPromotionForm) => {
+    const field = Object.keys(changedValues)[0];
+    let value = changedValues[field];
+    let studiesToUpdate = [...studies];
+
+    if (field === "listaPrecioId" && !value) {
+      setStudies([]);
+    } else if (field === "dias") {
+      studiesToUpdate = studiesToUpdate.map((x) => ({ ...x, ...value }));
+      setStudies(studiesToUpdate);
+    } else if (field === "fechaDescuento") {
+      // prettier-ignore
+      studiesToUpdate = studiesToUpdate.map((x) => ({
+        ...x,
+        fechaInicial: !!value ? value[0].utcOffset(0, false).toDate(): new Date(),
+        fechaFinal: !!value ? value[1].utcOffset(0, false).toDate(): new Date(),
+      }));
+      setStudies(studiesToUpdate);
+    } else if (field === "tipoDescuento" || field === "cantidad") {
+      value = value ?? 0;
+      studiesToUpdate = studiesToUpdate.map((x) => {
+        // prettier-ignore
+        let descP = values.tipoDescuento === "p" ? values.cantidad : values.cantidad * 100 / x.precio;
+        descP = Number(descP.toFixed(2));
+        // prettier-ignore
+        let descQ = values.tipoDescuento === "p" ? x.precio * values.cantidad / 100 : values.cantidad;
+        descQ = Number(descQ.toFixed(2));
+
+        return {
+          ...x,
+          descuentoPorcentaje: descP,
+          descuentoCantidad: descQ,
+          precioFinal: x.precio - descQ,
+        };
+      });
+      setStudies(studiesToUpdate);
+    }
   };
 
   return (
@@ -1036,11 +213,11 @@ const PromotionForm: FC<ReagentFormProps> = ({
       tip={printing ? "Imprimiendo" : download ? "descargando" : ""}
     >
       <Row style={{ marginBottom: 24 }}>
-        {id && (
+        {!!id && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
             <Pagination
               size="small"
-              total={promotionLists?.length ?? 0}
+              total={promotions?.length ?? 0}
               pageSize={1}
               current={getPage(id)}
               onChange={setPage}
@@ -1091,14 +268,21 @@ const PromotionForm: FC<ReagentFormProps> = ({
           <Form<IPromotionForm>
             {...formItemLayout}
             form={form}
-            name="reagent"
-            initialValues={values}
             onFinish={onFinish}
+            onFinishFailed={({ errorFields }) => {
+              const errors = errorFields.map((x) => ({
+                name: x.name[0].toString(),
+                errors: x.errors,
+              }));
+              setErrors(errors);
+            }}
+            initialValues={new PromotionFormValues()}
+            name="promotion"
             scrollToFirstError
             onValuesChange={onValuesChange}
           >
-            <Row gutter={[12, 24]}>
-              <Col md={12} sm={24} xs={12}>
+            <Row gutter={[0, 12]}>
+              <Col md={8} sm={24} xs={24}>
                 <TextInput
                   formProps={{
                     name: "clave",
@@ -1107,31 +291,33 @@ const PromotionForm: FC<ReagentFormProps> = ({
                   max={100}
                   required
                   readonly={readonly}
+                  errors={errors.find((x) => x.name === "clave")?.errors}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={24}>
                 <SelectInput
                   formProps={{
-                    name: "idListaPrecios",
+                    name: "listaPrecioId",
                     label: "Lista de precios",
                   }}
                   required
                   options={priceListOptions}
                   readonly={readonly}
+                  errors={
+                    errors.find((x) => x.name === "listaPrecioId")?.errors
+                  }
+                  onChange={() => setFirstLoad(false)}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "nombre",
-                    label: "Nombre",
-                  }}
-                  max={100}
-                  required
+              <Col md={4} sm={12} xs={12}>
+                <SwitchInput
+                  labelCol={{ span: 18 }}
+                  name="aplicaMedicos"
+                  label="Medicos"
                   readonly={readonly}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={4} sm={12} xs={12}>
                 <SwitchInput
                   name="activo"
                   onChange={(value) => {
@@ -1144,297 +330,103 @@ const PromotionForm: FC<ReagentFormProps> = ({
                   label="Activo"
                   readonly={readonly}
                 />
-                <SwitchInput
-                  name="mediccheck"
-                  label="Medicos"
-                  onChange={(val) => {
-                    setValues((prev) => ({ ...prev, mediccheck: val }));
+              </Col>
+              <Col md={8} sm={24} xs={24}>
+                <TextInput
+                  formProps={{
+                    name: "nombre",
+                    label: "Nombre",
                   }}
+                  max={100}
+                  required
                   readonly={readonly}
+                  errors={errors.find((x) => x.name === "nombre")?.errors}
                 />
               </Col>
-              <Col md={12} sm={24} xs={12}>
-                <div style={{ marginLeft: "85px", marginBottom: "20px" }}>
-                  Tipo de descuento:
+              <Col md={16} sm={0} xs={0}></Col>
+              <Col md={8} sm={24} xs={24}>
+                <Form.Item
+                  name="tipoDescuento"
+                  label="Tipo de descuento"
+                  help=""
+                  className="no-error-text"
+                >
                   <Radio.Group
-                    style={{ marginLeft: "10px" }}
+                    className={readonly ? "unclickable" : ""}
                     options={radioOptions}
-                    onChange={(e) => {
-                      setValues((prev) => ({
-                        ...prev,
-                        tipoDescuento: e.target.value,
-                      }));
-                      setDiscunt(e.target.value);
-                      console.log(values.cantidad);
-                      if (values.cantidad !== 0) {
-                        console.log("cambio de tipo");
-                        editStudy(e.target.value);
-                      }
-                    }}
-                    value={discunt}
                   />
-                </div>
+                </Form.Item>
               </Col>
-              <Col md={12} sm={24} xs={12}></Col>
-              <Col md={12} sm={24} xs={12}>
+              <Col md={8} sm={24} xs={24}>
                 <NumberInput
                   formProps={{
                     name: "cantidad",
                     label: "Descuento",
+                    wrapperCol: { span: 4 },
                   }}
-                  max={discunt === "number" ? 99999 : 100}
                   min={0}
+                  max={
+                    discountType === "p"
+                      ? 100
+                      : studies.length
+                      ? Math.min(...studies.map((x) => x.precio))
+                      : 0
+                  }
                   required
                   readonly={readonly}
+                  errors={errors.find((x) => x.name === "cantidad")?.errors}
                 ></NumberInput>
-                <div></div>
               </Col>
-              <Col md={12} sm={24} xs={12}></Col>
-              <Col md={12} sm={24} xs={12}>
-                <div style={{ marginLeft: "98px", marginBottom: "20px" }}>
-                  Descuento entre:
-                  <DatePicker
-                    disabled={readonly}
-                    style={{ marginLeft: "10px" }}
-                    value={moment(values.fechaInicial)}
-                    onChange={(value) => {
-                      setFechaInicial(value!);
-                    }}
-                  />
-                  <DatePicker
-                    disabled={readonly}
-                    style={{ marginLeft: "10px" }}
-                    value={moment(values.fechaFinal)}
-                    onChange={(value) => {
-                      setFechaFinal(value!);
-                    }}
-                  />
-                </div>
+              <Col md={8} sm={0} xs={0}></Col>
+              <Col md={8} sm={24} xs={24}>
+                <DateRangeInput
+                  formProps={{
+                    name: "fechaDescuento",
+                    label: "DescuentoEntre",
+                  }}
+                  readonly={readonly}
+                  required
+                />
               </Col>
-              <Col md={12} sm={24} xs={12}>
-                <div style={{ marginLeft: "125px", marginBottom: "20px" }}>
-                  <span style={{ marginRight: 8 }}>Aplicar dias:</span>
-                  {tagsData.map((tag) => (
-                    <CheckableTag
-                      key={tag.id}
-                      checked={
-                        selectedTags.filter((x) => x.id === tag.id).length > 0
-                      }
-                      onChange={(checked) => {
-                        if (!readonly) {
-                          handleChange(tag, checked);
-                        }
-                      }}
-                    >
-                      {tag.dia}
-                    </CheckableTag>
-                  ))}
-                </div>
+              <Col md={8} sm={24} xs={12}>
+                <Form.Item
+                  name="dias"
+                  label="Aplicar días"
+                  help=""
+                  className="no-error-text"
+                >
+                  <TagDayItem readonly={readonly} />
+                </Form.Item>
               </Col>
             </Row>
           </Form>
-          <div>
-            <div></div>
-          </div>
-          <Divider orientation="left">Sucursales</Divider>
-          <List<ISucMedComList>
-            header={
-              <div>
-                <Col md={12} sm={24} style={{ marginRight: 20 }}>
-                  Clave/Nombre:
-                  <Select
-                    options={branch}
-                    onChange={(value, option: any) => {
-                      if (value) {
-                        var sucursal = sucursales.filter((x) => x.id == value);
-                        setSucursal(sucursal[0]);
-                      } else {
-                        setSucursal(undefined);
-                      }
-                    }}
-                    style={{ width: 240, marginRight: 20, marginLeft: 10 }}
-                  />
-                  {!readonly && !printing && (
-                    <ImageButton
-                      key="agregar"
-                      title="Agregar "
-                      image="agregar-archivo"
-                      onClick={addClinic}
-                    />
-                  )}
-                </Col>
-              </div>
-            }
-            footer={<div></div>}
-            bordered
-            dataSource={values.branchs}
-            renderItem={(item) => (
-              <List.Item>
-                <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                  <Typography.Text mark></Typography.Text>
-                  {item.nombre}
-                </Col>
-                <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                  {!readonly && !printing && (
-                    <ImageButton
-                      key="Eliminar"
-                      title="Eliminar"
-                      image="Eliminar_Clinica"
-                      onClick={() => {
-                        deleteClinic(item.id);
-                      }}
-                    />
-                  )}
-                </Col>
-              </List.Item>
-            )}
+          <PromotionFormBranches
+            priceListId={priceListId}
+            readonly={readonly}
+            printing={printing}
+            firstLoad={firstLoad}
+            selectedBranches={selectedBranches}
+            setSelectedBranches={setSelectedBranches}
           />
-          {values.mediccheck && (
-            <div>
-              <Divider orientation="left">Médicos</Divider>
-
-              <List<ISucMedComList>
-                header={
-                  <div>
-                    <Col md={12} sm={24} style={{ marginRight: 20 }}>
-                      Clave/Nombre:
-                      <Select
-                        options={medicOptions}
-                        onChange={(value, option: any) => {
-                          console.log(medicOptions, "optios");
-                          setMedic([...medicOptions]);
-                          if (medic.length == 0) {
-                            setMedic([...medicOptions]);
-                            console.log(medic, "MEDIC");
-                          }
-                          if (value) {
-                            console.log(value);
-                            var sucursal = medicOptions.filter(
-                              (x) => x.value == value
-                            );
-                            console.log("SUCURSAL", sucursal);
-                            setMedic((prev) => [...prev, sucursal[0]]);
-                            var medics: Imedic = sucursal.map((x) => ({
-                              id: x.value.toString(),
-                              clave: "",
-                              activo: true,
-                              nombre: x.label?.toString()!,
-                            }))[0];
-                            setmedico(medics);
-                          } else {
-                            setMedic([]);
-                          }
-                        }}
-                        style={{ width: 240, marginRight: 20, marginLeft: 10 }}
-                      />
-                      {!readonly && !printing && (
-                        <ImageButton
-                          key="agregar"
-                          title="Agregar "
-                          image="agregar-archivo"
-                          onClick={addmedic}
-                        />
-                      )}
-                    </Col>
-                  </div>
-                }
-                footer={<div></div>}
-                bordered
-                dataSource={values.medics}
-                renderItem={(item) => (
-                  <List.Item>
-                    <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                      <Typography.Text mark></Typography.Text>
-                      {item.nombre}
-                    </Col>
-                    <Col md={12} sm={24} style={{ textAlign: "left" }}>
-                      {!readonly && !printing && (
-                        <ImageButton
-                          key="Eliminar"
-                          title="Eliminar"
-                          image="Eliminar_Clinica"
-                          onClick={() => {
-                            deletemedico(item.id);
-                          }}
-                        />
-                      )}
-                    </Col>
-                  </List.Item>
-                )}
-              />
-            </div>
-          )}{" "}
-          <Divider orientation="left">ESTUDIOS Y PAQUETES</Divider>
-          <Row justify="space-between" align="middle">
-            <Col span={6} offset={2}>
-              <Search
-                key="search"
-                placeholder="Buscar"
-                onSearch={(value) => {
-                  filterBySearch(value);
-                }}
-                allowClear
-                style={{ marginBottom: 19 }}
-              />
-            </Col>
-            <Col span={6} offset={2}>
-              <SelectInput
-                options={departmentOptions}
-                onChange={(value) => {
-                  setAreaId(undefined);
-                  setDepId(value);
-                  filterByDepartament(value);
-                }}
-                value={depId}
-                placeholder={"Departamentos"}
-                formProps={{
-                  name: "departamentos",
-                  label: "Departamento",
-                }}
-              />
-            </Col>
-            <Col span={6} offset={2}>
-              <SelectInput
-                options={aeraSearch}
-                onChange={(value) => {
-                  setAreaId(value);
-                  filterByArea(value);
-                }}
-                value={areaId}
-                placeholder={"Área"}
-                formProps={{
-                  name: "area",
-                  label: "Área",
-                }}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col
-              md={24}
-              sm={12}
-              style={{ marginRight: 20, textAlign: "center" }}
-            >
-              <Table<IPromotionEstudioList>
-                size="small"
-                rowKey={(record) => record.id}
-                columns={columnsEstudios}
-                pagination={false}
-                // dataSource={[...values.estudio]}
-                dataSource={[...estudiosT]}
-
-                components={VList({
-                  height: 500,
-                })}
-                scroll={{
-                  x: "max-content",
-                  y: 350,
-                  scrollToFirstRowOnChange: true,
-                }}
-                loading={loadingT}
-              />
-            </Col>
-          </Row>
+          {showDoctors && (
+            <PromotionFormDoctors
+              readonly={readonly}
+              printing={printing}
+              selectedDoctors={selectedDoctors}
+              setSelectedDoctors={setSelectedDoctors}
+            />
+          )}
+          {!!priceListId && (
+            <PromotionFormStudies
+              priceListId={priceListId}
+              form={form}
+              studies={studies}
+              setStudies={setStudies}
+              firstLoad={firstLoad}
+              readonly={readonly}
+              printing={printing}
+            />
+          )}
         </div>
       </div>
     </Spin>
@@ -1442,3 +434,51 @@ const PromotionForm: FC<ReagentFormProps> = ({
 };
 
 export default observer(PromotionForm);
+
+type TagDayItemProps = {
+  value?: IPromotionDay;
+  onChange?: (value: IPromotionDay) => void;
+  readonly: boolean;
+};
+
+// prettier-ignore
+type days = "lunes" | "martes" | "miercoles" | "jueves" | "viernes" | "sabado" | "domingo";
+
+const TagDayItem: React.FC<TagDayItemProps> = ({
+  value,
+  onChange,
+  readonly,
+}) => {
+  const [days, setDays] = useState(value || new PromotionDay());
+
+  useEffect(() => {
+    setDays(value || new PromotionDay());
+  }, [value]);
+
+  const onSelectTag = (tag: IDay, checked: boolean) => {
+    const newDays = { ...days };
+    newDays[tag.nombre! as days] = checked;
+    setDays(newDays);
+    if (typeof onChange === "function") {
+      onChange(newDays);
+    }
+  };
+
+  return (
+    <div>
+      {tagsData.map((tag) => (
+        <CheckableTag
+          onChange={(c) => {
+            if (readonly) return;
+            onSelectTag(tag, c);
+          }}
+          key={tag.id}
+          checked={days[tag.nombre! as days]}
+          className={readonly ? "unclickable" : ""}
+        >
+          {tag.dia}
+        </CheckableTag>
+      ))}
+    </div>
+  );
+};

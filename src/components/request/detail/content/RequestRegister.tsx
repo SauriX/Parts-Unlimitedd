@@ -183,11 +183,6 @@ const RequestRegister = () => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    console.log("PAGOOOOOOOOOOOOOOOOOOOOOOOOOOOS");
-    console.log(payments);
-  }, [payments]);
-
   return (
     <Spin spinning={loading}>
       <Row gutter={[8, 12]}>

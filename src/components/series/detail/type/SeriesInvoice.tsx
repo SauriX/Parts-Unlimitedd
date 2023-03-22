@@ -306,6 +306,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
             <SwitchInput
               name={["factura", "estatus"]}
               label="Estatus"
+              defaultChecked={true}
               onChange={(value) => {
                 if (value) {
                   alerts.info(messages.confirmations.invoiceEnabled);
@@ -373,7 +374,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
                         icon={<UploadOutlined />}
                         disabled={readonly}
                         onClick={() => {
-                          setOriginFile("key");
+                          setOriginFile("cer");
                         }}
                       >
                         Subir archivo
@@ -412,6 +413,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
                 onChangeBranch(value);
               }}
               readonly={readonly}
+              required
             />
           </Col>
         </Row>

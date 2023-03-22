@@ -1,37 +1,37 @@
-import { Button, Divider, PageHeader, Spin, Table } from "antd";
-import React, { FC, Fragment, useEffect, useRef, useState } from "react";
+import { Divider, PageHeader, Table, Typography } from "antd";
+import React, { FC, Fragment, useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
   IColumns,
   ISearch,
-} from "../../app/common/table/utils";
-import useWindowDimensions, { resizeWidth } from "../../app/util/window";
+} from "../../../app/common/table/utils";
 import { EditOutlined } from "@ant-design/icons";
-import IconButton from "../../app/common/button/IconButton";
+import IconButton from "../../../app/common/button/IconButton";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { IReagentList } from "../../app/models/reagent";
-import { useStore } from "../../app/stores/store";
+import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import { useReactToPrint } from "react-to-print";
-import HeaderTitle from "../../app/common/header/HeaderTitle";
-import views from "../../app/util/view";
-import { IPromotionList } from "../../app/models/promotion";
+import HeaderTitle from "../../../app/common/header/HeaderTitle";
+import views from "../../../app/util/view";
+import { IPromotionList } from "../../../app/models/promotion";
+
+const { Link } = Typography;
 
 type PromotionTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
 };
 
-const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => {
+const PromotionTable: FC<PromotionTableProps> = ({
+  componentRef,
+  printing,
+}) => {
   const { promotionStore } = useStore();
-   const {  getAll,promotionLists } = promotionStore; 
+  const { getAll, promotions } = promotionStore;
 
   const [searchParams] = useSearchParams();
 
   let navigate = useNavigate();
-
-  const { width: windowWidth } = useWindowDimensions();
 
   const [loading, setLoading] = useState(false);
 
@@ -40,8 +40,6 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
     searchedColumn: "",
   });
 
-  console.log("Table");
-
   useEffect(() => {
     const readPromotions = async () => {
       setLoading(true);
@@ -49,11 +47,11 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
       setLoading(false);
     };
 
-     if (promotionLists.length === 0) {
-       readPromotions()
-    } 
-     
-  }, [getAll]);
+    if (promotions.length === 0) {
+      readPromotions();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const columns: IColumns<IPromotionList> = [
     {
@@ -61,27 +59,24 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
         searchState,
         setSearchState,
         width: "10%",
-        minWidth: 150,
-        windowSize: windowWidth,
       }),
       render: (value, promotion) => (
-        <Button
-          type="link"
+        <Link
           onClick={() => {
-            navigate(`/${views.promo}/${promotion.id}?${searchParams}&mode=readonly`);
+            navigate(
+              `/${views.promo}/${promotion.id}?${searchParams}&mode=readonly`
+            );
           }}
         >
           {value}
-        </Button>
+        </Link>
       ),
     },
     {
-      ...getDefaultColumnProps("nombre", "Nombre promoción", {
+      ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
         width: "20%",
-        minWidth: 150,
-        windowSize: windowWidth,
       }),
     },
     {
@@ -89,25 +84,21 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
         searchState,
         setSearchState,
         width: "15%",
-        minWidth: 150,
-        windowSize: windowWidth,
       }),
     },
     {
-        ...getDefaultColumnProps("nombreListaPrecio", "Nombre Lista", {
-          searchState,
-          setSearchState,
-          width: "15%",
-          minWidth: 150,
-          windowSize: windowWidth,
-        }),
+      ...getDefaultColumnProps("listaPrecio", "Lista de precio", {
+        searchState,
+        setSearchState,
+        width: "15%",
+      }),
     },
     {
       key: "activo",
       dataIndex: "activo",
       title: "Activo",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: "10%",
       render: (value) => (value ? "Sí" : "No"),
     },
     {
@@ -115,7 +106,7 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
       dataIndex: "id",
       title: "Editar",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "10%",
+      width: "10%",
       render: (value) => (
         <IconButton
           title="Editar promoción"
@@ -133,7 +124,12 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
       <div ref={componentRef}>
         <PageHeader
           ghost={false}
-          title={<HeaderTitle title="Catálogo de Promociones en listas de precios" image="promocion" />}
+          title={
+            <HeaderTitle
+              title="Catálogo de Promociones en listas de precios"
+              image="promocion"
+            />
+          }
           className="header-container"
         ></PageHeader>
         <Divider className="header-divider" />
@@ -142,7 +138,7 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
           rowKey={(record) => record.id}
           columns={columns.slice(0, 4)}
           pagination={false}
-          dataSource={[...promotionLists]}
+          dataSource={[...promotions]}
         />
       </div>
     );
@@ -155,10 +151,10 @@ const PromotionTable: FC<PromotionTableProps> = ({ componentRef, printing }) => 
         size="small"
         rowKey={(record) => record.id}
         columns={columns}
-        dataSource={[...promotionLists]}
+        dataSource={[...promotions]}
         pagination={defaultPaginationProperties}
         sticky
-        scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
+        scroll={{ x: "auto" }}
       />
       <div style={{ display: "none" }}>{<ReagentTablePrint />}</div>
     </Fragment>

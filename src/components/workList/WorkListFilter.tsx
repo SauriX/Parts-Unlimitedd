@@ -20,7 +20,9 @@ const WorkListFilter = () => {
   const { filter, setFilter } = workListStore;
 
   const [form] = useForm<IWorkListFilter>();
-
+  useEffect(() => {
+    form.setFieldsValue(filter);
+  }, [form, filter]);
   useEffect(() => {
     getDepartmentAreaOptions();
     getBranchCityOptions();

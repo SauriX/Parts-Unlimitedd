@@ -17,6 +17,8 @@ interface IProps {
   style?: React.CSSProperties;
   showLabel?: boolean;
   errors?: any[];
+  border?: boolean;
+
   formatter?:
     | ((
         value: number | undefined,
@@ -27,6 +29,7 @@ interface IProps {
       ) => string)
     | undefined;
   parser?: ((displayValue: string | undefined) => number) | undefined;
+  onChange?: (value: any) => void;
 }
 
 const NumberInput = ({
@@ -42,7 +45,9 @@ const NumberInput = ({
   showLabel: isGroup,
   errors,
   formatter,
+  border,
   parser,
+  onChange,
 }: IProps) => {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -106,6 +111,7 @@ const NumberInput = ({
           autoComplete="off"
           placeholder={placeholder ?? itemProps.label?.toString()}
           disabled={readonly}
+          bordered={border}
           style={{
             paddingRight: paddingRight,
             width: width ?? "100%",
@@ -113,6 +119,9 @@ const NumberInput = ({
           }}
           formatter={formatter}
           parser={parser}
+          onChange={onChange}
+          min={min}
+          max={max}
         />
       </Form.Item>
       {/* {(!!suffix || isGroup || !!errors) && ( */}

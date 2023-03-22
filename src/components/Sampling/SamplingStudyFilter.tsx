@@ -15,11 +15,12 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 import moment from "moment";
 import { IOptions } from "../../app/models/shared";
-import { ISamplingForm } from "../../app/models/sampling";
+import { IGeneralForm } from "../../app/models/clinicResults";
 
 const SamplingStudyFilter = () => {
-  const { optionStore, samplingStudyStore, profileStore } = useStore();
-  const { getAll, setFormValues } = samplingStudyStore;
+  const { optionStore, samplingStudyStore, profileStore, clinicResultsStore } = useStore();
+  const { getAll } = samplingStudyStore;
+  const { setFormValues, formValues } = clinicResultsStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -54,20 +55,38 @@ const SamplingStudyFilter = () => {
   ]);
 
   useEffect(() => {
+    form.setFieldsValue(formValues);
+  }, [formValues, form]);
+
+  useEffect(() => {
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
-    if(selectedCity!=undefined && selectedCity !=null){
-      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
-    var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
-      setBranchOptions(
-        options
-      );
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value == profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
+      }
+      form.setFieldValue("sucursalId", [profileBranch]);
     }
-    form.setFieldValue("sucursalId", []);
+  }, [branchCityOptions, form, profile]);
+
+  useEffect(() => {
+    if (selectedCity != undefined && selectedCity != null) {
+      var branhces = branchCityOptions.filter((x) =>
+        selectedCity.includes(x.value.toString())
+      );
+      var options = branhces.flatMap((x) =>
+        x.options == undefined ? [] : x.options
+      );
+      setBranchOptions(options);
+    }
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
@@ -84,7 +103,7 @@ const SamplingStudyFilter = () => {
     form.setFieldValue("area", []);
   }, [departmentAreaOptions, form, selectedDepartment]);
 
-  const onFinish = async (newFormValues: ISamplingForm) => {
+  const onFinish = async (newFormValues: IGeneralForm) => {
     setLoading(true);
     const filter = { ...newFormValues };
     setFormValues(newFormValues);
@@ -94,7 +113,7 @@ const SamplingStudyFilter = () => {
 
   return (
     <div className="status-container">
-      <Form<ISamplingForm>
+      <Form<IGeneralForm>
         {...formItemLayout}
         form={form}
         name="requestedStudy"
@@ -204,7 +223,7 @@ const SamplingStudyFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
-                    form={form}
+                      form={form}
                       formProps={{
                         name: "ciudad",
                         label: "Ciudad",

@@ -6,7 +6,7 @@ import {
   IColumns,
   ISearch,
 } from "../../../app/common/table/utils";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import { IRequestInfo, IRequestStudyInfo } from "../../../app/models/request";
@@ -75,7 +75,7 @@ const RequestTable = () => {
       ),
     },
     {
-      ...getDefaultColumnProps("afiliacion", "Afiliación", {
+      ...getDefaultColumnProps("sucursal", "Sucursal", {
         searchState,
         setSearchState,
         width: 180,

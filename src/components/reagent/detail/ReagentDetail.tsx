@@ -1,8 +1,7 @@
 import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
-import { resolve } from "path";
-import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../../../app/stores/store";
 import { guidPattern } from "../../../app/util/utils";
@@ -54,7 +53,6 @@ const ReagentDetail = () => {
       const permissions = await access();
 
       if (reagentId === undefined) {
-        console.log("undefined");
         navigate("/notFound");
       } else if (!permissions?.crear && reagentId === "") {
         navigate(`/forbidden`);
@@ -78,9 +76,17 @@ const ReagentDetail = () => {
 
   return (
     <Fragment>
-      <ReagentFormHeader id={reagentId} handlePrint={handlePrint} handleDownload={handleDownload} />
+      <ReagentFormHeader
+        id={reagentId}
+        handlePrint={handlePrint}
+        handleDownload={handleDownload}
+      />
       <Divider className="header-divider" />
-      <ReagentForm id={reagentId} componentRef={componentRef} printing={printing} />
+      <ReagentForm
+        id={reagentId}
+        componentRef={componentRef}
+        printing={printing}
+      />
     </Fragment>
   );
 };

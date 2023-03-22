@@ -50,6 +50,8 @@ const InvoiceComapnyForm = () => {
     setSerie,
     saveFilterDate,
     printReceipt,
+    setFormValues,
+    formValues,
   } = invoiceCompanyStore;
 
   useEffect(() => {
@@ -67,7 +69,9 @@ const InvoiceComapnyForm = () => {
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
-
+  useEffect(() => {
+    form.setFieldsValue(formValues);
+  }, [form, formValues]);
   useEffect(() => {
     if (selectedCity != undefined && selectedCity != null) {
       var branhces = branchCityOptions.filter((x) =>
@@ -100,6 +104,7 @@ const InvoiceComapnyForm = () => {
       fechaInicial: newFormValues.fechas[0].utcOffset(0, true),
       facturaMetodo: tipo,
     };
+    setFormValues(newFormValues);
     saveFilterDate(newFormValues.fechas);
     getInvoicesCompany(formValues);
   };
@@ -115,7 +120,6 @@ const InvoiceComapnyForm = () => {
       return;
     }
 
-    console.log("SOLICITUDES CON FACTURAAAAAAAAAAAAA");
     let requestsWithInvoiceCompany: any[] = [];
     selectedRows.forEach((request) => {
       if (
@@ -242,6 +246,9 @@ const InvoiceComapnyForm = () => {
             <Col span={8}>
               <TextInput
                 formProps={{ name: "buscar", label: "Buscar" }}
+                onPressEnter={() => {
+                  form.submit();
+                }}
                 autoFocus
               />
             </Col>
