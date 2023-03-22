@@ -20,8 +20,8 @@ const InvoiceCompany = {
     requests.get(`invoiceCompany/${id}`),
   checkIn: (invoiceData: IInvoiceData): Promise<IInvoiceData> =>
     requests.post(`invoiceCompany/checkin/company`, invoiceData),
-  checkInGlobal: (seletedRequestsId: string[]): Promise<any> =>
-    requests.post(`invoiceCompany/chekin/global`, seletedRequestsId),
+  checkInGlobal: (global: any): Promise<any> =>
+    requests.post(`invoiceCompany/chekin/global`, global),
   sendInvoice: (sendInvoiceData: IInvoiceDeliveryInfo): Promise<boolean> =>
     requests.post(`invoiceCompany/send`, sendInvoiceData),
   cancelInvoice: (cancelInvoiceData: IMotivo): Promise<string> =>
