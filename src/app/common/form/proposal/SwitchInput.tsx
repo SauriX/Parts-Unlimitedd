@@ -5,12 +5,13 @@ import React from "react";
 interface IProps extends FormItemProps<any> {
   readonly?: boolean;
   checkedChildren?: React.ReactNode;
+  defaultChecked?: boolean;
   unCheckedChildren?: React.ReactNode;
   onChange?: SwitchChangeEventHandler;
 }
 
 const SwitchInput = (props: IProps) => {
-  const { readonly, checkedChildren, unCheckedChildren, onChange, ...prop } = props;
+  const { readonly, checkedChildren, defaultChecked, unCheckedChildren, onChange, ...prop } = props;
   return (
     <Form.Item
       labelAlign={props.labelAlign ?? "right"}
@@ -23,6 +24,7 @@ const SwitchInput = (props: IProps) => {
         disabled={readonly}
         checkedChildren={checkedChildren}
         unCheckedChildren={unCheckedChildren}
+        defaultChecked={defaultChecked}
         onChange={onChange}
       />
     </Form.Item>

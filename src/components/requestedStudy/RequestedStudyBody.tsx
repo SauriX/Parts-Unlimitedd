@@ -18,8 +18,9 @@ type RSDefaultProps = {
 };
 
 const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
-  const { requestedStudyStore } = useStore();
-  const { data, update, printOrder, getAll, formValues } = requestedStudyStore;
+  const { requestedStudyStore, clinicResultsStore } = useStore();
+  const { data, update, printOrder, getAll } = requestedStudyStore;
+  const { formValues } = clinicResultsStore;
   const [updateForm, setUpdateForm] = useState<IUpdate[]>([]);
   const [activity, setActivity] = useState<string>("");
   const [loading, setLoading] = useState(false);

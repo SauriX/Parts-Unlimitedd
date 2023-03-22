@@ -12,11 +12,13 @@ interface IProps {
   placeholder?: string;
   readonly?: boolean;
   autoSize?: boolean;
+  bordered?: boolean;
   width?: string | number;
   suffix?: React.ReactNode;
   style?: React.CSSProperties;
   isGroup?: boolean;
   errors?: any[];
+  onChange?: React.ChangeEventHandler<HTMLTextAreaElement> | undefined;
 }
 
 const TextAreaInput = ({
@@ -27,11 +29,13 @@ const TextAreaInput = ({
   placeholder,
   readonly,
   autoSize,
+  bordered,
   width,
   suffix,
   style,
   isGroup,
   errors,
+  onChange,
 }: IProps) => {
   let rules: Rule[] = [];
 
@@ -60,6 +64,8 @@ const TextAreaInput = ({
           autoComplete="off"
           placeholder={placeholder ?? itemProps.label?.toString()}
           autoSize={autoSize}
+          bordered={bordered}
+          onChange={onChange}
         />
       </Form.Item>
       {/* {(!!suffix || isGroup || !!errors) && ( */}

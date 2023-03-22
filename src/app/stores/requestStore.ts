@@ -384,12 +384,12 @@ export default class RequestStore {
           "Se encuentran coincidencias en parámetros de solicitud, en estudios: " +
             repeated.map((x) => x.clave).join(", "),
           async () => {
-            this.studies.unshift(study);
+            this.studies.push(study);
             this.updateTagsStudy(study);
           }
         );
       } else {
-        this.studies.unshift(study);
+        this.studies.push(study);
         this.updateTagsStudy(study);
       }
 
@@ -423,7 +423,7 @@ export default class RequestStore {
 
       // prettier-ignore
       const destinationTags = groupTags.map(
-        ({ etiquetaId, claveEtiqueta, claveInicial, nombreEtiqueta, color }) => ({
+        ({ etiquetaId, claveEtiqueta, claveInicial, nombreEtiqueta, color, observaciones }) => ({
           destinoId: keyData.destinoId,
           destino: keyData.destino,
           destinoTipo: Number(keyData.destinoTipo),
@@ -432,6 +432,7 @@ export default class RequestStore {
           claveInicial,
           nombreEtiqueta,
           color,
+          observaciones,
           cantidad: 1
         })
       );
@@ -544,6 +545,7 @@ export default class RequestStore {
       claveInicial: tag.claveInicial,
       color: tag.color,
       etiquetaId: tag.etiquetaId,
+      observaciones: tag.observaciones,
       estudios: [],
     });
   };
@@ -613,6 +615,7 @@ export default class RequestStore {
       ) {
         const payment = await Request.createPayment(request);
         this.payments.push(payment);
+        if(payment.lealtad) alerts.success(messages.loyaltyWallet);
       } else {
         this.chargePayPalPayment(request);
       }

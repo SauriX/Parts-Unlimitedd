@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
-import { IClinicResultForm } from "../../app/models/clinicResults";
+import { IGeneralForm } from "../../app/models/clinicResults";
 import { IOptions } from "../../app/models/shared";
 import {
   originOptions,
@@ -22,7 +22,7 @@ const ClinicResultsFilter = () => {
   const { requestStore, optionStore, clinicResultsStore, profileStore } =
     useStore();
   const { lastViewedFrom } = requestStore;
-  const { getAll, setFormValues, clearFilter, formValues } = clinicResultsStore;
+  const { getAll, setFormValues, formValues } = clinicResultsStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -115,7 +115,7 @@ const ClinicResultsFilter = () => {
     }
   }, [branchCityOptions, form, profile]);
 
-  const onFinish = async (newFormValues: IClinicResultForm) => {
+  const onFinish = async (newFormValues: IGeneralForm) => {
     setLoading(true);
 
     const filter = { ...newFormValues };
@@ -126,7 +126,7 @@ const ClinicResultsFilter = () => {
 
   return (
     <div className="status-container">
-      <Form<IClinicResultForm>
+      <Form<IGeneralForm>
         {...formItemLayout}
         form={form}
         name="clinicResults"

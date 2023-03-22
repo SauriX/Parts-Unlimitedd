@@ -95,16 +95,16 @@ const MaquiladorForm: FC<MaquiladorFormProps> = ({
       const maquilador = await getById(id);
 
       if (maquilador) {
+        setValues(maquilador);
         maquilador.codigoPostal = maquilador.codigoPostal?.trim();
         maquilador.ciudad = maquilador.ciudad?.trim();
+        if (maquilador.codigoPostal) {
+          getLocation(maquilador.codigoPostal.toString());
+        }
         form.setFieldsValue(maquilador);
-        getLocation(maquilador.codigoPostal!.toString());
-        // console.log(maquilador.codigoPostal);
-        setValues(maquilador);
       }
 
       setLoading(false);
-      //console.log(maquilador);
     };
 
     if (id) {
@@ -124,6 +124,8 @@ const MaquiladorForm: FC<MaquiladorFormProps> = ({
   const onFinish = async (newValues: IMaquiladorForm) => {
     setLoading(true);
     const maquilador = { ...values, ...newValues };
+
+    console.log(id);
 
     // maquilador.telefono = maquilador.telefono
     //   ? parseInt(

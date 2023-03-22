@@ -61,6 +61,7 @@ export interface IStudyTag {
   cantidad: number;
   orden: number;
   color: string;
+  observaciones?: string;
   nombreEstudio: string;
 }
 export interface IStudyTec{
@@ -68,7 +69,7 @@ export interface IStudyTec{
   tipoMuestra: string,
   diasEstabilidad: number,
   diasRefrigeracion: number,
-  diasEntrega:number,
+  diasEntrega:string,
   tapon:string
 }
 export class StudyFormValues implements IStudyForm {
