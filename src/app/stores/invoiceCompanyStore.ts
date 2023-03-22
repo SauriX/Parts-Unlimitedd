@@ -204,15 +204,23 @@ export class InvoiceCompanyStore {
     this.selectedRequestGlobal = selectedRequestGlobal;
   };
 
-  createInvoiceGlobal = async () => {
+  isLoadingGlobal = false;
+  createInvoiceGlobal = async (sucursalId: string) => {
     if (!this.selectedRequestGlobal.length) {
       alerts.info("Sin solicitudes seleccionadas");
       return;
     }
     try {
-      const response = await InvoiceCompany.checkInGlobal(
-        this.selectedRequestGlobal
-      );
+      alerts.info("Se estan generando las solicitudes");
+      this.isLoadingGlobal = true;
+      const response = await InvoiceCompany.checkInGlobal({
+        sucursalId: sucursalId,
+        solicitudesId: this.selectedRequestGlobal,
+      });
+      this.isLoadingGlobal = false;
+      alerts.info("Facturas generadas correctamente");
+
+      alerts.info("Se estan generando las solicitudes");
       console.log("conse", response);
       return response;
     } catch (error: any) {

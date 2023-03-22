@@ -22,7 +22,8 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
   handleDownload,
 }) => {
   let navigate = useNavigate();
-  const { invoiceCompanyStore } = useStore();
+  const { invoiceCompanyStore, profileStore } = useStore();
+  const { profile } = profileStore;
   const {
     selectedRows,
     isSameCommpany: mismaCompania,
@@ -132,7 +133,7 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
                 : tipo === "request"
                 ? "Crédito y cobranza (Facturación por solicitud)"
                 : tipo === "free"
-                ? "Crédito y cobranza (Facturación emitidas)"
+                ? "Crédito y cobranza (Facturación libre)"
                 : tipo === "global"
                 ? "Crédito y cobranza (Facturación global)"
                 : ""
@@ -171,7 +172,8 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
                         "solicitudes global",
                         toJS(selectedRequestGlobal)
                       );
-                      createInvoiceGlobal();
+
+                      createInvoiceGlobal(profile?.sucursal!);
                       return;
                     }
                     if (tipo === "free") {

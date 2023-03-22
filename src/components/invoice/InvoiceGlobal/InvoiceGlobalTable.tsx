@@ -9,7 +9,8 @@ import InvoiceGlobalTableDetail from "./InvoiceGlobalTableDetail";
 
 const InvoiceGlobalTable = () => {
   const { invoiceCompanyStore } = useStore();
-  const { isLoading, invoices, setSelectedRequestGlobal } = invoiceCompanyStore;
+  const { isLoading, invoices, setSelectedRequestGlobal, isLoadingGlobal } =
+    invoiceCompanyStore;
   const [formCreate] = Form.useForm();
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
@@ -82,7 +83,7 @@ const InvoiceGlobalTable = () => {
         rowKey={(record) => record.solicitudId}
         columns={columns}
         pagination={false}
-        loading={isLoading}
+        loading={isLoading || isLoadingGlobal}
         dataSource={invoices.solicitudes}
         showHeader={false}
         rowClassName={"row-search"}
@@ -113,6 +114,7 @@ const InvoiceGlobalTable = () => {
                 <InvoiceGlobalTableDetail
                   indice={index}
                   facturas={data.facturas}
+                  sucursal={data.nombreSucursal}
                 />
               </>
             );

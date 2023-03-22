@@ -277,7 +277,7 @@ const InvoiceFreeData = () => {
               formProps={{ label: "Forma de pago", name: "formaDePagoId" }}
               options={paymentOptions}
               style={{ marginBottom: 10 }}
-              readonly={id !== "new" || tipoFacturaLibre}
+              readonly={id !== "new"}
             />
             <TextInput
               formProps={{ label: "Numero de cuenta", name: "numeroDeCuenta" }}
@@ -298,7 +298,7 @@ const InvoiceFreeData = () => {
               formProps={{ label: "Método de pago", name: "metodoDePagoId" }}
               options={paymentMethodOptions}
               style={{ marginBottom: 10 }}
-              readonly={id !== "new" || tipoFacturaLibre}
+              readonly={id !== "new"}
             />
             <SelectInput
               formProps={{ label: "Banco", name: "bancoId" }}
@@ -308,7 +308,7 @@ const InvoiceFreeData = () => {
             />
             <SelectInput
               formProps={{ label: "uso CFDI", name: "cfdiId" }}
-              readonly={id !== "new" || tipoFacturaLibre}
+              readonly={id !== "new"}
               options={cfdiOptions}
             />
           </Col>
