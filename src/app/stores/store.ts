@@ -50,6 +50,7 @@ import SeriesStore from "./seriesStore";
 import InvoiceCatalogStore from "./InvoiceCatalogStore";
 import ReportStudyStore from "./reportStudyStore";
 import InvoiceFreeStore from "./invoiceFreeStore";
+import NotificationsStore from "./notificationsStore";
 configure({
   enforceActions: "never",
 });
@@ -104,6 +105,7 @@ interface Store {
   seriesStore: SeriesStore;
   invoiceCatalogStore: InvoiceCatalogStore;
   reportStudyStore: ReportStudyStore;
+  notificationsStore:NotificationsStore;
 }
 
 export const store: Store = {
@@ -155,8 +157,8 @@ export const store: Store = {
   invoiceFreeStore: new InvoiceFreeStore(),
   seriesStore: new SeriesStore(),
   invoiceCatalogStore: new InvoiceCatalogStore(),
-
   reportStudyStore: new ReportStudyStore(),
+  notificationsStore: new NotificationsStore(),
 };
 
 export const StoreContext = createContext(store);

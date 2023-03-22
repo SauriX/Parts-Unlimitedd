@@ -224,6 +224,7 @@ function App() {
             <Route path="series/:id/:tipoSerie" element={<SeriesDetail />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="notifications/:id" element={<NotificationsDetail />} />
+            <Route path="notifications/new" element={<NotificationsDetail />} />
             <Route path="roles/new-role" element={<NewRole />} />
             <Route path="roles/:id" element={<RoleDetail />} />
             <Route path="branches" element={<Branch />} />
