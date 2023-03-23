@@ -17,74 +17,74 @@ const dummyData = [
     fechaCreacion: "2021-05-05",
     clave: "1",
     editar: "Editar",
-    modulo: "Pruebas",
-    descripcion: "Pruebas",
-    activos: "Pruebas",
-    titulo: "Pruebas",
+    modulo: "Avisos",
+    descripcion: "Avisos",
+    activos: "Avisos",
+    titulo: "Avisos",
   },
   {
     key: "2",
     fechaCreacion: "2021-05-05",
     clave: "2",
     editar: "Editar",
-    modulo: "Pruebas",
-    descripcion: "Pruebas",
-    activos: "Pruebas",
-    titulo: "Pruebas",
+    modulo: "Avisos",
+    descripcion: "Avisos",
+    activos: "Avisos",
+    titulo: "Avisos",
   },
   {
     key: "3",
     fechaCreacion: "2021-05-05",
     clave: "3",
     editar: "Editar",
-    modulo: "Pruebas",
-    descripcion: "Pruebas",
-    activos: "Pruebas",
-    titulo: "Pruebas",
+    modulo: "Avisos",
+    descripcion: "Avisos",
+    activos: "Avisos",
+    titulo: "Avisos",
   },
   {
     key: "4",
     fechaCreacion: "2021-05-05",
     clave: "4",
     editar: "Editar",
-    modulo: "Pruebas",
-    descripcion: "Pruebas",
-    activos: "Pruebas",
-    titulo: "Pruebas",
+    modulo: "Avisos",
+    descripcion: "Avisos",
+    activos: "Avisos",
+    titulo: "Avisos",
   },
   {
     key: "5",
     fechaCreacion: "2021-05-05",
     clave: "5",
     editar: "Editar",
-    modulo: "Pruebas",
-    descripcion: "Pruebas",
-    activos: "Pruebas",
-    titulo: "Pruebas",
+    modulo: "Avisos",
+    descripcion: "Avisos",
+    activos: "Avisos",
+    titulo: "Avisos",
   },
   {
     key: "6",
     fechaCreacion: "2021-05-05",
     clave: "6",
     editar: "Editar",
-    modulo: "Pruebas",
-    descripcion: "Pruebas",
-    activos: "Pruebas",
-    titulo: "Pruebas",
+    modulo: "Avisos",
+    descripcion: "Avisos",
+    activos: "Avisos",
+    titulo: "Avisos",
   },
 ];
-const NotificationsTable = () => {
+const AvisosTable = () => {
   const navigate = useNavigate();
   const { notificationsStore } = useStore();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { getAllNotifications, notifications, updateStatus, changeStatusNotificacion } = notificationsStore;
+  const { getAllAvisos, avisos, updateStatus, changeStatusAvisos } = notificationsStore;
   useEffect(() => {
     const readAvisos = async () => {
-      await getAllNotifications(searchParams.get("search") || "all");
+      await getAllAvisos(searchParams.get("search") || "all");
     }
     readAvisos();
-  }, [getAllNotifications, searchParams]);
+  }, [getAllAvisos, searchParams]);
 
 
   const [searchState, setSearchState] = useState<ISearch>({
@@ -92,26 +92,60 @@ const NotificationsTable = () => {
     searchedColumn: "",
   });
   const onchangeStatus = async (id: string) => {
-    changeStatusNotificacion(id);
+    changeStatusAvisos(id);
     await updateStatus(id);
   }
 
   const columns: IColumns<INotificationsList> = [
+    
+    {
+      ...getDefaultColumnProps("clave", "Clave", {
+        searchState,
+        setSearchState,
+        width: 60,
+      }),
+      render: (value, item) => (
+        <Button
+          type="link"
+          onClick={() => {
+            navigate(`/notifications/${item.id}?mode=readonly`);
+          }}
+        >
+          {value}
+        </Button>
+      ),
+      fixed: "left",
+    },
+    {
+      ...getDefaultColumnProps("fecha", "Fecha de creación", {
+        searchState,
+        setSearchState,
+        width: 80,
+      }),
+    },
     {
       key: "titulo",
       dataIndex: "titulo",
       title: "Titulo",
       align: "center",
-      width: 80,
+      width: 220,
     },
     {
-      ...getDefaultColumnProps("contenido", "Contenido", {
+      ...getDefaultColumnProps("editar", "Editar", {
         searchState,
         setSearchState,
-        width: 200,
+        width: 1,
       }),
+      render: (value, item) => (
+        <IconButton
+          title="Editar notificación"
+          icon={<EditOutlined />}
+          onClick={() => {
+            navigate(`/notifications/${item.id}`);
+          }}
+        />
+      ),
     },
-
     {
       ...getDefaultColumnProps("activo", "Activo", {
         searchState,
@@ -126,8 +160,8 @@ const NotificationsTable = () => {
 
   return (
     <>
-      <Table size="small" columns={columns} dataSource={notifications} />
+      <Table size="small" columns={columns} dataSource={avisos} />
     </>
   );
 };
-export default observer(NotificationsTable);
+export default observer(AvisosTable);

@@ -1,16 +1,20 @@
 import { Empty, Comment, Typography, Tooltip } from "antd";
+import { observer } from "mobx-react-lite";
 import moment from "moment";
 import React, { Fragment } from "react";
+import { useStore } from "../stores/store";
 
 const { Text } = Typography;
 
 const Notifications = () => {
+  const {notificationStore}=useStore();
+  const {notifications}=notificationStore;
   return (
     <Fragment>
-      {[].length === 0 ? (
+      {[...notifications].length === 0 ? (
         <Empty />
       ) : (
-        [].map((x: any) => (
+        [...notifications].map((x: any) => (
           <div
             key={x.id}
             style={{
@@ -36,4 +40,4 @@ const Notifications = () => {
   );
 };
 
-export default Notifications;
+export default  observer(Notifications);
