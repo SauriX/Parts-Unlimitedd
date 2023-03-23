@@ -99,7 +99,7 @@ const NotificationsDetail = () => {
     setLoading(false);
 
     if (success) {
-      navigate(`/notifications?search=${searchParams.get("search") || "all"}`);
+      navigate(`/notifications?search=${searchParams.get("search") || "all"}&type=2`);
     }
   };
   const setEditMode = () => {
@@ -152,7 +152,7 @@ const NotificationsDetail = () => {
           <PageHeader
             ghost={false}
             title={<HeaderTitle title={`Crear notificación`} />}
-            onBack={() => navigate(`/notifications`)}
+            onBack={() => navigate(`/notifications?type=2`)}
             className="header-container"
             extra={[]}
           ></PageHeader>
@@ -166,7 +166,7 @@ const NotificationsDetail = () => {
               key="clean"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/notifications`)
+                navigate(`/notifications?type=2`)
               }}
             >
               Cancelar

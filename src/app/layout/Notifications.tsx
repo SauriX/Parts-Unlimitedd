@@ -1,14 +1,22 @@
-import { Empty, Comment, Typography, Tooltip } from "antd";
+import { Empty, Comment, Typography, Tooltip, Alert } from "antd";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
+import { INotification } from "../models/shared";
 import { useStore } from "../stores/store";
 
 const { Text } = Typography;
 
 const Notifications = () => {
   const {notificationStore}=useStore();
-  const {notifications}=notificationStore;
+  const {notifications,updateNotification,getNotification }=notificationStore;
+  useEffect(()=>{
+    getNotification();
+  },[getNotification]);
+  const onClose = (notificación:INotification)=>{
+
+    updateNotification(notificación)
+  }
   return (
     <Fragment>
       {[...notifications].length === 0 ? (
@@ -26,7 +34,11 @@ const Notifications = () => {
           >
             <Comment
               author={<Text strong>{x.titulo}</Text>}
-              content={x.mensaje}
+              content={    <Alert
+                description={x.mensaje}
+                closable
+                onClose={()=>onClose(x)}
+              />}
               datetime={
                 <Tooltip title={moment(x.fecha).format("YYYY-MM-DD HH:mm:ss")}>
                   <span>{moment(x.fecha).fromNow()}</span>

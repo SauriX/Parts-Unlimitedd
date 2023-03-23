@@ -1,5 +1,6 @@
 import { HttpTransportType, HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { makeAutoObservable } from "mobx";
+import { json } from "stream/consumers";
 import { INotification } from "../models/shared";
 import alerts from "../util/alerts";
 import { store } from "./store";
@@ -11,6 +12,28 @@ export default class NotificationStore {
 
   hubConnection: HubConnection | null = null;
   notifications:INotification[]=[];
+  updateNotification = (notification:INotification)=>{
+    var notifications = [...this.notifications] 
+    notifications=notifications.filter(x=>x != notification);
+    var notificationString = "";
+    notifications.forEach(element => {
+      notificationString += `${JSON.stringify(element)}-`
+    });
+window.localStorage.setItem("notifications", notificationString );
+    this.notifications = notifications;
+  };
+  getNotification = ()=>{
+    var notofications = window.localStorage.getItem("notifications")?.split("-");
+    if(notofications){
+      
+       notofications.pop();
+       var notifications:INotification[] = notofications.map(x=>JSON.parse(x));
+       this.notifications = notifications;
+       
+
+    }
+    
+  };
   createHubConnection = async () => {
     try {
       const hubUrl = process.env.REACT_APP_NOTIFICATION_URL;
@@ -53,7 +76,13 @@ export default class NotificationStore {
         }else{
           var notifications = [...this.notifications] 
           notifications.push(notification);
-          this.notifications = notifications;
+         
+           var notificationString = "";
+              notifications.forEach(element => {
+                notificationString += `${JSON.stringify(element)}-`
+              });
+          window.localStorage.setItem("notifications", notificationString );
+         
         }
       });
     } catch (error) {
