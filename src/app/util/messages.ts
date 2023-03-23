@@ -17,6 +17,7 @@ const messages = {
   emptyPermissions: "Debe seleccionar al menos un permiso",
   activeWallet: "El monedero electrónico ha sido activado exitosamente",
   loyaltyWallet: "Monedero electrónico aplicado",
+  loyaltyWalletDeny: "No aplica para monedero electrónico",
 
   confirmations: {
     enableTitle: "¿Desea activar el registro?",
