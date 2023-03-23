@@ -323,7 +323,7 @@ const RangoEdad: FC<Props> = ({
                           <Form.Item
                             {...valuesValor}
                             label="Valor crítrico mínimo: "
-                            name={[name, "criticoMaximo"]}
+                            name={[name, "criticoMinimo"]}
                             rules={[
                               { required: true, message: "Valor crítico mínimo faltante" },
                             ]}
