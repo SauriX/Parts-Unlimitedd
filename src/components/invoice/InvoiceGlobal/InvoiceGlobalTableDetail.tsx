@@ -5,16 +5,23 @@ import { useStore } from "../../../app/stores/store";
 import { moneyFormatter } from "../../../app/util/utils";
 import { DeleteOutlined } from "@ant-design/icons";
 import InvoiceGlobalCancelModal from "./InvoiceGlobalCancelModal";
+import { useNavigate } from "react-router-dom";
 const { Text, Link } = Typography;
 
 type InvoiceGlobalTableProps = {
   indice: number;
   facturas: any[];
+  sucursal: string;
 };
 
-const InvoiceGlobalTable = ({ indice, facturas }: InvoiceGlobalTableProps) => {
+const InvoiceGlobalTable = ({
+  indice,
+  facturas,
+  sucursal,
+}: InvoiceGlobalTableProps) => {
   const { modalStore } = useStore();
   const { openModal } = modalStore;
+  const navigate = useNavigate();
   const columns: IColumns<any> = [
     {
       key: "id",
@@ -26,7 +33,11 @@ const InvoiceGlobalTable = ({ indice, facturas }: InvoiceGlobalTableProps) => {
         return (
           <>
             <div style={{ display: "flex", flexDirection: "row" }}>
-              <Link onClick={() => {}}>
+              <Link
+                onClick={() => {
+                  navigate(`/invoice/request/${fullRow.facturapiId}`);
+                }}
+              >
                 {fullRow?.serie}-{fullRow?.consecutivo}
               </Link>
               <span>
@@ -74,10 +85,11 @@ const InvoiceGlobalTable = ({ indice, facturas }: InvoiceGlobalTableProps) => {
     },
     {
       key: "id",
-      dataIndex: "sucrusal",
+      dataIndex: "nombreSucursal",
       title: "Sucursal",
       align: "center",
       width: "15%",
+      render: () => sucursal,
     },
     {
       key: "id",
