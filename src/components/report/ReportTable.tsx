@@ -46,7 +46,6 @@ const ReportTable = ({
     setOpenRows(true);
   }, [data]);
 
-  console.log(report);
   totalDescuentos = 0;
   totalEstudios = 0;
   {
@@ -107,7 +106,6 @@ const ReportTable = ({
     <Fragment>
       {data.length > 0 &&
         (report == "cargo" ||
-          report == "descuento" ||
           report == "presupuestos" ||
           report == "empresa" ||
           report == "medicos-desglosado" ||

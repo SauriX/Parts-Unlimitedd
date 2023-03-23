@@ -86,7 +86,6 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
       currentReport == "urgentes" ||
       currentReport == "empresa" ||
       currentReport == "canceladas" ||
-      currentReport == "descuento" ||
       currentReport == "presupuestos" ||
       currentReport == "cargo" ||
       currentReport == "maquila_interna" ||
@@ -106,7 +105,9 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
       <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
         <Row gutter={[12, 12]}>
           {currentReport === "corte_caja" ? (
+          <Col span={24}>
             <CashBody printing={loading} />
+          </Col>
           ) : currentReport === "indicadores" ? (
             <Col span={24}>
               <IndicatorsBody printing={loading} />

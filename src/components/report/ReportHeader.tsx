@@ -42,7 +42,6 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
         value == "empresa" ||
         value === "medicos-desglosado" ||
         value == "canceladas" ||
-        value == "descuento" ||
         value == "cargo" ||
         value == "presupuestos" ||
         value == "maquila_interna" ||

@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import DateInput from "../../app/common/form/proposal/DateInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
+import SwitchInput from "../../app/common/form/proposal/SwitchInput";
 import TimeRangeInput from "../../app/common/form/proposal/TimeRangeInput";
 import { ICashRegisterFilter } from "../../app/models/cashRegister";
 import { IOptions } from "../../app/models/shared";
@@ -22,7 +23,7 @@ const typeCompanyOptions: IOptions[] = [
 
 const CashRegisterFilter = () => {
   const { cashRegisterStore, optionStore } = useStore();
-  const { filter, setFilter, getByFilter, clear } = cashRegisterStore;
+  const { filter, setFilter, getByFilter, clear, setShowChart: setActiveChart } = cashRegisterStore;
   const {
     branchCityOptions,
     getBranchCityOptions,
@@ -52,55 +53,62 @@ const CashRegisterFilter = () => {
     console.log(filter);
   };
 
+  const onChangeChart = (value: boolean) => {
+    setActiveChart(value);
+  };
+
   return (
     <Spin spinning={loading}>
-      <Form<ICashRegisterFilter>
-        {...formItemLayout}
-        form={form}
-        name="cash"
-        initialValues={filter}
-        onFinish={onFinish}
-      >
-        <Row>
-          <Col span={22}>
-            <Row justify="space-between" gutter={[12, 12]}>
-              <Col span={8}>
-                <DateInput
-                  formProps={{ label: "Fecha", name: "fechaIndividual" }}
-                  required={true}
-                />
-              </Col>
-              <Col span={8}>
-                <TimeRangeInput
-                  formProps={{ label: "Hora", name: "hora" }}
-                  required={true}
-                />
-              </Col>
-              <Col span={8}>
-                <SelectInput
-                  form={form}
-                  formProps={{ name: "sucursalId", label: "Sucursales" }}
-                  multiple
-                  options={branchCityOptions}
-                />
-              </Col>
-              <Col span={8}>
-                <SelectInput
-                  form={form}
-                  formProps={{ name: "tipoCompañia", label: "Convenio" }}
-                  multiple
-                  options={typeCompanyOptions}
-                />
-              </Col>
-            </Row>
-          </Col>
-          <Col span={2} style={{ textAlign: "right" }}>
-            <Button key="new" type="primary" htmlType="submit">
-              Mostrar listado
-            </Button>
-          </Col>
-        </Row>
-      </Form>
+      <div className="status-container">
+        <Form<ICashRegisterFilter>
+          {...formItemLayout}
+          form={form}
+          name="cash"
+          initialValues={filter}
+          onFinish={onFinish}
+        >
+          <Row justify="space-between" gutter={[12, 12]}>
+            <Col span={8}>
+              <DateInput
+                formProps={{ label: "Fecha", name: "fechaIndividual" }}
+                required={true}
+              />
+            </Col>
+            <Col span={8}>
+              <TimeRangeInput
+                formProps={{ label: "Hora", name: "hora" }}
+                required={true}
+              />
+            </Col>
+            <Col span={8}>
+              <SelectInput
+                form={form}
+                formProps={{ name: "sucursalId", label: "Sucursales" }}
+                multiple
+                options={branchCityOptions}
+              />
+            </Col>
+            <Col span={8}>
+              <SelectInput
+                form={form}
+                formProps={{ name: "tipoCompañia", label: "Convenio" }}
+                multiple
+                options={typeCompanyOptions}
+              />
+            </Col>
+            <Col span={8}>
+              <SwitchInput 
+              onChange={onChangeChart}
+              />
+            </Col>
+            <Col span={8} style={{ textAlign: "right" }}>
+              <Button key="new" type="primary" htmlType="submit">
+                Mostrar listado
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </div>
     </Spin>
   );
 };

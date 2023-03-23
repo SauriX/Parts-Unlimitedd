@@ -1,7 +1,7 @@
 import { Table, Tag } from "antd";
 import { observer } from "mobx-react-lite";
 import { FC, Fragment, useState } from "react";
-import { ISearch } from "../../app/common/table/utils";
+import { defaultPaginationProperties, ISearch } from "../../app/common/table/utils";
 import { ICommonData } from "../../app/models/cashRegister";
 import getCashRegisterColumns from "./tableDefinition/cashRegister";
 
@@ -23,16 +23,16 @@ const CashTable: FC<CashRegisterProps> = ({data, loading}) => {
         size="small"
         rowKey={(record) => record.id}
         columns={getCashRegisterColumns(searchState, setSearchState)}
-        pagination={false}
+        pagination={defaultPaginationProperties}
         dataSource={[...data]}
-        scroll={{ x: "max-content" }}
+        scroll={{ x: 'fit-content' }}
         rowClassName={(item) =>
           item.factura == "Total" ? "Resumen Total" : ""
         }
       />
-      <div style={{ textAlign: "right", marginTop: 10 }}>
+      {/* <div style={{ textAlign: "right", marginTop: 10 }}>
         <Tag color="lime">{Math.max(data.length - 1, 0)} Registros</Tag>
-      </div>
+      </div> */}
     </Fragment>
   );
 };
