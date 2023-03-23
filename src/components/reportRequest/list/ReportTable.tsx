@@ -177,7 +177,7 @@ const ReportTable = () => {
       render: (value, item) => (
         <div style={{ display: "inline", flexDirection: "column" }}>
           {value}
-          <ContainerBadge color={"#FF9F40"} text={item.estatus[0]} />
+          <ContainerBadge color={item.color} text={item.estatus[0]} />
         </div>
       ),
     },
