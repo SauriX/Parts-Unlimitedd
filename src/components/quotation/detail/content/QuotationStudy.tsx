@@ -33,6 +33,7 @@ const QuotationStudy = () => {
     optionStore;
   const {
     isStudy,
+    readonly,
     quotation,
     studies,
     packs,
@@ -120,39 +121,12 @@ const QuotationStudy = () => {
       },
     },
     {
-      key: "n",
-      dataIndex: "n",
-      title: "",
-      align: "center",
-      width: 30,
-      render: () => "N",
-    },
-    {
       ...getDefaultColumnProps("precio", "Precio", {
         searchable: false,
         width: 85,
       }),
       align: "right",
       render: (value) => moneyFormatter.format(value),
-    },
-    {
-      key: "aplicaCargo",
-      dataIndex: "aplicaCargo",
-      title: "C",
-      align: "center",
-      width: 35,
-      render: (value, item) => (
-        <Checkbox
-          checked={value}
-          onChange={(e) => {
-            if (isStudy(item)) {
-              setStudy({ ...item, aplicaCargo: e.target.checked });
-            } else {
-              setPack({ ...item, aplicaCargo: e.target.checked });
-            }
-          }}
-        />
-      ),
     },
     {
       ...getDefaultColumnProps("dias", "Días", {
@@ -172,6 +146,7 @@ const QuotationStudy = () => {
               value: x.promocionId,
               label: `${x.promocion} (${x.descuentoPorcentaje}%)`,
             }))}
+            disabled={readonly}
             value={value}
             bordered={false}
             style={{ width: "100%" }}
@@ -258,28 +233,34 @@ const QuotationStudy = () => {
 
   return (
     <Row gutter={[8, 8]}>
-      <Col span={18}>
-        <Select
-          showSearch
-          value={[]}
-          mode="multiple"
-          placeholder="Buscar Estudios"
-          optionFilterProp="children"
-          style={{ width: "100%" }}
-          onChange={(_, option) => {
-            addStudy((option as IOptions[])[0]);
-          }}
-          filterOption={(input: any, option: any) =>
-            option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }
-          options={options}
-        />
-      </Col>
-      <Col span={6} style={{ textAlign: "end" }}>
-        <Button danger onClick={cancel} disabled={selectedStudies.length === 0}>
-          Remover estudios
-        </Button>
-      </Col>
+      {!readonly && (
+        <Col span={24} style={{ textAlign: "end" }}>
+          <Select
+            showSearch
+            value={[]}
+            mode="multiple"
+            placeholder="Buscar Estudios"
+            optionFilterProp="children"
+            style={{ width: "45%", textAlign: "left" }}
+            onChange={(_, option) => {
+              addStudy((option as IOptions[])[0]);
+            }}
+            filterOption={(input: any, option: any) => {
+              if (input.indexOf("-") > -1) {
+                const value = input.split("-")[0];
+                return (
+                  option.label.toLowerCase().split("-")[0] ===
+                  value.toLowerCase() + " "
+                );
+              }
+              return (
+                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              );
+            }}
+            options={options}
+          />
+        </Col>
+      )}
       <Col span={24}>
         <Table<IQuotationStudy | IQuotationPack>
           size="small"
@@ -297,13 +278,24 @@ const QuotationStudy = () => {
               selectRowCheckbox(selectedRows);
             },
             getCheckboxProps: () => ({
-              disabled: false,
+              disabled: readonly,
             }),
             selectedRowKeys: selectedRowKeys,
           }}
           sticky
           scroll={{ x: "fit-content" }}
         />
+      </Col>
+      <Col span={24} style={{ textAlign: "end" }}>
+        {!readonly && (
+          <Button
+            danger
+            onClick={cancel}
+            disabled={selectedStudies.length === 0}
+          >
+            Remover estudios
+          </Button>
+        )}
       </Col>
     </Row>
   );
