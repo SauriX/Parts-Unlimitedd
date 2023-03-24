@@ -52,8 +52,8 @@ export interface IQuotationInfo extends IQuotationBase {
   clave: string;
   expediente: string;
   paciente: string;
-  correo: string;
-  whatsapp: string;
+  correo?: string;
+  whatsapp?: string;
   fecha: Date;
   activo: boolean;
   estudios: IQuotationStudyInfo[];
