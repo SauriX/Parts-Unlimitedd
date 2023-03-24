@@ -2,13 +2,11 @@ import {
   Button,
   Checkbox,
   Col,
-  Descriptions,
   Divider,
   PageHeader,
   Row,
   Spin,
   Table,
-  Tag,
   Typography,
 } from "antd";
 import { toJS } from "mobx";
@@ -48,9 +46,7 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
     massResultSearchStore;
   const { printOrder } = requestedStudyStore;
   const [loading, setLoading] = useState(false);
-  const [selectedStudies, setSelectedStudies] = useState<any[]>([
-    // { solicitudId: "", estudiosId: [{ estudioId: "", tipo: 3 }] },
-  ]);
+  const [selectedStudies, setSelectedStudies] = useState<any[]>([]);
   const [selectSendMethods, setSelectSendMethods] = useState<
     CheckboxValueType[]
   >([]);

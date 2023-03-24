@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
+import { IGeneralForm } from "../../app/models/general";
 import {
   IMassSearch,
   MassSearchValues,
@@ -18,12 +19,7 @@ const AreasFilter = [5, 34, 23, 44, 28, 17, 41, 9, 20];
 const MassSearchForm = () => {
   const [form] = Form.useForm();
 
-  const { optionStore, massResultSearchStore } = useStore();
-
-  const [filteredAreas, setFilteredAreas] = useState<IOptions[]>([]);
-  const [studiesFilteredByArea, setStudiesFilteredByArea] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-
+  const { optionStore, massResultSearchStore, generalStore } = useStore();
   const {
     branchCityOptions,
     getBranchCityOptions,
@@ -33,16 +29,20 @@ const MassSearchForm = () => {
     getStudiesOptions,
   } = optionStore;
 
-  const { setAreas, getRequestResults, search, setFilter } =
-    massResultSearchStore;
+  const { setAreas, getRequestResults } = massResultSearchStore;
+  const { generalFilter, setGeneralFilter } = generalStore;
+
+  const [filteredAreas, setFilteredAreas] = useState<IOptions[]>([]);
+  const [studiesFilteredByArea, setStudiesFilteredByArea] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    form.setFieldsValue(search);
-  }, [form, search]);
+    form.setFieldsValue(generalFilter);
+  }, [form, generalFilter]);
 
   useEffect(() => {
     getRequestResults({
-      fechas: [
+      fecha: [
         moment(Date.now()).utcOffset(0, true),
         moment(Date.now()).utcOffset(0, true),
       ],
@@ -53,6 +53,7 @@ const MassSearchForm = () => {
   useEffect(() => {
     setFilteredAreas(areas.filter((a) => AreasFilter.includes(+a.value)));
   }, [areas]);
+
   useEffect(() => {
     setStudiesFilteredByArea(studiesOptions);
   }, [studiesOptions]);
@@ -63,103 +64,81 @@ const MassSearchForm = () => {
     await getStudiesOptions();
   };
 
-  const onFinish = async (values: IMassSearch) => {
+  const onFinish = async (values: IGeneralForm) => {
     setLoading(true);
-    let nombreArea: string = filteredAreas.find((x) => x.value == values.area)
+    
+    let nombreArea: string = filteredAreas.find((x) => x.value == values.area![0])
       ?.label as string;
+
     let newValues = { ...values, nombreArea };
-    setFilter(newValues);
+    setGeneralFilter(newValues);
     await getRequestResults(newValues);
     setLoading(false);
   };
 
   return (
-    <>
-      <Row justify="end" style={{ marginBottom: 10 }}>
-        <Col>
-          <Button
-            key="clean"
-            onClick={(e) => {
-              e.stopPropagation();
-              form.resetFields();
-              setAreas("Sin seleccionar");
-            }}
-          >
-            Limpiar
-          </Button>
-          <Button
-            key="filter"
-            type="primary"
-            onClick={(e) => {
-              e.stopPropagation();
-              form.submit();
-            }}
-          >
-            Filtrar
-          </Button>
-        </Col>
-      </Row>
-      <div className="status-container">
-        <Form<IMassSearch>
-          {...formItemLayout}
-          form={form}
-          onFinish={onFinish}
-          initialValues={{
-            fechas: [
-              moment(Date.now()).utcOffset(0, true),
-              moment(Date.now()).utcOffset(0, true),
-            ],
-          }}
-        >
-          <Row>
-            <Col span={24}>
-              <Row justify="space-between" gutter={[12, 12]}>
-                <Col span={8}>
-                  <DateRangeInput
-                    formProps={{ label: "Fecha", name: "fechas" }}
-                    disableAfterDates
-                  />
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    formProps={{ label: "Área", name: "area" }}
-                    options={filteredAreas}
-                    onChange={(value: any, option: any) => {
-                      setStudiesFilteredByArea(
-                        studiesOptions.filter((s) => s.area === +value)
-                      );
+    <div className="status-container">
+      <Form<IGeneralForm>
+        {...formItemLayout}
+        form={form}
+        onFinish={onFinish}
+        initialValues={{
+          fecha: [
+            moment(Date.now()).utcOffset(0, true),
+            moment(Date.now()).utcOffset(0, true),
+          ],
+        }}
+      >
+        <Row justify="space-between" gutter={[0, 12]}>
+          <Col span={8}>
+            <DateRangeInput
+              formProps={{ label: "Fecha", name: "fecha" }}
+              disableAfterDates
+            />
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              formProps={{ label: "Área", name: "area" }}
+              options={filteredAreas}
+              onChange={(value: any, option: any) => {
+                setStudiesFilteredByArea(
+                  studiesOptions.filter((s) => s.area === +value)
+                );
 
-                      setAreas(option.label);
-                    }}
-                  />
-                </Col>
-                <Col span={8}>
-                  <TextInput
-                    formProps={{ label: "Buscar", name: "busqueda" }}
-                  />
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    form={form}
-                    formProps={{ label: "Sucursal", name: "sucursales" }}
-                    multiple
-                    options={branchCityOptions}
-                  />
-                </Col>
-                <Col span={8}>
-                  <SelectInput
-                    form={form}
-                    formProps={{ label: "Estudio", name: "estudios" }}
-                    multiple
-                    options={studiesFilteredByArea}
-                  />
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Form>
-      </div>
-    </>
+                setAreas(option.label);
+              }}
+            />
+          </Col>
+          <Col span={8}>
+            <TextInput formProps={{ label: "Buscar", name: "buscar" }} />
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              form={form}
+              formProps={{ label: "Sucursal", name: "sucursalId" }}
+              multiple
+              options={branchCityOptions}
+            />
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              form={form}
+              formProps={{ label: "Estudio", name: "estudio" }}
+              multiple
+              options={studiesFilteredByArea}
+            />
+          </Col>
+          <Col span={24} style={{ textAlign: "right" }}>
+            <Button key="clean" htmlType="reset">
+              Limpiar
+            </Button>
+            <Button key="filter" type="primary" htmlType="submit">
+              Buscar
+            </Button>
+          </Col>
+        </Row>
+      </Form>
+    </div>
   );
 };
 

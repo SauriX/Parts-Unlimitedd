@@ -29,6 +29,10 @@ export interface IGeneralForm {
   tipoFecha?: number;
   fechaInicial?: moment.Moment;
   fechaFinal?: moment.Moment;
+  // Envio resultados
+  mediosEntrega?: number[];
+  // Tabla captura
+  nombreArea?: string;
 }
 
 export class GeneralFormValues implements IGeneralForm {
@@ -56,6 +60,8 @@ export class GeneralFormValues implements IGeneralForm {
   tipoFecha = 0;
   fechaInicial = moment(moment.now());
   fechaFinal = moment(moment.now());
+  mediosEntrega = [];
+  nombreArea = '';
 
   constructor(init?: IGeneralForm) {
     Object.assign(this, init);
