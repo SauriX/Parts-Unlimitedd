@@ -1,24 +1,10 @@
-import {
-  Button,
-  Col,
-  Divider,
-  Form,
-  List,
-  Row,
-  Skeleton,
-  Typography,
-} from "antd";
+import { Button, Col, Divider, Form, List, Row, Skeleton } from "antd";
 import { observer } from "mobx-react-lite";
-import SelectInput from "../../../app/common/form/SelectInput";
 import { useForm } from "antd/lib/form/Form";
 import { formItemLayout } from "../../../app/util/utils";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import { useStore } from "../../../app/stores/store";
 import { useEffect, useState } from "react";
-import { toJS } from "mobx";
-type RequestDeliveryHistoryTypes = {
-  solicitudId: string;
-};
 
 const RequestDeliveryHistory = () => {
   const { clinicResultsStore, requestStore } = useStore();

@@ -5,11 +5,6 @@ import moment from "moment";
 import { Tab } from "rc-tabs/lib/interface";
 import { useCallback, useEffect, useState } from "react";
 import { useKeyPress } from "../../../app/hooks/useKeyPress";
-import { ProcedenciaFormValues } from "../../../app/models/catalog";
-import {
-  IProceedingForm,
-  ProceedingFormValues,
-} from "../../../app/models/Proceeding";
 import { IRequestGeneral } from "../../../app/models/request";
 import { useStore } from "../../../app/stores/store";
 import alerts from "../../../app/util/alerts";

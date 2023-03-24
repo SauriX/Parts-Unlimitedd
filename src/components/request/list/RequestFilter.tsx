@@ -7,6 +7,7 @@ import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import { useKeyPress } from "../../../app/hooks/useKeyPress";
+import { IGeneralForm } from "../../../app/models/general";
 import { IRequestFilter } from "../../../app/models/request";
 import { IOptions } from "../../../app/models/shared";
 import {
@@ -19,7 +20,7 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const RequestFilter = () => {
-  const { requestStore, optionStore, profileStore } = useStore();
+  const { requestStore, optionStore, profileStore, generalStore } = useStore();
   const {
     branchCityOptions,
     medicOptions,
@@ -32,9 +33,10 @@ const RequestFilter = () => {
     BranchOptions,
   } = optionStore;
   const { profile, getProfile } = profileStore;
-  const { filter, setFilter, getRequests } = requestStore;
+  const { getRequests } = requestStore;
+  const { setGeneralFilter, generalFilter } = generalStore;
 
-  const [form] = useForm<IRequestFilter>();
+  const [form] = useForm<IGeneralForm>();
 
   const selectedCity = Form.useWatch("ciudad", form);
 
@@ -91,28 +93,28 @@ const RequestFilter = () => {
   }, [BranchOptions, form, profile]);
 
   useEffect(() => {
-    form.setFieldsValue(filter);
-  }, [filter, form]);
+    form.setFieldsValue(generalFilter);
+  }, [generalFilter, form]);
 
-  const onFinish = (values: IRequestFilter) => {
+  const onFinish = (values: IGeneralForm) => {
     const filter = { ...values };
 
-    if (filter.fechas && filter.fechas.length > 1) {
-      filter.fechaInicial = filter.fechas[0].utcOffset(0, true);
-      filter.fechaFinal = filter.fechas[1].utcOffset(0, true);
+    if (filter.fecha && filter.fecha.length > 1) {
+      filter.fechaInicial = filter.fecha[0].utcOffset(0, true);
+      filter.fechaFinal = filter.fecha[1].utcOffset(0, true);
     }
 
-    setFilter(filter);
+    setGeneralFilter(filter);
     getRequests(filter);
   };
 
   return (
     <div className="status-container" style={{ marginBottom: 12 }}>
-      <Form<IRequestFilter>
+      <Form<IGeneralForm>
         {...formItemLayout}
         form={form}
         onFinish={onFinish}
-        initialValues={{ tipoFecha: 1, fechas: [moment(), moment()] }}
+        initialValues={{ tipoFecha: 1, fecha: [moment(), moment()] }}
         size="small"
       >
         <Row gutter={[0, 12]}>
@@ -131,13 +133,13 @@ const RequestFilter = () => {
           </Col>
           <Col span={8}>
             <DateRangeInput
-              formProps={{ name: "fechas", label: "Fechas" }}
+              formProps={{ name: "fecha", label: "Fechas" }}
               disableAfterDates={dateType == 1}
             />
           </Col>
           <Col span={8}>
             <TextInput
-              formProps={{ name: "clave", label: "Clave/Paciente" }}
+              formProps={{ name: "buscar", label: "Clave/Paciente" }}
               autoFocus
             />
           </Col>
@@ -152,7 +154,7 @@ const RequestFilter = () => {
           <Col span={8}>
             <SelectInput
               form={form}
-              formProps={{ name: "urgencias", label: "Tipo solicitud" }}
+              formProps={{ name: "tipoSolicitud", label: "Tipo solicitud" }}
               multiple
               options={urgencyOptions}
             />
@@ -168,7 +170,7 @@ const RequestFilter = () => {
           <Col span={8}>
             <SelectInput
               form={form}
-              formProps={{ name: "departamentos", label: "Departamento" }}
+              formProps={{ name: "departamento", label: "Departamento" }}
               multiple
               options={departmentOptions}
             />
@@ -193,7 +195,7 @@ const RequestFilter = () => {
                     <SelectInput
                       form={form}
                       formProps={{
-                        name: "sucursales",
+                        name: "sucursalId",
                         label: "Sucursales",
                         noStyle: true,
                       }}
@@ -208,7 +210,7 @@ const RequestFilter = () => {
           <Col span={8}>
             <SelectInput
               form={form}
-              formProps={{ name: "compañias", label: "Compañia" }}
+              formProps={{ name: "compañiaId", label: "Compañia" }}
               multiple
               options={companyOptions}
             />
@@ -216,7 +218,7 @@ const RequestFilter = () => {
           <Col span={8}>
             <SelectInput
               form={form}
-              formProps={{ name: "medicos", label: "Médico" }}
+              formProps={{ name: "medicoId", label: "Médico" }}
               multiple
               options={medicOptions}
             />
