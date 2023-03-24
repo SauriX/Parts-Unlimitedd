@@ -53,8 +53,8 @@ export default class PromotionStore {
     try {
       const priceList = await Promotion.getById(id);
       priceList.fechaDescuento = [
-        moment(priceList.fechaInicial).utcOffset(0, false),
-        moment(priceList.fechaFinal).utcOffset(0, false),
+        moment(priceList.fechaInicial),
+        moment(priceList.fechaFinal),
       ];
       return priceList;
     } catch (error: any) {

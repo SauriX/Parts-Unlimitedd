@@ -22,6 +22,7 @@ import { status } from "../util/catalogs";
 import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
+import views from "../util/view";
 
 export default class QuotationStore {
   constructor() {
@@ -51,6 +52,7 @@ export default class QuotationStore {
   packs: IQuotationPack[] = [];
   loadingQuotations: boolean = false;
   loadingTabContentCount: number = 0;
+  readonly: boolean = false;
 
   get loadingTabContent() {
     return this.loadingTabContentCount > 0;
@@ -104,32 +106,6 @@ export default class QuotationStore {
     return obj.type === "study";
   }
 
-  calculateTotals = () => {
-    const total =
-      this.studies.reduce((acc, obj) => acc + obj.precioFinal, 0) +
-      this.packs.reduce((acc, obj) => acc + obj.precioFinal, 0);
-
-    const char =
-      this.totals.cargoTipo === 1
-        ? ((this.studies
-            .filter((x) => x.aplicaCargo)
-            .reduce((acc, obj) => acc + obj.precio, 0) +
-            this.packs
-              .filter((x) => x.aplicaCargo)
-              .reduce((acc, obj) => acc + obj.precio, 0)) *
-            this.totals.cargo) /
-          100
-        : this.totals.cargo;
-
-    const finalTotal = total + char;
-
-    this.totals = {
-      ...this.totals,
-      totalEstudios: total,
-      total: finalTotal,
-    };
-  };
-
   setFilter = (filter: IQuotationFilter) => {
     this.filter = { ...filter };
   };
@@ -170,15 +146,11 @@ export default class QuotationStore {
     }
   };
 
-  setTotals = (totals: IQuotationTotal) => {
-    this.totals = totals;
-    this.calculateTotals();
-  };
-
   getById = async (quotationId: string) => {
     try {
       const quotation = await Quotation.getById(quotationId);
       this.quotation = quotation;
+      this.readonly = !quotation.activo;
     } catch (error) {
       alerts.warning(getErrors(error));
       history.push("/notFound");
@@ -203,8 +175,14 @@ export default class QuotationStore {
       this.loadingTabContentCount++;
       const quotation = await Quotation.getGeneral(quotationId);
       quotation.metodoEnvio = [];
-      if (quotation.correo) quotation.metodoEnvio.push("correo");
-      if (quotation.whatsapp) quotation.metodoEnvio.push("whatsapp");
+      if (quotation.correo) {
+        quotation.metodoEnvio.push("correo");
+        quotation.correos = quotation.correo.split(",");
+      }
+      if (quotation.whatsapp) {
+        quotation.metodoEnvio.push("whatsapp");
+        quotation.whatsapps = quotation.whatsapp.split(",");
+      }
       if (quotation.metodoEnvio.length === 2)
         quotation.metodoEnvio.push("ambos");
       return quotation;
@@ -260,11 +238,11 @@ export default class QuotationStore {
           "Se encuentran coincidencias en parámetros de solicitud, en estudios: " +
             repeated.map((x) => x.clave).join(", "),
           async () => {
-            this.studies.unshift(study);
+            this.studies.push(study);
           }
         );
       } else {
-        this.studies.unshift(study);
+        this.studies.push(study);
       }
 
       return true;
@@ -290,7 +268,7 @@ export default class QuotationStore {
         })),
       };
 
-      this.packs.unshift(pack);
+      this.packs.push(pack);
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -308,7 +286,7 @@ export default class QuotationStore {
     }
   };
 
-  sendTestEmail = async (quotationId: string, email: string) => {
+  sendTestEmail = async (quotationId: string, email: string[]) => {
     try {
       this.loadingTabContentCount++;
       await Quotation.sendTestEmail(quotationId, email);
@@ -320,7 +298,7 @@ export default class QuotationStore {
     }
   };
 
-  sendTestWhatsapp = async (quotationId: string, phone: string) => {
+  sendTestWhatsapp = async (quotationId: string, phone: string[]) => {
     try {
       this.loadingTabContentCount++;
       await Quotation.sendTestWhatsapp(quotationId, phone);
@@ -467,6 +445,7 @@ export default class QuotationStore {
         this.quotation.estatusId = status.quotation.cancelado;
         this.quotation.activo = false;
       }
+      history.push(`/${views.quotation}`);
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -519,19 +498,34 @@ export default class QuotationStore {
     }
   };
 
-  printTicket = async (quotationId: string) => {
-    try {
-      await Quotation.printTicket(quotationId);
-    } catch (error: any) {
-      alerts.warning(getErrors(error));
-    }
-  };
-  getQuotePdfUrl = async (id: string) => {
+  getQuotationPdf = async (id: string) => {
     try {
       const url = await Quotation.getQuotePdfUrl(id);
       return url;
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
+  };
+
+  // prettier-ignore
+  private calculateTotals = () => {
+    const studies = this.studies;
+    const packs = this.packs;
+
+    const studyAndPack = studies.map((x) => ({ descuento: x.descuento ?? 0, precio: x.precio, precioFinal: x.precioFinal }))
+      .concat(packs.map((x) => ({ descuento: x.descuento, precio: x.precio, precioFinal: x.precioFinal }))); 
+    
+    const totalStudies = studyAndPack.reduce((acc, obj) => acc + obj.precio, 0);
+    
+    const discount = totalStudies === 0 ? 0 : studyAndPack.reduce((acc, obj) => acc + obj.descuento, 0);
+    
+    const finalTotal = totalStudies - discount;
+    
+    this.totals = {
+      ...this.totals,
+      totalEstudios: totalStudies,
+      descuento: discount,
+      total: finalTotal,
+    };
   };
 }
