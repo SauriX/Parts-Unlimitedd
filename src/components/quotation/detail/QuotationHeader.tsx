@@ -9,8 +9,9 @@ import views from "../../../app/util/view";
 const { Text } = Typography;
 
 const QuotationHeader = () => {
-  const { quotationStore } = useStore();
-  const { quotation, quotations, filter, getQuotations } = quotationStore;
+  const { quotationStore, generalStore } = useStore();
+  const { quotation, quotations, getQuotations } = quotationStore;
+  const { generalFilter } = generalStore;
 
   let navigate = useNavigate();
 
@@ -21,7 +22,7 @@ const QuotationHeader = () => {
       quotations.length === 0 ||
       quotations.findIndex((x) => x.cotizacionId === quotationId) === -1
     ) {
-      getQuotations(filter);
+      getQuotations(generalFilter);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quotationId]);

@@ -18,9 +18,10 @@ import {
 const { Link, Text } = Typography;
 
 const QuotationTable = () => {
-  const { quotationStore } = useStore();
-  const { loadingQuotations, filter, quotations, getQuotations } =
+  const { quotationStore, generalStore } = useStore();
+  const { loadingQuotations, quotations, getQuotations } =
     quotationStore;
+  const { generalFilter } = generalStore;
 
   let navigate = useNavigate();
 
@@ -31,7 +32,7 @@ const QuotationTable = () => {
 
   useEffect(() => {
     const readQuotations = async () => {
-      await getQuotations(filter);
+      await getQuotations(generalFilter);
     };
 
     readQuotations();

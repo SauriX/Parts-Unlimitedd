@@ -8,6 +8,7 @@ import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
+import { IGeneralForm } from "../../../app/models/general";
 import { IQuotationFilter } from "../../../app/models/quotation";
 import { IFormError, IOptions } from "../../../app/models/shared";
 import { useStore } from "../../../app/stores/store";
@@ -15,9 +16,10 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const QuotationFilter = () => {
-  const { quotationStore, optionStore, profileStore } = useStore();
+  const { quotationStore, optionStore, profileStore, generalStore } = useStore();
   const { branchCityOptions, getBranchCityOptions } = optionStore;
-  const { filter, setFilter, getQuotations } = quotationStore;
+  const { getQuotations } = quotationStore;
+  const { setGeneralFilter, generalFilter } = generalStore;
   const { profile } = profileStore;
   const [form] = useForm<IQuotationFilter>();
 
@@ -46,7 +48,7 @@ const QuotationFilter = () => {
       if (findCity) {
         form.setFieldValue("ciudad", [findCity]);
       }
-      form.setFieldValue("sucursales", [profileBranch]);
+      form.setFieldValue("sucursalId", [profileBranch]);
     }
   }, [branchCityOptions, form, profile]);
 
@@ -64,10 +66,10 @@ const QuotationFilter = () => {
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
-    form.setFieldsValue(filter);
-  }, [filter, form]);
+    form.setFieldsValue(generalFilter);
+  }, [generalFilter, form]);
 
-  const onFinish = (values: IQuotationFilter) => {
+  const onFinish = (values: IGeneralForm) => {
     setErrors([]);
     const filter = { ...values };
 
@@ -80,13 +82,13 @@ const QuotationFilter = () => {
       filter.fechaNInicial = filter.fechaNacimiento.utcOffset(0, true);
     }
 
-    setFilter(filter);
+    setGeneralFilter(filter);
     getQuotations(filter);
   };
 
   return (
     <div className="status-container" style={{ marginBottom: 12 }}>
-      <Form<IQuotationFilter>
+      <Form<IGeneralForm>
         {...formItemLayout}
         form={form}
         onFinish={onFinish}
@@ -190,7 +192,7 @@ const QuotationFilter = () => {
                     <SelectInput
                       form={form}
                       formProps={{
-                        name: "sucursales",
+                        name: "sucursalId",
                         label: "Sucursales",
                         noStyle: true,
                       }}

@@ -13,12 +13,11 @@ import {
 } from "../../../../app/common/table/utils";
 import {
   IProceedingList,
-  ISearchMedical,
-  SearchMedicalFormValues,
 } from "../../../../app/models/Proceeding";
 import DateRangeInput from "../../../../app/common/form/proposal/DateRangeInput";
 import { moneyFormatter } from "../../../../app/util/utils";
 import MaskInput from "../../../../app/common/form/proposal/MaskInput";
+import { GeneralFormValues, IGeneralForm } from "../../../../app/models/general";
 
 const { Link, Text } = Typography;
 
@@ -36,7 +35,7 @@ const QuotationAssignment = ({
 
   let navigate = useNavigate();
 
-  const [form] = Form.useForm<ISearchMedical>();
+  const [form] = Form.useForm<IGeneralForm>();
 
   const [records, setRecords] = useState<IProceedingList[]>([]);
   const [searchState, setSearchState] = useState<ISearch>({
@@ -46,14 +45,14 @@ const QuotationAssignment = ({
 
   useEffect(() => {
     const readRecords = async () => {
-      const records = await getRecords(new SearchMedicalFormValues());
+      const records = await getRecords(new GeneralFormValues());
       setRecords(records);
     };
 
     readRecords();
   }, [getRecords]);
 
-  const onFinish = async (values: ISearchMedical) => {
+  const onFinish = async (values: IGeneralForm) => {
     const filter = { ...values };
 
     if (filter.fechaAlta && filter.fechaAlta.length > 1) {
@@ -147,9 +146,9 @@ const QuotationAssignment = ({
   return (
     <Row gutter={[8, 12]}>
       <Col span={24}>
-        <Form<ISearchMedical>
+        <Form<IGeneralForm>
           layout="vertical"
-          initialValues={new SearchMedicalFormValues()}
+          initialValues={new GeneralFormValues()}
           form={form}
           onFinish={onFinish}
         >
