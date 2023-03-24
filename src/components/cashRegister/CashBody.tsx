@@ -1,12 +1,10 @@
-import { FC, useState } from "react";
+import { FC, Fragment, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Col, PageHeader, Row, Spin } from "antd";
+import { Col, Divider, Row, Spin } from "antd";
 import CashFilter from "./CashFilter";
 import CashTable from "./CashTable";
-import { ICashRegisterData } from "../../app/models/cashRegister";
 import { useStore } from "../../app/stores/store";
 import InvoiceTable from "./InvoiceTable";
-import HeaderTitle from "../../app/common/header/HeaderTitle";
 
 type CashDefaultProps = {
   printing: boolean;
@@ -15,46 +13,40 @@ type CashDefaultProps = {
 const CashBody: FC<CashDefaultProps> = ({ printing }) => {
   const [loading, setLoading] = useState(false);
   const { cashRegisterStore } = useStore();
-  const { cashRegisterData } = cashRegisterStore;
+  const { cashRegisterData, showChart } = cashRegisterStore;
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
-      <Col span={24}>
-        <CashFilter />
-      </Col>
-      <Col span={24}>
-        <PageHeader
-          ghost={false}
-          title={<HeaderTitle title="PACIENTES DEL DÍA" />}
-          className="header-container"
-        />
-      </Col>
-      <Col span={24}>
-        <CashTable data={cashRegisterData.perDay} loading={loading} />
-      </Col>
-      <Col span={24}>
-        <PageHeader
-          ghost={false}
-          title={<HeaderTitle title="CANCELACIONES DEL DÍA" />}
-          className="header-container"
-        />
-      </Col>
-      <Col span={24}>
-        <CashTable data={cashRegisterData.canceled} loading={loading} />
-      </Col>
-      <Col span={24}>
-        <PageHeader
-          ghost={false}
-          title={<HeaderTitle title="PAGOS DE OTROS DÍAS" />}
-          className="header-container"
-        />
-      </Col>
-      <Col span={24}>
-        <CashTable data={cashRegisterData.otherDay} loading={loading} />
-      </Col>
-      <Col span={24}>
-        <InvoiceTable data={cashRegisterData.cashTotal} loading={loading} />
-      </Col>
+      <Row gutter={[12, 4]}>
+        <Col span={24}>
+          <CashFilter />
+        </Col>
+        {!showChart ? (
+          <Fragment>
+            <Col span={24}>
+              <Divider>PACIENTES DEL DÍA</Divider>
+              <CashTable data={cashRegisterData.perDay} loading={loading} />
+            </Col>
+            <Col span={24}>
+              <Divider>CANCELACIONES DEL DÍA</Divider>
+              <CashTable data={cashRegisterData.canceled} loading={loading} />
+            </Col>
+            <Col span={24}>
+              <Divider>PAGOS DE OTROS DÍAS</Divider>
+              <CashTable data={cashRegisterData.otherDay} loading={loading} />
+            </Col>
+            <Col span={24}>
+              <Divider>TOTALES</Divider>
+              <InvoiceTable
+                data={cashRegisterData.cashTotal}
+                loading={loading}
+              />
+            </Col>
+          </Fragment>
+        ) : (
+          ""
+        )}
+      </Row>
     </Spin>
   );
 };
