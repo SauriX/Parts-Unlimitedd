@@ -1,13 +1,17 @@
 import { makeAutoObservable } from "mobx";
 import ResultValidation from "../api/resultvalidation";
-import { ISearchValidation, Ivalidationlist, searchValues } from "../models/resultValidation";
+import { IGeneralForm } from "../models/general";
+import {
+  ISearchValidation,
+  Ivalidationlist,
+  searchValues,
+} from "../models/resultValidation";
 import { IUpdate } from "../models/sampling";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
-
 
 export default class ResultValidationStore {
   constructor() {
@@ -16,23 +20,18 @@ export default class ResultValidationStore {
 
   scopes?: IScopes;
   studys: Ivalidationlist[] = [];
-  studyCont:number=0;
-  soliCont:number=0;
-  search:ISearchValidation = new searchValues();
-  setSearch=(search:  ISearchValidation)=>{
-    this.search = search;
-  };
+  studyCont: number = 0;
+  soliCont: number = 0;
   clear: boolean = false;
 
   clearFilter = () => {
-    this.search =new searchValues();
     this.studys = [];
-    this.clear = !this.clear
+    this.clear = !this.clear;
     this.studyCont = 0;
-    this.soliCont=0;
-  }
+    this.soliCont = 0;
+  };
 
-  exportList = async (search:  ISearchValidation) => {
+  exportList = async (search: IGeneralForm) => {
     try {
       await ResultValidation.exportList(search);
       return true;
@@ -40,11 +39,12 @@ export default class ResultValidationStore {
       alerts.warning(getErrors(error));
     }
   };
-  setStudyCont=(cont:number)=>{
-    this.studyCont=cont;
+  
+  setStudyCont = (cont: number) => {
+    this.studyCont = cont;
   };
-  setSoliCont=(cont:number)=>{
-    this.soliCont=cont;
+  setSoliCont = (cont: number) => {
+    this.soliCont = cont;
   };
   clearScopes = () => {
     this.scopes = undefined;
@@ -65,7 +65,7 @@ export default class ResultValidationStore {
     }
   };
 
-  getAll = async (search: ISearchValidation) => {
+  getAll = async (search: IGeneralForm) => {
     try {
       const study = await ResultValidation.getAll(search);
       this.studys = study;
@@ -97,7 +97,7 @@ export default class ResultValidationStore {
   };
   viewTicket = async (recordId: any) => {
     try {
-      console.log(recordId,"record");
+      console.log(recordId, "record");
       await ResultValidation.getresultPdf(recordId);
     } catch (error: any) {
       alerts.warning(getErrors(error));
