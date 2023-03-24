@@ -1,13 +1,6 @@
 import moment, { Moment } from "moment";
 import { ITaxData } from "./taxdata";
-export interface ISearchMedical {
-  expediente?: string;
-  telefono?: string;
-  fechaNacimiento?: moment.Moment;
-  fechaAlta?: moment.Moment[];
-  ciudad: string[];
-  sucursal: string[];
-}
+
 export interface IProceedingList {
   id: string;
   expediente: string;
@@ -47,18 +40,6 @@ export interface IProceedingForm {
   fechaActivacionMonedero?: Date;
 
   observaciones?: string;
-}
-
-export class SearchMedicalFormValues implements ISearchMedical {
-  expediente = "";
-  telefono = "";
-  fechaAlta = [moment(), moment()];
-  ciudad = [];
-  sucursal = [];
-
-  constructor(init?: ISearchMedical) {
-    Object.assign(this, init);
-  }
 }
 
 export class ProceedingFormValues implements IProceedingForm {

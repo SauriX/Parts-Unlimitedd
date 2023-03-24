@@ -23,11 +23,7 @@ import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import views from "../../app/util/view";
-import {
-  IProceedingList,
-  ISearchMedical,
-  SearchMedicalFormValues,
-} from "../../app/models/Proceeding";
+import { IProceedingList } from "../../app/models/Proceeding";
 
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
@@ -37,6 +33,8 @@ import { useForm } from "antd/lib/form/Form";
 import DateInput from "../../app/common/form/proposal/DateInput";
 import { IOptions } from "../../app/models/shared";
 import MaskInput from "../../app/common/form/proposal/MaskInput";
+import { IGeneralForm } from "../../app/models/general";
+import moment from "moment";
 
 type ProceedingTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -47,9 +45,15 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
   componentRef,
   printing,
 }) => {
-  const { procedingStore, optionStore, locationStore, profileStore } =
-    useStore();
-  const { expedientes, getnow, setSearch, search } = procedingStore;
+  const {
+    procedingStore,
+    optionStore,
+    locationStore,
+    profileStore,
+    generalStore,
+  } = useStore();
+  const { generalFilter, setGeneralFilter } = generalStore;
+  const { expedientes, getnow } = procedingStore;
   const { profile } = profileStore;
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const { getCity } = locationStore;
@@ -93,9 +97,13 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       if (findCity) {
         form.setFieldValue("ciudad", [findCity]);
       }
-      form.setFieldValue("sucursal", [profileBranch]);
+      form.setFieldValue("sucursalId", [profileBranch]);
     }
   }, [branchCityOptions, form, profile]);
+
+  useEffect(() => {
+    form.setFieldsValue(generalFilter);
+  }, [generalFilter, form]);
 
   useEffect(() => {
     const readData = async () => {
@@ -107,24 +115,19 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
   useEffect(() => {
     const readPriceList = async () => {
       setLoading(true);
-      await getnow(search!);
+      await getnow(generalFilter);
       setLoading(false);
     };
 
     readPriceList();
   }, [getnow]);
 
-  useEffect(() => {
-    onfinish(new SearchMedicalFormValues());
-  }, []);
-
-  const onfinish = async (values: ISearchMedical) => {
+  const onfinish = async (values: IGeneralForm) => {
     setLoading(true);
     if (values.fechaNacimiento === null) {
       delete values.fechaNacimiento;
     }
     if (values.fechaNacimiento != null) {
-      console.log(values.fechaNacimiento, "nacimiento");
       values.fechaNacimiento = values.fechaNacimiento!.utcOffset(0, true);
     }
 
@@ -134,7 +137,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
         values.fechaAlta![1].utcOffset(0, true),
       ];
     }
-    setSearch(values);
+    setGeneralFilter(values);
     await getnow(values!);
     setLoading(false);
   };
@@ -162,7 +165,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       ),
     },
     {
-      ...getDefaultColumnProps("nomprePaciente", "Nombre del paciente", {
+      ...getDefaultColumnProps("nombrePaciente", "Paciente", {
         searchState,
         setSearchState,
         width: "25%",
@@ -265,12 +268,17 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
   return (
     <Fragment>
       <div className="status-container">
-        <Form<ISearchMedical>
+        <Form<IGeneralForm>
           {...formItemLayout}
           form={form}
           onFinish={onfinish}
           size="small"
-          initialValues={new SearchMedicalFormValues()}
+          initialValues={{
+            fechaAlta: [
+              moment(Date.now()).utcOffset(0, true),
+              moment(Date.now()).utcOffset(0, true),
+            ],
+          }}
           scrollToFirstError
         >
           <Row justify="space-between" gutter={[0, 12]}>
@@ -347,7 +355,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
                       <SelectInput
                         form={form}
                         formProps={{
-                          name: "sucursal",
+                          name: "sucursalId",
                           label: "Sucursales",
                           noStyle: true,
                         }}

@@ -73,6 +73,7 @@ const RequestedStudyFilter = () => {
       form.setFieldValue("sucursalId", [profileBranch]);
     }
   }, [branchCityOptions, form, profile]);
+  
   useEffect(() => {
     if (selectedCity != undefined && selectedCity != null) {
       var branhces = branchCityOptions.filter((x) =>
@@ -84,6 +85,7 @@ const RequestedStudyFilter = () => {
       setBranchOptions(options);
     }
   }, [branchCityOptions, form, selectedCity]);
+
   useEffect(() => {
     form.setFieldsValue(generalFilter);
   }, [generalFilter, form]);
