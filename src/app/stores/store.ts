@@ -51,6 +51,7 @@ import InvoiceCatalogStore from "./InvoiceCatalogStore";
 import ReportStudyStore from "./reportStudyStore";
 import InvoiceFreeStore from "./invoiceFreeStore";
 import NotificationsStore from "./notificationsStore";
+import GeneralStore from "./general";
 configure({
   enforceActions: "never",
 });
@@ -106,6 +107,7 @@ interface Store {
   invoiceCatalogStore: InvoiceCatalogStore;
   reportStudyStore: ReportStudyStore;
   notificationsStore:NotificationsStore;
+  generalStore: GeneralStore;
 }
 
 export const store: Store = {
@@ -159,6 +161,7 @@ export const store: Store = {
   invoiceCatalogStore: new InvoiceCatalogStore(),
   reportStudyStore: new ReportStudyStore(),
   notificationsStore: new NotificationsStore(),
+  generalStore: new GeneralStore(),
 };
 
 export const StoreContext = createContext(store);

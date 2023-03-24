@@ -1,14 +1,12 @@
-import { Button, Col, Collapse, Form, Input, Row } from "antd";
+import { Button, Col, Form, Input, Row } from "antd";
 import { useForm } from "antd/lib/form/Form";
-import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import React from "react";
 import { useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
-import { IGeneralForm } from "../../app/models/clinicResults";
+import { IGeneralForm } from "../../app/models/general";
 import { IOptions } from "../../app/models/shared";
 import {
   originOptions,
@@ -19,10 +17,11 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 
 const ClinicResultsFilter = () => {
-  const { requestStore, optionStore, clinicResultsStore, profileStore } =
+  const { requestStore, optionStore, clinicResultsStore, profileStore, generalStore } =
     useStore();
   const { lastViewedFrom } = requestStore;
-  const { getAll, setFormValues, formValues } = clinicResultsStore;
+  const { getAll } = clinicResultsStore;
+  const { generalFilter, setGeneralFilter } = generalStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -47,8 +46,8 @@ const ClinicResultsFilter = () => {
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
   useEffect(() => {
-    form.setFieldsValue(formValues);
-  }, [form, formValues]);
+    form.setFieldsValue(generalFilter);
+  }, [form, generalFilter]);
   useEffect(() => {
     const update = async () => {
       getBranchCityOptions();
@@ -119,7 +118,7 @@ const ClinicResultsFilter = () => {
     setLoading(true);
 
     const filter = { ...newFormValues };
-    setFormValues(newFormValues);
+    setGeneralFilter(newFormValues);
     getAll(filter);
     setLoading(false);
   };
