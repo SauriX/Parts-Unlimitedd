@@ -477,6 +477,22 @@ export default class OptionStore {
     }
   };
 
+  getAllBranchOptions = async () => {
+    try {
+      const branch = Branch.getAll("");
+      this.BranchOptions = (await branch).map((x) => ({
+        value: x.idSucursal,
+        label: x.nombre,
+      }));
+      this.cityOptions = (await branch).map((x) => ({
+        value: x.ciudad,
+        label: x.ciudad,
+      }));
+    } catch (error) {
+      this.BranchOptions = [];
+    }
+  };
+
   DeliveryOptions: IOptions[] = [];
   getDeliveryOptions = async () => {
     try {
@@ -647,6 +663,24 @@ export default class OptionStore {
         }
       });
       this.branchCityOptions = branchesFiltered;
+    } catch (error) {
+      this.branchCityOptions = [];
+    }
+  };
+
+  getAllBranchCityOptions = async () => {
+    try {
+      const branch = Branch.getBranchByCity();
+      let branches = (await branch).map((x) => ({
+        value: x.ciudad,
+        label: x.ciudad,
+        disabled: true,
+        options: x.sucursales.map((y) => ({
+          value: y.idSucursal,
+          label: y.nombre,
+        })),
+      }));
+      this.branchCityOptions = branches;
     } catch (error) {
       this.branchCityOptions = [];
     }

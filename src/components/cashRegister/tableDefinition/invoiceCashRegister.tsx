@@ -10,14 +10,15 @@ const getInvoiceColumns = (
     {
       ...getDefaultColumnProps("sumaEfectivo", "Efectivo", {
         searchState,
-        width: "20%",
+        width: 200,
       }),
+      fixed: "left",
       render: (value) => moneyFormatter.format(value),
     },
     {
       ...getDefaultColumnProps("sumaTDC", "TDC", {
         searchState,
-        width: "20%",
+        width: 200,
       }),
       render: (value) => moneyFormatter.format(value),
 
@@ -25,34 +26,49 @@ const getInvoiceColumns = (
     {
       ...getDefaultColumnProps("sumaTransferencia", "Transf. E", {
         searchState,
-        width: "20%",
+        width: 200,
       }),
       render: (value) => moneyFormatter.format(value),
     },
     {
       ...getDefaultColumnProps("sumaCheque", "Cheque", {
         searchState,
-        width: "20%",
+        width: 200,
+      }),
+      render: (value) => moneyFormatter.format(value),
+    },
+    {
+      ...getDefaultColumnProps("sumaTDD", "TDD", {
+        searchState,
+        width: 200,
+      }),
+      render: (value) => moneyFormatter.format(value),
+    },
+    {
+      ...getDefaultColumnProps("sumaOtroMetodo", "Otro método", {
+        searchState,
+        width: 200,
       }),
       render: (value) => moneyFormatter.format(value),
     },
     {
       ...getDefaultColumnProps("subtotal", "Subtotal", {
         searchState,
-        width: "20%",
+        width: 200,
       }),
       render: (value) => moneyFormatter.format(value),
     },
     {
       ...getDefaultColumnProps("sumaPP", "PP", {
         searchState,
-        width: "20%",
+        width: 200,
       }),
     },
     {
       ...getDefaultColumnProps("total", "Total", {
-        width: "20%",
+        width: 200,
       }),
+      fixed: "right",
       render: (value) => moneyFormatter.format(value),
     },
   ];

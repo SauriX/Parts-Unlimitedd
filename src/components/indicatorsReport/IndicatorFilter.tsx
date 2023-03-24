@@ -16,7 +16,7 @@ import { expandableBudgetStatsConfig } from "../report/columnDefinition/budgetSt
 
 const IndicatorFilter = () => {
   const { optionStore, indicatorsStore } = useStore();
-  const { getByFilter, filter, setFilter } = indicatorsStore;
+  const { getByFilter, datePickerType, setDatePickerType, setFilter } = indicatorsStore;
   const {
     branchCityOptions,
     getBranchCityOptions,
@@ -26,17 +26,8 @@ const IndicatorFilter = () => {
   const [form] = Form.useForm<IReportIndicatorsFilter>();
 
   const selectedCity = Form.useWatch("ciudad", form);
-  type pickerType =
-    | "time"
-    | "date"
-    | "week"
-    | "month"
-    | "quarter"
-    | "year"
-    | undefined;
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
-  const [datePickerType, setDatePickerType] = useState<pickerType>("date");
 
   useEffect(() => {
     getBranchCityOptions();
@@ -103,91 +94,93 @@ const IndicatorFilter = () => {
 
   return (
     <Spin spinning={loading}>
-      <Form<IReportIndicatorsFilter>
-        {...formItemLayout}
-        form={form}
-        name="indicators"
-        initialValues={{
-          fechaIndividual: moment(Date.now()).utcOffset(0, true),
-        }}
-        onFinish={onFinish}
-      >
-        <Row justify="space-between" gutter={[16, 12]}>
-          <Col span={10}>
-            <Form.Item label="Fecha" className="no-error-text" help="">
-              <Input.Group>
-                <Row gutter={[16, 12]}>
-                  <Col span={10}>
-                    <DateInput
-                      formProps={{
-                        label: "",
-                        name: "fechaIndividual",
-                      }}
-                      disableAfterDates
-                      pickerType={datePickerType}
-                    />
-                  </Col>
-                  <Col span={14}>
-                    <Radio.Group
-                      size="small"
-                      defaultValue="date"
-                      buttonStyle="solid"
-                      onChange={(e) => {
-                        setDatePickerType(e.target.value);
-                      }}
-                      value={datePickerType}
-                    >
-                      <Radio.Button value="date">Dia</Radio.Button>
-                      <Radio.Button value="week">Semana</Radio.Button>
-                      <Radio.Button value="month">Mensual</Radio.Button>
-                    </Radio.Group>
-                  </Col>
-                </Row>
-              </Input.Group>
-            </Form.Item>
-          </Col>
-          <Col span={10}>
-            <Form.Item label="Sucursal" className="no-error-text" help="">
-              <Input.Group>
-                <Row gutter={8}>
-                  <Col span={12}>
-                    <SelectInput
-                      form={form}
-                      formProps={{
-                        name: "ciudad",
-                        label: "Ciudad",
-                        noStyle: true,
-                      }}
-                      options={cityOptions}
-                      multiple
-                    />
-                  </Col>
-                  <Col span={12}>
-                    <SelectInput
-                      form={form}
-                      formProps={{
-                        name: "sucursalId",
-                        label: "Sucursales",
-                        noStyle: true,
-                      }}
-                      multiple
-                      options={branchOptions}
-                    />
-                  </Col>
-                </Row>
-              </Input.Group>
-            </Form.Item>
-          </Col>
-          <Col span={4} className="filter-buttons">
-            <Button key="modal" type="text" onClick={() => servicesCosts()}>
-              <SettingFilled style={{ fontSize: 14 }} />
-            </Button>
-            <Button key="filter" type="primary" htmlType="submit">
-              Filtrar
-            </Button>
-          </Col>
-        </Row>
-      </Form>
+      <div className="status-container">
+        <Form<IReportIndicatorsFilter>
+          {...formItemLayout}
+          form={form}
+          name="indicators"
+          initialValues={{
+            fechaIndividual: moment(Date.now()).utcOffset(0, true),
+          }}
+          onFinish={onFinish}
+        >
+          <Row justify="space-between" gutter={[16, 12]}>
+            <Col span={10}>
+              <Form.Item label="Fecha" className="no-error-text" help="">
+                <Input.Group>
+                  <Row gutter={[16, 12]}>
+                    <Col span={10}>
+                      <DateInput
+                        formProps={{
+                          label: "",
+                          name: "fechaIndividual",
+                        }}
+                        disableAfterDates
+                        pickerType={datePickerType}
+                      />
+                    </Col>
+                    <Col span={14}>
+                      <Radio.Group
+                        size="small"
+                        defaultValue="date"
+                        buttonStyle="solid"
+                        onChange={(e) => {
+                          setDatePickerType(e.target.value);
+                        }}
+                        value={datePickerType}
+                      >
+                        <Radio.Button value="date">Dia</Radio.Button>
+                        <Radio.Button value="week">Semana</Radio.Button>
+                        <Radio.Button value="month">Mensual</Radio.Button>
+                      </Radio.Group>
+                    </Col>
+                  </Row>
+                </Input.Group>
+              </Form.Item>
+            </Col>
+            <Col span={10}>
+              <Form.Item label="Sucursal" className="no-error-text" help="">
+                <Input.Group>
+                  <Row gutter={8}>
+                    <Col span={12}>
+                      <SelectInput
+                        form={form}
+                        formProps={{
+                          name: "ciudad",
+                          label: "Ciudad",
+                          noStyle: true,
+                        }}
+                        options={cityOptions}
+                        multiple
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <SelectInput
+                        form={form}
+                        formProps={{
+                          name: "sucursalId",
+                          label: "Sucursales",
+                          noStyle: true,
+                        }}
+                        multiple
+                        options={branchOptions}
+                      />
+                    </Col>
+                  </Row>
+                </Input.Group>
+              </Form.Item>
+            </Col>
+            <Col span={4} className="filter-buttons">
+              <Button key="modal" type="text" onClick={() => servicesCosts()}>
+                <SettingFilled style={{ fontSize: 14 }} />
+              </Button>
+              <Button key="filter" type="primary" htmlType="submit">
+                Filtrar
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </div>
     </Spin>
   );
 };

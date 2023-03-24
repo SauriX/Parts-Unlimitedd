@@ -9,6 +9,7 @@ import { formItemLayout } from "../../app/util/utils";
 import alerts from "../../app/util/alerts";
 import { IOptions } from "../../app/models/shared";
 import moment from "moment";
+import { pickerType } from "../../app/util/catalogs";
 
 type IndicatorsProps = {
   data: IReportIndicators[];
@@ -16,7 +17,8 @@ type IndicatorsProps = {
 
 const IndicatorsTable = ({ data }: IndicatorsProps) => {
   const { indicatorsStore, optionStore } = useStore();
-  const { filter, getForm, loadingReport } = indicatorsStore;
+  const { filter, getForm, loadingReport, getByFilter, datePickerType } =
+    indicatorsStore;
   const { branchCityOptions } = optionStore;
 
   const [columns, setColumns] = useState<IColumns>([]);
@@ -43,8 +45,9 @@ const IndicatorsTable = ({ data }: IndicatorsProps) => {
     };
     if (indicator) {
       getForm(indicator);
+      await getByFilter(filter);
     }
-    
+
     setLoading(false);
   };
 
@@ -60,6 +63,7 @@ const IndicatorsTable = ({ data }: IndicatorsProps) => {
               return (
                 <BudgetInput
                   loading={loading}
+                  datePickerType={datePickerType}
                   defaultValue={record[x]}
                   onFinish={(budget) => onFinish(x, budget)}
                 />
@@ -83,9 +87,15 @@ type BudgetInputProps = {
   defaultValue: number;
   onFinish: (budget: number) => void;
   loading: boolean;
+  datePickerType: pickerType;
 };
 
-const BudgetInput = ({ defaultValue, onFinish, loading }: BudgetInputProps) => {
+const BudgetInput = ({
+  defaultValue,
+  onFinish,
+  loading,
+  datePickerType,
+}: BudgetInputProps) => {
   const [form] = Form.useForm<IReportIndicators>();
 
   return (
@@ -96,19 +106,21 @@ const BudgetInput = ({ defaultValue, onFinish, loading }: BudgetInputProps) => {
         name="indicators"
         initialValues={{ costoReactivo: defaultValue }}
         onFinish={(values) => {
-          console.log(values);
           onFinish(values.costoReactivo);
         }}
         scrollToFirstError
+        disabled={datePickerType === "week" || datePickerType === "month"}
       >
         <Form.Item className="no-error-text" help="">
           <Input.Group compact>
             <Form.Item name={"costoReactivo"} className="no-error-text">
               <InputNumber min={0} bordered={false} />
             </Form.Item>
-            <Button type="primary" htmlType="submit">
-              <CheckOutlined style={{ color: "white" }} />
-            </Button>
+            {(datePickerType === "date" && (
+                <Button type="primary" htmlType="submit">
+                  <CheckOutlined style={{ color: "white" }} />
+                </Button>
+              ))}
           </Input.Group>
         </Form.Item>
       </Form>

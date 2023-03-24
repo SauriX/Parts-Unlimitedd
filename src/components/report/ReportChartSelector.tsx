@@ -105,7 +105,9 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
       <ReportChart<IMedicalBreakdownData>
         data={data as IMedicalBreakdownData[]}
         serieX={"claveMedico"}
-        series={[{ title: "Cantidad de Solicitudes", dataIndex: "noSolicitudes" }]}
+        series={[
+          { title: "Cantidad de Solicitudes", dataIndex: "noSolicitudes" },
+        ]}
         axisLabel={{ interval: 0, rotate: 0 }}
       />
     );
@@ -114,7 +116,9 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
       <ReportChart<IMaquilaData>
         data={data as IMaquilaData[]}
         serieX={"maquila"}
-        series={[{ title: "Cantidad de Solicitudes", dataIndex: "noSolicitudes" }]}
+        series={[
+          { title: "Cantidad de Solicitudes", dataIndex: "noSolicitudes" },
+        ]}
         axisLabel={{ interval: 0, rotate: 0 }}
       />
     );

@@ -615,7 +615,8 @@ export default class RequestStore {
       ) {
         const payment = await Request.createPayment(request);
         this.payments.push(payment);
-        if (payment.lealtad) alerts.success(messages.loyaltyWallet);
+        if(payment.lealtad) alerts.success(messages.loyaltyWallet);
+        else alerts.info(messages.loyaltyWalletDeny);
       } else {
         this.chargePayPalPayment(request);
       }

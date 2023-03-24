@@ -1,7 +1,7 @@
 import { Button, Descriptions, Table, Tag } from "antd";
 import { observer } from "mobx-react-lite";
 import { Fragment, useEffect, useState } from "react";
-import { IColumns } from "../../app/common/table/utils";
+import { defaultPaginationProperties, IColumns } from "../../app/common/table/utils";
 import { InvoiceData, IReportData } from "../../app/models/report";
 import { ExpandableConfig } from "antd/lib/table/interface";
 import { useSearchParams } from "react-router-dom";
@@ -46,7 +46,6 @@ const ReportTable = ({
     setOpenRows(true);
   }, [data]);
 
-  console.log(report);
   totalDescuentos = 0;
   totalEstudios = 0;
   {
@@ -107,7 +106,6 @@ const ReportTable = ({
     <Fragment>
       {data.length > 0 &&
         (report == "cargo" ||
-          report == "descuento" ||
           report == "presupuestos" ||
           report == "empresa" ||
           report == "medicos-desglosado" ||
@@ -129,7 +127,7 @@ const ReportTable = ({
         size="small"
         rowKey={(record) => record.id}
         columns={columns}
-        pagination={false}
+        pagination={defaultPaginationProperties}
         dataSource={[...data]}
         scroll={{ y: 400 }}
         rowClassName={(item) =>
