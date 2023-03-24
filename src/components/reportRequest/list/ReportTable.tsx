@@ -1,4 +1,4 @@
-import { Col, Image, Row, Table, Typography } from "antd";
+import { Col, Row, Table, Typography } from "antd";
 import { useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
@@ -6,11 +6,10 @@ import {
   IColumns,
   ISearch,
 } from "../../../app/common/table/utils";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import { IRequestInfo, IRequestStudyInfo } from "../../../app/models/request";
-import { moneyFormatter } from "../../../app/util/utils";
+import { IRequestStudyInfo } from "../../../app/models/request";
 import views from "../../../app/util/view";
 import {
   IReportRequestInfo,
@@ -19,18 +18,11 @@ import {
 
 const { Link, Text } = Typography;
 
-const logoWee = `${process.env.REACT_APP_NAME}/assets/logos/weeclinic.png`;
-
 const ReportTable = () => {
-  const { reportStudyStore } = useStore();
-  const {
-    loadingRequests,
-    filter,
-    lastViewedFrom,
-    requests,
-    setFilter,
-    getRequests,
-  } = reportStudyStore;
+  const { reportStudyStore, generalStore } = useStore();
+  const { loadingRequests, lastViewedFrom, requests, getRequests } =
+    reportStudyStore;
+  const { generalFilter, setGeneralFilter } = generalStore;
 
   let navigate = useNavigate();
 
@@ -46,8 +38,8 @@ const ReportTable = () => {
         : lastViewedFrom.from === "requests"
         ? undefined
         : lastViewedFrom.code;
-      setFilter({ ...filter, clave: defaultCode ?? filter.clave });
-      await getRequests({ ...filter, clave: defaultCode ?? filter.clave });
+        setGeneralFilter({ ...generalFilter, buscar: defaultCode ?? generalFilter.buscar });
+      await getRequests({ ...generalFilter, buscar: defaultCode ?? generalFilter.buscar });
     };
 
     readRequests();
@@ -73,7 +65,21 @@ const ReportTable = () => {
             {value}
           </Link>
           <small>
-            <Text type="secondary" style={{color:item.estatus==="Ruta"?"#00FF80":item.estatus==="Urgente"?"#FF8000":item.estatus!="Normal"?"#AE7BEE":""}}>{item.estatus}</Text>
+            <Text
+              type="secondary"
+              style={{
+                color:
+                  item.estatus === "Ruta"
+                    ? "#00FF80"
+                    : item.estatus === "Urgente"
+                    ? "#FF8000"
+                    : item.estatus != "Normal"
+                    ? "#AE7BEE"
+                    : "",
+              }}
+            >
+              {item.estatus}
+            </Text>
           </small>
         </div>
       ),
@@ -148,7 +154,7 @@ const ReportTable = () => {
       }),
       render: (value) => value,
     },
-     {
+    {
       key: "estudios",
       dataIndex: "estudios",
       title: "Estudios",
@@ -201,7 +207,7 @@ const ReportTable = () => {
       ellipsis: {
         showTitle: false,
       },
-    },     
+    },
   ];
   return (
     <Table<IReportRequestInfo>
@@ -216,13 +222,13 @@ const ReportTable = () => {
       expandable={{
         expandedRowRender: (record, index) => (
           <Table
-          rowKey={(records)=> records.idStudio +  records.estatus }
-          columns={nestedcolumns}
-          dataSource={record.estudios}
-          pagination={false}
-          className="header-expandable-table"
-          showHeader={false}
-        />
+            rowKey={(records) => records.idStudio + records.estatus}
+            columns={nestedcolumns}
+            dataSource={record.estudios}
+            pagination={false}
+            className="header-expandable-table"
+            showHeader={false}
+          />
         ),
         rowExpandable: (record) => record.estudios.length > 0,
       }}
