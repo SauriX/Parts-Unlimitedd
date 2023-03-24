@@ -150,6 +150,7 @@ export default class QuotationStore {
     try {
       const quotation = await Quotation.getById(quotationId);
       this.quotation = quotation;
+      this.readonly = !quotation.activo;
     } catch (error) {
       alerts.warning(getErrors(error));
       history.push("/notFound");
