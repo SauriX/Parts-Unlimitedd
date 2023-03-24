@@ -33,7 +33,7 @@ const BranchesPermissions = ({
 }: BranchesPermissionsTypes) => {
   const { optionStore, userStore } = useStore();
   const { setSucursalesId } = userStore;
-  const { getBranchCityOptions, branchCityOptions } = optionStore;
+  const { getAllBranchCityOptions, branchCityOptions } = optionStore;
   const [permissionsAvailableFiltered, setPermissionsAvailableFiltered] =
     useState<TreeData[]>([]);
   const [permissionsAdded, setPermissionsAdded] = useState<TreeData[]>([]);
@@ -45,17 +45,13 @@ const BranchesPermissions = ({
   >([]);
 
   const [targetKeys, setTargetKeys] = useState<string[]>([]);
-
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   let user: IUserForm = new UserFormValues();
-
   const [disabled, setDisabled] = useState(true);
-
   const [searchParams, setSearchParams] = useSearchParams();
-
   const [values, setValues] = useState<any[]>([]);
-
   const [treeInfo, setTreeInfo] = useState<any[]>([]);
+
   const transform = useMemo(
     () =>
       convertToTreeDataBranch(
@@ -67,6 +63,7 @@ const BranchesPermissions = ({
       ),
     [targetKeys]
   );
+
   useEffect(() => {
     if (sucursalId && id) {
       let sucursalesConjunto = [sucursalId, ...sucursalesUser];
@@ -77,10 +74,11 @@ const BranchesPermissions = ({
       setTargetKeys((original) => [...original, ...sucursalesConjunto]);
     }
   }, [sucursalId]);
+
   useEffect(() => {
-    console.log("target", toJS(targetKeys));
     setSucursalesId(targetKeys);
   }, [targetKeys]);
+
   useEffect(() => {
     setValues(
       branchCityOptions.map((x) => ({
@@ -94,12 +92,7 @@ const BranchesPermissions = ({
       }))
     );
   }, [branchCityOptions]);
-  useEffect(() => {
-    console.log("availablefiltered", toJS(permissionsAvailableFiltered));
-    console.log("added", toJS(permissionsAdded));
-    console.log("available", toJS(permissionsAvailable));
-    console.log("addefiltered", toJS(permissionsAddedFiltered));
-  }, [permissionsAvailableFiltered]);
+
   useEffect(() => {
     // transform(values ?? []);
     transform(
@@ -164,7 +157,6 @@ const BranchesPermissions = ({
     setTargetKeys(nextTargetKeys.sort((a, b) => a.length - b.length));
   };
   useEffect(() => {
-    console.log("tagetKeys", toJS(targetKeys));
   }, [targetKeys]);
   const filterOption = (inputValue: string, option: IUserPermission) => {
     return (
@@ -201,11 +193,9 @@ const BranchesPermissions = ({
       ...children.map((y) => y.key.toString()),
     ]);
   };
+
   useEffect(() => {
-    console.log("id", id);
-  }, [id]);
-  useEffect(() => {
-    getBranchCityOptions();
+    getAllBranchCityOptions();
   }, []);
 
   useEffect(() => {
@@ -219,9 +209,7 @@ const BranchesPermissions = ({
       })),
     }));
     setTreeInfo(menusAvailable);
-    // setPermissionsAddedFiltered(menusAvailable);
     setPermissionsAvailableFiltered(menusAvailable);
-    console.log("tree", menusAvailable);
   }, [branchCityOptions]);
   return (
     <>
