@@ -15,12 +15,12 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 import moment from "moment";
 import { IOptions } from "../../app/models/shared";
-import { IGeneralForm } from "../../app/models/clinicResults";
+import { IGeneralForm } from "../../app/models/general";
 
 const SamplingStudyFilter = () => {
-  const { optionStore, samplingStudyStore, profileStore, clinicResultsStore } = useStore();
+  const { optionStore, samplingStudyStore, profileStore, generalStore } = useStore();
   const { getAll } = samplingStudyStore;
-  const { setFormValues, formValues } = clinicResultsStore;
+  const { setGeneralFilter, generalFilter } = generalStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -55,8 +55,8 @@ const SamplingStudyFilter = () => {
   ]);
 
   useEffect(() => {
-    form.setFieldsValue(formValues);
-  }, [formValues, form]);
+    form.setFieldsValue(generalFilter);
+  }, [generalFilter, form]);
 
   useEffect(() => {
     setCityOptions(
@@ -106,7 +106,7 @@ const SamplingStudyFilter = () => {
   const onFinish = async (newFormValues: IGeneralForm) => {
     setLoading(true);
     const filter = { ...newFormValues };
-    setFormValues(newFormValues);
+    setGeneralFilter(newFormValues);
     getAll(filter);
     setLoading(false);
   };

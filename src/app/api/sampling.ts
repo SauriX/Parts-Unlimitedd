@@ -1,4 +1,4 @@
-import { IGeneralForm } from "../models/clinicResults";
+import { IGeneralForm } from "../models/general";
 import { ISamplingForm, ISamplingList, IUpdate } from "../models/sampling";
 import { IScopes } from "../models/shared";
 import requests from "./agent";

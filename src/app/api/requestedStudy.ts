@@ -1,4 +1,4 @@
-import { IGeneralForm } from "../models/clinicResults";
+import { IGeneralForm } from "../models/general";
 import {
   IRequestedStudyForm,
   IRequestedStudyList,

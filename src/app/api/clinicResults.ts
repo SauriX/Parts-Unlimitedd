@@ -1,9 +1,9 @@
 import {
   IClinicResultCaptureForm,
-  IGeneralForm,
   IClinicResultList,
   IResultPathological,
 } from "../models/clinicResults";
+import { IGeneralForm } from "../models/general";
 import { IRequestStudyUpdate } from "../models/request";
 import { IScopes } from "../models/shared";
 import requests from "./agent";

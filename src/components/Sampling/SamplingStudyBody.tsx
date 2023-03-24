@@ -19,9 +19,9 @@ type RSDefaultProps = {
 };
 
 const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
-  const { samplingStudyStore, clinicResultsStore } = useStore();
+  const { samplingStudyStore, generalStore } = useStore();
   const { data, update, printOrder, getAll } = samplingStudyStore;
-  const { formValues } = clinicResultsStore;
+  const { generalFilter } = generalStore;
 
   const [form] = Form.useForm();
 
@@ -110,7 +110,7 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
             setLoading(false);
             setUpdateForm([]);
             setActivity("");
-            getAll(formValues);
+            getAll(generalFilter);
           }
         },
         async () => {
@@ -131,7 +131,7 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
             setLoading(false);
             setUpdateForm([]);
             setActivity("");
-            getAll(formValues);
+            getAll(generalFilter);
           }
         },
         async () => {

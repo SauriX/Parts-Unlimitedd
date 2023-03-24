@@ -13,7 +13,7 @@ import {
 } from "../models/sampling";
 import { status } from "../util/catalogs";
 import { IRequestedStudy } from "../models/requestedStudy";
-import { IGeneralForm } from "../models/clinicResults";
+import { IGeneralForm } from "../models/general";
 
 export default class SamplingStore {
   constructor() {
@@ -23,7 +23,6 @@ export default class SamplingStore {
   scopes?: IScopes;
   data: ISamplingList[] = [];
   studies: IRequestedStudy[] = [];
-  formValues: ISamplingForm = new SamplingFormValues();
   loadingStudies: boolean = false;
 
   clearScopes = () => {
@@ -33,12 +32,6 @@ export default class SamplingStore {
   clearStudy = () => {
     this.data = [];
   };
-
-  setFormValues = (newFormValues: ISamplingForm) => {
-    this.formValues = newFormValues;
-  };
-
-  
 
   access = async () => {
     try {
