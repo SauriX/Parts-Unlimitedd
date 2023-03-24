@@ -713,7 +713,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                 <NumberInput
                   formProps={{
                     name: "diasEstabilidad",
-                    label: "Días de estabilidad",
+                    label: "Días de estabilidad en refrigeración",
                   }}
                   min={0}
                   max={999999}

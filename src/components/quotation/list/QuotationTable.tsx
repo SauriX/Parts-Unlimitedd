@@ -1,5 +1,5 @@
 import { Table, Tag, Tooltip, Typography } from "antd";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
@@ -19,8 +19,7 @@ const { Link, Text } = Typography;
 
 const QuotationTable = () => {
   const { quotationStore } = useStore();
-  const { loadingQuotations, filter, quotations, getQuotations } =
-    quotationStore;
+  const { loadingQuotations, quotations } = quotationStore;
 
   let navigate = useNavigate();
 
@@ -28,15 +27,6 @@ const QuotationTable = () => {
     searchedText: "",
     searchedColumn: "",
   });
-
-  useEffect(() => {
-    const readQuotations = async () => {
-      await getQuotations(filter);
-    };
-
-    readQuotations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const columns: IColumns<IQuotationInfo> = [
     {
@@ -91,7 +81,7 @@ const QuotationTable = () => {
       className: "no-padding-cell",
       render: (_, item) => (
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <Text>{item.correo}</Text>
+          <Text>{item.correo.split(",").join("\n")}</Text>
           <small>
             <Text type="secondary">{item.whatsapp}</Text>
           </small>

@@ -313,7 +313,7 @@ const PromotionForm: FC<Props> = ({ id, componentRef, printing, download }) => {
                 <SwitchInput
                   labelCol={{ span: 18 }}
                   name="aplicaMedicos"
-                  label="Medicos"
+                  label="Médicos"
                   readonly={readonly}
                 />
               </Col>
@@ -382,7 +382,7 @@ const PromotionForm: FC<Props> = ({ id, componentRef, printing, download }) => {
                 <DateRangeInput
                   formProps={{
                     name: "fechaDescuento",
-                    label: "DescuentoEntre",
+                    label: "Descuento entre",
                   }}
                   readonly={readonly}
                   required

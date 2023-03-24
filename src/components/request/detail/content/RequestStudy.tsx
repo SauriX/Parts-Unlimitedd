@@ -19,7 +19,6 @@ import alerts from "../../../../app/util/alerts";
 import { moneyFormatter } from "../../../../app/util/utils";
 import { status } from "../../../../app/util/catalogs";
 import InfoStudy from "../InfoModal/InfoStudy";
-import { IStudyTec } from "../../../../app/models/study";
 
 const { Link, Text } = Typography;
 

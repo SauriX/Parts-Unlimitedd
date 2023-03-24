@@ -38,26 +38,24 @@ const QuotationFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    const profileBranch = profile?.sucursal;
-    if (profileBranch) {
-      const findCity = branchCityOptions.find((x) =>
-        x.options?.some((y) => y.value == profileBranch)
-      )?.value;
-      if (findCity) {
-        form.setFieldValue("ciudad", [findCity]);
-      }
-      form.setFieldValue("sucursales", [profileBranch]);
+    if (!profile || !profile.sucursal || !branchCityOptions) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options!.some((y) => y.value === profileBranch))
+      ?.value?.toString();
+    if (userCity) {
+      setFilter({ ...filter, ciudad: [userCity], sucursales: [profileBranch] });
     }
-  }, [branchCityOptions, form, profile]);
+    getQuotations(filter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [branchCityOptions, profile]);
 
   useEffect(() => {
-    if (selectedCity != undefined && selectedCity != null) {
-      var branhces = branchCityOptions.filter((x) =>
+    if (selectedCity != null) {
+      const cityBranches = branchCityOptions.filter((x) =>
         selectedCity.includes(x.value.toString())
       );
-      var options = branhces.flatMap((x) =>
-        x.options == undefined ? [] : x.options
-      );
+      const options = cityBranches.flatMap((x) => x.options ?? []);
       setBranchOptions(options);
     }
     form.setFieldValue("sucursalId", []);

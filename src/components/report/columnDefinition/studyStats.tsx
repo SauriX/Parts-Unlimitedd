@@ -1,9 +1,7 @@
 import { IColumns, ISearch } from "../../../app/common/table/utils";
 import { IReportData, IStudiesData } from "../../../app/models/report";
 import { getDefaultColumnProps } from "../../../app/common/table/utils";
-import { Card, Descriptions, List, Table } from "antd";
-import moment from "moment";
-import { useState } from "react";
+import { Table } from "antd";
 
 const getStudyStatsColumns = (
   searchState: ISearch,
@@ -14,52 +12,48 @@ const getStudyStatsColumns = (
       ...getDefaultColumnProps("solicitud", "Clave", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "15%",
       }),
     },
     {
-      ...getDefaultColumnProps("paciente", "Nombre del Paciente", {
+      ...getDefaultColumnProps("paciente", "Paciente", {
         searchState,
         setSearchState,
-        width: "35%",
+        width: "20%",
       }),
     },
     {
       ...getDefaultColumnProps("edad", "Edad", {
-        searchState,
-        setSearchState,
-        width: "15%",
+        width: "5%",
       }),
     },
     {
       ...getDefaultColumnProps("sexo", "Sexo", {
+        width: "5%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("medico", "Médico", {
         searchState,
         setSearchState,
         width: "15%",
       }),
     },
     {
-      ...getDefaultColumnProps("medico", "Nombre del Médico", {
+      ...getDefaultColumnProps("fechaEntrega", "Fecha Entrega", {
         searchState,
         setSearchState,
-        width: "35%",
+        width: "15%",
       }),
     },
     {
-      ...getDefaultColumnProps("fechaEntrega", "Fecha de Entrega", {
-        searchState,
-        setSearchState,
-        width: "20%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("fecha", "Fecha de Solicitud", {
-        width: "20%",
+      ...getDefaultColumnProps("fecha", "Fecha Solicitud", {
+        width: "15%",
       }),
     },
     {
       ...getDefaultColumnProps("parcialidad", "Parcialidad", {
-        width: "20%",
+        width: "5%",
       }),
       render: (value) => (value == true ? "Si" : "No"),
     },
@@ -76,7 +70,7 @@ export const expandableStudyConfig = () => {
       }),
     },
     {
-      ...getDefaultColumnProps("estudio", "Nombre del estudio", {
+      ...getDefaultColumnProps("estudio", "Estudio", {
         width: "40%",
       }),
     },
