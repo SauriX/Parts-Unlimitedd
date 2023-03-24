@@ -592,14 +592,14 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   required
                 />
               </Col>
-              <Col md={8} xs={8}>
+             {/* <Col md={8} xs={8}>
                 <SelectInput
                   formProps={{ name: "tapon", label: "Etiqueta" }}
                   options={taponOption}
                   readonly={disabled}
                   required
                 />
-              </Col>
+                </Col>*/}
 
               <Col md={8} sm={24} xs={8}>
                 <NumberInput
