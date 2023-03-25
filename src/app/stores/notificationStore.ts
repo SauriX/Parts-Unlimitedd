@@ -1,8 +1,11 @@
 import { HttpTransportType, HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { makeAutoObservable } from "mobx";
 import { json } from "stream/consumers";
+import Notifications from "../api/notiofications";
+import { INotificationFilter } from "../models/notifications";
 import { INotification } from "../models/shared";
 import alerts from "../util/alerts";
+import { getErrors } from "../util/utils";
 import { store } from "./store";
 
 export default class NotificationStore {
@@ -15,22 +18,16 @@ export default class NotificationStore {
   updateNotification = (notification:INotification)=>{
     var notifications = [...this.notifications] 
     notifications=notifications.filter(x=>x != notification);
-    var notificationString = "";
-    notifications.forEach(element => {
-      notificationString += `${JSON.stringify(element)}-`
-    });
-window.localStorage.setItem("notifications", notificationString );
     this.notifications = notifications;
   };
-  getNotification = ()=>{
-    var notofications = window.localStorage.getItem("notifications")?.split("-");
-    if(notofications){
-      
-       notofications.pop();
-       var notifications:INotification[] = notofications.map(x=>JSON.parse(x));
-       this.notifications = notifications;
-       
-
+  getNotification = async  (filter:INotificationFilter)=>{
+    try {
+      let notifications = await Notifications.getNotification(filter);
+      notifications.reverse();
+      this.notifications = notifications;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      this.notifications = [];
     }
     
   };
@@ -74,15 +71,12 @@ window.localStorage.setItem("notifications", notificationString );
         if (notification.esAlerta) {
           alerts.info(notification.mensaje);
         }else{
+          
           var notifications = [...this.notifications] 
+          notifications.reverse();
           notifications.push(notification);
-         
-           var notificationString = "";
-              notifications.forEach(element => {
-                notificationString += `${JSON.stringify(element)}-`
-              });
-          window.localStorage.setItem("notifications", notificationString );
-         
+          notifications.reverse();
+          this.notifications = notifications;
         }
       });
     } catch (error) {

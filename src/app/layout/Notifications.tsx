@@ -9,10 +9,8 @@ const { Text } = Typography;
 
 const Notifications = () => {
   const {notificationStore}=useStore();
-  const {notifications,updateNotification,getNotification }=notificationStore;
-  useEffect(()=>{
-    getNotification();
-  },[getNotification]);
+  const {notifications,updateNotification}=notificationStore;
+
   const onClose = (notificación:INotification)=>{
 
     updateNotification(notificación)
