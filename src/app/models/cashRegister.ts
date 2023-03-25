@@ -19,12 +19,13 @@ export interface ICommonData {
   cheque: number;
   tdd: number;
   pp: number;
+  otroMetodo: number;
   subtotal: number;
   total: number;
   totalRecibido: number;
   saldo: number;
   fecha: Date;
-  usuarioModifico: string;
+  usuarioRegistra: string;
   empresa: string;
 }
 
@@ -35,6 +36,7 @@ export interface Invoice {
   sumaCheque: number;
   sumaTDD: number;
   sumaPP: number;
+  sumaOtroMetodo: number;
   subtotal: number;
   total: number;
 }
@@ -71,6 +73,7 @@ export class CashRegisterData implements ICashRegisterData {
     sumaCheque: 0,
     sumaTDD: 0,
     sumaPP: 0,
+    sumaOtroMetodo: 0,
     subtotal: 0,
     total: 0,
   };

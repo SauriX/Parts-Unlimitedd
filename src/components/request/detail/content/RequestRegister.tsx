@@ -87,7 +87,7 @@ const RequestRegister = () => {
         searchable: false,
         width: 100,
       }),
-      render: (value) => moment(value).format("DD/MM/YYYY"),
+      render: (value) => moment(value).format("DD/MM/YYYY HH:mm"),
     },
     {
       ...getDefaultColumnProps("serieFactura", "Factura", {

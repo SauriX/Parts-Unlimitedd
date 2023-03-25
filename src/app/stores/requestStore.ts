@@ -523,7 +523,7 @@ export default class RequestStore {
         })),
       };
 
-      this.packs.unshift(pack);
+      this.packs.push(pack);
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -616,6 +616,7 @@ export default class RequestStore {
         const payment = await Request.createPayment(request);
         this.payments.push(payment);
         if(payment.lealtad) alerts.success(messages.loyaltyWallet);
+        else alerts.info(messages.loyaltyWalletDeny);
       } else {
         this.chargePayPalPayment(request);
       }
@@ -649,7 +650,7 @@ export default class RequestStore {
       connection.off("NotifyPaymentResponse");
     });
   };
- 
+
   checkInPayment = async (request: IRequestCheckIn) => {
     try {
       const checkedIn = await Request.checkInPayment(request);
@@ -1083,7 +1084,7 @@ export default class RequestStore {
 
     const finalTotal = totalStudies - discount + charge;
     const userTotal = cup > 0 ? cup : finalTotal;
-    const balance =  finalTotal -  payments.reduce((acc,obj) => acc + obj.cantidad, 0);
+    const balance =  finalTotal - payments.reduce((acc,obj) => acc + obj.cantidad, 0);
 
     this.totals = {
       ...this.totals,

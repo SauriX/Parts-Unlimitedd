@@ -43,7 +43,6 @@ import { DataNode } from "antd/lib/tree";
 import PasswordInput from "../../../app/common/form/PasswordInput";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import IconButton from "../../../app/common/button/IconButton";
-import { EditOutlined, LockOutlined } from "@ant-design/icons";
 import { useStore } from "../../../app/stores/store";
 import ImageButton from "../../../app/common/button/ImageButton";
 import alerts from "../../../app/util/alerts";
