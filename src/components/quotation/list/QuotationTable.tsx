@@ -14,7 +14,6 @@ import {
   IQuotationInfo,
   IQuotationStudyInfo,
 } from "../../../app/models/quotation";
-import moment from "moment";
 
 const { Link, Text } = Typography;
 
@@ -93,7 +92,7 @@ const QuotationTable = () => {
       className: "no-padding-cell",
       render: (_, item) => (
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <Text>{item.correo}</Text>
+          <Text>{item.correo?.split(",")?.join("\n")}</Text>
           <small>
             <Text type="secondary">{item.whatsapp}</Text>
           </small>

@@ -1,12 +1,11 @@
 import "./css/changeStatus.less";
-import { Button, Col, Collapse, Form, Input, Row } from "antd";
+import { Button, Col, Form, Input, Row } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
-import { IRequestedStudyForm } from "../../app/models/requestedStudy";
 import {
   originOptions,
   requestedStudyOptions,
@@ -65,7 +64,7 @@ const RequestedStudyFilter = () => {
     const profileBranch = profile?.sucursal;
     if (profileBranch) {
       const findCity = branchCityOptions.find((x) =>
-        x.options?.some((y) => y.value == profileBranch)
+        x.options?.some((y) => y.value === profileBranch)
       )?.value;
       if (findCity) {
         form.setFieldValue("ciudad", [findCity]);

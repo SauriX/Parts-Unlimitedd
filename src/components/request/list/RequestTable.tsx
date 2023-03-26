@@ -120,15 +120,6 @@ const RequestTable = () => {
       render: (value) => moneyFormatter.format(value),
     },
     {
-      ...getDefaultColumnProps("descuento", "Descuento", {
-        searchState,
-        setSearchState,
-        width: 120,
-      }),
-      align: "right",
-      render: (value) => moneyFormatter.format(value),
-    },
-    {
       ...getDefaultColumnProps("total", "Total", {
         searchState,
         setSearchState,

@@ -15,16 +15,14 @@ type ReportHeaderProps = {
 };
 
 const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
-  const { reportStore, cashRegisterStore } = useStore();
+  const { reportStore } = useStore();
   const {
     currentReport,
     filter,
     setCurrentReport,
     getByFilter,
     getByChart,
-    clearFilter,
   } = reportStore;
-  const { clearFilter: clearCash } = cashRegisterStore;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -44,7 +42,6 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
         value == "empresa" ||
         value === "medicos-desglosado" ||
         value == "canceladas" ||
-        value == "descuento" ||
         value == "cargo" ||
         value == "presupuestos" ||
         value == "maquila_interna" ||
@@ -56,8 +53,6 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
       setCurrentReport(undefined);
       searchParams.delete("report");
     }
-    clearFilter();
-    clearCash();
     setSearchParams(searchParams);
   };
 

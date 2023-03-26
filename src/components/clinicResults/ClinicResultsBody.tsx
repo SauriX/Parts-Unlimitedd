@@ -17,7 +17,7 @@ type CRDefaultProps = {
 const ClinicResultsBody = ({ printing, formValues }: CRDefaultProps) => {
   const { clinicResultsStore } = useStore();
   const { data } = clinicResultsStore;
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   return (
     <Fragment>

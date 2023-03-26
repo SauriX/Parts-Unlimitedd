@@ -97,7 +97,7 @@ const PromotionFormDoctors = ({
     <div>
       <Divider orientation="left">Médicos</Divider>
       <List<IOptions>
-        header={<Header />}
+        header={!readonly && <Header />}
         bordered
         dataSource={selected}
         renderItem={(item) => <RowRender item={item} />}

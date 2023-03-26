@@ -141,7 +141,6 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     } else if (currentKey === "request") {
       const ok = await updateStudies(studyUpdate, autoSave);
       if (!ok) {
-        setCurrentKey("request");
         return;
       }
     }
@@ -153,7 +152,6 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
         autoSave
       );
       if (!ok) {
-        setCurrentKey("print");
         return;
       }
     }
@@ -250,6 +248,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
         </Row>
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [branchId, formGeneral, updateGeneral]
   );
 

@@ -16,7 +16,8 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const QuotationFilter = () => {
-  const { quotationStore, optionStore, profileStore, generalStore } = useStore();
+  const { quotationStore, optionStore, profileStore, generalStore } =
+    useStore();
   const { branchCityOptions, getBranchCityOptions } = optionStore;
   const { getQuotations } = quotationStore;
   const { setGeneralFilter, generalFilter } = generalStore;
@@ -40,26 +41,30 @@ const QuotationFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    const profileBranch = profile?.sucursal;
-    if (profileBranch) {
-      const findCity = branchCityOptions.find((x) =>
-        x.options?.some((y) => y.value == profileBranch)
-      )?.value;
-      if (findCity) {
-        form.setFieldValue("ciudad", [findCity]);
-      }
-      form.setFieldValue("sucursalId", [profileBranch]);
+    if (!profile || !profile.sucursal || !branchCityOptions) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options!.some((y) => y.value === profileBranch))
+      ?.value?.toString();
+    if (userCity) {
+      setGeneralFilter({
+        ...generalFilter,
+        ciudad: [userCity],
+        sucursalId: [profileBranch],
+      });
+      form.setFieldValue("ciudad", [userCity]);
     }
-  }, [branchCityOptions, form, profile]);
+    form.setFieldValue("sucursalId", [profileBranch]);
+    getQuotations(generalFilter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [branchCityOptions, profile]);
 
   useEffect(() => {
-    if (selectedCity != undefined && selectedCity != null) {
-      var branhces = branchCityOptions.filter((x) =>
+    if (selectedCity != null) {
+      const cityBranches = branchCityOptions.filter((x) =>
         selectedCity.includes(x.value.toString())
       );
-      var options = branhces.flatMap((x) =>
-        x.options == undefined ? [] : x.options
-      );
+      const options = cityBranches.flatMap((x) => x.options ?? []);
       setBranchOptions(options);
     }
   }, [branchCityOptions, form, selectedCity]);

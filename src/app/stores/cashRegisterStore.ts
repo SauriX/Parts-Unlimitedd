@@ -21,6 +21,7 @@ export default class CashRegisterStore {
   filter: ICashRegisterFilter = new CashRegisterFilterValues();
   clear: boolean = false;
   cashRegisterData: ICashRegisterData = new CashRegisterData();
+  showChart: boolean = false
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -28,6 +29,10 @@ export default class CashRegisterStore {
 
   setFilter = (filter: ICashRegisterFilter) => {
     this.filter = filter;
+  };
+
+  setShowChart = (showChart: boolean) => {
+    this.showChart = showChart;
   };
 
   clearFilter = () => {

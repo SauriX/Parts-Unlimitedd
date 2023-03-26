@@ -2,10 +2,9 @@ import { Form, Row, Col, Checkbox, Input, Button } from "antd";
 import { FormInstance } from "antd/es/form/Form";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
-import MaskInput from "../../../../app/common/form/proposal/MaskInput";
 import SelectInput from "../../../../app/common/form/proposal/SelectInput";
+import SelectTagInput from "../../../../app/common/form/proposal/SelectTagInput";
 import TextAreaInput from "../../../../app/common/form/proposal/TextAreaInput";
-import TextInput from "../../../../app/common/form/proposal/TextInput";
 import { IQuotationGeneral } from "../../../../app/models/quotation";
 import { IFormError, IOptions } from "../../../../app/models/shared";
 import { originOptions } from "../../../../app/stores/optionStore";
@@ -45,6 +44,7 @@ const QuotationGeneral = ({
     getMedicOptions,
   } = optionStore;
   const {
+    readonly,
     quotation,
     setStudyFilter,
     getGeneral,
@@ -56,8 +56,8 @@ const QuotationGeneral = ({
   const doctorId = Form.useWatch("medicoId", form);
   const companyId = Form.useWatch("compañiaId", form);
 
-  const email = Form.useWatch("correo", form);
-  const whatsapp = Form.useWatch("whatsapp", form);
+  const emails = Form.useWatch("correos", form);
+  const whatsapps = Form.useWatch("whatsapps", form);
 
   const [errors, setErrors] = useState<IFormError[]>([]);
   const [previousSendings, setPreviousSendings] = useState<string[]>([]);
@@ -90,11 +90,19 @@ const QuotationGeneral = ({
   }, [quotation]);
 
   useEffect(() => {
-    setIsValidEmail(validateEmail(email));
-    setIsValidWhatsapp(
-      (whatsapp ?? "").replaceAll("-", "").replaceAll("_", "").length === 10
+    setIsValidEmail(
+      !!emails && emails.length > 0 && emails.every(validateEmail)
     );
-  }, [email, whatsapp]);
+    setIsValidWhatsapp(
+      !!whatsapps &&
+        whatsapps.length > 0 &&
+        whatsapps.every(
+          (whatsapp) =>
+            (whatsapp ?? "").replaceAll("-", "").replaceAll("_", "").length ===
+            10
+        )
+    );
+  }, [emails, whatsapps]);
 
   const onValuesChange = (changedValues: any) => {
     const path = Object.keys(changedValues)[0];
@@ -132,20 +140,22 @@ const QuotationGeneral = ({
   const onFinish = (values: IQuotationGeneral) => {
     setErrors([]);
     const quotation = { ...quotationGeneral, ...values };
+    quotation.correo = !isValidEmail ? undefined : emails?.join(",");
+    quotation.whatsapp = !isValidWhatsapp ? undefined : whatsapps?.join(",");
     const autoSave = form.getFieldValue("guardadoAutomatico");
 
     onSubmit(quotation, autoSave);
   };
 
   const sendEmail = async () => {
-    if (quotation) {
-      await sendTestEmail(quotation.cotizacionId, email);
+    if (quotation && emails) {
+      await sendTestEmail(quotation.cotizacionId, emails);
     }
   };
 
   const sendWhatsapp = async () => {
-    if (quotation) {
-      await sendTestWhatsapp(quotation.cotizacionId, whatsapp);
+    if (quotation && whatsapps) {
+      await sendTestWhatsapp(quotation.cotizacionId, whatsapps);
     }
   };
 
@@ -169,6 +179,8 @@ const QuotationGeneral = ({
         metodoEnvio: [],
         companyId: catalog.company.particulares,
         procedencia: PARTICULAR,
+        correos: [],
+        whatsapps: [],
       }}
       onValuesChange={onValuesChange}
       size="small"
@@ -184,6 +196,7 @@ const QuotationGeneral = ({
             required
             errors={errors.find((x) => x.name === "compañiaId")?.errors}
             onChange={onCompanyChange}
+            readonly={readonly}
           />
         </Col>
         <Col span={24}>
@@ -205,6 +218,7 @@ const QuotationGeneral = ({
             }}
             options={MedicOptions}
             required
+            readonly={readonly}
           />
         </Col>
         <Col span={24} style={{ textAlign: "start" }}>
@@ -214,7 +228,10 @@ const QuotationGeneral = ({
             labelCol={{ span: 0 }}
             wrapperCol={{ span: 24 }}
           >
-            <Checkbox.Group options={sendOptions} />
+            <Checkbox.Group
+              className={readonly ? "unclickable" : ""}
+              options={sendOptions}
+            />
           </Form.Item>
         </Col>
         <Col span={24}>
@@ -229,25 +246,30 @@ const QuotationGeneral = ({
             <Input.Group>
               <Row>
                 <Col span={12}>
-                  <TextInput
+                  <SelectTagInput
                     formProps={{
-                      name: "correo",
+                      name: "correos",
                       label: "E-Mail",
                       noStyle: true,
                     }}
-                    readonly={!sendings?.includes("correo")}
+                    regex={
+                      /([A-Za-z0-9_.-]+)@([\dA-Za-z.-]+)\.([A-Za-z.]{2,6})$/
+                    }
+                    readonly={!sendings?.includes("correo") || readonly}
                     required={sendings?.includes("correo")}
-                    errors={errors.find((x) => x.name === "correo")?.errors}
+                    errors={errors.find((x) => x.name === "correos")?.errors}
                   />
                 </Col>
                 <Col span={12}>
-                  <Button
-                    type="primary"
-                    disabled={!sendings?.includes("correo") || !isValidEmail}
-                    onClick={sendEmail}
-                  >
-                    Prueba
-                  </Button>
+                  {!readonly && (
+                    <Button
+                      type="primary"
+                      disabled={!sendings?.includes("correo") || !isValidEmail}
+                      onClick={sendEmail}
+                    >
+                      Prueba
+                    </Button>
+                  )}
                 </Col>
               </Row>
             </Input.Group>
@@ -263,45 +285,34 @@ const QuotationGeneral = ({
             required={sendings?.includes("whatsapp")}
           >
             <Input.Group>
-              <MaskInput
-                formProps={{
-                  name: "whatsapp",
-                  label: "Whatsapp",
-                  noStyle: true,
-                }}
-                width="50%"
-                mask={[
-                  /[0-9]/,
-                  /[0-9]/,
-                  /[0-9]/,
-                  "-",
-                  /[0-9]/,
-                  /[0-9]/,
-                  /[0-9]/,
-                  "-",
-                  /[0-9]/,
-                  /[0-9]/,
-                  "-",
-                  /[0-9]/,
-                  /[0-9]/,
-                ]}
-                validator={(_, value: any) => {
-                  if (!value || value.indexOf("_") === -1) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject("El campo debe contener 10 dígitos");
-                }}
-                readonly={!sendings?.includes("whatsapp")}
-                required={sendings?.includes("whatsapp")}
-                errors={errors.find((x) => x.name === "whatsapp")?.errors}
-              />
-              <Button
-                type="primary"
-                disabled={!sendings?.includes("whatsapp") || !isValidWhatsapp}
-                onClick={sendWhatsapp}
-              >
-                Prueba
-              </Button>
+              <Row>
+                <Col span={12}>
+                  <SelectTagInput
+                    formProps={{
+                      name: "whatsapps",
+                      label: "Whatsapp",
+                      noStyle: true,
+                    }}
+                    regex={/([0-9]{3})-?([0-9]{3})-?([0-9]{2})-?([0-9]{2})$/}
+                    readonly={!sendings?.includes("whatsapp") || readonly}
+                    required={sendings?.includes("whatsapp")}
+                    errors={errors.find((x) => x.name === "whatsapps")?.errors}
+                  />
+                </Col>
+                <Col span={12}>
+                  {!readonly && (
+                    <Button
+                      type="primary"
+                      disabled={
+                        !sendings?.includes("whatsapp") || !isValidWhatsapp
+                      }
+                      onClick={sendWhatsapp}
+                    >
+                      Prueba
+                    </Button>
+                  )}
+                </Col>
+              </Row>
             </Input.Group>
           </Form.Item>
         </Col>
@@ -314,6 +325,7 @@ const QuotationGeneral = ({
               wrapperCol: { span: 24 },
             }}
             rows={3}
+            readonly={readonly}
             errors={errors.find((x) => x.name === "observaciones")?.errors}
           />
         </Col>

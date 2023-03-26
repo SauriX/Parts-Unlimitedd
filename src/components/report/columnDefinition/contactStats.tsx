@@ -16,14 +16,14 @@ const getContactStatsColumns = (
       }),
     },
     {
-      ...getDefaultColumnProps("paciente", "Nombre del Paciente", {
+      ...getDefaultColumnProps("paciente", "Paciente", {
         searchState,
         setSearchState,
         width: "35%",
       }),
     },
     {
-      ...getDefaultColumnProps("medico", "Nombre del Médico", {
+      ...getDefaultColumnProps("medico", "Médico", {
         searchState,
         setSearchState,
         width: "35%",

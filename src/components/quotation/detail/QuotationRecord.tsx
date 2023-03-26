@@ -26,7 +26,7 @@ const QuotationRecord = ({
 }: QuotationRecordProps) => {
   const { quotationStore, procedingStore, locationStore, optionStore } =
     useStore();
-  const { quotation } = quotationStore;
+  const { readonly, quotation } = quotationStore;
   const { getById } = procedingStore;
   const { getColoniesByZipCode } = locationStore;
   const { BranchOptions, getBranchOptions } = optionStore;
@@ -223,7 +223,6 @@ const QuotationRecord = ({
                   </Input.Group>
                 </Form.Item>
               </Col>
-              <Col span={16}></Col>
             </>
           )}
           <Col span={16}></Col>
@@ -236,6 +235,7 @@ const QuotationRecord = ({
                 wrapperCol: { span: 18 },
               }}
               options={BranchOptions}
+              readonly={readonly}
             />
           </Col>
         </Row>

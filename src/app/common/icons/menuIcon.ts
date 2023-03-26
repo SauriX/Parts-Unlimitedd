@@ -39,7 +39,10 @@ import {
   faFileMedical,
   faFileInvoice,
   faMoneyBills,
-  faCalendarDay
+  faCalendarDay,
+  faSliders,
+  faChartBar,
+
 } from "@fortawesome/free-solid-svg-icons";
 
 const getMenuIcon = (name: string) => {
@@ -63,7 +66,7 @@ const getMenuIcon = (name: string) => {
     case "indication":
       return faListCheck;
     case "parameter":
-      return faListOl;
+      return faChartBar;
     case "catalog":
       return faFolderOpen;
     case "price":

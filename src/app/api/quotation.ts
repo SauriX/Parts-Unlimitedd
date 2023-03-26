@@ -18,10 +18,10 @@ const Quotation = {
     requests.get(`quotation/general/${quotationId}`),
   getStudies: (quotationId: string): Promise<IQuotationStudyUpdate> =>
     requests.get(`quotation/studies/${quotationId}`),
-  sendTestEmail: (quotationId: string, email: string): Promise<void> =>
-    requests.get(`quotation/email/${quotationId}/${email}`),
-  sendTestWhatsapp: (quotationId: string, phone: string): Promise<void> =>
-    requests.get(`quotation/whatsapp/${quotationId}/${phone}`),
+  sendTestEmail: (quotationId: string, emails: string[]): Promise<void> =>
+    requests.post(`quotation/email/${quotationId}`, emails),
+  sendTestWhatsapp: (quotationId: string, phones: string[]): Promise<void> =>
+    requests.post(`quotation/whatsapp/${quotationId}`, phones),
   create: (quotation: IQuotation): Promise<string> =>
     requests.post("quotation", quotation),
   convertToRequest: (quotationId: string): Promise<string> =>
