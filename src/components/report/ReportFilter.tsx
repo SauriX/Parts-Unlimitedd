@@ -59,7 +59,7 @@ const typeCompanyOptions: IOptions[] = [
 ];
 
 const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
-  const { reportStore, optionStore } = useStore();
+  const { reportStore, optionStore, profileStore } = useStore();
   const { currentReport, filter, setFilter, getByFilter, getByChart, clear } =
     reportStore;
   const {
@@ -70,6 +70,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
     getMedicOptions,
     getCompanyOptions,
   } = optionStore;
+  const { profile } = profileStore;
 
   const [form] = Form.useForm<IReportFilter>();
   const chartValue = Form.useWatch("grafica", form);
@@ -86,14 +87,23 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
   }, [getBranchCityOptions, getMedicOptions, getCompanyOptions]);
 
   useEffect(() => {
-    form.setFieldsValue(filter);
-  }, [form, filter]);
-
-  useEffect(() => {
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
+
+  useEffect(() => {
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value === profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
+      }
+      form.setFieldValue("sucursalId", [profileBranch]);
+    }
+  }, [branchCityOptions, form, profile]);
 
   useEffect(() => {
     if (selectedCity != undefined && selectedCity != null) {
@@ -105,7 +115,6 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
       );
       setBranchOptions(options);
     }
-    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {

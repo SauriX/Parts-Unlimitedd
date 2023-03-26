@@ -64,6 +64,7 @@ const Indicators = ({ getResult }: Props) => {
           moment(Date.now()).utcOffset(0, true),
           moment(Date.now()).utcOffset(0, true),
         ],
+        mensual: moment(Date.now()).utcOffset(0, true)
       });
     }
   }, [modalTab]);
