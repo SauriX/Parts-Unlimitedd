@@ -255,7 +255,6 @@ expandableProps) => {
                   idstudio: record.id,
                 });
 
-                console.log(vistos, "vistos");
                 await viewTicket(sendFiles);
                 setvisto(vistos);
                 setver(!ver);

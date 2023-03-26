@@ -52,8 +52,6 @@ const QuotationRecord = ({
   }, [form, quotation]);
 
   useEffect(() => {
-    console.log(recordId);
-
     const readRecord = async () => {
       setLoading(true);
       const record = await getById(recordId!);

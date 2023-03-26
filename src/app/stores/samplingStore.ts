@@ -5,12 +5,7 @@ import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 import Sampling from "../api/sampling";
-import {
-  ISamplingForm,
-  ISamplingList,
-  IUpdate,
-  SamplingFormValues,
-} from "../models/sampling";
+import { ISamplingList, IUpdate } from "../models/sampling";
 import { status } from "../util/catalogs";
 import { IRequestedStudy } from "../models/requestedStudy";
 import { IGeneralForm } from "../models/general";
@@ -37,7 +32,6 @@ export default class SamplingStore {
     try {
       const scopes = await Sampling.access();
       this.scopes = scopes;
-      console.log(scopes);
     } catch (error) {
       alerts.warning(getErrors(error));
       history.push("/forbidden");
@@ -94,8 +88,8 @@ export default class SamplingStore {
       alerts.warning(getErrors(error));
     }
   };
-  
-  exportList = async (search: ISamplingForm) => {
+
+  exportList = async (search: IGeneralForm) => {
     try {
       await Sampling.exportList(search);
       return true;

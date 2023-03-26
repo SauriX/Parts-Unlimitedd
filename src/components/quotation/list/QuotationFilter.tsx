@@ -62,7 +62,6 @@ const QuotationFilter = () => {
       );
       setBranchOptions(options);
     }
-    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
@@ -72,11 +71,6 @@ const QuotationFilter = () => {
   const onFinish = (values: IGeneralForm) => {
     setErrors([]);
     const filter = { ...values };
-
-    if (filter.fechaAlta && filter.fechaAlta.length > 1) {
-      filter.fechaAInicial = filter.fechaAlta[0].utcOffset(0, true);
-      filter.fechaAFinal = filter.fechaAlta[1].utcOffset(0, true);
-    }
 
     if (filter.fechaNacimiento) {
       filter.fechaNInicial = filter.fechaNacimiento.utcOffset(0, true);
@@ -101,7 +95,7 @@ const QuotationFilter = () => {
         }}
         size="small"
         initialValues={{
-          fechaAlta: [
+          fecha: [
             moment(Date.now()).utcOffset(0, true),
             moment(Date.now()).utcOffset(0, true),
           ],
@@ -110,7 +104,7 @@ const QuotationFilter = () => {
         <Row gutter={[0, 12]}>
           <Col span={8}>
             <DateRangeInput
-              formProps={{ name: "fechaAlta", label: "Fecha de alta" }}
+              formProps={{ name: "fecha", label: "Fecha de alta" }}
               disableAfterDates
             />
           </Col>

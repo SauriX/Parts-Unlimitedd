@@ -290,11 +290,7 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
   return (
     <>
       <Divider />
-      {/* <Divider orientation="right">
-        {`${formDeliverResult.fechaInicial?.format(
-          "DD-MMM-YYYY"
-        )} - ${formDeliverResult.fechaFinal?.format("DD-MMM-YYYY")}`}
-      </Divider> */}
+
       <Row justify="center">
         <Col>
           <Checkbox.Group
@@ -302,9 +298,6 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
             onChange={onChange}
             value={selectSendMethods}
           />
-          {/* <Checkbox>Correo</Checkbox>
-          <Checkbox>Whatsapp</Checkbox>
-          <Checkbox>Fisico</Checkbox> */}
         </Col>
       </Row>
       <Row justify="end" style={{ marginBottom: 10 }}>
@@ -455,9 +448,6 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
               columns={columns}
               dataSource={[...requests]}
               rowClassName="row-search"
-              // pagination={false}
-              // scroll={{ x: 450 }}
-
               expandable={{
                 onExpand: onExpand,
                 expandedRowKeys: expandedRowKeys,
@@ -466,7 +456,6 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
 
                 expandedRowRender: (data: any, index: number) => (
                   <>
-                    {/* {console.log("no se que data", toJS(data.estudios))} */}
                     <Table<any>
                       size="small"
                       rowKey={(record) => record.estudioId}

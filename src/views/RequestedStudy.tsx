@@ -6,13 +6,14 @@ import RequestedStudyBody from "../components/requestedStudy/RequestedStudyBody"
 import RequestedStudyHeader from "../components/requestedStudy/RequestedStudyHeader";
 
 const RequestedStudy = () => {
-  const { requestedStudyStore } = useStore();
-  const { scopes, access, clearScopes, exportList, formValues } = requestedStudyStore;
+  const { requestedStudyStore, generalStore } = useStore();
+  const { scopes, access, clearScopes, exportList } = requestedStudyStore;
+  const { generalFilter } = generalStore;
   const [loading, setLoading] = useState(false);
 
   const handleDownload = async () => {
     setLoading(true);
-    await exportList(formValues);
+    await exportList(generalFilter);
     setLoading(false);
   };
 

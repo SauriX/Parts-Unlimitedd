@@ -13,22 +13,16 @@ export interface IGeneralForm {
   ciudad?: string[];
   tipoSolicitud?: string[];
   estatus?: number[];
-  estudio?: number[]; 
+  estudio?: number[];
   // Expediente
   expediente?: string;
   telefono?: string;
   fechaNacimiento?: moment.Moment;
-  fechaAlta?: moment.Moment[];
-  // Cotizacion 
-  fechaAInicial?: moment.Moment;
-  fechaAFinal?: moment.Moment;
   correo?: string;
   fechaNInicial?: moment.Moment;
   fechaNFinal?: moment.Moment;
   // Solicitudes
   tipoFecha?: number;
-  fechaInicial?: moment.Moment;
-  fechaFinal?: moment.Moment;
   // Envio resultados
   mediosEntrega?: number[];
   // Tabla captura
@@ -36,32 +30,21 @@ export interface IGeneralForm {
 }
 
 export class GeneralFormValues implements IGeneralForm {
-  sucursalId = [];
   medicoId = [];
   compañiaId = [];
-  fecha = [moment(moment.now()), moment(moment.now())];
-  buscar = '';
+  fecha = [moment().utcOffset(0, true), moment().utcOffset(0, true)];
+  buscar = "";
   procedencia = [];
-  area = [];
   departamento = [];
-  ciudad = [];
   tipoSolicitud = [];
   estatus = [];
   estudio = [];
-  expediente = '';
-  telefono = '';
-  fechaNacimiento = moment(moment.now());
-  fechaAlta = [moment(moment.now()), moment(moment.now())];
-  fechaAInicial = moment(moment.now());
-  fechaAFinal = moment(moment.now());
-  correo = '';
-  fechaNInicial = moment(moment.now());
-  fechaNFinal = moment(moment.now());
-  tipoFecha = 0;
-  fechaInicial = moment(moment.now());
-  fechaFinal = moment(moment.now());
+  expediente = "";
+  telefono = "";
+  correo = "";
+  tipoFecha = 1;
   mediosEntrega = [];
-  nombreArea = '';
+  nombreArea = "";
 
   constructor(init?: IGeneralForm) {
     Object.assign(this, init);

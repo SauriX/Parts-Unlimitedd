@@ -6,14 +6,14 @@ import ClinicResultsBody from "../components/clinicResults/ClinicResultsBody";
 import ClinicResultsHeader from "../components/clinicResults/ClinicResultsHeader";
 
 const ClinicResults = () => {
-  const { clinicResultsStore } = useStore();
-  const { scopes, access, clearScopes, exportList, formValues } =
-    clinicResultsStore;
+  const { clinicResultsStore, generalStore } = useStore();
+  const { scopes, access, clearScopes, exportList } = clinicResultsStore;
+  const { generalFilter } = generalStore;
   const [loading, setLoading] = useState(false);
 
   const handleDownload = async () => {
     setLoading(true);
-    await exportList(formValues);
+    await exportList(generalFilter);
     setLoading(false);
   };
 
@@ -37,7 +37,7 @@ const ClinicResults = () => {
     <Fragment>
       <ClinicResultsHeader handleList={handleDownload} />
       <Divider className="header-divider" />
-      <ClinicResultsBody printing={loading} formValues={formValues}/>
+      <ClinicResultsBody printing={loading} formValues={generalFilter} />
     </Fragment>
   );
 };

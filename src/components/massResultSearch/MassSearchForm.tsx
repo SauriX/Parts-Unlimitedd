@@ -66,11 +66,13 @@ const MassSearchForm = () => {
 
   const onFinish = async (values: IGeneralForm) => {
     setLoading(true);
-    
+
     let nombreArea: string = filteredAreas.find((x) => x.value == values.area![0])
       ?.label as string;
+    let putAreaIntoArray: number[] = [];
+    putAreaIntoArray.push(+values.area!);
 
-    let newValues = { ...values, nombreArea };
+    let newValues = { ...values, nombreArea, area: putAreaIntoArray };
     setGeneralFilter(newValues);
     await getRequestResults(newValues);
     setLoading(false);

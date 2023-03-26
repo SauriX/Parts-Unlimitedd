@@ -26,8 +26,8 @@ const RequestedStudyFilter = () => {
     branchCityOptions,
     medicOptions,
     companyOptions,
-    departmentAreaOptions,
-    getDepartmentAreaOptions,
+    areaByDeparmentOptions,
+    getAreaByDeparmentOptions,
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
@@ -37,7 +37,7 @@ const RequestedStudyFilter = () => {
   const [loading, setLoading] = useState(false);
 
   const selectedCity = Form.useWatch("ciudad", form);
-  const selectedDepartment = Form.useWatch("departament", form);
+  const selectedDepartment = Form.useWatch("departamento", form);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
@@ -47,12 +47,12 @@ const RequestedStudyFilter = () => {
     getBranchCityOptions();
     getMedicOptions();
     getCompanyOptions();
-    getDepartmentAreaOptions();
+    getAreaByDeparmentOptions();
   }, [
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
-    getDepartmentAreaOptions,
+    getAreaByDeparmentOptions,
   ]);
 
   useEffect(() => {
@@ -76,10 +76,10 @@ const RequestedStudyFilter = () => {
   
   useEffect(() => {
     if (selectedCity != undefined && selectedCity != null) {
-      var branhces = branchCityOptions.filter((x) =>
+      var branches = branchCityOptions.filter((x) =>
         selectedCity.includes(x.value.toString())
       );
-      var options = branhces.flatMap((x) =>
+      var options = branches.flatMap((x) =>
         x.options == undefined ? [] : x.options
       );
       setBranchOptions(options);
@@ -92,17 +92,16 @@ const RequestedStudyFilter = () => {
 
   useEffect(() => {
     setDepartmentOptions(
-      departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
+      areaByDeparmentOptions.map((x) => ({ value: x.value, label: x.label }))
     );
-  }, [departmentAreaOptions]);
+  }, [areaByDeparmentOptions]);
 
   useEffect(() => {
     setAreaOptions(
-      departmentAreaOptions.find((x) => x.value === selectedDepartment)
+      areaByDeparmentOptions.find((x) => x.value === selectedDepartment)
         ?.options ?? []
     );
-    form.setFieldValue("area", []);
-  }, [departmentAreaOptions, form, selectedDepartment]);
+  }, [areaByDeparmentOptions, form, selectedDepartment]);
 
   const onFinish = async (newFormValues: IGeneralForm) => {
     setLoading(true);
@@ -185,7 +184,7 @@ const RequestedStudyFilter = () => {
                     <SelectInput
                       form={form}
                       formProps={{
-                        name: "departament",
+                        name: "departamento",
                         label: "Departamento",
                         noStyle: true,
                       }}

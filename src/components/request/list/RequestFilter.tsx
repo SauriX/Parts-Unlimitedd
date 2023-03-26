@@ -8,7 +8,6 @@ import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
 import { useKeyPress } from "../../../app/hooks/useKeyPress";
 import { IGeneralForm } from "../../../app/models/general";
-import { IRequestFilter } from "../../../app/models/request";
 import { IOptions } from "../../../app/models/shared";
 import {
   originOptions,
@@ -61,6 +60,10 @@ const RequestFilter = () => {
   ]);
 
   useEffect(() => {
+    form.setFieldsValue(generalFilter);
+  }, [generalFilter, form]);
+
+  useEffect(() => {
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
@@ -76,7 +79,6 @@ const RequestFilter = () => {
       );
       setBranchOptions(options);
     }
-    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
@@ -88,24 +90,13 @@ const RequestFilter = () => {
       if (findCity) {
         form.setFieldValue("ciudad", [findCity]);
       }
-      form.setFieldValue("sucursales", [profileBranch]);
+      form.setFieldValue("sucursalId", [profileBranch]);
     }
   }, [BranchOptions, form, profile]);
 
-  useEffect(() => {
-    form.setFieldsValue(generalFilter);
-  }, [generalFilter, form]);
-
   const onFinish = (values: IGeneralForm) => {
-    const filter = { ...values };
-
-    if (filter.fecha && filter.fecha.length > 1) {
-      filter.fechaInicial = filter.fecha[0].utcOffset(0, true);
-      filter.fechaFinal = filter.fecha[1].utcOffset(0, true);
-    }
-
-    setGeneralFilter(filter);
-    getRequests(filter);
+    setGeneralFilter(values);
+    getRequests(values);
   };
 
   return (

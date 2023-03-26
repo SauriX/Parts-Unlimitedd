@@ -73,7 +73,6 @@ export default class ProfileStore {
   login = async (creds: ILoginForm) => {
     try {
       const profile = await Profile.login(creds);
-      console.log(profile, "profile");
       this.setToken(profile.token);
       this.setProfile(profile);
 

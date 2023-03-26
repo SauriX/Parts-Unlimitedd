@@ -21,7 +21,6 @@ export const getErrors = (error: any) => {
     }
     return errors;
   } catch (e) {
-    console.log(e);
     return messages.systemError;
   }
 };

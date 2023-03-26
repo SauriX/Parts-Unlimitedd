@@ -17,8 +17,13 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 
 const ClinicResultsFilter = () => {
-  const { requestStore, optionStore, clinicResultsStore, profileStore, generalStore } =
-    useStore();
+  const {
+    requestStore,
+    optionStore,
+    clinicResultsStore,
+    profileStore,
+    generalStore,
+  } = useStore();
   const { lastViewedFrom } = requestStore;
   const { getAll } = clinicResultsStore;
   const { generalFilter, setGeneralFilter } = generalStore;
@@ -45,9 +50,11 @@ const ClinicResultsFilter = () => {
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
+
   useEffect(() => {
     form.setFieldsValue(generalFilter);
   }, [form, generalFilter]);
+
   useEffect(() => {
     const update = async () => {
       getBranchCityOptions();
@@ -98,13 +105,13 @@ const ClinicResultsFilter = () => {
         .filter((x) => selectedDepartment?.includes(x.value as number))
         .flatMap((x) => x.options ?? [])
     );
-    form.setFieldValue("area", []);
   }, [areaByDeparmentOptions, form, selectedDepartment]);
 
   useEffect(() => {
     const profileBranch = profile?.sucursal;
+    let findCity: string | number | undefined;
     if (profileBranch) {
-      const findCity = branchCityOptions.find((x) =>
+      findCity = branchCityOptions.find((x) =>
         x.options?.some((y) => y.value == profileBranch)
       )?.value;
       if (findCity) {

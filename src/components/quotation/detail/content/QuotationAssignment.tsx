@@ -53,14 +53,7 @@ const QuotationAssignment = ({
   }, [getRecords]);
 
   const onFinish = async (values: IGeneralForm) => {
-    const filter = { ...values };
-
-    if (filter.fechaAlta && filter.fechaAlta.length > 1) {
-      filter.fechaAlta[0] = filter.fechaAlta[0].utcOffset(0, true);
-      filter.fechaAlta[1] = filter.fechaAlta[1].utcOffset(0, true);
-    }
-
-    const records = await getRecords(filter);
+    const records = await getRecords(values);
     setRecords(records);
   };
 
@@ -167,7 +160,7 @@ const QuotationAssignment = ({
               <DateRangeInput
                 formProps={{
                   label: "Fecha de alta",
-                  name: "fechaAlta",
+                  name: "fecha",
                 }}
               />
             </Col>

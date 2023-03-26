@@ -38,14 +38,11 @@ export const convertToTreeDataBranch = (
       let childrenNotSelected = copy.children?.filter(
         (x) => !targetKeys.includes(x.key)
       );
-      // console.log("childrenseleted", childrenSelected);
-      // console.log("childrenNOTseleted", childrenNotSelected);
       if (!!childrenSelected?.length) {
         let copy_info = {
           ...copy,
           children: childrenSelected,
         };
-        console.log("selecteds", copy_info);
         selectedNodes.push(copy_info);
       }
       if (!!childrenNotSelected?.length) {
@@ -56,9 +53,6 @@ export const convertToTreeDataBranch = (
         notSelectedNodes.push(copy_info);
       }
     });
-    console.log("targetkeys", toJS(targetKeys));
-    // console.log("childrenseleted", selectedNodes);
-    // console.log("childrenNOTseleted", notSelectedNodes);
 
     setPermissionsAdded(selectedNodes);
     setPermissionsAvailable(notSelectedNodes);
@@ -132,8 +126,6 @@ export const onTreeSelectChangeBranch = (
   setSelectedKeys: React.Dispatch<React.SetStateAction<string[]>>
 ) => {
   return (sourceSelectedKeys: string[], targetSelectedKeys: string[]) => {
-    console.log("SOURCE", toJS(sourceSelectedKeys));
-    console.log("TARGET", toJS(targetSelectedKeys));
     const availableIds = permissionsAvailableFiltered
       .flatMap((x) => x.children)
       .map((x) => x?.key);

@@ -41,8 +41,8 @@ const RequestTable = () => {
         : lastViewedFrom.from === "requests"
         ? undefined
         : lastViewedFrom.code;
-      setGeneralFilter({ ...generalFilter, buscar: defaultCode ?? generalFilter.buscar });
-      await getRequests({ ...generalFilter, buscar: defaultCode ?? generalFilter.buscar });
+      setGeneralFilter({ ...generalFilter, buscar: defaultCode ?? generalFilter.buscar, tipoFecha: 1 });
+      await getRequests({ ...generalFilter, buscar: defaultCode ?? generalFilter.buscar, tipoFecha: 1 });
     };
 
     readRequests();

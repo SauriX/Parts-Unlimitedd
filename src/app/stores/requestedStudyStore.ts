@@ -58,7 +58,6 @@ export default class RequestedStudyStore {
 
   update = async (study: IUpdate[]) => {
     try {
-      console.log(study);
       await RequestedStudy.update(study);
       alerts.success(messages.updated);
 
@@ -96,7 +95,7 @@ export default class RequestedStudyStore {
     }
   };
 
-  exportList = async (search: IRequestedStudyForm) => {
+  exportList = async (search: IGeneralForm) => {
     try {
       await RequestedStudy.exportList(search);
       return true;

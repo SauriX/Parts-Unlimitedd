@@ -56,7 +56,6 @@ export default class StudyStore {
     try {
       const scopes = await Study.access();
       this.scopes = scopes;
-      console.log(scopes);
     } catch (error) {
       alerts.warning(getErrors(error));
       history.push("/forbidden");
@@ -78,7 +77,6 @@ export default class StudyStore {
       const study = await Study.getById(id);
       return study;
     } catch (error) {
-      console.log(error);
       alerts.warning(getErrors(error));
     }
   };
@@ -93,7 +91,6 @@ export default class StudyStore {
 
   create = async (study: IStudyForm) => {
     try {
-        console.log("here");
       await Study.create(study);
       alerts.success(messages.created);
       return true;

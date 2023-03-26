@@ -25,7 +25,6 @@ const ValidationTableStudy = ({
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
 
   useEffect(() => {
-    console.log("data", data)
     setExpandedRowKeys(data.map((x) => x.id));
     setOpenRows(true);
   }, [data]);

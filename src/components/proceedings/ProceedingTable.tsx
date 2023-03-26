@@ -131,12 +131,6 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       values.fechaNacimiento = values.fechaNacimiento!.utcOffset(0, true);
     }
 
-    if (values.fechaAlta != null) {
-      values.fechaAlta = [
-        values.fechaAlta![0].utcOffset(0, true),
-        values.fechaAlta![1].utcOffset(0, true),
-      ];
-    }
     setGeneralFilter(values);
     await getnow(values!);
     setLoading(false);
@@ -274,7 +268,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
           onFinish={onfinish}
           size="small"
           initialValues={{
-            fechaAlta: [
+            fecha: [
               moment(Date.now()).utcOffset(0, true),
               moment(Date.now()).utcOffset(0, true),
             ],
@@ -293,7 +287,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
             </Col>
             <Col span={8}>
               <DateRangeInput
-                formProps={{ label: "Fecha de alta", name: "fechaAlta" }}
+                formProps={{ label: "Fecha de alta", name: "fecha" }}
                 disableAfterDates={true}
               />
             </Col>

@@ -220,7 +220,6 @@ export default class ClinicResultsStores {
     // updateResultPathological = async (result: IResultPathological) => {
     try {
       await ClinicResults.updateStatusStudy(requestStudyId, status);
-      console.log("update", { requestStudyId, status });
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -308,7 +307,6 @@ export default class ClinicResultsStores {
   };
 
   changeParameterRange = (id: string, estudioId: number) => {
-    console.log(id, estudioId);
     let studyIndex = this.studies.findIndex((x) => x.id === 1612);
     let study = this.studies[studyIndex];
     let parameterIndex = study.parametros.findIndex(

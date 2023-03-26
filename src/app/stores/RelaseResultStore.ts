@@ -85,7 +85,6 @@ export default class RelaseResultStore {
   };
   viewTicket = async (recordId: any) => {
     try {
-      console.log(recordId, "record");
       await ResultValidation.getresultPdf(recordId);
     } catch (error: any) {
       alerts.warning(getErrors(error));

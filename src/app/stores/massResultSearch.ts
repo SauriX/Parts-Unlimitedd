@@ -47,7 +47,7 @@ export default class MassResultSearchStore {
     }
   };
 
-  formDeliverResult: IGeneralForm = { fechaInicial: moment(), fechaFinal: moment() };
+  formDeliverResult: IGeneralForm = { fecha: [moment(), moment()] };
   setFormDeliverResult = (form: IGeneralForm) => {
     this.formDeliverResult = form;
   };

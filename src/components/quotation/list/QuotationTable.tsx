@@ -14,6 +14,7 @@ import {
   IQuotationInfo,
   IQuotationStudyInfo,
 } from "../../../app/models/quotation";
+import moment from "moment";
 
 const { Link, Text } = Typography;
 

@@ -27,12 +27,7 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
 
   useEffect(() => {
     const readRequests = async () => {
-      await getAll({
-        fecha: [
-          moment(Date.now()).utcOffset(0, true),
-          moment(Date.now()).utcOffset(0, true),
-        ],
-      });
+      await getAll(generalFilter);
     };
 
     readRequests();
