@@ -8,13 +8,9 @@ type UrlParams = {
   id: string;
 };
 const Notifications = () => {
-  const [type,setType] = useState<number>(1);
-  const handleDownload = () => {
-    console.log("handleDownload");
-  };
-  const handlePrint = () => {
-    console.log("handlePrint");
-  };
+  const [type, setType] = useState<number>(1);
+  const handleDownload = () => {};
+  const handlePrint = () => {};
   return (
     <>
       <NotificationsHeader
@@ -24,8 +20,7 @@ const Notifications = () => {
         setType={setType}
       />
       <Divider />
-      {type===1?<NotificationsTable />:<AvisosTable />}
-      
+      {type === 1 ? <NotificationsTable /> : <AvisosTable />}
     </>
   );
 };

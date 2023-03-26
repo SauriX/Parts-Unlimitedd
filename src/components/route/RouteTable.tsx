@@ -22,7 +22,7 @@ type RouteTableProps = {
 };
 
 const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
-    const { routeStore } = useStore();
+  const { routeStore } = useStore();
   const { routes, getAll } = routeStore;
 
   const [searchParams] = useSearchParams();
@@ -38,15 +38,12 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
     searchedColumn: "",
   });
 
-  //console.log("Table");
-
   useEffect(() => {
     const readRoutes = async () => {
       setLoading(true);
       await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
       getAll("all");
-      // create(routes).then(x => { getAll("all")});
     };
 
     if (routes.length === 0) {
@@ -68,7 +65,9 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/${views.route}/${route.id}?${searchParams}&mode=readonly`);
+            navigate(
+              `/${views.route}/${route.id}?${searchParams}&mode=readonly`
+            );
           }}
         >
           {value}
@@ -94,14 +93,14 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-        ...getDefaultColumnProps("sucursalDestino", "Destino", {
-          searchState,
-          setSearchState,
-          width: "20%",
-          minWidth: 150,
-          windowSize: windowWidth,
-        }),
-      },
+      ...getDefaultColumnProps("sucursalDestino", "Destino", {
+        searchState,
+        setSearchState,
+        width: "20%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
     {
       key: "activo",
       dataIndex: "activo",

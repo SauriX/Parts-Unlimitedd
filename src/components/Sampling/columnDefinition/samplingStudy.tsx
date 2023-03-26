@@ -147,7 +147,6 @@ export const SamplingStudyExpandable = ({
   onChange,
   updateForm,
 }: expandableProps) => {
-  console.log(updateForm);
 
   const nestedColumns: IColumns<IStudySampling> = [
     {

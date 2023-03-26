@@ -261,7 +261,6 @@ const DatosFiscalesForm = ({
           title="Editar datos fiscales"
           icon={<EditOutlined />}
           onClick={() => {
-            console.log("ITEM: ", toJS(item));
             setIsEditing(true);
             getColonies(item.cp);
             const regId = regimenFiscal

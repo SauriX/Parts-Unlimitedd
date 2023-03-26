@@ -17,17 +17,16 @@ import { observer } from "mobx-react-lite";
 const ParameterTable = () => {
   const { parameterStore } = useStore();
   const { getAll, parameters } = parameterStore;
-  let navigate = useNavigate();
-  let id = "";
   const { width: windowWidth } = useWindowDimensions();
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  let navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-  console.log("Table");
+
   useEffect(() => {
     const readUsers = async () => {
       setLoading(true);

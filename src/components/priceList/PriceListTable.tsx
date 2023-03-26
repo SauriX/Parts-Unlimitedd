@@ -41,8 +41,6 @@ const PriceListTable: FC<PriceListTableProps> = ({
     searchedColumn: "",
   });
 
-  console.log("Table");
-
   useEffect(() => {
     const readPriceList = async () => {
       setLoading(true);

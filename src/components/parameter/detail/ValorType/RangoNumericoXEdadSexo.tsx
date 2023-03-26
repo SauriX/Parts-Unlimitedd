@@ -18,8 +18,6 @@ const RangoNumericoXEdadSexo: FC<Props> = ({ idTipeVAlue, parameter }) => {
         <Button
           onClick={() => {
             setDisabled(false);
-            console.log("editabe");
-            console.log(disabled);
           }}
           type="default"
         >

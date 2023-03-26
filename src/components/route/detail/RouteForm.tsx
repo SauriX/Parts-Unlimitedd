@@ -671,7 +671,6 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
           pagination={false}
           dataSource={[...(values.estudio ?? [])]}
           rowSelection={rowSelection}
-          // scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
           scroll={{ y: 240 }}
         />
       </Row>

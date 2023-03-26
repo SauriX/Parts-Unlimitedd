@@ -57,7 +57,6 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
     searchedText: "",
     searchedColumn: "",
   });
-  console.log("Table");
   useEffect(() => {
     const readUsers = async () => {
       setLoading(true);

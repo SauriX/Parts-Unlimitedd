@@ -81,7 +81,6 @@ const Home = () => {
       }
       var requests = await getRequests(filter);
 
-      console.log(requests, "solis");
       setSolicitudes(requests!.length);
 
       var cierre = 0;
@@ -186,7 +185,6 @@ const Home = () => {
           }
         })
       );
-      console.log(temp, "temporal");
       setProxCierre(cierre);
     };
     readRequest();
@@ -236,9 +234,7 @@ const Home = () => {
             sucursaldest: profile?.sucursal!,
           });
           contador += recibe?.length!;
-          console.log(contador);
         }
-        console.log(contador);
         setRecibir(contador);
       }
     };

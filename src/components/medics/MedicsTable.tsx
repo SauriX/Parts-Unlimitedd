@@ -1,4 +1,4 @@
-import { Button, Divider, PageHeader,  Table} from "antd";
+import { Button, Divider, PageHeader, Table } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
@@ -37,8 +37,6 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
     searchedColumn: "",
   });
 
-  //console.log("Table");
-
   useEffect(() => {
     const readMedics = async () => {
       setLoading(true);
@@ -62,7 +60,9 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
           type="link"
           onClick={() => {
             navigate(
-              `/medics/${medics.idMedico}?${searchParams}&mode=readonly&search=${
+              `/medics/${
+                medics.idMedico
+              }?${searchParams}&mode=readonly&search=${
                 searchParams.get("search") ?? "all"
               }`
             );
@@ -174,7 +174,9 @@ const MedicsTable: FC<MedicsTableProps> = ({ componentRef, printing }) => {
           icon={<EditOutlined />}
           onClick={() => {
             navigate(
-              `/medics/${value}?${searchParams}&mode=edit&search=${searchParams.get("search") ?? "all"}`
+              `/medics/${value}?${searchParams}&mode=edit&search=${
+                searchParams.get("search") ?? "all"
+              }`
             );
           }}
         />

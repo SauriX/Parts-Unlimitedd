@@ -294,11 +294,6 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
   return (
     <>
       <Divider />
-      {/* <Divider orientation="right">
-        {`${formDeliverResult.fechaInicial?.format(
-          "DD-MMM-YYYY"
-        )} - ${formDeliverResult.fechaFinal?.format("DD-MMM-YYYY")}`}
-      </Divider> */}
       <Row justify="center">
         <Col>
           <Checkbox.Group
@@ -306,9 +301,6 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
             onChange={onChange}
             value={selectSendMethods}
           />
-          {/* <Checkbox>Correo</Checkbox>
-          <Checkbox>Whatsapp</Checkbox>
-          <Checkbox>Fisico</Checkbox> */}
         </Col>
       </Row>
       <Row justify="end" style={{ marginBottom: 10 }}>

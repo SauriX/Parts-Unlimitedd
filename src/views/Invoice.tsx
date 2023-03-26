@@ -9,9 +9,7 @@ import InvoiceFreeTable from "../components/invoice/InvoiceFree/InvoiceFreeTable
 import InvoiceGlobalForm from "../components/invoice/InvoiceGlobal/InvoiceGlobalForm";
 import InvoiceGlobalTable from "../components/invoice/InvoiceGlobal/InvoiceGlobalTable";
 
-const handleDownload = async () => {
-  console.log("handleDownload");
-};
+const handleDownload = async () => {};
 type UrlParams = {
   tipo: string;
 };

@@ -26,7 +26,6 @@ export default class BranchStore {
 
   create = async (reagent: IBranchForm) => {
     try {
-        console.log("here");
       await Branch.create(reagent);
       alerts.success(messages.created);
       return true;
@@ -48,9 +47,7 @@ export default class BranchStore {
 
   getAll = async (search: string="all") => {
     try {
-      console.log(search);
       const roles= await Branch.getAll(search);
-      console.log(roles);
       this.sucursales = roles;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -62,7 +59,6 @@ export default class BranchStore {
    
     try {
       const rol = await Branch.getById(id);
-      console.log(rol);
       this.sucursal = rol;
       return rol;
     } catch (error: any) {

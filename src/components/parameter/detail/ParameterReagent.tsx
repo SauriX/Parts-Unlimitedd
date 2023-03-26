@@ -100,9 +100,7 @@ const ParameterReagent = ({ getResult, selectedReagent }: Props) => {
     onSelect: onSelectKeys,
   };
 
-  useEffect(() => {
-    console.log(selectedReagentKeys);
-  }, [selectedReagentKeys]);
+  useEffect(() => {}, [selectedReagentKeys]);
 
   const acceptChanges = () => {
     setReagentSelected(selectedReagentKeys);

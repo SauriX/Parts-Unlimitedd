@@ -44,8 +44,6 @@ const BranchDetail = () => {
     }
   }, [getById, id]);
   const handleDownload = async () => {
-    console.log(sucursal);
-    console.log("download");
     setLoading(true);
     setIsPrinting(false);
     const succes = await exportForm(id!, "sucursal");

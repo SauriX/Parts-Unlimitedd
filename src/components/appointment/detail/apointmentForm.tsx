@@ -115,7 +115,6 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
   };
 
   useEffect(() => {
-    console.log(values, "values");
     form.setFieldsValue(values!);
   }, [values]);
 
@@ -123,7 +122,6 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
 
 
     const read = async () => {
-      console.log("here");
       setValues((prev)=>({...prev,sucursale:profile?.sucursal}));
       if (type == "laboratorio") {
         await getAllLab(search);
@@ -229,11 +227,9 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
       SetTotal(suma);
       setGenerales(expediente?.generales);
       setGeneralesDom(expediente?.generalesDom);
-      console.log(expediente, "expediente");
       expediente!.fechaNacimiento = moment(expediente?.fechaNacimiento);
       form.setFieldsValue(expediente!);
       setValues(expediente!);
-      console.log(expediente?.estudy!, "estudys");
       setData(expediente?.estudy!);
       SetCargo(expediente?.cargo!);
       SetTypo(expediente?.typo!);
@@ -310,7 +306,6 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
 
   const onFinish = async (newValues: IAppointmentForm) => {
     setLoading(true);
-    console.log(generales, "genreales");
     const reagent = { ...values, ...newValues };
     if (data.length <= 0) {
       alerts.warning(`La cotización debe tener un estudio o paquete`);
@@ -326,7 +321,6 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
     reagent.typo = typo;
     reagent.cargo = cargo;
     reagent.sucursalId = profile?.sucursal;
-    console.log(reagent, "reagent");
 
     var duplicados = parametrosDuplicados(reagent.estudy);
     if (duplicados.length > 0) {
@@ -340,7 +334,6 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
       return;
     }
     if (!reagent.id) {
-      console.log("succes");
       if (type == "laboratorio") {
         success = await createLab(reagent);
       } else {

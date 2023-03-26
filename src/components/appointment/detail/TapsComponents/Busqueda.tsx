@@ -129,8 +129,6 @@ const BusquedaForm: FC<GeneralesFormProps> = ({
           type="link"
           onClick={() => {
             handleIdExpediente(expediente);
-            console.log("here");
-            console.log(expediente);
             handleCotizacion((prev) => ({
               ...prev,
               expedienteid: expediente.id,

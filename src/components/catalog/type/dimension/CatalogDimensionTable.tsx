@@ -39,7 +39,6 @@ const CatalogDimensionTable: FC<CatalogDimensionTableProps> = ({ componentRef, p
     searchedColumn: "",
   });
 
-  console.log("Table");
 
   const columns: IColumns<ICatalogList> = [
     {

@@ -50,7 +50,6 @@ const CashRegisterFilter = () => {
     await getByFilter(filter);
     setFilter(filter);
     setLoading(false);
-    console.log(filter);
   };
 
   const onChangeChart = (value: boolean) => {
