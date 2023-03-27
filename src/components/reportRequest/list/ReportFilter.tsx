@@ -127,7 +127,7 @@ const ReportFilter = () => {
       >
         <Row gutter={[0, 12]}>
           <Col span={8}>
-            <DateRangeInput formProps={{ name: "fecha", label: "Fecha" }} />
+            <DateRangeInput formProps={{ name: "fechas", label: "Fechas de entrega" }} />
           </Col>
           <Col span={8}>
             <TextInput
