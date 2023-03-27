@@ -277,12 +277,6 @@ const RangoEdad: FC<Props> = ({
                             {...valuesValor}
                             label="Valor crítrico mínimo: "
                             name={[name, "criticoMinimo"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Valor crítico mínimo faltante",
-                              },
-                            ]}
                           >
                             <Input
                               type={"number"}
@@ -298,12 +292,6 @@ const RangoEdad: FC<Props> = ({
                             {...valuesValor}
                             label="Valor crítico máximo: "
                             name={[name, "criticoMaximo"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Valor crítico máximo faltante",
-                              },
-                            ]}
                           >
                             <Input
                               type={"number"}
