@@ -15,18 +15,18 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 import moment from "moment";
 import { IOptions } from "../../app/models/shared";
-import { IGeneralForm } from "../../app/models/clinicResults";
+import { IGeneralForm } from "../../app/models/general";
 
 const SamplingStudyFilter = () => {
-  const { optionStore, samplingStudyStore, profileStore, clinicResultsStore } = useStore();
+  const { optionStore, samplingStudyStore, profileStore, generalStore } = useStore();
   const { getAll } = samplingStudyStore;
-  const { setFormValues, formValues } = clinicResultsStore;
+  const { setGeneralFilter, generalFilter } = generalStore;
   const {
     branchCityOptions,
     medicOptions,
     companyOptions,
-    departmentAreaOptions,
-    getDepartmentAreaOptions,
+    areaByDeparmentOptions,
+    getAreaByDeparmentOptions,
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
@@ -36,7 +36,7 @@ const SamplingStudyFilter = () => {
   const [loading, setLoading] = useState(false);
 
   const selectedCity = Form.useWatch("ciudad", form);
-  const selectedDepartment = Form.useWatch("departament", form);
+  const selectedDepartment = Form.useWatch("departamento", form);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
@@ -46,17 +46,17 @@ const SamplingStudyFilter = () => {
     getBranchCityOptions();
     getMedicOptions();
     getCompanyOptions();
-    getDepartmentAreaOptions();
+    getAreaByDeparmentOptions();
   }, [
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
-    getDepartmentAreaOptions,
+    getAreaByDeparmentOptions,
   ]);
 
   useEffect(() => {
-    form.setFieldsValue(formValues);
-  }, [formValues, form]);
+    form.setFieldsValue(generalFilter);
+  }, [generalFilter, form]);
 
   useEffect(() => {
     setCityOptions(
@@ -91,22 +91,22 @@ const SamplingStudyFilter = () => {
 
   useEffect(() => {
     setDepartmentOptions(
-      departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
+      areaByDeparmentOptions.map((x) => ({ value: x.value, label: x.label }))
     );
-  }, [departmentAreaOptions]);
+  }, [areaByDeparmentOptions]);
 
   useEffect(() => {
     setAreaOptions(
-      departmentAreaOptions.find((x) => x.value === selectedDepartment)
+      areaByDeparmentOptions.find((x) => x.value === selectedDepartment)
         ?.options ?? []
     );
     form.setFieldValue("area", []);
-  }, [departmentAreaOptions, form, selectedDepartment]);
+  }, [areaByDeparmentOptions, form, selectedDepartment]);
 
   const onFinish = async (newFormValues: IGeneralForm) => {
     setLoading(true);
     const filter = { ...newFormValues };
-    setFormValues(newFormValues);
+    setGeneralFilter(newFormValues);
     getAll(filter);
     setLoading(false);
   };
@@ -182,11 +182,13 @@ const SamplingStudyFilter = () => {
                 <Row gutter={8}>
                   <Col span={12}>
                     <SelectInput
+                    form={form}
                       formProps={{
-                        name: "departament",
+                        name: "departamento",
                         label: "Departamento",
                         noStyle: true,
                       }}
+                      multiple
                       options={departmentOptions}
                     />
                   </Col>

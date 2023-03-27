@@ -2,13 +2,11 @@ import {
   Button,
   Checkbox,
   Col,
-  Descriptions,
   Divider,
   PageHeader,
   Row,
   Spin,
   Table,
-  Tag,
   Typography,
 } from "antd";
 import { toJS } from "mobx";
@@ -48,9 +46,7 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
     massResultSearchStore;
   const { printOrder } = requestedStudyStore;
   const [loading, setLoading] = useState(false);
-  const [selectedStudies, setSelectedStudies] = useState<any[]>([
-    // { solicitudId: "", estudiosId: [{ estudioId: "", tipo: 3 }] },
-  ]);
+  const [selectedStudies, setSelectedStudies] = useState<any[]>([]);
   const [selectSendMethods, setSelectSendMethods] = useState<
     CheckboxValueType[]
   >([]);
@@ -451,9 +447,6 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
               columns={columns}
               dataSource={[...requests]}
               rowClassName="row-search"
-              // pagination={false}
-              // scroll={{ x: 450 }}
-
               expandable={{
                 onExpand: onExpand,
                 expandedRowKeys: expandedRowKeys,
@@ -462,7 +455,6 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
 
                 expandedRowRender: (data: any, index: number) => (
                   <>
-                    {/* {console.log("no se que data", toJS(data.estudios))} */}
                     <Table<any>
                       size="small"
                       rowKey={(record) => record.estudioId}

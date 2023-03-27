@@ -1,5 +1,5 @@
 import { Table, Tag, Tooltip, Typography } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
@@ -18,8 +18,10 @@ import {
 const { Link, Text } = Typography;
 
 const QuotationTable = () => {
-  const { quotationStore } = useStore();
-  const { loadingQuotations, quotations } = quotationStore;
+  const { quotationStore, generalStore } = useStore();
+  const { loadingQuotations, quotations, getQuotations } =
+    quotationStore;
+  const { generalFilter } = generalStore;
 
   let navigate = useNavigate();
 
@@ -27,6 +29,15 @@ const QuotationTable = () => {
     searchedText: "",
     searchedColumn: "",
   });
+
+  useEffect(() => {
+    const readQuotations = async () => {
+      await getQuotations(generalFilter);
+    };
+
+    readQuotations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const columns: IColumns<IQuotationInfo> = [
     {

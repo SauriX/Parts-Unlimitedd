@@ -1,12 +1,11 @@
 import { makeAutoObservable } from "mobx";
 import moment from "moment";
 import MassResultSearch from "../api/massResultSearch";
+import { IGeneralForm } from "../models/general";
 import {
   IDeliverResultsForm,
-  IMassSearch,
   IParameter,
   IResult,
-  MassSearchValues,
 } from "../models/massResultSearch";
 import alerts from "../util/alerts";
 import { getErrors } from "../util/utils";
@@ -19,18 +18,13 @@ export default class MassResultSearchStore {
   area: string = "";
   results: IResult[] = [];
   parameters: IParameter[] = [];
-  search: IMassSearch = new MassSearchValues();
   loadingStudies: boolean = false;
 
   setAreas = (area: string) => {
     this.area = area;
   };
 
-  setFilter = (search: IMassSearch) => {
-    this.search = search;
-  };
-
-  getRequestResults = async (search: IMassSearch) => {
+  getRequestResults = async (search: IGeneralForm) => {
     try {
       this.loadingStudies = true;
       const result = await MassResultSearch.getRequestResults(search);
@@ -44,7 +38,7 @@ export default class MassResultSearchStore {
   };
 
   requests: any[] = [];
-  getAllCaptureResults = async (search: IDeliverResultsForm) => {
+  getAllCaptureResults = async (search: IGeneralForm) => {
     try {
       const result = await MassResultSearch.getAllCaptureResults(search);
       this.requests = result;
@@ -52,18 +46,13 @@ export default class MassResultSearchStore {
       alerts.warning(getErrors(error));
     }
   };
-  clearRequests = () => {
-    this.requests = [];
-  };
 
-  formDeliverResult: any = { fechaInicial: moment(), fechaFinal: moment() };
-  setFormDeliverResult = (form: any) => {
+  formDeliverResult: IGeneralForm = { fecha: [moment(), moment()] };
+  setFormDeliverResult = (form: IGeneralForm) => {
     this.formDeliverResult = form;
   };
-  clearFormDeliverResult = () => {
-    this.formDeliverResult = { fechaInicial: moment(), fechaFinal: moment() };
-  };
-  exportListDeliverResult = async (search: any) => {
+
+  exportListDeliverResult = async (search: IGeneralForm) => {
     try {
       await MassResultSearch.exportListDeliverResult(search);
       return true;
@@ -72,7 +61,7 @@ export default class MassResultSearchStore {
     }
   };
 
-  printPdf = async (search: IMassSearch) => {
+  printPdf = async (search: IGeneralForm) => {
     try {
       await MassResultSearch.printPdf(search);
     } catch (error: any) {

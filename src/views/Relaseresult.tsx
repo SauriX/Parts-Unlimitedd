@@ -9,19 +9,20 @@ import ResultValidationHeader from "../components/Resultvalidation/ResultValidat
 import ResultValidationTable from "../components/Resultvalidation/ResultValidationTable";
 
 const Relaseresult = () => {
-  const { relaseResultStore, resultValidationStore } = useStore();
-  const { exportList, search, activeTab } = relaseResultStore;
-  const { exportList: exportValidationList, search: validationSearch } =
+  const { relaseResultStore, resultValidationStore, generalStore } = useStore();
+  const { exportList, activeTab } = relaseResultStore;
+  const { exportList: exportValidationList } =
     resultValidationStore;
+  const { generalFilter } = generalStore;
   const [loading, setLoading] = useState(false);
   const componentRef = useRef<any>();
 
   const handleDownload = async () => {
     setLoading(true);
     if (!activeTab) {
-      await exportList(search);
+      await exportList(generalFilter);
     } else {
-      await exportValidationList(validationSearch);
+      await exportValidationList(generalFilter);
     }
     setLoading(false);
   };

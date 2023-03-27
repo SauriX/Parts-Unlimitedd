@@ -18,15 +18,14 @@ const { Link, Text } = Typography;
 const logoWee = `${process.env.REACT_APP_NAME}/assets/logos/weeclinic.png`;
 
 const RequestTable = () => {
-  const { requestStore } = useStore();
+  const { requestStore, generalStore } = useStore();
   const {
     loadingRequests,
-    filter,
     lastViewedFrom,
     requests,
-    setFilter,
     getRequests,
   } = requestStore;
+  const { generalFilter, setGeneralFilter } = generalStore;
 
   let navigate = useNavigate();
 
@@ -42,8 +41,8 @@ const RequestTable = () => {
         : lastViewedFrom.from === "requests"
         ? undefined
         : lastViewedFrom.code;
-      setFilter({ ...filter, clave: defaultCode ?? filter.clave });
-      await getRequests({ ...filter, clave: defaultCode ?? filter.clave });
+      setGeneralFilter({ ...generalFilter, buscar: defaultCode ?? generalFilter.buscar, tipoFecha: 1 });
+      await getRequests({ ...generalFilter, buscar: defaultCode ?? generalFilter.buscar, tipoFecha: 1 });
     };
 
     readRequests();

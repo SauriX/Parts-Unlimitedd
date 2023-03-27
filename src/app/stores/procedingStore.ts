@@ -4,19 +4,13 @@ import messages from "../util/messages";
 import responses from "../util/responses";
 import { getErrors } from "../util/utils";
 import history from "../util/history";
-import {
-  IProceedingForm,
-  IProceedingList,
-  ISearchMedical,
-  SearchMedicalFormValues,
-} from "../models/Proceeding";
+import { IProceedingForm, IProceedingList } from "../models/Proceeding";
 import Proceding from "../api/proceding";
 import { ITaxData } from "../models/taxdata";
-// import { IQuotationList, ISearchQuotation, SearchQuotationValues } from "../models/quotation";
 import quotation from "../api/quotation";
-import moment from "moment";
 import Study from "../api/study";
 import { IQuotationFilter, IQuotationInfo } from "../models/quotation";
+import { IGeneralForm } from "../models/general";
 
 export default class ProcedingStore {
   constructor() {
@@ -25,7 +19,6 @@ export default class ProcedingStore {
 
   expedientes: IProceedingList[] = [];
   expediente?: IProceedingForm;
-  search: ISearchMedical = new SearchMedicalFormValues();
   tax: ITaxData[] = [];
   searchQ: any;
   quotatios: IQuotationInfo[] = [];
@@ -74,10 +67,6 @@ export default class ProcedingStore {
     this.tax = [];
   };
 
-  setSearch = (value: ISearchMedical) => {
-    this.search = value;
-  };
-
   getAll = async (search: string = "all") => {
     try {
       const parameters = await Proceding.getAll(search);
@@ -88,9 +77,9 @@ export default class ProcedingStore {
     }
   };
 
-  getnow = async (search: ISearchMedical) => {
+  getnow = async (filter: IGeneralForm) => {
     try {
-      const parameters = await Proceding.getNow(search);
+      const parameters = await Proceding.getNow(filter);
       this.expedientes = parameters;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -220,7 +209,7 @@ export default class ProcedingStore {
     }
   };
 
-  exportList = async (search: ISearchMedical) => {
+  exportList = async (search: IGeneralForm) => {
     try {
       await Proceding.exportList(search);
       return true;

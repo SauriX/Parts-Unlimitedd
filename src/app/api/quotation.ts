@@ -1,6 +1,6 @@
+import { IGeneralForm } from "../models/general";
 import {
   IQuotation,
-  IQuotationFilter,
   IQuotationGeneral,
   IQuotationInfo,
   IQuotationStudyUpdate,
@@ -9,7 +9,7 @@ import {
 import requests from "./agent";
 
 const Quotation = {
-  getQuotations: (filter: IQuotationFilter): Promise<IQuotationInfo[]> =>
+  getQuotations: (filter: IGeneralForm): Promise<IQuotationInfo[]> =>
     requests.post("quotation/filter", filter),
   getActive: (): Promise<IQuotationInfo[]> => requests.get("quotation/active"),
   getById: (quotationId: string): Promise<IQuotation> =>

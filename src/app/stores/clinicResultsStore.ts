@@ -6,9 +6,7 @@ import history from "../util/history";
 import { getErrors } from "../util/utils";
 import moment from "moment";
 import {
-  ClinicResultsFormValues,
   IClinicResultCaptureForm,
-  IGeneralForm,
   IClinicResultList,
   IClinicStudy,
   IPrintTypes,
@@ -16,6 +14,7 @@ import {
 import Request from "../api/request";
 import messages from "../util/messages";
 import { v4 as uuidv4 } from "uuid";
+import { IGeneralForm } from "../models/general";
 
 export default class ClinicResultsStores {
   constructor() {
@@ -25,7 +24,6 @@ export default class ClinicResultsStores {
   scopes?: IScopes;
   data: IClinicResultList[] = [];
   studies: IClinicStudy[] = [];
-  formValues: IGeneralForm = new ClinicResultsFormValues();
   loadingStudies: boolean = false;
   clear: boolean = false;
   studiesSelectedToPrint: IPrintTypes[] = [];
@@ -94,32 +92,6 @@ export default class ClinicResultsStores {
     this.studiesSelectedToPrint = this.studiesSelectedToPrint.filter(
       (item) => item.id !== estudio.id
     );
-  };
-
-  setFormValues = (newFormValues: IGeneralForm) => {
-    this.formValues = newFormValues;
-  };
-
-  clearFilter = () => {
-    const emptyFilter: IGeneralForm = {
-      sucursalId: [],
-      medicoId: [],
-      compañiaId: [],
-      fecha: [
-        moment(Date.now()).utcOffset(0, true),
-        moment(Date.now()).utcOffset(0, true).add(1, "day"),
-      ],
-      buscar: "",
-      procedencia: [],
-      departamento: [],
-      tipoSolicitud: [],
-      area: [],
-      estatus: [],
-      estudio: [],
-    };
-    this.data = [];
-    this.formValues = emptyFilter;
-    this.clear = !this.clear;
   };
 
   access = async () => {

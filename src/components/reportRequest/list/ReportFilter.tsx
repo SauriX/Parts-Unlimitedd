@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
+import { IGeneralForm } from "../../../app/models/general";
 import { IRequestFilter } from "../../../app/models/request";
 import { IOptions } from "../../../app/models/shared";
 import {
@@ -18,36 +19,39 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const ReportFilter = () => {
-  const { reportStudyStore, optionStore } = useStore();
+  const { reportStudyStore, optionStore, generalStore, profileStore } = useStore();
   const {
     branchCityOptions,
     medicOptions,
     companyOptions,
-    departmentOptions,
+    areaByDeparmentOptions,
+    getAreaByDeparmentOptions,
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
-    getDepartmentOptions,
   } = optionStore;
-  const { filter, setFilter, getRequests } = reportStudyStore;
+  const { profile } = profileStore;
+  const { getRequests } = reportStudyStore;
+  const { generalFilter, setGeneralFilter } = generalStore;
 
-  const [form] = useForm<IRequestFilter>();
-
+  const [form] = useForm();
   const selectedCity = Form.useWatch("ciudad", form);
-
+  const selectedDepartment = Form.useWatch("departamento", form);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
+  const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
+  const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
     getBranchCityOptions();
     getMedicOptions();
     getCompanyOptions();
-    getDepartmentOptions();
+    getAreaByDeparmentOptions();
   }, [
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
-    getDepartmentOptions,
+    getAreaByDeparmentOptions,
   ]);
 
   useEffect(() => {
@@ -55,39 +59,60 @@ const ReportFilter = () => {
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
+
   useEffect(() => {
-    form.setFieldsValue(filter);
-  }, [form, filter]);
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value == profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
+      }
+      form.setFieldValue("sucursalId", [profileBranch]);
+    }
+  }, [branchCityOptions, form, profile]);
+  
   useEffect(() => {
     if (selectedCity != undefined && selectedCity != null) {
-      var branhces = branchCityOptions.filter((x) =>
+      var branches = branchCityOptions.filter((x) =>
         selectedCity.includes(x.value.toString())
       );
-      var options = branhces.flatMap((x) =>
+      var options = branches.flatMap((x) =>
         x.options == undefined ? [] : x.options
       );
       setBranchOptions(options);
     }
-    form.setFieldValue("sucursales", []);
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
-    var filtered = filter;
+    form.setFieldsValue(generalFilter);
+  }, [generalFilter, form]);
+
+  useEffect(() => {
+    setDepartmentOptions(
+      areaByDeparmentOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [areaByDeparmentOptions]);
+
+  useEffect(() => {
+    setAreaOptions(
+      areaByDeparmentOptions.find((x) => x.value === selectedDepartment)
+        ?.options ?? []
+    );
+  }, [areaByDeparmentOptions, form, selectedDepartment]);
+
+  useEffect(() => {
+    let filtered = generalFilter;
     filtered.tipoFecha = 2;
     getRequests(filtered);
   }, [getRequests]);
-  useEffect(() => {
-    form.setFieldsValue(filter);
-  }, [form]);
-  const onFinish = (values: IRequestFilter) => {
+  
+  const onFinish = (values: IGeneralForm) => {
     const filtered = { ...values };
     filtered.tipoFecha = 2;
-    if (filtered.fechas && filtered.fechas.length > 1) {
-      filtered.fechaInicial = filtered.fechas[0].utcOffset(0, true);
-      filtered.fechaFinal = filtered.fechas[1].utcOffset(0, true);
-    }
 
-    setFilter(filtered);
+    setGeneralFilter(filtered);
     getRequests(filtered);
   };
 
@@ -97,7 +122,7 @@ const ReportFilter = () => {
         {...formItemLayout}
         form={form}
         onFinish={onFinish}
-        initialValues={{ tipoFecha: 1, fechas: [moment(), moment()] }}
+        initialValues={{ tipoFecha: 1, fecha: [moment(), moment()] }}
         size="small"
       >
         <Row gutter={[0, 12]}>
@@ -106,14 +131,14 @@ const ReportFilter = () => {
           </Col>
           <Col span={8}>
             <TextInput
-              formProps={{ name: "clave", label: "Clave/Paciente" }}
+              formProps={{ name: "buscar", label: "Clave/Paciente" }}
               autoFocus={true}
             />
           </Col>
           <Col span={8}>
             <SelectInput
               form={form}
-              formProps={{ name: "procedencias", label: "Procedencia" }}
+              formProps={{ name: "procedencia", label: "Procedencia" }}
               multiple
               options={originOptions}
             />
@@ -121,7 +146,7 @@ const ReportFilter = () => {
           <Col span={8}>
             <SelectInput
               form={form}
-              formProps={{ name: "urgencias", label: "Tipo solicitud" }}
+              formProps={{ name: "tipoSolicitud", label: "Tipo solicitud" }}
               multiple
               options={urgencyOptions}
             />
@@ -137,7 +162,7 @@ const ReportFilter = () => {
           <Col span={8}>
             <SelectInput
               form={form}
-              formProps={{ name: "departamentos", label: "Departamento" }}
+              formProps={{ name: "departamento", label: "Departamento" }}
               multiple
               options={departmentOptions}
             />
@@ -162,7 +187,7 @@ const ReportFilter = () => {
                     <SelectInput
                       form={form}
                       formProps={{
-                        name: "sucursales",
+                        name: "sucursalId",
                         label: "Sucursales",
                         noStyle: true,
                       }}
@@ -177,7 +202,7 @@ const ReportFilter = () => {
           <Col span={8}>
             <SelectInput
               form={form}
-              formProps={{ name: "compañias", label: "Compañia" }}
+              formProps={{ name: "compañiaId", label: "Compañia" }}
               multiple
               options={companyOptions}
             />
@@ -185,7 +210,7 @@ const ReportFilter = () => {
           <Col span={8}>
             <SelectInput
               form={form}
-              formProps={{ name: "medicos", label: "Médico" }}
+              formProps={{ name: "medicoId", label: "Médico" }}
               multiple
               options={medicOptions}
             />

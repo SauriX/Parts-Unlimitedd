@@ -1,7 +1,7 @@
 import { makeAutoObservable, reaction } from "mobx";
 import ReportStudy from "../api/reportStudy";
+import { IGeneralForm } from "../models/general";
 import { IReportRequestInfo } from "../models/ReportRequest";
-import { IRequestFilter, RequestFilterForm } from "../models/request";
 import alerts from "../util/alerts";
 import { getErrors } from "../util/utils";
 
@@ -10,17 +10,11 @@ export default class ReportStudyStore {
     makeAutoObservable(this);
   }
 
-  filter: IRequestFilter = new RequestFilterForm();
-
-  requests: IReportRequestInfo[] = [];
-
+  requests: IReportRequestInfo[] = []
   loadingRequests: boolean = false;
   lastViewedFrom?: { from: "requests" | "results"; code: string };
 
-  setFilter = (filter: IRequestFilter) => {
-    this.filter = { ...filter };
-  };
-  getRequests = async (filter: IRequestFilter) => {
+  getRequests = async (filter: IGeneralForm) => {
     try {
       this.loadingRequests = true;
       const requests = await ReportStudy.getRequests(filter);
@@ -33,23 +27,19 @@ export default class ReportStudyStore {
     }
   };
 
-   
-  printPdf = async (filter: IRequestFilter) => {
+  printPdf = async (filter: IGeneralForm) => {
     try {
-  
       await ReportStudy.printPdf(filter);
     } catch (error: any) {
       alerts.warning(getErrors(error));
-    } 
+    }
   };
 
-  downloadList = async (filter: IRequestFilter) => {
+  downloadList = async (filter: IGeneralForm) => {
     try {
-  
       await ReportStudy.downloadList(filter);
     } catch (error: any) {
       alerts.warning(getErrors(error));
-    } 
+    }
   };
-
 }
