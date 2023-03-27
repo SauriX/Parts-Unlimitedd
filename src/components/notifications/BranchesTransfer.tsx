@@ -9,7 +9,6 @@ import {
 } from "../../app/models/user";
 import {
   convertToTreeDataBranch,
-  filterTree,
   onTreeSearch,
   onTreeSelectChangeBranch,
 } from "./utils";
@@ -17,21 +16,19 @@ import { useSearchParams } from "react-router-dom";
 import { DataNode } from "antd/lib/tree";
 import { useStore } from "../../app/stores/store";
 import IconSelector from "../../app/common/icons/IconSelector";
-import { toJS } from "mobx";
-import { TransferDirection } from "antd/lib/transfer";
 
 type BranchesPermissionsTypes = {
   id: any;
   sucursales: string[];
   sucursalesNotificacion: string[];
-  setSucursales: React.Dispatch<React.SetStateAction<string[]>>
+  setSucursales: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 const BranchesTransfer = ({
   id,
   sucursales,
   sucursalesNotificacion,
-  setSucursales
+  setSucursales,
 }: BranchesPermissionsTypes) => {
   const { optionStore, userStore } = useStore();
   const { setSucursalesId } = userStore;
@@ -48,19 +45,16 @@ const BranchesTransfer = ({
 
   const [targetKeys, setTargetKeys] = useState<string[]>([]);
 
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   let user: IUserForm = new UserFormValues();
-
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const [disabled, setDisabled] = useState(true);
-
-  const [searchParams, setSearchParams] = useSearchParams();
-
+  const [searchParams] = useSearchParams();
   const [values, setValues] = useState<any[]>([]);
-
   const [treeInfo, setTreeInfo] = useState<any[]>([]);
+
   useEffect(() => {
-    if ( sucursalesNotificacion && id) {
-      let sucursalesConjunto = [ ...sucursalesNotificacion];
+    if (sucursalesNotificacion && id) {
+      let sucursalesConjunto = [...sucursalesNotificacion];
 
       sucursalesConjunto = sucursalesConjunto.filter(
         (item, index) => sucursalesConjunto.indexOf(item) === index
@@ -81,7 +75,6 @@ const BranchesTransfer = ({
   );
 
   useEffect(() => {
-    console.log("target", toJS(targetKeys));
     setSucursalesId(targetKeys);
   }, [targetKeys]);
   useEffect(() => {
@@ -97,14 +90,8 @@ const BranchesTransfer = ({
       }))
     );
   }, [branchCityOptions]);
+  useEffect(() => {}, [permissionsAvailableFiltered]);
   useEffect(() => {
-    console.log("availablefiltered", toJS(permissionsAvailableFiltered));
-    console.log("added", toJS(permissionsAdded));
-    console.log("available", toJS(permissionsAvailable));
-    console.log("addefiltered", toJS(permissionsAddedFiltered));
-  }, [permissionsAvailableFiltered]);
-  useEffect(() => {
-    // transform(values ?? []);
     transform(
       branchCityOptions.map((x) => ({
         title: "" + x.value,
@@ -167,9 +154,7 @@ const BranchesTransfer = ({
     setTargetKeys(nextTargetKeys.sort((a, b) => a.length - b.length));
     setSucursales(nextTargetKeys.sort((a, b) => a.length - b.length));
   };
-  useEffect(() => {
-    console.log("tagetKeys", toJS(targetKeys));
-  }, [targetKeys]);
+  useEffect(() => {}, [targetKeys]);
   const filterOption = (inputValue: string, option: IUserPermission) => {
     return (
       option.menu.toLowerCase().indexOf(inputValue.toLowerCase()) > -1 ||
@@ -205,9 +190,7 @@ const BranchesTransfer = ({
       ...children.map((y) => y.key.toString()),
     ]);
   };
-  useEffect(() => {
-    console.log("id", id);
-  }, [id]);
+  useEffect(() => {}, [id]);
   useEffect(() => {
     getBranchCityOptions();
   }, []);
@@ -225,7 +208,6 @@ const BranchesTransfer = ({
     setTreeInfo(menusAvailable);
     // setPermissionsAddedFiltered(menusAvailable);
     setPermissionsAvailableFiltered(menusAvailable);
-    console.log("tree", menusAvailable);
   }, [branchCityOptions]);
   return (
     <>

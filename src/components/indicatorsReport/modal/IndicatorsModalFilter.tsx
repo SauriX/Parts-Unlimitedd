@@ -34,6 +34,7 @@ import { useNavigate } from "react-router-dom";
 import { UploadOutlined } from "@ant-design/icons";
 import { UploadChangeParam } from "antd/lib/upload";
 import alerts from "../../../app/util/alerts";
+import DateInput from "../../../app/common/form/proposal/DateInput";
 
 type ModalProps = {
   modalTab: string;
@@ -148,10 +149,7 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
         form={form}
         name="indicators"
         initialValues={{
-          fecha: [
-            moment(Date.now()).utcOffset(0, true),
-            moment(Date.now()).utcOffset(0, true),
-          ],
+          mensual: moment(Date.now()).utcOffset(0, true),
         }}
         onFinish={onFinish}
       >
@@ -189,12 +187,21 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
             </Form.Item>
           </Col>
           <Col span={10}>
-            <DateRangeInput
-              formProps={{ label: "Fecha", name: "fecha" }}
-              pickerType="month"
-              required={true}
-              disableAfterDates
-            />
+            {modalTab === "service" ? (
+              <DateInput
+                formProps={{ label: "Fecha", name: "mensual" }}
+                pickerType="month"
+                required={true}
+                disableAfterDates
+              />
+            ) : (
+              <DateRangeInput
+                formProps={{ label: "Fecha", name: "fecha" }}
+                pickerType="month"
+                required={true}
+                disableAfterDates
+              />
+            )}
           </Col>
           <Col span={4} style={{ textAlign: "right" }}>
             <Button key="new" type="primary" htmlType="submit">

@@ -35,7 +35,6 @@ const RequestDeliveryHistory = () => {
             form={form}
             name="clinicResults"
             onFinish={async (newFormValues: any) => {
-              console.log("nueva nota", newFormValues);
               const nota = {
                 ...newFormValues,
                 solicitudId: request?.solicitudId!,

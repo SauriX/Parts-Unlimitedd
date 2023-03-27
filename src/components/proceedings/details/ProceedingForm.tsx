@@ -403,7 +403,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
 
       if (success) {
         goBack(false);
-        console.log(isUpdated);
         if (!isUpdated) {
           navigate(
             `/${views.proceeding}/${record}?${searchParams}&mode=readonly`

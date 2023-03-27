@@ -21,13 +21,10 @@ const IndicationHeader: FC<IndicationsHeaderProps> = ({ handlePrint }) => {
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  console.log("Header");
-
   const download = () => {
     exportList(searchParams.get("search") ?? "all");
   };
 
-  console.log("Header");
   return (
     <PageHeader
       ghost={false}

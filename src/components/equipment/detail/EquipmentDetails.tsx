@@ -37,7 +37,6 @@ const EquipmentDetail = () => {
   const equipmentId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
 
   useEffect(() => {
-    console.log(equipmentId);
     if (equipmentId === undefined) {
       navigate("/notFound");
     }

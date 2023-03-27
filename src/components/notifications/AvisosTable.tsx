@@ -126,7 +126,7 @@ const AvisosTable = () => {
     {
       key: "titulo",
       dataIndex: "titulo",
-      title: "Titulo",
+      title: "Título",
       align: "center",
       width: 220,
     },

@@ -31,7 +31,6 @@ export default class PackStore {
 
   create = async (reagent: IPackForm) => {
     try {
-        console.log("here");
       await Pack.create(reagent);
       alerts.success(messages.created);
       return true;
@@ -53,9 +52,7 @@ export default class PackStore {
 
   getAll = async (search: string="all") => {
     try {
-      console.log(search);
       const roles= await Pack.getAll(search);
-      console.log(roles);
       this.packs= roles;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -67,8 +64,6 @@ export default class PackStore {
         
         const roles= await Study.getAll("all");
         const activos = roles.filter(x => x.activo);
-        console.log(roles,"studies");
-        console.log(roles);
         var studies= activos.map((x) => {
             let data:IPackEstudioList = {
                 id: x.id,
@@ -81,8 +76,6 @@ export default class PackStore {
             return data;});
             this.studies=studies;
             return studies
-            console.log("estudios");
-            console.log(this.studies);
       } catch (error: any) {
         alerts.warning(getErrors(error));
         this.packs = [];
@@ -92,7 +85,6 @@ export default class PackStore {
    
     try {
       const rol = await Pack.getById(id);
-      console.log(rol);
       this.pack = rol;
       return rol;
     } catch (error: any) {

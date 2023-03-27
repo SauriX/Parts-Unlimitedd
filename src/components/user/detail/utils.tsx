@@ -31,7 +31,6 @@ export const convertToTreeDataBranch = (
 
     permissions.forEach((node: TreeData) => {
       let copy = { ...node };
-      // copy.children = copy.children?.filter((x) => targetKeys.includes(x.key));
       let childrenSelected = copy.children?.filter((x) =>
         targetKeys.includes(x.key)
       );

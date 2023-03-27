@@ -9,7 +9,7 @@ import {
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../../app/stores/store";
 import TextArea from "antd/lib/input/TextArea";
-import alerts from "../../../../app/util/alerts";
+
 type Props = {
   idTipeVAlue: string;
   parameter: IParameterForm;
@@ -18,18 +18,19 @@ type UrlParams = {
   id: string | "";
 };
 const ReferenciaParrafo: FC<Props> = ({ idTipeVAlue, parameter }) => {
-  const [lista, setLista] = useState<any[]>([]);
+  const [lista] = useState<any[]>([]);
   const [formValue] = Form.useForm<ItipoValorForm[]>();
   const [disabled, setDisabled] = useState(true);
   let { id } = useParams<UrlParams>();
   const { parameterStore } = useStore();
   const { addvalues, getAllvalues, update } = parameterStore;
-  const [valuesValor, setValuesValor] = useState<ItipoValorForm[]>([]);
+
+  let navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
   useEffect(() => {
     const readuser = async (idUser: string) => {
       let value = await getAllvalues(idUser, idTipeVAlue);
-      console.log("form");
-      console.log(value);
 
       value?.map((item) => lista.push(item));
       formValue.setFieldsValue(value!);
@@ -41,12 +42,7 @@ const ReferenciaParrafo: FC<Props> = ({ idTipeVAlue, parameter }) => {
       readuser(id);
     }
   }, [formValue, getAllvalues, id]);
-
-  let navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
   const onFinish = async (values: any) => {
-    console.log(values);
-
     const val: ItipoValorForm[] = values.value.map((x: ItipoValorForm) => {
       let data: ItipoValorForm = {
         nombre: idTipeVAlue,
@@ -118,7 +114,7 @@ const ReferenciaParrafo: FC<Props> = ({ idTipeVAlue, parameter }) => {
                       rows={5}
                       autoSize
                       placeholder={"Párrafo"}
-                      style={{width: 500}}
+                      style={{ width: 500 }}
                     />
                   </Form.Item>
                   <MinusCircleOutlined onClick={() => remove(name)} />

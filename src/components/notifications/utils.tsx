@@ -1,4 +1,3 @@
-import { toJS } from "mobx";
 import IconSelector from "../../app/common/icons/IconSelector";
 import { TreeData } from "../../app/models/shared";
 import { IUserForm, IUserPermission } from "../../app/models/user";
@@ -6,10 +5,7 @@ import { IUserForm, IUserPermission } from "../../app/models/user";
 export const filterTree = (keys: any, halfKeys: any, rootNode: any) =>
   rootNode
     ? rootNode
-        .filter(
-          // (node: any) => keys.includes(node.key) || halfKeys.includes(node.key)
-          (node: any) => keys.includes(node.key)
-        )
+        .filter((node: any) => keys.includes(node.key))
         .map((nodeRoot: any) => ({
           ...nodeRoot,
           children: filterTree(keys, halfKeys, nodeRoot.children),
@@ -31,7 +27,6 @@ export const convertToTreeDataBranch = (
 
     permissions.forEach((node: TreeData) => {
       let copy = { ...node };
-      // copy.children = copy.children?.filter((x) => targetKeys.includes(x.key));
       let childrenSelected = copy.children?.filter((x) =>
         targetKeys.includes(x.key)
       );

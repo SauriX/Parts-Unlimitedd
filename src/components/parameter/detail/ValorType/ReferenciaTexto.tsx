@@ -9,7 +9,7 @@ import {
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../../app/stores/store";
 import TextArea from "antd/lib/input/TextArea";
-import alerts from "../../../../app/util/alerts";
+
 type Props = {
   idTipeVAlue: string;
   parameter: IParameterForm;
@@ -18,18 +18,18 @@ type UrlParams = {
   id: string | "";
 };
 const ReferenciaTexto: FC<Props> = ({ idTipeVAlue, parameter }) => {
-  const [lista, setLista] = useState<any[]>([]);
+  const [lista,] = useState<any[]>([]);
   const [disabled, setDisabled] = useState(true);
   const [formValue] = Form.useForm<ItipoValorForm[]>();
   let { id } = useParams<UrlParams>();
   const { parameterStore } = useStore();
   const { addvalues, getAllvalues, update } = parameterStore;
-  const [valuesValor, setValuesValor] = useState<ItipoValorForm[]>([]);
+  let navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
   useEffect(() => {
     const readuser = async (idUser: string) => {
       let value = await getAllvalues(idUser, idTipeVAlue);
-      console.log("form");
-      console.log(value);
 
       value?.map((item) => lista.push(item));
       formValue.setFieldsValue(value!);
@@ -42,11 +42,7 @@ const ReferenciaTexto: FC<Props> = ({ idTipeVAlue, parameter }) => {
     }
   }, [formValue, getAllvalues, id]);
 
-  let navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
   const onFinish = async (values: any) => {
-    console.log(values);
-
     const val: ItipoValorForm[] = values.value.map((x: ItipoValorForm) => {
       let data: ItipoValorForm = {
         nombre: idTipeVAlue,
@@ -59,13 +55,13 @@ const ReferenciaTexto: FC<Props> = ({ idTipeVAlue, parameter }) => {
       return data;
     });
 
-      var succes = await addvalues(val, id!);
+    var succes = await addvalues(val, id!);
+    if (succes) {
+      succes = await update(parameter);
       if (succes) {
-        succes = await update(parameter);
-        if (succes) {
-          navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
-        }
+        navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
       }
+    }
   };
   return (
     <div>
@@ -118,7 +114,7 @@ const ReferenciaTexto: FC<Props> = ({ idTipeVAlue, parameter }) => {
                       rows={5}
                       autoSize
                       placeholder={"Texto"}
-                      style={{width: 500}}
+                      style={{ width: 500 }}
                     />
                   </Form.Item>
                   <MinusCircleOutlined onClick={() => remove(name)} />

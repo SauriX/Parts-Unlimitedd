@@ -207,7 +207,6 @@ export const isEqualObject = <T extends Record<string, any>>(
 };
 
 export const consoleColor = (msg: string, color: string) => {
-  console.log(`%c${msg}`, `color: ${color}`);
 };
 
 export const formItemLayout = {

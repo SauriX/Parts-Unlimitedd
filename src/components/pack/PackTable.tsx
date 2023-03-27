@@ -37,8 +37,6 @@ const PackTable: FC<ReagentTableProps> = ({ componentRef, printing }) => {
     searchedColumn: "",
   });
 
-  console.log("Table");
-
   useEffect(() => {
     const readReagents = async () => {
       setLoading(true);

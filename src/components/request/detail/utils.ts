@@ -13,7 +13,6 @@ export const submitGeneral = async (
     return true;
   } catch (error: any) {
     if (error && error.hasOwnProperty("errorFields")) {
-      console.log(error);
       alerts.warning("Por favor complete los campos correctamente");
       error.errorFields.forEach((err: any) => {
         alerts.warning(err.errors.join(", "));

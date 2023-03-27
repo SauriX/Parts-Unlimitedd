@@ -93,10 +93,8 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     const loyal = await getByDate(moment().toDate());
     const contieneMedico = loyal?.precioLista.some((l) => l === "Medicos");
     const expediente = await getById(request?.expedienteId!);
-    console.log("expediente", toJS(expediente));
     const fechaCreaccionSolicitud = moment(request?.registro);
     const fechaActivacionMonedero = moment(expediente?.fechaActivacionMonedero);
-    console.log("#fechas", fechaActivacionMonedero, fechaCreaccionSolicitud);
     if (
       expediente?.hasWallet &&
       !studyFilter.compañiaId &&

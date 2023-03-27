@@ -290,7 +290,6 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
   return (
     <>
       <Divider />
-
       <Row justify="center">
         <Col>
           <Checkbox.Group

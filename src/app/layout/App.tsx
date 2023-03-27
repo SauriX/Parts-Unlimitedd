@@ -93,10 +93,12 @@ import InvoiceCatalog from "../../views/InvoiceCatalog";
 import ReportStudy from "../../views/ReportStudy";
 import { useKeyPress } from "../hooks/useKeyPress";
 import CreditMonitoring from "../../views/CreditMonitoring";
+import { INotificationFilter } from "../models/notifications";
 
 function App() {
-  const { profileStore, configurationStore } = useStore();
-  const { token, getProfile, getMenu } = profileStore;
+  const { profileStore, configurationStore,notificationStore } = useStore();
+  const { token, getProfile, getMenu,profile } = profileStore;
+  const { getNotification } = notificationStore;
   const { getGeneral } = configurationStore;
 
   const location = useLocation();
@@ -119,7 +121,18 @@ function App() {
       setLoading(false);
     }
   }, [token, setLoading, loadUser]);
-
+useEffect(()=>{
+  const readNotifications = async()=>{
+    var filter:INotificationFilter={
+        sucursalId:profile?.sucursal,
+        rolId:profile?.rol
+    }
+    await getNotification(filter);
+  }
+  if(profile){
+    readNotifications();
+  }
+},[getNotification,profile]);
   useEffect(() => {
     if (!lastLocation) {
       setLastLocation(location.pathname);

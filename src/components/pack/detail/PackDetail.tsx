@@ -17,10 +17,9 @@ const PackDetail = () => {
   const [msj, setMsj] = useState<String>();
   const componentRef = useRef<any>();
   const { packStore } = useStore();
-  const { getById,exportForm } = packStore;
+  const { getById, exportForm } = packStore;
   let { id } = useParams<UrlParams>();
-   
- 
+
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     onBeforeGetContent: () => {
@@ -36,30 +35,31 @@ const PackDetail = () => {
       setLoading(false);
     },
   });
-  useEffect( () => {
+  useEffect(() => {
     const readuser = async (idUser: number) => {
-       await getById(idUser);
+      await getById(idUser);
     };
     if (id) {
       readuser(Number(id));
     }
-  }, [  getById,id  ]);
-  const  handleDownload = async() => {
-    
-    console.log("download");
+  }, [getById, id]);
+  const handleDownload = async () => {
     setLoading(true);
     setMsj("Descargando");
     const succes = await exportForm(Number(id)!);
-    
-     if(succes){
+
+    if (succes) {
       setLoading(false);
-    } 
+    }
   };
   return (
     <Fragment>
-    <PackFormHeader  handlePrint={handlePrint} handleDownload={handleDownload}/>
+      <PackFormHeader
+        handlePrint={handlePrint}
+        handleDownload={handleDownload}
+      />
       <Divider className="header-divider" />
-    <PackForm  componentRef={componentRef} load={loading}  msj={msj!}/>
+      <PackForm componentRef={componentRef} load={loading} msj={msj!} />
     </Fragment>
   );
 };

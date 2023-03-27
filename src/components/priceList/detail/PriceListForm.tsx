@@ -72,8 +72,12 @@ const PriceListForm: FC<PriceListFormProps> = ({
     studies,
     sucMedCom,
   } = priceListStore;
-  const { getDepartmentOptions, departmentOptions, getAreaOptions: getareaOptions, areaOptions: areas } =
-    optionStore;
+  const {
+    getDepartmentOptions,
+    departmentOptions,
+    getAreaOptions: getareaOptions,
+    areaOptions: areas,
+  } = optionStore;
   const { openModal, closeModal } = modalStore;
   const [areaId, setAreaId] = useState<number>();
   const navigate = useNavigate();
@@ -690,8 +694,6 @@ const PriceListForm: FC<PriceListFormProps> = ({
             var active = false;
             if (value1.target.checked) {
               active = true;
-              console.log(value1.target.checked);
-              // setActiveStudy(active)
             }
 
             setStudy(active, item, item.paqute!, false, values!);
@@ -1124,7 +1126,6 @@ const PriceListForm: FC<PriceListFormProps> = ({
                 columns={
                   printing ? columnsEstudiosP.slice(0, 4) : columnsEstudiosP
                 }
-                
                 dataSource={[...(values.table?.filter((x) => x.paqute) ?? [])]}
                 pagination={false}
                 scroll={{
