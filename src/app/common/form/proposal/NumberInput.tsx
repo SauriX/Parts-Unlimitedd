@@ -55,7 +55,6 @@ const NumberInput = ({
 
   useEffect(() => {
     const observer = new ResizeObserver((entries) => {
-      console.log(entries[0]);
       setPaddingRight(entries[0].target.clientWidth);
     });
 

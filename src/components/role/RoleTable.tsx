@@ -1,21 +1,17 @@
-import { Button, Divider, PageHeader, Spin, Table, Form, Row, Col, Modal } from "antd";
-import React, { FC, Fragment, useEffect, useRef, useState } from "react";
+import { Button, Divider, PageHeader, Table } from "antd";
+import React, { FC, Fragment, useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
   IColumns,
   ISearch,
 } from "../../app/common/table/utils";
-import { formItemLayout } from "../../app/util/utils";
-import { IUserList, IChangePasswordForm } from "../../app/models/user";
 import { IRole } from "../../app/models/role";
 import useWindowDimensions, { resizeWidth } from "../../app/util/window";
-import { EditOutlined, LockOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
 import IconButton from "../../app/common/button/IconButton";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
-import { observer } from "mobx-react-lite";
-import PasswordInput from "../../app/common/form/PasswordInput";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 type RoleTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -32,7 +28,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
     searchedText: "",
     searchedColumn: "",
   });
-  console.log("Table");
+
   useEffect(() => {
     const readUsers = async () => {
       setLoading(true);
@@ -55,7 +51,11 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/roles/${role.id}?mode=ReadOnly&search=${searchParams.get("search") ?? "all"}`);
+            navigate(
+              `/roles/${role.id}?mode=ReadOnly&search=${
+                searchParams.get("search") ?? "all"
+              }`
+            );
           }}
         >
           {value}
@@ -84,7 +84,9 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
           title="Editar Rol"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/roles/${rol.id}?search=${searchParams.get("search") ?? "all"}`);
+            navigate(
+              `/roles/${rol.id}?search=${searchParams.get("search") ?? "all"}`
+            );
           }}
         />
       ),
@@ -114,7 +116,7 @@ const RoleTable: FC<RoleTableProps> = ({ componentRef, printing }) => {
   return (
     <Fragment>
       <Table<IRole>
-        loading={loading ||printing}
+        loading={loading || printing}
         size="small"
         rowKey={(record) => record.id}
         columns={columns}

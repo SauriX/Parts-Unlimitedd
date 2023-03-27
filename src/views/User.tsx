@@ -14,7 +14,6 @@ const User = () => {
   const [accessing, setAccessing] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const handleDownload = async () => {
-    console.log("aqui");
     setPrinting(true);
     var succes = await exportList(searchParams.get("search") ?? "all");
     // if(succes){

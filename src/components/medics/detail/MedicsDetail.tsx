@@ -1,6 +1,6 @@
 import { Divider } from "antd";
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import MedicsForm from "./MedicsForm";
 import MedicsFormHeader from "./MedicsFormHeader";
@@ -11,8 +11,6 @@ type UrlParams = {
 
 const MedicsDetail = () => {
   let navigate = useNavigate();
-
-  // const [searchParams, setSearchParams] = useSearchParams();
 
   const [printing, setPrinting] = useState(false);
 
@@ -33,20 +31,13 @@ const MedicsDetail = () => {
   });
 
   const { id } = useParams<UrlParams>();
-  const medicsId = !id ? undefined  : (id);
+  const medicsId = !id ? undefined : id;
 
-  useEffect(() => {
-    //console.log(medicsId);
-    // if (medicsId === undefined) {
-    //   navigate("/notFound");
-    // }
-  }, [navigate, medicsId]);
-
-  //if (medicsId === undefined) return null;
+  useEffect(() => {}, [navigate, medicsId]);
 
   return (
     <Fragment>
-       <MedicsFormHeader id={medicsId!} handlePrint={handlePrint} /> 
+      <MedicsFormHeader id={medicsId!} handlePrint={handlePrint} />
       <Divider className="header-divider" />
       <MedicsForm
         id={medicsId!}

@@ -51,7 +51,6 @@ export default class EquipmentStore {
       const equipments = await Equipment.getById(id);
       return equipments;
     } catch (error) {
-      console.log(error);
       alerts.warning(getErrors(error));
     }
   };

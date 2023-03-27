@@ -7,17 +7,16 @@ import MassSearchHeader from "../components/massResultSearch/MassSearchHeader";
 import MassSearchTable from "../components/massResultSearch/MassSearchTable";
 
 const MassResultSearch = () => {
-  const { massResultSearchStore } = useStore();
-  const { results, area, printPdf, search } = massResultSearchStore;
+  const { massResultSearchStore, generalStore } = useStore();
+  const { results, area, printPdf } = massResultSearchStore;
+  const { generalFilter } = generalStore;
   const [loading, setLoading] = useState(false);
-  
-  useEffect(() => {
-    console.log("Area info", area);
-  }, [area]);
+
+  useEffect(() => {}, [area]);
 
   const handleDownload = async () => {
     setLoading(true);
-    await printPdf(search);
+    await printPdf(generalFilter);
     setLoading(false);
   };
 

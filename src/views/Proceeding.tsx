@@ -1,18 +1,15 @@
 import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
-import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
 import ProceedingHeader from "../components/proceedings/ProceedingHeader";
 import ProceedingTable from "../components/proceedings/ProceedingTable";
 
 const Proceeding = () => {
-  const { procedingStore } = useStore();
-  const { /* scopes, access, clearScopes, */ exportList, search } =
-    procedingStore;
-
-  const [searchParams] = useSearchParams();
+  const { procedingStore, generalStore } = useStore();
+  const { exportList } = procedingStore;
+  const { generalFilter } = generalStore;
 
   const [loading, setLoading] = useState(false);
 
@@ -30,36 +27,10 @@ const Proceeding = () => {
 
   const handleDownload = async () => {
     setLoading(true);
-    await exportList(search);
+    await exportList(generalFilter);
     setLoading(false);
   };
 
-  useEffect(
-    () => {
-      const checkAccess = async () => {
-        // await access();
-      };
-
-      checkAccess();
-    },
-    [
-      /* access */
-    ]
-  );
-
-  useEffect(
-    () => {
-      return () => {
-        //clearScopes();
-      };
-    },
-    [
-      /* clearScopes */
-    ]
-  );
-  /* 
-  if (!scopes?.acceder) return null;
- */
   return (
     <Fragment>
       <ProceedingHeader

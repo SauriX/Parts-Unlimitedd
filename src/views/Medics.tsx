@@ -13,8 +13,8 @@ const Medics = () => {
 
   const [printing, setPrinting] = useState(false);
 
-    const componentRef = useRef<any>();
-    const handlePrint = useReactToPrint({
+  const componentRef = useRef<any>();
+  const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     onBeforeGetContent: () => {
       setPrinting(true);
@@ -31,8 +31,6 @@ const Medics = () => {
 
     checkAccess();
   }, [access]);
-
-  console.log("Render");
 
   useEffect(() => {
     return () => {

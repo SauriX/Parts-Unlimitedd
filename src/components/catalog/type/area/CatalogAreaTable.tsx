@@ -39,7 +39,6 @@ const CatalogAreaTable: FC<CatalogAreaTableProps> = ({ componentRef, printing })
     searchedColumn: "",
   });
 
-  console.log("Table");
   
   const columns: IColumns<ICatalogList> = [
     {

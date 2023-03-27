@@ -25,7 +25,6 @@ const ValidationTableStudy = ({
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
 
   useEffect(() => {
-    console.log("data", data)
     setExpandedRowKeys(data.map((x) => x.id));
     setOpenRows(true);
   }, [data]);
@@ -55,18 +54,17 @@ const ValidationTableStudy = ({
 
   return (
     <Fragment>
-      {data.length > 0 &&
-        (
-          <div style={{ textAlign: "right", marginBottom: 10 }}>
-            <Button
-              type="primary"
-              onClick={toggleRow}
-              style={{ marginRight: 10 }}
-            >
-              {!openRows ? "Abrir tabla" : "Cerrar tabla"}
-            </Button>
-          </div>
-        )}
+      {data.length > 0 && (
+        <div style={{ textAlign: "right", marginBottom: 10 }}>
+          <Button
+            type="primary"
+            onClick={toggleRow}
+            style={{ marginRight: 10 }}
+          >
+            {!openRows ? "Abrir tabla" : "Cerrar tabla"}
+          </Button>
+        </div>
+      )}
       <Table<Ivalidationlist>
         rowClassName={"row-search"}
         loading={loadingStudies}

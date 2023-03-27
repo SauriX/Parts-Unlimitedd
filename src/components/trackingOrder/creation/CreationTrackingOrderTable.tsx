@@ -49,24 +49,16 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
   const { temperatura, trackingOrder, setEscaneado, setTemperature } =
     trackingOrderStore;
 
-  const [searchParams] = useSearchParams();
-
   let navigate = useNavigate();
 
   const { width: windowWidth } = useWindowDimensions();
 
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-
-  // console.log("Table");
-
-  // useEffect(() => {
-  //   console.log("estudios", toJS(trackingOrder));
-  // }, [trackingOrder]);
 
   const columns: IColumns<IEstudiosList> = [
     {
@@ -108,9 +100,8 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
         <Button
           type="link"
           onClick={() => {
-            
             navigate(
-              `/${views.request}/${record.estudio?.expedienteId }/${ record.estudio?.solicitudId}` 
+              `/${views.request}/${record.estudio?.expedienteId}/${record.estudio?.solicitudId}`
             );
           }}
         >
@@ -125,9 +116,7 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
       title: "Paciente",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value,record) => (
-        <>{record.estudio?.nombrePaciente}</>)
-      ,
+      render: (value, record) => <>{record.estudio?.nombrePaciente}</>,
     },
     {
       key: "escaneado",
@@ -139,12 +128,7 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
         <Switch
           checked={fullrow.escaneado}
           onChange={(value) => {
-            console.log("escaneado", value, fullrow);
             setEscaneado(value, fullrow.id!);
-
-            //  else {
-            //   alerts.info(messages.confirmations.disable);
-            // }
           }}
         />
       ),
@@ -159,7 +143,11 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
         <Input
           max={100}
           required
-          value={fullrow.estudio?.temperatura ? fullrow.estudio?.temperatura : temperatura}
+          value={
+            fullrow.estudio?.temperatura
+              ? fullrow.estudio?.temperatura
+              : temperatura
+          }
           type={"number"}
           onChange={(newValue) => {
             setTemperature(+newValue.target.value, fullrow.id);

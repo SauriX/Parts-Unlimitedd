@@ -31,7 +31,6 @@ const TimeRangeInput = ({
 
   useEffect(() => {
     const observer = new ResizeObserver((entries) => {
-      console.log(entries[0]);
       const width = entries[0].target.clientWidth;
       setPaddingRight(width === 0 ? 7 : width);
     });

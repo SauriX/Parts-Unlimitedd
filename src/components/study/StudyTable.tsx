@@ -37,14 +37,12 @@ const StudyTable: FC<StudyTableProps> = ({ componentRef, printing }) => {
   let navigate = useNavigate();
   let id = "";
   const { width: windowWidth } = useWindowDimensions();
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-  console.log("Table");
   useEffect(() => {
     const readUsers = async () => {
       setLoading(true);

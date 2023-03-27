@@ -33,7 +33,6 @@ export default class ParameterStore {
 
   getAll = async (search: string = "all") => {
     try {
-      console.log(search);
       const parameters = await Parameter.getAll(search);
       this.parameters = parameters;
     } catch (error: any) {
@@ -43,9 +42,7 @@ export default class ParameterStore {
   };
   getAllvalues = async (search: string, tipo = "") => {
     try {
-      console.log(search);
       const parameters = await Parameter.getAllValues(search, tipo);
-      console.log(parameters);
       return parameters;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -57,7 +54,6 @@ export default class ParameterStore {
       const rol = await Parameter.getById(id);
       rol.tipoValor =
         rol.tipoValor == null ? "Sin valor" : parseInt(rol.tipoValor);
-      console.log(rol);
       this.parameter = rol;
       return rol;
     } catch (error: any) {
@@ -87,8 +83,6 @@ export default class ParameterStore {
 
   create = async (parameter: IParameterForm) => {
     try {
-      console.log(parameter);
-      console.log("here");
       parameter.tipoValor = parameter.tipoValor?.toString();
       await Parameter.create(parameter);
       alerts.success(messages.created);
@@ -127,7 +121,6 @@ export default class ParameterStore {
 
       return true;
     } catch (error: any) {
-      console.log("error values ");
       alerts.warning(getErrors(error));
       return false;
     }
@@ -139,10 +132,8 @@ export default class ParameterStore {
         idParameter: parametroId,
       };
       var success = await Parameter.addValues(tipovalor);
-      console.log(success, "succes");
       return true;
     } catch (error: any) {
-      console.log();
       alerts.warning(getErrors(error));
       return false;
     }

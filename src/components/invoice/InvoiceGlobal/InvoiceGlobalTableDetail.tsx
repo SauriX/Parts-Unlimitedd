@@ -119,7 +119,6 @@ const InvoiceGlobalTable = ({
               shape="circle"
               icon={<DeleteOutlined />}
               onClick={() => {
-                console.log("Cancelar");
                 openModal({
                   title: `Cancelar factura ${fullRow?.serie}-${fullRow?.consecutivo}`,
                   body: (

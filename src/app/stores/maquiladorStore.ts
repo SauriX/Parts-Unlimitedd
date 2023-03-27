@@ -49,7 +49,6 @@ export default class MaquiladorStore {
       const maquilador = await Maquilador.getById(id);
       return maquilador;
     } catch (error) {
-      console.log(error);
       alerts.warning(getErrors(error));
     }
   };

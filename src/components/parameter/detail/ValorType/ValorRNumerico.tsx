@@ -1,21 +1,5 @@
-import {
-  Spin,
-  Form,
-  Row,
-  Col,
-  Transfer,
-  Tooltip,
-  Tree,
-  Tag,
-  Pagination,
-  Button,
-  Divider,
-  Table,
-} from "antd";
-import React, { FC, useEffect, useMemo, useState } from "react";
-import useWindowDimensions, { resizeWidth } from "../../../../app/util/window";
-import { IColumns } from "../../../../app/common/table/utils";
-import IconButton from "../../../../app/common/button/IconButton";
+import { Form, Row, Col, Button, Divider } from "antd";
+import { FC, useEffect, useState } from "react";
 import NumberInput from "../../../../app/common/form/NumberInput";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
@@ -34,7 +18,6 @@ type UrlParams = {
   id: string;
 };
 const ValorRNumerico: FC<Props> = ({ idTipeVAlue, parameter }) => {
-  const { width: windowWidth } = useWindowDimensions();
   const [formValue] = Form.useForm<ItipoValorForm>();
   const [disabled, setDisabled] = useState(true);
   const { parameterStore } = useStore();
@@ -44,14 +27,13 @@ const ValorRNumerico: FC<Props> = ({ idTipeVAlue, parameter }) => {
     new tipoValorFormValues()
   );
   let navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+
   useEffect(() => {
     const readuser = async (idUser: string) => {
       const value = await getvalue(idUser);
-      console.log("her");
       formValue.setFieldsValue(value!);
       setValuesValor(value!);
-      console.log(valuesValor);
       if (value?.id) {
         setDisabled(true);
       }
@@ -62,7 +44,6 @@ const ValorRNumerico: FC<Props> = ({ idTipeVAlue, parameter }) => {
   }, [formValue, getvalue, id]);
 
   const onFinish = async (newValues: ItipoValorForm) => {
-    console.log(newValues);
     const value = { ...valuesValor, ...newValues };
 
     if (value.valorInicial! > value.valorFinal!) {

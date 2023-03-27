@@ -125,14 +125,6 @@ const MaquiladorForm: FC<MaquiladorFormProps> = ({
     setLoading(true);
     const maquilador = { ...values, ...newValues };
 
-    console.log(id);
-
-    // maquilador.telefono = maquilador.telefono
-    //   ? parseInt(
-    //       maquilador.telefono.toString()?.replaceAll("_", "0")?.replaceAll("-", "")
-    //     )
-    //   : undefined;
-
     let success = false;
 
     if (!maquilador.id) {
@@ -163,8 +155,7 @@ const MaquiladorForm: FC<MaquiladorFormProps> = ({
   };
 
   useEffect(() => {
-    //console.log(values);
-  }, [values]);
+  }, [values])
 
   const botonEdit = () => {
     setReadonly(false);
@@ -174,8 +165,6 @@ const MaquiladorForm: FC<MaquiladorFormProps> = ({
   };
 
   const onValuesChange = async (changeValues: any, values: IMaquiladorForm) => {
-    // console.log(changeValues, values);
-
     const field = Object.keys(changeValues)[0];
 
     if (field === "codigoPostal") {

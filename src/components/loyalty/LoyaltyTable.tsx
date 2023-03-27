@@ -59,7 +59,6 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
     searchedColumn: "",
   });
 
-  //console.log("Table");
   function disabledDate(current: moment.Moment) {
     return current.isBefore(moment(), "day");
   }
@@ -73,8 +72,6 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
                 "YYYY/MM/DD"
               )}`
             );
-
-            //console.log(newDate, id)
           } else {
             setNewDate("");
           }
@@ -122,9 +119,7 @@ const LoyaltyTable: FC<LoyaltyTableProps> = ({
     readLoyalty();
   }, [getAll, searchParams]);
 
-  useEffect(() => {
-    //console.log(newDate);
-  }, [newDate]);
+  useEffect(() => {}, [newDate]);
 
   const LoyaltyTableForm = () => {
     return (

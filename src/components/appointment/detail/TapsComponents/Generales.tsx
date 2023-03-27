@@ -114,28 +114,9 @@ const GeneralesForm: FC<GeneralesFormProps> = ({
   }, [branchId, companyId, doctorId, setStudyFilter]);
   const onFinish = async (newValues: IAppointmentGeneralesForm) => {
     const reagent = { ...values, ...newValues };
-    console.log("onfinish");
-    console.log(reagent);
     generales(reagent);
     setValues(reagent);
-    /*     setLoading(true);
-        
-            const reagent = { ...values, ...newValues };
-        
-              
-              let success = false;
-              reagent.taxData = tax;
-              if (!reagent.id) {
-                 success = await create(reagent);      
-              } else{
-                success = await update(reagent);
-              }
-              setLoading(false);
-              if (success) {
-        
-                goBack();
-                
-              }   */
+
   };
 
   const onValuesChange = async (changedValues: IAppointmentGeneralesForm) => {

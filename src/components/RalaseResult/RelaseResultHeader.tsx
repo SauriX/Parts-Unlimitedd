@@ -17,7 +17,6 @@ const RelaseResultHeader: FC<RelaseResultHeaderProps> = ({ handleList }) => {
 
   const onChangeActive = () => {
     setActive(true);
-    console.log(activeTab);
   };
 
   useEffect(() => {

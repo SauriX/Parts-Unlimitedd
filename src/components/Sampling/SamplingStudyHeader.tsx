@@ -3,7 +3,6 @@ import { FC } from "react";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../app/stores/store";
-import React from "react";
 import DownloadIcon from "../../app/common/icons/DownloadIcon";
 
 const { Text } = Typography;

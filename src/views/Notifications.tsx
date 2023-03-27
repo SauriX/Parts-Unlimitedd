@@ -9,14 +9,9 @@ type UrlParams = {
   id: string;
 };
 const Notifications = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [type,setType] = useState<number>(searchParams.get("type")?Number.parseInt(searchParams.get("type")!):1);
-  const handleDownload = () => {
-    console.log("handleDownload");
-  };
-  const handlePrint = () => {
-    console.log("handlePrint");
-  };
+  const [type, setType] = useState<number>(1);
+  const handleDownload = () => {};
+  const handlePrint = () => {};
   return (
     <>
       <NotificationsHeader
@@ -26,8 +21,7 @@ const Notifications = () => {
         setType={setType}
       />
       <Divider />
-      {type===1?<NotificationsTable />:<AvisosTable />}
-      
+      {type === 1 ? <NotificationsTable /> : <AvisosTable />}
     </>
   );
 };

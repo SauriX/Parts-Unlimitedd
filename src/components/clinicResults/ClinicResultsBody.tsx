@@ -1,7 +1,5 @@
-import { Button, Col, Divider, Row, Spin } from "antd";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import { Spin } from "antd";
 import { observer } from "mobx-react-lite";
-import React, { useEffect } from "react";
 import { Fragment, useState } from "react";
 import { useStore } from "../../app/stores/store";
 import ClinicResultsColumns, {
@@ -9,8 +7,7 @@ import ClinicResultsColumns, {
 } from "./columnDefinition/clinicResults";
 import ClinicResultsFilter from "./ClinicResultsFilter";
 import ClinicResultsTable from "./ClinicResultsTable";
-import { IGeneralForm } from "../../app/models/clinicResults";
-import moment from "moment";
+import { IGeneralForm } from "../../app/models/general";
 
 type CRDefaultProps = {
   printing: boolean;

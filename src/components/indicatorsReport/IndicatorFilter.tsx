@@ -15,12 +15,11 @@ import { lte } from "lodash";
 import { expandableBudgetStatsConfig } from "../report/columnDefinition/budgetStats";
 
 const IndicatorFilter = () => {
-  const { optionStore, indicatorsStore } = useStore();
-  const { getByFilter, datePickerType, setDatePickerType, setFilter } = indicatorsStore;
-  const {
-    branchCityOptions,
-    getBranchCityOptions,
-  } = optionStore;
+  const { optionStore, indicatorsStore, profileStore } = useStore();
+  const { getByFilter, datePickerType, setDatePickerType, setFilter } =
+    indicatorsStore;
+  const { branchCityOptions, getBranchCityOptions } = optionStore;
+  const { profile } = profileStore;
 
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm<IReportIndicatorsFilter>();
@@ -45,8 +44,20 @@ const IndicatorFilter = () => {
         .filter((x) => selectedCity?.includes(x.value))
         .flatMap((x) => x.options ?? [])
     );
-    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
+
+  useEffect(() => {
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      const findCity = branchCityOptions.find((x) =>
+        x.options?.some((y) => y.value === profileBranch)
+      )?.value;
+      if (findCity) {
+        form.setFieldValue("ciudad", [findCity]);
+      }
+      form.setFieldValue("sucursalId", [profileBranch]);
+    }
+  }, [branchCityOptions, form, profile]);
 
   const servicesCosts = () => {
     return IndicatorsModal();
@@ -61,6 +72,7 @@ const IndicatorFilter = () => {
         ...filter,
         fechaInicial: moment(filter.fechaIndividual).utcOffset(0, true),
         fechaFinal: moment(filter.fechaIndividual).utcOffset(0, true),
+        tipoFecha: datePickerType,
       };
     } else if (datePickerType === "week") {
       newFilter = {
@@ -71,6 +83,7 @@ const IndicatorFilter = () => {
         fechaFinal: moment(filter.fechaIndividual)
           .utcOffset(0, true)
           .endOf("week"),
+        tipoFecha: datePickerType,
       };
     } else if (datePickerType === "month") {
       newFilter = {
@@ -83,6 +96,7 @@ const IndicatorFilter = () => {
           moment(Date.now()).utcOffset(0, true).month()
             ? moment(Date.now()).utcOffset(0, true)
             : moment(filter.fechaIndividual).utcOffset(0, true).endOf("month"),
+        tipoFecha: datePickerType,
       };
     }
 

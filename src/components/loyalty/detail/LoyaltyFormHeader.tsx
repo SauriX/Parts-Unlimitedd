@@ -26,9 +26,7 @@ const LoyaltyFormHeader: FC<LoyaltyFormHeaderProps> = ({ id, handlePrint }) => {
     exportForm(id);
   };
 
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  //console.log("Header");
+  const [searchParams] = useSearchParams();
 
   return (
     <PageHeader

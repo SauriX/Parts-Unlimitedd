@@ -58,7 +58,6 @@ const Coincidencias: FC<ProceedingTableProps> = ({
     searchedColumn: "",
   });
 
-  console.log("Table");
 
   useEffect(() => {
     const readPriceList = async () => {

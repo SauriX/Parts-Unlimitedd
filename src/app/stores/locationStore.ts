@@ -27,18 +27,8 @@ export default class LocationStore {
         value:x.ciudad, 
         label:x.ciudad
       }));
-      console.log(this.cityOptions,"options");
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
   };
-
-  // getCity2 = async () => {
-  //   try {
-  //     const ciudades = await Location.getCity();
-  //     return ciudades;
-  //   } catch (error: any) {
-  //     alerts.warning(getErrors(error));
-  //   }
-  // };
 }

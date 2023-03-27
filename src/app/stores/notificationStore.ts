@@ -49,20 +49,16 @@ export default class NotificationStore {
 
       try {
         await this.hubConnection.start();
-        console.log("mensaje");
         if (this.hubConnection.state === "Connected") {
-          console.log("mensaje","conectado");
           this.hubConnection.invoke("Subscribe");
           this.hubConnection.invoke("SubscribeWithName","all");
           this.hubConnection.invoke("SubscribeWithName",store.profileStore.profile?.sucursal);
           this.hubConnection.invoke("SubscribeWithName",store.profileStore.profile?.rol);
         }
       } catch (error) {
-        console.log("Error al conectar con SignalR: ", error);
       }
 
       this.hubConnection.onreconnected(() => {
-        console.log("mensaje","reconectado");
         this.hubConnection!.invoke("Subscribe");
         this.hubConnection!.invoke("SubscribeWithName","all");
         this.hubConnection!.invoke("SubscribeWithName",store.profileStore.profile?.sucursal);
@@ -70,7 +66,6 @@ export default class NotificationStore {
       });
 
       this.hubConnection.on("Notify", (notification: INotification) => {
-        console.log(notification,"mensaje");
         if (notification.esAlerta) {
           alerts.info(notification.mensaje);
         }else{
@@ -83,7 +78,6 @@ export default class NotificationStore {
         }
       });
     } catch (error) {
-      console.log("Error con SignalR: ", error);
     }
   };
 }

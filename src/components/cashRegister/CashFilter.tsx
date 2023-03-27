@@ -22,14 +22,21 @@ const typeCompanyOptions: IOptions[] = [
 ];
 
 const CashRegisterFilter = () => {
-  const { cashRegisterStore, optionStore } = useStore();
-  const { filter, setFilter, getByFilter, clear, setShowChart: setActiveChart } = cashRegisterStore;
+  const { cashRegisterStore, optionStore, profileStore } = useStore();
+  const {
+    filter,
+    setFilter,
+    getByFilter,
+    clear,
+    setShowChart: setActiveChart,
+  } = cashRegisterStore;
   const {
     branchCityOptions,
     getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
   } = optionStore;
+  const { profile } = profileStore;
 
   const [form] = Form.useForm<ICashRegisterFilter>();
 
@@ -43,14 +50,20 @@ const CashRegisterFilter = () => {
 
   useEffect(() => {
     form.setFieldsValue(filter);
-  }, [clear]);
+  }, [filter, form]);
+
+  useEffect(() => {
+    const profileBranch = profile?.sucursal;
+    if (profileBranch) {
+      form.setFieldValue("sucursalId", [profileBranch]);
+    }
+  }, [branchCityOptions, form, profile]);
 
   const onFinish = async (filter: ICashRegisterFilter) => {
     setLoading(true);
     await getByFilter(filter);
     setFilter(filter);
     setLoading(false);
-    console.log(filter);
   };
 
   const onChangeChart = (value: boolean) => {
@@ -97,9 +110,7 @@ const CashRegisterFilter = () => {
               />
             </Col>
             <Col span={8}>
-              <SwitchInput 
-              onChange={onChangeChart}
-              />
+              <SwitchInput onChange={onChangeChart} />
             </Col>
             <Col span={8} style={{ textAlign: "right" }}>
               <Button key="new" type="primary" htmlType="submit">

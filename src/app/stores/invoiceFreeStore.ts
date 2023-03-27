@@ -8,13 +8,11 @@ export default class InvoiceFreeStore {
   receptor: any = {};
   setReceptor = (receptor: any) => {
     this.receptor = receptor;
-    console.log("Cambiando en el store", toJS(receptor));
   };
 
   receptorData: any = {};
   setReceptorData = (receptorData: any) => {
     this.receptorData = receptorData;
-    console.log("Cambiando en el store", toJS(receptorData));
   };
 
   detailInvoice: any = [];

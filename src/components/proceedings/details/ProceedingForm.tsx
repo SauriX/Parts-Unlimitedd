@@ -31,7 +31,6 @@ import DatosFiscalesForm from "./DatosFiscalesForm";
 import Concidencias from "./Concidencias";
 import {
   IProceedingForm,
-  ISearchMedical,
   ProceedingFormValues,
 } from "../../../app/models/Proceeding";
 import moment, { Moment } from "moment";
@@ -49,6 +48,7 @@ import ProceedingQuotations from "./ProceedingQuotations";
 import ProceedingAppointments from "./ProceedingAppointments";
 import { faLaptopHouse } from "@fortawesome/free-solid-svg-icons";
 import ProceedingObservations from "./ProceedingObservations";
+import { IGeneralForm } from "../../../app/models/general";
 
 const { Text, Title } = Typography;
 
@@ -75,9 +75,11 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     appointmentStore,
     quotationStore,
     drawerStore,
+    generalStore,
   } = useStore();
   const { openDrawer } = drawerStore;
   const { getQuotations } = quotationStore;
+  const { generalFilter } = generalStore;
   const { getAllDom, getAllLab, createsolictud } = appointmentStore;
   const { requests, getRequests: getByFilter } = requestStore;
   const {
@@ -89,7 +91,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     setTax,
     clearTax,
     expedientes,
-    search,
     tax,
     activateWallet,
     getAllQ,
@@ -214,18 +215,19 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   }, []);
 
   useEffect(() => {
-    const readData = async (search: ISearchMedical) => {
+    const readData = async (search: IGeneralForm) => {
       await getnow(search);
     };
 
-    readData(search);
-  }, [search, getnow]);
+    readData(generalFilter);
+  }, [generalFilter, getnow]);
+
   useEffect(() => {
-    const readData = async (_search: ISearchMedical) => {
+    const readData = async (_search: IGeneralForm) => {
       await getBranchOptions();
     };
 
-    readData(search);
+    readData(generalFilter);
   }, [getBranchOptions]);
 
   const setEditMode = () => {
@@ -401,7 +403,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
 
       if (success) {
         goBack(false);
-        console.log(isUpdated);
         if (!isUpdated) {
           navigate(
             `/${views.proceeding}/${record}?${searchParams}&mode=readonly`

@@ -8,20 +8,21 @@ import ReportFilter from "../components/reportRequest/list/ReportFilter";
 import ReportTable from "../components/reportRequest/list/ReportTable";
 
 const ReportStudy = () => {
-  const { reportStudyStore } = useStore();
+  const { reportStudyStore, generalStore } = useStore();
   const [loading, setLoading] = useState(false);
-  const { filter, printPdf, downloadList } = reportStudyStore;
+  const { printPdf, downloadList } = reportStudyStore;
+  const { generalFilter } = generalStore;
   const handleDownload = async () => {
     setLoading(true);
 
-    await printPdf(filter);
+    await printPdf(generalFilter);
 
     setLoading(false);
   };
   const handleDownloadList = async () => {
     setLoading(true);
 
-    await downloadList(filter);
+    await downloadList(generalFilter);
 
     setLoading(false);
   };
