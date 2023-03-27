@@ -23,8 +23,11 @@ export default class NotificationStore {
   getNotification = async  (filter:INotificationFilter)=>{
     try {
       let notifications = await Notifications.getNotification(filter);
-      notifications.reverse();
-      this.notifications = notifications;
+      if(notifications){
+        notifications.reverse();
+        this.notifications = notifications;
+      }
+
     } catch (error) {
       alerts.warning(getErrors(error));
       this.notifications = [];
