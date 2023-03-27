@@ -68,11 +68,13 @@ export interface IReportIndicatorsFilter {
   fechaInicial: moment.Moment;
   fechaFinal: moment.Moment;
   fechaIndividual: moment.Moment;
+  tipoFecha: string;
 }
 
 export interface IModalIndicatorsFilter {
   sucursalId?: string[];
   fecha: moment.Moment[];
+  mensual?: moment.Moment;
   servicios?: string[];
   ciudad?: string[];
 }
@@ -104,6 +106,7 @@ export class IndicatorFilterValues implements IReportIndicatorsFilter {
   fechaInicial = moment(Date.now()).utcOffset(0, true);
   fechaFinal = moment(Date.now()).utcOffset(0, true);
   fechaIndividual = moment(Date.now()).utcOffset(0, true);
+  tipoFecha = "date";
 
   constructor(init?: IReportIndicatorsFilter) {
     Object.assign(this, init);
@@ -147,6 +150,7 @@ export class ModalIndicatorFilterValues implements IModalIndicatorsFilter {
     moment(Date.now()),
     moment(Date.now()),
   ];
+  mensual = moment(Date.now())
   servicio = [];
   ciudad = [];
 
