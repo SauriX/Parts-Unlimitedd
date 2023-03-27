@@ -41,7 +41,6 @@ const CatalogDescriptionTable: FC<CatalogDescriptionTableProps> = ({
     searchedColumn: "",
   });
 
-  console.log("Table");
 
   const catalogType = (catalogName: string) => {
     switch (catalogName) {

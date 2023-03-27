@@ -1,4 +1,14 @@
-import { Button, Divider, PageHeader, Spin, Table, Form, Row, Col, Modal } from "antd";
+import {
+  Button,
+  Divider,
+  PageHeader,
+  Spin,
+  Table,
+  Form,
+  Row,
+  Col,
+  Modal,
+} from "antd";
 import React, { FC, Fragment, useEffect, useRef, useState } from "react";
 import {
   defaultPaginationProperties,
@@ -54,14 +64,11 @@ const UserTable: FC<UserTableProps> = ({ componentRef, printing }) => {
   };
   const onFinishPass = async (newValues: IChangePasswordForm) => {
     let passForm = { ...newValues, id: userId };
-    // let success = false;
-    let checkPass = false;
     const success = await changePassword(passForm);
     if (success) {
       formPassword.resetFields();
       setIsModalVisible(false);
     }
-    // console.log(success);
   };
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
@@ -70,7 +77,6 @@ const UserTable: FC<UserTableProps> = ({ componentRef, printing }) => {
     searchedColumn: "",
   });
 
-  console.log("Table");
   useEffect(() => {
     const readUsers = async () => {
       setLoading(true);
@@ -93,7 +99,11 @@ const UserTable: FC<UserTableProps> = ({ componentRef, printing }) => {
         <Button
           type="link"
           onClick={() => {
-            navigate(`/users/${user.id}?mode=ReadOnly&search=${searchParams.get("search") ?? "all"}`);
+            navigate(
+              `/users/${user.id}?mode=ReadOnly&search=${
+                searchParams.get("search") ?? "all"
+              }`
+            );
           }}
         >
           {value}
@@ -154,7 +164,9 @@ const UserTable: FC<UserTableProps> = ({ componentRef, printing }) => {
           title="Editar usuario"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(`/users/${user.id}?search=${searchParams.get("search") ?? "all"}`);
+            navigate(
+              `/users/${user.id}?search=${searchParams.get("search") ?? "all"}`
+            );
           }}
         />
       ),
@@ -176,7 +188,12 @@ const UserTable: FC<UserTableProps> = ({ componentRef, printing }) => {
           dataSource={[...users]}
           scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
         />
-        <Modal title="Ingreso de contraseña" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+        <Modal
+          title="Ingreso de contraseña"
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
           <Form<IChangePasswordForm>
             {...formItemLayout}
             form={formPassword}

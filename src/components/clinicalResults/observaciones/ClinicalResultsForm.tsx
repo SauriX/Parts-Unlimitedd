@@ -286,8 +286,6 @@ const ClinicalResultsForm: FC<ClinicalResultsFormProps> = ({
 
     await loadInit();
     if (isUpdated && saveReport) {
-      console.log(currentStudy);
-      console.log(isUpdated);
       alerts.success("Se ha guardado correctamente");
     }
     setLoading(false);

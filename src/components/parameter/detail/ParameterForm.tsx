@@ -250,7 +250,6 @@ const ParameterForm: FC<ParameterFormProps> = ({ componentRef, load }) => {
         windowSize: windowWidth,
       }),
       render: (value: any, row: any) => {
-        console.log("render", row);
         return (
           <>
             <Link

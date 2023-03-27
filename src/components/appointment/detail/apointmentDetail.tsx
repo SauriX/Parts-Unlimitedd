@@ -55,33 +55,6 @@ const ApointmentDetail = () => {
     }
   };
 
-  useEffect(() => {
-    const checkAccess = async () => {
-     /*  const permissions = await access(); */
-
-/*       if (reagentId === undefined) {
-        console.log("undefined");
-        navigate("/notFound");
-      } else if (!permissions?.crear && reagentId === "") {
-        navigate(`/forbidden`);
-      } else if (!permissions?.modificar && reagentId !== "") {
-        navigate(`/forbidden`);
-      } */
-    };
-
-    checkAccess();
-  }, [/* access */, navigate, reagentId]);
-
-  useEffect(() => {
-    return () => {
-     /*  clearScopes(); */
-    };
-  }, [/* clearScopes */]);
-
-/*   if (reagentId == null) return null;
-
-  if (!scopes?.acceder) return null; */
-
   return (
     <Fragment>
       <ApointmentHeaderForm id={reagentId!} handlePrint={handlePrint} handleDownload={handleDownload} />

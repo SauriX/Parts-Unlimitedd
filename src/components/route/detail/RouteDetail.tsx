@@ -53,7 +53,6 @@ const RouteDetail = () => {
       const permissions = await access();
 
       if (routeId === undefined) {
-        //console.log("undefined");
         navigate("/notFound");
       } else if (!permissions?.crear && routeId === "") {
         navigate(`/forbidden`);
@@ -77,7 +76,11 @@ const RouteDetail = () => {
 
   return (
     <Fragment>
-      <RouteFormHeader id={routeId} handlePrint={handlePrint} handleDownload={handleDownload} />
+      <RouteFormHeader
+        id={routeId}
+        handlePrint={handlePrint}
+        handleDownload={handleDownload}
+      />
       <Divider className="header-divider" />
       <RouteForm id={routeId} componentRef={componentRef} printing={printing} />
     </Fragment>

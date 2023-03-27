@@ -51,16 +51,7 @@ const LoyaltyDetail = () => {
 
   useEffect(() => {
     const checkAccess = async () => {
-      const permissions = await access();
-
-    //   if (loyaltyId === undefined) {
-    //     console.log("undefined");
-    //     navigate("/notFound");
-    //   } else if (!permissions?.crear && loyaltyId === "") {
-    //     navigate(`/forbidden`);
-    //   } else if (!permissions?.modificar && loyaltyId !== "") {
-    //     navigate(`/forbidden`);
-    //   }
+      await access();
     };
 
     checkAccess();
@@ -78,9 +69,17 @@ const LoyaltyDetail = () => {
 
   return (
     <Fragment>
-      <LoyaltyFormHeader id={loyaltyId} handlePrint={handlePrint} handleDownload={handleDownload} />
+      <LoyaltyFormHeader
+        id={loyaltyId}
+        handlePrint={handlePrint}
+        handleDownload={handleDownload}
+      />
       <Divider className="header-divider" />
-      <LoyaltyForm id={loyaltyId} componentRef={componentRef} printing={printing} />
+      <LoyaltyForm
+        id={loyaltyId}
+        componentRef={componentRef}
+        printing={printing}
+      />
     </Fragment>
   );
 };

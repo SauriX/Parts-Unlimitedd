@@ -52,8 +52,12 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
     packStore;
   const [lista, setLista] = useState(studies);
   const [searchParams] = useSearchParams();
-  const { getDepartmentOptions, departmentOptions, getAreaOptions: getareaOptions, areaOptions: areas } =
-    optionStore;
+  const {
+    getDepartmentOptions,
+    departmentOptions,
+    getAreaOptions: getareaOptions,
+    areaOptions: areas,
+  } = optionStore;
   const navigate = useNavigate();
   const [form] = Form.useForm<IPackForm>();
   const [loading, setLoading] = useState(false);
@@ -110,14 +114,10 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
     setValues((prev) => ({ ...prev, estudio: val }));
   };
   useEffect(() => {
-    console.log("use");
     const readuser = async (idUser: number) => {
       setLoading(true);
-      console.log("here");
-      const all = await getAll("all");
-      console.log(all);
+      await getAll("all");
       var studis = await getAllStudy();
-      console.log(studies, "estudios");
       var areaForm = await getareaOptions(values.idDepartamento);
 
       const user = await getById(idUser);
@@ -132,7 +132,6 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
       setValues(user!);
       setLista(studis!);
       setLoading(false);
-      console.log(studis);
     };
     if (id) {
       readuser(Number(id));
@@ -182,10 +181,8 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
           name="activo"
           checked={item.activo}
           onChange={(value) => {
-            console.log(value.target.checked);
             var active = false;
             if (value.target.checked) {
-              console.log("here");
               active = true;
             }
             setStudy(active, item);
@@ -199,7 +196,6 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
     const field = Object.keys(changedValues)[0];
 
     if (field === "idDepartamento") {
-      console.log("deparatemento");
       const value = changedValues[field];
       var areaForm = await getareaOptions(value);
       setAreaForm(areaForm!);
@@ -212,10 +208,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
         (x) => x.value === departament
       )[0].label;
       var areaSearch = await getareaOptions(departament);
-      console.log(departamento, "departamento");
       var estudios = lista.filter((x) => x.departamento === departamento);
-      console.log(lista, "lista");
-      console.log(estudios, "estudios filtro dep");
       setValues((prev) => ({ ...prev, estudio: estudios }));
       setAreaSearch(areaSearch!);
     } else {
@@ -248,9 +241,6 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
 
     User.estudio = lista.filter((x) => x.activo == true);
 
-    console.log("finish ");
-    console.log(lista);
-    console.log(User);
     let success = false;
     if (!User.id) {
       success = await create(User);
@@ -271,7 +261,6 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
     }
     return 0;
   };
-  console.log(form.getFieldsValue(), "form");
   const siguienteUser = (index: number) => {
     const user = packs[index];
     setAreaId(undefined);
@@ -442,7 +431,7 @@ const PackForm: FC<PackFormProps> = ({ componentRef, load, msj }) => {
                   setSearchvalue(value.target.value);
                 }}
                 value={searchvalue}
-                allowClear 
+                allowClear
               />
             </Col>
             <Col span={6} offset={2}>

@@ -84,7 +84,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
   } = trackingOrderStore;
 
   const [searchParams] = useSearchParams();
-  const [StudySelected,setStudySelected]=useState<IRequestStudyOrder[]>([]); 
+  const [StudySelected, setStudySelected] = useState<IRequestStudyOrder[]>([]);
   const [form] = Form.useForm<ITrackingOrderForm>();
 
   const [loading, setLoading] = useState(false);
@@ -127,7 +127,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
       })),
     },
   ];
-  
+
   const setSucursalOrigenInicial = () => {
     values.sucursalOrigenId = profileOptions?.sucursal;
     form.setFieldsValue(values!);
@@ -139,7 +139,13 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
     getMaquiladorOptions();
     setSucursalOrigenInicial();
     getProfileOptions();
-  }, [getSucursalesOptions, getBranchOptions, getMaquiladorOptions, profile, getProfileOptions]);
+  }, [
+    getSucursalesOptions,
+    getBranchOptions,
+    getMaquiladorOptions,
+    profile,
+    getProfileOptions,
+  ]);
 
   useEffect(() => {
     const readTrackingOrder = async (id: string) => {
@@ -289,7 +295,7 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
           escaneado: order.escaneado,
           temperatura: order.temperatura,
           estudioId: estudio.estudioId,
-          isExtra:estudio.isExtra
+          isExtra: estudio.isExtra,
         };
       });
     trackingOrderSend.estudios = _.flatten(estudiosFiltrados);
@@ -444,7 +450,6 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
               if (propertyForm == "temperatura") {
                 setTemperatura(changes_values[propertyForm]);
                 setTemperature(changes_values[propertyForm]);
-                console.log(changes_values[propertyForm])
               }
               if (propertyForm === "fecha") {
                 var date = changes_values[propertyForm];
@@ -512,8 +517,11 @@ const CreationTrackingOrderForm: FC<TrackingOrderFormProps> = ({
                     name: "muestraId",
                     label: "Muestra",
                   }}
-                 
-                  onKeyUp={async (e)=>{if(e.code==="Enter"){ await StudyModal(StudySelected,solicitud);}}}
+                  onKeyUp={async (e) => {
+                    if (e.code === "Enter") {
+                      await StudyModal(StudySelected, solicitud);
+                    }
+                  }}
                   max={100}
                   readonly={readonly}
                 />

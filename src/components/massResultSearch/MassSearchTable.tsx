@@ -141,9 +141,6 @@ const MassSearchTable = ({ printing }: MSDefaultProps) => {
           onChange: (selectedRow) => {
             setSelectedRowKeys([...selectedRow]);
           },
-          onSelect: () => {
-            console.log("hola mundo");
-          },
           renderCell: (cel, request: IResult) => {
             return (
               <>

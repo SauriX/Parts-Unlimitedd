@@ -1,7 +1,6 @@
 import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
-import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
 import IndicationHeader from "../components/indication/IndicationHeader";
@@ -15,32 +14,20 @@ const Indication = () => {
 
   const componentRef = useRef<any>();
   const handlePrint = useReactToPrint({
-  content: () => componentRef.current,
-  onBeforeGetContent: () => {
-    setPrinting(true);
-  },
-  onAfterPrint: () => {
-    setPrinting(false);
-  },
-});
-
-  // useEffect(() => {
-  //   const checkAccess = async () => {
-  //     await access();
-  //   };
-
-  //   checkAccess();
-  // }, [access]);
-
-  console.log("Render");
+    content: () => componentRef.current,
+    onBeforeGetContent: () => {
+      setPrinting(true);
+    },
+    onAfterPrint: () => {
+      setPrinting(false);
+    },
+  });
 
   useEffect(() => {
     return () => {
       clearScopes();
     };
   }, [clearScopes]);
-
- //if (!scopes?.acceder) return null;
 
   return (
     <Fragment>

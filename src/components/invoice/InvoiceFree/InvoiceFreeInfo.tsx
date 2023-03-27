@@ -117,7 +117,6 @@ const InvoiceFreeInfo = () => {
     } ${compañiaSeleccionada?.ciudad ?? ""} ${
       compañiaSeleccionada?.codigoPostal ?? ""
     } `;
-    console.log("compañias", compañiaSeleccionada.direccionFiscal);
     setReceptorLocal(compañiaSeleccionada);
   };
 

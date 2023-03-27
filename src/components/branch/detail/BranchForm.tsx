@@ -195,7 +195,6 @@ const BranchForm: FC<BranchFormProps> = ({
     setLoading(true);
 
     const User = { ...values, ...newValues };
-    console.log(User);
 
     let success = false;
 

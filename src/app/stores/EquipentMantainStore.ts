@@ -71,7 +71,6 @@ export default class EquipmentMantainStore {
       this.mantain=equipments!;
       return equipments;
     } catch (error) {
-      console.log(error);
       alerts.warning(getErrors(error));
     }
   };
@@ -81,7 +80,6 @@ export default class EquipmentMantainStore {
       this.equip=equipments;
       return equipments;
     } catch (error) {
-      console.log(error);
       alerts.warning(getErrors(error));
     }
   };

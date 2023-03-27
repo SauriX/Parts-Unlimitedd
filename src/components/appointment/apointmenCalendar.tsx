@@ -90,14 +90,11 @@ const AppointmentCalendar: FC<ProceedingTableProps> = ({ componentRef }) => {
   } = appointmentStore;
   useEffect(() => {
     const readData = async () => {
-      console.log();
       if (tipo == "laboratorio") {
         var citas = await getAllLab(search);
-        console.log(citas, "cirtas");
         var citasgeneradas = citas?.filter((x) => x.tipo == 1);
         Setgeneradas(citasgeneradas);
         var citasagendadas = citas?.filter((x) => x.tipo == 2);
-        console.log(citasagendadas, "agendadas");
         citasagendadas?.forEach((x) => {
           var newEvent: IEvent = {
             id: x.id,
@@ -105,7 +102,6 @@ const AppointmentCalendar: FC<ProceedingTableProps> = ({ componentRef }) => {
             date: moment(x.fecha),
             noSolicitud: x.nombre,
           };
-          console.log(newEvent, "event");
           setEvents((prev) => [...prev, newEvent]);
         });
 
@@ -127,18 +123,15 @@ const AppointmentCalendar: FC<ProceedingTableProps> = ({ componentRef }) => {
       }
     };
     readData();
-    console.log(events, "events");
   }, [tipo, getAllDom, getAllLab]);
   let navigate = useNavigate();
 
   const searchOnClick = async () => {
     if (tipo == "laboratorio") {
       var citas = await getAllLab(search);
-      console.log(citas, "cirtas");
       var citasgeneradas = citas?.filter((x) => x.tipo == 1);
       Setgeneradas(citasgeneradas);
       var citasagendadas = citas?.filter((x) => x.tipo == 2);
-      console.log(citasagendadas, "agendadas");
       citasagendadas?.forEach((x) => {
         var newEvent: IEvent = {
           id: x.id,
@@ -146,7 +139,6 @@ const AppointmentCalendar: FC<ProceedingTableProps> = ({ componentRef }) => {
           date: moment(x.fecha),
           noSolicitud: x.nombre,
         };
-        console.log(newEvent, "event");
         setEvents((prev) => [...prev, newEvent]);
       });
       SetAgendadas(citasagendadas);
@@ -345,7 +337,6 @@ const AppointmentCalendar: FC<ProceedingTableProps> = ({ componentRef }) => {
                 "DD [de] MMM [del] YYYY"
               )} en el horario ${date.format("hh:mm a")}`,
               async () => {
-                console.log(date, "date");
                 if (tipo == "laboratorio") {
                   var cita = await getByIdLab(citaSelect?.id!);
                   cita!.fecha = date;
@@ -374,19 +365,16 @@ const AppointmentCalendar: FC<ProceedingTableProps> = ({ componentRef }) => {
                 "DD [de] MMM [del] YYYY"
               )} en el horario ${date.format("hh:mm a")}`,
               async () => {
-                console.log(date, "date");
                 //  llamada a la api para crear el evento...
                 if (tipo == "laboratorio") {
                   var cita = await getByIdLab(event!.id.toString());
                   cita!.fecha = date;
                   cita!.status = 2;
-                  console.log(cita, "cita");
                   await updateLab(cita!);
                 } else {
                   var cita = await getByIdDom(event!.id.toString());
                   cita!.fecha = date;
                   cita!.status = 2;
-                  console.log(cita, "cita");
                   await updateDom(cita!);
                 }
                 const index = events.findIndex((x) => x.id === event.id);

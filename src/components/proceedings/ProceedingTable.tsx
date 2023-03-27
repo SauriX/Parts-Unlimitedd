@@ -124,7 +124,6 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       delete values.fechaNacimiento;
     }
     if (values.fechaNacimiento != null) {
-      console.log(values.fechaNacimiento, "nacimiento");
       values.fechaNacimiento = values.fechaNacimiento!.utcOffset(0, true);
     }
 

@@ -127,7 +127,6 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
       }
 
       setLoading(false);
-      //console.log(medics);
     };
 
     if (id) {
@@ -190,13 +189,9 @@ const MedicsForm: FC<MedicsFormProps> = ({ id, componentRef, printing }) => {
     );
   };
 
-  useEffect(() => {
-    //console.log(values);
-  }, [values]);
+  useEffect(() => {}, [values]);
 
   const onValuesChange = async (changeValues: any, values: IMedicsForm) => {
-    // console.log(changeValues, values);
-
     const code =
       values.nombre.substring(0, 3) +
       values.primerApellido?.substring(0, 1) +

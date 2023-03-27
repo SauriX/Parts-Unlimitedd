@@ -53,7 +53,6 @@ const PriceListDetail = () => {
       const permissions = await access();
 
       if (priceListId === undefined) {
-        console.log("undefined");
         navigate("/notFound");
       } else if (!permissions?.crear && priceListId === "") {
         navigate(`/forbidden`);

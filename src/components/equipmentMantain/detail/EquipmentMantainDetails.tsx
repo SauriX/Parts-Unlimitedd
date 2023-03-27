@@ -1,22 +1,16 @@
 import { Divider } from "antd";
-import { resolve } from "path";
-import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Fragment, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import EquipmentForm from "./EquipmentMantainForm";
 import EquipmentFormHeader from "./EquipmentFormHeader";
-import { ConsoleLogger } from "@microsoft/signalr/dist/esm/Utils";
 
 type UrlParams = {
-  id: string,
-  ide:string,
+  id: string;
+  ide: string;
 };
 
 const EquipmentMantainDetails = () => {
-  let navigate = useNavigate();
-
-  const [searchParams, setSearchParams] = useSearchParams();
-
   const [printing, setPrinting] = useState(false);
 
   const componentRef = useRef<any>();
@@ -35,16 +29,10 @@ const EquipmentMantainDetails = () => {
     },
   });
 
-  const { id,ide } = useParams<UrlParams>();
+  const { id, ide } = useParams<UrlParams>();
   const equipmentId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
-  console.log(equipmentId,"elid");
-   const mantainid = !ide?"":isNaN(Number(id)) ? id : null;
+  const mantainid = !ide ? "" : isNaN(Number(id)) ? id : null;
 
-
-/*   if (equipmentId === undefined) {
-    return null;
-  }
- */
   return (
     <Fragment>
       <EquipmentFormHeader id={equipmentId!} handlePrint={handlePrint} />

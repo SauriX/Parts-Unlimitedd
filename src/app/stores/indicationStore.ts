@@ -51,7 +51,6 @@ export default class IndicationStore {
       const indication = await Indication.getById(id);
       return indication;
     } catch (error) {
-      console.log(error);
       alerts.warning(getErrors(error));
     }
   };

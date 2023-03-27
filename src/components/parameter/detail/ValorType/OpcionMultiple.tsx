@@ -47,15 +47,12 @@ const OpcionMUltiple: FC<Props> = ({ idTipeVAlue, parameter }) => {
   let { id } = useParams<UrlParams>();
   const { parameterStore } = useStore();
   const { addvalues, getAllvalues, update } = parameterStore;
-  const [valuesValor, setValuesValor] = useState<ItipoValorForm[]>([]);
+  
   useEffect(() => {
     const readuser = async (idUser: string) => {
       let value = await getAllvalues(idUser, idTipeVAlue);
-      console.log("form");
-      console.log(value);
 
       value?.map((item) => lista.push(item));
-      //setLista(prev=>[...prev,...value!]);
       formValue.setFieldsValue(value!);
       if (lista?.length > 0) {
         setDisabled(true);
@@ -65,27 +62,10 @@ const OpcionMUltiple: FC<Props> = ({ idTipeVAlue, parameter }) => {
       readuser(id);
     }
   }, [formValue, getAllvalues, id]);
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 4 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 20 },
-    },
-  };
-  const formItemLayoutWithOutLabel = {
-    wrapperCol: {
-      xs: { span: 24, offset: 0 },
-      sm: { span: 20, offset: 4 },
-    },
-  };
+
   let navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const onFinish = async (values: any) => {
-    console.log(values);
-
     const val: ItipoValorForm[] = values.value.map((x: ItipoValorForm) => {
       let data: ItipoValorForm = {
         nombre: idTipeVAlue,
@@ -98,13 +78,13 @@ const OpcionMUltiple: FC<Props> = ({ idTipeVAlue, parameter }) => {
       return data;
     });
 
-      var succes = await addvalues(val, id!);
+    var succes = await addvalues(val, id!);
+    if (succes) {
+      succes = await update(parameter);
       if (succes) {
-        succes = await update(parameter);
-        if (succes) {
-          navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
-        }
+        navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
       }
+    }
   };
   return (
     <div>
@@ -151,7 +131,7 @@ const OpcionMUltiple: FC<Props> = ({ idTipeVAlue, parameter }) => {
                   <Form.Item
                     {...valuesValor}
                     label={"Opción " + (name + 1)}
-                    name={[name, "opcion"]} 
+                    name={[name, "opcion"]}
                     rules={[{ required: true, message: "Missing valor" }]}
                   >
                     <TextArea

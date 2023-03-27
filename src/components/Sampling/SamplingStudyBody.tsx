@@ -78,7 +78,6 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
 
   const updateData = async () => {
     const obs = form.getFieldsValue();
-    console.log(obs);
 
     let observaciones: ISamplingComment[] = Object.keys(obs).map((x) => ({
       id: parseInt(x),
@@ -93,7 +92,6 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
     });
 
     setUpdateForm(studyWithComments);
-    console.log(studyWithComments);
 
     setLoading(true);
     if (activity == "register") {

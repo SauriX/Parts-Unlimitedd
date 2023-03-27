@@ -20,8 +20,13 @@ const CostoTomaColumns = () => {
   });
 
   const { indicatorsStore, optionStore } = useStore();
-  const { updateSample, modalFilter, getSamplesCostsByFilter, getByFilter, filter } =
-    indicatorsStore;
+  const {
+    updateSample,
+    modalFilter,
+    getSamplesCostsByFilter,
+    getByFilter,
+    filter,
+  } = indicatorsStore;
   const { branchCityOptions } = optionStore;
 
   const [loading, setLoading] = useState(false);
@@ -119,7 +124,6 @@ const SampleCostInput = ({
         name="samples"
         initialValues={defaultValue}
         onFinish={(values) => {
-          console.log(values);
           onFinish({ ...defaultValue, costoToma: values.costoToma });
         }}
         scrollToFirstError
