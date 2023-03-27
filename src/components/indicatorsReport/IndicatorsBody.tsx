@@ -21,7 +21,8 @@ const IndicatorsBody = ({ printing }: IndicatorsProps) => {
         fechaIndividual: moment(Date.now()).utcOffset(0, true),
         sucursalId: [],
         fechaInicial: moment(Date.now()).utcOffset(0, true),
-        fechaFinal: moment(Date.now()).utcOffset(0, true)
+        fechaFinal: moment(Date.now()).utcOffset(0, true),
+        tipoFecha: "date"
       });
     };
 
