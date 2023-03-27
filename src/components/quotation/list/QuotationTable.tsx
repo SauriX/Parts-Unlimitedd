@@ -81,7 +81,7 @@ const QuotationTable = () => {
       className: "no-padding-cell",
       render: (_, item) => (
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <Text>{item.correo.split(",").join("\n")}</Text>
+          <Text>{item.correo?.split(",")?.join("\n")}</Text>
           <small>
             <Text type="secondary">{item.whatsapp}</Text>
           </small>

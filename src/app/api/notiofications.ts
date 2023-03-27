@@ -1,5 +1,5 @@
-import { INotificationForm, INotificationsList } from "../models/notifications";
-import { IScopes } from "../models/shared";
+import { INotificationFilter, INotificationForm, INotificationsList } from "../models/notifications";
+import { INotification, IScopes } from "../models/shared";
 import requests from "./agent";
 
 const Notifications = {
@@ -10,6 +10,7 @@ const Notifications = {
   create: (notification: INotificationForm): Promise<void> => requests.post("notifications", notification),
   update: (notification: INotificationForm): Promise<void> => requests.put("notifications", notification),
   updateStatus: (id:string): Promise<void> => requests.put(`notifications/status/${id}`,id),
+  getNotification: (filter:INotificationFilter): Promise<INotification[]> => requests.post(`notification`,filter),
 
 };
 

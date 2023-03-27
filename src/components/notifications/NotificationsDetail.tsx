@@ -4,6 +4,7 @@ import {
   Divider,
   Form,
   PageHeader,
+  Pagination,
   Row,
   Tooltip,
   Transfer,
@@ -45,7 +46,7 @@ const NotificationsDetail = () => {
 
   const { getRoleOptions, roleOptions } = optionStore
   const [searchParams, setSearchParams] = useSearchParams();
-  const { getById, create, update } = notificationsStore;
+  const { getById, create, update,avisos,getAllAvisos } = notificationsStore;
   const [selectedTags, setSelectedTags] = useState<IDay[]>([]);
   const [sucursales, setSucursales] = useState<string[]>([]);
   const [values, setValues] = useState<INotificationForm>(new NotificationValues());
@@ -74,6 +75,7 @@ const NotificationsDetail = () => {
       setSelectedTags(notification!.dias);
       let roles = [...notification!.roles]
       setTargetKeys(roles);
+      await getAllAvisos(searchParams.get("search") || "all");
     }
 
     if (id) {
@@ -99,7 +101,7 @@ const NotificationsDetail = () => {
     setLoading(false);
 
     if (success) {
-      navigate(`/notifications?search=${searchParams.get("search") || "all"}`);
+      navigate(`/notifications?search=${searchParams.get("search") || "all"}&type=2`);
     }
   };
   const setEditMode = () => {
@@ -135,6 +137,14 @@ const NotificationsDetail = () => {
     setSelectedKeys([...sourceSelectedKeys, ...targetSelectedKeys]);
   };
 
+  const getPage = (id: string) => {
+    return avisos.findIndex((x) => x.id === id) + 1;
+  };
+
+  const setPage = (page: number) => {
+    const route = avisos[page - 1];
+    navigate(`/${views.route}/${route.id}?${searchParams}`);
+  };
 
   const tagsData: IDay[] = [
     { id: 1, dia: "L" },
@@ -152,13 +162,24 @@ const NotificationsDetail = () => {
           <PageHeader
             ghost={false}
             title={<HeaderTitle title={`Crear notificación`} />}
-            onBack={() => navigate(`/notifications`)}
+            onBack={() => navigate(`/notifications?type=2`)}
             className="header-container"
             extra={[]}
           ></PageHeader>
         </Col>
       </Row>
       <Divider></Divider>
+      {!!id && (
+          <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
+            <Pagination
+              size="small"
+              total={avisos?.length ?? 0}
+              pageSize={1}
+              current={getPage(id)}
+              onChange={setPage}
+            />
+          </Col>
+        )}
       <Row justify="end" style={{ marginBottom: 10 }}>
         {!readonly && (
           <Col md={id ? 12 : 24} sm={24} xs={12} style={{ textAlign: "right" }}>
@@ -166,7 +187,7 @@ const NotificationsDetail = () => {
               key="clean"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/notifications`)
+                navigate(`/notifications?type=2`)
               }}
             >
               Cancelar
