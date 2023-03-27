@@ -1,9 +1,7 @@
-import { Button, PageHeader, Input } from "antd";
-import React, { FC } from "react";
+import { PageHeader, Input } from "antd";
+import { FC } from "react";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
-import { PlusOutlined } from "@ant-design/icons";
-import ImageButton from "../../../app/common/button/ImageButton";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import PrintIcon from "../../../app/common/icons/PrintIcon";
 import DownloadIcon from "../../../app/common/icons/DownloadIcon";
@@ -27,10 +25,6 @@ const IndicationFormHeader: FC<IndicationFormHeaderProps> = ({
   const download = () => {
     exportForm(id);
   };
-
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  console.log("Header");
 
   return (
     <PageHeader

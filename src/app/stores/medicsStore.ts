@@ -52,7 +52,6 @@ export default class MedicsStore {
       const medics = await Medics.getById(id);
       return medics;
     } catch (error) {
-      console.log(error);
       alerts.warning(getErrors(error));
     }
   };

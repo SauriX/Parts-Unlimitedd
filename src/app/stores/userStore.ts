@@ -70,7 +70,6 @@ export default class UserStore {
   };
   saveImage = async (request: FormData) => {
     try {
-      console.log(request);
       var imageName = await User.saveImage(request);
       return imageName;
     } catch (error) {
@@ -99,11 +98,8 @@ export default class UserStore {
   };
 
   getById = async (id: string) => {
-    console.log(id);
     try {
       const user = await User.getById(id);
-      console.log("hey cosas");
-      console.log(user.permisos);
       // this.permisos = user.permisos;
       this.user = user;
       return user;

@@ -24,7 +24,6 @@ export default class MassResultSearchStore {
 
   setAreas = (area: string) => {
     this.area = area;
-    console.log("area store", this.area);
   };
 
   setFilter = (search: IMassSearch) => {
@@ -36,14 +35,7 @@ export default class MassResultSearchStore {
       this.loadingStudies = true;
       const result = await MassResultSearch.getRequestResults(search);
       this.parameters = result.parameters;
-      // if (result.parameters.length < 8) {
-      //   let faltantes = 8 - result.parameters.length;
-      //   for (let i = 0; i < faltantes; i++) {
-      //     this.parameters.push({ nombre: "", etiqueta: "", unidades: "" });
-      //   }
-      // }
       this.results = result.results;
-      console.log("RESULT", result);
     } catch (error: any) {
       alerts.warning(getErrors(error));
     } finally {
@@ -56,7 +48,6 @@ export default class MassResultSearchStore {
     try {
       const result = await MassResultSearch.getAllCaptureResults(search);
       this.requests = result;
-      console.log("RESULT", result);
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }

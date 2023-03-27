@@ -30,7 +30,6 @@ export class InvoiceCompanyStore {
     this.selectedRequests = this.selectedRows.filter(
       (x) => x.expedienteId === user
     );
-    console.log("seletedRequests", this.selectedRequests);
   };
   detailInvoice: any = [];
   setDetailInvoice = (detailInvoice: any) => {
@@ -123,7 +122,6 @@ export class InvoiceCompanyStore {
   checkIn = async (invoiceData: any) => {
     try {
       const invoiceInfo = await InvoiceCompany.checkIn(invoiceData);
-      console.log("conse", invoiceInfo);
       return invoiceInfo;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -140,7 +138,6 @@ export class InvoiceCompanyStore {
   downloadPdf = async (facturapiId: string) => {
     try {
       const invoiceInfo = await InvoiceCompany.downloadPdf(facturapiId);
-      console.log("conse", invoiceInfo);
       return invoiceInfo;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -149,7 +146,6 @@ export class InvoiceCompanyStore {
   downloadXML = async (facturapiId: string) => {
     try {
       const invoiceInfo = await InvoiceCompany.downloadXML(facturapiId);
-      console.log("conse", invoiceInfo);
       return invoiceInfo;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -159,7 +155,6 @@ export class InvoiceCompanyStore {
   printPdf = async (facturapiId: string) => {
     try {
       const invoiceInfo = await InvoiceCompany.printPdf(facturapiId);
-      console.log("conse", invoiceInfo);
       return invoiceInfo;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -174,7 +169,6 @@ export class InvoiceCompanyStore {
   sendInvoice = async (sendInvoiceData: any) => {
     try {
       return await InvoiceCompany.sendInvoice(sendInvoiceData);
-      // console.log("conse", invoiceInfo);
       // return invoiceInfo;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -183,7 +177,6 @@ export class InvoiceCompanyStore {
   cancelInvoice = async (cancelInvoiceData: any) => {
     try {
       return await InvoiceCompany.cancelInvoice(cancelInvoiceData);
-      // console.log("conse", invoiceInfo);
       // return invoiceInfo;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -193,7 +186,6 @@ export class InvoiceCompanyStore {
   printReceipt = async (receiptCompanyData: any) => {
     try {
       const reciptInfo = await InvoiceCompany.printReceipt(receiptCompanyData);
-      console.log("conse", reciptInfo);
       return reciptInfo;
     } catch (error: any) {
       alerts.warning(getErrors(error));
@@ -221,7 +213,6 @@ export class InvoiceCompanyStore {
       alerts.info("Facturas generadas correctamente");
 
       alerts.info("Se estan generando las solicitudes");
-      console.log("conse", response);
       return response;
     } catch (error: any) {
       alerts.warning(getErrors(error));

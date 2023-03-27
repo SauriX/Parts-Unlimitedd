@@ -27,8 +27,6 @@ const NumeroColumna: FC<Props> = ({ idTipeVAlue, parameter }) => {
   useEffect(() => {
     const readuser = async (idUser: string) => {
       let value = await getAllvalues(idUser, idTipeVAlue);
-      console.log("form");
-      console.log(value);
 
       value?.map((item) => lista.push(item));
       formValue.setFieldsValue(value!);

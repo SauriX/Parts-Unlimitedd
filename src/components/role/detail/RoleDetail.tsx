@@ -40,15 +40,16 @@ const RoleDetail = () => {
     }
   }, [getById, id]);
   const handleDownload = async () => {
-    console.log(role);
-    console.log("download");
     setLoading(true);
-    const succes = await exportForm(id!, role!.nombre);
+    await exportForm(id!, role!.nombre);
     setLoading(false);
   };
   return (
     <Fragment>
-      <RoleFormHeader handlePrint={handlePrint} handleDownload={handleDownload} />
+      <RoleFormHeader
+        handlePrint={handlePrint}
+        handleDownload={handleDownload}
+      />
       <Divider className="header-divider" />
       <RoleForm componentRef={componentRef} load={loading} />
     </Fragment>

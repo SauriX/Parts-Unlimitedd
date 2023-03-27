@@ -32,9 +32,6 @@ const RouteTrackingTable: FC<RouteTableProps> = ({
   const { TabPane } = Tabs;
   const { routeStore } = useStore();
   const { routes, getAll } = routeStore;
-  
-
-  
 
   const [searchParams] = useSearchParams();
 
@@ -49,14 +46,11 @@ const RouteTrackingTable: FC<RouteTableProps> = ({
     searchedColumn: "",
   });
 
-  //console.log("Table");
-
   useEffect(() => {
     const readRoutes = async () => {
       setLoading(true);
       await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
-      // create(routes).then(x => { getAll("all")});
     };
 
     readRoutes();

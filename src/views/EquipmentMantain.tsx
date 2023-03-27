@@ -1,13 +1,12 @@
 import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
-import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
-
-import IndicationTable from "../components/equipment/EquipmentTable";
 import EquipmentMantainHeader from "../components/equipmentMantain/EquipmentHeader";
 import EquipmentMantainData from "../components/equipmentMantain/EquipmentMantainData";
+
 type UrlParams = {
   id: string;
 };
@@ -28,15 +27,6 @@ const EquipmmentMantain = () => {
     },
   });
 
-  // useEffect(() => {
-  //   const checkAccess = async () => {
-  //     await access();
-  //   };
-
-  //   checkAccess();
-  // }, [access]);
-
-  console.log("Render");
   const { id } = useParams<UrlParams>();
   const equipmentId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
   useEffect(() => {
@@ -45,13 +35,15 @@ const EquipmmentMantain = () => {
     };
   }, [clearScopes]);
 
-  //if (!scopes?.acceder) return null;
-
   return (
     <Fragment>
       <EquipmentMantainHeader handlePrint={handlePrint} />
       <Divider className="header-divider" />
-      <EquipmentMantainData componentRef={componentRef} printing={printing} id={equipmentId!}/>
+      <EquipmentMantainData
+        componentRef={componentRef}
+        printing={printing}
+        id={equipmentId!}
+      />
     </Fragment>
   );
 };

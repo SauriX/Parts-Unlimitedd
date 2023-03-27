@@ -1,15 +1,13 @@
 import { Button, Col, PageHeader } from "antd";
 import { observer } from "mobx-react-lite";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import DownloadIcon from "../../../app/common/icons/DownloadIcon";
 import { useParams, useNavigate } from "react-router-dom";
-import GoBackIcon from "../../../app/common/icons/GoBackIcon";
 import { PlusOutlined } from "@ant-design/icons";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import { useStore } from "../../../app/stores/store";
 import alerts from "../../../app/util/alerts";
-import { toJS } from "mobx";
 
 type InvoiceCompanyHeaderProps = {
   handleDownload: () => void;
@@ -168,11 +166,6 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
                   type="primary"
                   onClick={() => {
                     if (tipo === "global") {
-                      console.log(
-                        "solicitudes global",
-                        toJS(selectedRequestGlobal)
-                      );
-
                       createInvoiceGlobal(profile?.sucursal!);
                       return;
                     }

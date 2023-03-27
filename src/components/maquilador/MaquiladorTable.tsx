@@ -38,8 +38,6 @@ const MaquiladorTable: FC<MaquiladorTableProps> = ({ componentRef, printing }) =
     searchedColumn: "",
   });
 
-  //console.log("Table");
-
   useEffect(() => {
     const readMaquilador = async () => {
       setLoading(true);

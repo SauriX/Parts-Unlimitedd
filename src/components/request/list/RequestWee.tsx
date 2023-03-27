@@ -126,7 +126,6 @@ const RequestWee = () => {
       setLoading(true);
       const folio = await searchPatientByFolio(value);
       setLoading(false);
-      console.log(folio);
       if (folio) {
         const service = folio;
         const values: any = {

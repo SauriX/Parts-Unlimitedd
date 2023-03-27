@@ -136,7 +136,6 @@ const CatalogBudgetForm: FC<CatalogBudgetFormProps> = ({
     });
 
     catalog.sucursales = branchCityBudgetList;
-    console.log(catalog);
 
     let success = false;
 

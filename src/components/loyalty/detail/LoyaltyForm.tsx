@@ -229,37 +229,28 @@ const LoyaltyForm: FC<LoyaltyFormProps> = ({ id, componentRef, printing }) => {
                             tipoDescuento: e.target.value,
                           }));
                           setDiscunt(e.target.value);
-                          console.log(values.cantidad);
                         }}
                         value={discunt}
                       />
                     </div>
                   </Form.Item>
                 </Form>
-                {/* <Typography>
-        <pre>Name Value: {nameValue}</pre>
-      </Typography> */}
+
                 <NumberInput
                   formProps={{
                     name: "cantidadDescuento",
                     label: "Descuento/Cantidad",
                   }}
-                  // nameValue ?  true : false;
                   min={0}
                   max={nameValue === "Porcentaje" ? 100 : undefined}
                   readonly={readonly}
                   required
                 />
                 <div style={{ marginBottom: "20px" }}>
-                  {/* Descuento entre : */}
                   <DateRangeInput
                     formProps={{ label: "Descuento entre", name: "fecha" }}
                     readonly={readonly}
                   />
-                  {/* <RangePicker
-                    style={{ marginLeft: "20px" }} //value={moment(item.fechaInicial)}
-                    onChange={(value) => console.log(value!)}
-                  /> */}
                 </div>
               </Col>
               <Col md={12} sm={24} xs={12}>

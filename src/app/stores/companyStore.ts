@@ -49,7 +49,6 @@ export default class CompanyStore {
       const company = await Company.getById(id);
       return company;
     } catch (error) {
-      console.log(error);
       alerts.warning(getErrors(error));
     }
   };
@@ -59,7 +58,6 @@ export default class CompanyStore {
       const contacts = await Company.getContactsByCompany(id);
       this.contactos = contacts;
     } catch (error) {
-      console.log(error);
       alerts.warning(getErrors(error));
     }
   };

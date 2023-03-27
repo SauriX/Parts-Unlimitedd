@@ -473,8 +473,6 @@ export default class RequestStore {
       }
     }
 
-    console.log(allTags);
-
     this.setTags(allTags);
   };
 

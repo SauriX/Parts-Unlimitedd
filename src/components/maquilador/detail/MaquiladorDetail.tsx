@@ -1,6 +1,6 @@
 import { Divider } from "antd";
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import MaquiladorForm from "./MaquiladorForm";
 import MaquiladorFormHeader from "./MaquiladorFormHeader";
@@ -36,7 +36,6 @@ const MaquiladorDetail = () => {
   const maquiladorId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
 
   useEffect(() => {
-    //console.log(maquiladorId);
     if (maquiladorId === undefined) {
       navigate("/notFound");
     }

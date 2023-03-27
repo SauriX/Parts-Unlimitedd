@@ -64,7 +64,6 @@ export default class NotificationsStore {
       const notification = await Notifications.getById(id);
       return notification;
     } catch (error) {
-      console.log(error);
       alerts.warning(getErrors(error));
     }
   };

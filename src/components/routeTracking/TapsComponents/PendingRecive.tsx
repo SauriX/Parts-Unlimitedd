@@ -118,7 +118,6 @@ const PendingRecive = () => {
     setOpenRows(true);
   }, [pendings]);
   useEffect(() => {
-    console.log(profile, "user");
     const readPriceList = async () => {
       var search = values;
       search.sucursaldest = profile!.sucursal;
@@ -301,17 +300,13 @@ const PendingRecive = () => {
     },
   ];
   const onFinish = async (newValues: ISearchPending) => {
-    console.log("onfinish");
     const reagent = { ...values, ...newValues };
-    console.log(profile, "user");
 
     var search = reagent;
     search.sucursaldest = profile!.sucursal;
     let studios = [];
     var datas = await getAllRecive(search!);
     datas?.forEach((x: any) => studios.push(x.pendings));
-    console.log(reagent, "en el onfish");
-    console.log(reagent);
     let success = false;
   };
   return (

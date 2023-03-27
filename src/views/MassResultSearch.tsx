@@ -10,10 +10,6 @@ const MassResultSearch = () => {
   const { massResultSearchStore } = useStore();
   const { results, area, printPdf, search } = massResultSearchStore;
   const [loading, setLoading] = useState(false);
-  
-  useEffect(() => {
-    console.log("Area info", area);
-  }, [area]);
 
   const handleDownload = async () => {
     setLoading(true);

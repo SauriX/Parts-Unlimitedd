@@ -49,8 +49,6 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
     searchedColumn: "",
   });
 
-  console.log("Table");
-
   useEffect(() => {
     const readEquipment = async () => {
       setLoading(true);
@@ -169,16 +167,7 @@ const EquipmentTable: FC<EquipmentTableProps> = ({
       </div>
     );
   };
-  const test = () => {
-    console.log(equipment);
-    const a: any[] = [];
-    for (const obj of equipment) {
-      a.push({ ...obj });
-    }
 
-    console.log(a);
-  };
-  test();
   return (
     <Fragment>
       <Table<IEquipmentList>

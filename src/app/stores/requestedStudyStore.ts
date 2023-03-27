@@ -65,7 +65,6 @@ export default class RequestedStudyStore {
 
   update = async (study: IUpdate[]) => {
     try {
-      console.log(study);
       await RequestedStudy.update(study);
       alerts.success(messages.updated);
 

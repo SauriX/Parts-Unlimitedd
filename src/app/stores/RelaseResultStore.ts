@@ -23,7 +23,6 @@ export default class RelaseResultStore {
   activeTab: boolean = false;
 
   setActiveTab = (active: boolean) => {
-    console.log(active)
     this.activeTab = active;
   };
 
@@ -60,7 +59,6 @@ export default class RelaseResultStore {
     try {
       const scopes = await ResultValidation.access();
       this.scopes = scopes;
-      console.log(scopes);
     } catch (error) {
       alerts.warning(getErrors(error));
       history.push("/forbidden");
@@ -80,7 +78,6 @@ export default class RelaseResultStore {
 
   update = async (study: IUpdate[]) => {
     try {
-      console.log(study);
       await ResultValidation.update(study);
       alerts.success(messages.updated);
       return true;
@@ -99,7 +96,6 @@ export default class RelaseResultStore {
   };
   viewTicket = async (recordId: any) => {
     try {
-      console.log(recordId,"record");
       await ResultValidation.getresultPdf(recordId);
     } catch (error: any) {
       alerts.warning(getErrors(error));

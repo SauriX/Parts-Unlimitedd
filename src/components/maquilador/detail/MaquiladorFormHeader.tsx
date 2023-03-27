@@ -27,10 +27,6 @@ const MaquiladorFormHeader: FC<MaquiladorFormHeaderProps> = ({
     exportForm(id);
   };
 
-  // const [searchParams, setSearchParams] = useSearchParams();
-
-  //console.log("Header");
-
   return (
     <PageHeader
       ghost={false}

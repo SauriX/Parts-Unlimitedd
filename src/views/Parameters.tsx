@@ -12,9 +12,8 @@ const Parameter = () => {
   const { exportList } = parameterStore;
   const [printing, setPrinting] = useState(false);
   const [accessing, setAccessing] = useState(true);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const handleDownload = async () => {
-    console.log("aqui");
     setPrinting(true);
     var succes = await exportList(searchParams.get("search") ?? "all");
     if (succes) {
@@ -22,16 +21,14 @@ const Parameter = () => {
     }
   };
 
-  useEffect(
-    () => {
-      const checkAccess = async () => {
-        //await access();
-        setAccessing(false);
-      };
+  useEffect(() => {
+    const checkAccess = async () => {
+      //await access();
+      setAccessing(false);
+    };
 
-      checkAccess();
-    } /* [access] */
-  );
+    checkAccess();
+  });
 
   useEffect(() => {
     return () => {

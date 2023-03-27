@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
 import MaquiladorHeader from "../components/maquilador/MaquiladorHeader";
-import MaquiladorTable  from "../components/maquilador/MaquiladorTable";
+import MaquiladorTable from "../components/maquilador/MaquiladorTable";
 
 const Maquilador = () => {
   const { maquiladorStore } = useStore();
@@ -13,8 +13,8 @@ const Maquilador = () => {
 
   const [printing, setPrinting] = useState(false);
 
-    const componentRef = useRef<any>();
-    const handlePrint = useReactToPrint({
+  const componentRef = useRef<any>();
+  const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     onBeforeGetContent: () => {
       setPrinting(true);
@@ -31,8 +31,6 @@ const Maquilador = () => {
 
     checkAccess();
   }, [access]);
-
-  console.log("Render");
 
   useEffect(() => {
     return () => {

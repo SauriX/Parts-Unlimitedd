@@ -44,7 +44,6 @@ export default class SamplingStore {
     try {
       const scopes = await Sampling.access();
       this.scopes = scopes;
-      console.log(scopes);
     } catch (error) {
       alerts.warning(getErrors(error));
       history.push("/forbidden");

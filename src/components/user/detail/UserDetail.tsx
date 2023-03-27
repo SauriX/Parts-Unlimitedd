@@ -41,7 +41,6 @@ const UserDetail = () => {
   }, [getById, id]);
 
   const handleDownload = async () => {
-    console.log(user);
     setLoading(true);
     const succes = await exportForm(id!);
 
