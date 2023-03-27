@@ -6,13 +6,14 @@ import SamplingStudyBody from "../components/Sampling/SamplingStudyBody";
 import SamplingStudyHeader from "../components/Sampling/SamplingStudyHeader";
 
 const SamplingStudy = () => {
-  const { samplingStudyStore } = useStore();
-  const { scopes, access, clearScopes, exportList, formValues } = samplingStudyStore;
+  const { samplingStudyStore, generalStore } = useStore();
+  const { scopes, access, clearScopes, exportList } = samplingStudyStore;
+  const { generalFilter } = generalStore;
   const [loading, setLoading] = useState(false);
 
   const handleDownload = async () => {
     setLoading(true);
-    await exportList(formValues);
+    await exportList(generalFilter);
     setLoading(false);
   };
 

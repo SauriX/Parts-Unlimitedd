@@ -1,5 +1,5 @@
-import { IGeneralForm } from "../models/clinicResults";
-import { ISamplingForm, ISamplingList, IUpdate } from "../models/sampling";
+import { IGeneralForm } from "../models/general";
+import { ISamplingList, IUpdate } from "../models/sampling";
 import { IScopes } from "../models/shared";
 import requests from "./agent";
 
@@ -11,7 +11,7 @@ const Sampling = {
     requests.put("sampling", update),
   getOrderPdf: (recordId: string, requestId: string): Promise<void> =>
     requests.print(`sampling/order/${recordId}/${requestId}`),
-  exportList: (search: ISamplingForm): Promise<void> =>
+  exportList: (search: IGeneralForm): Promise<void> =>
     requests.download(`sampling/export/getList`, search),
 };
 

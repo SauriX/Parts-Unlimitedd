@@ -29,7 +29,6 @@ type MSDefaultProps = {
 };
 
 const MassSearchTable = ({ printing }: MSDefaultProps) => {
-  const { width: windowWidth } = useWindowDimensions();
   const { massResultSearchStore } = useStore();
   const { parameters, results, loadingStudies, printOrder } =
     massResultSearchStore;
@@ -40,7 +39,6 @@ const MassSearchTable = ({ printing }: MSDefaultProps) => {
     searchedColumn: "",
   });
   const [columnas, setColumnas] = useState<any>([]);
-  const [selected, setSelected] = useState<any[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
 
   useEffect(() => {

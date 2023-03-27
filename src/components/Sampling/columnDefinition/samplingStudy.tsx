@@ -147,7 +147,6 @@ export const SamplingStudyExpandable = ({
   onChange,
   updateForm,
 }: expandableProps) => {
-
   const nestedColumns: IColumns<IStudySampling> = [
     {
       ...getDefaultColumnProps("clave", "Estudio", {

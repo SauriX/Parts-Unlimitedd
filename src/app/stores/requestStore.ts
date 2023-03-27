@@ -4,7 +4,6 @@ import Request from "../api/request";
 import { IPriceListInfoFilter } from "../models/priceList";
 import {
   IRequest,
-  IRequestFilter,
   IRequestGeneral,
   IRequestInfo,
   IRequestPack,
@@ -30,6 +29,7 @@ import { store } from "./store";
 import NetPay from "../api/netPay";
 import { ITag, ITagStudy } from "../models/tag";
 import moment from "moment";
+import { IGeneralForm } from "../models/general";
 
 export default class RequestStore {
   constructor() {
@@ -85,7 +85,6 @@ export default class RequestStore {
     );
   }
 
-  filter: IRequestFilter = new RequestFilterForm();
   studyFilter: IPriceListInfoFilter = {};
   requests: IRequestInfo[] = [];
   request?: IRequest;
@@ -188,11 +187,7 @@ export default class RequestStore {
   isStudy(obj: IRequestStudy | IRequestPack): obj is IRequestStudy {
     return obj.type === "study";
   }
-
-  setFilter = (filter: IRequestFilter) => {
-    this.filter = { ...filter };
-  };
-
+  
   setLastViewedCode = (
     data:
       | {
@@ -261,7 +256,7 @@ export default class RequestStore {
     }
   };
 
-  getRequests = async (filter: IRequestFilter) => {
+  getRequests = async (filter: IGeneralForm) => {
     try {
       this.loadingRequests = true;
       const requests = await Request.getRequests(filter);

@@ -5,15 +5,10 @@ import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 import Sampling from "../api/sampling";
-import {
-  ISamplingForm,
-  ISamplingList,
-  IUpdate,
-  SamplingFormValues,
-} from "../models/sampling";
+import { ISamplingList, IUpdate } from "../models/sampling";
 import { status } from "../util/catalogs";
 import { IRequestedStudy } from "../models/requestedStudy";
-import { IGeneralForm } from "../models/clinicResults";
+import { IGeneralForm } from "../models/general";
 
 export default class SamplingStore {
   constructor() {
@@ -23,7 +18,6 @@ export default class SamplingStore {
   scopes?: IScopes;
   data: ISamplingList[] = [];
   studies: IRequestedStudy[] = [];
-  formValues: ISamplingForm = new SamplingFormValues();
   loadingStudies: boolean = false;
 
   clearScopes = () => {
@@ -33,12 +27,6 @@ export default class SamplingStore {
   clearStudy = () => {
     this.data = [];
   };
-
-  setFormValues = (newFormValues: ISamplingForm) => {
-    this.formValues = newFormValues;
-  };
-
-  
 
   access = async () => {
     try {
@@ -100,8 +88,8 @@ export default class SamplingStore {
       alerts.warning(getErrors(error));
     }
   };
-  
-  exportList = async (search: ISamplingForm) => {
+
+  exportList = async (search: IGeneralForm) => {
     try {
       await Sampling.exportList(search);
       return true;

@@ -1,10 +1,7 @@
-import { Button, PageHeader, Input } from "antd";
-import React, { FC } from "react";
+import { Button, PageHeader } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
-import DownloadIcon from "../../../app/common/icons/DownloadIcon";
-import PrintIcon from "../../../app/common/icons/PrintIcon";
 import views from "../../../app/util/view";
 
 const QuotationHeader = () => {

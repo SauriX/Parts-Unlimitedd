@@ -1,6 +1,5 @@
-import { Descriptions, Checkbox, Table, Typography } from "antd";
+import { Checkbox, Table, Typography } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import moment from "moment";
 import { useState } from "react";
 import PrintIcon from "../../app/common/icons/PrintIcon";
 import { EyeOutlined } from "@ant-design/icons";
@@ -9,14 +8,8 @@ import {
   ISearch,
   getDefaultColumnProps,
 } from "../../app/common/table/utils";
-import { IRequestStudy } from "../../app/models/request";
-import {
-  IRequestedStudy,
-  IRequestedStudyList,
-  IUpdate,
-} from "../../app/models/requestedStudy";
+import { IUpdate } from "../../app/models/requestedStudy";
 
-import { status } from "../../app/util/catalogs";
 import { useNavigate } from "react-router";
 import {
   checked,
@@ -32,8 +25,7 @@ type expandableProps = {
   visto: checked[];
   setvisto: React.Dispatch<React.SetStateAction<checked[]>>;
   updateData: IUpdate[];
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>
-  //cambiar: boolean
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 type tableProps = {
@@ -58,9 +50,6 @@ const RelaseStudyColumns = ({ printTicket }: tableProps) => {
           <Link
             onClick={() => {
               navigate(`/clinicResultsDetails/${record?.order}/${record?.id}`);
-              /*               navigate(
-                `/requests/${record.order}/${record.id}`
-              ); */
             }}
           >
             {record.solicitud}
@@ -147,7 +136,7 @@ export const ValidationStudyExpandable = ({
   visto,
   setvisto,
   updateData,
-  setLoading
+  setLoading,
 }: // cambiar
 expandableProps) => {
   const [ver, setver] = useState<boolean>(false);
@@ -231,8 +220,9 @@ expandableProps) => {
               ?.estudioId.includes(record.id))
             ? ""
             : ""}
-          {record.estatus === 6 && (activiti == "cancel") && (
-            <Checkbox style={{ marginLeft:50}}
+          {record.estatus === 6 && activiti == "cancel" && (
+            <Checkbox
+              style={{ marginLeft: 50 }}
               onChange={(e) => {
                 {
                   onChange(e, record.id, record.solicitudId);

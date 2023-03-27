@@ -2,8 +2,8 @@ import { makeAutoObservable, reaction } from "mobx";
 import PriceList from "../api/priceList";
 import Proceding from "../api/proceding";
 import Quotation from "../api/quotation";
+import { IGeneralForm } from "../models/general";
 import { IPriceListInfoFilter } from "../models/priceList";
-import { ISearchMedical } from "../models/Proceeding";
 import {
   IQuotation,
   IQuotationFilter,
@@ -43,7 +43,6 @@ export default class QuotationStore {
     );
   }
 
-  filter: IQuotationFilter = new QuotationFilterForm();
   studyFilter: IPriceListInfoFilter = {};
   quotations: IQuotationInfo[] = [];
   quotation?: IQuotation;
@@ -106,10 +105,6 @@ export default class QuotationStore {
     return obj.type === "study";
   }
 
-  setFilter = (filter: IQuotationFilter) => {
-    this.filter = { ...filter };
-  };
-
   setStudyFilter = (
     branchId?: string,
     doctorId?: string,
@@ -157,7 +152,7 @@ export default class QuotationStore {
     }
   };
 
-  getQuotations = async (filter: IQuotationFilter) => {
+  getQuotations = async (filter: IGeneralForm) => {
     try {
       this.loadingQuotations = true;
       const quotations = await Quotation.getQuotations(filter);
@@ -276,7 +271,7 @@ export default class QuotationStore {
     }
   };
 
-  getRecords = async (filter: ISearchMedical) => {
+  getRecords = async (filter: IGeneralForm) => {
     try {
       const records = await Proceding.getNow(filter);
       return records;

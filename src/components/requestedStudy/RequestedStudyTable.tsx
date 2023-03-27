@@ -1,8 +1,8 @@
-import { Button, Table, Tag } from "antd";
+import { Button, Table } from "antd";
 import { ExpandableConfig } from "antd/lib/table/interface";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { IColumns } from "../../app/common/table/utils";
 import { IRequestedStudyList } from "../../app/models/requestedStudy";
 import { useStore } from "../../app/stores/store";

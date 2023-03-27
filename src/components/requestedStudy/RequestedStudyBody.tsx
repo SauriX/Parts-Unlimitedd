@@ -2,7 +2,7 @@ import { Button, Col, Row, Spin } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Fragment, useState } from "react";
 import { IUpdate } from "../../app/models/requestedStudy";
 import { useStore } from "../../app/stores/store";
@@ -18,21 +18,16 @@ type RSDefaultProps = {
 };
 
 const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
-  const { requestedStudyStore, clinicResultsStore } = useStore();
+  const { requestedStudyStore, generalStore } = useStore();
   const { data, update, printOrder, getAll } = requestedStudyStore;
-  const { formValues } = clinicResultsStore;
+  const { generalFilter } = generalStore;
   const [updateForm, setUpdateForm] = useState<IUpdate[]>([]);
   const [activity, setActivity] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const readRequests = async () => {
-      await getAll({
-        fecha: [
-          moment(Date.now()).utcOffset(0, true),
-          moment(Date.now()).utcOffset(0, true),
-        ],
-      });
+      await getAll(generalFilter);
     };
 
     readRequests();
@@ -88,7 +83,7 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
             setLoading(false);
             setUpdateForm([]);
             setActivity("");
-            getAll(formValues);
+            getAll(generalFilter);
           }
         },
         async () => {
@@ -109,7 +104,7 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
             setLoading(false);
             setUpdateForm([]);
             setActivity("");
-            getAll(formValues);
+            getAll(generalFilter);
           }
         },
         async () => {

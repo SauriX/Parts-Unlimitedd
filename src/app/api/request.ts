@@ -1,6 +1,6 @@
+import { IGeneralForm } from "../models/general";
 import {
   IRequest,
-  IRequestFilter,
   IRequestGeneral,
   IRequestInfo,
   IRequestPartiality,
@@ -19,7 +19,7 @@ import {
 import requests from "./agent";
 
 const Request = {
-  getRequests: (filter: IRequestFilter): Promise<IRequestInfo[]> =>
+  getRequests: (filter: IGeneralForm): Promise<IRequestInfo[]> =>
     requests.post("request/filter", filter),
   getById: (recordId: string, requestId: string): Promise<IRequest> =>
     requests.get(`request/${recordId}/${requestId}`),

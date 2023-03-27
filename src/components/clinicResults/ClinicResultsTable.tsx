@@ -1,8 +1,8 @@
-import { Button, Table, Tag } from "antd";
+import { Button, Table } from "antd";
 import { ExpandableConfig } from "antd/lib/table/interface";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { IColumns } from "../../app/common/table/utils";
 import { IClinicResultList } from "../../app/models/clinicResults";
 import { useStore } from "../../app/stores/store";
@@ -18,9 +18,10 @@ const ClinicResultsTable = ({
   columns,
   expandable,
 }: ClinicResultsTableProps) => {
-  const { clinicResultsStore, requestStore } = useStore();
+  const { clinicResultsStore, requestStore, generalStore } = useStore();
   const { lastViewedFrom } = requestStore;
   const { loadingStudies, getAll } = clinicResultsStore;
+  const { generalFilter } = generalStore;
   const [openRows, setOpenRows] = useState<boolean>(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
 
@@ -59,10 +60,7 @@ const ClinicResultsTable = ({
       ? undefined
       : lastViewedFrom.code;
     getAll({
-      fecha: [
-        moment(Date.now()).utcOffset(0, true),
-        moment(Date.now()).utcOffset(0, true),
-      ],
+      ...generalFilter,
       buscar: defaultCode,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

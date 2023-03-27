@@ -52,9 +52,6 @@ const ValidationStudyColumns = ({ printTicket }: tableProps) => {
               navigate(
                 `/clinicResultsDetails/${record?.order}/${record?.id}?return=validation`
               );
-              /*               navigate(
-                `/requests/${record.order}/${record.id}`
-              ); */
             }}
           >
             {record.solicitud}

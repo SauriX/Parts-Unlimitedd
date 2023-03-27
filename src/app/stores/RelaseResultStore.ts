@@ -1,6 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import ResultValidation from "../api/resultrelase";
-import { Irelacelist, ISearchRelase, searchrelase } from "../models/relaseresult";
+import { IGeneralForm } from "../models/general";
+import { Irelacelist } from "../models/relaseresult";
 
 import { IUpdate } from "../models/sampling";
 import { IScopes } from "../models/shared";
@@ -9,7 +10,6 @@ import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 
-
 export default class RelaseResultStore {
   constructor() {
     makeAutoObservable(this);
@@ -17,19 +17,15 @@ export default class RelaseResultStore {
 
   scopes?: IScopes;
   studys: Irelacelist[] = [];
-  studyCont:number=0;
-  soliCont:number=0;
-  search:ISearchRelase = new searchrelase();
+  studyCont: number = 0;
+  soliCont: number = 0;
   activeTab: boolean = false;
 
   setActiveTab = (active: boolean) => {
     this.activeTab = active;
   };
 
-  setSearch=(search:  ISearchRelase)=>{
-    this.search = search;
-  };
-  exportList = async (search:  ISearchRelase) => {
+  exportList = async (search: IGeneralForm) => {
     try {
       await ResultValidation.exportList(search);
       return true;
@@ -37,23 +33,16 @@ export default class RelaseResultStore {
       alerts.warning(getErrors(error));
     }
   };
-  setStudyCont=(cont:number)=>{
-    this.studyCont=cont;
+  setStudyCont = (cont: number) => {
+    this.studyCont = cont;
   };
-  setSoliCont=(cont:number)=>{
-    this.soliCont=cont;
+  setSoliCont = (cont: number) => {
+    this.soliCont = cont;
   };
   clearScopes = () => {
     this.scopes = undefined;
   };
   clear: boolean = false;
-
-  clearStudy = () => {
-    this.studys = [];
-    this.clear = !this.clear
-    this.studyCont = 0;
-    this.soliCont=0;
-  };
 
   access = async () => {
     try {
@@ -65,7 +54,7 @@ export default class RelaseResultStore {
     }
   };
 
-  getAll = async (search: ISearchRelase) => {
+  getAll = async (search: IGeneralForm) => {
     try {
       const study = await ResultValidation.getAll(search);
       this.studys = study;
