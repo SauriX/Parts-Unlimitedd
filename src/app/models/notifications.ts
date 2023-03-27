@@ -22,6 +22,10 @@ export interface INotificationForm {
     dias: IDias[]
 }
 
+export interface INotificationFilter {
+    sucursalId?: string,
+    rolId?: string
+}
 export class NotificationValues implements INotificationForm {
  
     titulo = "";
