@@ -1,5 +1,6 @@
 import { Button, Col, Form, Input, Row } from "antd";
 import { useForm } from "antd/lib/form/Form";
+import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -52,12 +53,7 @@ const ClinicResultsFilter = () => {
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
-    form.setFieldsValue(generalFilter);
-  }, [form, generalFilter]);
-
-  useEffect(() => {
     const update = async () => {
-      getBranchCityOptions();
       getMedicOptions();
       getCompanyOptions();
       getAreaByDeparmentOptions();
@@ -66,7 +62,6 @@ const ClinicResultsFilter = () => {
     };
     update();
   }, [
-    getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
     getStudiesOptions,
@@ -108,25 +103,41 @@ const ClinicResultsFilter = () => {
   }, [areaByDeparmentOptions, form, selectedDepartment]);
 
   useEffect(() => {
-    const profileBranch = profile?.sucursal;
-    let findCity: string | number | undefined;
-    if (profileBranch) {
-      findCity = branchCityOptions.find((x) =>
-        x.options?.some((y) => y.value == profileBranch)
-      )?.value;
-      if (findCity) {
-        form.setFieldValue("ciudad", [findCity]);
-      }
-      form.setFieldValue("sucursalId", [profileBranch]);
-    }
-  }, [branchCityOptions, form, profile]);
+    const defaultCode = !lastViewedFrom
+      ? undefined
+      : lastViewedFrom.from === "results"
+      ? undefined
+      : lastViewedFrom.code;
+
+    if (!profile || !profile.sucursal || branchCityOptions.length === 0) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options!.some((y) => y.value === profileBranch))
+      ?.value?.toString();
+
+    const filter = {
+      ...generalFilter,
+      buscar: defaultCode,
+      ciudad: !generalFilter.cargaInicial
+        ? generalFilter.ciudad
+        : [userCity as string],
+      sucursalId: !generalFilter.cargaInicial
+        ? generalFilter.sucursalId
+        : [profileBranch],
+    };
+    form.setFieldsValue(filter);
+    filter.cargaInicial = false;
+
+    setGeneralFilter(filter);
+    getAll(filter);
+  }, [branchCityOptions]);
 
   const onFinish = async (newFormValues: IGeneralForm) => {
     setLoading(true);
 
-    const filter = { ...newFormValues };
     setGeneralFilter(newFormValues);
-    getAll(filter);
+    await getAll(newFormValues);
+
     setLoading(false);
   };
 

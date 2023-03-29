@@ -18,10 +18,9 @@ import {
 const { Link, Text } = Typography;
 
 const QuotationTable = () => {
-  const { quotationStore, generalStore } = useStore();
-  const { loadingQuotations, quotations, getQuotations } =
+  const { quotationStore } = useStore();
+  const { loadingQuotations, quotations } =
     quotationStore;
-  const { generalFilter } = generalStore;
 
   let navigate = useNavigate();
 
@@ -29,15 +28,6 @@ const QuotationTable = () => {
     searchedText: "",
     searchedColumn: "",
   });
-
-  useEffect(() => {
-    const readQuotations = async () => {
-      await getQuotations(generalFilter);
-    };
-
-    readQuotations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const columns: IColumns<IQuotationInfo> = [
     {

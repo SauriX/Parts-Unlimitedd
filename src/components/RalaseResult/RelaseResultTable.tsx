@@ -51,7 +51,6 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   const { expedientes } = procedingStore;
   const {
     branchCityOptions,
-    getBranchCityOptions,
     medicOptions,
     getMedicOptions,
     companyOptions,
@@ -94,16 +93,10 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
-    getBranchCityOptions();
     getMedicOptions();
     getCompanyOptions();
     getAreaByDeparmentOptions();
-  }, [
-    getBranchCityOptions,
-    getMedicOptions,
-    getCompanyOptions,
-    getAreaByDeparmentOptions,
-  ]);
+  }, [getMedicOptions, getCompanyOptions, getAreaByDeparmentOptions]);
 
   useEffect(() => {
     setCityOptions(
@@ -112,17 +105,27 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
   }, [branchCityOptions]);
 
   useEffect(() => {
-    const profileBranch = profile?.sucursal;
-    if (profileBranch) {
-      const findCity = branchCityOptions.find((x) =>
-        x.options?.some((y) => y.value == profileBranch)
-      )?.value;
-      if (findCity) {
-        form.setFieldValue("ciudad", [findCity]);
-      }
-      form.setFieldValue("sucursalId", [profileBranch]);
-    }
-  }, [branchCityOptions, form, profile]);
+    if (!profile || !profile.sucursal || branchCityOptions.length === 0) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options!.some((y) => y.value === profileBranch))
+      ?.value?.toString();
+
+    const filter = {
+      ...generalFilter,
+      ciudad: !generalFilter.cargaInicial
+        ? generalFilter.ciudad
+        : [userCity as string],
+      sucursalId: !generalFilter.cargaInicial
+        ? generalFilter.sucursalId
+        : [profileBranch],
+    };
+    form.setFieldsValue(filter);
+    filter.cargaInicial = false;
+
+    setGeneralFilter(filter);
+    getAll(filter);
+  }, [branchCityOptions]);
 
   useEffect(() => {
     if (selectedCity != undefined && selectedCity != null) {
@@ -135,10 +138,6 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
       setBranchOptions(options);
     }
   }, [branchCityOptions, form, selectedCity]);
-
-  useEffect(() => {
-    form.setFieldsValue(generalFilter);
-  }, [generalFilter, form]);
 
   useEffect(() => {
     setDepartmentOptions(
@@ -160,8 +159,6 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
     };
     readStudy();
   }, [getStudiesOptions]);
-
-  useEffect(() => {}, [studiesOptions]);
 
   useEffect(() => {
     setexpandedRowKeys(studys!.map((x) => x.id));

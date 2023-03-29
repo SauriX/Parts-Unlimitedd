@@ -25,20 +25,17 @@ const RequestFilter = () => {
     medicOptions,
     companyOptions,
     departmentOptions,
-    getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
     getDepartmentOptions,
-    BranchOptions,
   } = optionStore;
   const { profile, getProfile } = profileStore;
-  const { getRequests } = requestStore;
+  const { getRequests, lastViewedFrom } = requestStore;
   const { setGeneralFilter, generalFilter } = generalStore;
 
   const [form] = useForm<IGeneralForm>();
 
   const selectedCity = Form.useWatch("ciudad", form);
-
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [dateType, setDateType] = useState<number>(1);
@@ -46,22 +43,11 @@ const RequestFilter = () => {
   useKeyPress("L", form.submit);
 
   useEffect(() => {
-    getBranchCityOptions();
     getMedicOptions();
     getCompanyOptions();
     getDepartmentOptions();
     getProfile();
-  }, [
-    getBranchCityOptions,
-    getMedicOptions,
-    getCompanyOptions,
-    getDepartmentOptions,
-    getProfile,
-  ]);
-
-  useEffect(() => {
-    form.setFieldsValue(generalFilter);
-  }, [generalFilter, form]);
+  }, [getMedicOptions, getCompanyOptions, getDepartmentOptions, getProfile]);
 
   useEffect(() => {
     setCityOptions(
@@ -82,17 +68,32 @@ const RequestFilter = () => {
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
-    const profileBranch = profile?.sucursal;
-    if (profileBranch) {
-      const findCity = branchCityOptions.find((x) =>
-        x.options?.some((y) => y.value == profileBranch)
-      )?.value;
-      if (findCity) {
-        form.setFieldValue("ciudad", [findCity]);
-      }
-      form.setFieldValue("sucursalId", [profileBranch]);
-    }
-  }, [BranchOptions, form, profile]);
+    const defaultCode = !lastViewedFrom
+      ? undefined
+      : lastViewedFrom.from === "requests"
+      ? undefined
+      : lastViewedFrom.code;
+
+    if (!profile || !profile.sucursal || branchCityOptions.length === 0) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options!.some((y) => y.value === profileBranch))
+      ?.value?.toString();
+
+    const filter = {
+      ...generalFilter,
+      buscar: defaultCode,
+      ciudad: !generalFilter.cargaInicial ? generalFilter.ciudad : [userCity!],
+      sucursalId: !generalFilter.cargaInicial
+        ? generalFilter.sucursalId
+        : [profileBranch],
+    };
+    form.setFieldsValue(filter);
+    filter.cargaInicial = false;
+
+    setGeneralFilter({ ...filter, tipoFecha: 1 });
+    getRequests({ ...filter, tipoFecha: 1 });
+  }, [branchCityOptions]);
 
   const onFinish = (values: IGeneralForm) => {
     setGeneralFilter(values);
