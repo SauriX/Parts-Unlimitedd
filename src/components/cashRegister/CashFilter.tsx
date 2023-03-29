@@ -23,30 +23,18 @@ const typeCompanyOptions: IOptions[] = [
 
 const CashRegisterFilter = () => {
   const { cashRegisterStore, optionStore, profileStore } = useStore();
-  const {
-    filter,
-    setFilter,
-    getByFilter,
-    clear,
-    setShowChart: setActiveChart,
-  } = cashRegisterStore;
-  const {
-    branchCityOptions,
-    getBranchCityOptions,
-    getMedicOptions,
-    getCompanyOptions,
-  } = optionStore;
+  const { filter, setFilter, getByFilter, setShowChart } = cashRegisterStore;
+  const { branchCityOptions, getMedicOptions, getCompanyOptions } = optionStore;
   const { profile } = profileStore;
 
   const [form] = Form.useForm<ICashRegisterFilter>();
-
   const [loading, setLoading] = useState(false);
+  const chartValue = Form.useWatch("grafica", form);
 
   useEffect(() => {
-    getBranchCityOptions();
     getMedicOptions();
     getCompanyOptions();
-  }, [getBranchCityOptions, getMedicOptions, getCompanyOptions]);
+  }, [getMedicOptions, getCompanyOptions]);
 
   useEffect(() => {
     form.setFieldsValue(filter);
@@ -59,15 +47,15 @@ const CashRegisterFilter = () => {
     }
   }, [branchCityOptions, form, profile]);
 
+  useEffect(() => {
+    setShowChart(chartValue);
+  }, [chartValue]);
+
   const onFinish = async (filter: ICashRegisterFilter) => {
     setLoading(true);
     await getByFilter(filter);
     setFilter(filter);
     setLoading(false);
-  };
-
-  const onChangeChart = (value: boolean) => {
-    setActiveChart(value);
   };
 
   return (
@@ -110,7 +98,7 @@ const CashRegisterFilter = () => {
               />
             </Col>
             <Col span={8}>
-              <SwitchInput onChange={onChangeChart} />
+              {/* <SwitchInput name="grafica" label="Gráfica" /> */}
             </Col>
             <Col span={8} style={{ textAlign: "right" }}>
               <Button key="new" type="primary" htmlType="submit">

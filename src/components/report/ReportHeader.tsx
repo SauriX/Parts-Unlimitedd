@@ -16,13 +16,8 @@ type ReportHeaderProps = {
 
 const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
   const { reportStore } = useStore();
-  const {
-    currentReport,
-    filter,
-    setCurrentReport,
-    getByFilter,
-    getByChart,
-  } = reportStore;
+  const { currentReport, filter, setCurrentReport, getByFilter, getByChart } =
+    reportStore;
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -33,8 +28,8 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
     if (options) {
       const value = (options as IOptionsReport).value!.toString() as reportType;
       setCurrentReport(value);
-      searchParams.set("report", value!);
       await getByFilter(value!, filter);
+      searchParams.set("report", value!);
       if (
         value === "contacto" ||
         value == "estudios" ||
@@ -58,49 +53,47 @@ const ReportHeader: FC<ReportHeaderProps> = ({ handleDownload }) => {
 
   return (
     <Fragment>
-      <>
-        <PageHeader
-          ghost={false}
-          title={
-            <HeaderTitle
-              title={
-                currentReport == "corte_caja"
-                  ? "Corte de caja"
-                  : currentReport == "indicadores"
-                  ? "Indicadores"
-                  : "Reportes"
-              }
-              image={
-                currentReport == "corte_caja"
-                  ? "registradora"
-                  : currentReport == "indicadores"
-                  ? "indicadores"
-                  : "grafico"
-              }
-            />
-          }
-          className="header-container"
-          extra={[
-            currentReport && (
-              <DownloadIcon key="download" onClick={handleDownload} />
-            ),
-            <Select
-              key="reports"
-              showSearch
-              placeholder="Reporte"
-              optionFilterProp="children"
-              defaultValue={searchParams.get("report")}
-              onChange={handleChange}
-              filterOption={(input: string, option: any) =>
-                option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-              allowClear
-              style={{ width: 180, textAlign: "left" }}
-              options={reports}
-            ></Select>,
-          ]}
-        ></PageHeader>
-      </>
+      <PageHeader
+        ghost={false}
+        title={
+          <HeaderTitle
+            title={
+              currentReport == "corte_caja"
+                ? "Corte de caja"
+                : currentReport == "indicadores"
+                ? "Indicadores"
+                : "Reportes"
+            }
+            image={
+              currentReport == "corte_caja"
+                ? "registradora"
+                : currentReport == "indicadores"
+                ? "indicadores"
+                : "grafico"
+            }
+          />
+        }
+        className="header-container"
+        extra={[
+          currentReport && (
+            <DownloadIcon key="download" onClick={handleDownload} />
+          ),
+          <Select
+            key="reports"
+            showSearch
+            placeholder="Reporte"
+            optionFilterProp="children"
+            defaultValue={searchParams.get("report")}
+            onChange={handleChange}
+            filterOption={(input: string, option: any) =>
+              option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            }
+            allowClear
+            style={{ width: 180, textAlign: "left" }}
+            options={reports}
+          ></Select>,
+        ]}
+      ></PageHeader>
     </Fragment>
   );
 };

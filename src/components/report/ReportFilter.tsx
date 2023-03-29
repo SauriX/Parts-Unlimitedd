@@ -60,8 +60,14 @@ const typeCompanyOptions: IOptions[] = [
 
 const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
   const { reportStore, optionStore, profileStore } = useStore();
-  const { currentReport, filter, setFilter, getByFilter, getByChart, clear } =
-    reportStore;
+  const {
+    currentReport,
+    filter,
+    setFilter,
+    getByFilter,
+    getByChart,
+    loadingReport,
+  } = reportStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -73,18 +79,16 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
   const { profile } = profileStore;
 
   const [form] = Form.useForm<IReportFilter>();
+
   const chartValue = Form.useWatch("grafica", form);
   const selectedCity = Form.useWatch("ciudad", form);
-
-  const [loading, setLoading] = useState(false);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
-    getBranchCityOptions();
     getMedicOptions();
     getCompanyOptions();
-  }, [getBranchCityOptions, getMedicOptions, getCompanyOptions]);
+  }, [getMedicOptions, getCompanyOptions]);
 
   useEffect(() => {
     setCityOptions(
@@ -93,17 +97,31 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    const profileBranch = profile?.sucursal;
-    if (profileBranch) {
-      const findCity = branchCityOptions.find((x) =>
-        x.options?.some((y) => y.value === profileBranch)
-      )?.value;
-      if (findCity) {
-        form.setFieldValue("ciudad", [findCity]);
-      }
-      form.setFieldValue("sucursalId", [profileBranch]);
+    if (!profile || !profile.sucursal || branchCityOptions.length === 0) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options!.some((y) => y.value === profileBranch))
+      ?.value?.toString();
+
+    const reportFilter = {
+      ...filter,
+      ciudad: !filter.cargaInicial ? filter.ciudad : [userCity as string],
+      sucursalId: !filter.cargaInicial ? filter.sucursalId : [profileBranch],
+    };
+
+    form.setFieldsValue(reportFilter);
+    filter.cargaInicial = false;
+
+    setFilter(reportFilter);
+
+    const getReport = async () => {
+      await getByFilter(currentReport!, reportFilter);
+    };
+
+    if (currentReport) {
+      getReport();
     }
-  }, [branchCityOptions, form, profile]);
+  }, [branchCityOptions]);
 
   useEffect(() => {
     if (selectedCity != undefined && selectedCity != null) {
@@ -123,7 +141,6 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
   }, [chartValue, setShowChart]);
 
   const onFinish = async (filter: IReportFilter) => {
-    setLoading(true);
     if (currentReport) {
       await getByFilter(currentReport, filter);
       setFilter(filter);
@@ -142,144 +159,137 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
         await getByChart(currentReport, filter);
       }
     }
-    setLoading(false);
   };
 
   return (
-    <Spin spinning={loading}>
-      <div className="status-container">
-        <Form<IReportFilter>
-          {...formItemLayout}
-          form={form}
-          name="report"
-          initialValues={{
-            fecha: [
-              moment(Date.now()).utcOffset(0, true),
-              moment(Date.now()).utcOffset(0, true),
-            ],
-          }}
-          onFinish={onFinish}
-        >
-          <Row>
-            <Col span={22}>
-              <Row justify="space-between" gutter={[12, 12]}>
-                {input.includes("fecha") && (
-                  <Col span={8}>
-                    <DateRangeInput
-                      formProps={{ label: "Fecha", name: "fecha" }}
-                      required={true}
-                      disableAfterDates
-                    />
-                  </Col>
-                )}
-                {input.includes("sucursal") && (
-                  <Col span={8}>
-                    <Form.Item
-                      label="Sucursal"
-                      className="no-error-text"
-                      help=""
-                    >
-                      <Input.Group>
-                        <Row gutter={8}>
-                          <Col span={12}>
-                            <SelectInput
-                              form={form}
-                              formProps={{
-                                name: "ciudad",
-                                label: "Ciudad",
-                                noStyle: true,
-                              }}
-                              multiple
-                              options={cityOptions}
-                            />
-                          </Col>
-                          <Col span={12}>
-                            <SelectInput
-                              form={form}
-                              formProps={{
-                                name: "sucursalId",
-                                label: "Sucursales",
-                                noStyle: true,
-                              }}
-                              multiple
-                              options={branchOptions}
-                            />
-                          </Col>
-                        </Row>
-                      </Input.Group>
-                    </Form.Item>
-                  </Col>
-                )}
-                {input.includes("medico") && (
-                  <Col span={8}>
-                    <SelectInput
-                      form={form}
-                      formProps={{ name: "medicoId", label: "Médico" }}
-                      multiple
-                      options={medicOptions}
-                    />
-                  </Col>
-                )}
-                {input.includes("compañia") && (
-                  <Col span={8}>
-                    <SelectInput
-                      form={form}
-                      formProps={{ name: "compañiaId", label: "Compañía" }}
-                      multiple
-                      options={companyOptions}
-                    />
-                  </Col>
-                )}
-                {input.includes("metodoEnvio") && (
-                  <Col span={8}>
-                    <SelectInput
-                      form={form}
-                      formProps={{
-                        name: "metodoEnvio",
-                        label: "Medio de envío",
-                      }}
-                      multiple
-                      options={sendMethodOptions}
-                    />
-                  </Col>
-                )}
-                {input.includes("urgencia") && (
-                  <Col span={8}>
-                    <SelectInput
-                      form={form}
-                      formProps={{
-                        name: "urgencia",
-                        label: "Tipo de Urgencia",
-                      }}
-                      multiple
-                      options={urgentOptions}
-                    />
-                  </Col>
-                )}
-                {input.includes("tipoCompañia") && (
-                  <Col span={8}>
-                    <SelectInput
-                      form={form}
-                      formProps={{ name: "tipoCompañia", label: "Convenio" }}
-                      multiple
-                      options={typeCompanyOptions}
-                    />
-                  </Col>
-                )}
+    <div className="status-container">
+      <Form<IReportFilter>
+        {...formItemLayout}
+        form={form}
+        name="report"
+        initialValues={{
+          fecha: [
+            moment(Date.now()).utcOffset(0, true),
+            moment(Date.now()).utcOffset(0, true),
+          ],
+        }}
+        onFinish={onFinish}
+      >
+        <Row>
+          <Col span={22}>
+            <Row justify="space-between" gutter={[12, 12]}>
+              {input.includes("fecha") && (
                 <Col span={8}>
-                  <SwitchInput name="grafica" label="Gráfica" />
+                  <DateRangeInput
+                    formProps={{ label: "Fecha", name: "fecha" }}
+                    required={true}
+                    disableAfterDates
+                  />
                 </Col>
-              </Row>
-            </Col>
-            <Col span={2} style={{ textAlign: "right" }}>
-              <Button key="new" type="primary" htmlType="submit">
-                Filtrar
-              </Button>
-            </Col>
-          </Row>
-        </Form>
-      </div>
-    </Spin>
+              )}
+              {input.includes("sucursal") && (
+                <Col span={8}>
+                  <Form.Item label="Sucursal" className="no-error-text" help="">
+                    <Input.Group>
+                      <Row gutter={8}>
+                        <Col span={12}>
+                          <SelectInput
+                            form={form}
+                            formProps={{
+                              name: "ciudad",
+                              label: "Ciudad",
+                              noStyle: true,
+                            }}
+                            multiple
+                            options={cityOptions}
+                          />
+                        </Col>
+                        <Col span={12}>
+                          <SelectInput
+                            form={form}
+                            formProps={{
+                              name: "sucursalId",
+                              label: "Sucursales",
+                              noStyle: true,
+                            }}
+                            multiple
+                            options={branchOptions}
+                          />
+                        </Col>
+                      </Row>
+                    </Input.Group>
+                  </Form.Item>
+                </Col>
+              )}
+              {input.includes("medico") && (
+                <Col span={8}>
+                  <SelectInput
+                    form={form}
+                    formProps={{ name: "medicoId", label: "Médico" }}
+                    multiple
+                    options={medicOptions}
+                  />
+                </Col>
+              )}
+              {input.includes("compañia") && (
+                <Col span={8}>
+                  <SelectInput
+                    form={form}
+                    formProps={{ name: "compañiaId", label: "Compañía" }}
+                    multiple
+                    options={companyOptions}
+                  />
+                </Col>
+              )}
+              {input.includes("metodoEnvio") && (
+                <Col span={8}>
+                  <SelectInput
+                    form={form}
+                    formProps={{
+                      name: "metodoEnvio",
+                      label: "Medio de envío",
+                    }}
+                    multiple
+                    options={sendMethodOptions}
+                  />
+                </Col>
+              )}
+              {input.includes("urgencia") && (
+                <Col span={8}>
+                  <SelectInput
+                    form={form}
+                    formProps={{
+                      name: "urgencia",
+                      label: "Tipo de Urgencia",
+                    }}
+                    multiple
+                    options={urgentOptions}
+                  />
+                </Col>
+              )}
+              {input.includes("tipoCompañia") && (
+                <Col span={8}>
+                  <SelectInput
+                    form={form}
+                    formProps={{ name: "tipoCompañia", label: "Convenio" }}
+                    multiple
+                    options={typeCompanyOptions}
+                  />
+                </Col>
+              )}
+              <Col span={8}>
+                <SwitchInput name="grafica" label="Gráfica" />
+              </Col>
+            </Row>
+          </Col>
+          <Col span={2} style={{ textAlign: "right" }}>
+            <Button key="new" type="primary" htmlType="submit">
+              Filtrar
+            </Button>
+          </Col>
+        </Row>
+      </Form>
+    </div>
   );
 };
 

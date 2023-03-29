@@ -45,12 +45,6 @@ const getCompanyStatsColumns = (
       render: (value) => moneyFormatter.format(value),
     },
     {
-      ...getDefaultColumnProps("descuento", "Desc.", {
-        width: "20%",
-      }),
-      render: (value) => moneyFormatter.format(value),
-    },
-    {
       ...getDefaultColumnProps("totalEstudios", "Total", {
         width: "20%",
       }),
@@ -89,13 +83,15 @@ export const expandablePriceConfig = () => {
       ...getDefaultColumnProps("paquete", "Paquete", {
         width: "10%",
       }),
-      render: (_value, record) => record.paquete != null ? record.paquete : "-",
+      render: (_value, record) =>
+        record.paquete != null ? record.paquete : "-",
     },
     {
       ...getDefaultColumnProps("promocion", "Promoción del paquete", {
         width: "15%",
       }),
-      render: (_value, record) => record.paquete != null ? moneyFormatter.format(_value) : "-",
+      render: (_value, record) =>
+        record.paquete != null ? moneyFormatter.format(_value) : "-",
     },
   ];
 

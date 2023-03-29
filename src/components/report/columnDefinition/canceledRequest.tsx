@@ -50,12 +50,6 @@ const getCanceledRequestColumns = (
       render: (value) => moneyFormatter.format(value),
     },
     {
-      ...getDefaultColumnProps("descuento", "Desc.", {
-        width: "20%",
-      }),
-      render: (value) => moneyFormatter.format(value),
-    },
-    {
       ...getDefaultColumnProps("iva", "IVA", {
         width: "20%",
       }),
