@@ -1,7 +1,6 @@
 import moment from "moment";
 
 export interface IGeneralForm {
-  // Captura de resultados, Toma de muestra, Solicitud de estudio, Reporte del dia, Validacion y liberacion de resultados
   sucursalId?: string[];
   medicoId?: string[];
   compañiaId?: string[];
@@ -14,24 +13,23 @@ export interface IGeneralForm {
   tipoSolicitud?: string[];
   estatus?: number[];
   estudio?: number[];
-  // Expediente
   expediente?: string;
   telefono?: string;
   fechaNacimiento?: moment.Moment;
   correo?: string;
   fechaNInicial?: moment.Moment;
   fechaNFinal?: moment.Moment;
-  // Solicitudes
   tipoFecha?: number;
-  // Envio resultados
   mediosEntrega?: number[];
-  // Tabla captura
   nombreArea?: string;
+  cargaInicial?: boolean;
 }
 
 export class GeneralFormValues implements IGeneralForm {
   medicoId = [];
   compañiaId = [];
+  sucursalId = [];
+  ciudad = [];
   fecha = [moment().utcOffset(0, true), moment().utcOffset(0, true)];
   buscar = "";
   procedencia = [];
@@ -45,6 +43,7 @@ export class GeneralFormValues implements IGeneralForm {
   tipoFecha = 1;
   mediosEntrega = [];
   nombreArea = "";
+  cargaInicial = true;
 
   constructor(init?: IGeneralForm) {
     Object.assign(this, init);

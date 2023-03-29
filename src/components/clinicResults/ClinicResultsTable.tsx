@@ -18,10 +18,8 @@ const ClinicResultsTable = ({
   columns,
   expandable,
 }: ClinicResultsTableProps) => {
-  const { clinicResultsStore, requestStore, generalStore } = useStore();
-  const { lastViewedFrom } = requestStore;
-  const { loadingStudies, getAll } = clinicResultsStore;
-  const { generalFilter } = generalStore;
+  const { clinicResultsStore } = useStore();
+  const { loadingStudies } = clinicResultsStore;
   const [openRows, setOpenRows] = useState<boolean>(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState<string[]>([]);
 
@@ -52,19 +50,6 @@ const ClinicResultsTable = ({
     }
     setExpandedRowKeys(expandRows);
   };
-
-  useEffect(() => {
-    const defaultCode = !lastViewedFrom
-      ? undefined
-      : lastViewedFrom.from === "results"
-      ? undefined
-      : lastViewedFrom.code;
-    getAll({
-      ...generalFilter,
-      buscar: defaultCode,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <Fragment>

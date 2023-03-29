@@ -40,10 +40,13 @@ export default class MassResultSearchStore {
   requests: any[] = [];
   getAllCaptureResults = async (search: IGeneralForm) => {
     try {
+      this.loadingStudies = true;
       const result = await MassResultSearch.getAllCaptureResults(search);
       this.requests = result;
     } catch (error: any) {
       alerts.warning(getErrors(error));
+    } finally {
+      this.loadingStudies = false;
     }
   };
 

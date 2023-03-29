@@ -56,7 +56,7 @@ const ClinicResultsColumns = () => {
       ...getDefaultColumnProps("nombre", "Nombre del Paciente", {
         searchState,
         setSearchState,
-        width: "30%",
+        width: "20%",
       }),
     },
     {
@@ -77,14 +77,14 @@ const ClinicResultsColumns = () => {
       ...getDefaultColumnProps("edad", "Edad", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "5%",
       }),
     },
     {
       ...getDefaultColumnProps("sexo", "Sexo", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "5%",
       }),
     },
     {

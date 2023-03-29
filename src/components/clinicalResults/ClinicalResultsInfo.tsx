@@ -121,7 +121,7 @@ const ClinicalResultsInfo = () => {
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <ClinicalResultsHeader printing={false} />
-      <Divider orientation="left"></Divider>
+      <Divider orientation="left" className="header-clinicResults-divider"></Divider>
       <Collapse ghost className="request-filter-collapse">
         <Panel header="Información de la solicitud" key="informationRequest">
           <div className="status-container">

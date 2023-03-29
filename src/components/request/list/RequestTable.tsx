@@ -18,14 +18,8 @@ const { Link, Text } = Typography;
 const logoWee = `${process.env.REACT_APP_NAME}/assets/logos/weeclinic.png`;
 
 const RequestTable = () => {
-  const { requestStore, generalStore } = useStore();
-  const {
-    loadingRequests,
-    lastViewedFrom,
-    requests,
-    getRequests,
-  } = requestStore;
-  const { generalFilter, setGeneralFilter } = generalStore;
+  const { requestStore } = useStore();
+  const { loadingRequests, requests } = requestStore;
 
   let navigate = useNavigate();
 
@@ -33,21 +27,6 @@ const RequestTable = () => {
     searchedText: "",
     searchedColumn: "",
   });
-
-  useEffect(() => {
-    const readRequests = async () => {
-      const defaultCode = !lastViewedFrom
-        ? undefined
-        : lastViewedFrom.from === "requests"
-        ? undefined
-        : lastViewedFrom.code;
-      setGeneralFilter({ ...generalFilter, buscar: defaultCode ?? generalFilter.buscar, tipoFecha: 1 });
-      await getRequests({ ...generalFilter, buscar: defaultCode ?? generalFilter.buscar, tipoFecha: 1 });
-    };
-
-    readRequests();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const columns: IColumns<IRequestInfo> = [
     {
@@ -146,10 +125,7 @@ const RequestTable = () => {
       render: (value: IRequestStudyInfo[]) => (
         <Row align="middle">
           {value.map((x, i) => (
-            <Col
-              key={x.id}
-              style={{ display: "flex", alignItems: "center" }}
-            >
+            <Col key={x.id} style={{ display: "flex", alignItems: "center" }}>
               <ContainerBadge color={x.color} text={x.estatus[0]} />
             </Col>
           ))}
@@ -179,10 +155,7 @@ const RequestTable = () => {
         expandedRowRender: (record) => (
           <Row align="middle" gutter={[25, 25]}>
             {record.estudios.map((x) => (
-              <Col
-                key={x.id}
-                style={{ display: "flex", alignItems: "center" }}
-              >
+              <Col key={x.id} style={{ display: "flex", alignItems: "center" }}>
                 {x.nombre}{" "}
                 <ContainerBadge color={x.color} text={x.estatus[0]} />
               </Col>

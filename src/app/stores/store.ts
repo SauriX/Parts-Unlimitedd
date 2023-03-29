@@ -51,7 +51,7 @@ import InvoiceCatalogStore from "./InvoiceCatalogStore";
 import ReportStudyStore from "./reportStudyStore";
 import InvoiceFreeStore from "./invoiceFreeStore";
 import NotificationsStore from "./notificationsStore";
-import GeneralStore from "./general";
+import GeneralStore from "./generalStore";
 configure({
   enforceActions: "never",
 });
