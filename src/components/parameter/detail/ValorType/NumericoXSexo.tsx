@@ -26,6 +26,7 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue, parameter }) => {
   const { parameterStore } = useStore();
   const { addValue, getvalue, updatevalue, update } = parameterStore;
   const [valuesValor] = useState<ItipoValorForm[]>([]);
+  
   useEffect(() => {
     const readuser = async (idUser: string) => {
       let value = await getvalue(idUser);
@@ -42,19 +43,21 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue, parameter }) => {
 
   let navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
   const onFinish = async (newValues: ItipoValorForm) => {
     const value = { ...valuesValor, ...newValues };
     let success = false;
+    let saveValues = false;
     if (!value.id) {
       value.nombre = idTipeVAlue;
       value.parametroId = id || "";
-      success = await addValue(value);
+      saveValues = await addValue(value);
       success = await update(parameter);
     } else {
-      success = await updatevalue(value);
+      saveValues = await updatevalue(value);
       success = await update(parameter);
     }
-    if (success) {
+    if (success && saveValues) {
       navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
     }
   };
