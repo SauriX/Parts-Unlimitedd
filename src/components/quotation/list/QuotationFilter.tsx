@@ -18,46 +18,22 @@ import "./css/index.css";
 const QuotationFilter = () => {
   const { quotationStore, optionStore, profileStore, generalStore } =
     useStore();
-  const { branchCityOptions, getBranchCityOptions } = optionStore;
+  const { branchCityOptions } = optionStore;
   const { getQuotations } = quotationStore;
   const { setGeneralFilter, generalFilter } = generalStore;
   const { profile } = profileStore;
   const [form] = useForm<IQuotationFilter>();
 
   const selectedCity = Form.useWatch("ciudad", form);
-
   const [errors, setErrors] = useState<IFormError[]>([]);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
-
-  useEffect(() => {
-    getBranchCityOptions();
-  }, [getBranchCityOptions]);
 
   useEffect(() => {
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
-
-  useEffect(() => {
-    if (!profile || !profile.sucursal || !branchCityOptions) return;
-    const profileBranch = profile.sucursal;
-    const userCity = branchCityOptions
-      .find((x) => x.options!.some((y) => y.value === profileBranch))
-      ?.value?.toString();
-    if (userCity) {
-      setGeneralFilter({
-        ...generalFilter,
-        ciudad: [userCity],
-        sucursalId: [profileBranch],
-      });
-      form.setFieldValue("ciudad", [userCity]);
-    }
-    form.setFieldValue("sucursalId", [profileBranch]);
-    getQuotations(generalFilter);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [branchCityOptions, profile]);
 
   useEffect(() => {
     if (selectedCity != null) {
@@ -70,8 +46,25 @@ const QuotationFilter = () => {
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
-    form.setFieldsValue(generalFilter);
-  }, [generalFilter, form]);
+    if (!profile || !profile.sucursal || branchCityOptions.length === 0) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options?.some((y) => y.value == profileBranch))
+      ?.value.toString();
+
+    const filter = {
+      ...generalFilter,
+      ciudad: !generalFilter.cargaInicial ? generalFilter.ciudad : [userCity!],
+      sucursalId: !generalFilter.cargaInicial
+        ? generalFilter.sucursalId
+        : [profileBranch],
+    };
+    form.setFieldsValue(filter);
+    filter.cargaInicial = false;
+
+    setGeneralFilter(filter);
+    getQuotations(filter);
+  }, [branchCityOptions]);
 
   const onFinish = (values: IGeneralForm) => {
     setErrors([]);

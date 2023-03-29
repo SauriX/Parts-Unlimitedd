@@ -25,14 +25,6 @@ const RequestedStudyBody = ({ printing }: RSDefaultProps) => {
   const [activity, setActivity] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const readRequests = async () => {
-      await getAll(generalFilter);
-    };
-
-    readRequests();
-  }, []);
-
   const onChange = (e: CheckboxChangeEvent, id: number, solicitud: string) => {
     const index = updateForm.findIndex((x) => x.solicitudId == solicitud);
     if (e.target.checked) {

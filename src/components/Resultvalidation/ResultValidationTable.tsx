@@ -46,7 +46,6 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   const {
     procedingStore,
     optionStore,
-    locationStore,
     resultValidationStore,
     profileStore,
     generalStore,
@@ -55,7 +54,6 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   const { expedientes } = procedingStore;
   const {
     branchCityOptions,
-    getBranchCityOptions,
     medicOptions,
     getMedicOptions,
     companyOptions,
@@ -73,13 +71,12 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     setSoliCont,
     setStudyCont,
     viewTicket,
-    clearFilter,
   } = resultValidationStore;
   const { generalFilter, setGeneralFilter } = generalStore;
 
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
   const [form] = Form.useForm<IGeneralForm>();
-  
+
   const [updateData, setUpdateDate] = useState<IUpdate[]>([]);
   const [ids, setIds] = useState<number[]>([]);
   const [solicitudesData, SetSolicitudesData] = useState<string[]>([]);
@@ -92,23 +89,18 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   const [loading, setLoading] = useState(false);
   const [activiti, setActiviti] = useState<string>("");
   const [openRows, setOpenRows] = useState<boolean>(false);
+
   const selectedDepartment = Form.useWatch("departamento", form);
   const selectedCity = Form.useWatch("ciudad", form);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
-  
+
   useEffect(() => {
-    getBranchCityOptions();
     getMedicOptions();
     getCompanyOptions();
     getAreaByDeparmentOptions();
-  }, [
-    getBranchCityOptions,
-    getMedicOptions,
-    getCompanyOptions,
-    getAreaByDeparmentOptions,
-  ]);
+  }, [getMedicOptions, getCompanyOptions, getAreaByDeparmentOptions]);
 
   useEffect(() => {
     setCityOptions(
@@ -117,17 +109,27 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
   }, [branchCityOptions]);
 
   useEffect(() => {
-    const profileBranch = profile?.sucursal;
-    if (profileBranch) {
-      const findCity = branchCityOptions.find((x) =>
-        x.options?.some((y) => y.value == profileBranch)
-      )?.value;
-      if (findCity) {
-        form.setFieldValue("ciudad", [findCity]);
-      }
-      form.setFieldValue("sucursalId", [profileBranch]);
-    }
-  }, [branchCityOptions, form, profile]);
+    if (!profile || !profile.sucursal || branchCityOptions.length === 0) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options!.some((y) => y.value === profileBranch))
+      ?.value?.toString();
+
+    const filter = {
+      ...generalFilter,
+      ciudad: !generalFilter.cargaInicial
+        ? generalFilter.ciudad
+        : [userCity as string],
+      sucursalId: !generalFilter.cargaInicial
+        ? generalFilter.sucursalId
+        : [profileBranch],
+    };
+    form.setFieldsValue(filter);
+    filter.cargaInicial = false;
+
+    setGeneralFilter(filter);
+    getAll(filter);
+  }, [branchCityOptions]);
 
   useEffect(() => {
     if (selectedCity != undefined && selectedCity != null) {
@@ -140,10 +142,6 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
       setBranchOptions(options);
     }
   }, [branchCityOptions, form, selectedCity]);
-
-  useEffect(() => {
-    form.setFieldsValue(generalFilter);
-  }, [generalFilter, form]);
 
   useEffect(() => {
     setDepartmentOptions(
@@ -165,8 +163,6 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
     };
     readStudy();
   }, [getStudiesOptions]);
-
-  useEffect(() => {}, [studiesOptions]);
 
   useEffect(() => {
     setexpandedRowKeys(studys?.map((x) => x.id) ?? []);

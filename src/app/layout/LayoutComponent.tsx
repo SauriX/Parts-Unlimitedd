@@ -153,14 +153,17 @@ const LayoutComponent = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  
   useEffect(() => {
     getBranchCityOptions();
   }, []);
+
   useEffect(() => {
     if (profile) {
       form.setFieldValue("sucursal", profile.sucursal);
     }
   }, [profile]);
+
   useEffect(() => {
     const branchesFiltered: IOptions[] = [];
     branchCityOptions.forEach((bco) => {
@@ -177,6 +180,7 @@ const LayoutComponent = () => {
     });
     setBranchCityFiltered(branchesFiltered);
   }, [branchCityOptions]);
+
   const updateUserBranch = async (changedValues: any) => {
     await updateBranch(changedValues.sucursal);
     await getProfile();

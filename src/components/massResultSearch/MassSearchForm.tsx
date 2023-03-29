@@ -34,19 +34,10 @@ const MassSearchForm = () => {
 
   const [filteredAreas, setFilteredAreas] = useState<IOptions[]>([]);
   const [studiesFilteredByArea, setStudiesFilteredByArea] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    getRequestResults(generalFilter);
     form.setFieldsValue(generalFilter);
-  }, [form, generalFilter]);
-
-  useEffect(() => {
-    getRequestResults({
-      fecha: [
-        moment(Date.now()).utcOffset(0, true),
-        moment(Date.now()).utcOffset(0, true),
-      ],
-    });
     loadInit();
   }, []);
 
@@ -59,23 +50,20 @@ const MassSearchForm = () => {
   }, [studiesOptions]);
 
   const loadInit = async () => {
-    await getBranchCityOptions();
     await getareaOptions(0);
     await getStudiesOptions();
   };
 
   const onFinish = async (values: IGeneralForm) => {
-    setLoading(true);
-
-    let nombreArea: string = filteredAreas.find((x) => x.value == values.area![0])
-      ?.label as string;
+    let nombreArea: string = filteredAreas.find(
+      (x) => x.value == values.area![0]
+    )?.label as string;
     let putAreaIntoArray: number[] = [];
     putAreaIntoArray.push(+values.area!);
 
     let newValues = { ...values, nombreArea, area: putAreaIntoArray };
     setGeneralFilter(newValues);
     await getRequestResults(newValues);
-    setLoading(false);
   };
 
   return (

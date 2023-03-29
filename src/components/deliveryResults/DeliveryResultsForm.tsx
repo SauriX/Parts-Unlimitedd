@@ -26,7 +26,6 @@ const DeliveryResultsForm = () => {
     companyOptions,
     areaByDeparmentOptions,
     getCityOptions,
-    getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
     getDepartmentOptions,
@@ -34,8 +33,7 @@ const DeliveryResultsForm = () => {
     getAreaByDeparmentOptions,
   } = optionStore;
   const { profile } = profileStore;
-  const { getAllCaptureResults } =
-    massResultSearchStore;
+  const { getAllCaptureResults } = massResultSearchStore;
   const { generalFilter, setGeneralFilter } = generalStore;
 
   const selectedCity = Form.useWatch("ciudad", form);
@@ -46,7 +44,6 @@ const DeliveryResultsForm = () => {
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
-    getBranchCityOptions();
     getMedicOptions();
     getCompanyOptions();
     getDepartmentOptions();
@@ -54,16 +51,11 @@ const DeliveryResultsForm = () => {
     getBranchOptions();
     getCityOptions();
   }, [
-    getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
     getDepartmentOptions,
-    getAreaByDeparmentOptions
+    getAreaByDeparmentOptions,
   ]);
-
-  useEffect(() => {
-    form.setFieldsValue(generalFilter);
-  }, [generalFilter, form]);
 
   useEffect(() => {
     setCityOptions(
@@ -94,37 +86,34 @@ const DeliveryResultsForm = () => {
       areaByDeparmentOptions.find((x) => x.value === selectedDepartment)
         ?.options ?? []
     );
-    form.setFieldValue("area", []);
   }, [areaByDeparmentOptions, form, selectedDepartment]);
 
   useEffect(() => {
-    const profileBranch = profile?.sucursal;
-    if (profileBranch) {
-      const findCity = branchCityOptions.find((x) =>
-        x.options?.some((y) => y.value == profileBranch)
-      )?.value;
-      if (findCity) {
-        form.setFieldValue("ciudad", [findCity]);
-      }
-      form.setFieldValue("sucursalId", [profileBranch]);
-    }
-  }, [branchCityOptions, form, profile]);
+    if (!profile || !profile.sucursal || branchCityOptions.length === 0) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options!.some((y) => y.value === profileBranch))
+      ?.value?.toString();
 
-  useEffect(() => {
-    const formValues = form.getFieldsValue();
-    formValues.fechaInicial = formValues.fecha[0].utcOffset(0, true);
-    formValues.fechaFinal = formValues.fecha[1].utcOffset(0, true);
-    getAllCaptureResults(formValues);
-  }, []);
+    const filter = {
+      ...generalFilter,
+      ciudad: !generalFilter.cargaInicial
+        ? generalFilter.ciudad
+        : [userCity as string],
+      sucursalId: !generalFilter.cargaInicial
+        ? generalFilter.sucursalId
+        : [profileBranch],
+    };
+    form.setFieldsValue(filter);
+    filter.cargaInicial = false;
+
+    setGeneralFilter(filter);
+    getAllCaptureResults(filter);
+  }, [branchCityOptions]);
 
   const onFinish = async (newFormValues: IGeneralForm) => {
-    const formValues = {
-      ...newFormValues,
-      fechaFinal: newFormValues.fecha![1].utcOffset(0, true),
-      fechaInicial: newFormValues.fecha![0].utcOffset(0, true),
-    };
-    await getAllCaptureResults(formValues);
-    setGeneralFilter(formValues);
+    await getAllCaptureResults(newFormValues);
+    setGeneralFilter(newFormValues);
   };
 
   return (

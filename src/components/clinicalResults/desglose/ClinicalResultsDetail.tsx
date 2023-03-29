@@ -270,11 +270,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
             >
               <Row>
                 <Col span={24}>
-                  <Row
-                    justify="space-between"
-                    gutter={[0, 12]}
-                    style={{ textAlign: "center" }}
-                  >
+                  <Row justify="space-between" style={{ textAlign: "center" }}>
                     <Col span={4}>
                       <h3>EXAMEN</h3>
                     </Col>
@@ -319,10 +315,8 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                             <Row
                               key={field.key}
                               justify="space-between"
-                              gutter={[0, 24]}
                               style={{
                                 textAlign: "center",
-                                marginBottom: 5,
                               }}
                               align="middle"
                             >
@@ -376,9 +370,10 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                               placeholder="Resultado"
                                               style={{
                                                 width: "72%",
-                                                marginBottom: "7px",
                                               }}
+                                              className="result-textarea"
                                               rows={4}
+                                              bordered
                                               allowClear
                                               autoSize
                                             />
@@ -433,7 +428,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                               allowClear
                                               style={{
                                                 width: "80%",
-                                                marginBottom: "7px",
                                               }}
                                             />
                                           ) : (
@@ -445,11 +439,9 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                                   ? {
                                                       width: "80%",
                                                       borderColor: "red",
-                                                      marginBottom: "7px",
                                                     }
                                                   : {
                                                       width: "80%",
-                                                      marginBottom: "7px",
                                                     }
                                               }
                                               allowClear

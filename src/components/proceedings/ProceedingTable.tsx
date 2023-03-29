@@ -45,22 +45,14 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
   componentRef,
   printing,
 }) => {
-  const {
-    procedingStore,
-    optionStore,
-    locationStore,
-    profileStore,
-    generalStore,
-  } = useStore();
+  const { procedingStore, optionStore, profileStore, generalStore } =
+    useStore();
   const { generalFilter, setGeneralFilter } = generalStore;
   const { expedientes, getnow } = procedingStore;
   const { profile } = profileStore;
-  const { branchCityOptions, getBranchCityOptions } = optionStore;
-  const { getCity } = locationStore;
+  const { branchCityOptions } = optionStore;
   const [searchParams] = useSearchParams();
   let navigate = useNavigate();
-  const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
-  const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
 
   const { width: windowWidth } = useWindowDimensions();
   const [form] = useForm();
@@ -69,22 +61,28 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
     searchedText: "",
     searchedColumn: "",
   });
-  const selectedCity = Form.useWatch("ciudad", form);
 
-  useEffect(() => {
-    getBranchCityOptions();
-  }, [getBranchCityOptions]);
+  const selectedCity = Form.useWatch("ciudad", form);
+  const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
+  const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
     setCityOptions(
-      branchCityOptions.map((x: any) => ({ value: x.value, label: x.label }))
+      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [branchCityOptions]);
+
+  useEffect(() => {
+    setCityOptions(
+      branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
 
   useEffect(() => {
     setBranchOptions(
-      branchCityOptions.find((x: any) => selectedCity?.includes(x.value))
-        ?.options ?? []
+      branchCityOptions
+        .filter((x) => selectedCity?.includes(x.value as string))
+        .flatMap((x) => x.options ?? [])
     );
   }, [branchCityOptions, form, selectedCity]);
 
@@ -104,13 +102,6 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
   useEffect(() => {
     form.setFieldsValue(generalFilter);
   }, [generalFilter, form]);
-
-  useEffect(() => {
-    const readData = async () => {
-      await getCity();
-    };
-    readData();
-  }, [getCity]);
 
   useEffect(() => {
     const readPriceList = async () => {
@@ -372,7 +363,6 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
           </Row>
         </Form>
       </div>
-      <br />
       <Table<IProceedingList>
         loading={loading || printing}
         size="small"
