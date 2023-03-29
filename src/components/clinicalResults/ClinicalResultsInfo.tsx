@@ -1,8 +1,6 @@
 import "./css/containerInfo.less";
 import {
-  Collapse,
   Col,
-  Form,
   Row,
   Spin,
   Typography,
@@ -10,26 +8,34 @@ import {
   Divider,
   Button,
   Radio,
+  Affix,
+  Tag,
 } from "antd";
 import { observer } from "mobx-react-lite";
-import SelectInput from "../../app/common/form/SelectInput";
-import TextAreaInput from "../../app/common/form/TextAreaInput";
-import TextInput from "../../app/common/form/TextInput";
 import { useState, useEffect } from "react";
-
 import ClinicalResultsForm from "./observaciones/ClinicalResultsForm";
 import ClinicalResultsDetails from "./desglose/ClinicalResultsDetail";
 import ClinicalResultsHeader from "./ClinicalResultsHeader";
 import { useParams } from "react-router-dom";
 import { useStore } from "../../app/stores/store";
 import { IRequestStudy } from "../../app/models/request";
-
-import { ProceedingFormValues } from "../../app/models/Proceeding";
-import moment from "moment";
+import {
+  IProceedingForm,
+  ProceedingFormValues,
+} from "../../app/models/Proceeding";
 import ClinicalResultsXRay from "./desglose/ClinicalResultsXRay";
+import moment from "moment";
+import {
+  MedicineBoxTwoTone,
+  FileTextTwoTone,
+  MobileTwoTone,
+  PhoneTwoTone,
+  BankTwoTone,
+  CalendarTwoTone,
+  ReconciliationTwoTone,
+} from "@ant-design/icons";
 
-const { Text } = Typography;
-const { Panel } = Collapse;
+const { Text, Title } = Typography;
 
 type UrlParams = {
   expedienteId: string;
@@ -68,37 +74,29 @@ const ClinicalResultsInfo = () => {
     new ProceedingFormValues()
   );
 
+  const [currentRecord, setCurrentRecord] = useState<IProceedingForm>(
+    new ProceedingFormValues()
+  );
   const { expedienteId, requestId } = useParams<UrlParams>();
 
   useEffect(() => {
     const searchRequest = async () => {
       setLoading(true);
+      const record = await procedingById(expedienteId!);
+      if (record) setCurrentRecord(record);
+
       await getDepartmentOptions();
       await getById(expedienteId!, requestId!, "results");
-      const procedingFound = await procedingById(expedienteId!);
       await getStudies(expedienteId!, requestId!);
       await getStudiesParams(expedienteId!, requestId!);
-      setDataClinicalResult({ ...request, ...procedingFound });
-      setProcedingCurrent({ ...procedingFound });
-      form.setFieldsValue({
-        ...procedingFound,
-        fechaNacimiento: moment(procedingFound?.fechaNacimiento),
-        ...request,
-      });
+
+      setDataClinicalResult({ ...request, ...record });
+      setProcedingCurrent({ ...record });
       setLoading(false);
     };
+
     searchRequest();
   }, [getById, procedingById, expedienteId, requestId]);
-
-  useEffect(() => {
-    form.setFieldsValue({
-      ...dataClinicalResult,
-      fechaNacimiento: moment(dataClinicalResult?.fechaNacimiento),
-      ...request,
-    });
-  }, [request]);
-
-  const [form] = Form.useForm<any>();
 
   const sendToPrintSelectedStudies = async () => {
     setPrinting(true);
@@ -118,102 +116,65 @@ const ClinicalResultsInfo = () => {
     return studiesSelectedToPrint.length <= 0;
   };
 
+  let descriptionAge =
+    moment(currentRecord.fechaNacimiento).year === moment().year
+      ? " años"
+      : " meses";
+
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
       <ClinicalResultsHeader printing={false} />
-      <Divider orientation="left" className="header-clinicResults-divider"></Divider>
-      <Collapse ghost className="request-filter-collapse">
-        <Panel header="Información de la solicitud" key="informationRequest">
-          <div className="status-container">
-            <Form
-              form={form}
-              name="clinicalResults"
-              initialValues={dataClinicalResult}
-              scrollToFirstError
-            >
-              <Row>
-                <Col span={24}>
-                  <Row justify="space-between" gutter={[0, 0]}>
-                    <Col span={10}>
-                      <TextInput
-                        formProps={{ name: "nombre", label: "Nombre" }}
-                        readonly={true}
-                      />
-                    </Col>
-                    <Col span={12} style={{ textAlign: "right" }}>
-                      <TextInput
-                        formProps={{ name: "nombreMedico", label: "Médico" }}
-                        readonly={true}
-                      />
-                    </Col>
-                    <Col span={4}>
-                      <TextInput
-                        formProps={{
-                          name: "fechaNacimientoFormat",
-                          label: "Fecha de Nacimiento",
-                        }}
-                        readonly={true}
-                      />
-                    </Col>
-
-                    <Col span={2}>
-                      <TextInput
-                        formProps={{ name: "edad", label: "Edad" }}
-                        readonly={true}
-                      />
-                    </Col>
-                    <Col span={2}>
-                      <SelectInput
-                        formProps={{ name: "sexo", label: "Genero" }}
-                        options={[]}
-                        readonly={true}
-                      />
-                    </Col>
-                    <Col span={3}>
-                      <TextInput
-                        formProps={{ name: "telefono", label: "Teléfono" }}
-                        readonly={true}
-                      />
-                    </Col>
-                    <Col span={3}>
-                      <TextInput
-                        formProps={{ name: "celular", label: "Celular" }}
-                        readonly={true}
-                      />
-                    </Col>
-                    <Col span={3} style={{ alignItems: "left" }}>
-                      <Text key="expediente">
-                        Expediente:{" "}
-                        <Text strong>{dataClinicalResult?.expediente}</Text>
-                      </Text>
-                    </Col>
-                    <Col span={10}>
-                      <TextInput
-                        formProps={{
-                          name: "nombreCompania",
-                          label: "Compañía",
-                        }}
-                        readonly={true}
-                      />
-                    </Col>
-
-                    <Col span={12}>
-                      <TextAreaInput
-                        formProps={{
-                          name: "observaciones",
-                          label: "Observaciones",
-                        }}
-                        rows={3}
-                        readonly={true}
-                      />
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-            </Form>
-          </div>
-        </Panel>
-      </Collapse>
+      <Divider orientation="left" className="header-divider"></Divider>
+      <div className="recordInfo-container">
+        <Row justify="space-between">
+          <Col span={6}>
+            <Title level={5} className="clinicTitle">
+              {currentRecord.nombre + " " + currentRecord.apellido}{" "}
+              <Tag color="geekblue">{currentRecord.sexo}</Tag>
+            </Title>
+          </Col>
+          <Col span={6}>
+            <MedicineBoxTwoTone />
+            <Text strong>{" Médico: "}</Text>
+            {request?.nombreMedico}
+          </Col>
+          <Col span={6}>
+            <BankTwoTone />
+            <Text strong>{" Compañía: "}</Text>
+            {request?.nombreCompania}
+          </Col>
+          <Col span={6}>
+            <FileTextTwoTone />
+            <Text strong>{" Expediente: "}</Text>
+            {currentRecord.expediente}
+          </Col>
+          <Col span={6}>
+            <Text>{currentRecord.edad + descriptionAge}</Text>
+          </Col>
+          <Col span={6}>
+            <CalendarTwoTone />
+            <Text strong>{" Fecha de nacimiento: "}</Text>
+            {moment(currentRecord.fechaNacimiento).format("DD/MM/yyyy")}
+          </Col>
+          <Col span={6}>
+            <PhoneTwoTone />
+            <Text strong>{" Teléfono: "}</Text>
+            {currentRecord.telefono}
+          </Col>
+          <Col span={6}>
+            <MobileTwoTone />
+            <Text strong>{" Celular: "}</Text>
+            {currentRecord.celular}
+          </Col>
+          {request?.observaciones && (
+            <Col span={18} offset={6}>
+              <ReconciliationTwoTone />
+              <Text strong>{" Observaciones: "}</Text>
+              {request?.observaciones}
+            </Col>
+          )}
+        </Row>
+      </div>
 
       <Row style={{ marginBottom: "1%" }}>
         <Col span={15}>
@@ -359,3 +320,15 @@ const ClinicalResultsInfo = () => {
   );
 };
 export default observer(ClinicalResultsInfo);
+
+interface DescriptionItemProps {
+  title: string;
+  content: React.ReactNode;
+}
+
+const DescriptionItem = ({ title, content }: DescriptionItemProps) => (
+  <div className="site-description-item-profile-wrapper">
+    <p className="site-description-item-profile-p-label">{title}:</p>
+    {content}
+  </div>
+);
