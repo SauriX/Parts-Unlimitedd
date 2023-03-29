@@ -2,71 +2,83 @@ import { Row, Col, Divider, Spin, Typography } from "antd";
 import { Fragment, useEffect, useState } from "react";
 import { useStore } from "../../../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import InfoStudyHeader from "./InfoStudyHeader";
-import { IStudyTec } from "../../../../app/models/study";
+import { IStudyDatasheet } from "../../../../app/models/study";
 import TextArea from "antd/lib/input/TextArea";
-import { Link } from "react-router-dom";
+
+const { Text } = Typography;
+
 type Props = {
-    id: number,
-    sucursal: string;
-    sucursalDestino: string;
-    estudio: string;
+  id: number;
+  originBranch: string;
+  destinationBranch: string;
 };
 
-const InfoStudy = ({ id, sucursal, sucursalDestino, estudio }: Props) => {
-    const [study, setStudy] = useState<IStudyTec>();
-    const { studyStore } = useStore();
-    const { getTecInfoById } = studyStore;
-    const [loading, setLoading] = useState(false);
-    const { Text } = Typography;
-    useEffect(() => {
-        const readInfoStudy = async () => {
-            setLoading(true);
-            var studys = await getTecInfoById(id);
-            if(Number(studys!.diasEntrega) <=0){
-                    studys!.diasEntrega = ""
-            }
-            setStudy(studys);
-            setLoading(false);
-        };
-        readInfoStudy();
-    }, [getTecInfoById, id, setStudy]);
-    return (
-        <Fragment>
-            <InfoStudyHeader></InfoStudyHeader>
-            <Text type="secondary" style={{ color: "blue" }}>{estudio}</Text>
-            <Divider className="header-divider" />
-            <Spin spinning={loading} tip={""}>
-                <Row gutter={[12, 12]}>
-                    <Col span={8} style={{ textAlign: "center" }}>
-                        Sucursal: {sucursal}
-                    </Col>
-                    <Col span={8} style={{ textAlign: "center" }}>
-                        Sucursal destino: {sucursalDestino}
-                    </Col>
-                   <Col span={8} style={{ textAlign: "center" }}>
-                        Días de entrega: {study?.diasEntrega}
-                    </Col>
+const InfoStudy = ({ id, originBranch, destinationBranch }: Props) => {
+  const { studyStore } = useStore();
+  const { getTecInfoById } = studyStore;
 
-                    <Col span={12}>
-                        Tipo de muestra: {study?.tipoMuestra}
-                    </Col>
-                    <Col span={12}>
-                        Días de estabilidad en medio ambiente: {study?.diasEstabilidad}
-                    </Col>
-                    <Col span={12}>
-                        Tubo de muestra: {study?.tapon}
-                    </Col>
-                    <Col span={12}>
-                    Días de estabilidad en refrigeración: {study?.diasRefrigeracion}
-                    </Col>
-                    <Col span={24}>
-                        <label htmlFor="">Instrucciones de toma:</label>
-                        <TextArea value={study?.instrucciones} readOnly></TextArea>
-                    </Col>
-                </Row>
-            </Spin>
-        </Fragment>
-    );
+  const [study, setStudy] = useState<IStudyDatasheet>();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const readInfoStudy = async () => {
+      setLoading(true);
+      var study = await getTecInfoById(id);
+      setLoading(false);
+      if (!study) return;
+      setStudy(study);
+    };
+
+    readInfoStudy();
+  }, [getTecInfoById, id, setStudy]);
+
+  const TextWithLineBreaks = ({ text }: { text: string }) => {
+    const lines = text.split("\n");
+    const elements = lines.map((line, index) => (
+      <div key={index}>
+        {line}
+        {index !== lines.length - 1 && <br />}
+      </div>
+    ));
+    return <div>{elements}</div>;
+  };
+
+  return (
+    <>
+      <Text className="primary-color">{study?.nombre}</Text>
+      <Divider className="header-divider" />
+      <Spin spinning={loading} tip={""}>
+        <Row gutter={[12, 12]}>
+          <Col span={8}>
+            <Text strong>Sucursal:</Text> {originBranch}
+          </Col>
+          <Col span={8}>
+            <Text strong>Sucursal destino:</Text> {destinationBranch}
+          </Col>
+          <Col span={8}>
+            <Text strong>Días de entrega:</Text> {study?.diasEntrega}
+          </Col>
+          <Col span={16}>
+            <Text strong>Tipo de muestra:</Text> {study?.tipoMuestra}
+          </Col>
+          <Col span={8}>
+            <Text strong>Días de estabilidad en medio ambiente:</Text>{" "}
+            {study?.diasEstabilidad}
+          </Col>
+          <Col span={16}>
+            <Text strong>Tubo de muestra:</Text> {study?.tapon}
+          </Col>
+          <Col span={8}>
+            <Text strong>Días de estabilidad en refrigeración:</Text>{" "}
+            {study?.diasRefrigeracion}
+          </Col>
+          <Col span={24}>
+            <Text strong>Instrucciones de toma:</Text>
+            <TextArea autoSize disabled value={study?.instrucciones} />
+          </Col>
+        </Row>
+      </Spin>
+    </>
+  );
 };
 export default observer(InfoStudy);

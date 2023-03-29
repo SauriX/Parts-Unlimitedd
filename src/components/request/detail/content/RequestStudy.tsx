@@ -219,20 +219,21 @@ const RequestStudy = () => {
         ) : null,
     },
   ];
+
   const showStudyDetails = async (id: number, estudio: string) => {
     openModal({
       title: "",
       body: (
         <InfoStudy
           id={id}
-          sucursal={request!.sucursal!}
-          sucursalDestino={request!.destino!}
-          estudio={estudio}
+          originBranch={request!.sucursal!}
+          destinationBranch={request!.destino!}
         ></InfoStudy>
       ),
       width: 1000,
     });
   };
+
   const addStudy = async (option: IOptions) => {
     const value = parseInt(option.value.toString().split("-")[1]);
 
