@@ -67,6 +67,7 @@ const RequestHeader = () => {
           pageSize={1}
           current={getPage(request?.expedienteId, request?.solicitudId)}
           onChange={setPage}
+          showSizeChanger={false}
         />
       }
       extra={[
