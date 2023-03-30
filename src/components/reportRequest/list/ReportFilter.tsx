@@ -19,7 +19,8 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const ReportFilter = () => {
-  const { reportStudyStore, optionStore, generalStore, profileStore } = useStore();
+  const { reportStudyStore, optionStore, generalStore, profileStore } =
+    useStore();
   const {
     branchCityOptions,
     medicOptions,
@@ -72,7 +73,7 @@ const ReportFilter = () => {
       form.setFieldValue("sucursalId", [profileBranch]);
     }
   }, [branchCityOptions, form, profile]);
-  
+
   useEffect(() => {
     if (selectedCity != undefined && selectedCity != null) {
       var branches = branchCityOptions.filter((x) =>
@@ -107,7 +108,7 @@ const ReportFilter = () => {
     filtered.tipoFecha = 2;
     getRequests(filtered);
   }, [getRequests]);
-  
+
   const onFinish = (values: IGeneralForm) => {
     const filtered = { ...values };
     filtered.tipoFecha = 2;
@@ -122,12 +123,20 @@ const ReportFilter = () => {
         {...formItemLayout}
         form={form}
         onFinish={onFinish}
-        initialValues={{ tipoFecha: 1, fecha: [moment(), moment()] }}
+        initialValues={{
+          fecha: [
+            moment(Date.now()).utcOffset(0, true),
+            moment(Date.now()).utcOffset(0, true),
+          ],
+          tipoFecha: 1,
+        }}
         size="small"
       >
         <Row gutter={[0, 12]}>
           <Col span={8}>
-            <DateRangeInput formProps={{ name: "fechas", label: "Fechas de entrega" }} />
+            <DateRangeInput
+              formProps={{ name: "fecha", label: "Fecha de entrega" }}
+            />
           </Col>
           <Col span={8}>
             <TextInput
