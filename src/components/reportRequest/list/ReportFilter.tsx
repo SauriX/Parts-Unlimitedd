@@ -27,7 +27,6 @@ const ReportFilter = () => {
     companyOptions,
     areaByDeparmentOptions,
     getAreaByDeparmentOptions,
-    getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
   } = optionStore;
@@ -44,16 +43,10 @@ const ReportFilter = () => {
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
-    getBranchCityOptions();
     getMedicOptions();
     getCompanyOptions();
     getAreaByDeparmentOptions();
-  }, [
-    getBranchCityOptions,
-    getMedicOptions,
-    getCompanyOptions,
-    getAreaByDeparmentOptions,
-  ]);
+  }, [getMedicOptions, getCompanyOptions, getAreaByDeparmentOptions]);
 
   useEffect(() => {
     setCityOptions(
@@ -62,16 +55,24 @@ const ReportFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    const profileBranch = profile?.sucursal;
-    if (profileBranch) {
-      const findCity = branchCityOptions.find((x) =>
-        x.options?.some((y) => y.value == profileBranch)
-      )?.value;
-      if (findCity) {
-        form.setFieldValue("ciudad", [findCity]);
-      }
-      form.setFieldValue("sucursalId", [profileBranch]);
-    }
+    if (!profile || !profile.sucursal || branchCityOptions.length === 0) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options!.some((y) => y.value === profileBranch))
+      ?.value?.toString();
+
+    const filter = {
+      ...generalFilter,
+      ciudad: !generalFilter.cargaInicial ? generalFilter.ciudad : [userCity!],
+      sucursalId: !generalFilter.cargaInicial
+        ? generalFilter.sucursalId
+        : [profileBranch],
+    };
+    form.setFieldsValue(filter);
+    filter.cargaInicial = false;
+
+    setGeneralFilter({ ...filter, tipoFecha: 2 });
+    getRequests({ ...filter, tipoFecha: 2 });
   }, [branchCityOptions, form, profile]);
 
   useEffect(() => {
@@ -87,10 +88,6 @@ const ReportFilter = () => {
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
-    form.setFieldsValue(generalFilter);
-  }, [generalFilter, form]);
-
-  useEffect(() => {
     setDepartmentOptions(
       areaByDeparmentOptions.map((x) => ({ value: x.value, label: x.label }))
     );
@@ -102,12 +99,6 @@ const ReportFilter = () => {
         ?.options ?? []
     );
   }, [areaByDeparmentOptions, form, selectedDepartment]);
-
-  useEffect(() => {
-    let filtered = generalFilter;
-    filtered.tipoFecha = 2;
-    getRequests(filtered);
-  }, [getRequests]);
 
   const onFinish = (values: IGeneralForm) => {
     const filtered = { ...values };
@@ -128,7 +119,7 @@ const ReportFilter = () => {
             moment(Date.now()).utcOffset(0, true),
             moment(Date.now()).utcOffset(0, true),
           ],
-          tipoFecha: 1,
+          tipoFecha: 2,
         }}
         size="small"
       >
