@@ -22,6 +22,11 @@ const Equipmentmantain = {
     requests.download(`equipment/export/list/${!search ? "all" : search}`),
   exportForm: (id: number): Promise<void> =>
     requests.download(`equipment/export/form/${id}`),
+    deleteImage: (
+      Id: string,
+      code: string
+    ): Promise<void> =>
+      requests.delete(` /image/${Id}/${code}`),
 };
 
 export default Equipmentmantain;

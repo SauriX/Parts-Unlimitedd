@@ -99,6 +99,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   const { BranchOptions, getBranchOptions } = optionStore;
   const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [searchquotation, setquotationsearch] = useState<IGeneralForm>();
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
@@ -162,9 +163,11 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       setLoading(true);
 
       var expediente = await getById(id);
-      var searchQ: IQuotationFilter = {
+      var searchQ: IGeneralForm = {
         expediente: expediente?.expediente,
       };
+
+      setquotationsearch(searchQ);
       var searchC: ISearchAppointment = {
         expediente: expediente?.expediente!,
         nombre: "",
@@ -879,7 +882,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           loading={loading}
                           printing={printing}
                           readonly={readonly}
-                          searchParams={searchParams}
+                          searchParams={searchquotation}
                         />
                       ),
                     },

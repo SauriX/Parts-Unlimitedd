@@ -291,8 +291,8 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
               );
             }}
           >
-            <Row>
-              <Col md={12} sm={24} xs={12} style={{ textAlign: "center" }}>
+            <Row gutter={8} justify="space-between">
+              <Col md={6} sm={12} xs={6} style={{ textAlign: "center" }}>
                 <TextInput
                   formProps={{
                     name: "clave",
@@ -302,6 +302,9 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
                   required
                   readonly={readonly}
                 />
+
+              </Col>
+              <Col md={6} sm={12} xs={6} style={{ textAlign: "center" }}>
 
                 <TextInput
                   formProps={{

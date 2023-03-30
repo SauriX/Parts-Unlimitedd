@@ -11,6 +11,7 @@ import views from "../../../app/util/view";
 import IconButton from "../../../app/common/button/IconButton";
 import { EditOutlined } from "@ant-design/icons";
 import { useStore } from "../../../app/stores/store";
+import { useEffect } from "react";
 
 type ProceedingQuotationsProps = {
   loading: boolean;
@@ -30,6 +31,15 @@ const ProceedingQuotations = ({
   const { getQuotations, quotations, convertToRequest, cancelQuotation } =
     quotationStore;
   const { getRequests: getByFilter } = requestStore;
+
+  useEffect(()=>{
+    const readQuotation = async()=>{
+      await getQuotations(searchParams);
+    } 
+    if(searchParams){
+      readQuotation();
+    }
+  },[getQuotations]);
   const columnsP: IColumns<IQuotationInfo> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {

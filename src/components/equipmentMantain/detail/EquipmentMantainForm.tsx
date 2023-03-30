@@ -143,12 +143,14 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
       readEquipment(idmantain!);
     }
   }, [getAlls, searchParams]);
+
+
   useEffect(() => {
     const readEquipment = async (id: string) => {
       setLoading(true);
       const equipment = await getById(id);
       form.setFieldsValue(equipment!);
-      setImages((values) => ({ ...values, format: equipment!.imagenUrl }));
+      setImages((values) => ({ ...values, format: equipment!.imagenUrl.map(x=>x.imagenUrl) }));
       setValues(equipment!);
       setLoading(false);
     };
@@ -158,16 +160,6 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
     }
   }, [form, getById, id]);
 
-  useEffect(() => {
-    const readEquipment = async () => {
-      setLoading(true);
-      var searching = search!;
-      searching.idEquipo = idmantain!;
-      await getAlls(searching);
-      setLoading(false);
-    };
-    readEquipment();
-  }, [getAlls, searchParams]);
 
   const onFinish = async (newValues: ImantainForm) => {
     const equipment = { ...values, ...newValues };
@@ -179,7 +171,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
       var response = await create(equipment);
 
       if (response?.id) {
-        navigate(`/equipmentMantain/edit/${response.id}`);
+        navigate(`/equipmentMantain/edit/${equip?.id}/${response.id}`);
       }
     } else {
       equipment.clave = mantain?.clave!;
@@ -197,14 +189,16 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
 
   const sumbitImages = async () => {
     const formData = objectToFormData(images);
-    const ok = await saveImage(formData);
+    if (formData.values.length>0) {
+      const ok = await saveImage(formData);
 
-    if (ok) {
-      alerts.success("La imagen se ha guardado con éxito");
-      return true;
+      if (ok) {
+        alerts.success("La imagen se ha guardado con éxito");
+        return true;
+      }
     }
   };
-  useEffect(() => {}, [values]);
+  useEffect(() => { }, [values]);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
@@ -274,7 +268,10 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
   const onRemoveImageFormat = async (file: UploadFile<any>) => {
     if (mantain) {
       setLoading(true);
-      const ok = await deleteImage(mantain.id, mantain.id!, file.name);
+      console.log(values);
+      var  images = values.imagenUrl.find(x=>x.imagenUrl.includes(file.name));
+      console.log(images);
+      const ok = await deleteImage(mantain.id, images?.clave!);
       setLoading(false);
       if (ok) {
         setImages((prev) => ({
@@ -449,8 +446,8 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
             onFieldsChange={() => {
               setDisabled(
                 !form.isFieldsTouched() ||
-                  form.getFieldsError().filter(({ errors }) => errors.length)
-                    .length > 0
+                form.getFieldsError().filter(({ errors }) => errors.length)
+                  .length > 0
               );
             }}
           >
