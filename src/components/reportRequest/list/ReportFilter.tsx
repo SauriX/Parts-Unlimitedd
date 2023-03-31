@@ -19,14 +19,14 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const ReportFilter = () => {
-  const { reportStudyStore, optionStore, generalStore, profileStore } = useStore();
+  const { reportStudyStore, optionStore, generalStore, profileStore } =
+    useStore();
   const {
     branchCityOptions,
     medicOptions,
     companyOptions,
     areaByDeparmentOptions,
     getAreaByDeparmentOptions,
-    getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
   } = optionStore;
@@ -43,16 +43,10 @@ const ReportFilter = () => {
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
-    getBranchCityOptions();
     getMedicOptions();
     getCompanyOptions();
     getAreaByDeparmentOptions();
-  }, [
-    getBranchCityOptions,
-    getMedicOptions,
-    getCompanyOptions,
-    getAreaByDeparmentOptions,
-  ]);
+  }, [getMedicOptions, getCompanyOptions, getAreaByDeparmentOptions]);
 
   useEffect(() => {
     setCityOptions(
@@ -61,18 +55,26 @@ const ReportFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    const profileBranch = profile?.sucursal;
-    if (profileBranch) {
-      const findCity = branchCityOptions.find((x) =>
-        x.options?.some((y) => y.value == profileBranch)
-      )?.value;
-      if (findCity) {
-        form.setFieldValue("ciudad", [findCity]);
-      }
-      form.setFieldValue("sucursalId", [profileBranch]);
-    }
+    if (!profile || !profile.sucursal || branchCityOptions.length === 0) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options!.some((y) => y.value === profileBranch))
+      ?.value?.toString();
+
+    const filter = {
+      ...generalFilter,
+      ciudad: !generalFilter.cargaInicial ? generalFilter.ciudad : [userCity!],
+      sucursalId: !generalFilter.cargaInicial
+        ? generalFilter.sucursalId
+        : [profileBranch],
+    };
+    form.setFieldsValue(filter);
+    filter.cargaInicial = false;
+
+    setGeneralFilter({ ...filter, tipoFecha: 2 });
+    getRequests({ ...filter, tipoFecha: 2 });
   }, [branchCityOptions, form, profile]);
-  
+
   useEffect(() => {
     if (selectedCity != undefined && selectedCity != null) {
       var branches = branchCityOptions.filter((x) =>
@@ -84,10 +86,6 @@ const ReportFilter = () => {
       setBranchOptions(options);
     }
   }, [branchCityOptions, form, selectedCity]);
-
-  useEffect(() => {
-    form.setFieldsValue(generalFilter);
-  }, [generalFilter, form]);
 
   useEffect(() => {
     setDepartmentOptions(
@@ -102,12 +100,6 @@ const ReportFilter = () => {
     );
   }, [areaByDeparmentOptions, form, selectedDepartment]);
 
-  useEffect(() => {
-    let filtered = generalFilter;
-    filtered.tipoFecha = 2;
-    getRequests(filtered);
-  }, [getRequests]);
-  
   const onFinish = (values: IGeneralForm) => {
     const filtered = { ...values };
     filtered.tipoFecha = 2;
@@ -122,12 +114,20 @@ const ReportFilter = () => {
         {...formItemLayout}
         form={form}
         onFinish={onFinish}
-        initialValues={{ tipoFecha: 1, fecha: [moment(), moment()] }}
+        initialValues={{
+          fecha: [
+            moment(Date.now()).utcOffset(0, true),
+            moment(Date.now()).utcOffset(0, true),
+          ],
+          tipoFecha: 2,
+        }}
         size="small"
       >
         <Row gutter={[0, 12]}>
           <Col span={8}>
-            <DateRangeInput formProps={{ name: "fechas", label: "Fechas de entrega" }} />
+            <DateRangeInput
+              formProps={{ name: "fecha", label: "Fecha de entrega" }}
+            />
           </Col>
           <Col span={8}>
             <TextInput
