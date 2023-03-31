@@ -15,6 +15,7 @@ import {
 } from "../models/indicators";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
+import { pickerType } from "../util/catalogs";
 import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
@@ -32,6 +33,7 @@ export default class IndicatorStore {
   servicesCost: IServicesCost[] = [];
   services: IServicesInvoice = new ServiceInvoice();
   loadingReport: boolean = false;
+  datePickerType: pickerType = "date";
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -47,6 +49,10 @@ export default class IndicatorStore {
 
   setModalFilter = (modalFilter: IModalIndicatorsFilter) => {
     this.modalFilter = modalFilter;
+  };
+
+  setDatePickerType = (datePickerType: pickerType) => {
+    this.datePickerType = datePickerType;
   };
 
   deleteServiceCost = async (id: string) => {

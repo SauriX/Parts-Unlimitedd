@@ -62,7 +62,6 @@ export default class TrackingOrdertStore {
 
         return a;
       });
-      console.log(estudios);
       this.trackingOrder = estudios;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -194,9 +193,8 @@ export default class TrackingOrdertStore {
   };
   RequestStudi = async (solicitud: string) => {
     try {
-      console.log(solicitud);
-      let studies = await TrackingOrder.findRequestStudies(solicitud);
-      return studies;
+      let studies =await TrackingOrder.findRequestStudies(solicitud);
+      return studies
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
@@ -207,8 +205,6 @@ export default class TrackingOrdertStore {
 
       let studiesR = studies.map((x) => {
         let a = new TrackingOrderListValues(x);
-        console.log(a);
-        console.log(x);
         return a;
       });
       if (this.trackingOrder.length <= 0) {

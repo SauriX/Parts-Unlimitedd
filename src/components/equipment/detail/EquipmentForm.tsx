@@ -104,9 +104,6 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
   }, [getAll, searchParams]);
 
   const onFinish = async (newValues: IEquipmentForm) => {
-    // const equipment = { ...values, ...newValues };
-    console.log("values", values);
-    console.log("newValues", newValues);
     const equipment = { ...newEquipment, ...newValues };
     let success = false;
 
@@ -139,7 +136,6 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
   };
 
   useEffect(() => {
-    console.log("valores cambiantes", values);
     if (
       searchParams.get("mode") === "readonly" ||
       searchParams.get("mode") === "edit"
@@ -148,7 +144,6 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
     }
   }, [values]);
 
-  console.log("Table");
   const { width: windowWidth } = useWindowDimensions();
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
@@ -246,7 +241,6 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
               disabled={disabled}
               onClick={(e) => {
                 // e.preventDefault();
-                // console.log("formularioi", form.getFieldsValue());
                 form.submit();
               }}
             >
@@ -297,8 +291,8 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
               );
             }}
           >
-            <Row>
-              <Col md={12} sm={24} xs={12} style={{ textAlign: "center" }}>
+            <Row gutter={8} justify="space-between">
+              <Col md={6} sm={12} xs={6} style={{ textAlign: "center" }}>
                 <TextInput
                   formProps={{
                     name: "clave",
@@ -308,6 +302,9 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
                   required
                   readonly={readonly}
                 />
+
+              </Col>
+              <Col md={6} sm={12} xs={6} style={{ textAlign: "center" }}>
 
                 <TextInput
                   formProps={{
@@ -334,13 +331,6 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
                 />
                 <SwitchInput
                   name="activo"
-                  // onChange={(value) => {
-                  //   if (value) {
-                  //     alerts.info(messages.confirmations.enable);
-                  //   } else {
-                  //     alerts.info(messages.confirmations.disable);
-                  //   }
-                  // }}
                   label="Activo"
                   readonly={readonly}
                 />
@@ -384,7 +374,6 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
                                   } else {
                                     setNumSerie(undefined);
                                   }
-                                  console.log(value.target.value);
                                 }}
                               />
                             </Col>
@@ -448,7 +437,6 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
                           onClick={() => {
                             deleteEquipment(item.num_serie);
                             setDisabled(false);
-                            console.log("eliminar configuracion", item);
                           }}
                         />
                       )}

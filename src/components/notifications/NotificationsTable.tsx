@@ -1,7 +1,7 @@
 import { Button, Switch, Table } from "antd";
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import IconButton from "../../app/common/button/IconButton";
 import { EditOutlined } from "@ant-design/icons";
 import {
@@ -9,6 +9,8 @@ import {
   IColumns,
   ISearch,
 } from "../../app/common/table/utils";
+import { useStore } from "../../app/stores/store";
+import { INotificationsList } from "../../app/models/notifications";
 const dummyData = [
   {
     key: "1",
@@ -73,102 +75,58 @@ const dummyData = [
 ];
 const NotificationsTable = () => {
   const navigate = useNavigate();
+  const { notificationsStore } = useStore();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const { getAllNotifications, notifications, updateStatus, changeStatusNotificacion } = notificationsStore;
+  useEffect(() => {
+    const readAvisos = async () => {
+      await getAllNotifications(searchParams.get("search") || "all");
+    }
+    readAvisos();
+  }, [getAllNotifications, searchParams]);
+
+
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
-  const columns: IColumns<any> = [
-    //cambiar tipo de dato
-    {
-      ...getDefaultColumnProps("clave", "Clave", {
-        searchState,
-        setSearchState,
-        width: 60,
-      }),
-      render: (value, role) => (
-        <Button
-          type="link"
-          onClick={() => {
-            navigate(`/notifications/${value}`);
-          }}
-        >
-          {value}
-        </Button>
-      ),
-      fixed: "left",
-    },
-    {
-      ...getDefaultColumnProps("fechaCreacion", "Fecha de creación", {
-        searchState,
-        setSearchState,
-        width: 80,
-      }),
-    },
+  const onchangeStatus = async (id: string) => {
+    changeStatusNotificacion(id);
+    await updateStatus(id);
+  }
+
+  const columns: IColumns<INotificationsList> = [
     {
       key: "titulo",
       dataIndex: "titulo",
       title: "Titulo",
       align: "center",
-      width: 220,
+      width: 80,
     },
     {
-      ...getDefaultColumnProps("editar", "Editar", {
+      ...getDefaultColumnProps("contenido", "Contenido", {
         searchState,
         setSearchState,
-        width: 1,
+        width: 200,
       }),
-      render: (value, role) => (
-        <IconButton
-          title="Editar notificación"
-          icon={<EditOutlined />}
-          onClick={() => {
-            navigate(`/#`);
-          }}
-        />
-      ),
     },
-  ];
-  const columnsDetail: IColumns<any> = [
+
     {
-      ...getDefaultColumnProps("modulo", "Módulo", {
-        searchState,
-        setSearchState,
-        width: 120,
-      }),
-      render: (value, role) => (
-        <Button
-          type="link"
-          onClick={() => {
-            navigate(`/#`);
-          }}
-        >
-          {value}
-        </Button>
-      ),
-      fixed: "left",
-    },
-    {
-      ...getDefaultColumnProps("descripcion", "Descripción", {
+      ...getDefaultColumnProps("activo", "Activo", {
         searchState,
         setSearchState,
         width: 180,
       }),
-    },
-    {
-      ...getDefaultColumnProps("activos", "Activos", {
-        searchState,
-        setSearchState,
-        width: 180,
-      }),
-      render: (value, role) => (
-        <Switch defaultChecked onChange={() => console.log("changed")} />
+      render: (value, item) => (
+        <Switch checked={value} onChange={async () => { onchangeStatus(item.id) }} />
       ),
     },
   ];
+
   return (
     <>
-      <Table size="small" columns={columns} dataSource={dummyData} />
-      <Table size="small" columns={columnsDetail} dataSource={dummyData} />
+      <Table size="small" columns={columns} dataSource={notifications} />
     </>
   );
 };

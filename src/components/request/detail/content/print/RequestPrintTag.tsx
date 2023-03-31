@@ -10,7 +10,7 @@ import {
   Typography,
 } from "antd";
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   IColumns,
   getDefaultColumnProps,
@@ -24,6 +24,7 @@ import alerts from "../../../../../app/util/alerts";
 import { DeleteTwoTone } from "@ant-design/icons";
 import { ITagStudy } from "../../../../../app/models/tag";
 import TextAreaInput from "../../../../../app/common/form/proposal/TextAreaInput";
+import TextArea from "antd/lib/input/TextArea";
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -66,9 +67,19 @@ const RequestPrintTag = () => {
     }
   };
 
+  const onChangeObservation = (observation: string, record: IRequestTag) => {
+    let index = tags.findIndex((x) => x.id === record.id);
+    if (index > -1) {
+      const lbls = [...tags];
+      lbls[index] = { ...lbls[index], observaciones: observation };
+      setTags(lbls);
+    }
+  };
+
   const onChangeStudies = (values: string[], tag: IRequestTag) => {
     const newTags = [...tags];
     const index = newTags.findIndex((x) => x.id === tag.id);
+
 
     if (index === -1) return;
 
@@ -119,14 +130,11 @@ const RequestPrintTag = () => {
         width: "20%",
       }),
       render: (value, record) => (
-        <TextAreaInput
-          formProps={{
-            name: "observaciones",
-            label: "",
-            noStyle: true,
-          }}
+        <TextArea
+          value={record.observaciones}
           bordered={record ? true : false}
           rows={3}
+          onChange={(e) => onChangeObservation(e.target.value, record)}
           autoSize
         />
       ),

@@ -110,9 +110,13 @@ const InvoiceFreeData = () => {
     invoiceData.solicitudesId = [];
     invoiceData.detalles = detailInvoice;
     invoiceData.serie = newFormValues.serieCFDI;
-    invoiceData.bancoId = newFormValues.bancoId;
-    invoiceData.diasCredito = receptor.diasCredito;
-    invoiceData.formaPagoId = newFormValues.formaDePagoId;
+    invoiceData.bancoId = !!newFormValues.bancoId ? newFormValues.bancoId : 0;
+    invoiceData.diasCredito = !!receptor.diasCredito
+      ? newFormValues.diasCredito
+      : 0;
+    invoiceData.formaPagoId = !!newFormValues.formaDePagoId
+      ? newFormValues.formaDePagoId
+      : 0;
     invoiceData.formaPago = paymentOptions.find(
       (x) => x.value === newFormValues.formaDePagoId
     )?.label;
@@ -183,7 +187,7 @@ const InvoiceFreeData = () => {
         name="invoiceFreeData"
         onFinish={createInvoiceFree}
         size="small"
-        initialValues={{ fechas: [moment(), moment()] }}
+        initialValues={{ fechas: [moment(), moment()], bancoId: 0 }}
       >
         <Row>
           <Col span={24}>
@@ -277,7 +281,7 @@ const InvoiceFreeData = () => {
               formProps={{ label: "Forma de pago", name: "formaDePagoId" }}
               options={paymentOptions}
               style={{ marginBottom: 10 }}
-              readonly={id !== "new" || tipoFacturaLibre}
+              readonly={false}
             />
             <TextInput
               formProps={{ label: "Numero de cuenta", name: "numeroDeCuenta" }}
@@ -298,17 +302,17 @@ const InvoiceFreeData = () => {
               formProps={{ label: "Método de pago", name: "metodoDePagoId" }}
               options={paymentMethodOptions}
               style={{ marginBottom: 10 }}
-              readonly={id !== "new" || tipoFacturaLibre}
+              readonly={id !== "new"}
             />
             <SelectInput
               formProps={{ label: "Banco", name: "bancoId" }}
               options={bankOptions}
               style={{ marginBottom: 10 }}
-              readonly={id !== "new" || tipoFacturaLibre}
+              readonly={false}
             />
             <SelectInput
               formProps={{ label: "uso CFDI", name: "cfdiId" }}
-              readonly={id !== "new" || tipoFacturaLibre}
+              readonly={id !== "new"}
               options={cfdiOptions}
             />
           </Col>

@@ -18,15 +18,17 @@ const { Paragraph } = Typography;
 type Props = {
   getResult: (isAdmin: boolean) => any;
   selectedStudys: IRequestStudyOrder[];
-  solicitud:string;
+  solicitud: string;
 };
 
-const StudyTable = ({ getResult, selectedStudys,solicitud }: Props) => {
+const StudyTable = ({ getResult, selectedStudys, solicitud }: Props) => {
   const { trackingOrderStore } = useStore();
 
-  const {RequestStudi,getStudiesByRequest}= trackingOrderStore;
-  const [selectedRowKeysCheck, setSelectedRowKeysCheck] = useState<number[]>([]);
-  const [data, setData]= useState<IRequestStudyOrder[]>([]);
+  const { RequestStudi, getStudiesByRequest } = trackingOrderStore;
+  const [selectedRowKeysCheck, setSelectedRowKeysCheck] = useState<number[]>(
+    []
+  );
+  const [data, setData] = useState<IRequestStudyOrder[]>([]);
   const { openModal, closeModal } = store.modalStore;
   const { width: windowWidth } = useWindowDimensions();
   const [loading, setLoading] = useState(false);
@@ -38,15 +40,13 @@ const StudyTable = ({ getResult, selectedStudys,solicitud }: Props) => {
   useEffect(() => {
     const readReagents = async () => {
       setLoading(true);
-  
-      let studies=  await RequestStudi(solicitud);
-        setData(studies!);
-        console.log(studies);
+
+      let studies = await RequestStudi(solicitud);
+      setData(studies!);
       setLoading(false);
     };
     readReagents();
   }, [RequestStudi]);
-
 
   const columns: IColumns<IRequestStudyOrder> = [
     {
@@ -96,22 +96,22 @@ const StudyTable = ({ getResult, selectedStudys,solicitud }: Props) => {
     },
   ];
 
-
-
-
   const acceptChanges = async () => {
-
-     let search:searchstudies = {
+    let search: searchstudies = {
       estudios: selectedRowKeysCheck,
-      solicitud:solicitud
-     }
+      solicitud: solicitud,
+    };
     await getStudiesByRequest(search);
     closeModal();
   };
 
   return (
     <Fragment>
-      <Button type="primary"  style={{marginBottom:19,marginLeft:"94%"}} onClick={acceptChanges}>
+      <Button
+        type="primary"
+        style={{ marginBottom: 19, marginLeft: "94%" }}
+        onClick={acceptChanges}
+      >
         Agregar
       </Button>
 
@@ -132,41 +132,35 @@ const StudyTable = ({ getResult, selectedStudys,solicitud }: Props) => {
           getCheckboxProps: (record: IRequestStudyOrder) => ({
             //disabled: record.estatusId != 8,
           }),
-          onSelect: (selectedRow:IRequestStudyOrder, isSelected, a: any) => {
-            let lista = [...selectedRowKeysCheck] 
-           
-            let study = lista.find(x=> x==selectedRow.id);
-            if(study==undefined){
+          onSelect: (selectedRow: IRequestStudyOrder, isSelected, a: any) => {
+            let lista = [...selectedRowKeysCheck];
+
+            let study = lista.find((x) => x == selectedRow.id);
+            if (study == undefined) {
               lista.push(selectedRow.id);
               setSelectedRowKeysCheck(lista);
-              
-            }else{
-              let listafitered=lista.filter(x=>x != selectedRow.id );
+            } else {
+              let listafitered = lista.filter((x) => x != selectedRow.id);
               setSelectedRowKeysCheck(listafitered);
             }
-           
-            
           },
           onChange: (
             selectedRowKeys: React.Key[],
             selectedRows: any,
             rowSelectedMethod: any
           ) => {
-            if(rowSelectedMethod.type=="all"){
-              
-              let lista = [...selectedRowKeysCheck] 
-              selectedRows.forEach((x:IRequestStudyOrder)=>{
-
-                let study = lista.find(y=> y==x.id);
-                if(study==undefined){
+            if (rowSelectedMethod.type == "all") {
+              let lista = [...selectedRowKeysCheck];
+              selectedRows.forEach((x: IRequestStudyOrder) => {
+                let study = lista.find((y) => y == x.id);
+                if (study == undefined) {
                   lista.push(x.id);
                   setSelectedRowKeysCheck(lista);
-                  
                 }
               });
 
-              if(selectedRowKeys.length ==0){
-                setSelectedRowKeysCheck([])
+              if (selectedRowKeys.length == 0) {
+                setSelectedRowKeysCheck([]);
               }
             }
           },

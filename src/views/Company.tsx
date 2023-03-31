@@ -13,8 +13,8 @@ const Company = () => {
 
   const [printing, setPrinting] = useState(false);
 
-    const componentRef = useRef<any>();
-    const handlePrint = useReactToPrint({
+  const componentRef = useRef<any>();
+  const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     onBeforeGetContent: () => {
       setPrinting(true);
@@ -24,23 +24,11 @@ const Company = () => {
     },
   });
 
-  // useEffect(() => {
-  //   const checkAccess = async () => {
-  //     await access();
-  //   };
-
-  //   checkAccess();
-  // }, [access]);
-
-  console.log("Render");
-
   useEffect(() => {
     return () => {
       clearScopes();
     };
   }, [clearScopes]);
-
-  //if (!scopes?.acceder) return null;
 
   return (
     <Fragment>

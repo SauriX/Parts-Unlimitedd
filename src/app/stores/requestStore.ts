@@ -4,7 +4,6 @@ import Request from "../api/request";
 import { IPriceListInfoFilter } from "../models/priceList";
 import {
   IRequest,
-  IRequestFilter,
   IRequestGeneral,
   IRequestInfo,
   IRequestPack,
@@ -30,6 +29,7 @@ import { store } from "./store";
 import NetPay from "../api/netPay";
 import { ITag, ITagStudy } from "../models/tag";
 import moment from "moment";
+import { IGeneralForm } from "../models/general";
 
 export default class RequestStore {
   constructor() {
@@ -85,7 +85,6 @@ export default class RequestStore {
     );
   }
 
-  filter: IRequestFilter = new RequestFilterForm();
   studyFilter: IPriceListInfoFilter = {};
   requests: IRequestInfo[] = [];
   request?: IRequest;
@@ -188,11 +187,7 @@ export default class RequestStore {
   isStudy(obj: IRequestStudy | IRequestPack): obj is IRequestStudy {
     return obj.type === "study";
   }
-
-  setFilter = (filter: IRequestFilter) => {
-    this.filter = { ...filter };
-  };
-
+  
   setLastViewedCode = (
     data:
       | {
@@ -261,7 +256,7 @@ export default class RequestStore {
     }
   };
 
-  getRequests = async (filter: IRequestFilter) => {
+  getRequests = async (filter: IGeneralForm) => {
     try {
       this.loadingRequests = true;
       const requests = await Request.getRequests(filter);
@@ -423,7 +418,7 @@ export default class RequestStore {
 
       // prettier-ignore
       const destinationTags = groupTags.map(
-        ({ etiquetaId, claveEtiqueta, claveInicial, nombreEtiqueta, color }) => ({
+        ({ etiquetaId, claveEtiqueta, claveInicial, nombreEtiqueta, color, observaciones }) => ({
           destinoId: keyData.destinoId,
           destino: keyData.destino,
           destinoTipo: Number(keyData.destinoTipo),
@@ -432,6 +427,7 @@ export default class RequestStore {
           claveInicial,
           nombreEtiqueta,
           color,
+          observaciones,
           cantidad: 1
         })
       );
@@ -471,8 +467,6 @@ export default class RequestStore {
         }
       }
     }
-
-    console.log(allTags);
 
     this.setTags(allTags);
   };
@@ -522,7 +516,7 @@ export default class RequestStore {
         })),
       };
 
-      this.packs.unshift(pack);
+      this.packs.push(pack);
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -544,6 +538,7 @@ export default class RequestStore {
       claveInicial: tag.claveInicial,
       color: tag.color,
       etiquetaId: tag.etiquetaId,
+      observaciones: tag.observaciones,
       estudios: [],
     });
   };
@@ -614,6 +609,7 @@ export default class RequestStore {
         const payment = await Request.createPayment(request);
         this.payments.push(payment);
         if(payment.lealtad) alerts.success(messages.loyaltyWallet);
+        else alerts.info(messages.loyaltyWalletDeny);
       } else {
         this.chargePayPalPayment(request);
       }
@@ -1081,7 +1077,7 @@ export default class RequestStore {
 
     const finalTotal = totalStudies - discount + charge;
     const userTotal = cup > 0 ? cup : finalTotal;
-    const balance =  finalTotal -  payments.reduce((acc,obj) => acc + obj.cantidad, 0);
+    const balance =  finalTotal - payments.reduce((acc,obj) => acc + obj.cantidad, 0);
 
     this.totals = {
       ...this.totals,

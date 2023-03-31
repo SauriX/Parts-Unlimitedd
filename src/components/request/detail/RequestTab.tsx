@@ -5,11 +5,6 @@ import moment from "moment";
 import { Tab } from "rc-tabs/lib/interface";
 import { useCallback, useEffect, useState } from "react";
 import { useKeyPress } from "../../../app/hooks/useKeyPress";
-import { ProcedenciaFormValues } from "../../../app/models/catalog";
-import {
-  IProceedingForm,
-  ProceedingFormValues,
-} from "../../../app/models/Proceeding";
 import { IRequestGeneral } from "../../../app/models/request";
 import { useStore } from "../../../app/stores/store";
 import alerts from "../../../app/util/alerts";
@@ -98,10 +93,8 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     const loyal = await getByDate(moment().toDate());
     const contieneMedico = loyal?.precioLista.some((l) => l === "Medicos");
     const expediente = await getById(request?.expedienteId!);
-    console.log("expediente", toJS(expediente));
     const fechaCreaccionSolicitud = moment(request?.registro);
     const fechaActivacionMonedero = moment(expediente?.fechaActivacionMonedero);
-    console.log("#fechas", fechaActivacionMonedero, fechaCreaccionSolicitud);
     if (
       expediente?.hasWallet &&
       !studyFilter.compañiaId &&
@@ -146,7 +139,6 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
     } else if (currentKey === "request") {
       const ok = await updateStudies(studyUpdate, autoSave);
       if (!ok) {
-        setCurrentKey("request");
         return;
       }
     }
@@ -158,7 +150,6 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
         autoSave
       );
       if (!ok) {
-        setCurrentKey("print");
         return;
       }
     }
@@ -255,6 +246,7 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
         </Row>
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [branchId, formGeneral, updateGeneral]
   );
 

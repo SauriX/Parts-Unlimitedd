@@ -20,10 +20,10 @@ export default class ReportStore {
   scopes?: IScopes;
   currentReport?: reportType;
   filter: IReportFilter = new ReportFilterValues();
-  clear: boolean = false;
   reportData: IReportData[] = [];
   chartData: any[] = [];
   tableData: any[] = [];
+  loadingReport: boolean = false;
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -35,25 +35,6 @@ export default class ReportStore {
 
   setFilter = (filter: IReportFilter) => {
     this.filter = filter;
-  };
-
-  clearFilter = () => {
-    const emptyFilter: IReportFilter = {
-      sucursalId: [],
-      medicoId: [],
-      compañiaId: [],
-      metodoEnvio: [],
-      tipoCompañia: [],
-      urgencia: [],
-      fecha: [
-        moment(Date.now()).utcOffset(0, true),
-        moment(Date.now()).utcOffset(0, true),
-      ],
-      grafica: false,
-    };
-    this.reportData = [];
-    this.filter = emptyFilter;
-    this.clear = !this.clear;
   };
 
   access = async () => {
@@ -69,11 +50,14 @@ export default class ReportStore {
 
   getByFilter = async (report: string, filter: IReportFilter) => {
     try {
+      this.loadingReport = true;
       const data = await Report.getByFilter(report, filter);
       this.reportData = data;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       this.reportData = [];
+    } finally {
+      this.loadingReport = false;
     }
   };
 
@@ -82,11 +66,14 @@ export default class ReportStore {
     filter: IReportFilter
   ) => {
     try {
+      this.loadingReport = true;
       const data = await Report.getByChart<T>(report, filter);
       this.chartData = data;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       this.reportData = [];
+    } finally {
+      this.loadingReport = false;
     }
   };
 
@@ -95,11 +82,14 @@ export default class ReportStore {
     filter: IReportFilter
   ) => {
     try {
+      this.loadingReport = true;
       const data = await Report.getByTable<T>(report, filter);
       this.tableData = data;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       this.reportData = [];
+    } finally {
+      this.loadingReport = false;
     }
   };
 

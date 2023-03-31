@@ -73,7 +73,6 @@ const Agenda = <T extends IAgenda>({
     const endDate = selectedDate.clone().endOf("week");
 
     const dates = getWeekDates(startDate, endDate, excludeDays ?? []);
-    console.log(dates);
     setSelectedDates(dates);
   }, [calendarType, excludeDays, selectedDate]);
 

@@ -1,7 +1,5 @@
-import { Form, Col, Button, Divider, Input, Space, Row } from "antd";
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { Form, Col, Button, Divider, Row } from "antd";
 import { FC, useEffect, useState } from "react";
-import SelectInput from "../../../../app/common/form/proposal/SelectInput";
 import { observer } from "mobx-react-lite";
 import {
   IParameterForm,
@@ -9,7 +7,6 @@ import {
 } from "../../../../app/models/parameter";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../../app/stores/store";
-import alerts from "../../../../app/util/alerts";
 import NumberInput from "../../../../app/common/form/proposal/NumberInput";
 
 type Props = {
@@ -22,21 +19,18 @@ type UrlParams = {
 };
 
 const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue, parameter }) => {
-  const [lista, setLista] = useState<any[]>([]);
+  const [lista] = useState<any[]>([]);
   const [formValue] = Form.useForm<ItipoValorForm>();
   const [disabled, setDisabled] = useState(false);
   let { id } = useParams<UrlParams>();
   const { parameterStore } = useStore();
   const { addValue, getvalue, updatevalue, update } = parameterStore;
-  const [valuesValor, setValuesValor] = useState<ItipoValorForm[]>([]);
+  const [valuesValor] = useState<ItipoValorForm[]>([]);
+  
   useEffect(() => {
     const readuser = async (idUser: string) => {
       let value = await getvalue(idUser);
-      console.log("form");
-      console.log(value);
 
-      // value?.map((item) => lista.push(item));
-      // setLista(prev=>[...prev,...value!]);
       formValue.setFieldsValue(value!);
       if (lista?.length > 0) {
         setDisabled(true);
@@ -48,20 +42,22 @@ const RangoEdadXSexo: FC<Props> = ({ idTipeVAlue, parameter }) => {
   }, [formValue, getvalue, id]);
 
   let navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+
   const onFinish = async (newValues: ItipoValorForm) => {
     const value = { ...valuesValor, ...newValues };
     let success = false;
+    let saveValues = false;
     if (!value.id) {
       value.nombre = idTipeVAlue;
       value.parametroId = id || "";
-      success = await addValue(value);
+      saveValues = await addValue(value);
       success = await update(parameter);
     } else {
-      success = await updatevalue(value);
+      saveValues = await updatevalue(value);
       success = await update(parameter);
     }
-    if (success) {
+    if (success && saveValues) {
       navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
     }
   };

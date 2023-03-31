@@ -37,15 +37,6 @@ const CompanyDetail = () => {
   const { id } = useParams<UrlParams>();
   const companyId = !id ? undefined : id;
 
-  useEffect(() => {
-    console.log(companyId);
-    // if (companyId === undefined) {
-    //   navigate("/notFound");
-    // }
-  }, [navigate, companyId]);
-
-  //if (companyId === undefined) return null;
-
   return (
     <Fragment>
       <CompanyFormHeader id={companyId!} handlePrint={handlePrint} />
@@ -55,13 +46,6 @@ const CompanyDetail = () => {
         componentRef={componentRef}
         printing={printing}
       />
-      {/* <Divider className="header-divider" /> */}
-      {/* <Table<IContactForm>
-            size="large"
-            rowKey={(record) => record.tempId ?? record.id}
-            columns={columns.slice(0, 5)}
-            dataSource={[...contacts]}
-          /> */}
     </Fragment>
   );
 };

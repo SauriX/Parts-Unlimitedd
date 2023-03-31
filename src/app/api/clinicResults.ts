@@ -1,16 +1,16 @@
 import {
   IClinicResultCaptureForm,
-  IClinicResultForm,
   IClinicResultList,
   IResultPathological,
 } from "../models/clinicResults";
+import { IGeneralForm } from "../models/general";
 import { IRequestStudyUpdate } from "../models/request";
 import { IScopes } from "../models/shared";
 import requests from "./agent";
 
 const ClinicResults = {
   access: (): Promise<IScopes> => requests.get("scopes/report"),
-  getAll: (search: IClinicResultForm): Promise<IClinicResultList[]> =>
+  getAll: (search: IGeneralForm): Promise<IClinicResultList[]> =>
     requests.post(`clinicResults/getList`, search),
   getStudies: (
     recordId: string,
@@ -48,7 +48,7 @@ const ClinicResults = {
     requests.post(`clinicResults/getLaboratoryResults`, search),
   getRequestStudyById: (requestStudy: number): Promise<any> =>
     requests.post(`clinicResults/getRequestStudyById`, requestStudy),
-  exportList: (search: IClinicResultForm): Promise<void> =>
+  exportList: (search: IGeneralForm): Promise<void> =>
     requests.download(`clinicResults/export/list`, search),
   exportGlucose: (search: IClinicResultCaptureForm): Promise<void> =>
     requests.download(`clinicResults/export/glucose`, search),

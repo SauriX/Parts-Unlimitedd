@@ -381,14 +381,15 @@ const InvoiceCompanyTable = () => {
                     },
                   },
                   {
-                    key: "totalPrecio",
-                    dataIndex: "totalPrecio",
-                    title: "totalPrecio",
+                    key: "total",
+                    dataIndex: "total",
+                    title: "total",
                     align: "center",
                     render(value, record, index) {
                       return moneyFormatter.format(value);
                     },
                   },
+
                   {
                     key: "totalD",
                     dataIndex: "totalD",
@@ -408,9 +409,9 @@ const InvoiceCompanyTable = () => {
                     },
                   },
                   {
-                    key: "total",
-                    dataIndex: "total",
-                    title: "total",
+                    key: "totalPrecio",
+                    dataIndex: "totalPrecio",
+                    title: "totalPrecio",
                     align: "center",
                     render(value, record, index) {
                       return moneyFormatter.format(value);

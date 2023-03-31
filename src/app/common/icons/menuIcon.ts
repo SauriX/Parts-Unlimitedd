@@ -38,7 +38,11 @@ import {
   faMoneyBill1Wave,
   faFileMedical,
   faFileInvoice,
-  faMoneyBills
+  faMoneyBills,
+  faCalendarDay,
+  faSliders,
+  faChartBar,
+
 } from "@fortawesome/free-solid-svg-icons";
 
 const getMenuIcon = (name: string) => {
@@ -62,7 +66,7 @@ const getMenuIcon = (name: string) => {
     case "indication":
       return faListCheck;
     case "parameter":
-      return faListOl;
+      return faChartBar;
     case "catalog":
       return faFolderOpen;
     case "price":
@@ -89,6 +93,8 @@ const getMenuIcon = (name: string) => {
       return faFileInvoiceDollar;
     case "report":
       return faChartColumn;
+    case "reportstudy":
+      return faCalendarDay;
     case "results":
       return faFileMedical;
     case "appointments":

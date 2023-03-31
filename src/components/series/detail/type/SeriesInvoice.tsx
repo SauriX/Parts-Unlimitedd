@@ -11,6 +11,7 @@ import {
   Spin,
   Tag,
   Input,
+  Tooltip,
 } from "antd";
 import { observer } from "mobx-react-lite";
 import { FC, Fragment, useEffect, useState } from "react";
@@ -86,6 +87,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
 
       if (serie) {
         serie.factura.año = moment(serie.factura.año);
+        serie.expedicion.sucursalId = serie.expedicion.sucursalId;
         setValues(serie);
         form.setFieldsValue(serie);
       }
@@ -102,6 +104,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
       getNewForm(newForm).then((newValues: any) => {
         if (newValues) {
           newValues.factura.año = moment(newValues.factura.año);
+          newValues.factura.estatus = true;
           setValues(newValues);
           form.setFieldsValue(newValues);
         }
@@ -154,7 +157,6 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
     if (status === "uploading") {
       return;
     } else if (status === "done") {
-
       submitFile(info.file.originFileObj!, info.file.name);
     } else if (status === "error") {
       message.error(`Error al cargar el archivo ${info.file.name}.`);
@@ -167,6 +169,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
     showUploadList: false,
     customRequest: uploadFakeRequest,
     onChange: (info) => onChangeFile(info),
+    style: { width: "100%" },
   };
 
   const setEditMode = () => {
@@ -188,7 +191,6 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
     const serie = { ...values, ...newValues };
     serie.factura.archivoKey = keyFile;
     serie.factura.archivoCer = cerFile;
-    serie.expedicion.sucursalId = branch;
 
     let serieFormData = objectToFormData(serie);
 
@@ -335,27 +337,25 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
               required
             >
               <Input.Group>
-                <Row gutter={4}>
-                  <Col span={id ? 12 : 24}>
-                    <Upload {...props}>
-                      <Button
-                        type="primary"
-                        icon={<UploadOutlined />}
-                        disabled={readonly}
-                        onClick={() => {
-                          setOriginFile("key");
-                        }}
-                      >
-                        Subir archivo
-                      </Button>
-                    </Upload>
-                  </Col>
-                  {id && values.factura.claveKey ? (
-                    <Col span={12}>
-                      <Tag color="green">{values.factura.claveKey}</Tag>
-                    </Col>
-                  ) : null}
-                </Row>
+                <Upload {...props}>
+                  <Button
+                    type="primary"
+                    icon={<UploadOutlined />}
+                    disabled={readonly}
+                    onClick={() => {
+                      setOriginFile("key");
+                    }}
+                  >
+                    Subir archivo
+                  </Button>
+                </Upload>
+                {id && values.factura.claveKey ? (
+                  <Tooltip color="skyblue" title={values.factura.claveCer}>
+                    <Button type="default" style={{ marginLeft: "8px" }}>
+                      ...
+                    </Button>
+                  </Tooltip>
+                ) : null}
               </Input.Group>
             </Form.Item>
           </Col>
@@ -366,8 +366,8 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
               required
             >
               <Input.Group>
-                <Row gutter={4}>
-                  <Col span={id ? 12 : 24}>
+                <Row gutter={[0, 4]}>
+                  <Col span={24}>
                     <Upload {...props}>
                       <Button
                         type="primary"
@@ -380,12 +380,14 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
                         Subir archivo
                       </Button>
                     </Upload>
+                    {id && values.factura.claveCer ? (
+                      <Tooltip color="skyblue" title={values.factura.claveCer}>
+                        <Button type="default" style={{ marginLeft: "8px" }}>
+                          ...
+                        </Button>
+                      </Tooltip>
+                    ) : null}
                   </Col>
-                  {id && values.factura.claveCer ? (
-                    <Col span={12}>
-                      <Tag color="green">{values.factura.claveCer}</Tag>
-                    </Col>
-                  ) : null}
                 </Row>
               </Input.Group>
             </Form.Item>

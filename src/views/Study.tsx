@@ -7,8 +7,8 @@ import { useStore } from "../app/stores/store";
 import StudyHeader from "../components/study/StudyHeader";
 import StudyTable from "../components/study/StudyTable";
 const Study = () => {
-  const { studyStore} = useStore();
-  const { scopes, access, clearScopes,exportList } = studyStore;
+  const { studyStore } = useStore();
+  const { scopes, access, clearScopes, exportList } = studyStore;
   const [printing, setPrinting] = useState(false);
   const [accessing, setAccessing] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -42,21 +42,23 @@ const Study = () => {
   }, []);
   if (!scopes?.acceder) return null;
 
-
   const handleDownload = async () => {
-    console.log("here");
     setPrinting(true);
-    var succes=true; await exportList(searchParams.get("search") ?? "all");
-    if(succes){
+    var succes = true;
+    await exportList(searchParams.get("search") ?? "all");
+    if (succes) {
       setPrinting(false);
     }
   };
 
   return (
     <Fragment>
-        <StudyHeader handlePrint={handlePrint} handleList={handleDownload}></StudyHeader>
-        <Divider className="header-divider" />
-        <StudyTable componentRef={componentRef} printing={printing}></StudyTable>
+      <StudyHeader
+        handlePrint={handlePrint}
+        handleList={handleDownload}
+      ></StudyHeader>
+      <Divider className="header-divider" />
+      <StudyTable componentRef={componentRef} printing={printing}></StudyTable>
     </Fragment>
   );
 };

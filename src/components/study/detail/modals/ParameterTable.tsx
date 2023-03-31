@@ -85,10 +85,6 @@ const ParameterReagent = ({ getResult, selectedParameters }: Props) => {
     selectedRowKeys: selectedParameterKeys.map((x) => x.id),
     onSelect: onSelectKeys,
   };
-  
-  useEffect(() => {
-    console.log(selectedParameterKeys);
-  }, [selectedParameterKeys]);
 
   const acceptChanges = () => {
     setParameterSelected(selectedParameterKeys);

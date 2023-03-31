@@ -19,14 +19,7 @@ const logoWee = `${process.env.REACT_APP_NAME}/assets/logos/weeclinic.png`;
 
 const RequestTable = () => {
   const { requestStore } = useStore();
-  const {
-    loadingRequests,
-    filter,
-    lastViewedFrom,
-    requests,
-    setFilter,
-    getRequests,
-  } = requestStore;
+  const { loadingRequests, requests } = requestStore;
 
   let navigate = useNavigate();
 
@@ -34,21 +27,6 @@ const RequestTable = () => {
     searchedText: "",
     searchedColumn: "",
   });
-
-  useEffect(() => {
-    const readRequests = async () => {
-      const defaultCode = !lastViewedFrom
-        ? undefined
-        : lastViewedFrom.from === "requests"
-        ? undefined
-        : lastViewedFrom.code;
-      setFilter({ ...filter, clave: defaultCode ?? filter.clave });
-      await getRequests({ ...filter, clave: defaultCode ?? filter.clave });
-    };
-
-    readRequests();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const columns: IColumns<IRequestInfo> = [
     {
@@ -121,15 +99,6 @@ const RequestTable = () => {
       render: (value) => moneyFormatter.format(value),
     },
     {
-      ...getDefaultColumnProps("descuento", "Descuento", {
-        searchState,
-        setSearchState,
-        width: 120,
-      }),
-      align: "right",
-      render: (value) => moneyFormatter.format(value),
-    },
-    {
       ...getDefaultColumnProps("total", "Total", {
         searchState,
         setSearchState,
@@ -156,10 +125,7 @@ const RequestTable = () => {
       render: (value: IRequestStudyInfo[]) => (
         <Row align="middle">
           {value.map((x, i) => (
-            <Col
-              key={x.id}
-              style={{ display: "flex", alignItems: "center" }}
-            >
+            <Col key={x.id} style={{ display: "flex", alignItems: "center" }}>
               <ContainerBadge color={x.color} text={x.estatus[0]} />
             </Col>
           ))}
@@ -189,10 +155,7 @@ const RequestTable = () => {
         expandedRowRender: (record) => (
           <Row align="middle" gutter={[25, 25]}>
             {record.estudios.map((x) => (
-              <Col
-                key={x.id}
-                style={{ display: "flex", alignItems: "center" }}
-              >
+              <Col key={x.id} style={{ display: "flex", alignItems: "center" }}>
                 {x.nombre}{" "}
                 <ContainerBadge color={x.color} text={x.estatus[0]} />
               </Col>

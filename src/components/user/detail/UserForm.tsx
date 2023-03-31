@@ -43,7 +43,6 @@ import { DataNode } from "antd/lib/tree";
 import PasswordInput from "../../../app/common/form/PasswordInput";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import IconButton from "../../../app/common/button/IconButton";
-import { EditOutlined, LockOutlined } from "@ant-design/icons";
 import { useStore } from "../../../app/stores/store";
 import ImageButton from "../../../app/common/button/ImageButton";
 import alerts from "../../../app/util/alerts";
@@ -147,7 +146,6 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
 
       form.setFieldsValue(user!);
       setImages((values) => ({ ...values, format: user!.images }));
-      console.log(user, "user");
       setValues(user!);
       setLoading(false);
     };
@@ -288,7 +286,6 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
     info: UploadChangeParam<UploadFile<any>>,
     type: "orden" | "ine" | "ineReverso" | "formato"
   ) => {
-    console.log(" onChangeImage");
     const { status } = info.file;
     if (status === "uploading") {
       return;
@@ -382,7 +379,6 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
       const value = changeValues[fields];
       clave.primerApellido = value;
       if (id) {
-        console.log("mi loco entre");
         clave.nombre = values.nombre;
         clave.segundoApellido = values.segundoApellido;
       }
@@ -472,7 +468,6 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
     }
 
     const url = `${baseUrl}${url64}`;
-    console.log(url64, "url");
     return (
       <Image
         preview={false}
@@ -490,7 +485,6 @@ const UserForm: FC<UserFormProps> = ({ componentRef, load }) => {
     return 0;
   };
   const siguienteUser = (index: number) => {
-    console.log(id);
     const user = users[index];
 
     navigate(

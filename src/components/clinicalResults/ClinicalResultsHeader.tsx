@@ -17,7 +17,9 @@ const ClinicalResultsHeader: FC<ClinicalFormProps> = ({ printing }) => {
   const { request, getById } = requestStore;
   const { data } = clinicResultsStore;
   const [searchParams] = useSearchParams();
-  const [returnV, setReturnV] = useState(searchParams.get("return") === "validation");
+  const [returnV, setReturnV] = useState(
+    searchParams.get("return") === "validation"
+  );
   let navigate = useNavigate();
   const getPage = (id: string) => {
     const index = data.findIndex((x) => x.id === id) + 1;
@@ -35,9 +37,15 @@ const ClinicalResultsHeader: FC<ClinicalFormProps> = ({ printing }) => {
     <PageHeader
       ghost={false}
       title={<HeaderTitle title={`Solicitud: ${request?.clave}`} />}
-      onBack={() => {if(returnV){navigate(`/ResultValidation`)}else{navigate(`/clinicResults`)}}}
-      subTitle={`Registro: ${request?.registro}`}
+      onBack={() => {
+        if (returnV) {
+          navigate(`/ResultValidation`);
+        } else {
+          navigate(`/clinicResults`);
+        }
+      }}
       className="header-container"
+      subTitle={`Registro: ${request?.registro}`}
       extra={[
         <Pagination
           key="pagination"

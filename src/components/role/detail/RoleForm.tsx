@@ -134,11 +134,8 @@ const RoleForm: FC<UserFormProps> = ({ componentRef, load: printing }) => {
   );
   useEffect(() => {
     const readUsers = async () => {
-      console.log("soy el use efect");
       setLoading(true);
       await getAll(searchParams.get("search") ?? "all");
-      console.log("roles");
-      console.log(roles);
       setLoading(false);
     };
 

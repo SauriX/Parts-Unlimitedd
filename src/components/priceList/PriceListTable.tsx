@@ -41,8 +41,6 @@ const PriceListTable: FC<PriceListTableProps> = ({
     searchedColumn: "",
   });
 
-  console.log("Table");
-
   useEffect(() => {
     const readPriceList = async () => {
       setLoading(true);
@@ -61,7 +59,7 @@ const PriceListTable: FC<PriceListTableProps> = ({
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "25%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -82,17 +80,27 @@ const PriceListTable: FC<PriceListTableProps> = ({
       ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
+        width: "25%",
+        minWidth: 150,
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("nombreCompañia", "Compañía", {
+        searchState,
+        setSearchState,
         width: "30%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
+      render: (value, record) => record.nombreCompañia !== "" || record.nombreCompañia !== null ? value : "N/A", 
     },
     {
       key: "activo",
       dataIndex: "activo",
       title: "Activo",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "20%",
+      width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (value ? "Sí" : "No"),
     },
     {
@@ -100,7 +108,7 @@ const PriceListTable: FC<PriceListTableProps> = ({
       dataIndex: "id",
       title: "Editar",
       align: "center",
-      width: windowWidth < resizeWidth ? 100 : "20%",
+      width: windowWidth < resizeWidth ? 100 : "10%",
       render: (value) => (
         <IconButton
           title="Editar lista de precio"

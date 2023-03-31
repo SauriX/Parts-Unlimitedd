@@ -55,7 +55,6 @@ export default class RouteTrackingStore {
     try {
       const scopes = await Sampling.access();
       this.scopes = scopes;
-      console.log(scopes);
     } catch (error) {
       alerts.warning(getErrors(error));
       history.push("/forbidden");
@@ -127,8 +126,6 @@ export default class RouteTrackingStore {
     }
   };
   update = async (study: IUpdate[]) => {
-    console.log("this.update");
-    console.log(study);
     try {
       await RouteTracking.update(study);
       alerts.success(messages.updated);
@@ -139,7 +136,6 @@ export default class RouteTrackingStore {
     }
   };
   exportForm = async (id: string) => {
-    console.log(id);
     try {
       await RouteTracking.exportForm(id);
     } catch (error: any) {

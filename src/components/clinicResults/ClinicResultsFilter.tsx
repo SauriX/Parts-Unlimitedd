@@ -1,14 +1,13 @@
-import { Button, Col, Collapse, Form, Input, Row } from "antd";
+import { Button, Col, Form, Input, Row } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import React from "react";
 import { useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
-import { IClinicResultForm } from "../../app/models/clinicResults";
+import { IGeneralForm } from "../../app/models/general";
 import { IOptions } from "../../app/models/shared";
 import {
   originOptions,
@@ -19,16 +18,21 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 
 const ClinicResultsFilter = () => {
-  const { requestStore, optionStore, clinicResultsStore, profileStore } =
-    useStore();
+  const {
+    requestStore,
+    optionStore,
+    clinicResultsStore,
+    profileStore,
+    generalStore,
+  } = useStore();
   const { lastViewedFrom } = requestStore;
-  const { getAll, setFormValues, clearFilter, formValues } = clinicResultsStore;
+  const { getAll } = clinicResultsStore;
+  const { generalFilter, setGeneralFilter } = generalStore;
   const {
     branchCityOptions,
     medicOptions,
     companyOptions,
     studiesOptions,
-    getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
     getStudiesOptions,
@@ -46,12 +50,9 @@ const ClinicResultsFilter = () => {
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
-  useEffect(() => {
-    form.setFieldsValue(formValues);
-  }, [form, formValues]);
+
   useEffect(() => {
     const update = async () => {
-      getBranchCityOptions();
       getMedicOptions();
       getCompanyOptions();
       getAreaByDeparmentOptions();
@@ -60,7 +61,6 @@ const ClinicResultsFilter = () => {
     };
     update();
   }, [
-    getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
     getStudiesOptions,
@@ -99,34 +99,50 @@ const ClinicResultsFilter = () => {
         .filter((x) => selectedDepartment?.includes(x.value as number))
         .flatMap((x) => x.options ?? [])
     );
-    form.setFieldValue("area", []);
   }, [areaByDeparmentOptions, form, selectedDepartment]);
 
   useEffect(() => {
-    const profileBranch = profile?.sucursal;
-    if (profileBranch) {
-      const findCity = branchCityOptions.find((x) =>
-        x.options?.some((y) => y.value == profileBranch)
-      )?.value;
-      if (findCity) {
-        form.setFieldValue("ciudad", [findCity]);
-      }
-      form.setFieldValue("sucursalId", [profileBranch]);
-    }
-  }, [branchCityOptions, form, profile]);
+    const defaultCode = !lastViewedFrom
+      ? undefined
+      : lastViewedFrom.from === "results"
+      ? undefined
+      : lastViewedFrom.code;
 
-  const onFinish = async (newFormValues: IClinicResultForm) => {
+    if (!profile || !profile.sucursal || branchCityOptions.length === 0) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options!.some((y) => y.value === profileBranch))
+      ?.value?.toString();
+
+    const filter = {
+      ...generalFilter,
+      buscar: defaultCode ?? generalFilter.buscar,
+      ciudad: !generalFilter.cargaInicial
+        ? generalFilter.ciudad
+        : [userCity as string],
+      sucursalId: !generalFilter.cargaInicial
+        ? generalFilter.sucursalId
+        : [profileBranch],
+    };
+    form.setFieldsValue(filter);
+    filter.cargaInicial = false;
+
+    setGeneralFilter(filter);
+    getAll(filter);
+  }, [branchCityOptions]);
+
+  const onFinish = async (newFormValues: IGeneralForm) => {
     setLoading(true);
 
-    const filter = { ...newFormValues };
-    setFormValues(newFormValues);
-    getAll(filter);
+    setGeneralFilter(newFormValues);
+    await getAll(newFormValues);
+
     setLoading(false);
   };
 
   return (
     <div className="status-container">
-      <Form<IClinicResultForm>
+      <Form<IGeneralForm>
         {...formItemLayout}
         form={form}
         name="clinicResults"

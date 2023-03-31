@@ -31,7 +31,6 @@ import DatosFiscalesForm from "./DatosFiscalesForm";
 import Concidencias from "./Concidencias";
 import {
   IProceedingForm,
-  ISearchMedical,
   ProceedingFormValues,
 } from "../../../app/models/Proceeding";
 import moment, { Moment } from "moment";
@@ -49,6 +48,7 @@ import ProceedingQuotations from "./ProceedingQuotations";
 import ProceedingAppointments from "./ProceedingAppointments";
 import { faLaptopHouse } from "@fortawesome/free-solid-svg-icons";
 import ProceedingObservations from "./ProceedingObservations";
+import { IGeneralForm } from "../../../app/models/general";
 
 const { Text, Title } = Typography;
 
@@ -75,9 +75,11 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     appointmentStore,
     quotationStore,
     drawerStore,
+    generalStore,
   } = useStore();
   const { openDrawer } = drawerStore;
   const { getQuotations } = quotationStore;
+  const { generalFilter } = generalStore;
   const { getAllDom, getAllLab, createsolictud } = appointmentStore;
   const { requests, getRequests: getByFilter } = requestStore;
   const {
@@ -89,7 +91,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
     setTax,
     clearTax,
     expedientes,
-    search,
     tax,
     activateWallet,
     getAllQ,
@@ -98,6 +99,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   const { BranchOptions, getBranchOptions } = optionStore;
   const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [searchquotation, setquotationsearch] = useState<IGeneralForm>();
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
@@ -161,9 +163,11 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
       setLoading(true);
 
       var expediente = await getById(id);
-      var searchQ: IQuotationFilter = {
+      var searchQ: IGeneralForm = {
         expediente: expediente?.expediente,
       };
+
+      setquotationsearch(searchQ);
       var searchC: ISearchAppointment = {
         expediente: expediente?.expediente!,
         nombre: "",
@@ -214,18 +218,19 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
   }, []);
 
   useEffect(() => {
-    const readData = async (search: ISearchMedical) => {
+    const readData = async (search: IGeneralForm) => {
       await getnow(search);
     };
 
-    readData(search);
-  }, [search, getnow]);
+    readData(generalFilter);
+  }, [generalFilter, getnow]);
+
   useEffect(() => {
-    const readData = async (_search: ISearchMedical) => {
+    const readData = async (_search: IGeneralForm) => {
       await getBranchOptions();
     };
 
-    readData(search);
+    readData(generalFilter);
   }, [getBranchOptions]);
 
   const setEditMode = () => {
@@ -401,7 +406,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
 
       if (success) {
         goBack(false);
-        console.log(isUpdated);
         if (!isUpdated) {
           navigate(
             `/${views.proceeding}/${record}?${searchParams}&mode=readonly`
@@ -502,7 +506,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
             setErrors(errors);
           }}
         >
-          <Row gutter={[0, 12]}>
+          <Row gutter={[0, 12]} justify="space-between">
             <Col span={12}>
               <Form.Item
                 label="Nombre"
@@ -779,8 +783,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 </Input.Group>
               </Form.Item>
             </Col>
-
-            <Col span={2} style={{ textAlign: "center" }}>
+            <Col span={12} style={{ textAlign: "left" }}>
               <Button
                 onClick={() => {
                   navigate(`/requests/${id}`);
@@ -790,8 +793,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               >
                 Agregar solicitud
               </Button>
-            </Col>
-            <Col span={2} style={{ textAlign: "center" }}>
               <Button
                 onClick={() => {
                   navigate(`/cotizacion/new?&mode=edit&exp=${id}`);
@@ -801,8 +802,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               >
                 Agregar cotización
               </Button>
-            </Col>
-            <Col span={2} style={{ textAlign: "center" }}>
               <Button
                 onClick={() => {
                   navigate(`/appointments`);
@@ -812,8 +811,6 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
               >
                 Agregar cita
               </Button>
-            </Col>
-            <Col span={2} style={{ textAlign: "center" }}>
               <Button
                 onClick={() => {
                   values?.hasWallet ? openWallet() : activarMonedero();
@@ -824,7 +821,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 {values?.hasWallet ? "Ver monedero" : "Activar monedero"}
               </Button>
             </Col>
-            <Col span={8} style={{ textAlign: "end" }}>
+            <Col span={6} style={{ textAlign: "end" }}>
               <Button
                 onClick={() =>
                   openModal({
@@ -843,7 +840,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                 Datos Fiscales
               </Button>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <SelectInput
                 formProps={{
                   name: "sucursal",
@@ -885,7 +882,7 @@ const ProceedingForm: FC<ProceedingFormProps> = ({
                           loading={loading}
                           printing={printing}
                           readonly={readonly}
-                          searchParams={searchParams}
+                          searchParams={searchquotation}
                         />
                       ),
                     },

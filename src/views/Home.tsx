@@ -3,7 +3,6 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import DashboardChart from "../components/dashboard/dashboardChart";
 import { IDashBoard } from "../app/models/dashboard";
 import { useStore } from "../app/stores/store";
-import { IRequestFilter } from "../app/models/request";
 import moment from "moment";
 import {
   SearchTracking,
@@ -12,28 +11,26 @@ import {
 import AppointmentCalendar from "../components/dashboard/dashCalendar";
 import { useReactToPrint } from "react-to-print";
 import SelectInput from "../app/common/form/proposal/SelectInput";
+import { IGeneralForm } from "../app/models/general";
 
 const { Text } = Typography;
 
 const Home = () => {
   const [printing, setPrinting] = useState(false);
   const componentRef = useRef<any>();
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-    onBeforeGetContent: () => {
-      setPrinting(true);
-    },
-    onAfterPrint: () => {
-      setPrinting(false);
-    },
-  });
-  const { appointmentStore, requestStore, routeTrackingStore, profileStore } =
-    useStore();
+
+  const {
+    appointmentStore,
+    requestStore,
+    routeTrackingStore,
+    profileStore,
+    generalStore,
+  } = useStore();
   const { profile } = profileStore;
-  const { getAllDom, getAllLab, search } = appointmentStore;
+  const { setGeneralFilter, generalFilter } = generalStore;
+  const { getAllLab, search } = appointmentStore;
   const { getRequests } = requestStore;
-  const { getAll, getAllRecive, searchPending, setSearchi } =
-    routeTrackingStore;
+  const { getAll, getAllRecive, searchPending } = routeTrackingStore;
   const [calendar, setCalendar] = useState<boolean>(false);
   const [vista, setVista] = useState<number>(1);
   const [citas, setCitas] = useState<number>(0);
@@ -68,20 +65,21 @@ const Home = () => {
         },
       ];
 
-      var filter: IRequestFilter = {
-        fechaInicial: moment(moment.now()),
-        fechaFinal: moment(moment.now()),
+      var filter: IGeneralForm = {
+        fecha: [
+          moment(moment.now()).utcOffset(0, true),
+          moment(moment.now()).utcOffset(0, true),
+        ],
         tipoFecha: 1,
       };
       if (vista == 2) {
         var weeknumber = moment(moment.now()).week();
         var primer = moment().isoWeek(weeknumber).startOf("W");
         var final = moment().isoWeek(weeknumber).endOf("W").subtract(1, "d");
-        filter = { fechaInicial: primer, fechaFinal: final, tipoFecha: 1 };
+        filter = { fecha: [primer, final], tipoFecha: 1 };
       }
       var requests = await getRequests(filter);
 
-      console.log(requests, "solis");
       setSolicitudes(requests!.length);
 
       var cierre = 0;
@@ -186,7 +184,6 @@ const Home = () => {
           }
         })
       );
-      console.log(temp, "temporal");
       setProxCierre(cierre);
     };
     readRequest();
@@ -236,9 +233,7 @@ const Home = () => {
             sucursaldest: profile?.sucursal!,
           });
           contador += recibe?.length!;
-          console.log(contador);
         }
-        console.log(contador);
         setRecibir(contador);
       }
     };

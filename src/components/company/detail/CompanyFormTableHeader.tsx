@@ -15,15 +15,11 @@ type CompanyFormTableHeaderProps = {
 };
 
 const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
-  handleCompanyPrint,
   formContact,
   contacts,
   setFilteredContacts,
 }) => {
-  const [searchParams] = useSearchParams();
   const [searchValue, setSearchValue] = useState<string>("");
-
-  console.log("Header");
 
   useEffect(() => {
     setFilteredContacts(
@@ -45,24 +41,15 @@ const CompanyFormTableHeader: FC<CompanyFormTableHeaderProps> = ({
           style={{ marginRight: 20, textAlign: "left" }}
           key="search"
           placeholder="Buscar"
-          // defaultValue={searchParams.get("search") ?? ""}
           value={searchValue}
           onSearch={(value) => {
             setSearchValue(value);
-            // setFilteredContacts(
-            //   contacts.filter(
-            //     (x) =>
-            //       x.nombre.toLowerCase().includes(value.toLowerCase()) ||
-            //       x.telefono?.toString()?.includes(value)
-            //   )
-            // );
           }}
         />,
         <Button
           style={{ marginRight: 20, textAlign: "left" }}
           type="primary"
           htmlType="submit"
-          // disabled={disabled}
           onClick={() => {
             formContact.submit();
           }}

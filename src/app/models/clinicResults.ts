@@ -1,4 +1,5 @@
 import moment from "moment";
+import { IGeneralForm } from "./general";
 import { ItipoValorForm } from "./parameter";
 
 export interface IClinicResultList {
@@ -86,21 +87,6 @@ export interface IClinicResultCaptureForm {
   tipoValores?: ItipoValorForm[];
 }
 
-export interface IClinicResultForm {
-  sucursalId?: string[];
-  medicoId?: string[];
-  compañiaId?: string[];
-  fecha?: moment.Moment[];
-  buscar?: string;
-  procedencia?: number[];
-  departamento?: string[];
-  ciudad?: string[];
-  area?: number[];
-  tipoSolicitud?: string[];
-  estatus?: number[];
-  estudio?: number[];
-}
-
 export interface IStudyList {
   id: number;
   nombre: string;
@@ -131,29 +117,7 @@ export class ResultPathologicalValues implements IResultPathological {
   listaImagenesCargadas = [];
   estatus = 0;
   departamentoEstudio = "";
-  constructor(init?: IClinicResultForm) {
-    Object.assign(this, init);
-  }
-}
-
-export class ClinicResultsFormValues implements IClinicResultForm {
-  sucursalId = [];
-  medicoId = [];
-  compañiaId = [];
-  fecha = [
-    moment(Date.now()).utcOffset(0, true),
-    moment(Date.now()).utcOffset(0, true),
-  ];
-  buscar = "";
-  procedencia = [];
-  departamento = [];
-  ciudad = [];
-  tipoSolicitud = [];
-  area = [];
-  estatus = [];
-  estudio = [];
-
-  constructor(init?: IClinicResultForm) {
+  constructor(init?: IGeneralForm) {
     Object.assign(this, init);
   }
 }
@@ -184,7 +148,7 @@ export class ClinicResultsCaptureForm implements IClinicResultCaptureForm {
   orden = 0;
   clave = "";
 
-  constructor(init?: IClinicResultForm) {
+  constructor(init?: IGeneralForm) {
     Object.assign(this, init);
   }
 }

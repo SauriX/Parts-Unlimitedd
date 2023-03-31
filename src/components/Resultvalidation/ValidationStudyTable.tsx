@@ -52,9 +52,6 @@ const ValidationStudyColumns = ({ printTicket }: tableProps) => {
               navigate(
                 `/clinicResultsDetails/${record?.order}/${record?.id}?return=validation`
               );
-              /*               navigate(
-                `/requests/${record.order}/${record.id}`
-              ); */
             }}
           >
             {record.solicitud}
@@ -258,7 +255,6 @@ expandableProps) => {
                   idstudio: record.id,
                 });
 
-                console.log(vistos, "vistos");
                 await viewTicket(sendFiles);
                 setvisto(vistos);
                 setver(!ver);

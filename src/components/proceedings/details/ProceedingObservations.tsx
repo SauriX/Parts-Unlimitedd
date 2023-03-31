@@ -53,7 +53,7 @@ const ProceedingObservations = ({
 
   return (
     <>
-      <Divider orientation="left">Observaciones</Divider>
+      <Divider orientation="left">Observaciones generales para el expediente del paciente</Divider>
       <Form<any>
         form={form}
         {...formItemLayout}

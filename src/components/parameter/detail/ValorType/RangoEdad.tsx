@@ -1,27 +1,5 @@
-import {
-  Spin,
-  Form,
-  Row,
-  Col,
-  Transfer,
-  Tooltip,
-  Tree,
-  Tag,
-  Pagination,
-  Button,
-  Divider,
-  Table,
-  Space,
-  Input,
-  Select,
-} from "antd";
-import React, { FC, useEffect, useMemo, useState } from "react";
-import useWindowDimensions, { resizeWidth } from "../../../../app/util/window";
-import { IColumns } from "../../../../app/common/table/utils";
-import IconButton from "../../../../app/common/button/IconButton";
-import NumberInput from "../../../../app/common/form/NumberInput";
-import SelectInput from "../../../../app/common/form/SelectInput";
-import MaskInput from "../../../../app/common/form/MaskInput";
+import { Form, Row, Col, Button, Divider, Select, InputNumber } from "antd";
+import { FC, useEffect, useState } from "react";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
 import {
@@ -30,13 +8,17 @@ import {
 } from "../../../../app/models/parameter";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useStore } from "../../../../app/stores/store";
-import { values } from "mobx";
 import alerts from "../../../../app/util/alerts";
+import { toJS } from "mobx";
 type Props = {
   description: string;
   idTipeVAlue: string;
   parameter: IParameterForm;
   auto: boolean;
+  setValues?: React.Dispatch<React.SetStateAction<ItipoValorForm[]>>;
+  setCounter?: React.Dispatch<React.SetStateAction<number>>;
+  setFlag?: React.Dispatch<React.SetStateAction<boolean>>;
+  setChanged?: React.Dispatch<React.SetStateAction<boolean>>;
   disabled: boolean;
 };
 type UrlParams = {
@@ -47,15 +29,18 @@ const RangoEdad: FC<Props> = ({
   idTipeVAlue,
   parameter,
   auto,
+  setFlag,
+  setCounter,
+  setValues,
+  setChanged,
   disabled,
 }) => {
-  const [lista, setLista] = useState<any[]>([]);
+  const [lista] = useState<any[]>([]);
   const [formValue] = Form.useForm<ItipoValorForm[]>();
   const [disable, setDisable] = useState(disabled);
   let { id } = useParams<UrlParams>();
   const { parameterStore } = useStore();
   const { addvalues, getAllvalues, update } = parameterStore;
-  const [valuesValor, setValuesValor] = useState<ItipoValorForm[]>([]);
 
   useEffect(() => {
     const update = () => {
@@ -75,11 +60,9 @@ const RangoEdad: FC<Props> = ({
   useEffect(() => {
     const readuser = async (idUser: string) => {
       let value = await getAllvalues(idUser, idTipeVAlue);
-      console.log("form");
-      console.log(value);
 
       value?.map((item) => lista.push(item));
-      //setLista(prev=>[...prev,...value!]);
+      if (setCounter) setCounter((counter) => counter + lista.length);
       formValue.setFieldsValue(value!);
       if (lista.length > 0) {
         setDisable(true);
@@ -88,29 +71,12 @@ const RangoEdad: FC<Props> = ({
     if (id) {
       readuser(id);
     }
-  }, [formValue, getAllvalues, id]);
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 4 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 20 },
-    },
-  };
-  const formItemLayoutWithOutLabel = {
-    wrapperCol: {
-      xs: { span: 24, offset: 0 },
-      sm: { span: 20, offset: 4 },
-    },
-  };
+  }, [formValue, id]);
 
   let navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const onFinish = async (values: any) => {
-    console.log(values);
+  const [searchParams] = useSearchParams();
 
+  const onFinish = async (values: any) => {
     const val: ItipoValorForm[] = values.value.map((x: ItipoValorForm) => {
       let data: ItipoValorForm = {
         valorInicialNumerico: x.valorInicialNumerico,
@@ -129,45 +95,56 @@ const RangoEdad: FC<Props> = ({
       };
       return data;
     });
-    var validatehombre = val.map((x) => {
-      console.log(x, "x");
+
+    let validate = val.map((x) => {
       if (x.valorInicialNumerico! > x.valorFinalNumerico!) {
-        console.log("if");
         return true;
       }
       return false;
     });
-    if (validatehombre.includes(true)) {
+
+    if (validate.includes(true)) {
       alerts.warning(`En ${description} inicial no puede ser mayor al final`);
       return;
     }
-    var validatehombreIgual = val.map((x) => {
-      console.log(x, "x");
+
+    let validateEquality = val.map((x) => {
       if (x.valorInicialNumerico! === x.valorFinalNumerico!) {
-        console.log("if");
         return true;
       }
       return false;
     });
-    if (validatehombreIgual.includes(true)) {
+
+    if (validateEquality.includes(true)) {
       alerts.warning(`En ${description} inicial no puede ser igual al final`);
       return;
     }
-      var succes = await addvalues(val, id!);
-      if (succes) {
-        succes = await update(parameter);
-        if (succes) {
+
+    if ((val && idTipeVAlue === "hombre") || idTipeVAlue === "mujer") {
+      setValues!((values) => [...values, ...val]);
+    }
+
+    if (idTipeVAlue !== "hombre" && idTipeVAlue !== "mujer") {
+      let success = false;
+      let updateParam = false;
+      if (val) {
+        success = await addvalues(val, id!);
+      } else return;
+
+      if (success) {
+        updateParam = await update(parameter);
+        if (updateParam) {
           navigate(`/parameters?search=${searchParams.get("search") || "all"}`);
         }
       }
+      setFlag!(false);
+    }
   };
   const onValuesChange = async (changeValues: any, values: any) => {
     const fields = Object.keys(changeValues)[0];
     if (fields === "rangoEdadInicial") {
       const value = changeValues[fields];
-      console.log("on change");
       if (value < formValue.getFieldValue("rangoEdadFinal")) {
-        console.log("dentro del if");
         alerts.warning("El rango final no puede ser menor al inicial");
       }
     }
@@ -175,7 +152,6 @@ const RangoEdad: FC<Props> = ({
   return (
     <div>
       <Divider orientation="left">{description}</Divider>
-
       {idTipeVAlue != "hombre" && idTipeVAlue != "mujer" && (
         <Col md={24} sm={24} xs={24} style={{ marginLeft: "50%" }}>
           <Button
@@ -211,157 +187,155 @@ const RangoEdad: FC<Props> = ({
             <>
               {Fields.map(({ key, name, ...valuesValor }) => (
                 <div>
-                  <Row>
-                    <Col span={24}>
-                      <Row justify="space-between" gutter={[12, 4]}>
-                        <Col span={3}>
-                          <Form.Item
-                            {...valuesValor}
-                            label="Rango edad inicial: "
-                            name={[name, "rangoEdadInicial"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Missing Hombre valor",
-                              },
-                            ]}
-                          >
-                            <Input
-                              type={"number"}
-                              min={0}
-                              max={120}
-                              disabled={disable}
-                              placeholder={"Rango Edad"}
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col span={3}>
-                          <Form.Item
-                            {...valuesValor}
-                            label="Rango edad final: "
-                            name={[name, "rangoEdadFinal"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Rango de edad faltante",
-                              },
-                            ]}
-                          >
-                            <Input
-                              type={"number"}
-                              min={0}
-                              max={120}
-                              disabled={disable}
-                              placeholder="Rango Edad"
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col span={3}>
-                          <Form.Item
-                            {...valuesValor}
-                            label="Unidad de tiempo: "
-                            name={[name, "medidaTiempoId"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Unidad de medida faltante",
-                              },
-                            ]}
-                          >
-                            <Select
-                              defaultValue={0}
-                              disabled={disable}
-                              options={[
-                                { label: "Unidad de tiempo", value: 0 },
-                                { label: "Días", value: 1 },
-                                { label: "Meses", value: 2 },
-                                { label: "Años", value: 3 },
-                              ]}
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col span={3}>
-                          <Form.Item
-                            {...valuesValor}
-                            label="Valor númerico inicial: "
-                            name={[name, "valorInicialNumerico"]}
-                            rules={[
-                              { required: true, message: "Valor inicial faltante" },
-                            ]}
-                          >
-                            <Input
-                              type={"number"}
-                              min={0}
-                              max={120}
-                              disabled={disable}
-                              placeholder={"Valor inicial"}
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col span={3}>
-                          <Form.Item
-                            {...valuesValor}
-                            label="Valor númerico final: "
-                            name={[name, "valorFinalNumerico"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Valor final faltante",
-                              },
-                            ]}
-                          >
-                            <Input
-                              type={"number"}
-                              min={0}
-                              max={120}
-                              disabled={disable}
-                              placeholder="Valor final"
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col span={3}>
-                          <Form.Item
-                            {...valuesValor}
-                            label="Valor crítrico mínimo: "
-                            name={[name, "criticoMaximo"]}
-                            rules={[
-                              { required: true, message: "Valor crítico mínimo faltante" },
-                            ]}
-                          >
-                            <Input
-                              type={"number"}
-                              min={0}
-                              max={120}
-                              disabled={disable}
-                              placeholder={"Valor crítico mínimo"}
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col span={3}>
-                          <Form.Item
-                            {...valuesValor}
-                            label="Valor crítico máximo: "
-                            name={[name, "criticoMaximo"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Valor crítico máximo faltante",
-                              },
-                            ]}
-                          >
-                            <Input
-                              type={"number"}
-                              min={0}
-                              max={120}
-                              disabled={disable}
-                              placeholder="Valor crítico máximo"
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col span={3}>
-                          <MinusCircleOutlined onClick={() => remove(name)} />
-                        </Col>
-                      </Row>
+                  <Row justify="space-between" gutter={[12, 4]}>
+                    <Col span={3}>
+                      <Form.Item
+                        {...valuesValor}
+                        label="Rango edad inicial: "
+                        name={[name, "rangoEdadInicial"]}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Valor faltante",
+                          },
+                        ]}
+                      >
+                        <InputNumber
+                          min={0}
+                          max={120}
+                          disabled={disable}
+                          placeholder={"Rango Edad"}
+                          style={{ width: "100%" }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={3}>
+                      <Form.Item
+                        {...valuesValor}
+                        label="Rango edad final: "
+                        name={[name, "rangoEdadFinal"]}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Rango de edad faltante",
+                          },
+                        ]}
+                      >
+                        <InputNumber
+                          min={0}
+                          max={120}
+                          disabled={disable}
+                          placeholder="Rango Edad"
+                          style={{ width: "100%" }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={3}>
+                      <Form.Item
+                        {...valuesValor}
+                        label="Unidad de tiempo: "
+                        name={[name, "medidaTiempoId"]}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Unidad de medida faltante",
+                          },
+                        ]}
+                      >
+                        <Select
+                          defaultValue={0}
+                          disabled={disable}
+                          options={[
+                            { label: "Unidad de tiempo", value: 0 },
+                            { label: "Días", value: 1 },
+                            { label: "Meses", value: 2 },
+                            { label: "Años", value: 3 },
+                          ]}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={3}>
+                      <Form.Item
+                        {...valuesValor}
+                        label="Valor númerico inicial: "
+                        name={[name, "valorInicialNumerico"]}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Valor inicial faltante",
+                          },
+                        ]}
+                      >
+                        <InputNumber
+                          min={0}
+                          max={120}
+                          disabled={disable}
+                          placeholder={"Valor inicial"}
+                          style={{ width: "100%" }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={3}>
+                      <Form.Item
+                        {...valuesValor}
+                        label="Valor númerico final: "
+                        name={[name, "valorFinalNumerico"]}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Valor final faltante",
+                          },
+                        ]}
+                      >
+                        <InputNumber
+                          min={0}
+                          max={120}
+                          disabled={disable}
+                          placeholder="Valor final"
+                          style={{ width: "100%" }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={3}>
+                      <Form.Item
+                        {...valuesValor}
+                        label="Valor crítrico mínimo: "
+                        name={[name, "criticoMinimo"]}
+                      >
+                        <InputNumber
+                          min={0}
+                          max={120}
+                          disabled={disable}
+                          placeholder={"Valor crítico mínimo"}
+                          style={{ width: "100%" }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={3}>
+                      <Form.Item
+                        {...valuesValor}
+                        label="Valor crítico máximo: "
+                        name={[name, "criticoMaximo"]}
+                      >
+                        <InputNumber
+                          min={0}
+                          max={120}
+                          disabled={disable}
+                          placeholder="Valor crítico máximo"
+                          style={{ width: "100%" }}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={3}>
+                      <MinusCircleOutlined
+                        onClick={() => {
+                          remove(name);
+                          if (setCounter && setChanged) {
+                            setCounter((counter) => counter - 1);
+                            setChanged!(true);
+                          }
+                        }}
+                      />
                     </Col>
                   </Row>
                 </div>
@@ -369,7 +343,13 @@ const RangoEdad: FC<Props> = ({
               <Form.Item>
                 <Button
                   type="dashed"
-                  onClick={() => add()}
+                  onClick={() => {
+                    add();
+                    if (setCounter && setChanged) {
+                      setCounter!((counter) => counter + 1);
+                      setChanged!(true);
+                    }
+                  }}
                   block
                   icon={<PlusOutlined />}
                 >

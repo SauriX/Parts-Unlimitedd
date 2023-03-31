@@ -1,18 +1,5 @@
-import {
-  Button,
-  Divider,
-  PageHeader,
-  Spin,
-  Table,
-  List,
-  Typography,
-  Row,
-  Col,
-  Pagination,
-  Form,
-  Switch,
-} from "antd";
-import React, { FC, Fragment, useEffect, useRef, useState } from "react";
+import { Button, Spin, Table, Row, Col, Form, Switch } from "antd";
+import React, { FC, useEffect, useState } from "react";
 import {
   defaultPaginationProperties,
   getDefaultColumnProps,
@@ -23,18 +10,15 @@ import useWindowDimensions, { resizeWidth } from "../../app/util/window";
 import { EditOutlined, PrinterOutlined, EyeOutlined } from "@ant-design/icons";
 import IconButton from "../../app/common/button/IconButton";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { IEquipmentList } from "../../app/models/equipment";
 import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import { useReactToPrint } from "react-to-print";
-import HeaderTitle from "../../app/common/header/HeaderTitle";
-import { IMantainList, ISearchMantain, SearchMantainValues } from "../../app/models/equipmentMantain";
+import {
+  IMantainList,
+  ISearchMantain,
+  SearchMantainValues,
+} from "../../app/models/equipmentMantain";
 import TextInput from "../../app/common/form/proposal/TextInput";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
-import SwitchInput from "../../app/common/form/SwitchInput";
-import moment from "moment";
-// import Search from "antd/es/transfer/search";
-// import Indications from "../../views/Indications";
 
 type EquipmentTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -45,10 +29,20 @@ type EquipmentTableProps = {
 const EquipmentMantainData: FC<EquipmentTableProps> = ({
   componentRef,
   printing,
-  id
+  id,
 }) => {
   const { equipmentMantainStore, equipmentStore } = useStore();
-  const { equipments, getAlls, getequip, equip, setSearch, search, setiD, idEq, printTicket } = equipmentMantainStore;
+  const {
+    equipments,
+    getAlls,
+    getequip,
+    equip,
+    setSearch,
+    search,
+    setiD,
+    idEq,
+    printTicket,
+  } = equipmentMantainStore;
   const { equipment, getAll } = equipmentStore;
   const [searchParams] = useSearchParams();
   const [form] = Form.useForm<ISearchMantain>();
@@ -67,13 +61,11 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
     searchedColumn: "",
   });
 
-  console.log("Table");
-
   useEffect(() => {
     const readEquipment = async () => {
       setLoading(true);
       var equipo = await getequip(id);
-      search!.idEquipo = equipo?.id!
+      search!.idEquipo = equipo?.id!;
       await getAlls(search!);
       await getAll("all");
       setiD(id);
@@ -83,40 +75,11 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
     readEquipment();
   }, [getAll, searchParams, getequip, getAlls]);
   const onFinish = async (newValues: ISearchMantain) => {
-    // const equipment = { ...values, ...newValues };
-    console.log("values", values);
-    console.log("newValues", newValues);
     const equipment = { ...search, ...newValues };
     setSearch(equipment);
     await getAlls(equipment);
-
-  };
-  const actualMaquilador = () => {
-    if (id) {
-      const index = equipment.findIndex((x) => x.id === id);
-      return index + 1;
-    }
-    return 0;
   };
 
-  const EquipmentTablePrint = () => {
-    return (
-      <div ref={componentRef}>
-        <PageHeader
-          ghost={false}
-          title={
-            <HeaderTitle
-              title="Catálogo de Indicaciones"
-
-            />
-          }
-          className="header-container"
-        ></PageHeader>
-        <Divider className="header-divider" />
-
-      </div>
-    );
-  };
   const columns: IColumns<IMantainList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
@@ -130,9 +93,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
         <Button
           type="link"
           onClick={() => {
-            navigate(
-              `/equipmentMantain/edit/${id}/${user.id}?mode=readonly`
-            );
+            navigate(`/equipmentMantain/edit/${id}/${user.id}?mode=readonly`);
           }}
         >
           {value}
@@ -159,9 +120,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
           title="Editar equipo"
           icon={<EditOutlined />}
           onClick={() => {
-            navigate(
-              `/equipmentMantain/edit/${id}/${value}`
-            );
+            navigate(`/equipmentMantain/edit/${id}/${value}`);
           }}
         />
       ),
@@ -177,8 +136,6 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
           title=" Imprimir reporte"
           icon={<PrinterOutlined />}
           onClick={() => {
-            console.log("value", value)
-            console.log("item", item)
             printTicket(item.id);
           }}
         />
@@ -207,36 +164,38 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
       title: "Activo",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => (
-        <Switch checked={value}></Switch>
-      ),
+      render: (value) => <Switch checked={value}></Switch>,
     },
-
   ];
   return (
     <Spin spinning={loading || printing} tip={printing ? "Imprimiendo" : ""}>
-
       <Row style={{ marginBottom: 24 }} gutter={[12, 12]}>
         <Col md={12} sm={24} xs={12} style={{ textAlign: "center" }}>
-          <div style={{ backgroundColor: "#B4C7E7", textAlign: "justify", width: "40%", marginLeft: "40%" }}>
-            <p style={{marginLeft: "1%"}}>
-            Clave: {equip?.clave}
-            <br />
-            Nombre: {equip?.nombre}
-            <br />
-            Serie: <Link to={""}>{equip?.serie}</Link>
+          <div
+            style={{
+              backgroundColor: "#B4C7E7",
+              textAlign: "justify",
+              width: "40%",
+              marginLeft: "40%",
+            }}
+          >
+            <p style={{ marginLeft: "1%" }}>
+              Clave: {equip?.clave}
+              <br />
+              Nombre: {equip?.nombre}
+              <br />
+              Serie: <Link to={""}>{equip?.serie}</Link>
             </p>
           </div>
         </Col>
         <Col md={12} sm={24} xs={12} style={{ textAlign: "center" }}>
           <Form<ISearchMantain>
-
             form={form}
             name="equipment"
             initialValues={values}
             onFinish={onFinish}
             scrollToFirstError
-          /*            onFieldsChange={() => {
+            /*            onFieldsChange={() => {
                        setDisabled(
                          !form.isFieldsTouched() ||
                            form.getFieldsError().filter(({ errors }) => errors.length)
@@ -251,7 +210,6 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
                     name: "fecha",
                     label: "Fecha",
                   }}
-
                 />
               </Col>
               <Col md={10} sm={24}>
@@ -259,16 +217,19 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
                   formProps={{
                     name: "clave",
                     label: "Nombre",
-                    labelCol: { span: 10 }
+                    labelCol: { span: 10 },
                   }}
                   max={100}
-
                 />
               </Col>
               <Col md={2} sm={24}>
-                <Button onClick={() => {
-                  form.submit();
-                }}>Buscar</Button>
+                <Button
+                  onClick={() => {
+                    form.submit();
+                  }}
+                >
+                  Buscar
+                </Button>
               </Col>
             </Row>
           </Form>

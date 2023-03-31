@@ -44,7 +44,6 @@ const ClinicalResultsXRay = ({ study, record, request }: CRXRProps) => {
 
   useEffect(() => {
     loadStudy();
-    console.log("currentStudy", currentStudy);
   }, [getRequestStudyById, study]);
 
   return (

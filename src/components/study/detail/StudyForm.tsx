@@ -144,7 +144,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
 
   const handleClose = (removedTag: string) => {
     const newTags = tags.filter((tag) => tag !== removedTag);
-    console.log(newTags);
     setTags(newTags);
   };
 
@@ -207,7 +206,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
         windowSize: windowWidth,
       }),
       render: (value: any, row: any) => {
-        console.log("row", row);
         return (
           <>
             <Link
@@ -271,7 +269,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
       if (user?.workLists != "" && user?.workLists != null) {
         var tags = user.workLists.split("-");
         setTags(tags);
-        console.log(tags);
       }
       setParameterSelected(user?.parameters!);
       setIndicationSelected(user?.indicaciones!);
@@ -355,7 +352,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     return 0;
   };
   const siguienteStudy = (index: number) => {
-    console.log(index);
     const estudio = study[index];
 
     navigate(
@@ -411,7 +407,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
         dias = Math.round(dias * 100) / 100;
       }
 
-      console.log(dias);
       form.setFieldsValue({ diasrespuesta: dias });
     }
   };
@@ -422,7 +417,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
     );
     setParameterSelectedSource(filterList);
     setSelectedRowKeysp([]);
-    console.log("Parametros", parameterSelected);
   };
 
   const deleteIndicacion = () => {
@@ -572,7 +566,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
             onFinish={onFinish}
             scrollToFirstError
           >
-            <Row>
+            <Row gutter={[20,12]}>
               <Col md={8} sm={24} xs={8}>
                 <TextInput
                   formProps={{
@@ -592,14 +586,14 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   required
                 />
               </Col>
-              <Col md={8} xs={8}>
+             {/* <Col md={8} xs={8}>
                 <SelectInput
                   formProps={{ name: "tapon", label: "Etiqueta" }}
                   options={taponOption}
                   readonly={disabled}
                   required
                 />
-              </Col>
+                </Col>*/}
 
               <Col md={8} sm={24} xs={8}>
                 <NumberInput
@@ -713,7 +707,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                 <NumberInput
                   formProps={{
                     name: "diasEstabilidad",
-                    label: "Días de estabilidad",
+                    label: "Días de estabilidad en refrigeración",
                   }}
                   min={0}
                   max={999999}
@@ -738,7 +732,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   label="Visible"
                   onChange={(values) => {
                     setVisible(values);
-                    console.log(values);
                   }}
                   readonly={disabled}
                 />

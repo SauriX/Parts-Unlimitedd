@@ -59,9 +59,15 @@ const typeCompanyOptions: IOptions[] = [
 ];
 
 const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
-  const { reportStore, optionStore } = useStore();
-  const { currentReport, filter, setFilter, getByFilter, getByChart, clear } =
-    reportStore;
+  const { reportStore, optionStore, profileStore } = useStore();
+  const {
+    currentReport,
+    filter,
+    setFilter,
+    getByFilter,
+    getByChart,
+    loadingReport,
+  } = reportStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -70,49 +76,71 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
     getMedicOptions,
     getCompanyOptions,
   } = optionStore;
+  const { profile } = profileStore;
 
   const [form] = Form.useForm<IReportFilter>();
+
   const chartValue = Form.useWatch("grafica", form);
   const selectedCity = Form.useWatch("ciudad", form);
-
-  const [loading, setLoading] = useState(false);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
-    getBranchCityOptions();
     getMedicOptions();
     getCompanyOptions();
-  }, [getBranchCityOptions, getMedicOptions, getCompanyOptions]);
+  }, [getMedicOptions, getCompanyOptions]);
 
   useEffect(() => {
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
   }, [branchCityOptions]);
-  useEffect(() => {
-    if(selectedCity!=undefined && selectedCity !=null){
-      var branhces =branchCityOptions.filter((x) => selectedCity.includes(x.value.toString()))
-    var  options = branhces.flatMap(x=> (x.options== undefined?[]:x.options ));
-      setBranchOptions(
-        options
-      );
-    }
-    form.setFieldValue("sucursalId", []);
-  }, [branchCityOptions, form, selectedCity]);
 
+  useEffect(() => {
+    if (!profile || !profile.sucursal || branchCityOptions.length === 0) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options!.some((y) => y.value === profileBranch))
+      ?.value?.toString();
+
+    const reportFilter = {
+      ...filter,
+      ciudad: !filter.cargaInicial ? filter.ciudad : [userCity as string],
+      sucursalId: !filter.cargaInicial ? filter.sucursalId : [profileBranch],
+    };
+
+    form.setFieldsValue(reportFilter);
+    filter.cargaInicial = false;
+
+    setFilter(reportFilter);
+
+    const getReport = async () => {
+      await getByFilter(currentReport!, reportFilter);
+    };
+
+    if (currentReport) {
+      getReport();
+    }
+  }, [branchCityOptions]);
+
+  useEffect(() => {
+    if (selectedCity != undefined && selectedCity != null) {
+      var branhces = branchCityOptions.filter((x) =>
+        selectedCity.includes(x.value.toString())
+      );
+      var options = branhces.flatMap((x) =>
+        x.options == undefined ? [] : x.options
+      );
+      setBranchOptions(options);
+    }
+  }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
     setShowChart(chartValue);
     setFilter({ ...filter, grafica: chartValue });
   }, [chartValue, setShowChart]);
 
-  useEffect(() => {
-    form.setFieldsValue(filter);
-  }, [clear]);
-
   const onFinish = async (filter: IReportFilter) => {
-    setLoading(true);
     if (currentReport) {
       await getByFilter(currentReport, filter);
       setFilter(filter);
@@ -122,7 +150,6 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
         currentReport == "urgentes" ||
         currentReport == "empresa" ||
         currentReport == "canceladas" ||
-        currentReport == "descuento" ||
         currentReport == "presupuestos" ||
         currentReport == "cargo" ||
         currentReport == "maquila_interna" ||
@@ -132,11 +159,10 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
         await getByChart(currentReport, filter);
       }
     }
-    setLoading(false);
   };
 
   return (
-    <Spin spinning={loading}>
+    <div className="status-container">
       <Form<IReportFilter>
         {...formItemLayout}
         form={form}
@@ -168,7 +194,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
                       <Row gutter={8}>
                         <Col span={12}>
                           <SelectInput
-                           form={form}
+                            form={form}
                             formProps={{
                               name: "ciudad",
                               label: "Ciudad",
@@ -219,7 +245,10 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
                 <Col span={8}>
                   <SelectInput
                     form={form}
-                    formProps={{ name: "metodoEnvio", label: "Medio de envío" }}
+                    formProps={{
+                      name: "metodoEnvio",
+                      label: "Medio de envío",
+                    }}
                     multiple
                     options={sendMethodOptions}
                   />
@@ -229,7 +258,10 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
                 <Col span={8}>
                   <SelectInput
                     form={form}
-                    formProps={{ name: "urgencia", label: "Tipo de Urgencia" }}
+                    formProps={{
+                      name: "urgencia",
+                      label: "Tipo de Urgencia",
+                    }}
                     multiple
                     options={urgentOptions}
                   />
@@ -257,7 +289,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
           </Col>
         </Row>
       </Form>
-    </Spin>
+    </div>
   );
 };
 

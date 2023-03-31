@@ -9,15 +9,10 @@ import SamplingHeader from "../components/Sampling/SamplingStudyHeader";
 import SamplingTable from "../components/Sampling/SamplingStudyBody";
 
 const ResultValidation = () => {
-  const { resultValidationStore, relaseResultStore } = useStore();
-  //const { /* scopes, access, clearScopes, */ exportList,search } = procedingStore;
-  const { /* scopes, access, clearScopes, */ exportList, search } =
-    resultValidationStore;
-  const {
-    activeTab,
-    search: releaseSearch,
-    exportList: releaseExportList,
-  } = relaseResultStore;
+  const { resultValidationStore, relaseResultStore, generalStore } = useStore();
+  const { exportList } = resultValidationStore;
+  const { activeTab, exportList: releaseExportList } = relaseResultStore;
+  const { generalFilter } = generalStore;
   const [searchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);
@@ -27,14 +22,13 @@ const ResultValidation = () => {
   const handleDownload = async () => {
     setLoading(true);
     if (!activeTab) {
-      await releaseExportList(releaseSearch);
+      await releaseExportList(generalFilter);
     } else {
-      await exportList(search);
+      await exportList(generalFilter);
     }
     setLoading(false);
   };
 
-  
   return (
     <Fragment>
       <Fragment>

@@ -1,10 +1,6 @@
-import {
-  IProceedingForm,
-  IProceedingList,
-  ISearchMedical,
-} from "../models/Proceeding";
+import { IGeneralForm } from "../models/general";
+import { IProceedingForm, IProceedingList } from "../models/Proceeding";
 import { IQuotationFilter, IQuotationInfo } from "../models/quotation";
-// import { IQuotationList, ISearchQuotation } from "../models/quotation";
 import { IScopes } from "../models/shared";
 import { ITaxData } from "../models/taxdata";
 import requests from "./agent";
@@ -13,7 +9,7 @@ const Proceding = {
   access: (): Promise<IScopes> => requests.get("scopes/medic"),
   getAll: (search: string): Promise<IProceedingList[]> =>
     requests.get(`MedicalRecord/all`),
-  getNow: (search: ISearchMedical): Promise<IProceedingList[]> =>
+  getNow: (search: IGeneralForm): Promise<IProceedingList[]> =>
     requests.post(`medicalRecord/now`, search ?? {}),
   getNowQ: (search: IQuotationFilter): Promise<IQuotationInfo[]> =>
     requests.post(`quotation/filter`, search ?? {}),
@@ -42,7 +38,7 @@ const Proceding = {
     requests.put("/MedicalRecord/taxData/default", taxDataId),
   updateObservation: (observation: any): Promise<void> =>
     requests.put("/MedicalRecord/observations", observation),
-  exportList: (search: ISearchMedical): Promise<void> =>
+  exportList: (search: IGeneralForm): Promise<void> =>
     requests.download(`MedicalRecord/export/list`, search), //, "Catálogo de Sucursales.xlsx"
   exportForm: (id: string): Promise<void> =>
     requests.download(`MedicalRecord/export/form/${id}`), //, `Catálogo de Sucursales (${clave}).xlsx`

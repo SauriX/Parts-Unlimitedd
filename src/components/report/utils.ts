@@ -14,7 +14,6 @@ import getCompanyStatsColumns, {
   expandablePriceConfig,
 } from "./columnDefinition/companyStats";
 import getCanceledRequestColumns from "./columnDefinition/canceledRequest";
-import getDescountRequestColumns from "./columnDefinition/descountRequest";
 import getChargeRequestColumns from "./columnDefinition/chargeRequest";
 import getMaquilaExternColumns, {
   expandableMaquilaExternConfig,
@@ -35,7 +34,6 @@ export type reportType =
   | "estadistica"
   | "expediente"
   | "canceladas"
-  | "descuento"
   | "cargo"
   | "presupuestos"
   | "maquila_interna"
@@ -79,7 +77,6 @@ export const getInputs = (
   } else if (
     reportName === "estudios" ||
     reportName == "canceladas" ||
-    reportName === "descuento" ||
     reportName === "cargo"
   ) {
     filters.push("medico");
@@ -144,11 +141,6 @@ export const getReportConfig = (
     image = "cancelar";
     hasFooterRow = false;
     summary = true;
-  } else if (reportName === "descuento") {
-    title = "Solicitudes con Descuento";
-    image = "descuento";
-    hasFooterRow = false;
-    summary = true;
   } else if (reportName === "cargo") {
     title = "Solicitudes con Cargo";
     image = "cargo";
@@ -201,9 +193,7 @@ export const getColumns = (
     return getMedicalBreakdownStatsColumns(searchState, setSearchState);
   } else if (reportName === "canceladas") {
     return getCanceledRequestColumns(searchState, setSearchState);
-  } else if (reportName === "descuento") {
-    return getDescountRequestColumns(searchState, setSearchState);
-  } else if (reportName === "cargo") {
+  }  else if (reportName === "cargo") {
     return getChargeRequestColumns(searchState, setSearchState);
   } else if (reportName === "maquila_interna") {
     return getMaquilaInternColumns(searchState, setSearchState);
@@ -224,7 +214,6 @@ export const getExpandableConfig = (
   } else if (
     reportName == "empresa" ||
     reportName == "canceladas" ||
-    reportName == "descuento" ||
     reportName == "cargo" ||
     reportName == "presupuestos" ||
     reportName === "medicos-desglosado"

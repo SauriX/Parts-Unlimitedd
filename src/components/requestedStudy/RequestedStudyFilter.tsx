@@ -1,12 +1,11 @@
 import "./css/changeStatus.less";
-import { Button, Col, Collapse, Form, Input, Row } from "antd";
+import { Button, Col, Form, Input, Row } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../app/common/form/proposal/SelectInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
-import { IRequestedStudyForm } from "../../app/models/requestedStudy";
 import {
   originOptions,
   requestedStudyOptions,
@@ -16,17 +15,18 @@ import { useStore } from "../../app/stores/store";
 import { formItemLayout } from "../../app/util/utils";
 import moment from "moment";
 import { IOptions } from "../../app/models/shared";
+import { IGeneralForm } from "../../app/models/general";
 
 const RequestedStudyFilter = () => {
-  const { optionStore, requestedStudyStore, profileStore } = useStore();
-  const { getAll, setFormValues, formValues } = requestedStudyStore;
+  const { optionStore, requestedStudyStore, profileStore, generalStore } = useStore();
+  const { getAll } = requestedStudyStore;
+  const { setGeneralFilter, generalFilter } = generalStore
   const {
     branchCityOptions,
     medicOptions,
     companyOptions,
-    departmentAreaOptions,
-    getDepartmentAreaOptions,
-    getBranchCityOptions,
+    areaByDeparmentOptions,
+    getAreaByDeparmentOptions,
     getMedicOptions,
     getCompanyOptions,
   } = optionStore;
@@ -35,22 +35,20 @@ const RequestedStudyFilter = () => {
   const [loading, setLoading] = useState(false);
 
   const selectedCity = Form.useWatch("ciudad", form);
-  const selectedDepartment = Form.useWatch("departament", form);
+  const selectedDepartment = Form.useWatch("departamento", form);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
-    getBranchCityOptions();
     getMedicOptions();
     getCompanyOptions();
-    getDepartmentAreaOptions();
+    getAreaByDeparmentOptions();
   }, [
-    getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
-    getDepartmentAreaOptions,
+    getAreaByDeparmentOptions,
   ]);
 
   useEffect(() => {
@@ -60,57 +58,64 @@ const RequestedStudyFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    const profileBranch = profile?.sucursal;
-    if (profileBranch) {
-      const findCity = branchCityOptions.find((x) =>
-        x.options?.some((y) => y.value == profileBranch)
-      )?.value;
-      if (findCity) {
-        form.setFieldValue("ciudad", [findCity]);
-      }
-      form.setFieldValue("sucursalId", [profileBranch]);
-    }
-  }, [branchCityOptions, form, profile]);
+    if (!profile || !profile.sucursal || branchCityOptions.length === 0) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options!.some((y) => y.value === profileBranch))
+      ?.value?.toString();
+
+    const filter = {
+      ...generalFilter,
+      ciudad: !generalFilter.cargaInicial
+        ? generalFilter.ciudad
+        : [userCity as string],
+      sucursalId: !generalFilter.cargaInicial
+        ? generalFilter.sucursalId
+        : [profileBranch],
+    };
+    form.setFieldsValue(filter);
+    filter.cargaInicial = false;
+
+    setGeneralFilter(filter);
+    getAll(filter);
+  }, [branchCityOptions]);
+  
   useEffect(() => {
     if (selectedCity != undefined && selectedCity != null) {
-      var branhces = branchCityOptions.filter((x) =>
+      var branches = branchCityOptions.filter((x) =>
         selectedCity.includes(x.value.toString())
       );
-      var options = branhces.flatMap((x) =>
+      var options = branches.flatMap((x) =>
         x.options == undefined ? [] : x.options
       );
       setBranchOptions(options);
     }
   }, [branchCityOptions, form, selectedCity]);
-  useEffect(() => {
-    form.setFieldsValue(formValues);
-  }, [formValues, form]);
 
   useEffect(() => {
     setDepartmentOptions(
-      departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
+      areaByDeparmentOptions.map((x) => ({ value: x.value, label: x.label }))
     );
-  }, [departmentAreaOptions]);
+  }, [areaByDeparmentOptions]);
 
   useEffect(() => {
     setAreaOptions(
-      departmentAreaOptions.find((x) => x.value === selectedDepartment)
+      areaByDeparmentOptions.find((x) => x.value === selectedDepartment)
         ?.options ?? []
     );
-    form.setFieldValue("area", []);
-  }, [departmentAreaOptions, form, selectedDepartment]);
+  }, [areaByDeparmentOptions, form, selectedDepartment]);
 
-  const onFinish = async (newFormValues: IRequestedStudyForm) => {
+  const onFinish = async (newFormValues: IGeneralForm) => {
     setLoading(true);
     const filter = { ...newFormValues };
-    setFormValues(newFormValues);
+    setGeneralFilter(newFormValues);
     getAll(filter);
     setLoading(false);
   };
 
   return (
     <div className="status-container">
-      <Form<IRequestedStudyForm>
+      <Form<IGeneralForm>
         {...formItemLayout}
         form={form}
         name="requestedStudy"
@@ -181,7 +186,7 @@ const RequestedStudyFilter = () => {
                     <SelectInput
                       form={form}
                       formProps={{
-                        name: "departament",
+                        name: "departamento",
                         label: "Departamento",
                         noStyle: true,
                       }}

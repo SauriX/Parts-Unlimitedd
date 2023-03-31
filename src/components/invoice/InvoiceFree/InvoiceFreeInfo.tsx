@@ -61,8 +61,15 @@ const InvoiceFreeInfo = () => {
   };
 
   useEffect(() => {
+    form.resetFields([
+      "regimenFiscal",
+      "razonSocial",
+      "rfc",
+      "direccionFiscal",
+      "nombreComercial",
+      "clave",
+    ]);
     form.setFieldValue("fechas", [(moment(), moment())]);
-
     setTipoFacturaLibre(tipoFactura);
   }, [tipoFactura]);
   useEffect(() => {
@@ -75,7 +82,10 @@ const InvoiceFreeInfo = () => {
       form.setFieldsValue(invoice);
       form.setFieldValue("clave", invoice.claveExterna);
       form.setFieldValue("nombreComercial", invoice.nombre);
-      form.setFieldValue("direccionFiscal", invoice.direccionFiscal);
+      form.setFieldValue(
+        "direccionFiscal",
+        !!invoice.direccionFiscal ? invoice.direccionFiscal : ""
+      );
       form.setFieldValue("rfc", invoice.rfc);
       form.setFieldValue("razonSocial", invoice.razonSocial);
       form.setFieldValue("regimenFiscal", invoice.regimenFiscal);
@@ -106,7 +116,7 @@ const InvoiceFreeInfo = () => {
       compañiaSeleccionada?.estado ?? ""
     } ${compañiaSeleccionada?.ciudad ?? ""} ${
       compañiaSeleccionada?.codigoPostal ?? ""
-    } ${compañiaSeleccionada?.colonia ?? ""}`.trim();
+    } `;
     setReceptorLocal(compañiaSeleccionada);
   };
 

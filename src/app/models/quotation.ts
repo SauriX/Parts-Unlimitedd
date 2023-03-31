@@ -52,8 +52,8 @@ export interface IQuotationInfo extends IQuotationBase {
   clave: string;
   expediente: string;
   paciente: string;
-  correo: string;
-  whatsapp: string;
+  correo?: string;
+  whatsapp?: string;
   fecha: Date;
   activo: boolean;
   estudios: IQuotationStudyInfo[];
@@ -82,8 +82,10 @@ export interface IQuotationGeneral extends IQuotationBase {
   compañiaId?: string;
   medicoId?: string;
   metodoEnvio?: string[];
-  correo: string;
-  whatsapp: string;
+  correo?: string;
+  correos?: string[];
+  whatsapp?: string;
+  whatsapps?: string[];
   observaciones: string;
   activo: boolean;
 }
@@ -188,15 +190,13 @@ export interface IQuotationPack {
 
 export interface IQuotationTotal extends IQuotationBase {
   totalEstudios: number;
-  cargo: number;
-  cargoTipo: number;
+  descuento: number;
   total: number;
 }
 
 export class QuotationTotal implements IQuotationTotal {
   totalEstudios: number = 0;
-  cargo: number = 0;
-  cargoTipo: number = 1;
+  descuento: number = 0;
   total: number = 0;
   cotizacionId: string = "";
 

@@ -13,63 +13,50 @@ import {
   urgencyOptions,
 } from "../../app/stores/optionStore";
 import { IOptions } from "../../app/models/shared";
+import { IGeneralForm } from "../../app/models/general";
 
 const DeliveryResultsForm = () => {
   const [form] = Form.useForm();
-
-  const { requestStore, optionStore, massResultSearchStore, profileStore } =
+  const { optionStore, massResultSearchStore, profileStore, generalStore } =
     useStore();
 
   const {
     branchCityOptions,
     medicOptions,
     companyOptions,
-    departmentAreaOptions,
-    // cityOptions,
-    CityOptions,
+    areaByDeparmentOptions,
     getCityOptions,
-    BranchOptions,
-    getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
     getDepartmentOptions,
     getBranchOptions,
-    getDepartmentAreaOptions,
+    getAreaByDeparmentOptions,
   } = optionStore;
   const { profile } = profileStore;
-  const {
-    clearFormDeliverResult,
-    clearRequests,
-    getAllCaptureResults,
-    requests,
-    setFormDeliverResult,
-    formDeliverResult,
-  } = massResultSearchStore;
+  const { getAllCaptureResults } = massResultSearchStore;
+  const { generalFilter, setGeneralFilter } = generalStore;
 
   const selectedCity = Form.useWatch("ciudad", form);
-  const selectedDepartment = Form.useWatch("departament", form);
+  const selectedDepartment = Form.useWatch("departamento", form);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
   const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
-    getBranchCityOptions();
     getMedicOptions();
     getCompanyOptions();
     getDepartmentOptions();
-    getDepartmentAreaOptions();
+    getAreaByDeparmentOptions();
     getBranchOptions();
     getCityOptions();
   }, [
-    getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
     getDepartmentOptions,
+    getAreaByDeparmentOptions,
   ]);
-  useEffect(() => {
-    form.setFieldsValue(formDeliverResult);
-  }, [formDeliverResult, form]);
+
   useEffect(() => {
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
@@ -90,242 +77,217 @@ const DeliveryResultsForm = () => {
 
   useEffect(() => {
     setDepartmentOptions(
-      departmentAreaOptions.map((x) => ({ value: x.value, label: x.label }))
+      areaByDeparmentOptions.map((x) => ({ value: x.value, label: x.label }))
     );
-  }, [departmentAreaOptions]);
+  }, [areaByDeparmentOptions]);
 
   useEffect(() => {
     setAreaOptions(
-      departmentAreaOptions.find((x) => x.value === selectedDepartment)
+      areaByDeparmentOptions.find((x) => x.value === selectedDepartment)
         ?.options ?? []
     );
-    form.setFieldValue("area", []);
-  }, [departmentAreaOptions, form, selectedDepartment]);
+  }, [areaByDeparmentOptions, form, selectedDepartment]);
 
   useEffect(() => {
-    const profileBranch = profile?.sucursal;
-    if (profileBranch) {
-      const findCity = branchCityOptions.find((x) =>
-        x.options?.some((y) => y.value == profileBranch)
-      )?.value;
-      if (findCity) {
-        form.setFieldValue("ciudad", [findCity]);
-      }
-      form.setFieldValue("sucursalId", [profileBranch]);
-    }
-  }, [branchCityOptions, form, profile]);
+    if (!profile || !profile.sucursal || branchCityOptions.length === 0) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options!.some((y) => y.value === profileBranch))
+      ?.value?.toString();
 
-  useEffect(() => {
-    const formValues = form.getFieldsValue();
-    formValues.fechaInicial = formValues.fechas[0].utcOffset(0, true);
-    formValues.fechaFinal = formValues.fechas[1].utcOffset(0, true);
-    getAllCaptureResults(formValues);
-  }, []);
-
-  const onFinish = async (newFormValues: any) => {
-    const formValues = {
-      ...newFormValues,
-      fechaFinal: newFormValues.fechas[1].utcOffset(0, true),
-      fechaInicial: newFormValues.fechas[0].utcOffset(0, true),
+    const filter = {
+      ...generalFilter,
+      ciudad: !generalFilter.cargaInicial
+        ? generalFilter.ciudad
+        : [userCity as string],
+      sucursalId: !generalFilter.cargaInicial
+        ? generalFilter.sucursalId
+        : [profileBranch],
     };
-    await getAllCaptureResults(formValues);
-    setFormDeliverResult(formValues);
-  };
-  const limpiaFormulario = () => {
-    form.resetFields();
-    clearRequests();
-    clearFormDeliverResult();
+    form.setFieldsValue(filter);
+    filter.cargaInicial = false;
+
+    setGeneralFilter(filter);
+    getAllCaptureResults(filter);
+  }, [branchCityOptions]);
+
+  const onFinish = async (newFormValues: IGeneralForm) => {
+    await getAllCaptureResults(newFormValues);
+    setGeneralFilter(newFormValues);
   };
 
   return (
-    <>
-      <Row justify="end" gutter={[24, 12]} className="filter-buttons">
-        <Col span={24}>
-          <Button
-            key="clean"
-            onClick={(e) => {
-              e.stopPropagation();
-              limpiaFormulario();
-            }}
-          >
-            Limpiar
-          </Button>
-          <Button
-            key="filter"
-            type="primary"
-            onClick={(e) => {
-              e.stopPropagation();
-              form.submit();
-            }}
-          >
-            Filtrar
-          </Button>
-        </Col>
-      </Row>
-      <div className="status-container" style={{ marginBottom: 12 }}>
-        <Form
-          {...formItemLayout}
-          form={form}
-          onFinish={onFinish}
-          size="small"
-          initialValues={{ fechas: [moment(), moment()], tipoFecha: 1 }}
-          onKeyUp={(event) => {
-            if (event.key === "Enter") {
-              event.stopPropagation();
-              form.submit();
-            }
-          }}
-        >
-          <Row gutter={[0, 12]}>
-            <Col span={8}>
-              <SelectInput
-                formProps={{
-                  name: "tipoFecha",
-                  label: "Fecha de",
-                }}
-                options={[
-                  { value: 1, label: "Fecha de Creación" },
-                  { value: 2, label: "Fecha de Entrega" },
-                ]}
-              />
-            </Col>
-            <Col span={8}>
-              <DateRangeInput
-                formProps={{ label: "Fechas", name: "fechas" }}
-                disableAfterDates
-              />
-            </Col>
+    <div className="status-container" style={{ marginBottom: 12 }}>
+      <Form<IGeneralForm>
+        {...formItemLayout}
+        form={form}
+        onFinish={onFinish}
+        size="small"
+        initialValues={{ fecha: [moment(), moment()], tipoFecha: 1 }}
+        onKeyUp={(event) => {
+          if (event.key === "Enter") {
+            event.stopPropagation();
+            form.submit();
+          }
+        }}
+      >
+        <Row gutter={[0, 12]}>
+          <Col span={8}>
+            <SelectInput
+              formProps={{
+                name: "tipoFecha",
+                label: "Fecha de",
+              }}
+              options={[
+                { value: 1, label: "Fecha de Creación" },
+                { value: 2, label: "Fecha de Entrega" },
+              ]}
+            />
+          </Col>
+          <Col span={8}>
+            <DateRangeInput
+              formProps={{ label: "Fechas", name: "fecha" }}
+              disableAfterDates
+            />
+          </Col>
 
-            <Col span={8}>
-              <TextInput
-                formProps={{ name: "clave", label: "Clave/Paciente" }}
-              />
-            </Col>
-            <Col span={8}>
-              <SelectInput
-                form={form}
-                multiple
-                formProps={{ label: "Compañias", name: "companias" }}
-                options={companyOptions}
-              />
-            </Col>
-            <Col span={8}>
-              <SelectInput
-                form={form}
-                multiple
-                formProps={{
-                  label: "Medios de entrega",
-                  name: "mediosEntrega",
-                }}
-                options={[
-                  { value: "Whatsapp", label: "Whatsapp" },
-                  { value: "Correo", label: "Correo" },
-                  // { value: "Fisico", label: "Fisico" },
-                ]}
-              />
-            </Col>
-            <Col span={8}>
-              <SelectInput
-                form={form}
-                multiple
-                formProps={{
-                  label: "Tipo de solicitud",
-                  name: "tipoSolicitud",
-                }}
-                options={urgencyOptions}
-              />
-            </Col>
-            <Col span={8}>
-              <SelectInput
-                form={form}
-                multiple
-                formProps={{ label: "Estatus", name: "estatus" }}
-                options={studyStatusOptions}
-              />
-            </Col>
-            <Col span={8}>
-              <SelectInput
-                form={form}
-                multiple
-                formProps={{ label: "Médicos", name: "medicos" }}
-                options={medicOptions}
-              />
-            </Col>
+          <Col span={8}>
+            <TextInput
+              formProps={{ name: "buscar", label: "Clave/Paciente" }}
+            />
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              form={form}
+              multiple
+              formProps={{ label: "Compañias", name: "compañiaId" }}
+              options={companyOptions}
+            />
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              form={form}
+              multiple
+              formProps={{
+                label: "Medios de entrega",
+                name: "mediosEntrega",
+              }}
+              options={[
+                { value: "Whatsapp", label: "Whatsapp" },
+                { value: "Correo", label: "Correo" },
+                // { value: "Fisico", label: "Fisico" },
+              ]}
+            />
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              form={form}
+              multiple
+              formProps={{
+                label: "Tipo de solicitud",
+                name: "tipoSolicitud",
+              }}
+              options={urgencyOptions}
+            />
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              form={form}
+              multiple
+              formProps={{ label: "Estatus", name: "estatus" }}
+              options={studyStatusOptions}
+            />
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              form={form}
+              multiple
+              formProps={{ label: "Médicos", name: "medicoId" }}
+              options={medicOptions}
+            />
+          </Col>
 
-            <Col span={8}>
-              <Form.Item label="Sucursal" className="no-error-text" help="">
-                <Input.Group>
-                  <Row gutter={8}>
-                    <Col span={12}>
-                      <SelectInput
-                        form={form}
-                        formProps={{
-                          name: "ciudad",
-                          label: "Ciudad",
-                          noStyle: true,
-                        }}
-                        multiple
-                        options={cityOptions}
-                      />
-                    </Col>
-                    <Col span={12}>
-                      <SelectInput
-                        form={form}
-                        formProps={{
-                          name: "sucursalId",
-                          label: "Sucursales",
-                          noStyle: true,
-                        }}
-                        multiple
-                        options={branchOptions}
-                      />
-                    </Col>
-                  </Row>
-                </Input.Group>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item label="Áreas" className="no-error-text" help="">
-                <Input.Group>
-                  <Row gutter={8}>
-                    <Col span={12}>
-                      <SelectInput
-                        formProps={{
-                          name: "departament",
-                          label: "Departamento",
-                          noStyle: true,
-                        }}
-                        options={departmentOptions}
-                      />
-                    </Col>
-                    <Col span={12}>
-                      <SelectInput
-                        form={form}
-                        formProps={{
-                          name: "area",
-                          label: "Área",
-                          noStyle: true,
-                        }}
-                        multiple
-                        options={areaOptions}
-                      />
-                    </Col>
-                  </Row>
-                </Input.Group>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <SelectInput
-                form={form}
-                multiple
-                formProps={{ label: "Procedencias", name: "procedencias" }}
-                options={originOptions}
-              />
-            </Col>
-          </Row>
-        </Form>
-      </div>
-    </>
+          <Col span={8}>
+            <Form.Item label="Sucursal" className="no-error-text" help="">
+              <Input.Group>
+                <Row gutter={8}>
+                  <Col span={12}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "ciudad",
+                        label: "Ciudad",
+                        noStyle: true,
+                      }}
+                      multiple
+                      options={cityOptions}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "sucursalId",
+                        label: "Sucursales",
+                        noStyle: true,
+                      }}
+                      multiple
+                      options={branchOptions}
+                    />
+                  </Col>
+                </Row>
+              </Input.Group>
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item label="Áreas" className="no-error-text" help="">
+              <Input.Group>
+                <Row gutter={8}>
+                  <Col span={12}>
+                    <SelectInput
+                      formProps={{
+                        name: "departament",
+                        label: "Departamento",
+                        noStyle: true,
+                      }}
+                      options={departmentOptions}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <SelectInput
+                      form={form}
+                      formProps={{
+                        name: "area",
+                        label: "Área",
+                        noStyle: true,
+                      }}
+                      multiple
+                      options={areaOptions}
+                    />
+                  </Col>
+                </Row>
+              </Input.Group>
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <SelectInput
+              form={form}
+              multiple
+              formProps={{ label: "Procedencias", name: "procedencia" }}
+              options={originOptions}
+            />
+          </Col>
+          <Col span={24} style={{ textAlign: "right" }}>
+            <Button key="clean" htmlType="reset">
+              Limpiar
+            </Button>
+            <Button key="filter" type="primary" htmlType="submit">
+              Buscar
+            </Button>
+          </Col>
+        </Row>
+      </Form>
+    </div>
   );
 };
 export default observer(DeliveryResultsForm);

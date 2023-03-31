@@ -37,7 +37,6 @@ const IndicationDetail = () => {
   const indicationId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
 
   useEffect(() => {
-    console.log(indicationId);
     if (indicationId === undefined) {
       navigate("/notFound");
     }

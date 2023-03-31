@@ -24,8 +24,7 @@ type ReportDefaultProps = {
 
 const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
   const { reportStore } = useStore();
-  const { reportData, chartData, currentReport, filter } = reportStore;
-  const [loading, setLoading] = useState(false);
+  const { reportData, chartData, currentReport, filter, loadingReport } = reportStore;
   const [dataChart, setDataChart] = useState<any[]>([]);
 
   const [inputs, setInputs] = useState<
@@ -86,7 +85,6 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
       currentReport == "urgentes" ||
       currentReport == "empresa" ||
       currentReport == "canceladas" ||
-      currentReport == "descuento" ||
       currentReport == "presupuestos" ||
       currentReport == "cargo" ||
       currentReport == "maquila_interna" ||
@@ -103,13 +101,15 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
 
   return (
     <Fragment>
-      <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
+      <Spin spinning={loadingReport || printing} tip={printing ? "Descargando" : ""}>
         <Row gutter={[12, 12]}>
           {currentReport === "corte_caja" ? (
-            <CashBody printing={loading} />
+          <Col span={24}>
+            <CashBody printing={loadingReport} />
+          </Col>
           ) : currentReport === "indicadores" ? (
             <Col span={24}>
-              <IndicatorsBody printing={loading} />
+              <IndicatorsBody printing={loadingReport} />
             </Col>
           ) : (
             <>

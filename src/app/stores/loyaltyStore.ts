@@ -65,7 +65,6 @@ export default class LoyaltyStore {
       );
       return Loyaltys;
     } catch (error) {
-      console.log(error);
       alerts.warning(getErrors(error));
     }
   };

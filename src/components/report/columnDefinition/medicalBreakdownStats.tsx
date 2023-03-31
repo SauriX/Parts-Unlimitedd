@@ -23,7 +23,7 @@ const getMedicalBreakdownStatsColumns = (
       }),
     },
     {
-      ...getDefaultColumnProps("medico", "Nombre del Médico", {
+      ...getDefaultColumnProps("medico", "Médico", {
         searchState,
         setSearchState,
         width: "35%",
@@ -37,7 +37,7 @@ const getMedicalBreakdownStatsColumns = (
       }),
     },
     {
-      ...getDefaultColumnProps("paciente", "Nombre del Paciente", {
+      ...getDefaultColumnProps("paciente", "Paciente", {
         searchState,
         setSearchState,
         width: "20%",
@@ -51,12 +51,6 @@ const getMedicalBreakdownStatsColumns = (
     },
     {
       ...getDefaultColumnProps("promocion", "Promoción", {
-        width: "20%",
-      }),
-      render: (value) => moneyFormatter.format(value),
-    },
-    {
-      ...getDefaultColumnProps("descuento", "Desc.", {
         width: "20%",
       }),
       render: (value) => moneyFormatter.format(value),

@@ -16,13 +16,13 @@ const getInvoiceDataColumns = (
       render: (value) => moneyFormatter.format(value),
     },
     {
-      ...getDefaultColumnProps("totalDescuentosPorcentual", report === "cargo" ? "Cargo %" : "Desc. %", {
+      ...getDefaultColumnProps("totalDescuentosPorcentual", "Cargo %", {
         width: "15%",
       }),
       render: (_value, record) => record.totalDescuentoPorcentual + "%",
     },
     {
-      ...getDefaultColumnProps("totalDescuentos", report === "cargo" ? "Cargo" : "Desc.", {
+      ...getDefaultColumnProps("totalDescuentos", "Cargo %", {
         width: "15",
       }),
       render: (value) => moneyFormatter.format(value),

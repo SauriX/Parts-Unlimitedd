@@ -113,6 +113,7 @@ export interface IBudgetData {
 
 export interface IReportFilter {
   sucursalId: string[];
+  ciudad: string[];
   medicoId: string[];
   compañiaId: string[];
   metodoEnvio: number[];
@@ -120,10 +121,12 @@ export interface IReportFilter {
   urgencia: number[];
   fecha: moment.Moment[];
   grafica: boolean;
+  cargaInicial?: boolean;
 }
 
 export class ReportFilterValues implements IReportFilter {
   sucursalId = [];
+  ciudad = [];
   medicoId = [];
   compañiaId = [];
   metodoEnvio = [];
@@ -131,6 +134,7 @@ export class ReportFilterValues implements IReportFilter {
   urgencia = [];
   fecha = [moment(Date.now()).utcOffset(0, true), moment(Date.now()).utcOffset(0, true)];
   grafica = false;
+  cargaInicial = true;
 
   constructor(init?: IReportFilter) {
     Object.assign(this, init);

@@ -9,8 +9,9 @@ import views from "../../../app/util/view";
 const { Text } = Typography;
 
 const RequestHeader = () => {
-  const { requestStore } = useStore();
-  const { request, requests, filter, getRequests } = requestStore;
+  const { requestStore, generalStore } = useStore();
+  const { request, requests, getRequests } = requestStore;
+  const { generalFilter } = generalStore;
 
   let navigate = useNavigate();
 
@@ -23,7 +24,7 @@ const RequestHeader = () => {
         (x) => x.expedienteId === recordId && x.solicitudId === requestId
       ) === -1
     ) {
-      getRequests(filter);
+      getRequests(generalFilter);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requestId]);
@@ -66,6 +67,7 @@ const RequestHeader = () => {
           pageSize={1}
           current={getPage(request?.expedienteId, request?.solicitudId)}
           onChange={setPage}
+          showSizeChanger={false}
         />
       }
       extra={[

@@ -19,27 +19,15 @@ type RSDefaultProps = {
 };
 
 const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
-  const { samplingStudyStore } = useStore();
-  const { data, update, printOrder, getAll, formValues } = samplingStudyStore;
+  const { samplingStudyStore, generalStore } = useStore();
+  const { data, update, printOrder, getAll } = samplingStudyStore;
+  const { generalFilter } = generalStore;
 
   const [form] = Form.useForm();
 
   const [updateForm, setUpdateForm] = useState<IUpdate[]>([]);
   const [activity, setActivity] = useState<string>("");
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const readRequests = async () => {
-      await getAll({
-        fecha: [
-          moment(Date.now()).utcOffset(0, true),
-          moment(Date.now()).utcOffset(0, true),
-        ],
-      });
-    };
-
-    readRequests();
-  }, []);
 
   const onChange = (e: CheckboxChangeEvent, id: number, solicitud: string) => {
     const index = updateForm.findIndex((x) => x.solicitudId == solicitud);
@@ -77,8 +65,6 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
 
   const updateData = async () => {
     const obs = form.getFieldsValue();
-    console.log(obs);
-
     let observaciones: ISamplingComment[] = Object.keys(obs).map((x) => ({
       id: parseInt(x),
       observacion: obs[x],
@@ -92,8 +78,6 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
     });
 
     setUpdateForm(studyWithComments);
-    console.log(studyWithComments);
-
     setLoading(true);
     if (activity == "register") {
       alerts.confirm(
@@ -109,7 +93,7 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
             setLoading(false);
             setUpdateForm([]);
             setActivity("");
-            getAll(formValues);
+            getAll(generalFilter);
           }
         },
         async () => {
@@ -130,7 +114,7 @@ const SamplingStudyBody = ({ printing }: RSDefaultProps) => {
             setLoading(false);
             setUpdateForm([]);
             setActivity("");
-            getAll(formValues);
+            getAll(generalFilter);
           }
         },
         async () => {

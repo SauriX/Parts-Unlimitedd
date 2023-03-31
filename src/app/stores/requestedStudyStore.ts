@@ -5,7 +5,6 @@ import {
   IRequestedStudyList,
   IRequestedStudy,
   IUpdate,
-  RequestedStudyFormValues,
 } from "../models/requestedStudy";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -13,7 +12,7 @@ import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 import { status } from "../util/catalogs";
-import moment from "moment";
+import { IGeneralForm } from "../models/general";
 
 export default class RequestedStudyStore {
   constructor() {
@@ -23,7 +22,6 @@ export default class RequestedStudyStore {
   scopes?: IScopes;
   data: IRequestedStudyList[] = [];
   studies: IRequestedStudy[] = [];
-  formValues: IRequestedStudyForm = new RequestedStudyFormValues();
   loadingStudies: boolean = false;
 
   clearScopes = () => {
@@ -33,11 +31,7 @@ export default class RequestedStudyStore {
   clearStudy = () => {
     this.data = [];
   };
-
-  setFormValues = (newFormValues: IRequestedStudyForm) => {
-    this.formValues = newFormValues;
-  };
-
+  
   access = async () => {
     try {
       const scopes = await RequestedStudy.access();
@@ -48,7 +42,7 @@ export default class RequestedStudyStore {
     }
   };
 
-  getAll = async (search: IRequestedStudyForm) => {
+  getAll = async (search: IGeneralForm) => {
     try {
       this.loadingStudies = true;
       const study = await RequestedStudy.getAll(search);
@@ -64,7 +58,6 @@ export default class RequestedStudyStore {
 
   update = async (study: IUpdate[]) => {
     try {
-      console.log(study);
       await RequestedStudy.update(study);
       alerts.success(messages.updated);
 
@@ -102,7 +95,7 @@ export default class RequestedStudyStore {
     }
   };
 
-  exportList = async (search: IRequestedStudyForm) => {
+  exportList = async (search: IGeneralForm) => {
     try {
       await RequestedStudy.exportList(search);
       return true;

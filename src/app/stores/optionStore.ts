@@ -652,6 +652,24 @@ export default class OptionStore {
     }
   };
 
+  getAllBranchCityOptions = async () => {
+    try {
+      const branch = Branch.getBranchByCity();
+      let branches = (await branch).map((x) => ({
+        value: x.ciudad,
+        label: x.ciudad,
+        disabled: true,
+        options: x.sucursales.map((y) => ({
+          value: y.idSucursal,
+          label: y.nombre,
+        })),
+      }));
+      this.branchCityOptions = branches;
+    } catch (error) {
+      this.branchCityOptions = [];
+    }
+  };
+
   studiesOptions: any[] = [];
   getStudiesOptions = async () => {
     try {

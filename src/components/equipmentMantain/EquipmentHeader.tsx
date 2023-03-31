@@ -22,16 +22,9 @@ const EquipmentMantainHeader: FC<EquipmentHeaderProps> = ({ handlePrint }) => {
   const { equipmentStore } = useStore();
   const { exportList } = equipmentStore;
 
-  const [searchParams, setSearchParams] = useSearchParams();
   const { id } = useParams<UrlParams>();
   const equipmentId = !id ? 0 : isNaN(Number(id)) ? undefined : parseInt(id);
-  console.log("Header");
 
-  const download = () => {
-    exportList(searchParams.get("search") ?? "all");
-  };
-
-  console.log("Header");
   return (
     <PageHeader
       ghost={false}

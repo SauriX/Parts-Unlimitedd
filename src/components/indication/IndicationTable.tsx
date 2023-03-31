@@ -40,8 +40,6 @@ const IndicationTable: FC<IndicationsTableProps> = ({ componentRef, printing }) 
     searchedColumn: "",
   });
 
-  console.log("Table");
-
   useEffect(() => {
     const readIndication = async () => {
       setLoading(true);

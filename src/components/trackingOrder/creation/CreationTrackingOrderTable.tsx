@@ -28,7 +28,7 @@ const CreationTrackingOrderTable: FC<TrackingOrderTableProps> = ({
 
   const { width: windowWidth } = useWindowDimensions();
 
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",

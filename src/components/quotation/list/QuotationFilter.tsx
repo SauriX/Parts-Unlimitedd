@@ -8,6 +8,7 @@ import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import MaskInput from "../../../app/common/form/proposal/MaskInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
+import { IGeneralForm } from "../../../app/models/general";
 import { IQuotationFilter } from "../../../app/models/quotation";
 import { IFormError, IOptions } from "../../../app/models/shared";
 import { useStore } from "../../../app/stores/store";
@@ -15,21 +16,18 @@ import { formItemLayout } from "../../../app/util/utils";
 import "./css/index.css";
 
 const QuotationFilter = () => {
-  const { quotationStore, optionStore, profileStore } = useStore();
-  const { branchCityOptions, getBranchCityOptions } = optionStore;
-  const { filter, setFilter, getQuotations } = quotationStore;
+  const { quotationStore, optionStore, profileStore, generalStore } =
+    useStore();
+  const { branchCityOptions } = optionStore;
+  const { getQuotations } = quotationStore;
+  const { setGeneralFilter, generalFilter } = generalStore;
   const { profile } = profileStore;
   const [form] = useForm<IQuotationFilter>();
 
   const selectedCity = Form.useWatch("ciudad", form);
-
   const [errors, setErrors] = useState<IFormError[]>([]);
   const [cityOptions, setCityOptions] = useState<IOptions[]>([]);
   const [branchOptions, setBranchOptions] = useState<IOptions[]>([]);
-
-  useEffect(() => {
-    getBranchCityOptions();
-  }, [getBranchCityOptions]);
 
   useEffect(() => {
     setCityOptions(
@@ -38,55 +36,51 @@ const QuotationFilter = () => {
   }, [branchCityOptions]);
 
   useEffect(() => {
-    const profileBranch = profile?.sucursal;
-    if (profileBranch) {
-      const findCity = branchCityOptions.find((x) =>
-        x.options?.some((y) => y.value == profileBranch)
-      )?.value;
-      if (findCity) {
-        form.setFieldValue("ciudad", [findCity]);
-      }
-      form.setFieldValue("sucursales", [profileBranch]);
-    }
-  }, [branchCityOptions, form, profile]);
-
-  useEffect(() => {
-    if (selectedCity != undefined && selectedCity != null) {
-      var branhces = branchCityOptions.filter((x) =>
+    if (selectedCity != null) {
+      const cityBranches = branchCityOptions.filter((x) =>
         selectedCity.includes(x.value.toString())
       );
-      var options = branhces.flatMap((x) =>
-        x.options == undefined ? [] : x.options
-      );
+      const options = cityBranches.flatMap((x) => x.options ?? []);
       setBranchOptions(options);
     }
-    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
 
   useEffect(() => {
-    form.setFieldsValue(filter);
-  }, [filter, form]);
+    if (!profile || !profile.sucursal || branchCityOptions.length === 0) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options?.some((y) => y.value == profileBranch))
+      ?.value.toString();
 
-  const onFinish = (values: IQuotationFilter) => {
+    const filter = {
+      ...generalFilter,
+      ciudad: !generalFilter.cargaInicial ? generalFilter.ciudad : [userCity!],
+      sucursalId: !generalFilter.cargaInicial
+        ? generalFilter.sucursalId
+        : [profileBranch],
+    };
+    form.setFieldsValue(filter);
+    filter.cargaInicial = false;
+
+    setGeneralFilter(filter);
+    getQuotations(filter);
+  }, [branchCityOptions]);
+
+  const onFinish = (values: IGeneralForm) => {
     setErrors([]);
     const filter = { ...values };
-
-    if (filter.fechaAlta && filter.fechaAlta.length > 1) {
-      filter.fechaAInicial = filter.fechaAlta[0].utcOffset(0, true);
-      filter.fechaAFinal = filter.fechaAlta[1].utcOffset(0, true);
-    }
 
     if (filter.fechaNacimiento) {
       filter.fechaNInicial = filter.fechaNacimiento.utcOffset(0, true);
     }
 
-    setFilter(filter);
+    setGeneralFilter(filter);
     getQuotations(filter);
   };
 
   return (
     <div className="status-container" style={{ marginBottom: 12 }}>
-      <Form<IQuotationFilter>
+      <Form<IGeneralForm>
         {...formItemLayout}
         form={form}
         onFinish={onFinish}
@@ -99,7 +93,7 @@ const QuotationFilter = () => {
         }}
         size="small"
         initialValues={{
-          fechaAlta: [
+          fecha: [
             moment(Date.now()).utcOffset(0, true),
             moment(Date.now()).utcOffset(0, true),
           ],
@@ -108,7 +102,7 @@ const QuotationFilter = () => {
         <Row gutter={[0, 12]}>
           <Col span={8}>
             <DateRangeInput
-              formProps={{ name: "fechaAlta", label: "Fecha de alta" }}
+              formProps={{ name: "fecha", label: "Fecha de alta" }}
               disableAfterDates
             />
           </Col>
@@ -190,7 +184,7 @@ const QuotationFilter = () => {
                     <SelectInput
                       form={form}
                       formProps={{
-                        name: "sucursales",
+                        name: "sucursalId",
                         label: "Sucursales",
                         noStyle: true,
                       }}

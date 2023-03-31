@@ -1,15 +1,13 @@
 import { Button, Col, PageHeader } from "antd";
 import { observer } from "mobx-react-lite";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import DownloadIcon from "../../../app/common/icons/DownloadIcon";
 import { useParams, useNavigate } from "react-router-dom";
-import GoBackIcon from "../../../app/common/icons/GoBackIcon";
 import { PlusOutlined } from "@ant-design/icons";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import { useStore } from "../../../app/stores/store";
 import alerts from "../../../app/util/alerts";
-import { toJS } from "mobx";
 
 type InvoiceCompanyHeaderProps = {
   handleDownload: () => void;
@@ -22,7 +20,8 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
   handleDownload,
 }) => {
   let navigate = useNavigate();
-  const { invoiceCompanyStore } = useStore();
+  const { invoiceCompanyStore, profileStore } = useStore();
+  const { profile } = profileStore;
   const {
     selectedRows,
     isSameCommpany: mismaCompania,
@@ -132,7 +131,7 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
                 : tipo === "request"
                 ? "Crédito y cobranza (Facturación por solicitud)"
                 : tipo === "free"
-                ? "Crédito y cobranza (Facturación emitidas)"
+                ? "Crédito y cobranza (Facturación libre)"
                 : tipo === "global"
                 ? "Crédito y cobranza (Facturación global)"
                 : ""
@@ -141,7 +140,11 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
           />
         }
         onBack={() => {
-          navigate(-1);
+          if (id !== "new") {
+            navigate(-1);
+          } else {
+            navigate(-2);
+          }
         }}
         className="header-container"
         extra={
@@ -167,11 +170,7 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
                   type="primary"
                   onClick={() => {
                     if (tipo === "global") {
-                      console.log(
-                        "solicitudes global",
-                        toJS(selectedRequestGlobal)
-                      );
-                      createInvoiceGlobal();
+                      createInvoiceGlobal(profile?.sucursal!);
                       return;
                     }
                     if (tipo === "free") {

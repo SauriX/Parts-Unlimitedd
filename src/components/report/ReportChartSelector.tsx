@@ -1,4 +1,5 @@
 import { observer } from "mobx-react-lite";
+import { ICommonData } from "../../app/models/cashRegister";
 import {
   IReportRequestData,
   IMedicalBreakdownData,
@@ -105,7 +106,9 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
       <ReportChart<IMedicalBreakdownData>
         data={data as IMedicalBreakdownData[]}
         serieX={"claveMedico"}
-        series={[{ title: "Cantidad de Solicitudes", dataIndex: "noSolicitudes" }]}
+        series={[
+          { title: "Cantidad de Solicitudes", dataIndex: "noSolicitudes" },
+        ]}
         axisLabel={{ interval: 0, rotate: 0 }}
       />
     );
@@ -114,7 +117,9 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
       <ReportChart<IMaquilaData>
         data={data as IMaquilaData[]}
         serieX={"maquila"}
-        series={[{ title: "Cantidad de Solicitudes", dataIndex: "noSolicitudes" }]}
+        series={[
+          { title: "Cantidad de Solicitudes", dataIndex: "noSolicitudes" },
+        ]}
         axisLabel={{ interval: 0, rotate: 0 }}
       />
     );
@@ -124,6 +129,17 @@ const ReportChartSelector = ({ report, data }: ReportChartSelectorProps) => {
         data={data as IBudgetData[]}
         serieX={"sucursal"}
         series={[{ title: "Presupuesto por Sucursal", dataIndex: "total" }]}
+        axisLabel={{ interval: 0, rotate: 0 }}
+      />
+    );
+  } else if (report === "corte_caja") {
+    return (
+      <ReportChart<ICommonData>
+        data={data as ICommonData[]}
+        serieX={"efectivo"}
+        series={[
+          { title: "Total de Solicitudes", dataIndex: "total" },
+        ]}
         axisLabel={{ interval: 0, rotate: 0 }}
       />
     );
