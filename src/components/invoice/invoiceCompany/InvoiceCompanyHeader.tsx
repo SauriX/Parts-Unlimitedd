@@ -142,7 +142,11 @@ const InvoiceCompanyHeader: FC<InvoiceCompanyHeaderProps> = ({
           />
         }
         onBack={() => {
-          navigate(-1);
+          if (id !== "new") {
+            navigate(-1);
+          } else {
+            navigate(-2);
+          }
         }}
         className="header-container"
         extra={
