@@ -110,7 +110,7 @@ const ReportFilter = () => {
 
   return (
     <div className="status-container" style={{ marginBottom: 12 }}>
-      <Form<IRequestFilter>
+      <Form<IGeneralForm>
         {...formItemLayout}
         form={form}
         onFinish={onFinish}
@@ -131,7 +131,7 @@ const ReportFilter = () => {
           </Col>
           <Col span={8}>
             <TextInput
-              formProps={{ name: "clave", label: "Clave/Paciente" }}
+              formProps={{ name: "buscar", label: "Clave/Paciente" }}
               autoFocus={true}
             />
           </Col>
