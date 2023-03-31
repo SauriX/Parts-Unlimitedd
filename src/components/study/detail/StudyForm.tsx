@@ -566,7 +566,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
             onFinish={onFinish}
             scrollToFirstError
           >
-            <Row>
+            <Row gutter={[20,12]}>
               <Col md={8} sm={24} xs={8}>
                 <TextInput
                   formProps={{
