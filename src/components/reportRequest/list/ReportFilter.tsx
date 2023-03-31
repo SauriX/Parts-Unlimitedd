@@ -131,7 +131,7 @@ const ReportFilter = () => {
           </Col>
           <Col span={8}>
             <TextInput
-              formProps={{ name: "buscar", label: "Clave/Paciente" }}
+              formProps={{ name: "clave", label: "Clave/Paciente" }}
               autoFocus={true}
             />
           </Col>
