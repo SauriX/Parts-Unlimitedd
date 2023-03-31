@@ -42,6 +42,7 @@ import StudyTable from "./StudyTable";
 import PackTable from "./PackTable";
 import TabPane from "rc-tabs/lib/TabPanelList/TabPane";
 import { IOptions } from "../../../app/models/shared";
+import VirtualPriceListTable from "./VirtualPriceListTable";
 
 const { Search } = Input;
 
@@ -104,6 +105,10 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const [values, setValues] = useState<IPriceListForm>(
     new PriceListFormValues()
   );
+  const [sizeData, setSizeData] = useState({
+    startIndex: 0,
+    endIndex: 25,
+  });
 
   useEffect(() => {
     departmentOptions.shift();
@@ -633,12 +638,12 @@ const PriceListForm: FC<PriceListFormProps> = ({
 
   ///tabla Estudios/paquete
 
-  const columnsEstudios: IColumns<IPriceListEstudioList> = [
+  const studyPriceListColumns: IColumns<IPriceListEstudioList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
         setSearchState,
-        width: 0,
+        width: 100,
         windowSize: windowWidth,
       }),
     },
@@ -646,7 +651,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ...getDefaultColumnProps("nombre", "Nombre", {
         searchState,
         setSearchState,
-        width: 0,
+        width: 100,
         windowSize: windowWidth,
       }),
     },
@@ -654,7 +659,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ...getDefaultColumnProps("precio", "Precio", {
         searchState,
         setSearchState,
-        width: 0,
+        width: 150,
         windowSize: windowWidth,
       }),
       render: (value, item) => (
@@ -675,7 +680,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ...getDefaultColumnProps("area", "Área", {
         searchState,
         setSearchState,
-        width: 0,
+        width: 100,
         windowSize: windowWidth,
       }),
     },
@@ -684,7 +689,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       dataIndex: "id",
       title: "Añadir",
       align: "center",
-      width: 0 /*windowWidth < resizeWidth ? 100 : "10%"*/,
+      width: 100 /*windowWidth < resizeWidth ? 100 : "10%"*/,
       render: (value, item) => (
         <Checkbox
           name="activo"
@@ -702,6 +707,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ),
     },
   ];
+
   const setStudydiscuntc = (
     decuento: number,
     item: IPriceListEstudioList,
@@ -768,8 +774,9 @@ const PriceListForm: FC<PriceListFormProps> = ({
     val[indexVal] = item;
     setValues((prev) => ({ ...prev, estudio: val }));
   };
+
   //tabla paquietes
-  const columnsEstudiosP: IColumns<IPriceListEstudioList> = [
+  const packPriceListColumns: IColumns<IPriceListEstudioList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
@@ -896,6 +903,10 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ),
     },
   ];
+
+  const studyPriceListData = values.table?.filter((x) => !x.paqute) ?? [];
+  const packPriceListData = values.table?.filter((x) => x.paqute) ?? [];
+
   return (
     <Spin
       spinning={loading || printing || download}
@@ -1100,45 +1111,29 @@ const PriceListForm: FC<PriceListFormProps> = ({
             }}
           >
             <TabPane tab="Estudios" key="1">
-              <Table<IPriceListEstudioList>
-                size="large"
+              <VirtualPriceListTable
+                size="small"
+                dataSource={studyPriceListData}
+                rowKey={(record) => record.id}
                 columns={
-                  printing ? columnsEstudios.slice(0, 4) : columnsEstudios
+                  printing
+                    ? studyPriceListColumns.slice(0, 4)
+                    : studyPriceListColumns
                 }
                 pagination={false}
-                dataSource={[...(values.table?.filter((x) => !x.paqute) ?? [])]}
-                scroll={{
-                  y: "50vh",
-                  x:
-                    [...(values.table?.filter((x) => !x.paqute) ?? [])].length >
-                    0
-                      ? true
-                      : undefined,
-                }}
-                components={VList({
-                  height: 500,
-                })}
               />
             </TabPane>
             <TabPane tab="Paquetes" key="2">
-              <Table<IPriceListEstudioList>
-                size="large"
+              <VirtualPriceListTable
+                size="small"
+                dataSource={packPriceListData}
+                rowKey={(record) => record.id}
                 columns={
-                  printing ? columnsEstudiosP.slice(0, 4) : columnsEstudiosP
+                  printing
+                    ? packPriceListColumns.slice(0, 4)
+                    : packPriceListColumns
                 }
-                dataSource={[...(values.table?.filter((x) => x.paqute) ?? [])]}
                 pagination={false}
-                scroll={{
-                  y: "50vh",
-                  x:
-                    [...(values.table?.filter((x) => x.paqute) ?? [])].length >
-                    0
-                      ? true
-                      : undefined,
-                }}
-                components={VList({
-                  height: 500,
-                })}
               />
             </TabPane>
           </Tabs>
