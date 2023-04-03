@@ -27,6 +27,7 @@ export interface ISamplingList {
   seleccion: boolean;
   observacion: string;
   estudios: IStudySampling[];
+  clavePatologica:string
 }
 export interface IStudySampling {
   id: number;

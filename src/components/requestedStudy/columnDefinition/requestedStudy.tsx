@@ -61,8 +61,13 @@ const RequestedStudyColumns = ({ printOrder }: tableProps) => {
       ...getDefaultColumnProps("nombre", "Nombre del Paciente", {
         searchState,
         setSearchState,
-        width: "25%",
+        width: "15%",
       }),
+      render: (value, item) => (
+        <div style={{ display: "flex", flexDirection: "column",fontWeight:"bolder" }}>
+            {value}
+        </div>
+      ),
     },
     {
       ...getDefaultColumnProps("registro", "Registro", {
