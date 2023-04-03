@@ -30,12 +30,15 @@ export default class TrackingOrdertStore {
   estudios: IStudyTrackList[] = [];
   temperatura: number = 0;
   TranckingOrderSend: ITrackingOrderForm = new TrackingOrderFormValues();
+
   setSendData = (tranckingOrderSend: ITrackingOrderForm) => {
     this.TranckingOrderSend = tranckingOrderSend;
   };
+
   setTemperatura = (temepratura: number) => {
     this.temperatura = temepratura;
   };
+
   confirmarRecoleccionSend = async () => {
     try {
       await TrackingOrder.confirmarRecoleccion(this.OrderId);
@@ -45,6 +48,7 @@ export default class TrackingOrdertStore {
       alerts.warning(getErrors(error));
     }
   };
+
   cancelarRecoleccionSend = async () => {
     try {
       await TrackingOrder.cancelarRecoleccion(this.OrderId);
@@ -67,6 +71,7 @@ export default class TrackingOrdertStore {
       alerts.warning(getErrors(error));
     }
   };
+
   setTemperature = (temperature: number, id: string | null = null) => {
     try {
       if (id) {
@@ -106,10 +111,6 @@ export default class TrackingOrdertStore {
     this.scopes = undefined;
   };
 
-  clearTrackingOrders = () => {
-    this.trackingOrder = [];
-  };
-
   access = async () => {
     try {
       const scopes = await TrackingOrder.access();
@@ -144,8 +145,10 @@ export default class TrackingOrdertStore {
       alerts.warning(getErrors(error));
     }
   };
+
   OrderCreated = "";
   OrderId = "";
+  
   create = async (trackingOrder: ITrackingOrderForm) => {
     try {
       const orderCreated = await TrackingOrder.create(trackingOrder);

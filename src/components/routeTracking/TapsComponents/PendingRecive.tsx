@@ -1,49 +1,20 @@
-import {
-  Button,
-  Checkbox,
-  Col,
-  Descriptions,
-  Form,
-  Input,
-  PageHeader,
-  Row,
-  Switch,
-  Table,
-  Tag,
-} from "antd";
-import { FC, Fragment, useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Button, Col, Form, Row, Table, Tag } from "antd";
+import { Fragment, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
-import { PlusOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
-import { EditOutlined } from "@ant-design/icons";
-import DateRangeInput from "../../../app/common/form/proposal/DateRangeInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import TextInput from "../../../app/common/form/proposal/TextInput";
-import {
-  ISamplingForm,
-  ISamplingList,
-  IUpdate,
-  SamplingFormValues,
-} from "../../../app/models/sampling";
+import { IUpdate } from "../../../app/models/sampling";
 import {
   getDefaultColumnProps,
   IColumns,
   ISearch,
 } from "../../../app/common/table/utils";
 import { ExpandableConfig } from "antd/lib/table/interface";
-import ImageButton from "../../../app/common/button/ImageButton";
-import { getExpandableConfig } from "../../report/utils";
-import {
-  IRouteTrackingList,
-  SearchTracking,
-  TrackingFormValues,
-} from "../../../app/models/routeTracking";
 import IconButton from "../../../app/common/button/IconButton";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import alerts from "../../../app/util/alerts";
-import PrintIcon from "../../../app/common/icons/PrintIcon";
-import { ClockCircleOutlined, FileDoneOutlined } from "@ant-design/icons";
+import { ClockCircleOutlined } from "@ant-design/icons";
 import { Steps } from "antd";
 import DateInput from "../../../app/common/form/proposal/DateInput";
 import moment from "moment";
@@ -66,7 +37,7 @@ const PendingRecive = () => {
   } = useStore();
   const {
     getAll,
-    studys,
+    studyTags: studys,
     printTicket,
     update,
     exportForm,
@@ -275,7 +246,6 @@ const PendingRecive = () => {
           onClick={() => {
             setEstatus(value);
           }}
-          
         />
       ),
     },
@@ -328,7 +298,7 @@ const PendingRecive = () => {
           </Col>
           <Col span={6}>
             <SelectInput
-            form={form}
+              form={form}
               formProps={{
                 name: "sucursal",
                 label: "Sucursal(es) receptor(as)",

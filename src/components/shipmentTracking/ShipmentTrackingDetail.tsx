@@ -57,7 +57,7 @@ const ShipmentTackingDetail: FC<StudyTableProps> = ({
   const { id } = useParams<UrlParams>();
   const { routeTrackingStore, shipmentTracking } = useStore();
 
-  const { getAll, studys, searchrecive } = routeTrackingStore;
+  const { getAll, studyTags: studys, filterSend: searchrecive } = routeTrackingStore;
   const { getashipment, shipment } = shipmentTracking;
   useEffect(() => {
     var readshipment = async () => {

@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, toJS } from "mobx";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
@@ -22,12 +22,12 @@ export default class RouteTrackingStore {
   }
 
   scopes?: IScopes;
-  studys: IRouteTrackingList[] = [];
+  studyTags: IRouteTrackingList[] = [];
   tags: ITagTrackingOrder[] = [];
   pendings?: IRecibe[] = [];
   ventana: string = "enviar";
   searchPending?: ISearchPending = new searchValues();
-  searchrecive: SearchTracking = new TrackingFormValues();
+  filterSend: SearchTracking = new TrackingFormValues();
   loadingRoutes: boolean = false;
 
   tagsSelected: ITagTrackingOrder[] = [];
@@ -43,13 +43,15 @@ export default class RouteTrackingStore {
     this.ventana = ventana;
   };
   clearStudy = () => {
-    this.studys = [];
+    this.studyTags = [];
   };
+
   setSearchi = (search: ISearchPending) => {
     this.searchPending = search;
   };
-  setSearchRecive = (search: SearchTracking) => {
-    this.searchrecive = search;
+
+  setFilterSend = (filterSend: SearchTracking) => {
+    this.filterSend = filterSend;
   };
   access = async () => {
     try {
@@ -68,11 +70,11 @@ export default class RouteTrackingStore {
       let orderStudy = study.sort((x, y) => {
         return x.seguimiento.localeCompare(y.seguimiento);
       });
-      this.studys = orderStudy;
+      this.studyTags = orderStudy;
       return study;
     } catch (error) {
       alerts.warning(getErrors(error));
-      this.studys = [];
+      this.studyTags = [];
     } finally {
       this.loadingRoutes = false;
     }

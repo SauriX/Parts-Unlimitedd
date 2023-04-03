@@ -9,17 +9,14 @@ import { useStore } from "../../../app/stores/store";
 
 function RouteTrackingCreateHeader() {
   const navigate = useNavigate();
-  const { trackingOrderStore, routeTrackingStore } = useStore();
-  const { exportList, clearTrackingOrders } = trackingOrderStore;
-  const { searchrecive, getAll } = routeTrackingStore;
+  const { trackingOrderStore } = useStore();
+  const { exportList } = trackingOrderStore;
 
   const download = async () => {
     await exportList();
   };
 
   const goBack = async () => {
-    clearTrackingOrders();
-    await getAll(searchrecive);
     navigate(`/segRutas`);
   };
 
