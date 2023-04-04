@@ -13,10 +13,10 @@ const { Text } = Typography;
 const RelaseResultHeader: FC<RelaseResultHeaderProps> = ({ handleList }) => {
   const { relaseResultStore } = useStore();
   const { soliCont, studyCont, setActiveTab, activeTab } = relaseResultStore;
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(true);
 
   const onChangeActive = () => {
-    setActive(true);
+    setActive(false);
   };
 
   useEffect(() => {
@@ -35,9 +35,9 @@ const RelaseResultHeader: FC<RelaseResultHeaderProps> = ({ handleList }) => {
       className="header-container"
       extra={[
         <Switch
-          checkedChildren="Liberación"
-          unCheckedChildren="Validación"
-          checked={false}
+          checkedChildren="Validación"
+          unCheckedChildren="Liberación"
+          checked={true}
           onChange={() => onChangeActive()}
         />,
         <Text key="request">

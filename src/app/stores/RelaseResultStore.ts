@@ -22,6 +22,7 @@ export default class RelaseResultStore {
   activeTab: boolean = false;
 
   setActiveTab = (active: boolean) => {
+    console.log(active);
     this.activeTab = active;
   };
 

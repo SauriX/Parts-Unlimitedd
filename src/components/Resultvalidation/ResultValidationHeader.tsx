@@ -17,13 +17,15 @@ const ResultValidationHeader: FC<ResultValidationHeaderProps> = ({
   const { relaseResultStore, resultValidationStore } = useStore();
   const { soliCont, studyCont } = resultValidationStore;
   const { setActiveTab } = relaseResultStore;
-  const [active, setActive] = useState(true);
+  const [active, setActive] = useState(false);
 
   const onChangeActive = () => {
-    setActive(false);
+    console.log("here2c");
+    setActive(true);
   };
 
   useEffect(() => {
+    console.log("here2");
     setActiveTab(active);
   }, [active]);
 
@@ -39,9 +41,9 @@ const ResultValidationHeader: FC<ResultValidationHeaderProps> = ({
       className="header-container"
       extra={[
         <Switch
-          checkedChildren="Liberación"
-          unCheckedChildren="Validación"
-          checked={true}
+          checkedChildren="Validación"
+          unCheckedChildren="Liberación"
+          checked={false}
           onChange={() => onChangeActive()}
         />,
         <Text key="request">
