@@ -37,7 +37,7 @@ export interface ImantainForm{
     clave :string
     no_serie :string
     ativo :boolean
-    imagenUrl:string[]
+    imagenUrl:IImageSend[]
     ide:number
 }
 export class MantainValues implements ImantainForm {
@@ -57,6 +57,6 @@ export class MantainValues implements ImantainForm {
 export interface IMantainList {
     id:string
     clave:string,
-    fecha:moment.Moment,
+    fecha:string,
     activo:boolean
 }

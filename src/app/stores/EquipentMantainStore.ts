@@ -45,9 +45,9 @@ export default class EquipmentMantainStore {
       history.push("/forbidden");
     }
   };
-  deleteImage = async (recordId: string, requestId: string, code: string) => {
+  deleteImage = async (Id: string,  code: string) => {
     try {
-      //await Request.deleteImage(recordId, requestId, code);
+      await Equipmentmantain.deleteImage(Id,  code);
       return true;
     } catch (error) {
       alerts.warning(getErrors(error));

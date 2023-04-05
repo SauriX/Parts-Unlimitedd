@@ -44,6 +44,7 @@ const ClinicalResultsHeader: FC<ClinicalFormProps> = ({ printing }) => {
           navigate(`/clinicResults`);
         }
       }}
+      className="header-container"
       subTitle={`Registro: ${request?.registro}`}
       extra={[
         <Pagination

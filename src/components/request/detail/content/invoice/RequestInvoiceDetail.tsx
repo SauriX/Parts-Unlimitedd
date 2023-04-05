@@ -157,6 +157,7 @@ const RequestInvoiceDetail = ({
             value={simpleConcept}
             autoSize
             bordered={false}
+            maxLength={100}
             onChange={(e) => setSimpleConcept(e.target.value)}
           />
         );

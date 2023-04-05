@@ -5,6 +5,7 @@ import CashFilter from "./CashFilter";
 import CashTable from "./CashTable";
 import { useStore } from "../../app/stores/store";
 import InvoiceTable from "./InvoiceTable";
+import ReportChartSelector from "../report/ReportChartSelector";
 
 type CashDefaultProps = {
   printing: boolean;
@@ -14,6 +15,7 @@ const CashBody: FC<CashDefaultProps> = ({ printing }) => {
   const [loading, setLoading] = useState(false);
   const { cashRegisterStore } = useStore();
   const { cashRegisterData, showChart } = cashRegisterStore;
+  const currentReport = "corte_caja";
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>
@@ -44,7 +46,7 @@ const CashBody: FC<CashDefaultProps> = ({ printing }) => {
             </Col>
           </Fragment>
         ) : (
-          ""
+          <ReportChartSelector report={currentReport} data={cashRegisterData.perDay} />
         )}
       </Row>
     </Spin>

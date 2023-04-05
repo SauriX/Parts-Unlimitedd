@@ -33,7 +33,6 @@ const ClinicResultsFilter = () => {
     medicOptions,
     companyOptions,
     studiesOptions,
-    getBranchCityOptions,
     getMedicOptions,
     getCompanyOptions,
     getStudiesOptions,
@@ -117,7 +116,7 @@ const ClinicResultsFilter = () => {
 
     const filter = {
       ...generalFilter,
-      buscar: defaultCode,
+      buscar: defaultCode ?? generalFilter.buscar,
       ciudad: !generalFilter.cargaInicial
         ? generalFilter.ciudad
         : [userCity as string],

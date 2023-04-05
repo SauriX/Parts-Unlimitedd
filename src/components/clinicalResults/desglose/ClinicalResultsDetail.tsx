@@ -34,6 +34,7 @@ import StudyActions from "../content/StudyActions";
 import { referenceValues, updateStatus } from "../utils";
 import { ItipoValorForm as ITipoValorForm } from "../../../app/models/parameter";
 import Title from "antd/lib/typography/Title";
+import TitleColumns from "../content/TitleColumns";
 
 const { TextArea } = Input;
 const { Text, Link } = Typography;
@@ -270,27 +271,11 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
             >
               <Row>
                 <Col span={24}>
-                  <Row justify="space-between" style={{ textAlign: "center" }}>
-                    <Col span={4}>
-                      <h3>EXAMEN</h3>
-                    </Col>
-                    <Col span={4}>
-                      <h3>RESULTADO</h3>
-                    </Col>
-                    <Col span={4}>
-                      <h3>UNIDADES</h3>
-                    </Col>
-                    <Col span={4}>
-                      <h3>REFERENCIA</h3>
-                    </Col>
-                    <Col span={4}>
-                      <h3>PREVIO</h3>
-                    </Col>
-                  </Row>
+                  <TitleColumns />
                   <Form.List name="parametros">
                     {(fields) => (
                       <>
-                        {fields.map((field, index) => {
+                        {fields.map((field) => {
                           let fieldValue = form.getFieldValue([
                             "parametros",
                             field.name,
@@ -305,11 +290,17 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                             parseFloat(fieldResult ?? 0) >
                               parseFloat(fieldValue.valorFinal);
 
-                          let valuesByColumn =
-                            fieldValue.tipoValorId == "11" ||
-                            fieldValue.tipoValorId == "12" ||
-                            fieldValue.tipoValorId == "13" ||
-                            fieldValue.tipoValorId == "14";
+                          let valuesByColumn = false;
+                          switch (fieldValue.tipoValorId) {
+                            case "11":
+                            case "12":
+                            case "13":
+                            case "14":
+                              valuesByColumn = true;
+                              break;
+                            default:
+                              break;
+                          }
 
                           return (
                             <Row

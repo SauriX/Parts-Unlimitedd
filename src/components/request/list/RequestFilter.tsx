@@ -82,7 +82,7 @@ const RequestFilter = () => {
 
     const filter = {
       ...generalFilter,
-      buscar: defaultCode,
+      buscar: defaultCode ?? generalFilter.buscar,
       ciudad: !generalFilter.cargaInicial ? generalFilter.ciudad : [userCity!],
       sucursalId: !generalFilter.cargaInicial
         ? generalFilter.sucursalId

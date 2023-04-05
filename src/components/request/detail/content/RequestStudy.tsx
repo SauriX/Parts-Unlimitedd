@@ -32,6 +32,7 @@ const RequestStudy = () => {
     studies,
     packs,
     studyFilter,
+    payments,
     getPriceStudy,
     getPricePack,
     deleteStudy,
@@ -172,6 +173,11 @@ const RequestStudy = () => {
             bordered={false}
             style={{ width: "100%" }}
             allowClear
+            disabled={payments.some(
+              (x) =>
+                x.estatusId !== status.requestPayment.cancelado &&
+                x.estatusId !== status.requestPayment.facturaCancelada
+            )}
             placeholder="Seleccionar promoción"
             onChange={(promoId?: number) => {
               if (isStudy(item)) {
