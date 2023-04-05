@@ -18,6 +18,7 @@ import history from "../util/history";
 import messages from "../util/messages";
 import responses from "../util/responses";
 import { getErrors } from "../util/utils";
+import { ITagTrackingOrder } from "../models/routeTracking";
 
 export default class TrackingOrdertStore {
   constructor() {
@@ -27,6 +28,7 @@ export default class TrackingOrdertStore {
   scopes?: IScopes;
   trackingOrder: IStudyTrackList[] = [];
   trackingOrderStudies: ITrackingOrderList[] = [];
+
   estudios: IStudyTrackList[] = [];
   temperatura: number = 0;
   TranckingOrderSend: ITrackingOrderForm = new TrackingOrderFormValues();
@@ -148,7 +150,7 @@ export default class TrackingOrdertStore {
 
   OrderCreated = "";
   OrderId = "";
-  
+
   create = async (trackingOrder: ITrackingOrderForm) => {
     try {
       const orderCreated = await TrackingOrder.create(trackingOrder);

@@ -24,6 +24,7 @@ export default class RouteTrackingStore {
   scopes?: IScopes;
   studyTags: IRouteTrackingList[] = [];
   tags: ITagTrackingOrder[] = [];
+
   pendings?: IRecibe[] = [];
   ventana: string = "enviar";
   searchPending?: ISearchPending = new searchValues();
@@ -39,11 +40,9 @@ export default class RouteTrackingStore {
   clearScopes = () => {
     this.scopes = undefined;
   };
+
   setventana = (ventana: string) => {
     this.ventana = ventana;
-  };
-  clearStudy = () => {
-    this.studyTags = [];
   };
 
   setSearchi = (search: ISearchPending) => {
@@ -53,6 +52,7 @@ export default class RouteTrackingStore {
   setFilterSend = (filterSend: SearchTracking) => {
     this.filterSend = filterSend;
   };
+  
   access = async () => {
     try {
       const scopes = await Sampling.access();
@@ -105,14 +105,17 @@ export default class RouteTrackingStore {
     }
   };
 
-  getFindTags = async (routeId: string) => {
+  getFindTags = async (search: string) => {
     try {
-      const tags = await RouteTracking.getFindTags(routeId);
+      this.loadingRoutes = true;
+      const tags = await RouteTracking.getFindTags(search);
       this.tags = tags;
       return tags;
     } catch (error) {
       alerts.warning(getErrors(error));
       return [];
+    } finally {
+      this.loadingRoutes = false;
     }
   };
 

@@ -43,7 +43,6 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
       setLoading(true);
       await getAll(searchParams.get("search") ?? "all");
       setLoading(false);
-      getAll("all");
     };
 
     if (routes.length === 0) {

@@ -19,6 +19,7 @@ import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import { formItemLayout } from "../../../app/util/utils";
 import RouteTrackingCreateTable from "./RouteTrackingCreateTable";
+import { TagTrackingModal } from "./modal/TagTrackingModal";
 
 type TrackingOrderProps = {
   id?: string;
@@ -33,7 +34,7 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
     routeTrackingStore,
   } = useStore();
   const { create, update, getById } = trackingOrderStore;
-  const { getFindTags } = routeTrackingStore;
+  const { getFindTags, tagsSelected, setTagsSelected } = routeTrackingStore;
   const { find, foundRoutes } = routeStore;
   const { profile } = profileStore;
   const {
@@ -56,6 +57,7 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
   );
   const [tagData, setTagData] = useState<ITagTrackingOrder[]>([]);
   const [routeOptions, setRouteOptions] = useState<IOptions[]>([]);
+  const [originBranch, setOriginBranch] = useState<string>("");
 
   useEffect(() => {
     getBranchOptions();
@@ -82,19 +84,22 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
   useEffect(() => {
     const profileBranch = profile?.sucursal;
     if (profileBranch) {
-      form.setFieldValue("destinoId", [profileBranch]);
+      form.setFieldValue("origenId", [profileBranch]);
+      setOriginBranch(profileBranch);
     }
-  }, [form, profile]);
+  }, [profile]);
 
   const treeData = [
     {
       title: "Sucursales",
       value: "destinoId",
       disabled: true,
-      children: BranchOptions.map((x) => ({
-        title: x.label,
-        value: x.value,
-      })),
+      children: BranchOptions.filter((x) => x.value !== originBranch).map(
+        (x) => ({
+          title: x.label,
+          value: x.value,
+        })
+      ),
     },
     {
       title: "Maquiladores",
@@ -142,10 +147,21 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
     setLoading(false);
   };
 
-  const findRequest = async (value: string) => {
+  const findRequest = async (value: React.KeyboardEvent<HTMLInputElement>) => {
     setLoading(true);
-    
+    let search = value.currentTarget.value;
+    if (search === "") search = "all";
+
+    await TagTrackingModal(search, tagsSelected);
     setLoading(false);
+  };
+
+  const onActiveChange = (value: boolean) => {
+    if (value) {
+      alerts.info(messages.confirmations.enable);
+    } else {
+      alerts.info(messages.confirmations.disable);
+    }
   };
 
   const onFinish = async (newOrder: ITrackingOrderForm) => {
@@ -166,7 +182,7 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
 
   return (
     <Spin spinning={loading} tip={"Cargando"}>
-      <Row gutter={[4, 12]}>
+      <Row gutter={[4, 16]}>
         {!readOnly && (
           <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
             <Button>Cancelar</Button>
@@ -189,112 +205,105 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
             )}
           </Col>
         )}
-      </Row>
-
-      <Form<ITrackingOrderForm>
-        {...formItemLayout}
-        form={form}
-        name="trackingOrder"
-        initialValues={values}
-        onFinish={onFinish}
-        scrollToFirstError
-        labelWrap
-      >
-        <Row gutter={[24, 8]}>
-          <Col md={6} sm={12}>
-            <Form.Item label="Destino" name="sucursalDestinoId">
-              <TreeSelect
-                dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                treeData={treeData}
-                treeDefaultExpandAll
-                onChange={getRoutes}
-                allowClear
-              />
-            </Form.Item>
-          </Col>
-          <Col md={6} sm={12}>
-            <SelectInput
-              formProps={{
-                name: "origenId",
-                label: "Origen",
-              }}
-              required
-              options={BranchOptions}
-            />
-          </Col>
-          <Col md={6} sm={12}>
-            <Form.Item label="Fecha recolección" required>
-              <DatePicker
-                style={{ width: "100%" }}
-                defaultValue={moment()}
-                name="fecha"
-                format="DD/MM/YYYY HH:mm"
-                minuteStep={1}
-                showTime
-                allowClear
-                disabledDate={(current) => current.isBefore(moment())}
-              />
-            </Form.Item>
-          </Col>
-          <Col md={6} sm={12}>
-            <SelectInput
-              formProps={{
-                name: "rutaId",
-                label: "Ruta",
-              }}
-              onChange={findTagsByRoute}
-              options={routeOptions ?? []}
-              readonly={readOnly}
-            />
-          </Col>
-          <Col md={6} sm={12} style={{ textAlign: "left" }}>
-            <TextInput
-              formProps={{
-                name: "muestraId",
-                label: "Muestra",
-              }}
-              max={100}
-              readonly={readOnly}
-            />
-          </Col>
-          <Col md={6} sm={12} style={{ textAlign: "left" }}>
-            <NumberInput
-              formProps={{
-                name: "temperatura",
-                label: "Temperatura",
-              }}
-              type="number"
-              suffix="°C"
-              required
-              readonly={false}
-              controls={false}
-            />
-          </Col>
-          <Col md={6} sm={12}>
-            <SwitchInput
-              name="escaneoCodigoBarras"
-              label="Escaneo"
-              readonly={readOnly}
-            />
-          </Col>
-          <Col md={6} sm={12}>
-            <SwitchInput
-              name="activo"
-              onChange={(value) => {
-                if (value) {
-                  alerts.info(messages.confirmations.enable);
-                } else {
-                  alerts.info(messages.confirmations.disable);
-                }
-              }}
-              label="Activo"
-              readonly={readOnly}
-            />
-          </Col>
-        </Row>
-      </Form>
-
-      <Row>
+        <Col md={24} sm={12}>
+          <Form<ITrackingOrderForm>
+            {...formItemLayout}
+            form={form}
+            name="trackingOrder"
+            initialValues={values}
+            onFinish={onFinish}
+            scrollToFirstError
+            labelWrap
+          >
+            <Row>
+              <Col md={6} sm={12}>
+                <Form.Item label="Destino" name="destino">
+                  <TreeSelect
+                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                    treeData={treeData}
+                    treeDefaultExpandAll
+                    onChange={getRoutes}
+                    allowClear
+                  />
+                </Form.Item>
+              </Col>
+              <Col md={6} sm={12}>
+                <SelectInput
+                  formProps={{
+                    name: "origenId",
+                    label: "Origen",
+                  }}
+                  required
+                  options={BranchOptions}
+                />
+              </Col>
+              <Col md={6} sm={12}>
+                <Form.Item label="Fecha recolección" required>
+                  <DatePicker
+                    style={{ width: "100%" }}
+                    defaultValue={moment()}
+                    name="fecha"
+                    format="DD/MM/YYYY HH:mm"
+                    minuteStep={1}
+                    showTime
+                    allowClear
+                    disabledDate={(current) => current.isBefore(moment())}
+                  />
+                </Form.Item>
+              </Col>
+              <Col md={6} sm={12}>
+                <SelectInput
+                  formProps={{
+                    name: "rutaId",
+                    label: "Ruta",
+                  }}
+                  onChange={findTagsByRoute}
+                  options={routeOptions ?? []}
+                  readonly={readOnly}
+                />
+              </Col>
+              <Col md={6} sm={12} style={{ textAlign: "left" }}>
+                <TextInput
+                  formProps={{
+                    name: "muestraId",
+                    label: "Muestra",
+                  }}
+                  max={100}
+                  onPressEnter={findRequest}
+                  readonly={readOnly}
+                />
+              </Col>
+              <Col md={6} sm={12} style={{ textAlign: "left" }}>
+                <NumberInput
+                  formProps={{
+                    name: "temperatura",
+                    label: "Temperatura",
+                  }}
+                  type="number"
+                  suffix="°C"
+                  required
+                  readonly={false}
+                  controls={false}
+                />
+              </Col>
+              <Col md={6} sm={12}>
+                <SwitchInput
+                  name="escaneoCodigoBarras"
+                  label="Escaneo"
+                  readonly={readOnly}
+                />
+              </Col>
+              <Col md={6} sm={12}>
+                <SwitchInput
+                  name="activo"
+                  onChange={onActiveChange}
+                  label="Activo"
+                  readonly={readOnly}
+                />
+              </Col>
+            </Row>
+          </Form>
+        </Col>
         <Col md={24} sm={12}>
           <RouteTrackingCreateTable data={tagData} loading={loading} />
         </Col>

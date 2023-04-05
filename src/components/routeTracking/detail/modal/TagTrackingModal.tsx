@@ -2,8 +2,12 @@ import React from "react";
 import TagTracking from "./TagTracking";
 import { store } from "../../../../app/stores/store";
 import { ITagTrackingOrder } from "../../../../app/models/routeTracking";
+import { IRequest } from "../../../../app/models/request";
 
-export const TagTrackingModal = (selectedTags: ITagTrackingOrder[]) => {
+export const TagTrackingModal = (
+  requestCode: string,
+  selectedTags: ITagTrackingOrder[]
+) => {
   const { openModal, closeModal } = store.modalStore;
 
   return new Promise((resolve) => {
@@ -15,11 +19,13 @@ export const TagTrackingModal = (selectedTags: ITagTrackingOrder[]) => {
             closeModal();
           }}
           selectedTags={selectedTags}
+          requestCode={requestCode}
         />
       ),
       onClose: () => {
         resolve(undefined);
       },
+      width: "50%",
     });
   });
 };

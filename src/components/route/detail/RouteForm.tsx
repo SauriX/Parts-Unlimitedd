@@ -66,10 +66,10 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   const { optionStore, routeStore, profileStore } = useStore();
   const { routes, getById, getAll, create, update, getAllStudy, studies } =
     routeStore;
-  const [lista, setLista] = useState(studies);
+  const [studyList, setStudyRouteList] = useState(studies);
   const {
     BranchOptions,
-    getBranchOptions,
+    getAllBranchOptions,
     DeliveryOptions,
     getDeliveryOptions,
     MaquiladorOptions,
@@ -104,23 +104,23 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
-    const studys = async () => {
-      let estudio = await getAllStudy();
-      setLista(estudio!);
-      setValues((prev) => ({ ...prev, estudio: estudio! }));
+    const getStudies = async () => {
+      let study = await getAllStudy();
+      setStudyRouteList(study!);
+      setValues((prev) => ({ ...prev, estudio: study! }));
     };
     if (!id) {
-      studys();
+      getStudies();
     }
   }, [getAllStudy]);
 
   useEffect(() => {
-    getBranchOptions();
+    getAllBranchOptions();
     getDeliveryOptions();
     getMaquiladorOptions();
     getAreaByDeparmentOptions();
   }, [
-    getBranchOptions,
+    getAllBranchOptions,
     getDeliveryOptions,
     getMaquiladorOptions,
     getAreaByDeparmentOptions,
@@ -142,72 +142,65 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   }, [selectedDepartment, areaByDeparmentOptions, formAreaByDepartment]);
 
   useEffect(() => {
-    const readuser = async (idUser: string) => {
+    const readRoute = async (routeId: string) => {
       setLoading(true);
       var studies = await getAllStudy();
-      const user = await getById(idUser);
+      const route = await getById(routeId);
 
-      if (user) {
-        setTimeType(user.tipoTiempo ?? 1);
+      if (route) {
+        setTimeType(route.tipoTiempo ?? 1);
 
         studies = studies?.map((x) => {
-          var activo = user?.estudio.find((y) => y.id === x.id) != null;
+          var activo = route?.estudio.find((y) => y.id === x.id) != null;
           return { ...x, activo };
         });
         setSelectedRowKeys(
           studies?.filter((x) => x.activo)?.map((x) => x.id) ?? []
         );
 
-        setValues(user);
-        setLista(studies!);
+        setValues(route);
+        setStudyRouteList(studies!);
 
-        if (user.destinoId || user.maquiladorId) {
+        if (route.destinoId || route.maquiladorId) {
           const branch = treeData
             .map((x) => x.children)
             .flat()
-            .find((x) => x.value === user.destinoId);
+            .find((x) => x.value === route.destinoId);
           const maquila = treeData
             .map((x) => x.children)
             .flat()
-            .find((x) => x.value === user.maquiladorId);
+            .find((x) => x.value === route.maquiladorId);
 
           if (branch) {
-           user.destinoId = branch.value as string;
+            route.destinoId = branch.value as string;
           }
           if (maquila) {
-            user.destinoId = maquila.value as string;
+            route.destinoId = maquila.value as string;
           }
         }
 
-        user.horaDeRecoleccion = moment(
-          user.horaDeRecoleccion,
-          "HH:mm"
-        ).utcOffset(0, true);
+        console.log(route)
+
+        route.horaDeRecoleccion = moment(route.horaDeRecoleccion);
       }
 
       setLoading(false);
-      setSelectedTags(user?.dias!);
-      form.setFieldsValue(user!);
+      setSelectedTags(route?.dias!);
+      form.setFieldsValue(route!);
 
       setLoading(false);
     };
     if (id) {
-      readuser(id);
+      readRoute(id);
     } else {
       form.setFieldValue("origenId", profile?.sucursal);
     }
   }, [form, getById, id]);
 
-  useEffect(() => {
-    if (routes.length === 0) {
-      getAll(searchParams.get("search") ?? "all");
-    }
-  }, [getAll, routes.length, searchParams]);
-
   const onFinish = async (newValues: IRouteForm) => {
     setLoading(true);
     const route = { ...values, ...newValues };
-    route.estudio = lista.filter((x) => x.activo === true);
+    route.estudio = studyList.filter((x) => x.activo === true);
     route.dias = selectedTags;
 
     const parent = treeData.find((x) =>
@@ -229,7 +222,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     setLoading(false);
     if (success) {
       goBack();
-      getAll("all");
+      await getAll("all");
     }
   };
 
@@ -338,19 +331,19 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   };
 
   const setStudy = (active: boolean, item: IStudyRouteList) => {
-    var index = lista.findIndex((x) => x.id === item.id);
-    var list = lista;
-    item.activo = active;
-    list[index] = item;
-    setLista(list);
-    var indexVal = values.estudio.findIndex((x) => x.id === item.id);
-    var val = values.estudio;
-    val[indexVal] = item;
-    setValues((prev) => ({ ...prev, estudio: val }));
+    const index = studyList.findIndex((x) => x.id === item.id);
+    const updatedItem = { ...item, activo: active };
+    const updatedList = [...studyList];
+    updatedList[index] = updatedItem;
+    setStudyRouteList(updatedList);
+
+    const updatedValues = [...values.estudio];
+    updatedValues[index] = updatedItem;
+    setValues((prev) => ({ ...prev, estudio: updatedValues }));
   };
 
   const filterBySearch = (search: string) => {
-    var estudios = lista.filter(
+    var estudios = studyList.filter(
       (x) => x.clave.includes(search) || x.nombre.includes(search)
     );
     setValues((prev) => ({ ...prev, estudio: estudios }));
@@ -466,7 +459,6 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                 }}
                 defaultValue={0}
                 readonly={readonly}
-                required
                 options={DeliveryOptions}
               />
             </Col>
@@ -513,7 +505,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                   />
                   <SelectInput
                     formProps={{
-                      name: "tiempoDeEntregaTipo",
+                      name: "tipoTiempo",
                       label: "",
                     }}
                     defaultValue={1}

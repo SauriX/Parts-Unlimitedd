@@ -67,6 +67,7 @@ export interface ITrackingOrderForm {
   pacienteId: string;
   escaneado: boolean;
 }
+
 export class TrackingOrderListValues implements IStudyTrackList {
   claveEtiqueta = "";
   recipiente = "";

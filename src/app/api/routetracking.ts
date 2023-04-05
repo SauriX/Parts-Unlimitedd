@@ -13,9 +13,9 @@ const RouteTracking = {
   getAll: (search: SearchTracking): Promise<IRouteTrackingList[]> =>
     requests.post(`RouteTracking/all`, search),
   getAllTags: (search: string): Promise<ITagTrackingOrder[]> =>
-    requests.post(`RouteTracking/tags/all`, search),
-  getFindTags: (routeId: string): Promise<ITagTrackingOrder[]> =>
-    requests.get(`RouteTracking/findTags/${routeId}`),
+    requests.get(`RouteTracking/tags/all/${!search ? "all" : search}`),
+  getFindTags: (search: string): Promise<ITagTrackingOrder[]> =>
+    requests.get(`RouteTracking/findTags/${search}`),
   update: (update: IUpdate[]): Promise<void> =>
     requests.put("RouteTracking", update),
   exportForm: (id: string): Promise<void> =>

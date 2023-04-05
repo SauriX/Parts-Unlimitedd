@@ -1,7 +1,15 @@
-import { Button, Col, Form, Row, Table, Typography } from "antd";
-import search from "antd/lib/transfer/search";
+import {
+  Button,
+  Col,
+  Divider,
+  Form,
+  PageHeader,
+  Row,
+  Table,
+  Typography,
+} from "antd";
 import { observer } from "mobx-react-lite";
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import TextInput from "../../../../app/common/form/TextInput";
 import {
   getDefaultColumnProps,
@@ -12,21 +20,25 @@ import { SearchOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { ITagTrackingOrder } from "../../../../app/models/routeTracking";
 import { store, useStore } from "../../../../app/stores/store";
 import useWindowDimensions, { resizeWidth } from "../../../../app/util/window";
+import HeaderTitle from "../../../../app/common/header/HeaderTitle";
+import DownloadIcon from "../../../../app/common/icons/DownloadIcon";
 
 const { Paragraph } = Typography;
 
 type Props = {
   getResult: (isAdmin: string) => any;
   selectedTags: ITagTrackingOrder[];
+  requestCode: string;
 };
 
-const TagTracking = ({ getResult, selectedTags }: Props) => {
+const TagTracking = ({ getResult, selectedTags, requestCode }: Props) => {
   const { routeTrackingStore } = useStore();
   const { closeModal } = store.modalStore;
-  const { setTagsSelected, tags, getAllTags } = routeTrackingStore;
+  const { setTagsSelected, tags, getFindTags, getAllTags, loadingRoutes } =
+    routeTrackingStore;
+
   const [form] = Form.useForm<any>();
   const { width: windowWidth } = useWindowDimensions();
-  const [loading, setLoading] = useState(false);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -36,9 +48,7 @@ const TagTracking = ({ getResult, selectedTags }: Props) => {
 
   useEffect(() => {
     const readTags = async () => {
-      setLoading(true);
-      await getAllTags("all");
-      setLoading(false);
+      await getFindTags(requestCode);
     };
 
     readTags();
@@ -54,14 +64,14 @@ const TagTracking = ({ getResult, selectedTags }: Props) => {
       ...getDefaultColumnProps("claveEtiqueta", "Clave muestra", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "25%",
       }),
     },
     {
       ...getDefaultColumnProps("recipiente", "Recipiente", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: "25%",
       }),
     },
     {
@@ -75,7 +85,7 @@ const TagTracking = ({ getResult, selectedTags }: Props) => {
       ...getDefaultColumnProps("solicitud", "Solicitud", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: "25%",
       }),
     },
   ];
@@ -103,15 +113,21 @@ const TagTracking = ({ getResult, selectedTags }: Props) => {
 
   return (
     <Fragment>
+      <PageHeader
+        ghost={false}
+        title={
+          <HeaderTitle
+            title={`Agregar etiquetas manualemnte`}
+            image="etiquetas"
+          />
+        }
+        className="header-container"
+      ></PageHeader>
+      <Divider className="header-divider"></Divider>
+      <Paragraph>
+        Favor de ingresar la clave de una solicitud o una etiqueta.
+      </Paragraph>
       <Row gutter={[12, 12]}>
-        <Col span={24} style={{ textAlign: "center" }}>
-          <PlusCircleOutlined style={{ color: "green", fontSize: 48 }} />
-        </Col>
-        <Col span={24}>
-          <Paragraph style={{ textAlign: "center" }}>
-            Favor de ingresar la clave de una solicitud.
-          </Paragraph>
-        </Col>
         <Col span={24}>
           <Form<any>
             form={form}
@@ -138,7 +154,7 @@ const TagTracking = ({ getResult, selectedTags }: Props) => {
         </Col>
       </Row>
       <Table<ITagTrackingOrder>
-        loading={loading}
+        loading={loadingRoutes}
         size="small"
         rowKey={(record) => record.id}
         columns={columns}
