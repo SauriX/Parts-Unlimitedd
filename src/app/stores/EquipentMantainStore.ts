@@ -58,6 +58,7 @@ export default class EquipmentMantainStore {
     try {
       const equipments = await Equipmentmantain.getAll(search);
       this.equipments = equipments;
+      return equipments;
     } catch (error) {
       alerts.warning(getErrors(error));
       this.equipments = [];
@@ -139,5 +140,15 @@ export default class EquipmentMantainStore {
       }
     }
   };
+  updateStatus = async (id:string) => {
+    try {
 
+      await Equipmentmantain.updateStatus(id);
+      alerts.success(messages.updated);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
 }

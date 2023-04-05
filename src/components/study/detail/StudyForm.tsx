@@ -566,7 +566,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
             onFinish={onFinish}
             scrollToFirstError
           >
-            <Row gutter={[20,12]}>
+            <Row gutter={[30,12]}>
               <Col md={8} sm={24} xs={8}>
                 <TextInput
                   formProps={{
@@ -669,11 +669,12 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
-              <Col md={8} xs={8}>
+              <Col md={7} xs={8}>
                 <NumberInput
                   formProps={{
                     name: "diasrespuesta",
                     label: "Días de respuesta",
+                    
                   }}
                   min={0}
                   max={9}
@@ -686,6 +687,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   formProps={{
                     name: "nombreCorto",
                     label: "Nombre corto",
+                    labelCol:{xs:8}
                   }}
                   max={100}
                   readonly={disabled}
@@ -703,18 +705,8 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
-              <Col md={8} sm={24} xs={8}>
-                <NumberInput
-                  formProps={{
-                    name: "diasEstabilidad",
-                    label: "Días de estabilidad en refrigeración",
-                  }}
-                  min={0}
-                  max={999999}
-                  readonly={disabled}
-                />
-              </Col>
-              <Col md={8} sm={24} xs={8}>
+
+              <Col md={7} sm={24} xs={8}>
                 <NumberInput
                   formProps={{
                     name: "diasRefrigeracion",
@@ -722,17 +714,6 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   }}
                   min={0}
                   max={999999}
-                  readonly={disabled}
-                />
-              </Col>
-
-              <Col md={4} sm={24} xs={6}>
-                <SwitchInput
-                  name="visible"
-                  label="Visible"
-                  onChange={(values) => {
-                    setVisible(values);
-                  }}
                   readonly={disabled}
                 />
               </Col>
@@ -762,6 +743,28 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
+              <Col md={12} sm={24} xs={8}>
+                <NumberInput
+                  formProps={{
+                    name: "diasEstabilidad",
+                    label: "Días de estabilidad en refrigeración",
+                  }}
+                  min={0}
+                  max={999999}
+                  readonly={disabled}
+                />
+              </Col>
+              <Col md={4} sm={24} xs={6}>
+                <SwitchInput
+                  name="visible"
+                  label="Visible"
+                  onChange={(values) => {
+                    setVisible(values);
+                  }}
+                  readonly={disabled}
+                />
+              </Col>
+
               <Col md={3} sm={24} xs={6}>
                 <SwitchInput
                   name="activo"

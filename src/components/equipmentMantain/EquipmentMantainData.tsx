@@ -33,7 +33,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
 }) => {
   const { equipmentMantainStore, equipmentStore } = useStore();
   const {
-    equipments,
+    
     getAlls,
     getequip,
     equip,
@@ -42,6 +42,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
     setiD,
     idEq,
     printTicket,
+    updateStatus,
   } = equipmentMantainStore;
   const { equipment, getAll } = equipmentStore;
   const [searchParams] = useSearchParams();
@@ -55,7 +56,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
   const { width: windowWidth } = useWindowDimensions();
 
   const [loading, setLoading] = useState(false);
-
+const [ equipments,setEquipments]=useState<IMantainList[]>([]);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -66,7 +67,8 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
       setLoading(true);
       var equipo = await getequip(id);
       search!.idEquipo = equipo?.id!;
-      await getAlls(search!);
+      var data = await getAlls(search!);
+      setEquipments(data!);
       await getAll("all");
       setiD(id);
       setLoading(false);
@@ -80,6 +82,16 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
     await getAlls(equipment);
   };
 
+  const UpdateStatusChange = async (id:string)=>{
+    var list = [...equipments]
+    var equipment = list.find(x=>x.id===id);   
+    equipment!.activo = !equipment!.activo;
+    var index = list.findIndex(x=> x.id===id);
+    list[index]=equipment!;
+    setEquipments(list);
+
+    await updateStatus(id);
+  }
   const columns: IColumns<IMantainList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
@@ -164,7 +176,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
       title: "Activo",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      render: (value) => <Switch checked={value}></Switch>,
+      render: (value,item) => (<Switch onChange={()=>{UpdateStatusChange(value)}} checked={item.activo}></Switch>),
     },
   ];
   return (
@@ -240,7 +252,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
         size="small"
         rowKey={(record) => record.id}
         columns={columns}
-        dataSource={[...equipments]}
+        dataSource={equipments}
         pagination={defaultPaginationProperties}
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
