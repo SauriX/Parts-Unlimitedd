@@ -57,7 +57,7 @@ export default class PriceListStore {
 
   getAllPack = async () => {
     try {
-      const roles = await Pack.getAll("all");
+      const roles = await Pack.getPackList("all");
 
       var studies = roles.map((x) => {
         let data: IPriceListEstudioList = {

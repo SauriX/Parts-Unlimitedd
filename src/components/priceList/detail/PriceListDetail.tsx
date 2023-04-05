@@ -19,9 +19,13 @@ const PriceListDetail = () => {
   const navigate = useNavigate();
 
   const [printing, setPrinting] = useState(false);
+  const [priceListId, setPriceListId] = useState<string | undefined>("");
 
   const { id } = useParams<UrlParams>();
-  const priceListId = !id ? "" : !guidPattern.test(id) ? undefined : id;
+
+  useEffect(() => {
+    setPriceListId(!id ? "" : !guidPattern.test(id) ? undefined : id);
+  }, [id]);
 
   const componentRef = useRef<any>();
 

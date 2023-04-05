@@ -105,31 +105,64 @@ const PriceListForm: FC<PriceListFormProps> = ({
   const [values, setValues] = useState<IPriceListForm>(
     new PriceListFormValues()
   );
-  const [sizeData, setSizeData] = useState({
-    startIndex: 0,
-    endIndex: 25,
-  });
+
+  useEffect(() => {
+    const readuser = async (idUser: string) => {
+      setLoading(true);
+      const user = await getById(idUser);
+
+      var studis = await getAllStudy();
+      var pcks = await getAllPack();
+
+      var tabla = [...studis!, ...pcks!];
+
+      const branches = await getAllBranch();
+      const Companies = await getAllCompany();
+      const medics = await getAllMedics();
+      if (user!.paquete) {
+        user!.paquete = user!.paquete.map((x) => {
+          x.paqute = true;
+          return x;
+        });
+      }
+
+      var listatabla = user?.estudios.concat(user?.paquete);
+      user!.table = listatabla?.filter((x) => x != null);
+      var studys = user!.table!;
+      user!.table = tabla;
+      user!.sucMedCom = user!.sucursales;
+      setValues(user!);
+      form.setFieldsValue(user!);
+
+      setLista(tabla);
+      setListaofstudyspacks(tabla);
+
+      setListSucursal(branches);
+      setListCompañia(Companies);
+      setListMedicos(medics);
+
+      studys.forEach((x) => {
+        setStudy(x.activo!, x, x.paqute!, true, user!);
+      });
+      user?.sucursales.map((x) => setSucursalesList(x.activo!, x, branches));
+      user?.compañia.map((x) => setCompañiasList(x.activo!, x, Companies));
+      user?.medicos.map((x) => setMedicosList(x.activo!, x, medics));
+
+      setListSCM(user!.sucursales!.length <= 0 ? branches! : user!.sucursales);
+      setRadioValue("branch");
+
+      setLoading(false);
+    };
+    if (id) {
+      readuser(id);
+      console.log(id);
+    }
+  }, [id]);
 
   useEffect(() => {
     departmentOptions.shift();
     setDepartments([...departmentOptions]);
   }, [departmentOptions]);
-
-  useEffect(() => {
-    const readtabla = async () => {
-      let estudiostabla = await getAllStudy();
-
-      let paquetestabla = await getAllPack();
-      let tabla = [...estudiostabla!, ...paquetestabla!];
-
-      setValues((prev) => ({ ...prev, table: tabla }));
-      setLista(tabla);
-      setListaofstudyspacks(tabla);
-    };
-    if (!id) {
-      readtabla();
-    }
-  }, [getAllStudy, getAllPack]);
 
   useEffect(() => {
     getDepartmentOptions();
@@ -141,22 +174,6 @@ const PriceListForm: FC<PriceListFormProps> = ({
     };
     areareader();
   }, [getareaOptions]);
-
-  useEffect(() => {
-    const readtable = async () => {
-      const branches = await getAllBranch();
-      const Companies = await getAllCompany();
-      const medics = await getAllMedics();
-      setListSucursal(branches);
-      setListCompañia(Companies);
-      setListMedicos(medics);
-      if (!id) {
-        setListSCM(branches);
-        setRadioValue("branch");
-      }
-    };
-    readtable();
-  }, [getAllBranch, getAllCompany, getAllMedics]);
 
   const setStudy = (
     active: boolean,
@@ -238,15 +255,16 @@ const PriceListForm: FC<PriceListFormProps> = ({
   };
 
   const setSucMedCom = (active: boolean, item: ISucMedComList) => {
-    var index = listSMC.findIndex((x) => x.id === item.id);
-    var list = listSMC;
-    item.activo = active;
-    list[index] = item;
-    setListSCM(list);
-    var indexVal = values.sucMedCom.findIndex((x) => x.id === item.id);
-    var val = values.sucMedCom;
-    val[indexVal] = item;
-    setValues((prev) => ({ ...prev, sucMedCom: val }));
+    const updatedItem = { ...item, activo: active };
+    const newListSMC = [...listSMC];
+    const index = newListSMC.findIndex((x) => x.id === item.id);
+    newListSMC[index] = updatedItem;
+    setListSCM(newListSMC);
+
+    const updatedValues = [...values.sucMedCom];
+    const valIndex = updatedValues.findIndex((x) => x.id === item.id);
+    updatedValues[valIndex] = updatedItem;
+    setValues((prev) => ({ ...prev, sucMedCom: updatedValues }));
   };
 
   const setStudyPrice = (
@@ -288,68 +306,6 @@ const PriceListForm: FC<PriceListFormProps> = ({
     }
     setValues((prev) => ({ ...prev, table: val }));
   };
-
-  // red user 146
-  useEffect(() => {
-    const readuser = async (idUser: string) => {
-      setLoading(true);
-      const user = await getById(idUser);
-
-      var studis = await getAllStudy();
-      var pcks = await getAllPack();
-      // pcks = pcks?.filter((x) => x.activo);
-
-      var tabla = [...studis!, ...pcks!];
-
-      const branches = await getAllBranch();
-      const Companies = await getAllCompany();
-      const medics = await getAllMedics();
-      if (user!.paquete) {
-        user!.paquete = user!.paquete.map((x) => {
-          x.paqute = true;
-          return x;
-        });
-      }
-
-      var listatabla = user?.estudios.concat(user?.paquete);
-      user!.table = listatabla?.filter((x) => x != null);
-      var studys = user!.table!;
-      user!.table = tabla;
-      user!.sucMedCom = user!.sucursales;
-      setValues(user!);
-      form.setFieldsValue(user!);
-
-      setLista(tabla);
-      setListaofstudyspacks(tabla);
-
-      setListSucursal(branches);
-      setListCompañia(Companies);
-      setListMedicos(medics);
-
-      studys.forEach((x) => {
-        setStudy(x.activo!, x, x.paqute!, true, user!);
-      });
-      user?.sucursales.map((x) => setSucursalesList(x.activo!, x, branches));
-      user?.compañia.map((x) => setCompañiasList(x.activo!, x, Companies));
-      user?.medicos.map((x) => setMedicosList(x.activo!, x, medics));
-
-      setListSCM(user!.sucursales!.length <= 0 ? branches! : user!.sucursales);
-      setRadioValue("branch");
-
-      setLoading(false);
-    };
-    if (id) {
-      readuser(String(id));
-    }
-  }, [
-    getById,
-    id,
-    getAllBranch,
-    getAllCompany,
-    getAllMedics,
-    getAllPack,
-    getAllStudy,
-  ]);
 
   const goBack = () => {
     searchParams.delete("mode");
@@ -402,7 +358,48 @@ const PriceListForm: FC<PriceListFormProps> = ({
     searchedColumn: "",
   });
 
-  const columns: IColumns<ISucMedComList> = [
+  const branchColumns: IColumns<ISucMedComList> = [
+    {
+      ...getDefaultColumnProps("clave", "Clave", {
+        searchState,
+        setSearchState,
+        width: "10%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      ...getDefaultColumnProps("nombre", "Nombre", {
+        searchState,
+        setSearchState,
+        width: "10%",
+        windowSize: windowWidth,
+      }),
+    },
+    {
+      key: "editar",
+      dataIndex: "id",
+      title: "Añadir",
+      align: "center",
+      width: windowWidth < resizeWidth ? 100 : "10%",
+      render: (value, item) => (
+        <Checkbox
+          name="activo"
+          checked={item.activo}
+          disabled={readonly}
+          onChange={(value) => {
+            var active = false;
+            if (value.target.checked) {
+              active = true;
+            }
+
+            setSucMedCom(active, item);
+          }}
+        />
+      ),
+    },
+  ];
+
+  const companyColumns: IColumns<ISucMedComList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
@@ -433,8 +430,6 @@ const PriceListForm: FC<PriceListFormProps> = ({
       title: "Añadir",
       align: "center",
       width: windowWidth < resizeWidth ? 100 : "10%",
-      //Aqui es lo mismo que con el estudio
-      //Pero no vinculado al setstudy
       render: (value, item) => (
         <Checkbox
           name="activo"
@@ -567,8 +562,9 @@ const PriceListForm: FC<PriceListFormProps> = ({
 
       estudiosPaquete?.forEach((x) => {
         var estudy = values.estudios!.find((y) => y.id === x.id && !y.paqute);
-
-        estudiosValidar.push(estudy!);
+        if (estudy) {
+          estudiosValidar.push(estudy!);
+        }
       });
 
       estudiosValidar?.forEach((x) => {
@@ -806,6 +802,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
           readOnly={item.precio == 0}
           disabled={readonly}
           min={0}
+          max={100}
           value={item.descuento}
           onChange={(value) => setStudydiscunt(value ?? 0, item, item.paqute!)}
         ></InputNumber>
@@ -831,26 +828,6 @@ const PriceListForm: FC<PriceListFormProps> = ({
       ),
     },
     {
-      key: "editarc",
-      dataIndex: "id",
-      title: "Precio final",
-      align: "center",
-      width: "10%",
-      render: (value, item) => (
-        <InputNumber
-          type={"number"}
-          precision={2}
-          min={0}
-          readOnly={true}
-          value={item.precioFinal}
-          disabled={readonly}
-          onChange={(value) =>
-            setStudyPricefinal(value ?? 0, item, item.paqute!)
-          }
-        ></InputNumber>
-      ),
-    },
-    {
       ...getDefaultColumnProps("precio", "Precio", {
         searchState,
         setSearchState,
@@ -869,6 +846,26 @@ const PriceListForm: FC<PriceListFormProps> = ({
             setPrice(value ?? 0);
           }}
           readOnly={true}
+        ></InputNumber>
+      ),
+    },
+    {
+      key: "editarc",
+      dataIndex: "id",
+      title: "Precio final",
+      align: "center",
+      width: "10%",
+      render: (value, item) => (
+        <InputNumber
+          type={"number"}
+          precision={2}
+          min={0}
+          readOnly={true}
+          value={item.precioFinal}
+          disabled={readonly}
+          onChange={(value) =>
+            setStudyPricefinal(value ?? 0, item, item.paqute!)
+          }
         ></InputNumber>
       ),
     },
@@ -1028,7 +1025,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
               <Table<ISucMedComList>
                 size={printing ? "small" : "large"}
                 rowKey={(record) => record.id}
-                columns={printing ? columns.slice(0, 4) : columns}
+                columns={printing ? companyColumns.slice(0, 4) : companyColumns}
                 dataSource={listCompañia}
                 scroll={{
                   x: windowWidth < resizeWidth ? "max-content" : "auto",
@@ -1040,7 +1037,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
               <Table<ISucMedComList>
                 size={printing ? "small" : "large"}
                 rowKey={(record) => record.id}
-                columns={printing ? columns.slice(0, 4) : columns}
+                columns={printing ? branchColumns.slice(0, 4) : branchColumns}
                 dataSource={listSucursal}
                 scroll={{
                   x: windowWidth < resizeWidth ? "max-content" : "auto",
@@ -1111,7 +1108,7 @@ const PriceListForm: FC<PriceListFormProps> = ({
             }}
           >
             <TabPane tab="Estudios" key="1">
-              <VirtualPriceListTable
+              <Table<IPriceListEstudioList>
                 size="small"
                 dataSource={studyPriceListData}
                 rowKey={(record) => record.id}
@@ -1120,11 +1117,18 @@ const PriceListForm: FC<PriceListFormProps> = ({
                     ? studyPriceListColumns.slice(0, 4)
                     : studyPriceListColumns
                 }
+                components={VList({
+                  height: 500,
+                })}
+                scroll={{
+                  x: "max-content",
+                  y: 500,
+                }}
                 pagination={false}
               />
             </TabPane>
             <TabPane tab="Paquetes" key="2">
-              <VirtualPriceListTable
+              <Table<IPriceListEstudioList>
                 size="small"
                 dataSource={packPriceListData}
                 rowKey={(record) => record.id}
@@ -1134,6 +1138,13 @@ const PriceListForm: FC<PriceListFormProps> = ({
                     : packPriceListColumns
                 }
                 pagination={false}
+                components={VList({
+                  height: 500,
+                })}
+                scroll={{
+                  x: "max-content",
+                  y: 500,
+                }}
               />
             </TabPane>
           </Tabs>

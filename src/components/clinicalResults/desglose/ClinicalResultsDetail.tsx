@@ -68,7 +68,6 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     studies,
     updateResults,
     cancelResults,
-    addSelectedStudy,
     removeSelectedStudy,
     observationsSelected,
     setObservationsSelected,
@@ -103,6 +102,7 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
   const loadInit = async () => {
     const cStudy = await getRequestStudyById(estudio.id!);
     setCurrentStudy(cStudy!);
+    console.log(estudioId);
 
     let captureResult = studies.find(
       (x) => x.solicitudEstudioId! == estudio.id
@@ -235,166 +235,123 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
     }
   };
 
+  console.log(currentStudy);
+
   return (
     <Fragment key={estudio.id}>
-      {currentStudy.estatusId != status.requestStudy.cancelado ? (
-        <Spin spinning={loading}>
-          <Row gutter={[24, 24]} className="study-divider">
-            <Col span={24}>
-              <StudyActions
-                currentStudy={currentStudy}
-                setEnvioManual={setEnvioManual}
-                setCheckedPrint={setCheckedPrint}
-                checkedPrint={checkedPrint}
-                exportGlucoseData={exportGlucoseData}
-                isMarked={isMarked}
-                submitResults={onSubmit}
-                tipoEstudio={"LABORATORY"}
-                isXRay={false}
-              />
-            </Col>
-          </Row>
-          <Row gutter={[24, 24]}>
-            <Col span={24}>
-              <StatusTable currentStudy={currentStudy} />
-            </Col>
-          </Row>
-          <Card className="capture-details">
-            <Form<IClinicResultCaptureForm>
-              form={form}
-              onFinish={onFinish}
-              name="dynamic_form_item"
-              disabled={
-                currentStudy.estatusId > status.requestStudy.solicitado ||
-                currentStudy.estatusId < status.requestStudy.solicitado
-              }
-            >
-              <Row>
-                <Col span={24}>
-                  <TitleColumns />
-                  <Form.List name="parametros">
-                    {(fields) => (
-                      <>
-                        {fields.map((field) => {
-                          let fieldValue = form.getFieldValue([
-                            "parametros",
-                            field.name,
-                          ]) as IClinicResultCaptureForm;
-                          let fieldResult = resultValue?.find(
-                            (x) => x.id === fieldValue.id
-                          )?.resultado as string;
-
-                          let fieldRange =
-                            parseFloat(fieldValue.valorInicial) >
-                              parseFloat(fieldResult ?? 0) ||
-                            parseFloat(fieldResult ?? 0) >
-                              parseFloat(fieldValue.valorFinal);
-
-                          let valuesByColumn = false;
-                          switch (fieldValue.tipoValorId) {
-                            case "11":
-                            case "12":
-                            case "13":
-                            case "14":
-                              valuesByColumn = true;
-                              break;
-                            default:
-                              break;
-                          }
-
-                          return (
-                            <Row
-                              key={field.key}
-                              justify="space-between"
-                              style={{
-                                textAlign: "center",
-                              }}
-                              align="middle"
-                            >
-                              {fieldValue.tipoValorId ==
-                                parameters.valueType.etiqueta ||
-                              (fieldValue.clave === "_OB_CTG" &&
-                                paciente.sexo === "M") ? (
-                                fieldValue.nombre != null ? (
-                                  <Col span={4}>
-                                    <strong>{fieldValue.nombre}</strong>
-                                  </Col>
-                                ) : (
-                                  <Col span={24}>
-                                    <br />
-                                  </Col>
-                                )
+      <Spin spinning={loading}>
+        <Row gutter={[24, 24]} className="study-divider">
+          <Col span={24}>
+            <StudyActions
+              currentStudy={currentStudy}
+              setEnvioManual={setEnvioManual}
+              setCheckedPrint={setCheckedPrint}
+              checkedPrint={checkedPrint}
+              exportGlucoseData={exportGlucoseData}
+              isMarked={isMarked}
+              submitResults={onSubmit}
+              tipoEstudio={"LABORATORY"}
+              isXRay={false}
+            />
+          </Col>
+        </Row>
+        {currentStudy.estatusId !== status.requestStudy.cancelado ? (
+          <Fragment>
+            <Row gutter={[24, 24]}>
+              <Col span={24}>
+                <StatusTable currentStudy={currentStudy} />
+              </Col>
+            </Row>
+          </Fragment>
+        ) : (
+          ""
+        )}
+        <Card className="capture-details">
+          <Form<IClinicResultCaptureForm>
+            form={form}
+            onFinish={onFinish}
+            name="dynamic_form_item"
+            disabled={
+              currentStudy.estatusId > status.requestStudy.solicitado ||
+              currentStudy.estatusId < status.requestStudy.solicitado
+            }
+          >
+            <Row>
+              <Col span={24}>
+                <TitleColumns />
+                <Form.List name="parametros">
+                  {(fields) => (
+                    <>
+                      {fields.map((field) => {
+                        let fieldValue = form.getFieldValue([
+                          "parametros",
+                          field.name,
+                        ]) as IClinicResultCaptureForm;
+                        let fieldResult = resultValue?.find(
+                          (x) => x.id === fieldValue.id
+                        )?.resultado as string;
+                        let fieldRange =
+                          parseFloat(fieldValue.valorInicial) >
+                            parseFloat(fieldResult ?? 0) ||
+                          parseFloat(fieldResult ?? 0) >
+                            parseFloat(fieldValue.valorFinal);
+                        let valuesByColumn = false;
+                        switch (fieldValue.tipoValorId) {
+                          case "11":
+                          case "12":
+                          case "13":
+                          case "14":
+                            valuesByColumn = true;
+                            break;
+                          default:
+                            break;
+                        }
+                        return (
+                          <Row
+                            key={field.key}
+                            justify="space-between"
+                            style={{
+                              textAlign: "center",
+                            }}
+                            align="middle"
+                          >
+                            {fieldValue.tipoValorId ==
+                              parameters.valueType.etiqueta ||
+                            (fieldValue.clave === "_OB_CTG" &&
+                              paciente.sexo === "M") ? (
+                              fieldValue.nombre != null ? (
+                                <Col span={4}>
+                                  <strong>{fieldValue.nombre}</strong>
+                                </Col>
                               ) : (
-                                <>
+                                <Col span={24}>
+                                  <br />
+                                </Col>
+                              )
+                            ) : (
+                              <>
+                                <Col span={4}>
+                                  <h4>{fieldValue.nombre}</h4>
+                                  <h5
+                                    style={{
+                                      color: "red",
+                                    }}
+                                  >
+                                    {fieldValue.rango
+                                      ? fieldValue.resultado
+                                      : null}
+                                  </h5>
+                                </Col>
+                                {parseInt(fieldValue.tipoValorId) <
+                                Number(parameters.valueType.dosColumnas) ? (
                                   <Col span={4}>
-                                    <h4>{fieldValue.nombre}</h4>
-                                    <h5
-                                      style={{
-                                        color: "red",
-                                      }}
-                                    >
-                                      {fieldValue.rango
-                                        ? fieldValue.resultado
-                                        : null}
-                                    </h5>
-                                  </Col>
-                                  {parseInt(fieldValue.tipoValorId) <
-                                  Number(parameters.valueType.dosColumnas) ? (
-                                    <Col span={4}>
-                                      {fieldValue.tipoValorId ==
-                                        parameters.valueType.observacion ||
-                                      fieldValue.tipoValorId ==
-                                        parameters.valueType.parrafo ||
-                                      fieldValue.tipoValorId ==
-                                        parameters.valueType.texto ? (
-                                        <>
-                                          <Form.Item
-                                            {...field}
-                                            name={[field.name, "resultado"]}
-                                            validateTrigger={[
-                                              "onChange",
-                                              "onBlur",
-                                            ]}
-                                            noStyle
-                                          >
-                                            <TextArea
-                                              placeholder="Resultado"
-                                              style={{
-                                                width: "72%",
-                                              }}
-                                              className="result-textarea"
-                                              rows={4}
-                                              bordered
-                                              allowClear
-                                              autoSize
-                                            />
-                                          </Form.Item>
-                                          <Form.Item
-                                            {...field}
-                                            name={[
-                                              field.name,
-                                              "observacionesId",
-                                            ]}
-                                            noStyle
-                                            key={uuid()}
-                                          >
-                                            <Input
-                                              style={{ display: "none" }}
-                                            />
-                                          </Form.Item>
-                                          <Button
-                                            type="primary"
-                                            onClick={() => {
-                                              openTextTypeModal(
-                                                fieldValue,
-                                                field
-                                              );
-                                            }}
-                                          >
-                                            ...
-                                          </Button>
-                                        </>
-                                      ) : (
+                                    {fieldValue.tipoValorId ==
+                                      parameters.valueType.observacion ||
+                                    fieldValue.tipoValorId ==
+                                      parameters.valueType.parrafo ||
+                                    fieldValue.tipoValorId ==
+                                      parameters.valueType.texto ? (
+                                      <>
                                         <Form.Item
                                           {...field}
                                           name={[field.name, "resultado"]}
@@ -403,241 +360,268 @@ const ClinicalResultsDetail: FC<ClinicalResultsDetailProps> = ({
                                             "onBlur",
                                           ]}
                                           noStyle
-                                          key={"resultado"}
                                         >
-                                          {fieldValue.tipoValorId ==
-                                            parameters.valueType
-                                              .opcionMultiple ||
-                                          (fieldValue.tipoValorId ==
-                                            parameters.valueType.unaColumna &&
-                                            fieldValue.clave !== "_OB_CTG") ? (
-                                            <Select
-                                              options={selectInputOptions(
-                                                fieldValue.tipoValores,
-                                                fieldValue
-                                              )}
-                                              allowClear
-                                              style={{
-                                                width: "80%",
-                                              }}
-                                            />
-                                          ) : (
-                                            <Input
-                                              placeholder="Resultado"
-                                              className={"center-input"}
-                                              style={
-                                                fieldRange && fieldResult
-                                                  ? {
-                                                      width: "80%",
-                                                      borderColor: "red",
-                                                    }
-                                                  : {
-                                                      width: "80%",
-                                                    }
-                                              }
-                                              allowClear
-                                              disabled={
-                                                !fieldValue.editable ||
-                                                currentStudy.estatusId >
-                                                  status.requestStudy
-                                                    .solicitado ||
-                                                currentStudy.estatusId <
-                                                  status.requestStudy.solicitado
-                                              }
-                                            />
-                                          )}
+                                          <TextArea
+                                            placeholder="Resultado"
+                                            style={{
+                                              width: "72%",
+                                            }}
+                                            className="result-textarea"
+                                            rows={4}
+                                            bordered
+                                            allowClear
+                                            autoSize
+                                          />
                                         </Form.Item>
-                                      )}
-                                    </Col>
-                                  ) : (
-                                    <Col span={4}></Col>
-                                  )}
-
-                                  {parseInt(fieldValue.tipoValorId) <
-                                  Number(parameters.valueType.tresColumnas) ? (
-                                    <Col span={4}>
-                                      {fieldValue.unidadNombre == null
-                                        ? "-"
-                                        : fieldValue.unidadNombre}
-                                    </Col>
-                                  ) : (
-                                    <Fragment key={uuid()}>
-                                      <Col span={4}>
-                                        <Title level={5}> Columna No.1 </Title>
-                                        {fieldValue.tipoValores!.map((x) => (
-                                          <Fragment key={uuid()}>
-                                            <Text>
-                                              {!!x.primeraColumna
-                                                ? x.primeraColumna
-                                                : "-"}
-                                            </Text>
-                                            <br />
-                                          </Fragment>
-                                        ))}
-                                      </Col>
-                                      {parseInt(fieldValue.tipoValorId) >=
-                                      13 ? (
-                                        <Col span={4}>
-                                          <Title level={5}>
-                                            {" "}
-                                            Columna No.2{" "}
-                                          </Title>
-                                          {fieldValue.tipoValores!.map((x) => (
-                                            <Fragment key={uuid()}>
-                                              <Text>{x.segundaColumna}</Text>
-                                              <br />
-                                            </Fragment>
-                                          ))}
-                                        </Col>
-                                      ) : (
-                                        ""
-                                      )}
-                                    </Fragment>
-                                  )}
-                                  {parseInt(fieldValue.tipoValorId) >= 11 ? (
-                                    <Fragment key={uuid()}>
-                                      <Col span={4}>
-                                        <Title level={5}>
-                                          {" "}
-                                          {fieldValue.tipoValorId ===
-                                          parameters.valueType.tresColumnas
-                                            ? "Columna No.2"
-                                            : fieldValue.tipoValorId ===
-                                              parameters.valueType
-                                                .cuatroColumnas
-                                            ? "Columna No.3"
-                                            : "Columna No.1"}{" "}
-                                        </Title>
-                                        {fieldValue.tipoValores!.map((x) => (
-                                          <Fragment key={uuid()}>
-                                            <Text>
-                                              {fieldValue.tipoValorId ===
-                                              parameters.valueType.tresColumnas
-                                                ? x.segundaColumna
-                                                : fieldValue.tipoValorId ===
-                                                  parameters.valueType
-                                                    .cuatroColumnas
-                                                ? x.terceraColumna
-                                                : x.primeraColumna}
-                                            </Text>
-                                            <br />
-                                          </Fragment>
-                                        ))}
-                                      </Col>
-                                      <Col span={4}>
-                                        <Title level={5}>
-                                          {" "}
-                                          {fieldValue.tipoValorId ===
-                                          parameters.valueType.tresColumnas
-                                            ? "Columna No.3"
-                                            : fieldValue.tipoValorId ===
-                                              parameters.valueType
-                                                .cuatroColumnas
-                                            ? "Columna No.4"
-                                            : "Columna No.2"}{" "}
-                                        </Title>
-                                        {fieldValue.tipoValores!.map((x) => (
-                                          <Fragment key={uuid()}>
-                                            <Text>
-                                              {fieldValue.tipoValorId ===
-                                              parameters.valueType.tresColumnas
-                                                ? x.terceraColumna
-                                                : fieldValue.tipoValorId ===
-                                                  parameters.valueType
-                                                    .cuatroColumnas
-                                                ? x.cuartaColumna
-                                                : x.segundaColumna}
-                                            </Text>
-                                            <br />
-                                          </Fragment>
-                                        ))}
-                                      </Col>
-                                      {fieldValue.tipoValorId === "14" ? (
-                                        <Col
-                                          span={
-                                            fieldValue.tipoValorId ===
-                                            parameters.valueType.cuatroColumnas
-                                              ? 3
-                                              : 4
-                                          }
+                                        <Form.Item
+                                          {...field}
+                                          name={[field.name, "observacionesId"]}
+                                          noStyle
+                                          key={uuid()}
                                         >
-                                          <Title level={5}>
-                                            {" "}
-                                            Columna No.5{" "}
-                                          </Title>
-                                          {fieldValue.tipoValores!.map((x) => (
-                                            <Fragment key={uuid()}>
-                                              <Text>{x.quintaColumna}</Text>
-                                              <br />
-                                            </Fragment>
-                                          ))}
-                                        </Col>
-                                      ) : (
-                                        ""
-                                      )}
-                                    </Fragment>
-                                  ) : (
-                                    ""
-                                  )}
-                                  {!valuesByColumn ? (
-                                    <>
-                                      <Col span={4}>
-                                        {fieldValue.valorInicial == null
-                                          ? "-"
-                                          : referenceValues(
-                                              fieldValue.tipoValorId,
-                                              fieldValue.valorInicial,
-                                              fieldValue.valorFinal
+                                          <Input style={{ display: "none" }} />
+                                        </Form.Item>
+                                        <Button
+                                          type="primary"
+                                          onClick={() => {
+                                            openTextTypeModal(
+                                              fieldValue,
+                                              field
+                                            );
+                                          }}
+                                        >
+                                          ...
+                                        </Button>
+                                      </>
+                                    ) : (
+                                      <Form.Item
+                                        {...field}
+                                        name={[field.name, "resultado"]}
+                                        validateTrigger={["onChange", "onBlur"]}
+                                        noStyle
+                                        key={"resultado"}
+                                      >
+                                        {fieldValue.tipoValorId ==
+                                          parameters.valueType.opcionMultiple ||
+                                        (fieldValue.tipoValorId ==
+                                          parameters.valueType.unaColumna &&
+                                          fieldValue.clave !== "_OB_CTG") ? (
+                                          <Select
+                                            options={selectInputOptions(
+                                              fieldValue.tipoValores,
+                                              fieldValue
                                             )}
-                                      </Col>
-                                      <Col span={4}>
-                                        {fieldValue.ultimoResultado == null &&
-                                        fieldValue.ultimaSolicitud == null ? (
-                                          "-"
+                                            allowClear
+                                            style={{
+                                              width: "80%",
+                                            }}
+                                          />
                                         ) : (
-                                          <Tooltip
-                                            title={
-                                              <>
-                                                <Text>
-                                                  {fieldValue.ultimoResultado} -{" "}
-                                                  <Link
-                                                    onClick={() => {
-                                                      navigate(
-                                                        `/clinicResultsDetails/${fieldValue.ultimoExpedienteId}/${fieldValue.ultimaSolicitudId}`
-                                                      );
-                                                    }}
-                                                  >
-                                                    {fieldValue.ultimaSolicitud}
-                                                  </Link>
-                                                </Text>
-                                              </>
+                                          <Input
+                                            placeholder="Resultado"
+                                            className={"center-input"}
+                                            style={
+                                              fieldRange && fieldResult
+                                                ? {
+                                                    width: "80%",
+                                                    borderColor: "red",
+                                                  }
+                                                : {
+                                                    width: "80%",
+                                                  }
                                             }
-                                            color="#ffffff"
-                                          >
-                                            <EyeOutlined
-                                              style={{ cursor: "pointer" }}
-                                            />
-                                          </Tooltip>
+                                            allowClear
+                                            disabled={
+                                              !fieldValue.editable ||
+                                              currentStudy.estatusId >
+                                                status.requestStudy
+                                                  .solicitado ||
+                                              currentStudy.estatusId <
+                                                status.requestStudy.solicitado
+                                            }
+                                          />
                                         )}
+                                      </Form.Item>
+                                    )}
+                                  </Col>
+                                ) : (
+                                  <Col span={4}></Col>
+                                )}
+                                {parseInt(fieldValue.tipoValorId) <
+                                Number(parameters.valueType.tresColumnas) ? (
+                                  <Col span={4}>
+                                    {fieldValue.unidadNombre == null
+                                      ? "-"
+                                      : fieldValue.unidadNombre}
+                                  </Col>
+                                ) : (
+                                  <Fragment key={uuid()}>
+                                    <Col span={4}>
+                                      <Title level={5}> Columna No.1 </Title>
+                                      {fieldValue.tipoValores!.map((x) => (
+                                        <Fragment key={uuid()}>
+                                          <Text>
+                                            {!!x.primeraColumna
+                                              ? x.primeraColumna
+                                              : "-"}
+                                          </Text>
+                                          <br />
+                                        </Fragment>
+                                      ))}
+                                    </Col>
+                                    {parseInt(fieldValue.tipoValorId) >= 13 ? (
+                                      <Col span={4}>
+                                        <Title level={5}> Columna No.2 </Title>
+                                        {fieldValue.tipoValores!.map((x) => (
+                                          <Fragment key={uuid()}>
+                                            <Text>{x.segundaColumna}</Text>
+                                            <br />
+                                          </Fragment>
+                                        ))}
                                       </Col>
-                                    </>
-                                  ) : (
-                                    ""
-                                  )}
-                                </>
-                              )}
-                            </Row>
-                          );
-                        })}
-                      </>
-                    )}
-                  </Form.List>
-                </Col>
-              </Row>
-            </Form>
-          </Card>
-        </Spin>
-      ) : null}
+                                    ) : (
+                                      ""
+                                    )}
+                                  </Fragment>
+                                )}
+                                {parseInt(fieldValue.tipoValorId) >= 11 ? (
+                                  <Fragment key={uuid()}>
+                                    <Col span={4}>
+                                      <Title level={5}>
+                                        {" "}
+                                        {fieldValue.tipoValorId ===
+                                        parameters.valueType.tresColumnas
+                                          ? "Columna No.2"
+                                          : fieldValue.tipoValorId ===
+                                            parameters.valueType.cuatroColumnas
+                                          ? "Columna No.3"
+                                          : "Columna No.1"}{" "}
+                                      </Title>
+                                      {fieldValue.tipoValores!.map((x) => (
+                                        <Fragment key={uuid()}>
+                                          <Text>
+                                            {fieldValue.tipoValorId ===
+                                            parameters.valueType.tresColumnas
+                                              ? x.segundaColumna
+                                              : fieldValue.tipoValorId ===
+                                                parameters.valueType
+                                                  .cuatroColumnas
+                                              ? x.terceraColumna
+                                              : x.primeraColumna}
+                                          </Text>
+                                          <br />
+                                        </Fragment>
+                                      ))}
+                                    </Col>
+                                    <Col span={4}>
+                                      <Title level={5}>
+                                        {" "}
+                                        {fieldValue.tipoValorId ===
+                                        parameters.valueType.tresColumnas
+                                          ? "Columna No.3"
+                                          : fieldValue.tipoValorId ===
+                                            parameters.valueType.cuatroColumnas
+                                          ? "Columna No.4"
+                                          : "Columna No.2"}{" "}
+                                      </Title>
+                                      {fieldValue.tipoValores!.map((x) => (
+                                        <Fragment key={uuid()}>
+                                          <Text>
+                                            {fieldValue.tipoValorId ===
+                                            parameters.valueType.tresColumnas
+                                              ? x.terceraColumna
+                                              : fieldValue.tipoValorId ===
+                                                parameters.valueType
+                                                  .cuatroColumnas
+                                              ? x.cuartaColumna
+                                              : x.segundaColumna}
+                                          </Text>
+                                          <br />
+                                        </Fragment>
+                                      ))}
+                                    </Col>
+                                    {fieldValue.tipoValorId === "14" ? (
+                                      <Col
+                                        span={
+                                          fieldValue.tipoValorId ===
+                                          parameters.valueType.cuatroColumnas
+                                            ? 3
+                                            : 4
+                                        }
+                                      >
+                                        <Title level={5}> Columna No.5 </Title>
+                                        {fieldValue.tipoValores!.map((x) => (
+                                          <Fragment key={uuid()}>
+                                            <Text>{x.quintaColumna}</Text>
+                                            <br />
+                                          </Fragment>
+                                        ))}
+                                      </Col>
+                                    ) : (
+                                      ""
+                                    )}
+                                  </Fragment>
+                                ) : (
+                                  ""
+                                )}
+                                {!valuesByColumn ? (
+                                  <>
+                                    <Col span={4}>
+                                      {fieldValue.valorInicial == null
+                                        ? "-"
+                                        : referenceValues(
+                                            fieldValue.tipoValorId,
+                                            fieldValue.valorInicial,
+                                            fieldValue.valorFinal
+                                          )}
+                                    </Col>
+                                    <Col span={4}>
+                                      {fieldValue.ultimoResultado == null &&
+                                      fieldValue.ultimaSolicitud == null ? (
+                                        "-"
+                                      ) : (
+                                        <Tooltip
+                                          title={
+                                            <>
+                                              <Text>
+                                                {fieldValue.ultimoResultado} -{" "}
+                                                <Link
+                                                  onClick={() => {
+                                                    navigate(
+                                                      `/clinicResultsDetails/${fieldValue.ultimoExpedienteId}/${fieldValue.ultimaSolicitudId}`
+                                                    );
+                                                  }}
+                                                >
+                                                  {fieldValue.ultimaSolicitud}
+                                                </Link>
+                                              </Text>
+                                            </>
+                                          }
+                                          color="#ffffff"
+                                        >
+                                          <EyeOutlined
+                                            style={{ cursor: "pointer" }}
+                                          />
+                                        </Tooltip>
+                                      )}
+                                    </Col>
+                                  </>
+                                ) : (
+                                  ""
+                                )}
+                              </>
+                            )}
+                          </Row>
+                        );
+                      })}
+                    </>
+                  )}
+                </Form.List>
+              </Col>
+            </Row>
+          </Form>
+        </Card>
+      </Spin>
     </Fragment>
   );
 };
