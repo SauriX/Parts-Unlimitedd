@@ -19,7 +19,7 @@ const Relaseresult = () => {
 
   const handleDownload = async () => {
     setLoading(true);
-    if (!activeTab) {
+    if (activeTab) {
       await exportList(generalFilter);
     } else {
       await exportValidationList(generalFilter);
@@ -29,7 +29,7 @@ const Relaseresult = () => {
 
   return (
     <Fragment>
-      {!activeTab ? (
+      {activeTab ? (
         <Fragment>
           <RelaseResultHeader handleList={handleDownload} />
           <Divider className="header-divider" />
