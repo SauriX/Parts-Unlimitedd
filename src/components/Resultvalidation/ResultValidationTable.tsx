@@ -500,21 +500,25 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                     <Row gutter={8}>
                       <Col span={12}>
                         <SelectInput
+                         form={form}
                           formProps={{
                             name: "departamento",
                             label: "Departamento",
                             noStyle: true,
                           }}
+                          multiple
                           options={departmentOptions}
                         />
                       </Col>
                       <Col span={12}>
                         <SelectInput
+                         form={form}
                           formProps={{
                             name: "area",
                             label: "Área",
                             noStyle: true,
                           }}
+                          multiple
                           options={areaOptions}
                         />
                       </Col>
