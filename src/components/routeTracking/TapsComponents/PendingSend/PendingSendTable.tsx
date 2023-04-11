@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
 import { v4 as uuid } from "uuid";
+import { studyStatus } from "../../../../app/util/catalogs";
 
 const PendingSendTable = () => {
   const { routeTrackingStore } = useStore();
@@ -91,7 +92,9 @@ const PendingSendTable = () => {
         setSearchState,
         width: "10%",
       }),
-      render: (value, route) => (value === 2 ? "Toma de Muestra" : "En ruta"),
+      render: (value) => {
+        return studyStatus(value);
+      },
     },
     {
       ...getDefaultColumnProps("entrega", "Fecha de entrega", {

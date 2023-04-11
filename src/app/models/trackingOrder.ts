@@ -1,7 +1,8 @@
 import { uniqueId } from "lodash";
 import moment from "moment";
+import { ITagTrackingOrder } from "./routeTracking";
 
-export interface IStudyTrackList {
+export interface ITagRouteList {
   id?: string;
   claveEtiqueta: string;
   recipiente: string;
@@ -28,47 +29,39 @@ export interface IRequestStudyOrder {
   estatusId: number;
 }
 
-export interface ITrackingOrderList {
+export interface IStudyTrackinOrder {
   id?: number;
-  clave: string;
-  estudio: string;
+  etiquetaId: number;
+  solicitudId?: string;
   solicitud: string;
-  nombrePaciente: string;
-  escaneado?: boolean;
-  temperatura: number;
-  solicitudId: string;
-  estudioId: number;
-  expedienteId: string;
-  isExtra?: boolean;
+  claveEtiqueta: string;
+  recipiente: string;
+  cantidad: number;
+  estudios: string;
+  claveRuta: string;
+  estatus: number;
+  escaneo?: boolean;
+  extra?: boolean;
 }
 
-export interface ITrackingOrderForm {
+export interface IRouteTrackingForm {
   id?: string;
   origen: string;
   origenId?: string;
   destino: string;
   destinoId: string;
-  maquiladorId: number;
   rutaId: string;
-  ruta: string;
-  muestraId: string;
+  muestra: string;
   escaneo: boolean;
   temperatura: number;
   activo: boolean;
   clave: string;
-  isInRute: boolean;
-  estudiosAgrupados?: IStudyTrackList[];
-  estudios: ITrackingOrderList[];
-  horaDeRecoleccion: number | undefined;
-  fecha: moment.Moment;
-  solicitudId: string;
-  claveEstudio: string;
-  estudio: string;
-  pacienteId: string;
-  escaneado: boolean;
+  diaRecoleccion: moment.Moment;
+  estudios: IStudyTrackinOrder[];
+  etiquetas: ITagTrackingOrder[];
 }
 
-export class TrackingOrderListValues implements IStudyTrackList {
+export class TrackingOrderListValues implements ITagRouteList {
   claveEtiqueta = "";
   recipiente = "";
   cantidad = 0;
@@ -78,33 +71,27 @@ export class TrackingOrderListValues implements IStudyTrackList {
   estatus = "";
   escaneo = false;
 
-  constructor(init?: IStudyTrackList) {
+  constructor(init?: ITagRouteList) {
     Object.assign(this, init);
   }
 }
-export class TrackingOrderFormValues implements ITrackingOrderForm {
-  fecha = moment();
+export class TrackingOrderFormValues implements IRouteTrackingForm {
   rutaId = "";
-  ruta = "";
   destino = "";
   destinoId = "";
   origenId = "";
   origen = "";
-  muestraId = "";
-  solicitudId = "";
+  muestra = "";
   escaneo = false;
   temperatura = 0;
-  claveEstudio = "";
-  estudio = "";
-  pacienteId = "";
   escaneado = false;
-  estudios: ITrackingOrderList[] = [];
+  diaRecoleccion = moment().utcOffset(0, true);
+  estudios: IStudyTrackinOrder[] = [];
+  etiquetas: ITagTrackingOrder[] = [];
   activo = true;
-  maquiladorId = 0;
-  horaDeRecoleccion = 0;
   clave = "";
-  isInRute = false;
-  constructor(init?: ITrackingOrderForm) {
+
+  constructor(init?: IRouteTrackingForm) {
     Object.assign(this, init);
   }
 }

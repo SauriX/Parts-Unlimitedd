@@ -1,6 +1,10 @@
 import { IDias } from "../models/route";
 import { IOptions, IOptionsCatalog, IOptionsReport } from "../models/shared";
 
+interface StatusMap {
+  [key: number]: string;
+}
+
 export const catalogs: IOptionsCatalog[] = [
   { value: "area", label: "Áreas", type: "area" },
   { value: "bank", label: "Bancos", type: "normal" },
@@ -229,11 +233,26 @@ export const daysOfWeek: IDias[] = [
   { id: 7, dia: "D" },
 ];
 export type pickerType =
-| "time"
-| "date"
-| "week"
-| "month"
-| "quarter"
-| "year"
-| undefined;
+  | "time"
+  | "date"
+  | "week"
+  | "month"
+  | "quarter"
+  | "year"
+  | undefined;
 
+const statusMap: StatusMap = {
+  1: "Pendiente",
+  2: "Toma de muestra",
+  3: "Solicitado",
+  4: "Capturado",
+  5: "Validado",
+  6: "Liberado",
+  7: "Enviado",
+  8: "En ruta",
+  9: "Cancelado",
+};
+
+export const studyStatus = (status: number) => {
+  return statusMap[status] || "";
+};

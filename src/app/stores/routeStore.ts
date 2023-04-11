@@ -18,6 +18,7 @@ export default class RouteStore {
   routes: IRouteList[] = [];
   foundRoutes: IRouteForm[] = [];
   studies: IRouteEstudioList[] = [];
+  loadingRoutes: boolean = false
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -48,13 +49,17 @@ export default class RouteStore {
       return false;
     }
   };
+
   getAll = async (search: string) => {
     try {
+      this.loadingRoutes = true
       const routes = await Route.getAll(search);
       this.routes = routes;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       this.routes = [];
+    } finally {
+      this.loadingRoutes = false
     }
   };
 
@@ -91,6 +96,23 @@ export default class RouteStore {
       } else {
         alerts.warning(getErrors(error));
       }
+    }
+  };
+
+  getByOriginDestination = async (destination: string, origin: string) => {
+    try {
+      this.loadingRoutes = true
+      const foundRoutes = await Route.getByOriginDestination(
+        destination,
+        origin
+      );
+      this.foundRoutes = foundRoutes;
+      return foundRoutes;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      this.foundRoutes = [];
+    } finally {
+      this.loadingRoutes = false
     }
   };
 

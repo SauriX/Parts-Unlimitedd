@@ -23,11 +23,13 @@ export interface IRouteTrackingList {
 export interface ITagTrackingOrder{
   id: number;
   claveEtiqueta: string;
+  claveRuta: string;
   recipiente: string;
   cantidad: number;
   estudios: string;
   solicitud: string;
-  estatus: string;
+  solicitudId: string;
+  estatus: number;
   escaneo: boolean;
 }
 

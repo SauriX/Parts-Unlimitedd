@@ -1,28 +1,73 @@
 import { Switch, Table } from "antd";
 import { observer } from "mobx-react-lite";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import {
-    defaultPaginationProperties,
+  defaultPaginationProperties,
   getDefaultColumnProps,
   IColumns,
   ISearch,
 } from "../../../app/common/table/utils";
 import { ITagTrackingOrder } from "../../../app/models/routeTracking";
-import { IStudyTrackList } from "../../../app/models/trackingOrder";
+import {
+  IStudyTrackinOrder,
+  ITagRouteList,
+} from "../../../app/models/trackingOrder";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
+import { studyStatus } from "../../../app/util/catalogs";
+import { useStore } from "../../../app/stores/store";
 
 type TrackingOrderTableProps = {
   id?: string;
-  loading: boolean;
   data: ITagTrackingOrder[];
 };
 
-const RouteTrackingCreateTable = ({ id, data, loading }: TrackingOrderTableProps) => {
+const RouteTrackingCreateTable = ({ id, data }: TrackingOrderTableProps) => {
+  const { routeTrackingStore } = useStore();
+  const { routeStudies, scan, setScan } = routeTrackingStore;
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
   const { width: windowWidth } = useWindowDimensions();
+  const [checked, setChecked] = useState({id: 0, checked: false});
+
+  useEffect(() => {
+    if (scan) {
+      setChecked({id: 0, checked: false});
+    }
+  }, [scan]);
+
+  const onChecked = (checked: boolean, record: ITagTrackingOrder) => {
+    record.escaneo = checked;
+    let study = getStudyTrackingOrder(record);
+
+    if (record.escaneo) {
+      routeStudies.push(study);
+    } else {
+      routeStudies.splice(routeStudies.indexOf(study), 1);
+    }
+
+    setScan(false);
+    setChecked({id: record.id, checked: checked});
+
+    return record;
+  };
+
+  const getStudyTrackingOrder = (record: ITagTrackingOrder) => {
+    const studyTrackingOrder: IStudyTrackinOrder = {
+      etiquetaId: record.id,
+      solicitudId: record.solicitudId,
+      claveEtiqueta: record.claveEtiqueta,
+      claveRuta: record.claveRuta,
+      cantidad: record.cantidad,
+      estudios: record.estudios,
+      solicitud: record.solicitud,
+      recipiente: record.recipiente,
+      estatus: record.estatus,
+      escaneo: record.escaneo,
+    };
+    return studyTrackingOrder;
+  };
 
   const columns: IColumns<ITagTrackingOrder> = [
     {
@@ -61,7 +106,7 @@ const RouteTrackingCreateTable = ({ id, data, loading }: TrackingOrderTableProps
       }),
     },
     {
-      ...getDefaultColumnProps("ruta", "Clave ruta", {
+      ...getDefaultColumnProps("claveRuta", "Clave ruta", {
         searchState,
         setSearchState,
         width: "10%",
@@ -73,6 +118,9 @@ const RouteTrackingCreateTable = ({ id, data, loading }: TrackingOrderTableProps
         setSearchState,
         width: "10%",
       }),
+      render: (value) => {
+        return studyStatus(value);
+      },
     },
     {
       ...getDefaultColumnProps("escaneo", "Escaneo", {
@@ -80,13 +128,11 @@ const RouteTrackingCreateTable = ({ id, data, loading }: TrackingOrderTableProps
         setSearchState,
         width: "10%",
       }),
-      render: (value, record) => {
+      render: (value: boolean, record) => {
         return (
           <Switch
-            checked={value}
-            onChange={(checked) => {
-              record.escaneo = checked;
-            }}
+            checked={checked.id === record.id ? checked.checked : value}
+            onChange={(checked) => onChecked(checked, record)}
           />
         );
       },
@@ -96,7 +142,6 @@ const RouteTrackingCreateTable = ({ id, data, loading }: TrackingOrderTableProps
   return (
     <Fragment>
       <Table<ITagTrackingOrder>
-        loading={loading}
         size="small"
         rowKey={(record) => record.id!}
         columns={columns}

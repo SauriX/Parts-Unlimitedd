@@ -34,7 +34,7 @@ type Props = {
 const TagTracking = ({ getResult, selectedTags, requestCode }: Props) => {
   const { routeTrackingStore } = useStore();
   const { closeModal } = store.modalStore;
-  const { setTagsSelected, tags, getFindTags, getAllTags, loadingRoutes } =
+  const { setTagsSelected, tags, getAllTags, loadingRoutes } =
     routeTrackingStore;
 
   const [form] = Form.useForm<any>();
@@ -48,7 +48,7 @@ const TagTracking = ({ getResult, selectedTags, requestCode }: Props) => {
 
   useEffect(() => {
     const readTags = async () => {
-      await getFindTags(requestCode);
+      await getAllTags(requestCode);
     };
 
     readTags();

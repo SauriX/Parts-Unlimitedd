@@ -48,6 +48,7 @@ import TimeInput from "../../../app/common/form/proposal/TimeInput";
 import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import { profile } from "console";
 import moment from "moment";
+import { toJS } from "mobx";
 
 const { Search } = Input;
 const { Title } = Typography;
@@ -179,8 +180,6 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
           }
         }
 
-        console.log(route)
-
         route.horaDeRecoleccion = moment(route.horaDeRecoleccion);
       }
 
@@ -202,6 +201,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     const route = { ...values, ...newValues };
     route.estudio = studyList.filter((x) => x.activo === true);
     route.dias = selectedTags;
+    route.horaDeRecoleccion = moment(newValues.horaDeRecoleccion).utcOffset(0, true).toDate();
 
     const parent = treeData.find((x) =>
       x.children.map((x) => x.value).includes(newValues.destinoId!)

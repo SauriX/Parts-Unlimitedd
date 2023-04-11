@@ -11,7 +11,7 @@ import TextInput from "../../../app/common/form/proposal/TextInput";
 import { ITagTrackingOrder } from "../../../app/models/routeTracking";
 import { IOptions } from "../../../app/models/shared";
 import {
-  ITrackingOrderForm,
+  IRouteTrackingForm,
   TrackingOrderFormValues,
 } from "../../../app/models/trackingOrder";
 import { useStore } from "../../../app/stores/store";
@@ -33,9 +33,10 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
     routeStore,
     routeTrackingStore,
   } = useStore();
-  const { create, update, getById } = trackingOrderStore;
-  const { getFindTags, tagsSelected, setTagsSelected } = routeTrackingStore;
-  const { find, foundRoutes } = routeStore;
+  const { update, getById } = trackingOrderStore;
+  const { getFindTags, tagsSelected, routeStudies, createTrackingOrder, scan, setScan } =
+    routeTrackingStore;
+  const { getByOriginDestination, loadingRoutes } = routeStore;
   const { profile } = profileStore;
   const {
     getBranchOptions,
@@ -45,19 +46,20 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
   } = optionStore;
 
   const navigate = useNavigate();
-  const [form] = Form.useForm<ITrackingOrderForm>();
+  const [form] = Form.useForm<IRouteTrackingForm>();
   const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [readOnly, setReadOnly] = useState(
     searchParams.get("mode") === "readonly"
   );
 
-  const [values, setValues] = useState<ITrackingOrderForm>(
+  const [values, setValues] = useState<IRouteTrackingForm>(
     new TrackingOrderFormValues()
   );
   const [tagData, setTagData] = useState<ITagTrackingOrder[]>([]);
   const [routeOptions, setRouteOptions] = useState<IOptions[]>([]);
   const [originBranch, setOriginBranch] = useState<string>("");
+  const [destination, setDestination] = useState<string>("");
 
   useEffect(() => {
     getBranchOptions();
@@ -89,6 +91,10 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
     }
   }, [profile]);
 
+  useEffect(() => {
+    form.setFieldValue("escaneo", scan);
+  }, [scan]);
+
   const treeData = [
     {
       title: "Sucursales",
@@ -118,29 +124,49 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
     navigate("/segRutas");
   };
 
-  const getRoutes = (value: string) => {
-    const routes = foundRoutes.filter(
-      (x) => x.destinoId === value || x.maquiladorId === value
-    );
+  const getRoutes = async (value: string, dateForm?: moment.Moment | null) => {
+    setDestination(value);
 
-    const routesByDate = routes.filter((x) => {
-      const date = moment(x.horaDeRecoleccion);
-      const today = moment().hour();
+    if (value === "") return alerts.warning(messages.destinationNotFound);
+    if (originBranch === "") return alerts.warning(messages.originNotFound);
 
-      return date.isSameOrAfter(today);
-    });
+    const routes = await getByOriginDestination(value, originBranch);
 
-    const options = routesByDate.map((x) => ({
-      label: x.nombre,
-      value: x.id,
-    }));
+    if (routes) {
+      const routesByDate = routes.filter((x) => {
+        const date = moment(x.horaDeRecoleccion);
+        const dateHour = date.hour();
+        const dateMinute = date.minute();
 
-    setRouteOptions(options);
+        const today = moment(dateForm);
+        const todayHour = today.hour();
+        const todayMinute = today.minute();
+
+        return (
+          todayHour < dateHour ||
+          (todayHour === dateHour && todayMinute <= dateMinute)
+        );
+      });
+
+      const options = routesByDate.map((x) => ({
+        label: x.nombre,
+        value: x.id,
+      }));
+
+      if(options.length === 0) return form.setFieldValue("rutaId", []);
+
+      setRouteOptions(options);
+    }
+  };
+
+  const onDateChange = async (value: moment.Moment | null) => {
+    getRoutes(destination, value);
   };
 
   const findTagsByRoute = async (routeId: string) => {
     setLoading(true);
-    const tags = await getFindTags(routeId);
+    const route = routeId === undefined ? "" : routeId;
+    const tags = await getFindTags(route);
     if (tags) {
       setTagData(tags);
     }
@@ -164,15 +190,26 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
     }
   };
 
-  const onFinish = async (newOrder: ITrackingOrderForm) => {
+  const onScan = (value: boolean) => {
+    setTagData((prev) => prev.map((x) => ({ ...x, escaneo: value })));
+    setScan(value);
+  };
+
+  const onFinish = async (newOrder: IRouteTrackingForm) => {
     setLoading(true);
+    newOrder.estudios = routeStudies;
+    newOrder.destino = destination.toString();
+    newOrder.origenId = originBranch;
+    newOrder.diaRecoleccion = moment(newOrder.diaRecoleccion).utcOffset(
+      0,
+      true
+    );
+
     let success = false;
     if (!id) {
-      success = await create(newOrder);
-      alerts.success(messages.created);
+      success = await createTrackingOrder(newOrder);
     } else {
       success = await update(newOrder);
-      alerts.success(messages.updated);
     }
     setLoading(false);
     if (success) {
@@ -185,8 +222,20 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
       <Row gutter={[4, 16]}>
         {!readOnly && (
           <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
-            <Button>Cancelar</Button>
-            <Button type="primary" htmlType="submit">
+            <Button
+              onClick={() => {
+                navigate(`/segRutas`);
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              onClick={() => {
+                form.submit();
+              }}
+            >
               Confirmar recolección
             </Button>
           </Col>
@@ -206,7 +255,7 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
           </Col>
         )}
         <Col md={24} sm={12}>
-          <Form<ITrackingOrderForm>
+          <Form<IRouteTrackingForm>
             {...formItemLayout}
             form={form}
             name="trackingOrder"
@@ -222,7 +271,7 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
                     dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                     treeData={treeData}
                     treeDefaultExpandAll
-                    onChange={getRoutes}
+                    onChange={(value) => getRoutes(value.toString())}
                     allowClear
                   />
                 </Form.Item>
@@ -233,21 +282,21 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
                     name: "origenId",
                     label: "Origen",
                   }}
-                  required
+                  onChange={(value) => setOriginBranch(value)}
                   options={BranchOptions}
                 />
               </Col>
               <Col md={6} sm={12}>
-                <Form.Item label="Fecha recolección" required>
+                <Form.Item label="Fecha recolección" name="diaRecoleccion">
                   <DatePicker
                     style={{ width: "100%" }}
                     defaultValue={moment()}
-                    name="fecha"
                     format="DD/MM/YYYY HH:mm"
                     minuteStep={1}
                     showTime
                     allowClear
                     disabledDate={(current) => current.isBefore(moment())}
+                    onChange={(value) => onDateChange(value)}
                   />
                 </Form.Item>
               </Col>
@@ -258,6 +307,7 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
                     label: "Ruta",
                   }}
                   onChange={findTagsByRoute}
+                  loading={loadingRoutes}
                   options={routeOptions ?? []}
                   readonly={readOnly}
                 />
@@ -265,7 +315,7 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
               <Col md={6} sm={12} style={{ textAlign: "left" }}>
                 <TextInput
                   formProps={{
-                    name: "muestraId",
+                    name: "muestra",
                     label: "Muestra",
                   }}
                   max={100}
@@ -281,16 +331,16 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
                   }}
                   type="number"
                   suffix="°C"
-                  required
                   readonly={false}
                   controls={false}
                 />
               </Col>
               <Col md={6} sm={12}>
                 <SwitchInput
-                  name="escaneoCodigoBarras"
+                  name="escaneo"
                   label="Escaneo"
                   readonly={readOnly}
+                  onChange={(value) => onScan(value)}
                 />
               </Col>
               <Col md={6} sm={12}>
@@ -305,7 +355,7 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
           </Form>
         </Col>
         <Col md={24} sm={12}>
-          <RouteTrackingCreateTable data={tagData} loading={loading} />
+          <RouteTrackingCreateTable data={tagData} />
         </Col>
       </Row>
     </Spin>

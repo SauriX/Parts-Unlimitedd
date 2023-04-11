@@ -12,9 +12,10 @@ import {
   SearchTracking,
   TrackingFormValues,
 } from "../models/routeTracking";
-import RouteTracking from "../api/routetracking";
 import responses from "../util/responses";
 import { IRecibe, ISearchPending, searchValues } from "../models/pendingRecive";
+import { IRouteTrackingForm, IStudyTrackinOrder } from "../models/trackingOrder";
+import RouteTracking from "../api/routeTracking";
 
 export default class RouteTrackingStore {
   constructor() {
@@ -30,11 +31,18 @@ export default class RouteTrackingStore {
   searchPending?: ISearchPending = new searchValues();
   filterSend: SearchTracking = new TrackingFormValues();
   loadingRoutes: boolean = false;
+  scan: boolean = false;
 
+  routeTags: ITagTrackingOrder[] = [];
+  routeStudies: IStudyTrackinOrder[] = [];
   tagsSelected: ITagTrackingOrder[] = [];
 
   setTagsSelected = (tagsSelected: ITagTrackingOrder[]) => {
     this.tagsSelected = tagsSelected;
+  };
+
+  setScan = (scan: boolean) => {
+    this.scan = scan;
   };
 
   clearScopes = () => {
@@ -52,7 +60,7 @@ export default class RouteTrackingStore {
   setFilterSend = (filterSend: SearchTracking) => {
     this.filterSend = filterSend;
   };
-  
+
   access = async () => {
     try {
       const scopes = await Sampling.access();
@@ -67,10 +75,7 @@ export default class RouteTrackingStore {
     try {
       this.loadingRoutes = true;
       const study = await RouteTracking.getAll(search);
-      let orderStudy = study.sort((x, y) => {
-        return x.seguimiento.localeCompare(y.seguimiento);
-      });
-      this.studyTags = orderStudy;
+      this.studyTags = study;
       return study;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -105,10 +110,10 @@ export default class RouteTrackingStore {
     }
   };
 
-  getFindTags = async (search: string) => {
+  getFindTags = async (routeId: string) => {
     try {
       this.loadingRoutes = true;
-      const tags = await RouteTracking.getFindTags(search);
+      const tags = await RouteTracking.getFindTags(routeId);
       this.tags = tags;
       return tags;
     } catch (error) {
@@ -116,6 +121,31 @@ export default class RouteTrackingStore {
       return [];
     } finally {
       this.loadingRoutes = false;
+    }
+  };
+
+  getRequestTags = async (search: string) => {
+    try {
+      this.loadingRoutes = true;
+      const tags = await RouteTracking.getRequestTags(search);
+      this.tags = tags;
+      return tags;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      return [];
+    } finally {
+      this.loadingRoutes = false;
+    }
+  };
+
+  createTrackingOrder = async (order: IRouteTrackingForm) => {
+    try {
+      await RouteTracking.createTrackingOrder(order);
+      alerts.success(messages.created);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
     }
   };
 
@@ -130,6 +160,7 @@ export default class RouteTrackingStore {
       }
     }
   };
+
   update = async (study: IUpdate[]) => {
     try {
       await RouteTracking.update(study);
@@ -140,6 +171,7 @@ export default class RouteTrackingStore {
       return false;
     }
   };
+
   exportForm = async (id: string) => {
     try {
       await RouteTracking.exportForm(id);
@@ -151,6 +183,7 @@ export default class RouteTrackingStore {
       }
     }
   };
+
   printTicket = async (recordId: string, requestId: string) => {
     try {
       await Sampling.getOrderPdf(recordId, requestId);

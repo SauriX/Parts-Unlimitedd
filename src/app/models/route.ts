@@ -18,7 +18,7 @@ export interface IRouteForm {
   maquiladorId?: string | number;
   paqueteriaId: number;
   comentarios: string;
-  horaDeRecoleccion: moment.Moment;
+  horaDeRecoleccion: moment.Moment | Date;
   tiempoDeEntrega: number;
   tipoTiempo?: number;
   activo: boolean;

@@ -8,9 +8,9 @@ import { makeAutoObservable } from "mobx";
 import { getParsedCommandLineOfConfigFile } from "typescript";
 import TrackingOrder from "../api/trackingOrder";
 import {
-  ITrackingOrderForm,
-  ITrackingOrderList,
-  IStudyTrackList,
+  IRouteTrackingForm,
+  IStudyTrackinOrder,
+  ITagRouteList,
 } from "../models/trackingOrder";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -26,14 +26,14 @@ export default class TrackingOrdertStore {
   }
 
   scopes?: IScopes;
-  trackingOrder: IStudyTrackList[] = [];
-  trackingOrderStudies: ITrackingOrderList[] = [];
+  trackingOrder: ITagRouteList[] = [];
+  trackingOrderStudies: IStudyTrackinOrder[] = [];
 
-  estudios: IStudyTrackList[] = [];
+  estudios: ITagRouteList[] = [];
   temperatura: number = 0;
-  TranckingOrderSend: ITrackingOrderForm = new TrackingOrderFormValues();
+  TranckingOrderSend: IRouteTrackingForm = new TrackingOrderFormValues();
 
-  setSendData = (tranckingOrderSend: ITrackingOrderForm) => {
+  setSendData = (tranckingOrderSend: IRouteTrackingForm) => {
     this.TranckingOrderSend = tranckingOrderSend;
   };
 
@@ -137,7 +137,7 @@ export default class TrackingOrdertStore {
     try {
       const trackingOrder = await TrackingOrder.getById(id);
       this.OrderId = trackingOrder.id!;
-      this.trackingOrder = trackingOrder.estudiosAgrupados!.map((x: any) => {
+      this.trackingOrder = trackingOrder.etiquetas!.map((x: any) => {
         let a = new TrackingOrderListValues(x);
         a.escaneo = true;
         return a;
@@ -151,7 +151,7 @@ export default class TrackingOrdertStore {
   OrderCreated = "";
   OrderId = "";
 
-  create = async (trackingOrder: ITrackingOrderForm) => {
+  create = async (trackingOrder: IRouteTrackingForm) => {
     try {
       const orderCreated = await TrackingOrder.create(trackingOrder);
       this.OrderCreated = orderCreated.clave;
@@ -164,7 +164,7 @@ export default class TrackingOrdertStore {
     }
   };
 
-  update = async (trackingOrder: ITrackingOrderForm) => {
+  update = async (trackingOrder: IRouteTrackingForm) => {
     try {
       await TrackingOrder.update(trackingOrder);
       alerts.success(messages.updated);
