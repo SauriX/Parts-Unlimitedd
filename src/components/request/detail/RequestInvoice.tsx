@@ -11,7 +11,10 @@ const RequestInvoice = () => {
   const { receiptSeriesOptions, getReceiptSeriesOptions } = optionStore;
 
   useEffect(() => {
-    if (request?.sucursalId) getReceiptSeriesOptions(request.sucursalId);
+    if (request?.sucursalId) {
+      console.log("SUCURSAL", request.sucursalId);
+      getReceiptSeriesOptions(request.sucursalId);
+    }
   }, [getReceiptSeriesOptions, request?.sucursalId]);
 
   const onSeriesChange = (value: string) => {
@@ -37,7 +40,7 @@ const RequestInvoice = () => {
     <Row gutter={[8, 12]} align="bottom">
       <Col span={6}>
         <div style={{ height: 24 }}>
-          <label>Serie</label>
+          <label>Series</label>
         </div>
         <Select
           showSearch
