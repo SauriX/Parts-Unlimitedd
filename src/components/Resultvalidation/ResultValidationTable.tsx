@@ -20,7 +20,7 @@ import SelectInput from "../../app/common/form/proposal/SelectInput";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
 import { ExpandableConfig } from "antd/lib/table/interface";
-import { urgencyOptions } from "../../app/stores/optionStore";
+import { studyStatusOptions, urgencyOptions } from "../../app/stores/optionStore";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../app/util/alerts";
 import PrintIcon from "../../app/common/icons/PrintIcon";
@@ -487,11 +487,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                     label: "Estatus",
                   }}
                   multiple
-                  options={[
-                    { value: 5, label: "Validado" },
-                    { value: 4, label: "Capturado" },
-                    { value: 7, label: "Enviado" },
-                  ]}
+                  options={studyStatusOptions}
                 ></SelectInput>
               </Col>
               <Col span={8}>

@@ -5,6 +5,7 @@ import requests from "./agent";
 const Pack = {
   access: (): Promise<IScopes> => requests.get("scopes/medic"),
   getAll: (search: string): Promise<IPacketList[]> => requests.get(`pack/all/${!search ? "all" : search}`),
+  getPackList: (search: string): Promise<IPacketList[]> => requests.get(`pack/packList/${!search ? "all" : search}`),
   getActive: (): Promise<IPacketList[]> => requests.get(`pack/active`),
   getById: (id: number): Promise<IPackForm> => requests.get(`pack/${id}`),
   //getPermission: (): Promise<IRolePermission[]> => requests.get(`Rol/permisos`), */
