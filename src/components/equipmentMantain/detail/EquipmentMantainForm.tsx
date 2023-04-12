@@ -211,6 +211,8 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
     );
   };
   const onChangeImageFormat: UploadProps["onChange"] = ({ file }) => {
+
+    setDisabled(false);
     getBase64(file.originFileObj, (imageStr) => {
       submitImage(type, file.originFileObj!, imageStr!.toString());
     });
@@ -305,6 +307,7 @@ const EquipmentForm: FC<EquipmentFormProps> = ({
           onPreview={handlePreview}
           onChange={onChangeImageFormat}
           onRemove={onRemoveImageFormat}
+          disabled={readonly}
         >
           {uploadButton}
         </Upload>
