@@ -14,10 +14,10 @@ import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 
 const SeriesFilter = () => {
-  const { seriesStore, optionStore } = useStore();
-  const { getByFilter, setFormValues, setSeriesType, seriesType, formValues } =
-    seriesStore;
-  const { branchCityOptions, getBranchCityOptions } = optionStore;
+  const { seriesStore, optionStore, profileStore } = useStore();
+  const { getByFilter, setFormValues, formValues, setSeriesType } = seriesStore;
+  const { branchCityOptions } = optionStore;
+  const { profile } = profileStore;
 
   const [form] = useForm();
   const navigate = useNavigate();
@@ -32,10 +32,6 @@ const SeriesFilter = () => {
   }, [formValues, form]);
 
   useEffect(() => {
-    getBranchCityOptions();
-  }, [getBranchCityOptions]);
-
-  useEffect(() => {
     setCityOptions(
       branchCityOptions.map((x) => ({ value: x.value, label: x.label }))
     );
@@ -47,8 +43,25 @@ const SeriesFilter = () => {
         .filter((x) => selectedCity?.includes(x.value))
         .flatMap((x) => x.options ?? [])
     );
-    form.setFieldValue("sucursalId", []);
   }, [branchCityOptions, form, selectedCity]);
+
+  useEffect(() => {
+    if (!profile || !profile.sucursal || branchCityOptions.length === 0) return;
+    const profileBranch = profile.sucursal;
+    const userCity = branchCityOptions
+      .find((x) => x.options!.some((y) => y.value === profileBranch))
+      ?.value?.toString();
+
+    const filter = {
+      año: moment(Date.now()).utcOffset(0, true),
+      ciudad: userCity ? [userCity] : undefined,
+      sucursalId: profileBranch ? [profileBranch] : undefined,
+    };
+
+    form.setFieldsValue(filter);
+    setSeriesType(0);
+    getByFilter(filter);
+  }, [branchCityOptions]);
 
   const onFinish = async (values: ISeriesFilter) => {
     setLoading(true);

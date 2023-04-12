@@ -9,12 +9,11 @@ import {
   UploadProps,
   Divider,
   Spin,
-  Tag,
   Input,
   Tooltip,
 } from "antd";
 import { observer } from "mobx-react-lite";
-import { FC, Fragment, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import DateInput from "../../../../app/common/form/proposal/DateInput";
 import PasswordInput from "../../../../app/common/form/proposal/PasswordInput";
@@ -37,11 +36,9 @@ import {
 } from "../../../../app/util/utils";
 import { UploadOutlined } from "@ant-design/icons";
 import { RcFile, UploadChangeParam } from "antd/lib/upload";
-import React from "react";
 import moment from "moment";
 import { useSearchParams } from "react-router-dom";
 import ImageButton from "../../../../app/common/button/ImageButton";
-import { IOptions } from "../../../../app/models/shared";
 
 type SeriesInvoiceProps = {
   id: number;
@@ -125,7 +122,6 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
       "Cargar archivo",
       `¿Está seguro que desea cargar el archivo ${fileName}?`,
       async () => {
-        // await saveFile(file);
         if (fileName.split(".")[1] === "key" && originFile === "key") {
           setKeyFile(file);
         }

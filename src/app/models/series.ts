@@ -31,6 +31,7 @@ export interface ITicketSerie {
   clave: string;
   nombre: string;
   tipoSerie: number;
+  expedicion: ISeriesExpedition;
 }
 
 export interface ISeriesInvoice{
@@ -173,6 +174,7 @@ export class TicketSeriesValues implements ITicketSerie {
   clave = '';
   nombre = '';
   tipoSerie = 2;
+  expedicion = new SeriesExpeditionValues();
 
   constructor(init?: ITicketSerie) {
     Object.assign(this, init);
