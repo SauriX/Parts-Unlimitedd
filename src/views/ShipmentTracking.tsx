@@ -1,28 +1,21 @@
-import { Col, Divider, Row } from "antd";
+import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
-import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
-import RouteHeader from "../components/route/RouteHeader";
-import RouteTable from "../components/route/RouteTable";
-import RouteTrackingHeader from "../components/routeTracking/RouteHeader";
-import RouteTrackingTable from "../components/routeTracking/RouteTrackingTable";
-import ShipmentTrackingHeader from "../components/shipmentTracking/ShipmentTacking";
-import ShipmentTrackingDetail from "../components/shipmentTracking/ShipmentTrackingDetail";
+import ShipmentTrackingHeader from "../components/routeTracking/shipment/ShipmentTrackingHeader";
+import ShipmentTrackingDetail from "../components/routeTracking/shipment/ShipmentTrackingDetail";
 type UrlParams = {
   id: string;
 };
 
 const ShipmentTracking = () => {
-  const { routeStore } = useStore();
-
-  const { routeTrackingStore,shipmentTracking} = useStore();
+  const { shipmentTracking, routeTrackingStore } = useStore();
+  const { scopes, access, clearScopes } =
+    routeTrackingStore;
+  const { printTicket } = shipmentTracking;
   const { id } = useParams<UrlParams>();
-  
-    const {getAll,studyTags: studys}= routeTrackingStore;
-    const { getashipment,shipment,access,printTicket}=shipmentTracking;
-  const [searchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);
 
@@ -44,25 +37,28 @@ const ShipmentTracking = () => {
     setLoading(false);
   };
 
-/*   useEffect(() => {
+  useEffect(() => {
     const checkAccess = async () => {
       await access();
     };
 
     checkAccess();
-  }, [access]); */
+  }, [access]);
 
-/*   useEffect(() => {
+  useEffect(() => {
     return () => {
       clearScopes();
     };
-  }, [clearScopes]); */
+  }, [clearScopes]);
 
-  //if (!scopes?.acceder) return null;
+  if (!scopes?.acceder) return null;
 
   return (
     <Fragment>
-      <ShipmentTrackingHeader handlePrint={handlePrint} handleDownload={handleDownload} />
+      <ShipmentTrackingHeader
+        handlePrint={handlePrint}
+        handleDownload={handleDownload}
+      />
       <Divider className="header-divider" />
       <ShipmentTrackingDetail componentRef={componentRef} printing={loading} />
     </Fragment>

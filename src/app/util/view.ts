@@ -13,7 +13,7 @@ const views = {
   report: "reportes",
   cash: "cash",
   sampling: "samplings",
-  routeTraking: "segRutas",
+  routeTracking: "segRutas",
   shipmenttracking: "ShipmentTracking",
   recivetracking: "ReciveTracking",
   workLists: "workLists",

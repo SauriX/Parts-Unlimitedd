@@ -21,7 +21,7 @@ const ReciveTracking = () => {
   const { id } = useParams<UrlParams>();
   
     const {getAll,studyTags: studys}= routeTrackingStore;
-    const { getashipment,shipment,access,printTicket}=shipmentTracking;
+    const { getShipmentById: getashipment,shipment,access,printTicket}=shipmentTracking;
   const [searchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);

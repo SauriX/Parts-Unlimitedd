@@ -33,11 +33,11 @@ const PendingSendTable = () => {
         width: "10%",
         minWidth: 150,
       }),
-      render: (value, route) => (
+      render: (value, record) => (
         <Button
           type="link"
           onClick={() => {
-            navigate(`/ShipmentTracking/${route.id}`);
+            navigate(`/ShipmentTracking/${record.id}`);
           }}
         >
           {value}
@@ -109,13 +109,13 @@ const PendingSendTable = () => {
       title: "Editar",
       align: "center",
       width: "10%",
-      render: (value, route) =>
-        route.seguimiento && (
+      render: (value, record) =>
+        record.seguimiento && (
           <IconButton
             title="Editar ruta"
             icon={<EditOutlined />}
             onClick={() => {
-              navigate(`/trackingOrder/${value}`);
+              navigate(`/trackingOrder/${record.id}`);
             }}
           />
         ),

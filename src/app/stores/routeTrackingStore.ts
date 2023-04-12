@@ -1,11 +1,11 @@
-import { makeAutoObservable, toJS } from "mobx";
+import { makeAutoObservable } from "mobx";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 import Sampling from "../api/sampling";
-import { ISamplingForm, ISamplingList, IUpdate } from "../models/sampling";
+import { IUpdate } from "../models/sampling";
 import {
   IRouteTrackingList,
   ITagTrackingOrder,
@@ -14,8 +14,11 @@ import {
 } from "../models/routeTracking";
 import responses from "../util/responses";
 import { IRecibe, ISearchPending, searchValues } from "../models/pendingRecive";
-import { IRouteTrackingForm, IStudyTrackinOrder } from "../models/trackingOrder";
-import RouteTracking from "../api/routeTracking";
+import {
+  IRouteTrackingForm,
+  IStudyTrackinOrder,
+} from "../models/trackingOrder";
+import RouteTracking from "../api/routetracking";
 
 export default class RouteTrackingStore {
   constructor() {
@@ -36,6 +39,10 @@ export default class RouteTrackingStore {
   routeTags: ITagTrackingOrder[] = [];
   routeStudies: IStudyTrackinOrder[] = [];
   tagsSelected: ITagTrackingOrder[] = [];
+
+  setRouteStudies = (routeStudies: IStudyTrackinOrder[]) => {
+    this.routeStudies = routeStudies;
+  };
 
   setTagsSelected = (tagsSelected: ITagTrackingOrder[]) => {
     this.tagsSelected = tagsSelected;
@@ -80,6 +87,18 @@ export default class RouteTrackingStore {
     } catch (error) {
       alerts.warning(getErrors(error));
       this.studyTags = [];
+    } finally {
+      this.loadingRoutes = false;
+    }
+  };
+
+  getById = async (id: string) => {
+    try {
+      this.loadingRoutes = true;
+      const order = await RouteTracking.getById(id);
+      return order;
+    } catch (error) {
+      alerts.warning(getErrors(error));
     } finally {
       this.loadingRoutes = false;
     }

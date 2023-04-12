@@ -42,7 +42,7 @@ const ReciveTrackingHeader: FC<ShipmentTrackingProps> = ({
     setSearchParams(searchParams);
   };
   const getBack = () => {
-    navigate(`/${views.routeTraking}`);
+    navigate(`/${views.routeTracking}`);
   };
   return (
     <PageHeader

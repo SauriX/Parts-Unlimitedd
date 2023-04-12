@@ -274,7 +274,7 @@ function App() {
             <Route path="massResultSearch" element={<MassResultSearch />} />
             <Route path="deliveryResults" element={<DeliveryResults />} />
             <Route path={views.appointment} element={<Appointment />} />
-            <Route path={views.routeTraking} element={<RouteTracking />} />
+            <Route path={views.routeTracking} element={<RouteTracking />} />
             <Route path={views.workLists} element={<WorkList />} />
             <Route
               path={`${views.appointment}/:id`}

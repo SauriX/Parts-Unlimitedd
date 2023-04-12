@@ -2,7 +2,7 @@ import { Button, Col, DatePicker, Form, Row, Spin, TreeSelect } from "antd";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
 import NumberInput from "../../../app/common/form/proposal/NumberInput";
 import SelectInput from "../../../app/common/form/proposal/SelectInput";
@@ -21,11 +21,11 @@ import { formItemLayout } from "../../../app/util/utils";
 import RouteTrackingCreateTable from "./RouteTrackingCreateTable";
 import { TagTrackingModal } from "./modal/TagTrackingModal";
 
-type TrackingOrderProps = {
-  id?: string;
+type UrlParams = {
+  id: string;
 };
 
-const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
+const RouteTrackingCreateForm = () => {
   const {
     trackingOrderStore,
     optionStore,
@@ -33,9 +33,17 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
     routeStore,
     routeTrackingStore,
   } = useStore();
-  const { update, getById } = trackingOrderStore;
-  const { getFindTags, tagsSelected, routeStudies, createTrackingOrder, scan, setScan } =
-    routeTrackingStore;
+  const { update } = trackingOrderStore;
+  const {
+    getFindTags,
+    tagsSelected,
+    routeStudies,
+    setRouteStudies,
+    createTrackingOrder,
+    scan,
+    setScan,
+    getById
+  } = routeTrackingStore;
   const { getByOriginDestination, loadingRoutes } = routeStore;
   const { profile } = profileStore;
   const {
@@ -53,9 +61,11 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
     searchParams.get("mode") === "readonly"
   );
 
+  const { id } = useParams<UrlParams>();
   const [values, setValues] = useState<IRouteTrackingForm>(
     new TrackingOrderFormValues()
   );
+  
   const [tagData, setTagData] = useState<ITagTrackingOrder[]>([]);
   const [routeOptions, setRouteOptions] = useState<IOptions[]>([]);
   const [originBranch, setOriginBranch] = useState<string>("");
@@ -72,6 +82,8 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
       const order = await getById(id);
 
       if (order) {
+        order.diaRecoleccion = moment(order.diaRecoleccion);
+        setTagData(order.etiquetas);
         setValues(order);
         form.setFieldsValue(order);
       }
@@ -89,11 +101,10 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
       form.setFieldValue("origenId", [profileBranch]);
       setOriginBranch(profileBranch);
     }
-  }, [profile]);
 
-  useEffect(() => {
     form.setFieldValue("escaneo", scan);
-  }, [scan]);
+    setRouteStudies([]);
+  }, [profile, scan]);
 
   const treeData = [
     {
@@ -153,7 +164,7 @@ const RouteTrackingCreateForm = ({ id }: TrackingOrderProps) => {
         value: x.id,
       }));
 
-      if(options.length === 0) return form.setFieldValue("rutaId", []);
+      if (options.length === 0) return form.setFieldValue("rutaId", []);
 
       setRouteOptions(options);
     }

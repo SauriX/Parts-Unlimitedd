@@ -369,6 +369,7 @@ export interface IRequestTagStudy {
   nombreEstudio: string;
   orden: number;
   cantidad: number;
+  claveEstudio: string;
 }
 
 export interface IRequestTotal extends IRequestBase {

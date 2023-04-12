@@ -444,9 +444,10 @@ export default class RequestStore {
         );
 
         const tagStudies = items.map(
-          ({ estudioId, nombreEstudio, orden, cantidad }) => ({
+          ({ estudioId, nombreEstudio, claveEstudio, orden, cantidad }) => ({
             estudioId,
             nombreEstudio,
+            claveEstudio,
             orden,
             cantidad,
           })
@@ -475,10 +476,11 @@ export default class RequestStore {
     this.availableTagStudies = getDistinct(
       this.allActiveStudies
         .flatMap((x) => x.etiquetas)
-        .map(({ etiquetaId, estudioId, nombreEstudio, orden, cantidad }) => ({
+        .map(({ etiquetaId, estudioId, nombreEstudio, claveEstudio, orden, cantidad }) => ({
           etiquetaId,
           estudioId,
           nombreEstudio,
+          claveEstudio,
           orden,
           asignado: true,
           cantidad,

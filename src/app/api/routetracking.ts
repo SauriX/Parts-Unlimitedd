@@ -12,6 +12,8 @@ const RouteTracking = {
   access: (): Promise<void> => requests.get("/user/scopes"),
   getAll: (search: SearchTracking): Promise<IRouteTrackingList[]> =>
     requests.post(`RouteTracking/all`, search),
+  getById: (id: string): Promise<IRouteTrackingForm> =>
+    requests.get(`RouteTracking/${id}`),
   getAllTags: (search: string): Promise<ITagTrackingOrder[]> =>
     requests.get(`RouteTracking/tags/all/${!search ? "all" : search}`),
   getFindTags: (routeId: string): Promise<ITagTrackingOrder[]> =>
