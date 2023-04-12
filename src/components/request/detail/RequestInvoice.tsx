@@ -12,7 +12,6 @@ const RequestInvoice = () => {
 
   useEffect(() => {
     if (request?.sucursalId) {
-      console.log("SUCURSAL", request.sucursalId);
       getReceiptSeriesOptions(request.sucursalId);
     }
   }, [getReceiptSeriesOptions, request?.sucursalId]);
