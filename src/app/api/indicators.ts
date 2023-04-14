@@ -11,7 +11,7 @@ import { IScopes } from "../models/shared";
 import requests from "./agent";
 
 const Indicators = {
-  access: (): Promise<IScopes> => requests.get("scopes/indicators"),
+  access: (): Promise<IScopes> => requests.get("scopes/report"),
   getByFilter: (
     filter: IReportIndicatorsFilter
   ): Promise<IReportIndicators[]> =>
