@@ -52,8 +52,7 @@ export default class NotificationStore {
         if (this.hubConnection.state === "Connected") {
           this.hubConnection.invoke("Subscribe");
           this.hubConnection.invoke("SubscribeWithName","all");
-          this.hubConnection.invoke("SubscribeWithName",store.profileStore.profile?.sucursal);
-          this.hubConnection.invoke("SubscribeWithName",store.profileStore.profile?.rol);
+          this.hubConnection.invoke("SubscribeWithName",`${store.profileStore.profile?.rol}-${store.profileStore.profile?.sucursal}`);
         }
       } catch (error) {
       }
@@ -61,15 +60,14 @@ export default class NotificationStore {
       this.hubConnection.onreconnected(() => {
         this.hubConnection!.invoke("Subscribe");
         this.hubConnection!.invoke("SubscribeWithName","all");
-        this.hubConnection!.invoke("SubscribeWithName",store.profileStore.profile?.sucursal);
-        this.hubConnection!.invoke("SubscribeWithName",store.profileStore.profile?.rol);
+        this.hubConnection!.invoke("SubscribeWithName",`${store.profileStore.profile?.rol}-${store.profileStore.profile?.sucursal}`);
       });
 
       this.hubConnection.on("Notify", (notification: INotification) => {
         if (notification.esAlerta) {
           alerts.info(notification.mensaje);
         }else{
-          
+          console.log(notification);
           var notifications = [...this.notifications] 
           notifications.reverse();
           notifications.push(notification);

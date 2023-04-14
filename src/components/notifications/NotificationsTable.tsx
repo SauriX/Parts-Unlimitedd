@@ -78,10 +78,12 @@ const NotificationsTable = () => {
   const { notificationsStore } = useStore();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { getAllNotifications, notifications, updateStatus, changeStatusNotificacion } = notificationsStore;
+  const { getAllNotifications,  updateStatus, changeStatusNotificacion } = notificationsStore;
+  const[notifications,setNotifications]= useState<INotificationsList[]>([])
   useEffect(() => {
     const readAvisos = async () => {
-      await getAllNotifications(searchParams.get("search") || "all");
+      var notificaciones =await getAllNotifications(searchParams.get("search") || "all");
+      setNotifications(notificaciones!);
     }
     readAvisos();
   }, [getAllNotifications, searchParams]);
@@ -92,7 +94,12 @@ const NotificationsTable = () => {
     searchedColumn: "",
   });
   const onchangeStatus = async (id: string) => {
-    changeStatusNotificacion(id);
+    let notificationes = [...notifications!];
+    var notificacion = notificationes.find(x=>x.id===id);
+    notificacion!.activo = !notificacion!.activo;
+    var notificacionIndex = notificationes.findIndex(x=>x.id===id);
+    notificationes[notificacionIndex]=notificacion!;
+    setNotifications(notificationes);
     await updateStatus(id);
   }
 
@@ -126,7 +133,7 @@ const NotificationsTable = () => {
 
   return (
     <>
-      <Table size="small" columns={columns} dataSource={notifications} />
+      <Table size="small" columns={columns} dataSource={[...notifications!]} />
     </>
   );
 };

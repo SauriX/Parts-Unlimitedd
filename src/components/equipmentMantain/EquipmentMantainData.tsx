@@ -101,7 +101,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
       ),
     },
     {
-      ...getDefaultColumnProps("fecha", "Fecha", {
+      ...getDefaultColumnProps("fecha", "Fecha Programada", {
         searchState,
         setSearchState,
         width: "20%",
