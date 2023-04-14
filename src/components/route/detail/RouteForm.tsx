@@ -26,7 +26,7 @@ import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import {
   IDias,
-  IRouteEstudioList as IStudyRouteList,
+  IStudyRouteList,
   IRouteForm,
   RouteFormValues,
 } from "../../../app/models/route";
@@ -67,7 +67,6 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   const { optionStore, routeStore, profileStore } = useStore();
   const { routes, getById, getAll, create, update, getAllStudy, studies } =
     routeStore;
-  const [studyList, setStudyRouteList] = useState(studies);
   const {
     BranchOptions,
     getAllBranchOptions,
@@ -85,7 +84,10 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   const [form] = Form.useForm<IRouteForm>();
   const [formAreaByDepartment] = Form.useForm<any>();
 
-  const [searchvalue, setSearchvalue] = useState<string>();
+  const [studyList, setStudyList] = useState<IStudyRouteList[]>([]);
+  const [studiesSelected, setStudiesSelected] = useState<IStudyRouteList[]>([]);
+
+  const [searchValue, setSearchValue] = useState<string>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [loading, setLoading] = useState(false);
   const [readonly, setReadonly] = useState(
@@ -107,8 +109,10 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   useEffect(() => {
     const getStudies = async () => {
       let study = await getAllStudy();
-      setStudyRouteList(study!);
-      setValues((prev) => ({ ...prev, estudio: study! }));
+      if (study) {
+        setStudyList(study);
+        setValues((prev) => ({ ...prev, estudio: study! }));
+      }
     };
     if (!id) {
       getStudies();
@@ -160,7 +164,8 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
         );
 
         setValues(route);
-        setStudyRouteList(studies!);
+        setStudiesSelected(route.estudio);
+        setStudyList(studies!);
 
         if (route.destinoId || route.maquiladorId) {
           const branch = treeData
@@ -201,7 +206,9 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     const route = { ...values, ...newValues };
     route.estudio = studyList.filter((x) => x.activo === true);
     route.dias = selectedTags;
-    route.horaDeRecoleccion = moment(newValues.horaDeRecoleccion).utcOffset(0, true).toDate();
+    route.horaDeRecoleccion = moment(newValues.horaDeRecoleccion)
+      .utcOffset(0, true)
+      .toDate();
 
     const parent = treeData.find((x) =>
       x.children.map((x) => x.value).includes(newValues.destinoId!)
@@ -261,7 +268,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   const treeData = [
     {
       title: "Sucursales",
-      value: "sucursalDestinoId",
+      value: "destinoId",
       children: BranchOptions.map((x) => ({
         title: x.label,
         value: x.value,
@@ -295,7 +302,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-      ...getDefaultColumnProps("area", "Área", {
+      ...getDefaultColumnProps("departamento", "Departamento", {
         searchState,
         setSearchState,
         width: "20%",
@@ -303,7 +310,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-      ...getDefaultColumnProps("departamento", "Departamento", {
+      ...getDefaultColumnProps("area", "Área", {
         searchState,
         setSearchState,
         width: "20%",
@@ -314,7 +321,11 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   ];
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    setSelectedRowKeys(newSelectedRowKeys);
+    const newSelectedRowKeysCopy = [...selectedRowKeys, ...newSelectedRowKeys];
+    const filteredSelectedRowKeys = newSelectedRowKeysCopy.filter(
+      (item, index) => newSelectedRowKeysCopy.indexOf(item) === index
+    );
+    setSelectedRowKeys(filteredSelectedRowKeys);
   };
 
   const rowSelection = {
@@ -331,21 +342,47 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   };
 
   const setStudy = (active: boolean, item: IStudyRouteList) => {
-    const index = studyList.findIndex((x) => x.id === item.id);
-    const updatedItem = { ...item, activo: active };
-    const updatedList = [...studyList];
-    updatedList[index] = updatedItem;
-    setStudyRouteList(updatedList);
+    setStudyList((prevList) => {
+      const updatedList = prevList.map((x) =>
+        x.id === item.id ? { ...item, activo: active } : x
+      );
+      return updatedList;
+    });
 
-    const updatedValues = [...values.estudio];
-    updatedValues[index] = updatedItem;
-    setValues((prev) => ({ ...prev, estudio: updatedValues }));
+    setStudiesSelected(prevSelected => {
+      const selectedIds = [...prevSelected];
+      if (active && !selectedIds.includes(item)) {
+        selectedIds.push(item);
+      } else if (!active) {
+        const index = selectedIds.indexOf(item);
+        if (index !== -1) {
+          selectedIds.splice(index, 1);
+        }
+      }
+      return selectedIds;
+    });
+
+    setValues((prevValues) => {
+      const updatedValues = prevValues.estudio.map((x) =>
+        x.id === item.id ? { ...item, activo: active } : x
+      );
+      return { ...prevValues, estudio: updatedValues };
+    });
   };
 
   const filterBySearch = (search: string) => {
+    if (search === "") {
+      let filterStudies = studyList.filter((x) => x.activo);
+      setValues({ ...values, estudio: filterStudies });
+      return;
+    }
+
     var estudios = studyList.filter(
-      (x) => x.clave.includes(search) || x.nombre.includes(search)
+      (x) =>
+        x.clave.toLocaleLowerCase().includes(search) ||
+        x.nombre.toLocaleLowerCase().includes(search)
     );
+
     setValues((prev) => ({ ...prev, estudio: estudios }));
   };
 
@@ -572,12 +609,12 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
               placeholder="Buscar"
               onSearch={(value) => {
                 filterBySearch(value);
-                setSearchvalue(value);
+                setSearchValue(value);
               }}
               onChange={(value) => {
-                setSearchvalue(value.target.value);
+                setSearchValue(value.target.value);
               }}
-              value={searchvalue}
+              value={searchValue}
             />
           </Col>
           <Col md={8} sm={24} xs={12}>
@@ -614,7 +651,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
             rowKey={(record) => record.id}
             columns={columnsEstudios.slice(0, 6)}
             pagination={false}
-            dataSource={[...(values.estudio ?? [])]}
+            dataSource={[...values.estudio]}
             rowSelection={rowSelection}
             scroll={{ y: 240 }}
           />

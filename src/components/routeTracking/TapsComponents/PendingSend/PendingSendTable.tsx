@@ -85,6 +85,15 @@ const PendingSendTable = () => {
         setSearchState,
         width: "10%",
       }),
+      render: (value: string) => {
+        let route = value.split(",").map((item, index) => (
+          <React.Fragment key={index}>
+            {item}
+            <br />
+          </React.Fragment>
+        ));
+        return route;
+      },
     },
     {
       ...getDefaultColumnProps("estatus", "Estatus", {

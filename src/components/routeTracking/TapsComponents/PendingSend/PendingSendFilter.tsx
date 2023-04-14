@@ -12,7 +12,8 @@ import moment from "moment";
 
 const PendingSendFilter = () => {
   const { optionStore, routeTrackingStore, profileStore } = useStore();
-  const { getAll, filterSend, setFilterSend } = routeTrackingStore;
+  const { getAll, filterSend, setFilterSend, setTagData, setRouteStudies } =
+    routeTrackingStore;
   const { branchCityOptions } = optionStore;
   const { profile, getProfile } = profileStore;
 
@@ -22,6 +23,8 @@ const PendingSendFilter = () => {
 
   useEffect(() => {
     getProfile();
+    setTagData([]);
+    setRouteStudies([]);
   }, [getProfile]);
 
   useEffect(() => {
@@ -86,6 +89,7 @@ const PendingSendFilter = () => {
           <Col span={6}>
             <DateRangeInput
               formProps={{ name: "fecha", label: "Fecha" }}
+              disableAfterDates
             ></DateRangeInput>
           </Col>
           <Col span={6}>

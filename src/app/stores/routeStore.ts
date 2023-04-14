@@ -1,7 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import Route from "../api/route";
 import Study from "../api/study";
-import { IRouteEstudioList, IRouteForm, IRouteList } from "../models/route";
+import { IStudyRouteList, IRouteForm, IRouteList } from "../models/route";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
@@ -16,8 +16,8 @@ export default class RouteStore {
 
   scopes?: IScopes;
   routes: IRouteList[] = [];
+  studies: IStudyRouteList[] = [];
   foundRoutes: IRouteForm[] = [];
-  studies: IRouteEstudioList[] = [];
   loadingRoutes: boolean = false
 
   clearScopes = () => {
@@ -68,7 +68,7 @@ export default class RouteStore {
       const roles = await Study.getAll("all");
       const activos = roles.filter((x) => x.activo);
       var studies = activos.map((x) => {
-        let data: IRouteEstudioList = {
+        let data: IStudyRouteList = {
           id: x.id,
           clave: x.clave,
           nombre: x.nombre,

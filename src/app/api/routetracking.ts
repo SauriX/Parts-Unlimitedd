@@ -18,10 +18,12 @@ const RouteTracking = {
     requests.get(`RouteTracking/tags/all/${!search ? "all" : search}`),
   getFindTags: (routeId: string): Promise<ITagTrackingOrder[]> =>
     requests.get(`RouteTracking/findTags/${routeId}`),
-  getRequestTags: (search: string): Promise<ITagTrackingOrder[]> =>
-    requests.get(`RouteTracking/requestTags/${search}`),
+  getActive: (): Promise<IRouteTrackingList[]> =>
+    requests.get(`RouteTracking/getActive`),
   createTrackingOrder: (order: IRouteTrackingForm): Promise<void> =>
     requests.post("RouteTracking/trackingOrder", order),
+  updateTrackingOrder: (order: IRouteTrackingForm): Promise<void> =>
+    requests.put("RouteTracking/trackingOrder", order),
   update: (update: IUpdate[]): Promise<void> =>
     requests.put("RouteTracking", update),
   exportForm: (id: string): Promise<void> =>

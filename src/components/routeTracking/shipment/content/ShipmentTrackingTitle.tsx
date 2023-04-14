@@ -1,31 +1,28 @@
 import { observer } from "mobx-react-lite";
-import React, { Fragment } from "react";
+import { Fragment } from "react";
 import { IShipmentTracking } from "../../../../app/models/shipmentTracking";
-import { Col, Row, Typography } from "antd";
+import { Card, Col, Row, Statistic } from "antd";
 import DescriptionTitle from "../../../../app/common/display/DescriptionTitle";
-
-const { Text } = Typography;
 
 type STTProps = {
   shipment: IShipmentTracking | undefined;
 };
 
 const ShipmentTrackingTitle = ({ shipment }: STTProps) => {
-  console.log(shipment);
   return (
     <Fragment>
       <Row gutter={[4, 0]} justify="space-between">
         <Col span={8}>
           <DescriptionTitle
             title="No. de seguimiento"
-            content={shipment!.seguimiento}
+            content={shipment?.seguimiento}
           />
         </Col>
         <Col span={8}>
-          <DescriptionTitle title="Ruta" content={shipment!.ruta} />
+          <DescriptionTitle title="Ruta" content={shipment?.ruta} />
         </Col>
         <Col span={8}>
-          <DescriptionTitle title="Nombre" content={shipment!.nombre} />
+          <DescriptionTitle title="Nombre" content={shipment?.nombre} />
         </Col>
       </Row>
     </Fragment>

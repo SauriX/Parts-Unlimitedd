@@ -1,10 +1,14 @@
 import moment from "moment";
 
-export interface IShipmentStudies {
+export interface IShipmentTags {
   id: string;
-  estudio: string;
-  paciente: string;
+  claveEtiqueta: string;
+  recipiente: string;
+  cantidad: number;
+  estudios: string;
   solicitud: string;
+  estatus: number;
+  paciente: string;
   confirmacionOrigen: boolean;
   confirmacionDestino: boolean;
 }
@@ -19,8 +23,9 @@ export interface IShipmentTracking {
   fechaEnvio: moment.Moment;
   fechaEstimada: moment.Moment;
   fechaReal: moment.Moment;
-  estudios: IShipmentStudies[];
+  estudios: IShipmentTags[];
   seguimiento: string;
   ruta: string;
   nombre: string;
+  activo: boolean;
 }

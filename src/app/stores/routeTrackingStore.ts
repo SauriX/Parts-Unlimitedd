@@ -27,7 +27,9 @@ export default class RouteTrackingStore {
 
   scopes?: IScopes;
   studyTags: IRouteTrackingList[] = [];
+  trackingOrders: IRouteTrackingList[] = [];
   tags: ITagTrackingOrder[] = [];
+  tagData: ITagTrackingOrder[] = [];
 
   pendings?: IRecibe[] = [];
   ventana: string = "enviar";
@@ -44,8 +46,29 @@ export default class RouteTrackingStore {
     this.routeStudies = routeStudies;
   };
 
+  setTagData = (tagData: ITagTrackingOrder[]) => {
+    this.tagData = tagData;
+  };
+
   setTagsSelected = (tagsSelected: ITagTrackingOrder[]) => {
     this.tagsSelected = tagsSelected;
+  };
+
+  getStudyTrackingOrder = (record: ITagTrackingOrder) => {
+    const studyTrackingOrder: IStudyTrackinOrder = {
+      etiquetaId: record.id,
+      solicitudId: record.solicitudId,
+      claveEtiqueta: record.claveEtiqueta,
+      claveRuta: record.claveRuta,
+      cantidad: record.cantidad,
+      estudios: record.estudios,
+      solicitud: record.solicitud,
+      recipiente: record.recipiente,
+      estatus: record.estatus,
+      escaneo: record.escaneo,
+      extra: record.extra,
+    };
+    return studyTrackingOrder;
   };
 
   setScan = (scan: boolean) => {
@@ -143,12 +166,12 @@ export default class RouteTrackingStore {
     }
   };
 
-  getRequestTags = async (search: string) => {
+  getActive = async () => {
     try {
       this.loadingRoutes = true;
-      const tags = await RouteTracking.getRequestTags(search);
-      this.tags = tags;
-      return tags;
+      const trackingOrders = await RouteTracking.getActive();
+      this.trackingOrders = trackingOrders;
+      return trackingOrders;
     } catch (error) {
       alerts.warning(getErrors(error));
       return [];
@@ -161,6 +184,17 @@ export default class RouteTrackingStore {
     try {
       await RouteTracking.createTrackingOrder(order);
       alerts.success(messages.created);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
+
+  updateTrackingOrder = async (order: IRouteTrackingForm) => {
+    try {
+      await RouteTracking.updateTrackingOrder(order);
+      alerts.success(messages.updated);
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));

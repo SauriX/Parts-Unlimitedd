@@ -22,7 +22,7 @@ export interface IRouteForm {
   tiempoDeEntrega: number;
   tipoTiempo?: number;
   activo: boolean;
-  estudio: IRouteEstudioList[];
+  estudio: IStudyRouteList[];
   dias: IDias[];
 }
 
@@ -31,7 +31,7 @@ export interface IDias {
   dia: string;
 }
 
-export interface IRouteEstudioList {
+export interface IStudyRouteList {
   id: number;
   clave: string;
   nombre: string;
@@ -53,7 +53,7 @@ export class RouteFormValues implements IRouteForm {
   horaDeRecoleccion = moment(Date.now()).utcOffset(0, true);
   tiempoDeEntrega = 0;
   tipoTiempo = 1;
-  estudio: IRouteEstudioList[] = [];
+  estudio: IStudyRouteList[] = [];
   dias: IDias[] = [];
 
   constructor(init?: IRouteForm) {

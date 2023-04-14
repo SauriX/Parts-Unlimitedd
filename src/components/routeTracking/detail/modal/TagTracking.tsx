@@ -21,7 +21,7 @@ import { ITagTrackingOrder } from "../../../../app/models/routeTracking";
 import { store, useStore } from "../../../../app/stores/store";
 import useWindowDimensions, { resizeWidth } from "../../../../app/util/window";
 import HeaderTitle from "../../../../app/common/header/HeaderTitle";
-import DownloadIcon from "../../../../app/common/icons/DownloadIcon";
+import { v4 as uuid } from "uuid";
 
 const { Paragraph } = Typography;
 
@@ -34,8 +34,15 @@ type Props = {
 const TagTracking = ({ getResult, selectedTags, requestCode }: Props) => {
   const { routeTrackingStore } = useStore();
   const { closeModal } = store.modalStore;
-  const { setTagsSelected, tags, getAllTags, loadingRoutes } =
-    routeTrackingStore;
+  const {
+    setTagsSelected,
+    tags,
+    tagData,
+    getAllTags,
+    loadingRoutes,
+    routeStudies,
+    getStudyTrackingOrder,
+  } = routeTrackingStore;
 
   const [form] = Form.useForm<any>();
   const { width: windowWidth } = useWindowDimensions();
@@ -48,7 +55,7 @@ const TagTracking = ({ getResult, selectedTags, requestCode }: Props) => {
 
   useEffect(() => {
     const readTags = async () => {
-      await getAllTags(requestCode);
+      await getAllTags(requestCode ?? "all");
     };
 
     readTags();
@@ -65,6 +72,8 @@ const TagTracking = ({ getResult, selectedTags, requestCode }: Props) => {
         searchState,
         setSearchState,
         width: "25%",
+        minWidth: 150,
+        windowSize: windowWidth,
       }),
     },
     {
@@ -72,6 +81,8 @@ const TagTracking = ({ getResult, selectedTags, requestCode }: Props) => {
         searchState,
         setSearchState,
         width: "25%",
+        minWidth: 150,
+        windowSize: windowWidth,
       }),
     },
     {
@@ -79,6 +90,8 @@ const TagTracking = ({ getResult, selectedTags, requestCode }: Props) => {
         searchState,
         setSearchState,
         width: "25%",
+        minWidth: 150,
+        windowSize: windowWidth,
       }),
     },
     {
@@ -86,18 +99,31 @@ const TagTracking = ({ getResult, selectedTags, requestCode }: Props) => {
         searchState,
         setSearchState,
         width: "25%",
+        minWidth: 150,
+        windowSize: windowWidth,
       }),
     },
   ];
 
   const onSelectKeys = (item: ITagTrackingOrder, checked: boolean) => {
     const index = selectedTagKeys.findIndex((x) => x.id === item.id);
+    let routeCode = tagData.find((x) => x.claveRuta)?.claveRuta;
+    item.escaneo = true;
+    item.extra = true;
+    item.claveRuta = routeCode ?? "";
+
+    let study = getStudyTrackingOrder(item);
+
     if (checked && index === -1) {
       setSelectedTagKeys((prev) => [...prev, item]);
+      selectedTags.push(item);
+      tagData.push(item);
+      routeStudies.push(study);
     } else if (!checked && index > -1) {
       const newSelectedTagKeys = [...selectedTagKeys];
       newSelectedTagKeys.splice(index, 1);
       setSelectedTagKeys(newSelectedTagKeys);
+      routeStudies.splice(routeStudies.indexOf(study), 1);
     }
   };
 

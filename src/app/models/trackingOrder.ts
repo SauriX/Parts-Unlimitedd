@@ -47,7 +47,7 @@ export interface IStudyTrackinOrder {
 export interface IRouteTrackingForm {
   id?: string;
   origen: string;
-  origenId?: string;
+  origenId: string;
   destino: string;
   destinoId: string;
   rutaId: string;
@@ -56,6 +56,8 @@ export interface IRouteTrackingForm {
   temperatura: number;
   activo: boolean;
   clave: string;
+  cancelacion?: boolean
+  editar?: boolean;
   diaRecoleccion: moment.Moment;
   estudios: IStudyTrackinOrder[];
   etiquetas: ITagTrackingOrder[];

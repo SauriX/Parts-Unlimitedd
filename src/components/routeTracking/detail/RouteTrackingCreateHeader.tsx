@@ -1,16 +1,22 @@
 import { PageHeader } from "antd";
 import { observer } from "mobx-react-lite";
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { Fragment } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import DownloadIcon from "../../../app/common/icons/DownloadIcon";
 import GoBackIcon from "../../../app/common/icons/GoBackIcon";
 import { useStore } from "../../../app/stores/store";
 
+type UrlParams = {
+  id: string;
+};
+
 function RouteTrackingCreateHeader() {
   const navigate = useNavigate();
   const { trackingOrderStore } = useStore();
   const { exportList } = trackingOrderStore;
+
+  const { id } = useParams<UrlParams>();
 
   const download = async () => {
     await exportList();
@@ -30,10 +36,13 @@ function RouteTrackingCreateHeader() {
         />
       }
       className="header-container"
-      extra={[
-        <GoBackIcon key="back" onClick={goBack} />,
-        <DownloadIcon onClick={download} />,
-      ]}
+      extra={
+        <Fragment>
+          <GoBackIcon key="back" onClick={goBack} />
+
+          {id ? <DownloadIcon onClick={download} /> : ""}
+        </Fragment>
+      }
     ></PageHeader>
   );
 }

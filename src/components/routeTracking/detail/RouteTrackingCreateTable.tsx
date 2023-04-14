@@ -1,4 +1,4 @@
-import { Switch, Table } from "antd";
+import { InputNumber, Popconfirm, Switch, Table } from "antd";
 import { observer } from "mobx-react-lite";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import {
@@ -8,65 +8,68 @@ import {
   ISearch,
 } from "../../../app/common/table/utils";
 import { ITagTrackingOrder } from "../../../app/models/routeTracking";
-import {
-  IStudyTrackinOrder,
-  ITagRouteList,
-} from "../../../app/models/trackingOrder";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import { studyStatus } from "../../../app/util/catalogs";
 import { useStore } from "../../../app/stores/store";
 
-type TrackingOrderTableProps = {
-  id?: string;
-  data: ITagTrackingOrder[];
-};
-
-const RouteTrackingCreateTable = ({ id, data }: TrackingOrderTableProps) => {
+const RouteTrackingCreateTable = () => {
   const { routeTrackingStore } = useStore();
-  const { routeStudies, scan, setScan } = routeTrackingStore;
+  const {
+    routeStudies,
+    scan,
+    setScan,
+    tagsSelected,
+    getStudyTrackingOrder,
+    tagData,
+  } = routeTrackingStore;
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
   const { width: windowWidth } = useWindowDimensions();
-  const [checked, setChecked] = useState({id: 0, checked: false});
+  const [checked, setChecked] = useState({ id: 0, checked: false });
 
   useEffect(() => {
     if (scan) {
-      setChecked({id: 0, checked: false});
+      setChecked({ id: 0, checked: false });
     }
-  }, [scan]);
+    if (tagData) {
+      tagData.forEach((x) => {
+        if (x.escaneo) {
+          setChecked({ id: x.id, checked: true });
+        }
+      });
+    }
+  }, [scan, tagData]);
 
   const onChecked = (checked: boolean, record: ITagTrackingOrder) => {
     record.escaneo = checked;
     let study = getStudyTrackingOrder(record);
+    let existingRecord = routeStudies.find((x) => x.id === study.id);
 
-    if (record.escaneo) {
+    if (checked && !existingRecord) {
       routeStudies.push(study);
     } else {
       routeStudies.splice(routeStudies.indexOf(study), 1);
     }
 
     setScan(false);
-    setChecked({id: record.id, checked: checked});
+    setChecked({ id: record.id, checked: checked });
 
     return record;
   };
 
-  const getStudyTrackingOrder = (record: ITagTrackingOrder) => {
-    const studyTrackingOrder: IStudyTrackinOrder = {
-      etiquetaId: record.id,
-      solicitudId: record.solicitudId,
-      claveEtiqueta: record.claveEtiqueta,
-      claveRuta: record.claveRuta,
-      cantidad: record.cantidad,
-      estudios: record.estudios,
-      solicitud: record.solicitud,
-      recipiente: record.recipiente,
-      estatus: record.estatus,
-      escaneo: record.escaneo,
-    };
-    return studyTrackingOrder;
+  const onCancel = (record: ITagTrackingOrder) => {
+    record.escaneo = true;
+  };
+
+  const onConfirm = (record: ITagTrackingOrder) => {
+    const index = tagData.findIndex((x) => x.id === record.id);
+    let study = getStudyTrackingOrder(record);
+
+    tagData.splice(index, 1);
+    routeStudies.splice(routeStudies.indexOf(study), 1);
+    tagsSelected.splice(tagsSelected.indexOf(record), 1);
   };
 
   const columns: IColumns<ITagTrackingOrder> = [
@@ -90,6 +93,19 @@ const RouteTrackingCreateTable = ({ id, data }: TrackingOrderTableProps) => {
         setSearchState,
         width: "10%",
       }),
+      render: (value: number, record) => {
+        return (
+          <InputNumber
+            min={1}
+            max={100}
+            bordered={false}
+            defaultValue={value}
+            onChange={(value) => {
+              return (record.cantidad = value!);
+            }}
+          />
+        );
+      },
     },
     {
       ...getDefaultColumnProps("estudios", "Estudios", {
@@ -130,10 +146,26 @@ const RouteTrackingCreateTable = ({ id, data }: TrackingOrderTableProps) => {
       }),
       render: (value: boolean, record) => {
         return (
-          <Switch
-            checked={checked.id === record.id ? checked.checked : value}
-            onChange={(checked) => onChecked(checked, record)}
-          />
+          <Fragment>
+            {!record.extra ? (
+              <Switch
+                checked={checked.id === record.id ? checked.checked : value}
+                onChange={(checked) => onChecked(checked, record)}
+              />
+            ) : (
+              <Popconfirm
+                title="Eliminar etiqueta"
+                onConfirm={() => onConfirm(record)}
+                onCancel={() => onCancel(record)}
+                okText="Confirmar"
+                cancelText="Cancelar"
+              >
+                <Switch
+                  checked={checked.id === record.id ? checked.checked : value}
+                />
+              </Popconfirm>
+            )}
+          </Fragment>
         );
       },
     },
@@ -145,7 +177,7 @@ const RouteTrackingCreateTable = ({ id, data }: TrackingOrderTableProps) => {
         size="small"
         rowKey={(record) => record.id!}
         columns={columns}
-        dataSource={[...data]}
+        dataSource={[...tagData]}
         pagination={defaultPaginationProperties}
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}

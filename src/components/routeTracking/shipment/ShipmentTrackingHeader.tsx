@@ -7,6 +7,7 @@ import PrintIcon from "../../../app/common/icons/PrintIcon";
 import DownloadIcon from "../../../app/common/icons/DownloadIcon";
 import GoBackIcon from "../../../app/common/icons/GoBackIcon";
 import views from "../../../app/util/view";
+import { observer } from "mobx-react-lite";
 
 type ShipmentTrackingProps = {
   handlePrint: () => void;
@@ -42,4 +43,4 @@ const ShipmentTrackingHeader: FC<ShipmentTrackingProps> = ({
   );
 };
 
-export default ShipmentTrackingHeader;
+export default observer(ShipmentTrackingHeader);

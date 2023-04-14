@@ -20,7 +20,7 @@ export interface IRouteTrackingList {
   entrega: string;
 }
 
-export interface ITagTrackingOrder{
+export interface ITagTrackingOrder {
   id: number;
   claveEtiqueta: string;
   claveRuta: string;
@@ -31,21 +31,8 @@ export interface ITagTrackingOrder{
   solicitudId: string;
   estatus: number;
   escaneo: boolean;
-}
-
-export interface IstudyRoute {
-  id: number;
-  nombre: string;
-  area: string;
-  status: number;
-  registro: string;
-  entrega: string;
-  seleccion: boolean;
-  clave: string;
-  expedienteid: string;
-  solicitudid: string;
-  nombreEstatus: string;
-  routeId: string;
+  extra: boolean;
+  estudiosId: number[];
 }
 
 export class TrackingFormValues implements SearchTracking {

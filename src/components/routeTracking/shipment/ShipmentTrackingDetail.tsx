@@ -20,15 +20,13 @@ import useWindowDimensions from "../../../app/util/window";
 import { useNavigate, useParams } from "react-router-dom";
 import { useStore } from "../../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import { IShipmentStudies } from "../../../app/models/shipmentTracking";
-import { IRouteTrackingList } from "../../../app/models/routeTracking";
+import { IShipmentTags } from "../../../app/models/shipmentTracking";
 import moment from "moment";
 import "./../css/tracking.less";
 import DescriptionItem from "../../../app/common/display/DescriptionItem";
 import ShipmentTrackingTitle from "./content/ShipmentTrackingTitle";
-import DescriptionTitle from "../../../app/common/display/DescriptionTitle";
-
-const { Title, Text } = Typography;
+import { studyStatus } from "../../../app/util/catalogs";
+import { CheckCircleTwoTone, MinusCircleTwoTone } from "@ant-design/icons";
 
 type StudyTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -44,11 +42,10 @@ const ShipmentTackingDetail: FC<StudyTableProps> = ({
   printing,
 }) => {
   const { routeTrackingStore, shipmentTracking } = useStore();
-  const { getAll, filterSend: searchrecive } = routeTrackingStore;
+  const { getActive, trackingOrders } = routeTrackingStore;
   const { getShipmentById, shipment, loadingOrders } = shipmentTracking;
 
-  const [estudios, setEstudios] = useState<IRouteTrackingList[]>([]);
-  const [studies, setStudies] = useState<IShipmentStudies[]>([]);
+  const [studies, setStudies] = useState<IShipmentTags[]>([]);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -59,69 +56,83 @@ const ShipmentTackingDetail: FC<StudyTableProps> = ({
   const { width: windowWidth } = useWindowDimensions();
 
   useEffect(() => {
-    var readshipment = async () => {
-      var shipment = await getShipmentById(id!);
-      setStudies(shipment!.estudios);
+    let readshipment = async (id: string) => {
+      let shipment = await getShipmentById(id);
+
+      if (shipment) setStudies(shipment.estudios);
     };
 
-    readshipment();
+    if (id) {
+      readshipment(id);
+    }
   }, [getShipmentById, id]);
 
-  // useEffect(() => {
-  //   var readroute = async () => {
-  //     let estudiosrute = await getAll(searchrecive);
+  useEffect(() => {
+    const readOrders = async () => {
+      await getActive();
+    };
 
-  //     let pivote = estudiosrute![0];
-  //     let result: IRouteTrackingList[] = [];
-  //     result.push(pivote);
-  //     estudiosrute!.forEach((element) => {
-  //       if (element.seguimiento != pivote.seguimiento) {
-  //         pivote = element;
-  //         result.push(element);
-  //       }
-  //     });
-  //     setEstudioslist(result);
-  //   };
-  //   readroute();
-  // }, [getAll]);
+    readOrders();
+  }, [getActive]);
 
-  const actual = () => {
-    if (id) {
-      const index = studies.findIndex((x) => x.id === id);
-      return index + 1;
-    }
-    return 0;
+  const onPageChange = (page: number) => {
+    const trackingOrder = trackingOrders[page - 1];
+    navigate(`/ShipmentTracking/${trackingOrder.id}`);
   };
 
-  const prevnext = (index: number) => {
-    const maquila = studies[index];
-    navigate(`/ShipmentTracking/${maquila.id}`);
+  const getPage = (trackingOrderId?: string) => {
+    return trackingOrders.findIndex((x) => x.id === trackingOrderId) + 1;
   };
 
-  const columns: IColumns<IShipmentStudies> = [
+  const columns: IColumns<IShipmentTags> = [
     {
-      ...getDefaultColumnProps("estudio", "Estudio", {
+      ...getDefaultColumnProps("claveEtiqueta", "Clave muestra", {
         searchState,
         setSearchState,
-        width: "20%",
-        minWidth: 150,
-        windowSize: windowWidth,
+        width: "10%",
       }),
     },
     {
-      ...getDefaultColumnProps("paciente", "Nombre de paciente", {
+      ...getDefaultColumnProps("recipiente", "Recipiente", {
         searchState,
         setSearchState,
-        width: "20%",
-        minWidth: 150,
-        windowSize: windowWidth,
+        width: "9%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("cantidad", "Cantidad", {
+        width: "5%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("estudios", "Estudios", {
+        searchState,
+        setSearchState,
+        width: "15%",
       }),
     },
     {
       ...getDefaultColumnProps("solicitud", "Solicitud", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "8%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("estatus", "Estatus", {
+        searchState,
+        setSearchState,
+        width: "8%",
+      }),
+      render: (value) => {
+        return studyStatus(value);
+      },
+    },
+    {
+      ...getDefaultColumnProps("paciente", "Nombre de paciente", {
+        searchState,
+        setSearchState,
+        width: "15%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -129,51 +140,43 @@ const ShipmentTackingDetail: FC<StudyTableProps> = ({
     {
       key: "confirmacionOrigen",
       dataIndex: "confirmacionOrigen",
-      title: "Confirmación Muestra Origen",
+      title: "Confirmación Recolección",
       align: "center",
-      width: 100,
-      render: (value) => (value ? "Sí" : "No"),
+      width: "10%",
+      render: (value) =>
+        value ? (
+          <CheckCircleTwoTone twoToneColor="green" />
+        ) : (
+          <MinusCircleTwoTone twoToneColor="#FFCC00" />
+        ),
     },
     {
       key: "confirmacionDestino",
       dataIndex: "confirmacionDestino",
-      title: "Confirmación Muestra Destino",
+      title: "Confirmación Recepción",
+      width: "10%",
       align: "center",
-      width: 100,
-      render: (value) => (value ? "Sí" : "No"),
+      render: (value) => <MinusCircleTwoTone twoToneColor="#FFCC00" />,
     },
   ];
 
   return (
     <Fragment>
       <Spin spinning={loadingOrders}>
-        <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
-          <Pagination
-            size="small"
-            total={studies.length}
-            pageSize={1}
-            current={actual()}
-            onChange={(value) => {
-              prevnext(value - 1);
-            }}
-          />
-        </Col>
-        {/* <ShipmentTrackingTitle shipment={shipment} /> */}
-        <Row gutter={[4, 0]} justify="space-between">
-          <Col span={8}>
-            <DescriptionTitle
-              title="No. de seguimiento"
-              content={shipment!.seguimiento}
+        <Row gutter={[24, 16]}>
+          <Col md={8} sm={24} xs={12} style={{ textAlign: "left" }}>
+            <Pagination
+              size="small"
+              total={studies.length}
+              pageSize={1}
+              current={getPage(id)}
+              onChange={onPageChange}
+              showSizeChanger={false}
             />
           </Col>
-          <Col span={8}>
-            <DescriptionTitle title="Ruta" content={shipment!.ruta} />
+          <Col span={16}>
+            <ShipmentTrackingTitle shipment={shipment} />
           </Col>
-          <Col span={8}>
-            <DescriptionTitle title="Nombre" content={shipment!.nombre} />
-          </Col>
-        </Row>
-        <Row gutter={[24, 16]}>
           <Col md={12}>
             <div className="tracking-card">
               <Row gutter={[0, 4]}>
@@ -181,7 +184,11 @@ const ShipmentTackingDetail: FC<StudyTableProps> = ({
                   <PageHeader
                     title="Origen"
                     className="header-container-padding"
-                    tags={<Tag color="blue">Activo</Tag>}
+                    tags={
+                      <Tag color="blue">
+                        {shipment?.activo ? "Activo" : "Inactivo"}
+                      </Tag>
+                    }
                     avatar={{
                       src: `${process.env.REACT_APP_NAME}/assets/origen.png`,
                     }}
@@ -201,7 +208,7 @@ const ShipmentTackingDetail: FC<StudyTableProps> = ({
                   />
                 </Col>
                 <Col md={8}>
-                  <DescriptionItem title="Medio de entrega" content="" />
+                  <DescriptionItem title="Medio de entrega" content={shipment?.paqueteria} />
                 </Col>
                 <Col md={8}>
                   <DescriptionItem
@@ -261,28 +268,26 @@ const ShipmentTackingDetail: FC<StudyTableProps> = ({
                 <Col md={8}>
                   <DescriptionItem
                     title="Fecha de entrega real"
-                    content={moment(shipment?.fechaReal).format("DD/MM/YYYY")}
+                    content="N/A"
                   />
                 </Col>
                 <Col md={8}>
-                  <DescriptionItem
-                    title="Hora de entrega real"
-                    content={moment(shipment?.fechaReal).format("h:mmA")}
-                  />
+                  <DescriptionItem title="Hora de entrega real" content="N/A" />
                 </Col>
               </Row>
             </div>
           </Col>
-          <Table<IShipmentStudies>
-            size="small"
-            rowKey={(record) => record.id}
-            columns={columns}
-            dataSource={[...studies!]}
-            pagination={defaultPaginationProperties}
-            sticky
-            scroll={{ x: "max-content" }}
-          />
         </Row>
+        <br />
+        <Table<IShipmentTags>
+          size="small"
+          rowKey={(record) => record.id}
+          columns={columns}
+          dataSource={[...studies]}
+          pagination={defaultPaginationProperties}
+          sticky
+          scroll={{ x: "max-content" }}
+        />
       </Spin>
     </Fragment>
   );
