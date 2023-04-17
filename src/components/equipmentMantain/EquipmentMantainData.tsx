@@ -43,6 +43,7 @@ const EquipmentMantainData: FC<EquipmentTableProps> = ({
     idEq,
     printTicket,
     updateStatus,
+    exportForm
   } = equipmentMantainStore;
   const { equipment, getAll } = equipmentStore;
   const [searchParams] = useSearchParams();
@@ -68,6 +69,7 @@ const [ equipments,setEquipments]=useState<IMantainList[]>([]);
       var equipo = await getequip(id);
       search!.idEquipo = equipo?.id!;
       var data = await getAlls(search!);
+      console.log(data);
       setEquipments(data!);
       await getAll("all");
       setiD(id);
@@ -76,10 +78,12 @@ const [ equipments,setEquipments]=useState<IMantainList[]>([]);
 
     readEquipment();
   }, [getAll, searchParams, getequip, getAlls]);
+
   const onFinish = async (newValues: ISearchMantain) => {
     const equipment = { ...search, ...newValues };
-    setSearch(equipment);
-    await getAlls(equipment);
+   setSearch(equipment);
+   var data = await getAlls(equipment);
+    setEquipments(data!);
   };
 
   const UpdateStatusChange = async (id:string)=>{
@@ -148,7 +152,7 @@ const [ equipments,setEquipments]=useState<IMantainList[]>([]);
           title=" Imprimir reporte"
           icon={<PrinterOutlined />}
           onClick={() => {
-            printTicket(item.id);
+            exportForm(item.id);
           }}
         />
       ),
@@ -252,7 +256,7 @@ const [ equipments,setEquipments]=useState<IMantainList[]>([]);
         size="small"
         rowKey={(record) => record.id}
         columns={columns}
-        dataSource={equipments}
+        dataSource={[...equipments]}
         pagination={defaultPaginationProperties}
         sticky
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
