@@ -100,8 +100,8 @@ const InvoiceComapnyForm = () => {
     const formValues = {
       ...newFormValues,
       tipoFactura: checkedValues,
-      fechaFinal: newFormValues.fechas[1].utcOffset(0, true),
-      fechaInicial: newFormValues.fechas[0].utcOffset(0, true),
+      fechaFinal: newFormValues.fechas[1],
+      fechaInicial: newFormValues.fechas[0],
       facturaMetodo: tipo,
     };
     setFormValues(newFormValues);

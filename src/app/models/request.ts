@@ -34,7 +34,7 @@ export interface IRequest extends Omit<IRequestBase, "solicitudId"> {
   serie?: string;
   serieNumero?: string;
   estudios?: IRequestStudyInfo[];
-  destino?:string;
+  destino?: string;
 }
 
 export interface IRequestFilter {
@@ -57,8 +57,8 @@ export interface IRequestFilter {
 export class RequestFilterForm implements IRequestFilter {
   tipoFecha = 1;
   fechas = [moment(), moment()];
-  fechaInicial = moment().utcOffset(0, true);
-  fechaFinal = moment().utcOffset(0, true);
+  fechaInicial = moment();
+  fechaFinal = moment();
 
   constructor(init?: IRequestFilter) {
     Object.assign(this, init);
@@ -296,7 +296,7 @@ export class RequestStudyValues implements IRequestStudy {
   areaId = 0;
   dias = 0;
   horas = 0;
-  fechaEntrega = moment(moment.now());
+  fechaEntrega = moment();
   precio = 0;
   descuento = 0;
   descuentoPorcentaje = 0;
@@ -359,7 +359,7 @@ export interface IRequestTag {
   nombreEtiqueta: string;
   cantidad: number;
   color: string;
-  observaciones?: string
+  observaciones?: string;
   estudios: IRequestTagStudy[];
 }
 

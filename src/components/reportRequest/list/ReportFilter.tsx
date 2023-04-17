@@ -115,10 +115,7 @@ const ReportFilter = () => {
         form={form}
         onFinish={onFinish}
         initialValues={{
-          fecha: [
-            moment(Date.now()).utcOffset(0, true),
-            moment(Date.now()).utcOffset(0, true),
-          ],
+          fecha: [moment(), moment()],
           tipoFecha: 2,
         }}
         size="small"

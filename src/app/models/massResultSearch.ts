@@ -53,10 +53,7 @@ export interface IDeliverResultsForm {
 }
 
 export class MassSearchValues implements IMassSearch {
-  fechas = [
-    moment(Date.now()).utcOffset(0, true),
-    moment(Date.now()).utcOffset(0, true),
-  ];
+  fechas = [moment(), moment()];
   area = 0;
   nombreArea = "";
   busqueda = "";

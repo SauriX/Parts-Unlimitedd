@@ -119,7 +119,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
       delete values.fechaNacimiento;
     }
     if (values.fechaNacimiento != null) {
-      values.fechaNacimiento = values.fechaNacimiento!.utcOffset(0, true);
+      values.fechaNacimiento = values.fechaNacimiento!;
     }
 
     setGeneralFilter(values);
@@ -259,10 +259,7 @@ const ProceedingTable: FC<ProceedingTableProps> = ({
           onFinish={onfinish}
           size="small"
           initialValues={{
-            fecha: [
-              moment(Date.now()).utcOffset(0, true),
-              moment(Date.now()).utcOffset(0, true),
-            ],
+            fecha: [moment(), moment()],
           }}
           scrollToFirstError
         >

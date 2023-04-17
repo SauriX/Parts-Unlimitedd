@@ -44,6 +44,7 @@ export default class NotificationsStore {
     try {
       const notifications = await Notifications.getAllNotifications(search);
       this.notifications = notifications;
+      return notifications;
     } catch (error) {
       alerts.warning(getErrors(error));
       this.notifications = [];

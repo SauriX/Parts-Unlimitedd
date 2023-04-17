@@ -71,7 +71,7 @@ const QuotationFilter = () => {
     const filter = { ...values };
 
     if (filter.fechaNacimiento) {
-      filter.fechaNInicial = filter.fechaNacimiento.utcOffset(0, true);
+      filter.fechaNInicial = filter.fechaNacimiento;
     }
 
     setGeneralFilter(filter);
@@ -93,10 +93,7 @@ const QuotationFilter = () => {
         }}
         size="small"
         initialValues={{
-          fecha: [
-            moment(Date.now()).utcOffset(0, true),
-            moment(Date.now()).utcOffset(0, true),
-          ],
+          fecha: [moment(), moment()],
         }}
       >
         <Row gutter={[0, 12]}>

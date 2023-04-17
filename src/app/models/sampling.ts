@@ -27,7 +27,7 @@ export interface ISamplingList {
   seleccion: boolean;
   observacion: string;
   estudios: IStudySampling[];
-  clavePatologica:string
+  clavePatologica: string;
 }
 export interface IStudySampling {
   id: number;
@@ -52,7 +52,7 @@ export interface IUpdate {
   solicitudId: string;
   estudioId: number[];
   observacion?: ISamplingComment[];
-  ruteOrder?:string;
+  ruteOrder?: string;
 }
 
 export interface ISamplingComment {
@@ -61,10 +61,7 @@ export interface ISamplingComment {
 }
 
 export class SamplingFormValues implements ISamplingForm {
-  fecha = [
-    moment(Date.now()).utcOffset(0, true),
-    moment(Date.now()).utcOffset(0, true),
-  ];
+  fecha = [moment(), moment()];
   buscar = "";
   procedencia = [];
   departamento = [];

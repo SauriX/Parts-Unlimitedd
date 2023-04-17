@@ -50,7 +50,7 @@ export interface IServicesCost {
   fechaAlta?: moment.Moment;
 }
 
-export interface IBranchService{
+export interface IBranchService {
   costoId?: string;
   sucursalId: string;
   ciudad: string;
@@ -79,7 +79,7 @@ export interface IModalIndicatorsFilter {
   ciudad?: string[];
 }
 
-export interface IUpdateService{
+export interface IUpdateService {
   servicios: IServicesCost[];
   filtros: IModalIndicatorsFilter;
 }
@@ -94,7 +94,7 @@ export class ServicesCost implements IServicesCost {
   costoFijo = 0;
   nombre = "";
   sucursales = [];
-  fechaAlta = moment(Date.now());
+  fechaAlta = moment();
 
   constructor(init?: IServicesCost) {
     Object.assign(this, init);
@@ -103,9 +103,9 @@ export class ServicesCost implements IServicesCost {
 
 export class IndicatorFilterValues implements IReportIndicatorsFilter {
   sucursalId = [];
-  fechaInicial = moment(Date.now()).utcOffset(0, true);
-  fechaFinal = moment(Date.now()).utcOffset(0, true);
-  fechaIndividual = moment(Date.now()).utcOffset(0, true);
+  fechaInicial = moment();
+  fechaFinal = moment();
+  fechaIndividual = moment();
   tipoFecha = "date";
 
   constructor(init?: IReportIndicatorsFilter) {
@@ -118,7 +118,6 @@ export class ServiceInvoice implements IServicesInvoice {
   totalMensual = 0;
   totalSemanal = 0;
   totalDiario = 0;
-  
 
   constructor(init?: IServicesInvoice) {
     Object.assign(this, init);
@@ -133,7 +132,7 @@ export class IndicatorsFormValues implements IReportIndicators {
   costoTomaCalculado = 0;
   fechaInicial = "";
   fechaFinal = "";
-  fechaAlta = moment(Date.now()).utcOffset(0, true);
+  fechaAlta = moment();
   utilidadOperacion = "";
   sucursalId = "";
   sucursal = "";
@@ -146,11 +145,8 @@ export class IndicatorsFormValues implements IReportIndicators {
 
 export class ModalIndicatorFilterValues implements IModalIndicatorsFilter {
   sucursalId = [];
-  fecha = [
-    moment(Date.now()),
-    moment(Date.now()),
-  ];
-  mensual = moment(Date.now())
+  fecha = [moment(), moment()];
+  mensual = moment();
   servicio = [];
   ciudad = [];
 

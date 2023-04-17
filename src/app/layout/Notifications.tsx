@@ -39,6 +39,7 @@ const Notifications = () => {
               />}
               datetime={
                 <Tooltip title={moment(x.fecha).format("YYYY-MM-DD HH:mm:ss")}>
+                  
                   <span>{moment(x.fecha).fromNow()}</span>
                 </Tooltip>
               }
