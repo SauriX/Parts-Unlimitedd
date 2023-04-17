@@ -95,7 +95,7 @@ const Coincidencias: FC<ProceedingTableProps> = ({
       ),
     },
     {
-      ...getDefaultColumnProps("nomprePaciente", "Nombre del paciente", {
+      ...getDefaultColumnProps("nombrePaciente", "Nombre del paciente", {
         searchState,
         setSearchState,
         width: "20%",
