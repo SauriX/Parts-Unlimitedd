@@ -53,11 +53,11 @@ const RequestRequest = ({ formGeneral }: RequestRequestProps) => {
       return;
     }
 
-    setStudy({ ...item, fechaEntrega: value.utcOffset(0, true) });
+    setStudy({ ...item, fechaEntrega: value });
     const origin = formGeneral.getFieldValue("urgencia");
     if (
       origin === catalog.urgency.normal &&
-      moment(item.fechaEntrega).isAfter(value.utcOffset(0, true))
+      moment(item.fechaEntrega).isAfter(value)
     ) {
       alerts.info("La solicitud se marcó como urgente");
       formGeneral.setFieldValue("urgencia", catalog.urgency.urgente);

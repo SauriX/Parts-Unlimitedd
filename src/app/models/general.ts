@@ -30,7 +30,7 @@ export class GeneralFormValues implements IGeneralForm {
   compañiaId = [];
   sucursalId = [];
   ciudad = [];
-  fecha = [moment().utcOffset(0, true), moment().utcOffset(0, true)];
+  fecha = [moment(), moment()];
   buscar = "";
   procedencia = [];
   departamento = [];

@@ -73,10 +73,7 @@ const MassSearchForm = () => {
         form={form}
         onFinish={onFinish}
         initialValues={{
-          fecha: [
-            moment(Date.now()).utcOffset(0, true),
-            moment(Date.now()).utcOffset(0, true),
-          ],
+          fecha: [moment(), moment()],
         }}
       >
         <Row justify="space-between" gutter={[0, 12]}>

@@ -23,12 +23,9 @@ export interface IQuotationFilter {
 }
 
 export class QuotationFilterForm implements IQuotationFilter {
-  fechaAlta = [
-    moment(Date.now()).utcOffset(0, true),
-    moment(Date.now()).utcOffset(0, true),
-  ];
-  fechaAInicial = moment().utcOffset(0, true);
-  fechaAFinal = moment().utcOffset(0, true);
+  fechaAlta = [moment(), moment()];
+  fechaAInicial = moment();
+  fechaAFinal = moment();
   ciudad = [];
   constructor(init?: IQuotationFilter) {
     Object.assign(this, init);

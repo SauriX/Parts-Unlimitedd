@@ -90,9 +90,9 @@ const PromotionFormStudies = ({
 
       const filter = form.getFieldsValue();
       // prettier-ignore
-      filter.fechaInicial = filter.fechaDescuento ? filter.fechaDescuento[0].utcOffset(0, false).toDate() : new Date();
+      filter.fechaInicial = filter.fechaDescuento ? filter.fechaDescuento[0].toDate() : new Date();
       // prettier-ignore
-      filter.fechaFinal = filter.fechaDescuento ? filter.fechaDescuento[1].utcOffset(0, false).toDate() : new Date();
+      filter.fechaFinal = filter.fechaDescuento ? filter.fechaDescuento[1].toDate() : new Date();
       setLoading(true);
       const studies = await getStudies(filter, false);
       setLoading(false);
@@ -160,8 +160,8 @@ const PromotionFormStudies = ({
 
     const promoStudies = [...studies];
     const study = promoStudies[index];
-    study.fechaInicial = dates[0].utcOffset(0, false).toDate();
-    study.fechaFinal = dates[1].utcOffset(0, false).toDate();
+    study.fechaInicial = dates[0].toDate();
+    study.fechaFinal = dates[1].toDate();
     promoStudies[index] = study;
 
     setStudies(promoStudies);
@@ -282,10 +282,7 @@ const PromotionFormStudies = ({
       width: 200,
       render: (_value, item) => (
         <DatePicker.RangePicker
-          value={[
-            moment(item.fechaInicial).utcOffset(0, false),
-            moment(item.fechaFinal).utcOffset(0, false),
-          ]}
+          value={[moment(item.fechaInicial), moment(item.fechaFinal)]}
           format="DD/MM/YYYY"
           allowClear={false}
           onChange={(value) => {

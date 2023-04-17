@@ -36,7 +36,11 @@ import SelectInput from "../../../app/common/form/proposal/SelectInput";
 import SwitchInput from "../../../app/common/form/SwitchInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
-import { getDefaultColumnProps, IColumns, ISearch } from "../../../app/common/table/utils";
+import {
+  getDefaultColumnProps,
+  IColumns,
+  ISearch,
+} from "../../../app/common/table/utils";
 import { IFormError, IOptions } from "../../../app/models/shared";
 import moment from "moment";
 import { ITaxData } from "../../../app/models/taxdata";
@@ -63,10 +67,21 @@ type apointmentFormProps = {
   printing: boolean;
 };
 
-const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing }) => {
+const ApointmentForm: FC<apointmentFormProps> = ({
+  id,
+  componentRef,
+  printing,
+}) => {
   const navigate = useNavigate();
-  const { modalStore, locationStore, optionStore, profileStore, priceListStore, appointmentStore,procedingStore } =
-    useStore();
+  const {
+    modalStore,
+    locationStore,
+    optionStore,
+    profileStore,
+    priceListStore,
+    appointmentStore,
+    procedingStore,
+  } = useStore();
   const {
     getAllDom,
     getAllLab,
@@ -79,21 +94,26 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
     search,
     sucursales,
     sendTestEmail,
-    sendTestWhatsapp,createsolictud
+    sendTestWhatsapp,
+    createsolictud,
   } = appointmentStore;
-  
+
   const [data, setData] = useState<IRequestStudy[]>([]);
   const { profile } = profileStore;
   const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [readonly, setReadonly] = useState(searchParams.get("mode") === "readonly");
+  const [readonly, setReadonly] = useState(
+    searchParams.get("mode") === "readonly"
+  );
   const [type, setType] = useState(searchParams.get("type"));
   const [form] = Form.useForm<IAppointmentForm>();
-  const [values, setValues] = useState<IAppointmentForm>(new AppointmentFormValues());
+  const [values, setValues] = useState<IAppointmentForm>(
+    new AppointmentFormValues()
+  );
   const { getColoniesByZipCode } = locationStore;
   const { openModal, closeModal } = modalStore;
   const [colonies, setColonies] = useState<IOptions[]>([]);
-  const [date, setDate] = useState(moment(new Date(moment.now())));
+  const [date, setDate] = useState(moment());
   const [continuar, SetContinuar] = useState<boolean>(true);
   const [errors, setErrors] = useState<IFormError[]>([]);
   const [generales, setGenerales] = useState<IAppointmentGeneralesForm>();
@@ -119,10 +139,8 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
   }, [values]);
 
   useEffect(() => {
-
-
     const read = async () => {
-      setValues((prev)=>({...prev,sucursale:profile?.sucursal}));
+      setValues((prev) => ({ ...prev, sucursale: profile?.sucursal }));
       if (type == "laboratorio") {
         await getAllLab(search);
       } else {
@@ -173,14 +191,14 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
       SetTotalFinal(totalfinal);
     }
   };
-   const convertSolicitud=()=>{
-    var request:ISolicitud = {
-      Id:values.id,
-      ExpedienteId :values.expediente!,
-      SucursalId :profile?.sucursal!,
-      Clave :values.nomprePaciente,
-      ClavePatologica :"",
-      UsuarioId :"00000000-0000-0000-0000-000000000000",
+  const convertSolicitud = () => {
+    var request: ISolicitud = {
+      Id: values.id,
+      ExpedienteId: values.expediente!,
+      SucursalId: profile?.sucursal!,
+      Clave: values.nomprePaciente,
+      ClavePatologica: "",
+      UsuarioId: "00000000-0000-0000-0000-000000000000",
       General: {
         solicitudId: "00000000-0000-0000-0000-000000000000",
         expedienteId: values.expediente!,
@@ -195,11 +213,11 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
         observaciones: values.generales?.observaciones!,
       },
 
-      Estudios :values.estudy!,
-    }
+      Estudios: values.estudy!,
+    };
     var redirect = createsolictud(request);
     navigate(`/${views.quotation}/${redirect}?${searchParams}`);
-} 
+  };
   useEffect(() => {
     var suma = 0;
     data.forEach((x) => {
@@ -210,7 +228,6 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
   }, [data]);
 
   useEffect(() => {
-
     const readExpedinte = async (id: string) => {
       setLoading(true);
       if (type == "laboratorio") {
@@ -278,7 +295,6 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
       hoy.setFullYear(cumpleaños);
       /* setValues((prev) => ({ ...prev, fechaNacimiento: hoy })) */
     }
-    
   };
   const parametrosDuplicados = (estudios: IRequestStudy[]) => {
     let duplicados = [];
@@ -324,7 +340,9 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
 
     var duplicados = parametrosDuplicados(reagent.estudy);
     if (duplicados.length > 0) {
-      duplicados.forEach((x) => alerts.warning(`El parametro ${x.nombre} sse Encuentra duplicado`));
+      duplicados.forEach((x) =>
+        alerts.warning(`El parametro ${x.nombre} sse Encuentra duplicado`)
+      );
       setLoading(false);
       return;
     }
@@ -381,7 +399,12 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
         )}
         {readonly && (
           <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
-            <ImageButton key="edit" title="Editar" image="editar" onClick={setEditMode} />
+            <ImageButton
+              key="edit"
+              title="Editar"
+              image="editar"
+              onClick={setEditMode}
+            />
           </Col>
         )}
       </Row>
@@ -406,7 +429,10 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
             onValuesChange={onValuesChange}
             style={{ marginBottom: "10px" }}
             onFinishFailed={({ errorFields }) => {
-              const errors = errorFields.map((x) => ({ name: x.name[0].toString(), errors: x.errors }));
+              const errors = errorFields.map((x) => ({
+                name: x.name[0].toString(),
+                errors: x.errors,
+              }));
               setErrors(errors);
             }}
             size="small"
@@ -422,7 +448,9 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                   max={500}
                   showLabel
                   readonly={readonly}
-                  errors={errors.find((x) => x.name === "nomprePaciente")?.errors}
+                  errors={
+                    errors.find((x) => x.name === "nomprePaciente")?.errors
+                  }
                 />
               </Col>
               <Col md={8} sm={24} xs={12}>
@@ -455,9 +483,11 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                   formProps={{
                     name: "fechaNacimiento",
                     label: "Fecha de Nacimiento",
-                    labelCol: {span: 10},
+                    labelCol: { span: 10 },
                   }}
-                  errors={errors.find((x) => x.name === "fechaNacimiento")?.errors}
+                  errors={
+                    errors.find((x) => x.name === "fechaNacimiento")?.errors
+                  }
                 />
               </Col>
 
@@ -551,7 +581,12 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                 <Descriptions.Item label="Total">$ {total}</Descriptions.Item>
                 <Descriptions.Item
                   label={
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
                       <Text>Cargo</Text>
 
                       <Radio
@@ -560,7 +595,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                         onChange={(value) => {
                           setTipo(value.target.value, cargo!);
                         }}
-                        disabled={descuento!=0}
+                        disabled={descuento != 0}
                       >
                         %
                       </Radio>
@@ -570,7 +605,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                         onChange={(value) => {
                           setTipo(value.target.value, cargo!);
                         }}
-                        disabled={descuento!=0}
+                        disabled={descuento != 0}
                       >
                         $
                       </Radio>
@@ -580,17 +615,21 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                   <InputNumber
                     min={0}
                     value={cargo}
-
                     onChange={(value) => {
                       SetCargo(value ?? 0);
                       calculateTotalFinal(value ?? 0, typo);
                     }}
-                    disabled={descuento!=0}
+                    disabled={descuento != 0}
                   ></InputNumber>
                 </Descriptions.Item>
                 <Descriptions.Item
                   label={
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
                       <Text>Descuento</Text>
 
                       <Radio
@@ -598,9 +637,8 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                         checked={typoD == 1}
                         onChange={(value) => {
                           setTipoD(value.target.value, descuento!);
-                          
                         }}
-                        disabled={cargo!=0}
+                        disabled={cargo != 0}
                       >
                         %
                       </Radio>
@@ -610,7 +648,7 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                         onChange={(value) => {
                           setTipoD(value.target.value, descuento!);
                         }}
-                        disabled={cargo!=0}
+                        disabled={cargo != 0}
                       >
                         $
                       </Radio>
@@ -624,13 +662,20 @@ const ApointmentForm: FC<apointmentFormProps> = ({ id, componentRef, printing })
                       SetDescuento(value ?? 0);
                       calculateTotalFinalD(value ?? 0, typo);
                     }}
-                    disabled={cargo!=0}
+                    disabled={cargo != 0}
                   ></InputNumber>
                 </Descriptions.Item>
-                <Descriptions.Item label="Total">$ {totalFinal}</Descriptions.Item>
+                <Descriptions.Item label="Total">
+                  $ {totalFinal}
+                </Descriptions.Item>
               </Descriptions>
               <Button
-                style={{ marginTop: "10px", marginLeft: "100px", backgroundColor: "#B4C7E7", color: "white" }}
+                style={{
+                  marginTop: "10px",
+                  marginLeft: "100px",
+                  backgroundColor: "#B4C7E7",
+                  color: "white",
+                }}
                 onClick={async () => {
                   /* await printTicket() */
                 }}

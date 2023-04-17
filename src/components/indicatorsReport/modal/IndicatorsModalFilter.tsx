@@ -149,7 +149,7 @@ const IndicatorsModalFilter = ({ modalTab }: ModalProps) => {
         form={form}
         name="indicators"
         initialValues={{
-          mensual: moment(Date.now()).utcOffset(0, true),
+          mensual: moment(),
         }}
         onFinish={onFinish}
       >

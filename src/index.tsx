@@ -9,11 +9,9 @@ import es_ES from "antd/lib/locale/es_ES";
 import { store, StoreContext } from "./app/stores/store";
 import NavigateSetter from "./app/common/navigation/NavigateSetter";
 import { ThemeSwitcherProvider } from "react-css-theme-switcher";
-import moment from "moment";
 import "moment/locale/es-mx";
-
-moment.utc().local();
-
+import moment from "moment-timezone";
+moment.tz.setDefault(Intl.DateTimeFormat().resolvedOptions().timeZone);
 var meses =
   "Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre".split(
     "_"

@@ -66,14 +66,11 @@ const Home = () => {
       ];
 
       var filter: IGeneralForm = {
-        fecha: [
-          moment(moment.now()).utcOffset(0, true),
-          moment(moment.now()).utcOffset(0, true),
-        ],
+        fecha: [moment(), moment()],
         tipoFecha: 1,
       };
       if (vista == 2) {
-        var weeknumber = moment(moment.now()).week();
+        var weeknumber = moment().week();
         var primer = moment().isoWeek(weeknumber).startOf("W");
         var final = moment().isoWeek(weeknumber).endOf("W").subtract(1, "d");
         filter = { fecha: [primer, final], tipoFecha: 1 };
@@ -194,7 +191,7 @@ const Home = () => {
       var search: SearchTracking = new TrackingFormValues();
       var envia = await getAll(search);
 
-      const weeknumber = moment(moment.now()).week();
+      const weeknumber = moment().week();
       const primer = moment().isoWeek(weeknumber).startOf("W");
       const final = moment().isoWeek(weeknumber).endOf("W").subtract(1, "d");
       if (vista == 2) {
@@ -209,7 +206,7 @@ const Home = () => {
         envia = envia?.filter(
           (x) =>
             moment(x.entrega).format("YYYY MM DD") ==
-            moment(moment.now()).format("YYYY MM DD")
+            moment().format("YYYY MM DD")
         );
       }
 
