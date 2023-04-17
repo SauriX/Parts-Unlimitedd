@@ -1,6 +1,6 @@
 import { Button, Input, PageHeader, Select } from "antd";
 import { observer } from "mobx-react-lite";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
 import DownloadIcon from "../../app/common/icons/DownloadIcon";
 import PrintIcon from "../../app/common/icons/PrintIcon";
@@ -24,7 +24,6 @@ const NotificationsHeader: FC<NotificationsHeaderProps> = ({
   setType
 }) => {
   const navigate = useNavigate();
-
   return (
     <>
       <PageHeader

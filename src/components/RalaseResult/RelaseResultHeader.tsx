@@ -35,8 +35,8 @@ const RelaseResultHeader: FC<RelaseResultHeaderProps> = ({ handleList }) => {
       className="header-container"
       extra={[
         <Switch
-          checkedChildren="Validación"
-          unCheckedChildren="Liberación"
+          checkedChildren="Liberación"
+          unCheckedChildren="Validación"
           checked={true}
           onChange={() => onChangeActive()}
         />,

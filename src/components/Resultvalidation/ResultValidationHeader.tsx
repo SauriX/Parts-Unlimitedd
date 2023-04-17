@@ -41,8 +41,8 @@ const ResultValidationHeader: FC<ResultValidationHeaderProps> = ({
       className="header-container"
       extra={[
         <Switch
-          checkedChildren="Validación"
-          unCheckedChildren="Liberación"
+          checkedChildren="Liberación"
+          unCheckedChildren="Validación"
           checked={false}
           onChange={() => onChangeActive()}
         />,
