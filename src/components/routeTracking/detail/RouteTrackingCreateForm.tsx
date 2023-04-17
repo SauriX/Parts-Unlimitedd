@@ -67,9 +67,6 @@ const RouteTrackingCreateForm = () => {
     new TrackingOrderFormValues()
   );
 
-  const [currentStudyTags, setCurrentStudyTags] = useState<
-    IStudyTrackinOrder[]
-  >([]);
   const [routeOptions, setRouteOptions] = useState<IOptions[]>([]);
   const [originBranch, setOriginBranch] = useState<string>("");
   const [destination, setDestination] = useState<string>("");
@@ -91,7 +88,7 @@ const RouteTrackingCreateForm = () => {
           let study = getStudyTrackingOrder(x);
           return study;
         });
-        setCurrentStudyTags(idTags);
+        setRouteStudies(idTags);
 
         setTagData([...order.etiquetas, ...tagsSelected]);
         await getRoutes(order.destino, order.diaRecoleccion, order.origenId);
@@ -281,12 +278,16 @@ const RouteTrackingCreateForm = () => {
   ) => {
     setLoading(true);
     const order = { ...values, ...newOrder };
-    order.estudios = [...routeStudies, ...currentStudyTags];
+
+    order.estudios = routeStudies;
     order.destino = destination.toString();
     order.origenId = originBranch;
     order.diaRecoleccion = moment(order.diaRecoleccion).utcOffset(0, true);
+
     if (isCancelation) order.cancelacion = true;
     if (editable) order.editar = true;
+
+    console.log(order.estudios)
 
     let success = false;
     if (!id) {

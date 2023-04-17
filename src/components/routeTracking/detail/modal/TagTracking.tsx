@@ -123,6 +123,8 @@ const TagTracking = ({ getResult, selectedTags, requestCode }: Props) => {
       const newSelectedTagKeys = [...selectedTagKeys];
       newSelectedTagKeys.splice(index, 1);
       setSelectedTagKeys(newSelectedTagKeys);
+      selectedTags.splice(selectedTags.indexOf(item), 1);
+      tagData.splice(tagData.indexOf(item), 1);
       routeStudies.splice(routeStudies.indexOf(study), 1);
     }
   };

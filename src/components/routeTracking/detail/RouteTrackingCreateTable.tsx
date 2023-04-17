@@ -11,6 +11,11 @@ import { ITagTrackingOrder } from "../../../app/models/routeTracking";
 import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
 import { studyStatus } from "../../../app/util/catalogs";
 import { useStore } from "../../../app/stores/store";
+import { useParams } from "react-router-dom";
+
+type UrlParams = {
+  id: string;
+};
 
 const RouteTrackingCreateTable = () => {
   const { routeTrackingStore } = useStore();
@@ -27,6 +32,7 @@ const RouteTrackingCreateTable = () => {
     searchedColumn: "",
   });
   const { width: windowWidth } = useWindowDimensions();
+  const { id } = useParams<UrlParams>();
   const [checked, setChecked] = useState({ id: 0, checked: false });
 
   useEffect(() => {
@@ -45,7 +51,9 @@ const RouteTrackingCreateTable = () => {
   const onChecked = (checked: boolean, record: ITagTrackingOrder) => {
     record.escaneo = checked;
     let study = getStudyTrackingOrder(record);
-    let existingRecord = routeStudies.find((x) => x.id === study.id);
+    let existingRecord = routeStudies.find(
+      (x) => x.etiquetaId === study.etiquetaId
+    );
 
     if (checked && !existingRecord) {
       routeStudies.push(study);
@@ -147,14 +155,14 @@ const RouteTrackingCreateTable = () => {
       render: (value: boolean, record) => {
         return (
           <Fragment>
-            {!record.extra ? (
+            {!record.extra && !id ? (
               <Switch
                 checked={checked.id === record.id ? checked.checked : value}
                 onChange={(checked) => onChecked(checked, record)}
               />
             ) : (
               <Popconfirm
-                title="Eliminar etiqueta"
+                title="Eliminar muestra"
                 onConfirm={() => onConfirm(record)}
                 onCancel={() => onCancel(record)}
                 okText="Confirmar"
