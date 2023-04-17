@@ -41,7 +41,7 @@ const IndicatorsTable = ({ data }: IndicatorsProps) => {
     const indicator = {
       sucursalId: branchId as string,
       costoReactivo: budget,
-      fechaAlta: moment(filter.fechaIndividual).utcOffset(0, true),
+      fechaAlta: moment(filter.fechaIndividual),
     };
     if (indicator) {
       getForm(indicator);
@@ -116,11 +116,11 @@ const BudgetInput = ({
             <Form.Item name={"costoReactivo"} className="no-error-text">
               <InputNumber min={0} bordered={false} />
             </Form.Item>
-            {(datePickerType === "date" && (
-                <Button type="primary" htmlType="submit">
-                  <CheckOutlined style={{ color: "white" }} />
-                </Button>
-              ))}
+            {datePickerType === "date" && (
+              <Button type="primary" htmlType="submit">
+                <CheckOutlined style={{ color: "white" }} />
+              </Button>
+            )}
           </Input.Group>
         </Form.Item>
       </Form>

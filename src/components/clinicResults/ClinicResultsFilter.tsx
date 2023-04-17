@@ -148,10 +148,7 @@ const ClinicResultsFilter = () => {
         name="clinicResults"
         onFinish={onFinish}
         initialValues={{
-          fecha: [
-            moment(Date.now()).utcOffset(0, true),
-            moment(Date.now()).utcOffset(0, true),
-          ],
+          fecha: [moment(), moment()],
           buscar:
             lastViewedFrom?.from === "results"
               ? undefined

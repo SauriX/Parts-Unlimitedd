@@ -18,9 +18,10 @@ import { IOptions } from "../../app/models/shared";
 import { IGeneralForm } from "../../app/models/general";
 
 const RequestedStudyFilter = () => {
-  const { optionStore, requestedStudyStore, profileStore, generalStore } = useStore();
+  const { optionStore, requestedStudyStore, profileStore, generalStore } =
+    useStore();
   const { getAll } = requestedStudyStore;
-  const { setGeneralFilter, generalFilter } = generalStore
+  const { setGeneralFilter, generalFilter } = generalStore;
   const {
     branchCityOptions,
     medicOptions,
@@ -45,11 +46,7 @@ const RequestedStudyFilter = () => {
     getMedicOptions();
     getCompanyOptions();
     getAreaByDeparmentOptions();
-  }, [
-    getMedicOptions,
-    getCompanyOptions,
-    getAreaByDeparmentOptions,
-  ]);
+  }, [getMedicOptions, getCompanyOptions, getAreaByDeparmentOptions]);
 
   useEffect(() => {
     setCityOptions(
@@ -79,7 +76,7 @@ const RequestedStudyFilter = () => {
     setGeneralFilter(filter);
     getAll(filter);
   }, [branchCityOptions]);
-  
+
   useEffect(() => {
     if (selectedCity != undefined && selectedCity != null) {
       var branches = branchCityOptions.filter((x) =>
@@ -121,10 +118,7 @@ const RequestedStudyFilter = () => {
         name="requestedStudy"
         onFinish={onFinish}
         initialValues={{
-          fecha: [
-            moment(Date.now()).utcOffset(0, true),
-            moment(Date.now()).utcOffset(0, true),
-          ],
+          fecha: [moment(), moment()],
         }}
         scrollToFirstError
       >

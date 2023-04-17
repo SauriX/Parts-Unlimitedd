@@ -53,7 +53,7 @@ const SeriesFilter = () => {
       ?.value?.toString();
 
     const filter = {
-      año: moment(Date.now()).utcOffset(0, true),
+      año: moment(),
       ciudad: userCity ? [userCity] : undefined,
       sucursalId: profileBranch ? [profileBranch] : undefined,
     };
@@ -77,7 +77,7 @@ const SeriesFilter = () => {
           {...formItemLayout}
           form={form}
           name="series"
-          initialValues={{ año: moment(Date.now()).utcOffset(0, true) }}
+          initialValues={{ año: moment() }}
           onFinish={onFinish}
           scrollToFirstError
         >

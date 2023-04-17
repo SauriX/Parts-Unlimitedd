@@ -70,32 +70,25 @@ const IndicatorFilter = () => {
     if (datePickerType === "date") {
       newFilter = {
         ...filter,
-        fechaInicial: moment(filter.fechaIndividual).utcOffset(0, true),
-        fechaFinal: moment(filter.fechaIndividual).utcOffset(0, true),
+        fechaInicial: moment(filter.fechaIndividual),
+        fechaFinal: moment(filter.fechaIndividual),
         tipoFecha: datePickerType,
       };
     } else if (datePickerType === "week") {
       newFilter = {
         ...filter,
-        fechaInicial: moment(filter.fechaIndividual)
-          .utcOffset(0, true)
-          .startOf("week"),
-        fechaFinal: moment(filter.fechaIndividual)
-          .utcOffset(0, true)
-          .endOf("week"),
+        fechaInicial: moment(filter.fechaIndividual).startOf("week"),
+        fechaFinal: moment(filter.fechaIndividual).endOf("week"),
         tipoFecha: datePickerType,
       };
     } else if (datePickerType === "month") {
       newFilter = {
         ...filter,
-        fechaInicial: moment(filter.fechaIndividual)
-          .utcOffset(0, true)
-          .startOf("month"),
+        fechaInicial: moment(filter.fechaIndividual).startOf("month"),
         fechaFinal:
-          moment(filter.fechaIndividual).month() ===
-          moment(Date.now()).utcOffset(0, true).month()
-            ? moment(Date.now()).utcOffset(0, true)
-            : moment(filter.fechaIndividual).utcOffset(0, true).endOf("month"),
+          moment(filter.fechaIndividual).month() === moment().month()
+            ? moment()
+            : moment(filter.fechaIndividual).endOf("month"),
         tipoFecha: datePickerType,
       };
     }
@@ -114,7 +107,7 @@ const IndicatorFilter = () => {
           form={form}
           name="indicators"
           initialValues={{
-            fechaIndividual: moment(Date.now()).utcOffset(0, true),
+            fechaIndividual: moment(),
           }}
           onFinish={onFinish}
         >

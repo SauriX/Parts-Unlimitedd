@@ -142,7 +142,7 @@ const CostosFijosColumns = () => {
         width: "20%",
       }),
       render: (value: moment.Moment, record) => {
-        const selectedDate = moment(value) ?? moment(Date.now());
+        const selectedDate = moment(value) ?? moment();
 
         return (
           <DatePicker

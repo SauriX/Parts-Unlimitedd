@@ -15,20 +15,19 @@ const IndicatorsBody = ({ printing }: IndicatorsProps) => {
   const { indicatorsStore } = useStore();
   const { data, getByFilter } = indicatorsStore;
 
-  useEffect(() => { 
+  useEffect(() => {
     const readRequests = async () => {
       await getByFilter({
-        fechaIndividual: moment(Date.now()).utcOffset(0, true),
+        fechaIndividual: moment(),
         sucursalId: [],
-        fechaInicial: moment(Date.now()).utcOffset(0, true),
-        fechaFinal: moment(Date.now()).utcOffset(0, true),
-        tipoFecha: "date"
+        fechaInicial: moment(),
+        fechaFinal: moment(),
+        tipoFecha: "date",
       });
     };
 
     readRequests();
   }, []);
-
 
   return (
     <Spin spinning={loading || printing} tip={printing ? "Descargando" : ""}>

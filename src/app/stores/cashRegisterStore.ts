@@ -21,7 +21,7 @@ export default class CashRegisterStore {
   filter: ICashRegisterFilter = new CashRegisterFilterValues();
   clear: boolean = false;
   cashRegisterData: ICashRegisterData = new CashRegisterData();
-  showChart: boolean = false
+  showChart: boolean = false;
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -39,11 +39,8 @@ export default class CashRegisterStore {
     const emptyFilter: ICashRegisterFilter = {
       sucursalId: [],
       tipoCompañia: [],
-      fechaIndividual: moment(Date.now()).utcOffset(0, true),
-      hora: [
-        moment().hour(7).minutes(0).utcOffset(0, true),
-        moment().hour(19).minutes(0).utcOffset(0, true),
-      ],
+      fechaIndividual: moment(),
+      hora: [moment().hour(7).minutes(0), moment().hour(19).minutes(0)],
     };
     this.filter = emptyFilter;
     this.clear = !this.clear;

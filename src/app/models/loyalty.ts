@@ -41,7 +41,7 @@ export class LoyaltyFormValues implements ILoyaltyForm {
   cantidadDescuento = 0;
   cantidad = 0;
   activo = true;
-  fecha = [moment(Date.now()).utcOffset(0, true), moment(Date.now()).utcOffset(0, true).add(1, "day")];
+  fecha = [moment(), moment().add(1, "day")];
 
   constructor(init?: ILoyaltyForm) {
     Object.assign(this, init);

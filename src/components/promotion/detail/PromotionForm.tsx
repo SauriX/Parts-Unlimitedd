@@ -120,9 +120,9 @@ const PromotionForm: FC<Props> = ({ id, componentRef, printing, download }) => {
 
   const onFinish = async (newValues: IPromotionForm) => {
     // prettier-ignore
-    newValues.fechaInicial = newValues.fechaDescuento ? newValues.fechaDescuento[0].utcOffset(0, false).toDate() : new Date();
+    newValues.fechaInicial = newValues.fechaDescuento ? newValues.fechaDescuento[0].toDate() : new Date();
     // prettier-ignore
-    newValues.fechaFinal = newValues.fechaDescuento ? newValues.fechaDescuento[1].utcOffset(0, false).toDate() : new Date();
+    newValues.fechaFinal = newValues.fechaDescuento ? newValues.fechaDescuento[1].toDate() : new Date();
     newValues.sucursales = selectedBranches;
     newValues.medicos = selectedDoctors;
     newValues.estudios = studies;
@@ -182,8 +182,8 @@ const PromotionForm: FC<Props> = ({ id, componentRef, printing, download }) => {
       // prettier-ignore
       studiesToUpdate = studiesToUpdate.map((x) => ({
         ...x,
-        fechaInicial: !!value ? value[0].utcOffset(0, false).toDate(): new Date(),
-        fechaFinal: !!value ? value[1].utcOffset(0, false).toDate(): new Date(),
+        fechaInicial: !!value ? value[0].toDate(): new Date(),
+        fechaFinal: !!value ? value[1].toDate(): new Date(),
       }));
       setStudies(studiesToUpdate);
     } else if (field === "tipoDescuento" || field === "cantidad") {

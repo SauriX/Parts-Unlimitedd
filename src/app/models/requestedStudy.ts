@@ -67,10 +67,7 @@ export class RequestedStudyFormValues implements IRequestedStudyForm {
   sucursalId = [];
   medicoId = [];
   compañiaId = [];
-  fecha = [
-    moment(Date.now()).utcOffset(0, true),
-    moment(Date.now()).utcOffset(0, true),
-  ];
+  fecha = [moment(), moment()];
   buscar = "";
   procedencia = [];
   departamento = [];
