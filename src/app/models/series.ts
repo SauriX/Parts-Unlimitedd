@@ -31,6 +31,7 @@ export interface ITicketSerie {
   clave: string;
   nombre: string;
   tipoSerie: number;
+  estatus: boolean;
   expedicion: ISeriesExpedition;
 }
 
@@ -174,6 +175,7 @@ export class TicketSeriesValues implements ITicketSerie {
   clave = "";
   nombre = "";
   tipoSerie = 2;
+  estatus = false;
   expedicion = new SeriesExpeditionValues();
 
   constructor(init?: ITicketSerie) {

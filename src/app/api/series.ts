@@ -13,13 +13,17 @@ const Series = {
   access: (): Promise<IScopes> => requests.get("scopes/series"),
   getByBranch: (branchId: string, type: number): Promise<ISeriesList[]> =>
     requests.get(`series/branch/${branchId}/${type}`),
+  getAll: (): Promise<ISeriesList[]> => requests.get(`series/all`),
   getByFilter: (filter: ISeriesFilter): Promise<ISeriesList[]> =>
     requests.post(`series/filter`, filter),
   getNewForm: (newForm: ISeriesNewForm): Promise<ISeries> =>
     requests.post(`series/new`, newForm),
-  getById: (id: number, tipoSerie: number): Promise<ISeries> => requests.get(`series/${id}/${tipoSerie}`),
-  getBranch: (branchId: string): Promise<ISeriesExpedition> => requests.get(`series/${branchId}`),
-  getSeries: (branchId: string): Promise<ISeriesList[]> => requests.get(`series/active`),
+  getById: (id: number, tipoSerie: number): Promise<ISeries> =>
+    requests.get(`series/${id}/${tipoSerie}`),
+  getBranch: (branchId: string): Promise<ISeriesExpedition> =>
+    requests.get(`series/${branchId}`),
+  getSeries: (branchId: string): Promise<ISeriesList[]> =>
+    requests.get(`series/active`),
   createInvoice: (serie: FormData): Promise<void> =>
     requests.post(`series/invoice`, serie),
   updateInvoice: (serie: FormData): Promise<void> =>

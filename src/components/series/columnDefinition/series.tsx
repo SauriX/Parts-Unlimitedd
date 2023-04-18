@@ -31,7 +31,9 @@ const SeriesColumns = () => {
       render: (_value, record) => (
         <Link
           onClick={() => {
-            navigate(`/series/${record.id}/${record.tipo}?${searchParams}&mode=readonly`);
+            navigate(
+              `/series/${record.id}/${record.tipo}?${searchParams}&mode=readonly`
+            );
           }}
         >
           {record.id}
@@ -65,7 +67,12 @@ const SeriesColumns = () => {
         setSearchState,
         width: "10%",
       }),
-      render: (_value, record) => (record.cfdi ? "SI" : record.cfdi == null || record.tipo === 2 ? "" : "NO"), 
+      render: (_value, record) =>
+        record.cfdi
+          ? "SI"
+          : record.cfdi == null || record.tipo === 2
+          ? ""
+          : "NO",
     },
     {
       ...getDefaultColumnProps("año", "Año", {
@@ -75,13 +82,13 @@ const SeriesColumns = () => {
       }),
     },
     {
-        ...getDefaultColumnProps("activo", "Estatus", {
-          searchState,
-          setSearchState,
-          width: "10%",
-        }),
-        render: (_value, record) => (record.activo && record.tipo === 1 ? "Vigente" : record.activo == null || record.tipo === 2 ? "" : "Caducado"),
-      },
+      ...getDefaultColumnProps("activo", "Estatus", {
+        searchState,
+        setSearchState,
+        width: "10%",
+      }),
+      render: (_value, record) => (record.activo ? "Vigente" : "Caducado"),
+    },
   ];
 
   return columns;

@@ -23,6 +23,7 @@ export default class SeriesStore {
   scopes?: IScopes;
   series: ISeries = new SeriesValues();
   seriesList: ISeriesList[] = [];
+  seriesTotal: ISeriesList[] = [];
   formValues: ISeriesFilter = new SeriesFilterValues();
   loading: boolean = false;
   seriesType: number = 0;
@@ -47,6 +48,20 @@ export default class SeriesStore {
     } catch (error) {
       alerts.warning(getErrors(error));
       history.push("/forbidden");
+    }
+  };
+
+  getAll = async () => {
+    try {
+      this.loading = true;
+      const series = await Series.getAll();
+      this.seriesTotal = series;
+      return series;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      this.seriesTotal = [];
+    } finally {
+      this.loading = false;
     }
   };
 
