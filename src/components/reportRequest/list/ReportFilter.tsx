@@ -107,13 +107,17 @@ const ReportFilter = () => {
     setGeneralFilter(filtered);
     getRequests(filtered);
   };
-
+  const onChange=(values: IGeneralForm)=>{
+    const filtered = { ...values };
+    setGeneralFilter(filtered);
+  }
   return (
     <div className="status-container" style={{ marginBottom: 12 }}>
       <Form<IGeneralForm>
         {...formItemLayout}
         form={form}
         onFinish={onFinish}
+        onValuesChange={onChange}
         initialValues={{
           fecha: [moment(), moment()],
           tipoFecha: 2,
