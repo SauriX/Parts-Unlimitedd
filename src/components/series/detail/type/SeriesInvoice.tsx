@@ -11,6 +11,7 @@ import {
   Spin,
   Input,
   Tooltip,
+  Pagination,
 } from "antd";
 import { observer } from "mobx-react-lite";
 import { FC, useEffect, useState } from "react";
@@ -51,6 +52,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
   const {
     getById,
     createInvoice,
+    seriesTotal,
     updateInvoice,
     setSeriesType,
     getNewForm,
@@ -181,6 +183,17 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
     }
   };
 
+  const onPageChange = (page: number) => {
+    const serie = seriesTotal[page - 1];
+    navigate(
+      `/series/${serie.id}/${serie.tipo}?mode=${searchParams.get("mode")}`
+    );
+  };
+
+  const getPage = () => {
+    return seriesTotal.findIndex((x) => x.id === id) + 1;
+  };
+
   const onFinish = async (newValues: ISeries) => {
     setLoading(true);
 
@@ -207,8 +220,18 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
   return (
     <Spin spinning={loading} tip={"Cargando"}>
       <Row gutter={[24, 12]}>
+        <Col md={12} sm={24} xs={12}>
+          <Pagination
+            size="small"
+            pageSize={1}
+            current={getPage()}
+            total={seriesTotal.length}
+            onChange={onPageChange}
+            showSizeChanger={false}
+          />
+        </Col>
         {!readonly && (
-          <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
+          <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
             <Button onClick={goBack}>Cancelar</Button>
             <Button
               type="primary"
@@ -222,7 +245,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
           </Col>
         )}
         {readonly && (
-          <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
+          <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
             <ImageButton
               key="edit"
               title="Editar"

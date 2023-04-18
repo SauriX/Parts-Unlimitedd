@@ -1,4 +1,4 @@
-import { Button, Col, Row, Form, Spin, Divider } from "antd";
+import { Button, Col, Row, Form, Spin, Divider, Pagination } from "antd";
 import form from "antd/lib/form";
 import { observer } from "mobx-react-lite";
 import React, { FC, Fragment, useEffect, useState } from "react";
@@ -13,6 +13,9 @@ import {
 } from "../../../../app/models/series";
 import { useStore } from "../../../../app/stores/store";
 import { formItemLayout } from "../../../../app/util/utils";
+import SwitchInput from "../../../../app/common/form/proposal/SwitchInput";
+import alerts from "../../../../app/util/alerts";
+import messages from "../../../../app/util/messages";
 
 type SeriesTicketProps = {
   id: number;
@@ -22,8 +25,14 @@ type SeriesTicketProps = {
 const SeriesTicket: FC<SeriesTicketProps> = ({ id, tipoSerie }) => {
   const { seriesStore, optionStore } = useStore();
   const { getBranchOptions, BranchOptions } = optionStore;
-  const { getById, createTicket, updateTicket, setSeriesType, getBranch } =
-    seriesStore;
+  const {
+    getById,
+    createTicket,
+    updateTicket,
+    setSeriesType,
+    getBranch,
+    seriesTotal,
+  } = seriesStore;
 
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -50,6 +59,7 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id, tipoSerie }) => {
           clave: serie.factura.clave,
           nombre: serie.factura.nombre,
           tipoSerie: 2,
+          estatus: serie.factura.estatus,
           expedicion: serie.expedicion,
         };
         setValues(ticket);
@@ -82,6 +92,17 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id, tipoSerie }) => {
     }
   };
 
+  const onPageChange = (page: number) => {
+    const serie = seriesTotal[page - 1];
+    navigate(
+      `/series/${serie.id}/${serie.tipo}?mode=${searchParams.get("mode")}`
+    );
+  };
+
+  const getPage = () => {
+    return seriesTotal.findIndex((x) => x.id === id) + 1;
+  };
+
   const onFinish = async (newValues: ITicketSerie) => {
     setLoading(true);
 
@@ -106,8 +127,18 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id, tipoSerie }) => {
     <Fragment>
       <Spin spinning={loading} tip={"Cargando"}>
         <Row gutter={[24, 12]}>
+          <Col md={12} sm={24} xs={12}>
+            <Pagination
+              size="small"
+              pageSize={1}
+              current={getPage()}
+              total={seriesTotal.length}
+              onChange={onPageChange}
+              showSizeChanger={false}
+            />
+          </Col>
           {!readonly && (
-            <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
+            <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
               <Button onClick={goBack}>Cancelar</Button>
               <Button
                 type="primary"
@@ -121,7 +152,7 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id, tipoSerie }) => {
             </Col>
           )}
           {readonly && (
-            <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
+            <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
               <ImageButton
                 key="edit"
                 title="Editar"
@@ -173,7 +204,21 @@ const SeriesTicket: FC<SeriesTicketProps> = ({ id, tipoSerie }) => {
                 readonly={true}
               />
             </Col>
-            <Col md={16}></Col>
+            <Col md={16}>
+              <SwitchInput
+                name="estatus"
+                label="Estatus"
+                defaultChecked={true}
+                onChange={(value) => {
+                  if (value) {
+                    alerts.info(messages.confirmations.invoiceEnabled);
+                  } else {
+                    alerts.info(messages.confirmations.invoiceDisabled);
+                  }
+                }}
+                readonly={readonly}
+              />
+            </Col>
           </Row>
           <Divider orientation="left">Datos de Sucursal</Divider>
           <Row gutter={[24, 12]} style={{ marginBottom: 12 }}>
