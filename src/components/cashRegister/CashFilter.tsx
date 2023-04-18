@@ -37,15 +37,19 @@ const CashRegisterFilter = () => {
   }, [getMedicOptions, getCompanyOptions]);
 
   useEffect(() => {
-    form.setFieldsValue(filter);
-  }, [filter, form]);
-
-  useEffect(() => {
     const profileBranch = profile?.sucursal;
+
+    const getPayments = async (profileBranch: string) => {
+      setLoading(true);
+      await getByFilter({ ...filter, sucursalId: [profileBranch] });
+      setLoading(false);
+    };
+
     if (profileBranch) {
-      form.setFieldValue("sucursalId", [profileBranch]);
+      form.setFieldsValue({ ...filter, sucursalId: [profileBranch] });
+      getPayments(profileBranch);
     }
-  }, [branchCityOptions, form, profile]);
+  }, [branchCityOptions]);
 
   useEffect(() => {
     setShowChart(chartValue);

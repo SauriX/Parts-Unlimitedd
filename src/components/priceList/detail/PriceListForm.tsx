@@ -42,7 +42,6 @@ import StudyTable from "./StudyTable";
 import PackTable from "./PackTable";
 import TabPane from "rc-tabs/lib/TabPanelList/TabPane";
 import { IOptions } from "../../../app/models/shared";
-import VirtualPriceListTable from "./VirtualPriceListTable";
 
 const { Search } = Input;
 
