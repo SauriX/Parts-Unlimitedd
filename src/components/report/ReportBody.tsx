@@ -105,11 +105,11 @@ const ReportBody: FC<ReportDefaultProps> = ({ printing }) => {
         <Row gutter={[12, 12]}>
           {currentReport === "corte_caja" ? (
           <Col span={24}>
-            <CashBody printing={loadingReport} />
+            <CashBody printing={printing} />
           </Col>
           ) : currentReport === "indicadores" ? (
             <Col span={24}>
-              <IndicatorsBody printing={loadingReport} />
+              <IndicatorsBody printing={printing} />
             </Col>
           ) : (
             <>
