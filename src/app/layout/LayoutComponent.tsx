@@ -83,7 +83,6 @@ const LayoutComponent = () => {
   const [form] = useForm();
 
   const [collapsed, setCollapsed] = useState(true);
-  const [branchCityFiltered, setBranchCityFiltered] = useState<any>();
   const [menus, setMenus] = useState<IItem[]>([]);
 
   const convertMenu = useCallback(
@@ -153,33 +152,13 @@ const LayoutComponent = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
-  useEffect(() => {
-    getBranchCityOptions();
-  }, []);
 
   useEffect(() => {
     if (profile) {
       form.setFieldValue("sucursal", profile.sucursal);
     }
+    getBranchCityOptions();
   }, [profile]);
-
-  useEffect(() => {
-    const branchesFiltered: IOptions[] = [];
-    branchCityOptions.forEach((bco) => {
-      let sucursalesDisponibles = bco.options?.filter((x) =>
-        profile?.sucursales.includes("" + x.value)
-      );
-      if (!!sucursalesDisponibles?.length) {
-        let copy = {
-          ...bco,
-          options: sucursalesDisponibles,
-        };
-        branchesFiltered.push(copy);
-      }
-    });
-    setBranchCityFiltered(branchesFiltered);
-  }, [branchCityOptions]);
 
   const updateUserBranch = async (changedValues: any) => {
     await updateBranch(changedValues.sucursal);
@@ -262,7 +241,7 @@ const LayoutComponent = () => {
             <Form form={form} onValuesChange={updateUserBranch}>
               <SelectInput
                 formProps={{ label: "Sucursal", name: "sucursal" }}
-                options={branchCityFiltered}
+                options={branchCityOptions}
               />
             </Form>
           </Col>
