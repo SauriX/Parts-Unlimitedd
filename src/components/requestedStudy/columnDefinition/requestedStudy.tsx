@@ -38,7 +38,7 @@ const RequestedStudyColumns = ({ printOrder }: tableProps) => {
       ...getDefaultColumnProps("solicitud", "Clave", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "5%",
       }),
       render: (_value, record) => (
         <div style={{ display: "flex", flexDirection: "column" }}>
@@ -61,11 +61,12 @@ const RequestedStudyColumns = ({ printOrder }: tableProps) => {
       ...getDefaultColumnProps("nombre", "Nombre del Paciente", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "30%",
       }),
       render: (value, item) => (
-        <div style={{ display: "flex", flexDirection: "column",fontWeight:"bolder" }}>
-            {value}
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Text style={{ fontWeight: "bolder", marginBottom: -5 }}>{value}</Text>
+          {item.sucursal} {item.edad} años {item.sexo}
         </div>
       ),
     },
@@ -73,35 +74,14 @@ const RequestedStudyColumns = ({ printOrder }: tableProps) => {
       ...getDefaultColumnProps("registro", "Registro", {
         searchState,
         setSearchState,
-        width: "10%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("sucursal", "Sucursal", {
-        searchState,
-        setSearchState,
-        width: "15%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("edad", "Edad", {
-        searchState,
-        setSearchState,
-        width: "5%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("sexo", "Sexo", {
-        searchState,
-        setSearchState,
-        width: "5%",
+        width: "20%",
       }),
     },
     {
       ...getDefaultColumnProps("compañia", "Compañía", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: "20%",
       }),
     },
     {
@@ -114,7 +94,7 @@ const RequestedStudyColumns = ({ printOrder }: tableProps) => {
         return (
           <>
             {record.observacion != null ? (
-                <Tooltip title={record.observacion} color="#108ee9">
+              <Tooltip title={record.observacion} color="#108ee9">
                 <EyeOutlined style={{ cursor: "pointer" }} />
               </Tooltip>
             ) : (
@@ -151,50 +131,23 @@ export const RequestedStudyExpandable = ({
   const nestedColumns: IColumns<IRequestedStudy> = [
     {
       ...getDefaultColumnProps("clave", "Estudio", {
-        width: "30%",
+        width: "59%",
       }),
       render: (_value, record) => record.clave + " - " + record.nombre,
+    }, {
+      ...getDefaultColumnProps("nombreEstatus", "", {
+        width: "1%",
+      }),
+      render: (_value, record) => (<div>
+        {record.nombreEstatus}
+      </div>),
     },
     {
       ...getDefaultColumnProps("nombreEstatus", "Estatus", {
-        width: "15%",
+        width: "10%",
       }),
-      render: (_value, record) => record.nombreEstatus,
-    },
-    {
-      ...getDefaultColumnProps("fechaActualizacion", "Fecha de Actualización", {
-        width: "15%",
-      }),
-      render: (_value, record) =>
-        record.fechaActualizacion == null
-          ? " - "
-          : record.fechaActualizacion + " - " + record.usuarioActualizacion,
-    },
-    {
-      ...getDefaultColumnProps("registro", "Fecha de Registro", {
-        width: "15%",
-      }),
-      render: (_value, record) => record.registro,
-    },
-    {
-      ...getDefaultColumnProps("entrega", "Fecha de Entrega", {
-        width: "15%",
-      }),
-      render: (_value, record) => (
-        <Typography>
-          <Text style={record.urgencia > 1 ? { color: "red" } : {}}>
-            {record.entrega}
-          </Text>
-        </Typography>
-      ),
-    },
-    {
-      key: "Seleccionar",
-      dataIndex: "seleccionar",
-      title: "Seleccionar",
-      align: "center",
-      width: "10%",
-      render: (_value, record) => (
+      render: (_value, record) => (<div>
+
         <>
           {record.estatus === status.requestStudy.tomaDeMuestra && (
             <Checkbox
@@ -223,8 +176,36 @@ export const RequestedStudyExpandable = ({
             ></Checkbox>
           )}
         </>
+      </div>),
+    },
+    {
+      ...getDefaultColumnProps("fechaActualizacion", "Fecha de Actualización", {
+        width: "10%",
+      }),
+      render: (_value, record) =>
+        record.fechaActualizacion == null
+          ? " - "
+          : record.fechaActualizacion + " - " + record.usuarioActualizacion,
+    },
+    {
+      ...getDefaultColumnProps("registro", "Fecha de Registro", {
+        width: "10%",
+      }),
+      render: (_value, record) => record.registro,
+    },
+    {
+      ...getDefaultColumnProps("entrega", "Fecha de Entrega", {
+        width: "10%",
+      }),
+      render: (_value, record) => (
+        <Typography>
+          <Text style={record.urgencia > 1 ? { color: "red" } : {}}>
+            {record.entrega}
+          </Text>
+        </Typography>
       ),
     },
+
   ];
 
   return {
@@ -234,7 +215,7 @@ export const RequestedStudyExpandable = ({
         dataSource={item.estudios}
         pagination={false}
         className="header-expandable-table"
-        showHeader={index === 0}
+        showHeader={false}
       />
     ),
     rowExpandable: () => true,

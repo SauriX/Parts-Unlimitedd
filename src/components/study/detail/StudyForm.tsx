@@ -669,7 +669,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
-              <Col md={7} xs={8}>
+              <Col md={8} xs={8}>
                 <NumberInput
                   formProps={{
                     name: "diasrespuesta",
@@ -706,7 +706,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                 />
               </Col>
 
-              <Col md={7} sm={24} xs={8}>
+              <Col md={8} sm={24} xs={8}>
                 <NumberInput
                   formProps={{
                     name: "diasRefrigeracion",
@@ -717,7 +717,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   readonly={disabled}
                 />
               </Col>
-              <Col md={3} sm={24} xs={8}>
+              <Col md={4} sm={24} xs={8}>
                 <NumberInput
                   formProps={{
                     name: "dias",
@@ -729,20 +729,14 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                 />
               </Col>
 
-              <Col md={3} sm={24} xs={6}>
+              <Col md={4} sm={24} xs={6}>
                 <SwitchInput
                   name="prioridad"
                   label="Prioridad"
                   readonly={disabled}
                 />
               </Col>
-              <Col md={3} xs={6}>
-                <SwitchInput
-                  name="urgencia"
-                  label="Urgencia"
-                  readonly={disabled}
-                />
-              </Col>
+
               <Col md={12} sm={24} xs={8}>
                 <NumberInput
                   formProps={{
@@ -751,6 +745,13 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                   }}
                   min={0}
                   max={999999}
+                  readonly={disabled}
+                />
+              </Col>
+              <Col md={4} xs={6}>
+                <SwitchInput
+                  name="urgencia"
+                  label="Urgencia"
                   readonly={disabled}
                 />
               </Col>
@@ -765,7 +766,7 @@ const StudyForm: FC<StudyFormProps> = ({ componentRef, load }) => {
                 />
               </Col>
 
-              <Col md={3} sm={24} xs={6}>
+              <Col md={4} sm={24} xs={6}>
                 <SwitchInput
                   name="activo"
                   label="Activo"

@@ -14,7 +14,7 @@ import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
 import { useState, FC } from "react";
 import PrintIcon from "../../app/common/icons/PrintIcon";
-import { IColumns } from "../../app/common/table/utils";
+import { IColumns, getDefaultColumnProps } from "../../app/common/table/utils";
 import { useStore } from "../../app/stores/store";
 import type { CheckboxValueType } from "antd/es/checkbox/Group";
 import HeaderTitle from "../../app/common/header/HeaderTitle";
@@ -26,6 +26,7 @@ import {
   MailOutlined,
   FolderOpenOutlined,
 } from "@ant-design/icons";
+import { IRequestedStudyList } from "../../app/models/requestedStudy";
 
 const { Link, Text } = Typography;
 
@@ -57,7 +58,7 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
     setOpenRows(true);
   }, [requests]);
 
-  const columns: IColumns = [
+  const columns: IColumns<IRequestedStudyList> = [
     {
       key: "solicitudId",
       dataIndex: "solicitud",
@@ -86,35 +87,24 @@ const DeliveryResultsTable: FC<DeliveryResultsTableProps> = ({
       },
     },
     {
-      key: "solicitudId",
-      dataIndex: "nombre",
-      title: "Nombre",
-      align: "center",
+      ...getDefaultColumnProps("nombre", "Nombre del Paciente", {
+        width: "30%",
+      }),
+      render: (value, item) => (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Text style={{ fontWeight: "bolder", marginBottom: -5 }}>{value}</Text>
+          {item.sucursal} {item.edad} años {item.sexo[0]}
+        </div>
+      ),
     },
+
     {
       key: "solicitudId",
       dataIndex: "registro",
       title: "Registro",
       align: "center",
     },
-    {
-      key: "solicitudId",
-      dataIndex: "sucursal",
-      title: "Sucursal",
-      align: "center",
-    },
-    {
-      key: "solicitudId",
-      dataIndex: "edad",
-      title: "Edad",
-      align: "center",
-    },
-    {
-      key: "solicitudId",
-      dataIndex: "sexo",
-      title: "Sexo",
-      align: "center",
-    },
+
     {
       key: "solicitudId",
       dataIndex: "compania",

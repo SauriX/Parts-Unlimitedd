@@ -63,11 +63,12 @@ const ValidationStudyColumns = ({ printTicket }: tableProps) => {
       ...getDefaultColumnProps("nombre", "Nombre del Paciente", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "30%",
       }),
       render: (value, item) => (
-        <div style={{ display: "flex", flexDirection: "column",fontWeight:"bolder" }}>
-            {value}
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Text style={{ fontWeight: "bolder", marginBottom: -5 }}>{value}</Text>
+          {item.sucursal} {item.edad} años {item.sexo}
         </div>
       ),
     },
@@ -75,36 +76,14 @@ const ValidationStudyColumns = ({ printTicket }: tableProps) => {
       ...getDefaultColumnProps("registro", "Registro", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: "20%",
       }),
     },
-    {
-      ...getDefaultColumnProps("sucursal", "Sucursal", {
-        searchState,
-        setSearchState,
-        width: "15%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("edad", "Edad", {
-        searchState,
-        setSearchState,
-        width: "5%",
-      }),
-    },
-    {
-      ...getDefaultColumnProps("sexo", "Sexo", {
-        searchState,
-        setSearchState,
-        width: "5%",
-      }),
-    },
-
     {
       ...getDefaultColumnProps("compañia", "Compañía", {
         searchState,
         setSearchState,
-        width: "15%",
+        width: "20%",
       }),
     },
     {
@@ -136,7 +115,7 @@ export const ValidationStudyExpandable = ({
   setvisto,
   updateData,
 }: // cambiar
-expandableProps) => {
+  expandableProps) => {
   const [ver, setver] = useState<boolean>(false);
   const [cambio, stcambio] = useState<boolean>(false);
   const nestedColumns: IColumns<IvalidationStudyList> = [
@@ -145,12 +124,108 @@ expandableProps) => {
         width: "30%",
       }),
       render: (_value, record) => record.study,
+    }, {
+      ...getDefaultColumnProps("nombreEstatus", "", {
+        width: "1%",
+      }),
+      render: (_value, record) => (
+        <div>
+          <>
+            {((record.estatus === 4 &&
+              activiti == "register" &&
+              visto.find(
+                (x) =>
+                  x.idSolicitud == record.solicitudId && x.idstudio == record.id
+              ) != undefined) ||
+              (ver &&
+                visto.find(
+                  (x) =>
+                    x.idSolicitud == record.solicitudId && x.idstudio == record.id
+                ) != undefined &&
+                record.estatus === 4 &&
+                activiti == "cancel")) && (
+                <Checkbox
+                  onChange={(e) => {
+                    verfiy(e, record.id, record.solicitudId);
+                    stcambio(!cambio);
+                  }}
+                  checked={
+                    updateData
+                      .find((x) => x.solicitudId == record.solicitudId)
+                      ?.estudioId.includes(record.id) ||
+                    (cambio &&
+                      updateData
+                        .find((x) => x.solicitudId == record.solicitudId)
+                        ?.estudioId.includes(record.id))
+                  }
+                  disabled={!(activiti == "register")}
+                ></Checkbox>
+              )}
+            {updateData
+              .find((x) => x.solicitudId == record.solicitudId)
+              ?.estudioId.includes(record.id) ||
+              (cambio &&
+                updateData
+                  .find((x) => x.solicitudId == record.solicitudId)
+                  ?.estudioId.includes(record.id))
+              ? ""
+              : ""}
+            {record.estatus === 5 && activiti == "cancel" && (
+              <Checkbox
+                onChange={(e) => {
+                  {
+                    verfiy(e, record.id, record.solicitudId);
+                    stcambio(!cambio);
+                  }
+                }}
+                checked={
+                  updateData
+                    .find((x) => x.solicitudId == record.solicitudId)
+                    ?.estudioId.includes(record.id) ||
+                  (cambio &&
+                    updateData
+                      .find((x) => x.solicitudId == record.solicitudId)
+                      ?.estudioId.includes(record.id))
+                }
+                disabled={!(activiti == "cancel")}
+              ></Checkbox>
+            )}
+
+            {record.estatus === 4 && activiti == "register" && (
+              <EyeOutlined
+                style={{ marginLeft: "20%" }}
+                key="imprimir"
+                onClick={async () => {
+                  const sendFiles = {
+                    mediosEnvio: ["selectSendMethods"],
+                    estudios: [
+                      {
+                        solicitudId: record.solicitudId,
+                        EstudiosId: [{ EstudioId: record.id }],
+                      },
+                    ],
+                  };
+                  var vistos = visto;
+                  vistos.push({
+                    idSolicitud: record.solicitudId,
+                    idstudio: record.id,
+                  });
+
+                  await viewTicket(sendFiles);
+                  setvisto(vistos);
+                  setver(!ver);
+                }}
+              />
+            )}
+          </></div>),
     },
     {
       ...getDefaultColumnProps("nombreEstatus", "Estatus", {
-        width: "20%",
+        width: "5%",
       }),
-      render: (_value, record) => record.status,
+      render: (_value, record) => (
+        <div>
+          {record.status}</div>),
     },
     {
       key: "registro",
@@ -168,107 +243,11 @@ expandableProps) => {
     },
     {
       ...getDefaultColumnProps("entrega", "Entrega", {
-        width: "20%",
+        width: "10%",
       }),
       render: (_value, record) => record.entrega,
     },
-    {
-      key: "Seleccionar",
-      dataIndex: "seleccionar",
-      title: "Seleccionar",
-      align: "center",
-      width: "10%",
-      render: (_value, record) => (
-        <>
-          {((record.estatus === 4 &&
-            activiti == "register" &&
-            visto.find(
-              (x) =>
-                x.idSolicitud == record.solicitudId && x.idstudio == record.id
-            ) != undefined) ||
-            (ver &&
-              visto.find(
-                (x) =>
-                  x.idSolicitud == record.solicitudId && x.idstudio == record.id
-              ) != undefined &&
-              record.estatus === 4 &&
-              activiti == "cancel")) && (
-            <Checkbox
-              onChange={(e) => {
-                verfiy(e, record.id, record.solicitudId);
-                stcambio(!cambio);
-              }}
-              checked={
-                updateData
-                  .find((x) => x.solicitudId == record.solicitudId)
-                  ?.estudioId.includes(record.id) ||
-                (cambio &&
-                  updateData
-                    .find((x) => x.solicitudId == record.solicitudId)
-                    ?.estudioId.includes(record.id))
-              }
-              disabled={!(activiti == "register")}
-            ></Checkbox>
-          )}
-          {updateData
-            .find((x) => x.solicitudId == record.solicitudId)
-            ?.estudioId.includes(record.id) ||
-          (cambio &&
-            updateData
-              .find((x) => x.solicitudId == record.solicitudId)
-              ?.estudioId.includes(record.id))
-            ? ""
-            : ""}
-          {record.estatus === 5 && activiti == "cancel" && (
-            <Checkbox
-              onChange={(e) => {
-                {
-                  verfiy(e, record.id, record.solicitudId);
-                  stcambio(!cambio);
-                }
-              }}
-              checked={
-                updateData
-                  .find((x) => x.solicitudId == record.solicitudId)
-                  ?.estudioId.includes(record.id) ||
-                (cambio &&
-                  updateData
-                    .find((x) => x.solicitudId == record.solicitudId)
-                    ?.estudioId.includes(record.id))
-              }
-              disabled={!(activiti == "cancel")}
-            ></Checkbox>
-          )}
 
-          {record.estatus === 4 && activiti == "register" && (
-            <EyeOutlined
-              style={{ marginLeft: "20%" }}
-              key="imprimir"
-              onClick={async () => {
-                const sendFiles = {
-                  mediosEnvio: ["selectSendMethods"],
-                  estudios: [
-                    {
-                      solicitudId: record.solicitudId,
-                      EstudiosId: [{ EstudioId: record.id }],
-                    },
-                  ],
-                };
-                var vistos = visto;
-                vistos.push({
-                  idSolicitud: record.solicitudId,
-                  idstudio: record.id,
-                });
-
-                await viewTicket(sendFiles);
-                setvisto(vistos);
-                setver(!ver);
-              }}
-            />
-          )}
-        </>
-      ),
-    },
   ];
 
   return {
@@ -278,7 +257,7 @@ expandableProps) => {
         dataSource={item.estudios}
         pagination={false}
         className="header-expandable-table"
-        showHeader={index === 0}
+        showHeader={false}
       />
     ),
     rowExpandable: () => true,
