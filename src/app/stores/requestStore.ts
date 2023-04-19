@@ -187,7 +187,7 @@ export default class RequestStore {
   isStudy(obj: IRequestStudy | IRequestPack): obj is IRequestStudy {
     return obj.type === "study";
   }
-  
+
   setLastViewedCode = (
     data:
       | {
@@ -608,7 +608,7 @@ export default class RequestStore {
       ) {
         const payment = await Request.createPayment(request);
         this.payments.push(payment);
-        if(payment.lealtad) alerts.success(messages.loyaltyWallet);
+        if (payment.lealtad) alerts.success(messages.loyaltyWallet);
         else alerts.info(messages.loyaltyWalletDeny);
       } else {
         this.chargePayPalPayment(request);
@@ -995,6 +995,17 @@ export default class RequestStore {
       await Request.printTags(recordId, requestId, tags);
     } catch (error: any) {
       alerts.warning(getErrors(error));
+    }
+  };
+
+  printIndications = async (recordId: string, requestId: string) => {
+    try {
+      this.loadingTabContentCount++;
+      await Request.printIndications(recordId, requestId);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    } finally {
+      this.loadingTabContentCount--;
     }
   };
 

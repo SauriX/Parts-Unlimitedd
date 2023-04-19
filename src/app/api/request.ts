@@ -106,6 +106,8 @@ const Request = {
     tags: IRequestTag[]
   ): Promise<void> =>
     requests.print(`request/print/tags/${recordId}/${requestId}`, tags),
+  printIndications: (recordId: string, requestId: string): Promise<void> =>
+    requests.download(`request/print/indications/${recordId}/${requestId}`),
   saveImage: (formData: FormData): Promise<string> =>
     requests.put("request/images", formData),
   deleteImage: (

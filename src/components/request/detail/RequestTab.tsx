@@ -238,9 +238,9 @@ const RequestTab = ({ recordId, branchId }: RequestTabProps) => {
       }
 
       return (
-        <Row gutter={8}>
+        <Row gutter={16}>
           <Col span={18}>{component}</Col>
-          <Col span={6}>
+          <Col span={6} style={{ borderLeft: "1px solid lightgray" }}>
             <RequestInvoice />
           </Col>
         </Row>
