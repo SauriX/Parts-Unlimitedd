@@ -147,7 +147,9 @@ const StudyActions = ({
   };
 
   const studyTitle = (studyType: string, currentStudy: IRequestStudy) => {
-    return currentStudy.clave + " - " + currentStudy.nombre;
+    if (currentStudy.estatusId === status.requestStudy.cancelado)
+      return currentStudy.clave + " - " + currentStudy.nombre + " (Cancelado)";
+    else return currentStudy.clave + " - " + currentStudy.nombre;
   };
 
   return (

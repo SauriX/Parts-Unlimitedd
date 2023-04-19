@@ -145,10 +145,7 @@ const DeliveryResultsForm = () => {
             />
           </Col>
           <Col span={8}>
-            <DateRangeInput
-              formProps={{ label: "Fechas", name: "fecha" }}
-              disableAfterDates
-            />
+            <DateRangeInput formProps={{ label: "Fechas", name: "fecha" }} />
           </Col>
 
           <Col span={8}>

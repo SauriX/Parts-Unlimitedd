@@ -53,10 +53,7 @@ const RequestedStudyTable = ({
 
   useEffect(() => {
     getAll({
-      fecha: [
-        moment(Date.now()).utcOffset(0, true),
-        moment(Date.now()).utcOffset(0, true),
-      ],
+      fecha: [moment(), moment()],
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

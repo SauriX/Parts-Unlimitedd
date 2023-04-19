@@ -64,7 +64,6 @@ const ClinicalResultsInfo = () => {
   const [printing, setPrinting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [markAll, setMarkAll] = useState(false);
-  const [dataClinicalResult, setDataClinicalResult] = useState<any>();
 
   const [printLogos, setPrintLogos] = useState(false);
   const [printCritics, setPrintCritics] = useState(false);
@@ -90,7 +89,6 @@ const ClinicalResultsInfo = () => {
       await getStudies(expedienteId!, requestId!);
       await getStudiesParams(expedienteId!, requestId!);
 
-      setDataClinicalResult({ ...request, ...record });
       setProcedingCurrent({ ...record });
       setLoading(false);
     };
@@ -320,15 +318,3 @@ const ClinicalResultsInfo = () => {
   );
 };
 export default observer(ClinicalResultsInfo);
-
-interface DescriptionItemProps {
-  title: string;
-  content: React.ReactNode;
-}
-
-const DescriptionItem = ({ title, content }: DescriptionItemProps) => (
-  <div className="site-description-item-profile-wrapper">
-    <p className="site-description-item-profile-p-label">{title}:</p>
-    {content}
-  </div>
-);

@@ -9,12 +9,12 @@ import {
   UploadProps,
   Divider,
   Spin,
-  Tag,
   Input,
   Tooltip,
+  Pagination,
 } from "antd";
 import { observer } from "mobx-react-lite";
-import { FC, Fragment, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import DateInput from "../../../../app/common/form/proposal/DateInput";
 import PasswordInput from "../../../../app/common/form/proposal/PasswordInput";
@@ -37,11 +37,9 @@ import {
 } from "../../../../app/util/utils";
 import { UploadOutlined } from "@ant-design/icons";
 import { RcFile, UploadChangeParam } from "antd/lib/upload";
-import React from "react";
 import moment from "moment";
 import { useSearchParams } from "react-router-dom";
 import ImageButton from "../../../../app/common/button/ImageButton";
-import { IOptions } from "../../../../app/models/shared";
 
 type SeriesInvoiceProps = {
   id: number;
@@ -54,6 +52,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
   const {
     getById,
     createInvoice,
+    seriesTotal,
     updateInvoice,
     setSeriesType,
     getNewForm,
@@ -125,7 +124,6 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
       "Cargar archivo",
       `¿Está seguro que desea cargar el archivo ${fileName}?`,
       async () => {
-        // await saveFile(file);
         if (fileName.split(".")[1] === "key" && originFile === "key") {
           setKeyFile(file);
         }
@@ -185,6 +183,17 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
     }
   };
 
+  const onPageChange = (page: number) => {
+    const serie = seriesTotal[page - 1];
+    navigate(
+      `/series/${serie.id}/${serie.tipo}?mode=${searchParams.get("mode")}`
+    );
+  };
+
+  const getPage = () => {
+    return seriesTotal.findIndex((x) => x.id === id) + 1;
+  };
+
   const onFinish = async (newValues: ISeries) => {
     setLoading(true);
 
@@ -211,8 +220,18 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
   return (
     <Spin spinning={loading} tip={"Cargando"}>
       <Row gutter={[24, 12]}>
+        <Col md={12} sm={24} xs={12}>
+          <Pagination
+            size="small"
+            pageSize={1}
+            current={getPage()}
+            total={seriesTotal.length}
+            onChange={onPageChange}
+            showSizeChanger={false}
+          />
+        </Col>
         {!readonly && (
-          <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
+          <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
             <Button onClick={goBack}>Cancelar</Button>
             <Button
               type="primary"
@@ -226,7 +245,7 @@ const SeriesInvoice: FC<SeriesInvoiceProps> = ({ id, tipoSerie }) => {
           </Col>
         )}
         {readonly && (
-          <Col md={24} sm={24} xs={12} style={{ textAlign: "right" }}>
+          <Col md={12} sm={24} xs={12} style={{ textAlign: "right" }}>
             <ImageButton
               key="edit"
               title="Editar"

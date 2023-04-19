@@ -24,7 +24,7 @@ const Indicators = ({ getResult }: Props) => {
     modalFilter,
     getSamplesCostsByFilter,
     getServicesCost,
-    loadingReport
+    loadingReport,
   } = indicatorsStore;
   const [loading, setLoading] = useState(false);
 
@@ -53,18 +53,12 @@ const Indicators = ({ getResult }: Props) => {
   useEffect(() => {
     if (modalTab === "sample") {
       getSamplesCostsByFilter({
-        fecha: [
-          moment(Date.now()).utcOffset(0, true),
-          moment(Date.now()).utcOffset(0, true),
-        ],
+        fecha: [moment(), moment()],
       });
     } else if (modalTab === "service") {
       getServicesCost({
-        fecha: [
-          moment(Date.now()).utcOffset(0, true),
-          moment(Date.now()).utcOffset(0, true),
-        ],
-        mensual: moment(Date.now()).utcOffset(0, true)
+        fecha: [moment(), moment()],
+        mensual: moment(),
       });
     }
   }, [modalTab]);

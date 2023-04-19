@@ -12,6 +12,7 @@ import history from "../util/history";
 import messages from "../util/messages";
 import responses from "../util/responses";
 import { getErrors } from "../util/utils";
+import { store } from "./store";
 
 export default class EquipmentMantainStore {
   constructor() {
@@ -58,6 +59,7 @@ export default class EquipmentMantainStore {
     try {
       const equipments = await Equipmentmantain.getAll(search);
       this.equipments = equipments;
+      return equipments;
     } catch (error) {
       alerts.warning(getErrors(error));
       this.equipments = [];
@@ -114,7 +116,8 @@ export default class EquipmentMantainStore {
   };
   printTicket = async (recordId: string) => {
     try {
-      await Equipmentmantain.print(recordId);
+      var sucursal = store.profileStore.profile?.sucursal;
+      await Equipmentmantain.print(recordId,sucursal!);
     } catch (error: any) {
       alerts.warning(getErrors(error));
     }
@@ -128,9 +131,10 @@ export default class EquipmentMantainStore {
       return false;
     }
   };
-  exportForm = async (id: number) => {
+  exportForm = async (id: string) => {
     try {
-      await Equipment.exportForm(id);
+      var sucursal = store.profileStore.profile?.sucursal;
+      await Equipmentmantain.exportForm(id,sucursal!);
     } catch (error: any) {
       if (error.status === responses.notFound) {
         history.push("/notFound");
@@ -139,5 +143,15 @@ export default class EquipmentMantainStore {
       }
     }
   };
+  updateStatus = async (id:string) => {
+    try {
 
+      await Equipmentmantain.updateStatus(id);
+      alerts.success(messages.updated);
+      return true;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      return false;
+    }
+  };
 }

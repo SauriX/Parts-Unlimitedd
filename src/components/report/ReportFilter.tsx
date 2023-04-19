@@ -168,10 +168,7 @@ const ReportFilter = ({ input, setShowChart }: ReportFilterProps) => {
         form={form}
         name="report"
         initialValues={{
-          fecha: [
-            moment(Date.now()).utcOffset(0, true),
-            moment(Date.now()).utcOffset(0, true),
-          ],
+          fecha: [moment(), moment()],
         }}
         onFinish={onFinish}
       >

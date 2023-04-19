@@ -110,7 +110,7 @@ export class CatalogBudgetFormValues implements ICatalogBudgetForm {
   costoFijo = 0;
   sucursales = [];
   activo = true;
-  fecha = moment(Date.now()).utcOffset(0, true)
+  fecha = moment();
 
   constructor(init?: ICatalogNormalForm) {
     Object.assign(this, init);
@@ -146,7 +146,7 @@ export interface IProcedenciaForm {
 export class ProcedenciaFormValues implements IProcedenciaForm {
   id = 0;
   nombre = "";
-  Clave= "";
+  Clave = "";
   usuarioId = 0;
   activo = true;
 
@@ -160,4 +160,3 @@ export interface IAreaDeparment {
   departamento: string;
   areas: ICatalogAreaList[];
 }
-

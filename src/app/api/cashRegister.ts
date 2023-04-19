@@ -3,7 +3,7 @@ import { IScopes } from "../models/shared";
 import requests from "./agent";
 
 const CashRegister = {
-  access: (): Promise<IScopes> => requests.get("scopes/cash"),
+  access: (): Promise<IScopes> => requests.get("scopes/report"),
   getByFilter: (filter: ICashRegisterFilter): Promise<ICashRegisterData> =>
     requests.post(`report/corte_caja/filter`, filter),
   printPdf: (filter: ICashRegisterFilter): Promise<void> =>

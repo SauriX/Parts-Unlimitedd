@@ -18,7 +18,7 @@ import SelectInput from "../../app/common/form/proposal/SelectInput";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
 import { ExpandableConfig } from "antd/lib/table/interface";
-import { urgencyOptions } from "../../app/stores/optionStore";
+import { studyStatusOptions, urgencyOptions } from "../../app/stores/optionStore";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../app/util/alerts";
 import PrintIcon from "../../app/common/icons/PrintIcon";
@@ -435,11 +435,7 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
                     label: "Estatus",
                   }}
                   multiple
-                  options={[
-                    { value: 5, label: "Validado" },
-                    { value: 6, label: "Liberado" },
-                    { value: 7, label: "Enviado" },
-                  ]}
+                  options={studyStatusOptions}
                 ></SelectInput>
               </Col>
               <Col span={8}>
@@ -448,21 +444,26 @@ const RelaseResultTable: FC<ProceedingTableProps> = ({
                     <Row gutter={8}>
                       <Col span={12}>
                         <SelectInput
+                        form={form}
                           formProps={{
+
                             name: "departamento",
                             label: "Departamento",
                             noStyle: true,
                           }}
+                          multiple
                           options={departmentOptions}
                         />
                       </Col>
                       <Col span={12}>
                         <SelectInput
+                        form={form}
                           formProps={{
                             name: "area",
                             label: "Área",
                             noStyle: true,
                           }}
+                          multiple
                           options={areaOptions}
                         />
                       </Col>

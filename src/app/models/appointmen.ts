@@ -126,8 +126,8 @@ export interface IAppointmentExpedienteSearch {
 export class AppointmentExpedienteSearchValues
   implements IAppointmentExpedienteSearch
 {
-  fechaFinal = moment(moment.now());
-  fechaInicial = moment(moment.now());
+  fechaFinal = moment();
+  fechaInicial = moment();
   buscar = "";
   email = "";
   telefono = "";
@@ -168,7 +168,7 @@ export class AppointmentGeneralesFormDomValues implements generalDomicilio {
   }
 }
 export class SearchAppointmentValues implements ISearchAppointment {
-  fecha = [moment(Date.now()), moment(Date.now())];
+  fecha = [moment(), moment()];
   nombre = "";
   tipo = "laboratorio";
   constructor(init?: ISearchAppointment) {
@@ -183,7 +183,7 @@ export class AppointmentFormValues implements IAppointmentForm {
   genero = "";
   edad = 0;
   sucursal = "";
-  fechaNacimiento = moment(moment.now());
+  fechaNacimiento = moment();
   constructor(init?: IAppointmentForm) {
     Object.assign(this, init);
   }

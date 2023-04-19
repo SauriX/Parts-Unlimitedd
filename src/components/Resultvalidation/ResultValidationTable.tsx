@@ -20,7 +20,10 @@ import SelectInput from "../../app/common/form/proposal/SelectInput";
 import DateRangeInput from "../../app/common/form/proposal/DateRangeInput";
 import TextInput from "../../app/common/form/proposal/TextInput";
 import { ExpandableConfig } from "antd/lib/table/interface";
-import { urgencyOptions } from "../../app/stores/optionStore";
+import {
+  studyStatusOptions,
+  urgencyOptions,
+} from "../../app/stores/optionStore";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import alerts from "../../app/util/alerts";
 import PrintIcon from "../../app/common/icons/PrintIcon";
@@ -436,10 +439,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
             form={form}
             name="validation"
             initialValues={{
-              fecha: [
-                moment(Date.now()).utcOffset(0, true),
-                moment(Date.now()).utcOffset(0, true),
-              ],
+              fecha: [moment(), moment()],
             }}
             onFinish={onFinish}
             scrollToFirstError
@@ -487,11 +487,7 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                     label: "Estatus",
                   }}
                   multiple
-                  options={[
-                    { value: 5, label: "Validado" },
-                    { value: 4, label: "Capturado" },
-                    { value: 7, label: "Enviado" },
-                  ]}
+                  options={studyStatusOptions}
                 ></SelectInput>
               </Col>
               <Col span={8}>
@@ -500,21 +496,25 @@ const ResultValidationTable: FC<ProceedingTableProps> = ({
                     <Row gutter={8}>
                       <Col span={12}>
                         <SelectInput
+                          form={form}
                           formProps={{
                             name: "departamento",
                             label: "Departamento",
                             noStyle: true,
                           }}
+                          multiple
                           options={departmentOptions}
                         />
                       </Col>
                       <Col span={12}>
                         <SelectInput
+                          form={form}
                           formProps={{
                             name: "area",
                             label: "Área",
                             noStyle: true,
                           }}
+                          multiple
                           options={areaOptions}
                         />
                       </Col>

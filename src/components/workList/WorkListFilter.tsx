@@ -30,8 +30,8 @@ const WorkListFilter = () => {
 
   const onFinish = (values: IWorkListFilter) => {
     const filter = { ...values };
-    filter.horaInicio = filter.hora[0].utcOffset(0, true);
-    filter.horaFin = filter.hora[1].utcOffset(0, true);
+    filter.horaInicio = filter.hora[0];
+    filter.horaFin = filter.hora[1];
     filter.area = departmentAreaOptions
       .flatMap((x) => x.options)
       .find((x) => x?.value === values.areaId)

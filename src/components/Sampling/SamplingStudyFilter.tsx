@@ -118,10 +118,7 @@ const SamplingStudyFilter = () => {
         name="requestedStudy"
         onFinish={onFinish}
         initialValues={{
-          fecha: [
-            moment(Date.now()).utcOffset(0, true),
-            moment(Date.now()).utcOffset(0, true),
-          ],
+          fecha: [moment(), moment()],
         }}
         scrollToFirstError
       >

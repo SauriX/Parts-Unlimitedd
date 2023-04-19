@@ -31,9 +31,11 @@ export interface ITicketSerie {
   clave: string;
   nombre: string;
   tipoSerie: number;
+  estatus: boolean;
+  expedicion: ISeriesExpedition;
 }
 
-export interface ISeriesInvoice{
+export interface ISeriesInvoice {
   id: number;
   clave: string;
   nombre: string;
@@ -86,7 +88,7 @@ export interface ISeriesFilter {
   año: moment.Moment;
   tipoSeries?: number[];
   buscar?: string;
-  sucursalId?: string[]; 
+  sucursalId?: string[];
   ciudad?: string[];
 }
 
@@ -100,9 +102,9 @@ export interface ISeriesNewForm {
 export class SeriesFilterValues implements ISeriesFilter {
   sucursalId = [];
   ciudad = [];
-  año = moment(Date.now()).utcOffset(0, true);
+  año = moment();
   tipoSeries = [];
-  buscar = '';
+  buscar = "";
 
   constructor(init?: ISeriesFilter) {
     Object.assign(this, init);
@@ -110,10 +112,10 @@ export class SeriesFilterValues implements ISeriesFilter {
 }
 
 export class SeriesNewFormValues implements ISeriesNewForm {
-  sucursalId = '';
+  sucursalId = "";
   tipoSerie = 0;
-  emisorId = '';
-  usuarioId = '';
+  emisorId = "";
+  usuarioId = "";
 
   constructor(init?: ISeriesNewForm) {
     Object.assign(this, init);
@@ -132,15 +134,15 @@ export class SeriesValues implements ISeries {
 
 export class SeriesInvoiceValues implements ISeriesInvoice {
   id = 0;
-  clave = '';
-  nombre = '';
-  observaciones = '';
+  clave = "";
+  nombre = "";
+  observaciones = "";
   tipoSerie = 1;
   estatus = false;
   cfdi = false;
-  claveCer = '';
-  claveKey = '';
-  contraseña = '';
+  claveCer = "";
+  claveKey = "";
+  contraseña = "";
   año = moment();
 
   constructor(init?: ISeriesInvoice) {
@@ -150,18 +152,18 @@ export class SeriesInvoiceValues implements ISeriesInvoice {
 
 export class SeriesExpeditionValues implements ISeriesExpedition {
   id = 0;
-  sucursalKey = '';
-  calle = '';
-  numeroExterior = '';
-  numeroInterior = '';
-  colonia = '';
-  codigoPostal = '';
-  municipio = '';
-  estado = '';
-  pais = '';
-  telefono = '';
-  correo = '';
-  sucursalId = '';
+  sucursalKey = "";
+  calle = "";
+  numeroExterior = "";
+  numeroInterior = "";
+  colonia = "";
+  codigoPostal = "";
+  municipio = "";
+  estado = "";
+  pais = "";
+  telefono = "";
+  correo = "";
+  sucursalId = "";
 
   constructor(init?: ISeriesExpedition) {
     Object.assign(this, init);
@@ -170,12 +172,13 @@ export class SeriesExpeditionValues implements ISeriesExpedition {
 
 export class TicketSeriesValues implements ITicketSerie {
   id = 0;
-  clave = '';
-  nombre = '';
+  clave = "";
+  nombre = "";
   tipoSerie = 2;
+  estatus = false;
+  expedicion = new SeriesExpeditionValues();
 
   constructor(init?: ITicketSerie) {
     Object.assign(this, init);
   }
 }
-

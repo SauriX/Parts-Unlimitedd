@@ -48,7 +48,7 @@ export class ProceedingFormValues implements IProceedingForm {
   apellido = "";
   expediente = "";
   sexo = "";
-  fechaNacimiento = new Date(moment.now());
+  fechaNacimiento = moment();
   edad = undefined;
   edadCheck = false;
   telefono = "";

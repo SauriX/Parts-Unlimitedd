@@ -629,6 +629,7 @@ export default class OptionStore {
           label: y.nombre,
         })),
       }));
+      
       const branchesFiltered: IOptions[] = [];
       branches.forEach((bco) => {
         let sucursalesDisponibles = bco.options?.filter((x) =>
