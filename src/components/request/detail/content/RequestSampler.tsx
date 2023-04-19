@@ -127,8 +127,27 @@ const RequestSampler = () => {
             pagination={false}
             rowSelection={{
               fixed: "right",
-              onChange(_selectedRowKeys, selectedRows, _info) {
-                setSelectedStudies(toJS(selectedRows));
+              onChange(_selectedRowKeys, selectedRows, info) {
+                if (info.type === "single") {
+                  setSelectedStudies(toJS(selectedRows));
+                  return;
+                }
+
+                let toUpdate: IRequestStudy[];
+                // prettier-ignore
+                if (selectedRows.every((x) => x.estatusId === status.requestStudy.pendiente) ||
+                    selectedRows.every((x) => x.estatusId === status.requestStudy.tomaDeMuestra)) {
+                  toUpdate = toJS(selectedRows);
+                } else {
+                  toUpdate = selectedRows.filter(x => x.estatusId === status.requestStudy.pendiente);
+                }
+
+                // prettier-ignore
+                if(toUpdate.length === selectedStudies.length && toUpdate.every(x => selectedStudies.map(y => y.id).includes(x.id))){
+                  toUpdate = []  
+                }
+
+                setSelectedStudies(toUpdate);
               },
               getCheckboxProps: (record) => ({
                 disabled:
