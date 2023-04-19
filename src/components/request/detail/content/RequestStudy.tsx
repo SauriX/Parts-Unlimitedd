@@ -173,11 +173,13 @@ const RequestStudy = () => {
             bordered={false}
             style={{ width: "100%" }}
             allowClear
-            disabled={payments.some(
-              (x) =>
-                x.estatusId !== status.requestPayment.cancelado &&
-                x.estatusId !== status.requestPayment.facturaCancelada
-            )}
+            disabled={
+              payments.some(
+                (x) =>
+                  x.estatusId !== status.requestPayment.cancelado &&
+                  x.estatusId !== status.requestPayment.facturaCancelada
+              ) || item.estatusId === status.requestStudy.cancelado
+            }
             placeholder="Seleccionar promoción"
             onChange={(promoId?: number) => {
               if (isStudy(item)) {
