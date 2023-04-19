@@ -2,7 +2,7 @@ import { ISearchPending, IRecibe } from "../models/pendingRecive";
 import {
   IRouteTrackingList,
   ITagTrackingOrder,
-  SearchTracking,
+  ISearchTracking,
 } from "../models/routeTracking";
 import { IUpdate } from "../models/sampling";
 import { IRouteTrackingForm } from "../models/trackingOrder";
@@ -10,8 +10,8 @@ import requests from "./agent";
 
 const RouteTracking = {
   access: (): Promise<void> => requests.get("/user/scopes"),
-  getAll: (search: SearchTracking): Promise<IRouteTrackingList[]> =>
-    requests.post(`RouteTracking/all`, search),
+  getAllPendingSend: (search: ISearchTracking): Promise<IRouteTrackingList[]> =>
+    requests.post(`RouteTracking/allSend`, search),
   getById: (id: string): Promise<IRouteTrackingForm> =>
     requests.get(`RouteTracking/${id}`),
   getAllTags: (search: string): Promise<ITagTrackingOrder[]> =>
@@ -20,17 +20,19 @@ const RouteTracking = {
     requests.get(`RouteTracking/findTags/${routeId}`),
   getActive: (): Promise<IRouteTrackingList[]> =>
     requests.get(`RouteTracking/getActive`),
+
   createTrackingOrder: (order: IRouteTrackingForm): Promise<void> =>
     requests.post("RouteTracking/trackingOrder", order),
   updateTrackingOrder: (order: IRouteTrackingForm): Promise<void> =>
     requests.put("RouteTracking/trackingOrder", order),
-  update: (update: IUpdate[]): Promise<void> =>
-    requests.put("RouteTracking", update),
-  exportForm: (id: string): Promise<void> =>
+  exportTrackingOrderForm: (id: string): Promise<void> =>
     requests.print(`RouteTracking/exportOrder/${id}`),
-  getRecive: (search: ISearchPending): Promise<IRecibe[]> =>
-    requests.post(`RouteTracking/allrecive`, search),
-  exportFormpending: (id: ISearchPending): Promise<void> =>
+
+  getAllPendingReceive: (
+    search: ISearchTracking
+  ): Promise<IRouteTrackingList[]> =>
+    requests.post(`RouteTracking/allReceive`, search),
+  exportReceiveForm: (id: ISearchTracking): Promise<void> =>
     requests.download(`RouteTracking/report`, id),
 };
 

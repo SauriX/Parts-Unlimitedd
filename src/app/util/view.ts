@@ -15,7 +15,7 @@ const views = {
   sampling: "samplings",
   routeTracking: "segRutas",
   shipmenttracking: "ShipmentTracking",
-  recivetracking: "ReciveTracking",
+  recivetracking: "receiveTracking",
   workLists: "workLists",
   resultValidation: "ResultValidation",
   relaseValidation: "RelaseResult",

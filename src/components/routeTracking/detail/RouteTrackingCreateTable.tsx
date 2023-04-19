@@ -25,7 +25,7 @@ const RouteTrackingCreateTable = () => {
     setScan,
     tagsSelected,
     getStudyTrackingOrder,
-    tagData,
+    tagCreateData: tagData,
   } = routeTrackingStore;
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",

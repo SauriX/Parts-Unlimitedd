@@ -8,6 +8,7 @@ import {
   Tag,
   PageHeader,
   Divider,
+  Steps,
 } from "antd";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {
@@ -27,6 +28,7 @@ import DescriptionItem from "../../../app/common/display/DescriptionItem";
 import ShipmentTrackingTitle from "./content/ShipmentTrackingTitle";
 import { studyStatus } from "../../../app/util/catalogs";
 import { CheckCircleTwoTone, MinusCircleTwoTone } from "@ant-design/icons";
+import TrackingTimeline from "../content/TrackingTimeline";
 
 type StudyTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -42,7 +44,7 @@ const ShipmentTackingDetail: FC<StudyTableProps> = ({
   printing,
 }) => {
   const { routeTrackingStore, shipmentTracking } = useStore();
-  const { getActive, trackingOrders } = routeTrackingStore;
+  const { getActive, shipmentList: trackingOrders } = routeTrackingStore;
   const { getShipmentById, shipment, loadingOrders } = shipmentTracking;
 
   const [studies, setStudies] = useState<IShipmentTags[]>([]);
@@ -208,7 +210,10 @@ const ShipmentTackingDetail: FC<StudyTableProps> = ({
                   />
                 </Col>
                 <Col md={8}>
-                  <DescriptionItem title="Medio de entrega" content={shipment?.paqueteria} />
+                  <DescriptionItem
+                    title="Medio de entrega"
+                    content={shipment?.paqueteria}
+                  />
                 </Col>
                 <Col md={8}>
                   <DescriptionItem
@@ -277,6 +282,9 @@ const ShipmentTackingDetail: FC<StudyTableProps> = ({
               </Row>
             </div>
           </Col>
+          <Col span={24}>
+            <TrackingTimeline estatus={shipment?.estatus} />
+          </Col>
         </Row>
         <br />
         <Table<IShipmentTags>
@@ -286,7 +294,7 @@ const ShipmentTackingDetail: FC<StudyTableProps> = ({
           dataSource={[...studies]}
           pagination={defaultPaginationProperties}
           sticky
-          scroll={{ x: "max-content" }}
+          scroll={{ x: "max-content", y: 300 }}
         />
       </Spin>
     </Fragment>

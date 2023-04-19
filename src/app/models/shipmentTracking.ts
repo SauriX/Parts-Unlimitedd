@@ -28,4 +28,6 @@ export interface IShipmentTracking {
   ruta: string;
   nombre: string;
   activo: boolean;
+  estatus: number;
+  extra: boolean;
 }

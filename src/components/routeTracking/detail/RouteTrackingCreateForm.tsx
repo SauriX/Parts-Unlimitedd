@@ -34,8 +34,8 @@ const RouteTrackingCreateForm = () => {
   const {
     getFindTags,
     tagsSelected,
-    tagData,
-    setTagData,
+    tagCreateData: tagData,
+    setTagCreateData: setTagData,
     routeStudies,
     setRouteStudies,
     createTrackingOrder,

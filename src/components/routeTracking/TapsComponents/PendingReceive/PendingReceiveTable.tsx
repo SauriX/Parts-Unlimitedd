@@ -1,27 +1,29 @@
-import { Button, Table, Typography } from "antd";
+import { Button, Col, Row, Table, Typography } from "antd";
+import { observer } from "mobx-react-lite";
 import React, { Fragment, useState } from "react";
-import { IRouteTrackingList } from "../../../../app/models/routeTracking";
-import { useStore } from "../../../../app/stores/store";
+import IconButton from "../../../../app/common/button/IconButton";
 import {
   IColumns,
   ISearch,
   defaultPaginationProperties,
   getDefaultColumnProps,
 } from "../../../../app/common/table/utils";
-import IconButton from "../../../../app/common/button/IconButton";
+import { ClockCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { EditOutlined } from "@ant-design/icons";
-import { observer } from "mobx-react-lite";
+import { IRouteTrackingList } from "../../../../app/models/routeTracking";
+import { useStore } from "../../../../app/stores/store";
 import { v4 as uuid } from "uuid";
-import { studyStatus } from "../../../../app/util/catalogs";
+import TrackingTimeline from "../../content/TrackingTimeline";
 
 const { Text } = Typography;
 
-const PendingSendTable = () => {
+const PendingReceiveTable = () => {
   const { routeTrackingStore } = useStore();
-  const { sendStudyTags: studyTags, loadingRoutes } = routeTrackingStore;
+  const { loadingRoutes, receiveStudyTags } = routeTrackingStore;
 
   let navigate = useNavigate();
+
+  const [trackingStatus, setTrackingStatus] = useState<number>(0);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
@@ -37,17 +39,17 @@ const PendingSendTable = () => {
 
   const columns: IColumns<IRouteTrackingList> = [
     {
-      ...getDefaultColumnProps("seguimiento", "No. seguimiento", {
+      ...getDefaultColumnProps("seguimiento", "No. de seguimiento", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: "15%",
         minWidth: 150,
       }),
-      render: (value, record) => (
+      render: (value, route) => (
         <Button
           type="link"
           onClick={() => {
-            navigate(`/ShipmentTracking/${record.id}`);
+            navigate(`/receiveTracking/${route.id}`);
           }}
         >
           {value}
@@ -82,7 +84,7 @@ const PendingSendTable = () => {
       ...getDefaultColumnProps("estudios", "Estudios", {
         searchState,
         setSearchState,
-        width: "10%",
+        width: "15%",
       }),
     },
     {
@@ -99,61 +101,46 @@ const PendingSendTable = () => {
         setSearchState,
         width: "10%",
       }),
-      render: (value: string) => {
-        let route = value.split(",").map((item, index) => (
-          <React.Fragment key={index}>
-            {item}
-            <br />
-          </React.Fragment>
-        ));
-        return route;
-      },
     },
     {
-      ...getDefaultColumnProps("estatus", "Estatus", {
+      ...getDefaultColumnProps("estatusSeguimiento", "Estatus", {
         searchState,
         setSearchState,
         width: "10%",
       }),
-      render: (value, record) => renderExtra(studyStatus(value), record),
-    },
-    {
-      ...getDefaultColumnProps("entrega", "Fecha de entrega", {
-        searchState,
-        setSearchState,
-        width: "10%",
-      }),
-    },
-    {
-      key: "editar",
-      dataIndex: "id",
-      title: "Editar",
-      align: "center",
-      width: "10%",
-      render: (value, record) =>
-        record.seguimiento && (
-          <IconButton
-            title="Editar ruta"
-            icon={<EditOutlined />}
-            onClick={() => {
-              navigate(`/trackingOrder/${record.id}`);
-            }}
-          />
-        ),
+      render: (value: number) => (
+        <IconButton
+          title="estatus"
+          icon={<ClockCircleOutlined />}
+          onClick={() => {
+            setTrackingStatus(value);
+          }}
+        />
+      ),
     },
   ];
 
   return (
-    <Table<IRouteTrackingList>
-      loading={loadingRoutes}
-      size="small"
-      rowKey={uuid()}
-      columns={columns}
-      dataSource={[...studyTags]}
-      pagination={defaultPaginationProperties}
-      bordered
-    ></Table>
+    <Row gutter={[0, 12]}>
+      {trackingStatus ? (
+        <Col span={24}>
+          <TrackingTimeline estatus={trackingStatus} title={true} />
+        </Col>
+      ) : (
+        ""
+      )}
+      <Col span={24}>
+        <Table<IRouteTrackingList>
+          loading={loadingRoutes}
+          rowKey={uuid()}
+          columns={columns}
+          dataSource={[...receiveStudyTags]}
+          pagination={defaultPaginationProperties}
+          bordered
+        ></Table>
+      </Col>
+    </Row>
   );
 };
 
-export default observer(PendingSendTable);
+export default observer(PendingReceiveTable);

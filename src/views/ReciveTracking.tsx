@@ -20,7 +20,7 @@ const ReciveTracking = () => {
   const { routeTrackingStore,shipmentTracking} = useStore();
   const { id } = useParams<UrlParams>();
   
-    const {getAll,studyTags: studys}= routeTrackingStore;
+    const {getAllPendingSend: getAll,sendStudyTags: studys}= routeTrackingStore;
     const { getShipmentById: getashipment,shipment,access,printTicket}=shipmentTracking;
   const [searchParams] = useSearchParams();
 

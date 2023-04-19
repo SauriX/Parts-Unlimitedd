@@ -1,35 +1,23 @@
 import { Button, Col, Form, Row } from "antd";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useStore } from "../../../../app/stores/store";
+import form from "antd/lib/form";
 import { observer } from "mobx-react-lite";
-import DateRangeInput from "../../../../app/common/form/proposal/DateRangeInput";
-import SelectInput from "../../../../app/common/form/proposal/SelectInput";
-import TextInput from "../../../../app/common/form/proposal/TextInput";
+import moment from "moment";
+import React, { Fragment, useEffect, useState } from "react";
 import { ISearchTracking } from "../../../../app/models/routeTracking";
 import { formItemLayout } from "../../../../app/util/utils";
-import moment from "moment";
+import DateRangeInput from "../../../../app/common/form/proposal/DateRangeInput";
+import TextInput from "../../../../app/common/form/proposal/TextInput";
+import SelectInput from "../../../../app/common/form/proposal/SelectInput";
+import { useStore } from "../../../../app/stores/store";
 
-const PendingSendFilter = () => {
+const PendingReceiveFilter = () => {
   const { optionStore, routeTrackingStore, profileStore } = useStore();
-  const {
-    getAllPendingSend,
-    routeTrackingFilter,
-    setRouteTrackingFilter,
-    setTagCreateData: setTagData,
-    setRouteStudies,
-  } = routeTrackingStore;
-  const { branchCityOptions } = optionStore;
+  const { branchCityOptions, getBranchCityOptions } = optionStore;
+  const { getAllPendingReceive, routeTrackingFilter, setRouteTrackingFilter } =
+    routeTrackingStore;
   const { profile } = profileStore;
 
   const [form] = Form.useForm<ISearchTracking>();
-
-  let navigate = useNavigate();
-
-  useEffect(() => {
-    setTagData([]);
-    setRouteStudies([]);
-  }, []);
 
   useEffect(() => {
     if (!profile || !profile.sucursal || branchCityOptions.length === 0) return;
@@ -38,18 +26,18 @@ const PendingSendFilter = () => {
 
     const filter = {
       ...routeTrackingFilter,
-      origen: profileBranch || routeTrackingFilter.origen,
-      destino: routeTrackingFilter?.destino,
+      origen: routeTrackingFilter.destino,
+      destino: routeTrackingFilter.origen || profileBranch,
     };
     form.setFieldsValue(filter);
 
     setRouteTrackingFilter(filter);
-    getAllPendingSend(filter);
+    getAllPendingReceive(filter);
   }, [branchCityOptions]);
 
   const onFinish = async (newValues: ISearchTracking) => {
     setRouteTrackingFilter(newValues);
-    await getAllPendingSend(newValues);
+    await getAllPendingReceive(newValues);
   };
 
   return (
@@ -59,7 +47,7 @@ const PendingSendFilter = () => {
         form={form}
         name="tracking"
         initialValues={{
-          fechas: [
+          fecha: [
             moment(Date.now()).utcOffset(0, true),
             moment(Date.now()).utcOffset(0, true),
           ],
@@ -72,19 +60,19 @@ const PendingSendFilter = () => {
             <SelectInput
               options={branchCityOptions}
               formProps={{
-                name: "origen",
-                label: "Origen",
+                name: "destino",
+                label: "Destino",
               }}
-              readonly
             ></SelectInput>
           </Col>
           <Col span={6}>
             <SelectInput
               options={branchCityOptions}
               formProps={{
-                name: "destino",
-                label: "Destino",
+                name: "origen",
+                label: "Origen",
               }}
+              readonly
             ></SelectInput>
           </Col>
           <Col span={6}>
@@ -106,19 +94,11 @@ const PendingSendFilter = () => {
             <Button htmlType="submit" type="primary">
               Buscar
             </Button>
-            <Button
-              style={{ backgroundColor: " #18AC50" }}
-              onClick={() => {
-                navigate(`/trackingOrder/new`);
-              }}
-              type="primary"
-            >
-              Crear orden de seguimiento
-            </Button>
           </Col>
         </Row>
       </Form>
     </div>
   );
 };
-export default observer(PendingSendFilter);
+
+export default observer(PendingReceiveFilter);

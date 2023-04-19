@@ -1,8 +1,8 @@
 import { Tabs, TabsProps } from "antd";
 import { Fragment } from "react";
 import { observer } from "mobx-react-lite";
-import PendingRecive from "./TapsComponents/PendingRecive";
 import PendingSendBody from "./TapsComponents/PendingSend/PendingSendBody";
+import PendingReceiveBody from "./TapsComponents/PendingReceive/PendingReceiveBody";
 
 type RTDefaultProps = {
   printing: boolean;
@@ -18,7 +18,7 @@ const RouteTrackingTable = ({ printing }: RTDefaultProps) => {
     {
       key: "2",
       label: "Pendientes de recibir",
-      children: <PendingRecive />,
+      children: <PendingReceiveBody printing={printing} />,
     },
   ];
 

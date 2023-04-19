@@ -37,7 +37,7 @@ const TagTracking = ({ getResult, selectedTags, requestCode }: Props) => {
   const {
     setTagsSelected,
     tags,
-    tagData,
+    tagCreateData: tagData,
     getAllTags,
     loadingRoutes,
     routeStudies,

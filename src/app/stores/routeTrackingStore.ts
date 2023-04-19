@@ -5,15 +5,13 @@ import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 import Sampling from "../api/sampling";
-import { IUpdate } from "../models/sampling";
 import {
   IRouteTrackingList,
   ITagTrackingOrder,
-  SearchTracking,
-  TrackingFormValues,
+  ISearchTracking,
+  PendingSendValues,
 } from "../models/routeTracking";
 import responses from "../util/responses";
-import { IRecibe, ISearchPending, searchValues } from "../models/pendingRecive";
 import {
   IRouteTrackingForm,
   IStudyTrackinOrder,
@@ -26,28 +24,34 @@ export default class RouteTrackingStore {
   }
 
   scopes?: IScopes;
-  studyTags: IRouteTrackingList[] = [];
-  trackingOrders: IRouteTrackingList[] = [];
-  tags: ITagTrackingOrder[] = [];
-  tagData: ITagTrackingOrder[] = [];
+  routeTrackingFilter: ISearchTracking = new PendingSendValues();
 
-  pendings?: IRecibe[] = [];
-  ventana: string = "enviar";
-  searchPending?: ISearchPending = new searchValues();
-  filterSend: SearchTracking = new TrackingFormValues();
-  loadingRoutes: boolean = false;
-  scan: boolean = false;
+  sendStudyTags: IRouteTrackingList[] = [];
+  tagCreateData: ITagTrackingOrder[] = [];
+  shipmentList: IRouteTrackingList[] = [];
+  tags: ITagTrackingOrder[] = [];
 
   routeTags: ITagTrackingOrder[] = [];
   routeStudies: IStudyTrackinOrder[] = [];
   tagsSelected: ITagTrackingOrder[] = [];
 
+  receiveStudyTags: IRouteTrackingList[] = [];
+
+  trackingStatus = { timeLine: false, trackingStatus: 0 };
+
+  loadingRoutes: boolean = false;
+  scan: boolean = false;
+
+  setRouteTrackingFilter = (routeTrackingFilter: ISearchTracking) => {
+    this.routeTrackingFilter = routeTrackingFilter;
+  };
+
   setRouteStudies = (routeStudies: IStudyTrackinOrder[]) => {
     this.routeStudies = routeStudies;
   };
 
-  setTagData = (tagData: ITagTrackingOrder[]) => {
-    this.tagData = tagData;
+  setTagCreateData = (tagCreateData: ITagTrackingOrder[]) => {
+    this.tagCreateData = tagCreateData;
   };
 
   setTagsSelected = (tagsSelected: ITagTrackingOrder[]) => {
@@ -75,20 +79,12 @@ export default class RouteTrackingStore {
     this.scan = scan;
   };
 
+  setTrackingStatus = (timeLine: boolean, trackingStatus: number) => {
+    this.trackingStatus = { timeLine, trackingStatus };
+  };
+
   clearScopes = () => {
     this.scopes = undefined;
-  };
-
-  setventana = (ventana: string) => {
-    this.ventana = ventana;
-  };
-
-  setSearchi = (search: ISearchPending) => {
-    this.searchPending = search;
-  };
-
-  setFilterSend = (filterSend: SearchTracking) => {
-    this.filterSend = filterSend;
   };
 
   access = async () => {
@@ -101,15 +97,15 @@ export default class RouteTrackingStore {
     }
   };
 
-  getAll = async (search: SearchTracking) => {
+  getAllPendingSend = async (search: ISearchTracking) => {
     try {
       this.loadingRoutes = true;
-      const study = await RouteTracking.getAll(search);
-      this.studyTags = study;
+      const study = await RouteTracking.getAllPendingSend(search);
+      this.sendStudyTags = study;
       return study;
     } catch (error) {
       alerts.warning(getErrors(error));
-      this.studyTags = [];
+      this.sendStudyTags = [];
     } finally {
       this.loadingRoutes = false;
     }
@@ -141,14 +137,14 @@ export default class RouteTrackingStore {
     }
   };
 
-  getAllRecive = async (search: ISearchPending) => {
+  getAllPendingReceive = async (search: ISearchTracking) => {
     try {
-      const study = await RouteTracking.getRecive(search);
-      this.pendings = study;
+      const study = await RouteTracking.getAllPendingReceive(search);
+      this.receiveStudyTags = study;
       return study;
     } catch (error) {
       alerts.warning(getErrors(error));
-      this.pendings = [];
+      this.receiveStudyTags = [];
     }
   };
 
@@ -170,7 +166,7 @@ export default class RouteTrackingStore {
     try {
       this.loadingRoutes = true;
       const trackingOrders = await RouteTracking.getActive();
-      this.trackingOrders = trackingOrders;
+      this.shipmentList = trackingOrders;
       return trackingOrders;
     } catch (error) {
       alerts.warning(getErrors(error));
@@ -202,9 +198,9 @@ export default class RouteTrackingStore {
     }
   };
 
-  exportFormPending = async (id: ISearchPending) => {
+  exportFormPending = async (id: ISearchTracking) => {
     try {
-      await RouteTracking.exportFormpending(id);
+      await RouteTracking.exportReceiveForm(id);
     } catch (error: any) {
       if (error.status === responses.notFound) {
         history.push("/notFound");
@@ -214,20 +210,9 @@ export default class RouteTrackingStore {
     }
   };
 
-  update = async (study: IUpdate[]) => {
-    try {
-      await RouteTracking.update(study);
-      alerts.success(messages.updated);
-      return true;
-    } catch (error: any) {
-      alerts.warning(getErrors(error));
-      return false;
-    }
-  };
-
   exportForm = async (id: string) => {
     try {
-      await RouteTracking.exportForm(id);
+      await RouteTracking.exportTrackingOrderForm(id);
     } catch (error: any) {
       if (error.status === responses.notFound) {
         history.push("/notFound");

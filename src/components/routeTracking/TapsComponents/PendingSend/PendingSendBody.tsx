@@ -5,10 +5,10 @@ import PendingSendFilter from "./PendingSendFilter";
 import { observer } from "mobx-react-lite";
 
 type PSDefaultProps = {
-    printing: boolean;
+  printing: boolean;
 };
 
-const PendingSendBody = ({printing}: PSDefaultProps) => {
+const PendingSendBody = ({ printing }: PSDefaultProps) => {
   const [loading] = useState(false);
 
   return (

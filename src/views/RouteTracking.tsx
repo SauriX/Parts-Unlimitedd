@@ -8,7 +8,7 @@ import RouteTrackingTable from "../components/routeTracking/RouteTrackingTable";
 
 const RouteTracking = () => {
   const { routeTrackingStore } = useStore();
-  const { scopes, access, clearScopes, exportFormPending, searchPending } =
+  const { scopes, access, clearScopes, exportFormPending } =
     routeTrackingStore;
 
   const [loading, setLoading] = useState(false);
@@ -27,7 +27,7 @@ const RouteTracking = () => {
 
   const handleDownload = async () => {
     setLoading(true);
-    await exportFormPending(searchPending!);
+    // await exportFormPending(searchPending!);
     setLoading(false);
   };
 

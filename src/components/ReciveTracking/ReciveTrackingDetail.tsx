@@ -60,7 +60,7 @@ const ReciveTackingDetail: FC<StudyTableProps> = ({
   const { id } = useParams<UrlParams>();
   const { routeTrackingStore, shipmentTracking, modalStore } = useStore();
 
-  const { getAllRecive, pendings, searchPending } = routeTrackingStore;
+  const { getAllPendingReceive: getAllRecive } = routeTrackingStore;
   const { getaRecive, recive, updateRecive } = shipmentTracking;
   const { openModal, closeModal } = modalStore;
   useEffect(() => {
@@ -74,29 +74,29 @@ const ReciveTackingDetail: FC<StudyTableProps> = ({
     readshipment();
   }, [getaRecive, id]);
 
-  useEffect(() => {
-    var readroute = async () => {
-      await getAllRecive(searchPending!);
-    };
-    readroute();
-  }, [getAllRecive]);
+  // useEffect(() => {
+  //   var readroute = async () => {
+  //     await getAllRecive(searchPending!);
+  //   };
+  //   readroute();
+  // }, [getAllRecive]);
 
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
   const { width: windowWidth } = useWindowDimensions();
-  const actualMaquilador = () => {
-    if (id) {
-      const index = pendings!.findIndex((x) => x.id === id);
-      return index + 1;
-    }
-    return 0;
-  };
-  const prevnextMaquilador = (index: number) => {
-    const maquila = pendings![index];
-    navigate(`/eShipmentTracking/${maquila.id}`);
-  };
+  // const actualMaquilador = () => {
+  //   if (id) {
+  //     const index = pendings!.findIndex((x) => x.id === id);
+  //     return index + 1;
+  //   }
+  //   return 0;
+  // };
+  // const prevnextMaquilador = (index: number) => {
+  //   const maquila = pendings![index];
+  //   navigate(`/eShipmentTracking/${maquila.id}`);
+  // };
 
   const columns: IColumns<reciveStudy> = [
     {
@@ -261,7 +261,7 @@ const ReciveTackingDetail: FC<StudyTableProps> = ({
     <Fragment>
       <Spin spinning={loading}>
         <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
-          <Pagination
+          {/* <Pagination
             size="small"
             total={pendings!.length}
             pageSize={1}
@@ -269,7 +269,7 @@ const ReciveTackingDetail: FC<StudyTableProps> = ({
             onChange={(value) => {
               prevnextMaquilador(value - 1);
             }}
-          />
+          /> */}
         </Col>
         <br />
         <Row>

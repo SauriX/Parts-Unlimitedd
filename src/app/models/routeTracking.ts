@@ -1,6 +1,6 @@
 import moment from "moment";
 
-export interface SearchTracking {
+export interface ISearchTracking {
   fecha: moment.Moment[];
   destino: string;
   origen: string;
@@ -18,6 +18,8 @@ export interface IRouteTrackingList {
   estatus: string;
   ruta: string;
   entrega: string;
+  estatusSeguimiento: number;
+  extra: boolean;
 }
 
 export interface ITagTrackingOrder {
@@ -35,13 +37,13 @@ export interface ITagTrackingOrder {
   estudiosId: number[];
 }
 
-export class TrackingFormValues implements SearchTracking {
+export class PendingSendValues implements ISearchTracking {
   fecha = [moment(), moment()];
   buscar = "";
   destino = "";
   origen = "";
 
-  constructor(init?: SearchTracking) {
+  constructor(init?: ISearchTracking) {
     Object.assign(this, init);
   }
 }
