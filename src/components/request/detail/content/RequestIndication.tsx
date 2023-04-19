@@ -1,4 +1,4 @@
-import { Comment, List } from "antd";
+import { Button, Comment, List } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { IIndicationList } from "../../../../app/models/indication";
@@ -7,7 +7,7 @@ import { useStore } from "../../../../app/stores/store";
 
 const RequestIndication = () => {
   const { requestStore } = useStore();
-  const { studies, packs } = requestStore;
+  const { request, studies, packs, printIndications } = requestStore;
 
   const [indications, setIndications] = useState<IIndicationList[]>([]);
 
@@ -41,26 +41,37 @@ const RequestIndication = () => {
     setIndications(totalIndications);
   }, [packs, studies]);
 
+  const print = () => {
+    if (!request) return;
+
+    printIndications(request.expedienteId, request.solicitudId!);
+  };
+
   return (
-    <List
-      className="request-indication-list"
-      itemLayout="horizontal"
-      dataSource={indications}
-      renderItem={(item) => (
-        <li>
-          <Comment
-            author={
-              item.clave +
-              " (" +
-              item.estudios.map((x) => x.clave).join(", ") +
-              ")"
-            }
-            content={item.descripcion}
-            datetime={item.dias === 1 ? "1 día" : `${item.dias} días`}
-          />
-        </li>
-      )}
-    />
+    <>
+      <div style={{ textAlign: "right" }}>
+        <Button onClick={print}>Imprimir</Button>
+      </div>
+      <List
+        className="request-indication-list"
+        itemLayout="horizontal"
+        dataSource={indications}
+        renderItem={(item) => (
+          <li>
+            <Comment
+              author={
+                item.clave +
+                " (" +
+                item.estudios.map((x) => x.clave).join(", ") +
+                ")"
+              }
+              content={item.descripcion}
+              datetime={item.dias === 1 ? "1 día" : `${item.dias} días`}
+            />
+          </li>
+        )}
+      />
+    </>
   );
 };
 

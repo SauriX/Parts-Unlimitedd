@@ -24,11 +24,14 @@ import {
   IQuotationStudy,
   IQuotationStudyUpdate,
 } from "../../../../app/models/quotation";
+import InfoStudy from "../../../request/detail/InfoModal/InfoStudy";
+import HeaderTitle from "../../../../app/common/header/HeaderTitle";
 
-const { Link } = Typography;
+const { Link, Text } = Typography;
 
 const QuotationStudy = () => {
-  const { quotationStore, optionStore } = useStore();
+  const { quotationStore, optionStore, modalStore } = useStore();
+  const { openModal } = modalStore;
   const { studyOptions, packOptions, getStudyOptions, getPackOptions } =
     optionStore;
   const {
@@ -80,6 +83,16 @@ const QuotationStudy = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [packOptions, studyOptions]);
 
+  const showStudyDetails = async (id: number, estudio: string) => {
+    openModal({
+      title: <HeaderTitle image={"infoStudy"} title="Ficha técnica" />,
+      body: (
+        <InfoStudy id={id} originBranch={""} destinationBranch={""}></InfoStudy>
+      ),
+      width: 1000,
+    });
+  };
+
   const columns: IColumns<IQuotationStudy | IQuotationPack> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
@@ -87,7 +100,22 @@ const QuotationStudy = () => {
         setSearchState,
         width: 100,
       }),
-      render: (value) => <Link>{value}</Link>,
+      // render: (value) => <Link>{value}</Link>,
+      render: (value, item) => {
+        if (isStudy(item)) {
+          return (
+            <Link
+              onClick={() => {
+                showStudyDetails(item.estudioId!, item.nombre);
+              }}
+            >
+              {value}
+            </Link>
+          );
+        } else {
+          return <Text>{value}</Text>;
+        }
+      },
     },
     {
       ...getDefaultColumnProps("nombre", "Estudios", {

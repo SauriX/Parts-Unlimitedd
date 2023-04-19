@@ -330,6 +330,8 @@ export interface IRequestPack {
   listaPrecio: string;
   promocionId?: number;
   promocion?: string;
+  estatusId?: number;
+  estatus?: string;
   cancelado: boolean;
   departamentoId: number;
   areaId: number;

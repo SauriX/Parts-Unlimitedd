@@ -173,11 +173,13 @@ const RequestStudy = () => {
             bordered={false}
             style={{ width: "100%" }}
             allowClear
-            disabled={payments.some(
-              (x) =>
-                x.estatusId !== status.requestPayment.cancelado &&
-                x.estatusId !== status.requestPayment.facturaCancelada
-            )}
+            disabled={
+              payments.some(
+                (x) =>
+                  x.estatusId !== status.requestPayment.cancelado &&
+                  x.estatusId !== status.requestPayment.facturaCancelada
+              ) || item.estatusId === status.requestStudy.cancelado
+            }
             placeholder="Seleccionar promoción"
             onChange={(promoId?: number) => {
               if (isStudy(item)) {
@@ -225,20 +227,21 @@ const RequestStudy = () => {
         ) : null,
     },
   ];
+
   const showStudyDetails = async (id: number, estudio: string) => {
     openModal({
       title: "",
       body: (
         <InfoStudy
           id={id}
-          sucursal={request!.sucursal!}
-          sucursalDestino={request!.destino!}
-          estudio={estudio}
+          originBranch={request!.sucursal!}
+          destinationBranch={request!.destino!}
         ></InfoStudy>
       ),
       width: 1000,
     });
   };
+
   const addStudy = async (option: IOptions) => {
     const value = parseInt(option.value.toString().split("-")[1]);
 
