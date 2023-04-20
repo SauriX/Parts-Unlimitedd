@@ -44,9 +44,9 @@ export interface IStudyForm {
   indicaciones: IIndicationList[];
   reactivos: IReagentList[];
   paquete: IPacketList[];
-  instrucciones:string,
-  diasEstabilidad:number,
-  diasRefrigeracion:number,
+  instrucciones: string;
+  diasEstabilidad: number;
+  diasRefrigeracion: number;
 }
 
 export interface IStudyTag {
@@ -65,14 +65,18 @@ export interface IStudyTag {
   nombreEstudio: string;
   claveEstudio: string;
 }
-export interface IStudyTec{
-  instrucciones: string,
-  tipoMuestra: string,
-  diasEstabilidad: number,
-  diasRefrigeracion: number,
-  diasEntrega:string,
-  tapon:string
+
+export interface IStudyDatasheet {
+  clave: string;
+  nombre: string;
+  instrucciones: string;
+  tipoMuestra: string;
+  diasEstabilidad: number;
+  diasRefrigeracion: number;
+  diasEntrega: string;
+  tapon: string;
 }
+
 export class StudyFormValues implements IStudyForm {
   id = 0;
   clave = "";
@@ -102,8 +106,8 @@ export class StudyFormValues implements IStudyForm {
   cantidad = 0;
   workLists = "";
   instrucciones = "";
-  diasEstabilidad=0;
-  diasRefrigeracion=0;
+  diasEstabilidad = 0;
+  diasRefrigeracion = 0;
   constructor(init?: IStudyForm) {
     Object.assign(this, init);
   }

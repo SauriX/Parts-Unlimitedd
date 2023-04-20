@@ -80,6 +80,7 @@ export default class StudyStore {
       alerts.warning(getErrors(error));
     }
   };
+  
   getTecInfoById = async (id: number) => {
     try {
       const study = await Study.getStudyInfoById(id);

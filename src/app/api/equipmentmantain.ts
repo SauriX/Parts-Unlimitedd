@@ -16,12 +16,12 @@ const Equipmentmantain = {
   update: (equipment: ImantainForm): Promise<void> =>
     requests.put("mantain", equipment),
   saveImage: (formData: FormData): Promise<void> => requests.put("mantain/images", formData),
-  print: (recordId: string): Promise<void> =>
-    requests.print(`mantain/order/${recordId}`),
+  print: (recordId: string,sucursalId:string): Promise<void> =>
+    requests.print(`mantain/order/${recordId}/${sucursalId}`),
   exportList: (search: string): Promise<void> =>
     requests.download(`equipment/export/list/${!search ? "all" : search}`),
-  exportForm: (id: number): Promise<void> =>
-    requests.download(`equipment/export/form/${id}`),
+  exportForm: (id: string,sucursalId:string): Promise<void> =>
+    requests.download(`mantain/order/${id}/${sucursalId}`),
   deleteImage: (
     Id: string,
     code: string
