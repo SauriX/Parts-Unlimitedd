@@ -337,11 +337,12 @@ export interface IRequestPack {
   areaId: number;
   dias: number;
   horas: number;
+  precioEstudios: number;
+  paqueteDescuento: number;
+  paqueteDescuentoPorcentaje: number;
   precio: number;
-  descuento: number;
-  descuentoPorcentaje: number;
-  promocionDescuento?: number;
-  promocionDescuentoPorcentaje?: number;
+  descuento?: number;
+  descuentoPorcentaje?: number;
   precioFinal: number;
   nuevo: boolean;
   asignado: boolean;

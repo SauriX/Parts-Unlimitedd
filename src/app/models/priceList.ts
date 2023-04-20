@@ -132,13 +132,14 @@ export interface IPriceListInfoPack {
   areaId: number;
   dias: number;
   horas: number;
+  precioEstudios: number;
+  paqueteDescuento: number;
+  paqueteDescuentoPorcentaje: number;
   precio: number;
   descuento: number;
   descuentoPorcentaje: number;
   promocionId?: number;
   promocion?: string;
-  promocionDescuento?: number;
-  promocionDescuentoPorcentaje?: number;
   precioFinal: number;
   promociones: IPriceListInfoPromo[];
   estudios: IPriceListInfoStudy[];
