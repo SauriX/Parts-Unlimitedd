@@ -52,7 +52,7 @@ export class CashRegisterFilterValues implements ICashRegisterFilter {
   sucursalId = [];
   tipoCompañia = [];
   fechaIndividual = moment();
-  hora = [moment().hour(7).minutes(0), moment().hour(19).minutes(0)];
+  hora = [moment().hour(7).minutes(0).utcOffset(0, true), moment().hour(19).minutes(0).utcOffset(0, true)];
 
   constructor(init?: ICashRegisterFilter) {
     Object.assign(this, init);

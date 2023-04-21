@@ -13,8 +13,17 @@ type SeriesBodyProps = {
 
 const SeriesBody: FC<SeriesBodyProps> = ({ printing }) => {
   const { seriesStore } = useStore();
-  const { seriesList } = seriesStore;
+  const { seriesList, getAll, seriesTotal } = seriesStore;
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const getSeries = async () => {
+      await getAll();
+      console.log(seriesTotal)
+    };
+
+    getSeries();
+  }, [getAll]);
 
   return (
     <Fragment>

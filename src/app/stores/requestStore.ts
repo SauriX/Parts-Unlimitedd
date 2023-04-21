@@ -187,7 +187,7 @@ export default class RequestStore {
   isStudy(obj: IRequestStudy | IRequestPack): obj is IRequestStudy {
     return obj.type === "study";
   }
-  
+
   setLastViewedCode = (
     data:
       | {
@@ -608,7 +608,7 @@ export default class RequestStore {
       ) {
         const payment = await Request.createPayment(request);
         this.payments.push(payment);
-        if(payment.lealtad) alerts.success(messages.loyaltyWallet);
+        if (payment.lealtad) alerts.success(messages.loyaltyWallet);
         else alerts.info(messages.loyaltyWalletDeny);
       } else {
         this.chargePayPalPayment(request);
@@ -780,15 +780,17 @@ export default class RequestStore {
       (x) => x.id === pack.id && x.identificador === pack.identificador
     );
     if (index > -1) {
+      const _pack = { ...this.packs[index] };
       const promo = this.packs[index].promociones.find(
         (x) => x.promocionId === promoId
       );
       this.packs[index] = {
-        ...this.packs[index],
+        ..._pack,
         promocionId: promoId,
         promocion: promo?.promocion,
-        promocionDescuento: promo?.descuento,
-        promocionDescuentoPorcentaje: promo?.descuentoPorcentaje,
+        descuento: promo?.descuento,
+        descuentoPorcentaje: promo?.descuentoPorcentaje,
+        precioFinal: _pack.precio - (promo?.descuento ?? 0),
       };
     }
   };
@@ -998,6 +1000,17 @@ export default class RequestStore {
     }
   };
 
+  printIndications = async (recordId: string, requestId: string) => {
+    try {
+      this.loadingTabContentCount++;
+      await Request.printIndications(recordId, requestId);
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+    } finally {
+      this.loadingTabContentCount--;
+    }
+  };
+
   saveImage = async (request: FormData) => {
     try {
       var imageName = await Request.saveImage(request);
@@ -1064,7 +1077,7 @@ export default class RequestStore {
     );
     
     const studyAndPack = studies.map((x) => ({ descuento: x.descuento ?? 0, precio: x.precio, precioFinal: x.precioFinal, copago: x.copago ?? 0 }))
-      .concat(packs.map((x) => ({ descuento: x.descuento, precio: x.precio, precioFinal: x.precioFinal, copago: 0 })));
+      .concat(packs.map((x) => ({ descuento: x.descuento ?? 0, precio: x.precio, precioFinal: x.precioFinal, copago: 0 })));
 
     const totalStudies = studyAndPack.reduce((acc, obj) => acc + obj.precio, 0);
 

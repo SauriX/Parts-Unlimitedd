@@ -128,7 +128,7 @@ const RequestGeneral = ({ branchId, form, onSubmit }: RequestGeneralProps) => {
       setSelectedMedic(undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sendToMedic]);
+  }, [sendToMedic, doctorId]);
 
   const onValuesChange = (changedValues: any) => {
     const path = Object.keys(changedValues)[0];

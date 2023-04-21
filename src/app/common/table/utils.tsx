@@ -14,6 +14,7 @@ export const defaultPaginationProperties: TablePaginationConfig = {
   size: "small",
   pageSizeOptions: ["25", "50", "100"],
   showSizeChanger: true,
+  defaultPageSize: 25,
 };
 
 let searchInput: any;
