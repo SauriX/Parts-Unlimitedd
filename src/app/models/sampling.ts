@@ -28,6 +28,7 @@ export interface ISamplingList {
   observacion: string;
   estudios: IStudySampling[];
   clavePatologica: string;
+  expediente:string;
 }
 export interface IStudySampling {
   id: number;

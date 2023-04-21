@@ -70,6 +70,29 @@ const SamplingStudyColumns = ({ printOrder }: tableProps) => {
           {item.sucursal} {item.edad} años {item.sexo}
         </div>
       ),
+    },    {
+      ...getDefaultColumnProps("expediente", "Expediente", {
+        searchState,
+        setSearchState,
+        width: "8%",
+      }),
+      render: (value, item) => (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Link
+            onClick={() => {
+              navigate(
+                // ""
+                `/expedientes/${item.expedienteId!}?&mode=readonly`
+              );
+            }}
+          >
+            {value}
+          </Link>
+          <small>
+            <Text type="secondary">{item.clavePatologica}</Text>
+          </small>
+        </div>
+      ),
     },
     {
       ...getDefaultColumnProps("registro", "Registro", {
@@ -189,13 +212,7 @@ export const SamplingStudyExpandable = ({
       render: (_value, record) =>
         record.fechaActualizacion == null
           ? " - "
-          : record.fechaActualizacion + " - " + record.usuarioActualizacion,
-    },
-    {
-      ...getDefaultColumnProps("registro", "Fecha de Registro", {
-        width: "10%",
-      }),
-      render: (_value, record) => record.registro,
+          : record.fechaActualizacion + " - " + record.usuarioActualizacion +" 38 (FA)",
     },
     {
       ...getDefaultColumnProps("entrega", "Fecha de Entrega", {
@@ -204,7 +221,7 @@ export const SamplingStudyExpandable = ({
       render: (_value, record) => (
         <Typography>
           <Text style={record.urgencia > 1 ? { color: "red" } : {}}>
-            {record.entrega}
+            {record.entrega} (FE)
           </Text>
         </Typography>
       ),
