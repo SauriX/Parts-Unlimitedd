@@ -32,7 +32,7 @@ const ReceiveTrackingHeader: FC<ShipmentTrackingProps> = ({
     <PageHeader
       ghost={false}
       title={
-        <HeaderTitle title="Detalle de seguimiento de entrega" image="segruta" />
+        <HeaderTitle title="Detalle de seguimiento de entrega" image="entrega" />
       }
       className="header-container"
       extra={[

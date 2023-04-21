@@ -27,9 +27,23 @@ const PendingSendTable = () => {
     searchedColumn: "",
   });
 
-  const renderExtra = (value: any, record: IRouteTrackingList) => {
-    if (record.extra) {
-      return <Text style={{ color: "#1890ff" }}>{value}</Text>;
+  const renderExtra = (
+    value: any,
+    record: IRouteTrackingList,
+    isKey?: boolean
+  ) => {
+    if (record.extra && isKey) {
+      return (
+        <Text style={{ color: "#253B65" }} strong>
+          {value + "(E)"}
+        </Text>
+      );
+    } else if (record.extra) {
+      return (
+        <Text style={{ color: "#253B65" }} strong>
+          {value}
+        </Text>
+      );
     } else {
       return <Text>{value}</Text>;
     }
@@ -60,7 +74,7 @@ const PendingSendTable = () => {
         setSearchState,
         width: "10%",
       }),
-      render: (value, record) => renderExtra(value, record),
+      render: (value, record) => renderExtra(value, record, true),
     },
     {
       ...getDefaultColumnProps("recipiente", "Recipiente", {
@@ -84,6 +98,7 @@ const PendingSendTable = () => {
         setSearchState,
         width: "10%",
       }),
+      render: (value, record) => renderExtra(value, record),
     },
     {
       ...getDefaultColumnProps("solicitud", "Solicitud", {
@@ -99,10 +114,10 @@ const PendingSendTable = () => {
         setSearchState,
         width: "10%",
       }),
-      render: (value: string) => {
+      render: (value: string, record) => {
         let route = value.split(",").map((item, index) => (
           <React.Fragment key={index}>
-            {item}
+            {renderExtra(item, record)}
             <br />
           </React.Fragment>
         ));
@@ -123,6 +138,7 @@ const PendingSendTable = () => {
         setSearchState,
         width: "10%",
       }),
+      render: (value, record) => renderExtra(value, record),
     },
     {
       key: "editar",

@@ -54,6 +54,7 @@ export type imagesType =
   | "estudio"
   | "etiquetas"
   | "expediente"
+  | "entrega"
   | "grafico"
   | "indicacion"
   | "indicadores"

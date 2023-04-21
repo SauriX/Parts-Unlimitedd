@@ -8,6 +8,10 @@ import {
   Image,
   InputNumber,
   Switch,
+  Divider,
+  PageHeader,
+  Tag,
+  Select,
 } from "antd";
 import { observer } from "mobx-react-lite";
 import React, { FC, Fragment, useEffect, useState } from "react";
@@ -30,6 +34,13 @@ import Check from "./alerts/check";
 import End from "./alerts/end";
 import Scan from "./alerts/scan";
 import Uncheck from "./alerts/uncheck";
+import DescriptionItem from "../../../app/common/display/DescriptionItem";
+import moment from "moment";
+import TrackingTimeline from "../content/TrackingTimeline";
+import ShipmentTrackingTitle from "../shipment/content/ShipmentTrackingTitle";
+import { CheckCircleTwoTone, MinusCircleTwoTone } from "@ant-design/icons";
+import { IShipmentTags } from "../../../app/models/shipmentTracking";
+import { studyStatus } from "../../../app/util/catalogs";
 
 type StudyTableProps = {
   componentRef: React.MutableRefObject<any>;
@@ -43,8 +54,13 @@ const ReceiveTrackingDetail: FC<StudyTableProps> = ({
   componentRef,
   printing,
 }) => {
+  const { routeTrackingStore, shipmentTracking, modalStore } = useStore();
+  const { getActive, shipmentList: trackingOrders } = routeTrackingStore;
+  const { getShipmentById, shipment, loadingOrders } = shipmentTracking;
+  const { openModal, closeModal } = modalStore;
+
   const [loading, setLoading] = useState(false);
-  const [recives, setrecives] = useState<reciveTracking>();
+  const [studies, setStudies] = useState<IShipmentTags[]>([]);
   const [acepted, setacepted] = useState<reciveStudy>({
     id: "",
     estudio: "",
@@ -62,70 +78,74 @@ const ReceiveTrackingDetail: FC<StudyTableProps> = ({
   const [estudios, setEstudios] = useState<reciveStudy[]>([]);
   let navigate = useNavigate();
   const { id } = useParams<UrlParams>();
-  const { routeTrackingStore, shipmentTracking, modalStore } = useStore();
 
-  const { getAllPendingReceive: getAllRecive } = routeTrackingStore;
-  const { getaRecive, recive, updateRecive } = shipmentTracking;
-  const { openModal, closeModal } = modalStore;
   useEffect(() => {
-    var readshipment = async () => {
-      setLoading(true);
-      var ship = await getaRecive(id!);
-      setrecives(ship);
-      setEstudios(ship?.estudios!);
-      setLoading(false);
-    };
-    readshipment();
-  }, [getaRecive, id]);
+    let readshipment = async (id: string) => {
+      let shipment = await getShipmentById(id);
 
-  // useEffect(() => {
-  //   var readroute = async () => {
-  //     await getAllRecive(searchPending!);
-  //   };
-  //   readroute();
-  // }, [getAllRecive]);
+      if (shipment) setStudies(shipment.estudios);
+    };
+
+    if (id) {
+      readshipment(id);
+    }
+  }, [getShipmentById, id]);
 
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
   const { width: windowWidth } = useWindowDimensions();
-  // const actualMaquilador = () => {
-  //   if (id) {
-  //     const index = pendings!.findIndex((x) => x.id === id);
-  //     return index + 1;
-  //   }
-  //   return 0;
-  // };
-  // const prevnextMaquilador = (index: number) => {
-  //   const maquila = pendings![index];
-  //   navigate(`/eShipmentTracking/${maquila.id}`);
-  // };
 
-  const columns: IColumns<reciveStudy> = [
+  const columns: IColumns<IShipmentTags> = [
     {
-      ...getDefaultColumnProps("estudio", "Estudio", {
+      ...getDefaultColumnProps("claveEtiqueta", "Clave muestra", {
         searchState,
         setSearchState,
-        width: "20%",
-        minWidth: 150,
-        windowSize: windowWidth,
+        width: "10%",
       }),
     },
     {
-      ...getDefaultColumnProps("paciente", "Nombre de paciente", {
+      ...getDefaultColumnProps("recipiente", "Recipiente", {
         searchState,
         setSearchState,
-        width: "20%",
-        minWidth: 150,
-        windowSize: windowWidth,
+        width: "9%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("cantidad", "Cantidad", {
+        width: "5%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("estudios", "Estudios", {
+        searchState,
+        setSearchState,
+        width: "15%",
       }),
     },
     {
       ...getDefaultColumnProps("solicitud", "Solicitud", {
         searchState,
         setSearchState,
-        width: "20%",
+        width: "8%",
+      }),
+    },
+    {
+      ...getDefaultColumnProps("estatus", "Estatus", {
+        searchState,
+        setSearchState,
+        width: "8%",
+      }),
+      render: (value) => {
+        return studyStatus(value);
+      },
+    },
+    {
+      ...getDefaultColumnProps("paciente", "Nombre de paciente", {
+        searchState,
+        setSearchState,
+        width: "15%",
         minWidth: 150,
         windowSize: windowWidth,
       }),
@@ -133,41 +153,51 @@ const ReceiveTrackingDetail: FC<StudyTableProps> = ({
     {
       key: "confirmacionOrigen",
       dataIndex: "confirmacionOrigen",
-      title: "Confirmación Muestra Origen",
+      title: "Confirmación Recolección",
       align: "center",
-      width: 100,
-      render: (value) => (value ? "Sí" : "No"),
+      width: "10%",
+      render: (value) =>
+        value ? (
+          <CheckCircleTwoTone twoToneColor="green" />
+        ) : (
+          <MinusCircleTwoTone twoToneColor="#FFCC00" />
+        ),
     },
     {
       key: "confirmacionDestino",
       dataIndex: "confirmacionDestino",
-      title: "Confirmación Muestra Destino",
+      title: "Confirmación Recepción",
+      width: "10%",
       align: "center",
-      width: 100,
-      render: (value, item) => (
-        <Switch
-          checked={value}
-          onChange={(value) => {
-            onAcept(item, value);
-          }}
-        ></Switch>
-      ),
-    },
-    {
-      key: "editarc",
-      dataIndex: "temperatura",
-      title: "Temperatura",
-      align: "center",
-      width: 100,
-      render: (value, item) => (
-        <InputNumber
-          type={"number"}
-          value={value}
-          onChange={(value) => temperaturaIn(value, item)}
-        ></InputNumber>
+      render: (value) => (
+        <Select
+          allowClear
+          options={[
+            { label: "Destino Final", value: true },
+            { label: "Destino intermedio", value: false },
+          ]}
+          style={{ width: "100%" }}
+        />
       ),
     },
   ];
+
+  // {
+  //   key: "confirmacionDestino",
+  //   dataIndex: "confirmacionDestino",
+  //   title: "Confirmación Muestra Destino",
+  //   align: "center",
+  //   width: 100,
+  //   render: (value, item) => (
+  //     <Switch
+  //       checked={value}
+  //       onChange={(value) => {
+  //         onAcept(item, value);
+  //       }}
+  //     ></Switch>
+  //   ),
+  // },
+
   const onAcept = async (item: reciveStudy, status: boolean) => {
     item.confirmacionDestino = status;
     if (!status) {
@@ -246,130 +276,155 @@ const ReceiveTrackingDetail: FC<StudyTableProps> = ({
 
     setEstudios(estudys);
   };
-  const onFinish = async () => {
-    if (alertFin) {
-      SetAlertFind(false);
-    }
-    setLoading(true);
-    var valuesfinal = recives;
-    valuesfinal!.estudios = estudios;
-    var succes = await updateRecive(valuesfinal!);
-    setLoading(false);
 
-    if (succes) {
-      navigate(`/${views.recivetracking}/${valuesfinal?.id}`);
-      alerts.success("Registro guardado con éxito");
-    }
+  const onPageChange = (page: number) => {
+    const trackingOrder = trackingOrders[page - 1];
+    navigate(`/ShipmentTracking/${trackingOrder.id}`);
   };
+
+  const getPage = (trackingOrderId?: string) => {
+    return trackingOrders.findIndex((x) => x.id === trackingOrderId) + 1;
+  };
+
+  const onFinish = async () => {
+    // if (alertFin) {
+    //   SetAlertFind(false);
+    // }
+    // setLoading(true);
+    // var valuesfinal = recives;
+    // valuesfinal!.estudios = estudios;
+    // var succes = await updateRecive(valuesfinal!);
+    // setLoading(false);
+
+    // if (succes) {
+    //   navigate(`/${views.recivetracking}/${valuesfinal?.id}`);
+    //   alerts.success("Registro guardado con éxito");
+    // }
+    console.log("update");
+  };
+
   return (
     <Fragment>
       <Spin spinning={loading}>
-        <Col md={12} sm={24} xs={12} style={{ textAlign: "left" }}>
-          {/* <Pagination
-            size="small"
-            total={pendings!.length}
-            pageSize={1}
-            current={actualMaquilador()}
-            onChange={(value) => {
-              prevnextMaquilador(value - 1);
-            }}
-          /> */}
-        </Col>
-        <br />
-        <Row>
-          <Col md={8}>Numero de Seguimiento: {recive?.seguimiento}</Col>
-          <Col md={8}>Ruta: {recive?.ruta}</Col>
-          <Col md={8}>Nombre: {recive?.nombre}</Col>
-        </Row>
-        <Row>
-          <Col md={11}>
-            <div
-              style={{
-                // backgroundColor: "#F2F2F2",
-                height: "auto",
-                borderStyle: "solid",
-                borderColor: "#CBC9C9",
-                borderWidth: "1px",
-                borderRadius: "10px",
-                padding: "10px",
-              }}
-            >
-              <Row>
-                <Col md={10}></Col>
-                <Col md={10}>
-                  <Image
-                    width={50}
-                    height={50}
-                    src="origen"
-                    fallback={`${process.env.REACT_APP_NAME}/assets/origen.png`}
-                    style={{ marginLeft: "0%" }}
+        <Row gutter={[24, 16]}>
+          <Col md={8} sm={24} xs={12} style={{ textAlign: "left" }}>
+            <Pagination
+              size="small"
+              total={studies.length}
+              pageSize={1}
+              current={getPage(id)}
+              onChange={onPageChange}
+              showSizeChanger={false}
+            />
+          </Col>
+          <Col span={16}>
+            <ShipmentTrackingTitle shipment={shipment} />
+          </Col>
+          <Col md={12}>
+            <div className="tracking-card">
+              <Row gutter={[0, 4]}>
+                <Col md={24}>
+                  <PageHeader
+                    title="Origen"
+                    className="header-container-padding"
+                    tags={
+                      <Tag color="blue">
+                        {shipment?.activo ? "Activo" : "Inactivo"}
+                      </Tag>
+                    }
+                    avatar={{
+                      src: `${process.env.REACT_APP_NAME}/assets/origen.png`,
+                    }}
+                  ></PageHeader>
+                </Col>
+                <Divider className="header-divider"></Divider>
+                <Col md={8}>
+                  <DescriptionItem
+                    title="Sucursal"
+                    content={shipment?.origen}
                   />
                 </Col>
-                <Col md={2}></Col>
-                Origen-------------------------------------------------------------------------
-                <br />
-                <br />
-                Sucursal: {recive?.sucursalOrigen}
-                <br />
-                Responsable de envio: {recive?.responsableOrigen}
-                <br />
-                Medio de entrega: {recive?.medioentrega}
-                <br />
-                Fecha de envío: {recive?.fechaEnvio.format("MMMM D, YYYY")}
-                <br />
-                Hora de envío: {recive?.horaEnvio.utc().format("h:mmA")}
-                <br />
+                <Col md={8}>
+                  <DescriptionItem
+                    title="Responsable de envío"
+                    content={shipment?.emisor}
+                  />
+                </Col>
+                <Col md={8}>
+                  <DescriptionItem
+                    title="Medio de entrega"
+                    content={shipment?.paqueteria}
+                  />
+                </Col>
+                <Col md={8}>
+                  <DescriptionItem
+                    title="Fecha de envío"
+                    content={moment(shipment?.fechaEnvio).format("DD/MM/YYYY")}
+                  />
+                </Col>
+                <Col md={8}>
+                  <DescriptionItem
+                    title="Hora de envío"
+                    content={moment(shipment?.fechaEnvio).format("h:mmA")}
+                  />
+                </Col>
               </Row>
             </div>
           </Col>
-          <Col md={1}></Col>
-          <Col md={11}>
-            <div
-              style={{
-                // backgroundColor: "#F2F2F2",
-                height: "auto",
-                borderStyle: "solid",
-                borderColor: "#CBC9C9",
-                borderWidth: "1px",
-                borderRadius: "10px",
-                padding: "10px",
-              }}
-            >
-              <Row>
-                <Col md={10}></Col>
-                <Col md={12}>
-                  <Image
-                    width={50}
-                    height={50}
-                    src="origen"
-                    fallback={`${process.env.REACT_APP_NAME}/assets/destino.png`}
-                    style={{ marginLeft: "0%" }}
+          <Col md={12}>
+            <div className="tracking-card">
+              <Row gutter={[0, 4]}>
+                <Col md={24}>
+                  <PageHeader
+                    title="Destino"
+                    className="header-container-padding"
+                    avatar={{
+                      src: `${process.env.REACT_APP_NAME}/assets/destino.png`,
+                      shape: "square",
+                    }}
+                  ></PageHeader>
+                </Col>
+                <Divider className="header-divider"></Divider>
+                <Col md={8}>
+                  <DescriptionItem
+                    title="Sucursal"
+                    content={shipment?.destino}
                   />
                 </Col>
-                <Col md={2}></Col>
-                Destino--------------------------------------------------------------------------
-                <br />
-                Sucursal: {recive?.sucursalDestino}
-                <br />
-                Responsable de recibido: {recive?.responsableDestino}
-                <br />
-                Fecha de entrega estimada:{" "}
-                {recive?.fechaEnestimada.format("MMMM D, YYYY")}
-                <br />
-                Hora de entrega estimada:{" "}
-                {recive?.horaEnestimada.utc().format("h:mmA")}
-                <br />
-                Fecha de entrega real:
-                {recive?.fechaEnreal.format("MMMM D, YYYY") == "Enero 1, 0001"
-                  ? ""
-                  : recive?.fechaEnreal.format("MMMM D, YYYY")}
-                <br />
-                Hora de entrega real:{" "}
-                {recive?.horaEnreal.utc().format("h:mmA") == "5:47AM"
-                  ? ""
-                  : recive?.horaEnreal.utc().format("h:mmA")}
+                <Col md={8}>
+                  <DescriptionItem
+                    title="Responsable de recibido"
+                    content={shipment?.receptor ?? "N/A"}
+                  />
+                </Col>
+                <Col md={8}>
+                  <DescriptionItem
+                    title="Fecha de entrega estimada"
+                    content={moment(shipment?.fechaEstimada).format(
+                      "DD/MM/YYYY"
+                    )}
+                  />
+                </Col>
+                <Col md={8}>
+                  <DescriptionItem
+                    title="Hora de entrega estimada"
+                    content={moment(shipment?.fechaEstimada).format("h:mmA")}
+                  />
+                </Col>
+                <Col md={8}>
+                  <DescriptionItem
+                    title="Fecha de entrega real"
+                    content="N/A"
+                  />
+                </Col>
+                <Col md={8}>
+                  <DescriptionItem title="Hora de entrega real" content="N/A" />
+                </Col>
               </Row>
             </div>
+          </Col>
+          <Col span={24}>
+            <TrackingTimeline estatus={shipment?.estatus} />
           </Col>
         </Row>
       </Spin>
@@ -454,17 +509,17 @@ const ReceiveTrackingDetail: FC<StudyTableProps> = ({
           </Row>
         </Fragment>
         <br />
-        <Table<reciveStudy>
+        <Table<IShipmentTags>
           loading={loading}
           size="small"
           rowKey={(record) => record.id}
           columns={columns}
-          dataSource={[...estudios]}
+          dataSource={[...studies]}
           pagination={defaultPaginationProperties}
           sticky
           scroll={{ x: "max-content" }}
         />
-        <Button
+        {/* <Button
           style={{ marginLeft: "90%" }}
           type="primary"
           danger
@@ -473,7 +528,7 @@ const ReceiveTrackingDetail: FC<StudyTableProps> = ({
           }}
         >
           Finalizar escaneo
-        </Button>
+        </Button> */}
       </Fragment>
     </Fragment>
   );
