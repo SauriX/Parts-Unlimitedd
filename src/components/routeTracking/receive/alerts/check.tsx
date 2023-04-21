@@ -14,21 +14,21 @@ import {
     Switch
   } from "antd";
 import { useEffect, useState } from "react";
-import TextInput from "../../../app/common/form/proposal/TextInput";
-import SelectInput from "../../../app/common/form/proposal/SelectInput";
-import { useStore } from "../../../app/stores/store";
+import TextInput from "../../../../app/common/form/proposal/TextInput";
+import SelectInput from "../../../../app/common/form/proposal/SelectInput";
+import { useStore } from "../../../../app/stores/store";
 import { observer } from "mobx-react-lite";
 import {
   getDefaultColumnProps,
   IColumns,
   ISearch,
-} from "../../../app/common/table/utils";
-import { IFormError, IOptions } from "../../../app/models/shared";
-import { ITaxData } from "../../../app/models/taxdata";
-import IconButton from "../../../app/common/button/IconButton";
+} from "../../../../app/common/table/utils";
+import { IFormError, IOptions } from "../../../../app/models/shared";
+import { ITaxData } from "../../../../app/models/taxdata";
+import IconButton from "../../../../app/common/button/IconButton";
 import { EditOutlined } from "@ant-design/icons";
-import alerts from "../../../app/util/alerts";
-import { reciveStudy } from "../../../app/models/ReciveTracking";
+import alerts from "../../../../app/util/alerts";
+import { reciveStudy } from "../../../../app/models/ReciveTracking";
 
 const formItemLayout = {
   labelCol: { span: 8 },

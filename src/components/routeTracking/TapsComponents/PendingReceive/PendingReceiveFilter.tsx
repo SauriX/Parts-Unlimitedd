@@ -26,8 +26,8 @@ const PendingReceiveFilter = () => {
 
     const filter = {
       ...routeTrackingFilter,
-      origen: routeTrackingFilter.destino,
-      destino: routeTrackingFilter.origen || profileBranch,
+      destino: routeTrackingFilter.destino,
+      origen: routeTrackingFilter.origen || profileBranch,
     };
     form.setFieldsValue(filter);
 
@@ -60,7 +60,7 @@ const PendingReceiveFilter = () => {
             <SelectInput
               options={branchCityOptions}
               formProps={{
-                name: "destino",
+                name: "origen",
                 label: "Destino",
               }}
             ></SelectInput>
@@ -69,10 +69,9 @@ const PendingReceiveFilter = () => {
             <SelectInput
               options={branchCityOptions}
               formProps={{
-                name: "origen",
+                name: "destino",
                 label: "Origen",
               }}
-              readonly
             ></SelectInput>
           </Col>
           <Col span={6}>

@@ -23,15 +23,22 @@ const PendingReceiveTable = () => {
 
   let navigate = useNavigate();
 
-  const [trackingStatus, setTrackingStatus] = useState<number>(0);
+  const [trackingStatus, setTrackingStatus] = useState<IRouteTrackingList>();
+  const [isActive, setIsActive] = useState<boolean>(false);
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
     searchedColumn: "",
   });
 
-  const renderExtra = (value: any, record: IRouteTrackingList) => {
-    if (record.extra) {
-      return <Text style={{ color: "#1890ff" }}>{value}</Text>;
+  const renderExtra = (
+    value: any,
+    record: IRouteTrackingList,
+    isKey?: boolean
+  ) => {
+    if (record.extra && isKey) {
+      return <Text style={{ color: "#253B65" }} strong>{value + "(E)"}</Text>;
+    } else if (record.extra) {
+      return <Text style={{ color: "#253B65" }} strong>{value}</Text>;
     } else {
       return <Text>{value}</Text>;
     }
@@ -62,7 +69,7 @@ const PendingReceiveTable = () => {
         setSearchState,
         width: "10%",
       }),
-      render: (value, record) => renderExtra(value, record),
+      render: (value, record) => renderExtra(value, record, true),
     },
     {
       ...getDefaultColumnProps("recipiente", "Recipiente", {
@@ -86,6 +93,7 @@ const PendingReceiveTable = () => {
         setSearchState,
         width: "15%",
       }),
+      render: (value, record) => renderExtra(value, record),
     },
     {
       ...getDefaultColumnProps("solicitud", "Solicitud", {
@@ -101,6 +109,7 @@ const PendingReceiveTable = () => {
         setSearchState,
         width: "10%",
       }),
+      render: (value, record) => renderExtra(value, record),
     },
     {
       ...getDefaultColumnProps("estatusSeguimiento", "Estatus", {
@@ -108,12 +117,13 @@ const PendingReceiveTable = () => {
         setSearchState,
         width: "10%",
       }),
-      render: (value: number) => (
+      render: (value: number, record) => (
         <IconButton
-          title="estatus"
+          title="Estatus"
           icon={<ClockCircleOutlined />}
           onClick={() => {
-            setTrackingStatus(value);
+            setTrackingStatus(record);
+            setIsActive((prevState) => !prevState);
           }}
         />
       ),
@@ -122,9 +132,9 @@ const PendingReceiveTable = () => {
 
   return (
     <Row gutter={[0, 12]}>
-      {trackingStatus ? (
+      {trackingStatus && isActive ? (
         <Col span={24}>
-          <TrackingTimeline estatus={trackingStatus} title={true} />
+          <TrackingTimeline record={trackingStatus} title={true} />
         </Col>
       ) : (
         ""

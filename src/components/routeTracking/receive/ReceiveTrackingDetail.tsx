@@ -9,24 +9,28 @@ import {
   InputNumber,
   Switch,
 } from "antd";
-import React, { FC, Fragment, useEffect, useState } from "react";
-import {
-  defaultPaginationProperties,
-  getDefaultColumnProps,
-  IColumns,
-  ISearch,
-} from "../../app/common/table/utils";
-import useWindowDimensions from "../../app/util/window";
-import { useNavigate, useParams } from "react-router-dom";
-import { useStore } from "../../app/stores/store";
 import { observer } from "mobx-react-lite";
-import views from "../../app/util/view";
-import { reciveStudy, reciveTracking } from "../../app/models/ReciveTracking";
-import alerts from "../../app/util/alerts";
-import Scan from "./alerts/scan";
+import React, { FC, Fragment, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import {
+  ISearch,
+  IColumns,
+  getDefaultColumnProps,
+  defaultPaginationProperties,
+} from "../../../app/common/table/utils";
+import {
+  reciveTracking,
+  reciveStudy,
+} from "../../../app/models/ReciveTracking";
+import { useStore } from "../../../app/stores/store";
+import alerts from "../../../app/util/alerts";
+import views from "../../../app/util/view";
+import useWindowDimensions from "../../../app/util/window";
 import Check from "./alerts/check";
-import Uncheck from "./alerts/uncheck";
 import End from "./alerts/end";
+import Scan from "./alerts/scan";
+import Uncheck from "./alerts/uncheck";
+
 type StudyTableProps = {
   componentRef: React.MutableRefObject<any>;
   printing: boolean;
@@ -35,7 +39,7 @@ type UrlParams = {
   id: string;
 };
 
-const ReciveTackingDetail: FC<StudyTableProps> = ({
+const ReceiveTrackingDetail: FC<StudyTableProps> = ({
   componentRef,
   printing,
 }) => {
@@ -475,4 +479,4 @@ const ReciveTackingDetail: FC<StudyTableProps> = ({
   );
 };
 
-export default observer(ReciveTackingDetail);
+export default observer(ReceiveTrackingDetail);

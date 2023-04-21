@@ -139,12 +139,15 @@ export default class RouteTrackingStore {
 
   getAllPendingReceive = async (search: ISearchTracking) => {
     try {
+      this.loadingRoutes = true;
       const study = await RouteTracking.getAllPendingReceive(search);
       this.receiveStudyTags = study;
       return study;
     } catch (error) {
       alerts.warning(getErrors(error));
       this.receiveStudyTags = [];
+    } finally {
+      this.loadingRoutes = false;
     }
   };
 

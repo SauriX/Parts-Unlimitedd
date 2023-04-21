@@ -67,7 +67,7 @@ import RouteTracking from "../../views/RouteTracking";
 import ClinicResults from "../../views/ClinicResults";
 import ClinicalResults from "../../components/clinicalResults/ClinicalResultsInfo";
 import ShipmentTracking from "../../views/ShipmentTracking";
-import ReciveTracking from "../../views/ReciveTracking";
+import ReceiveTracking from "../../views/ReceiveTracking";
 import WorkList from "../../views/WorkList";
 import MassResultSearch from "../../views/MassResultSearch";
 import ResultValidation from "../../views/ResultValidation";
@@ -300,7 +300,7 @@ function App() {
             />
             <Route
               path={`${views.recivetracking}/:id`}
-              element={<ReciveTracking />}
+              element={<ReceiveTracking />}
             />
             <Route
               path={`${views.resultValidation}`}
