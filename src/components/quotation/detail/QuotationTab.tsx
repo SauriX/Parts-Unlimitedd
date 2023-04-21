@@ -208,6 +208,9 @@ const QuotationTab = ({
           >
             Guardar
           </Button>
+          <Button key="create" size="small" style={{ backgroundColor: " #18AC50" }} type="primary">
+            Convertir en solicitud
+          </Button>
         </>
       )}
     </Space>
