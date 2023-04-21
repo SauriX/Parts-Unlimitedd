@@ -1,88 +1,62 @@
+import moment from "moment";
+
 export interface IRouteList {
-    id: string;
-    clave: string;
-    nombre: string;
-    sucursalOrigen: string;
-    sucursalDestino: string;
-    activo: boolean;
+  id: string;
+  clave: string;
+  nombre: string;
+  origen: string;
+  destino: string;
+  activo: boolean;
 }
 
 export interface IRouteForm {
-    id: string,
-    clave: string,
-    nombre: string,
-    sucursalOrigenId?: string,
-    sucursalDestinoId?:	string,
-    maquiladorId?:	string|number,
-    requierePaqueteria: boolean,
-    seguimientoPaqueteria:	number,
-    paqueteriaId: number,
-    comentarios: string,
-    diasDeEntrega: number,
-    horaDeEntregaEstimada: number,
-    horaDeEntrega:	number,
-    horaDeRecoleccion?:	number,
-    tiempoDeEntrega?:	number,
-    formatoDeTiempoId?:	number,
-    estudioId:	string,
-    fechaInicial?: Date,
-    fechaFinal?: Date,
-    idResponsableEnvio:	string,
-    idResponsableRecepcion:	string,
-    activo: boolean
-    estudio: IRouteEstudioList[],
-    dias: IDias[],
-    idArea:number,
-    idDepartamento:number,
-
+  id: string;
+  clave: string;
+  nombre: string;
+  origenId?: string;
+  destinoId?: string;
+  maquiladorId?: string | number;
+  paqueteriaId: number;
+  comentarios: string;
+  horaDeRecoleccion: moment.Moment | Date;
+  tiempoDeEntrega: number;
+  tipoTiempo?: number;
+  activo: boolean;
+  estudio: IStudyRouteList[];
+  dias: IDias[];
 }
 
 export interface IDias {
-    id: number,
-    dia: string,
+  id: number;
+  dia: string;
 }
 
-export interface IRouteEstudioList {
-    id: number,
-    clave: string,
-    nombre: string,
-    area: string,
-    departamento: string,
-    activo: boolean,
-    //selectedTags:IDias[],
+export interface IStudyRouteList {
+  id: number;
+  clave: string;
+  nombre: string;
+  area: string;
+  departamento: string;
+  activo: boolean;
 }
 
 export class RouteFormValues implements IRouteForm {
-    id = "";
-    clave = "";
-    nombre = "";
-    idListaPrecios = "";
-    tipoDescuento = "";
-    cantidadDescuento = 0;
-    cantidad = 0;
-    activo = true;
-    sucursalOrigenId = undefined;
-    sucursalDestinoId = undefined;
-    maquiladorId = undefined;
-    requierePaqueteria = false;
-    seguimientoPaqueteria = 0;
-    paqueteriaId = 0;
-    comentarios = "";
-    diasDeEntrega = 0;
-    horaDeEntregaEstimada = 0;
-    horaDeEntrega = 0;
-    horaDeRecoleccion = undefined;
-    tiempoDeEntrega = undefined;
-    formatoDeTiempoId = 0;
-    estudioId = "";
-    idResponsableEnvio = "";
-    idResponsableRecepcion = "";
-    estudio: IRouteEstudioList[] = [];
-    dias: IDias[] = [];
-    idArea = 0;
-    idDepartamento =0;
+  id = "";
+  clave = "";
+  nombre = "";
+  activo = false;
+  origenId = "";
+  destinoId = "";
+  maquiladorId = 0;
+  paqueteriaId = 0;
+  comentarios = "";
+  horaDeRecoleccion = moment(Date.now()).utcOffset(0, true);
+  tiempoDeEntrega = 0;
+  tipoTiempo = 1;
+  estudio: IStudyRouteList[] = [];
+  dias: IDias[] = [];
 
-    constructor(init?: IRouteForm) {
-        Object.assign(this, init);
-    }
+  constructor(init?: IRouteForm) {
+    Object.assign(this, init);
+  }
 }

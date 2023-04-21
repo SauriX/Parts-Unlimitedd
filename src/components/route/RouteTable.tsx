@@ -23,15 +23,13 @@ type RouteTableProps = {
 
 const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
   const { routeStore } = useStore();
-  const { routes, getAll } = routeStore;
+  const { routes, getAll, loadingRoutes } = routeStore;
 
   const [searchParams] = useSearchParams();
 
   let navigate = useNavigate();
 
   const { width: windowWidth } = useWindowDimensions();
-
-  const [loading, setLoading] = useState(false);
 
   const [searchState, setSearchState] = useState<ISearch>({
     searchedText: "",
@@ -40,10 +38,7 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
 
   useEffect(() => {
     const readRoutes = async () => {
-      setLoading(true);
       await getAll(searchParams.get("search") ?? "all");
-      setLoading(false);
-      getAll("all");
     };
 
     if (routes.length === 0) {
@@ -84,7 +79,7 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-      ...getDefaultColumnProps("sucursalOrigen", "Sucursal Origen", {
+      ...getDefaultColumnProps("origen", "Sucursal Origen", {
         searchState,
         setSearchState,
         width: "20%",
@@ -93,7 +88,7 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-      ...getDefaultColumnProps("sucursalDestino", "Destino", {
+      ...getDefaultColumnProps("destino", "Destino", {
         searchState,
         setSearchState,
         width: "20%",
@@ -150,7 +145,7 @@ const RouteTable: FC<RouteTableProps> = ({ componentRef, printing }) => {
   return (
     <Fragment>
       <Table<IRouteList>
-        loading={loading || printing}
+        loading={loadingRoutes || printing}
         size="small"
         rowKey={(record) => record.id}
         columns={columns}

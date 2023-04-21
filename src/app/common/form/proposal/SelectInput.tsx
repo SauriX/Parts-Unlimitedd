@@ -32,6 +32,7 @@ type IProps =
       defaultValue?: any;
       value?: any;
       showArrow?: boolean;
+      loading?: boolean;
     }
   | {
       form?: FormInstance<any>;
@@ -50,6 +51,7 @@ type IProps =
       defaultValue?: any;
       value?: any;
       showArrow?: boolean;
+      loading?: boolean;
     };
 
 const SelectInput = ({
@@ -69,6 +71,7 @@ const SelectInput = ({
   defaultValue,
   value,
   showArrow,
+  loading
 }: IProps) => {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -110,6 +113,7 @@ const SelectInput = ({
           maxTagCount={"responsive"}
           style={{ width: width ?? "100%", ...(style ?? {}) }}
           defaultValue={defaultValue}
+          loading={loading}
           value={value}
           dropdownRender={
             !multiple || !form
