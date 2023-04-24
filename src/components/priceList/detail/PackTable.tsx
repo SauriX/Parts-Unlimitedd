@@ -58,11 +58,18 @@ const PackTable: FC<PriceListTableProps> = ({ data, closeModal, handle }) => {
         scroll={{ x: windowWidth < resizeWidth ? "max-content" : "auto" }}
       />
       <Row>
-        <Col md={24} style={{ textAlign: "center" }}>
-          <h1>¿Desea continuar con el alta?</h1>
+        <Col md={12} style={{ textAlign: "center" }}></Col>
+        <Col md={7} style={{ textAlign: "center" }}>
         </Col>
-        <Col md={8} style={{ textAlign: "center" }}></Col>
-        <Col md={4} style={{ textAlign: "center" }}>
+        <Col md={5} style={{ textAlign: "center" }}>
+        <Button
+            style={{ backgroundColor: "#9A0000", color: "white" }}
+            onClick={() => {
+              closeModal();
+            }}
+          >
+            Cancelar
+          </Button>
           <Button
             style={{ backgroundColor: "#002060", color: "white" }}
             onClick={() => {
@@ -70,16 +77,6 @@ const PackTable: FC<PriceListTableProps> = ({ data, closeModal, handle }) => {
             }}
           >
             Aceptar
-          </Button>
-        </Col>
-        <Col md={4} style={{ textAlign: "center" }}>
-          <Button
-            style={{ backgroundColor: "#9A0000", color: "white" }}
-            onClick={() => {
-              closeModal();
-            }}
-          >
-            Cancelar
           </Button>
         </Col>
       </Row>

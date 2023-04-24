@@ -1,7 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import Route from "../api/route";
 import Study from "../api/study";
-import { IRouteEstudioList, IRouteForm, IRouteList } from "../models/route";
+import { IStudyRouteList, IRouteForm, IRouteList } from "../models/route";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
 import history from "../util/history";
@@ -16,8 +16,9 @@ export default class RouteStore {
 
   scopes?: IScopes;
   routes: IRouteList[] = [];
+  studies: IStudyRouteList[] = [];
   foundRoutes: IRouteForm[] = [];
-  studies: IRouteEstudioList[] = [];
+  loadingRoutes: boolean = false
 
   clearScopes = () => {
     this.scopes = undefined;
@@ -42,20 +43,23 @@ export default class RouteStore {
     try {
       const foundRoutes = await Route.find(route);
       this.foundRoutes = foundRoutes;
-      //   this.routes = foundRoutes;
       return true;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       return false;
     }
   };
+
   getAll = async (search: string) => {
     try {
+      this.loadingRoutes = true
       const routes = await Route.getAll(search);
       this.routes = routes;
     } catch (error: any) {
       alerts.warning(getErrors(error));
       this.routes = [];
+    } finally {
+      this.loadingRoutes = false
     }
   };
 
@@ -64,7 +68,7 @@ export default class RouteStore {
       const roles = await Study.getAll("all");
       const activos = roles.filter((x) => x.activo);
       var studies = activos.map((x) => {
-        let data: IRouteEstudioList = {
+        let data: IStudyRouteList = {
           id: x.id,
           clave: x.clave,
           nombre: x.nombre,
@@ -92,6 +96,23 @@ export default class RouteStore {
       } else {
         alerts.warning(getErrors(error));
       }
+    }
+  };
+
+  getByOriginDestination = async (destination: string, origin: string) => {
+    try {
+      this.loadingRoutes = true
+      const foundRoutes = await Route.getByOriginDestination(
+        destination,
+        origin
+      );
+      this.foundRoutes = foundRoutes;
+      return foundRoutes;
+    } catch (error: any) {
+      alerts.warning(getErrors(error));
+      this.foundRoutes = [];
+    } finally {
+      this.loadingRoutes = false
     }
   };
 

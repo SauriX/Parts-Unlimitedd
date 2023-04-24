@@ -483,6 +483,10 @@ export default class OptionStore {
         value: x.id,
         label: x.nombre,
       }));
+      this.DeliveryOptions.unshift({
+        value: 0,
+        label: "Sin paquetería",
+      });
     } catch (error) {
       this.DeliveryOptions = [];
     }

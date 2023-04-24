@@ -7,28 +7,27 @@ import {
   Button,
   PageHeader,
   Divider,
-  Select,
   Input,
   Table,
   TreeSelect,
+  Typography,
+  Select,
+  Space,
 } from "antd";
 import React, { FC, useEffect, useState } from "react";
 import { formItemLayout } from "../../../app/util/utils";
-import TextInput from "../../../app/common/form/TextInput";
 import { useStore } from "../../../app/stores/store";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ImageButton from "../../../app/common/button/ImageButton";
 import HeaderTitle from "../../../app/common/header/HeaderTitle";
 import { observer } from "mobx-react-lite";
 import views from "../../../app/util/view";
-import SwitchInput from "../../../app/common/form/SwitchInput";
 import alerts from "../../../app/util/alerts";
 import messages from "../../../app/util/messages";
 import {
   IDias,
-  IRouteEstudioList,
+  IStudyRouteList,
   IRouteForm,
-  IRouteList,
   RouteFormValues,
 } from "../../../app/models/route";
 import {
@@ -36,14 +35,24 @@ import {
   IColumns,
   ISearch,
 } from "../../../app/common/table/utils";
-import useWindowDimensions, { resizeWidth } from "../../../app/util/window";
+import { daysOfWeek } from "../../../app/util/catalogs";
+import { SearchOutlined } from "@ant-design/icons";
+import useWindowDimensions from "../../../app/util/window";
 import { IOptions } from "../../../app/models/shared";
-import TextAreaInput from "../../../app/common/form/TextAreaInput";
-import NumberInput from "../../../app/common/form/NumberInput";
-import SelectInput from "../../../app/common/form/SelectInput";
 import CheckableTag from "antd/lib/tag/CheckableTag";
+import TextInput from "../../../app/common/form/proposal/TextInput";
+import SwitchInput from "../../../app/common/form/proposal/SwitchInput";
+import TextAreaInput from "../../../app/common/form/proposal/TextAreaInput";
+import SelectInput from "../../../app/common/form/proposal/SelectInput";
+import TimeInput from "../../../app/common/form/proposal/TimeInput";
+import NumberInput from "../../../app/common/form/proposal/NumberInput";
+import { profile } from "console";
+import moment from "moment";
+import { toJS } from "mobx";
 
 const { Search } = Input;
+const { Title } = Typography;
+
 type RouteFormProps = {
   id: string;
   componentRef: React.MutableRefObject<any>;
@@ -55,152 +64,164 @@ type UrlParams = {
 };
 
 const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
-  const { optionStore, routeStore } = useStore();
+  const { optionStore, routeStore, profileStore } = useStore();
   const { routes, getById, getAll, create, update, getAllStudy, studies } =
     routeStore;
-  const [lista, setLista] = useState(studies);
   const {
-    getDepartmentOptions,
-    departmentOptions,
-    getAreaOptions: getareaOptions,
-    areaOptions: areas,
     BranchOptions,
-    getBranchOptions,
+    getAllBranchOptions,
     DeliveryOptions,
     getDeliveryOptions,
     MaquiladorOptions,
     getMaquiladorOptions,
+    areaByDeparmentOptions,
+    getAreaByDeparmentOptions,
   } = optionStore;
+  const { profile } = profileStore;
+
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [form] = Form.useForm<IRouteForm>();
-  const [aeraSearch, setAreaSearch] = useState(areas);
-  const [areaForm, setAreaForm] = useState<IOptions[]>([]);
-  const [areaId, setAreaId] = useState<number>();
-  const [depId, setDepId] = useState<number>();
-  const [searchvalue, setSearchvalue] = useState<string>();
+  const [formAreaByDepartment] = Form.useForm<any>();
+
+  const [studyList, setStudyList] = useState<IStudyRouteList[]>([]);
+  const [studiesSelected, setStudiesSelected] = useState<IStudyRouteList[]>([]);
+
+  const [searchValue, setSearchValue] = useState<string>();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [loading, setLoading] = useState(false);
   const [readonly, setReadonly] = useState(
     searchParams.get("mode") === "readonly"
   );
   const [values, setValues] = useState<IRouteForm>(new RouteFormValues());
-  const [value, setValue] = useState<string>();
-  const [estudios, setEstudios] = useState<IRouteEstudioList[]>([]);
   let { id } = useParams<UrlParams>();
   const { width: windowWidth } = useWindowDimensions();
   const [selectedTags, setSelectedTags] = useState<IDias[]>([]);
-  const tagsData: IDias[] = [
-    { id: 1, dia: "L" },
-    { id: 2, dia: "M" },
-    { id: 3, dia: "M" },
-    { id: 4, dia: "J" },
-    { id: 5, dia: "V" },
-    { id: 6, dia: "S" },
-    { id: 7, dia: "D" },
-  ];
-  const [formTP] = Form.useForm<{ tiempoDeEntrega: string }>();
-  const nameValue = Form.useWatch("tiempoDeEntrega", formTP);
+  const [timeType, setTimeType] = useState<number>(1);
+
+  const selectedDepartment = Form.useWatch(
+    "departamento",
+    formAreaByDepartment
+  );
+  const [areaOptions, setAreaOptions] = useState<IOptions[]>([]);
+  const [departmentOptions, setDepartmentOptions] = useState<IOptions[]>([]);
 
   useEffect(() => {
-    const studys = async () => {
-      let estudio = await getAllStudy();
-      setLista(estudio!);
-      setValues((prev) => ({ ...prev, estudio: estudio! }));
+    const getStudies = async () => {
+      let study = await getAllStudy();
+      if (study) {
+        setStudyList(study);
+        setValues((prev) => ({ ...prev, estudio: study! }));
+      }
     };
     if (!id) {
-      studys();
+      getStudies();
     }
   }, [getAllStudy]);
 
   useEffect(() => {
-    getDepartmentOptions();
-  }, [getDepartmentOptions]);
-  useEffect(() => {
-    const areareader = async () => {
-      await getareaOptions(0);
-      setAreaSearch(areas);
-      setAreaForm(areas);
-    };
-    areareader();
-  }, [getareaOptions]);
-
-  useEffect(() => {
-    getBranchOptions();
+    getAllBranchOptions();
     getDeliveryOptions();
     getMaquiladorOptions();
-  }, [getBranchOptions, getDeliveryOptions, getMaquiladorOptions]);
-  // const [discunt, setDiscunt] = useState<string|number>();
+    getAreaByDeparmentOptions();
+  }, [
+    getAllBranchOptions,
+    getDeliveryOptions,
+    getMaquiladorOptions,
+    getAreaByDeparmentOptions,
+  ]);
+
   useEffect(() => {
-    //console.log("use");
-    const readuser = async (idUser: string) => {
-      try {
-        setLoading(true);
-        //console.log("here");
-        const all = await getAll("all");
-        //console.log(all);
-        var studis = await getAllStudy();
-        //console.log(studies, "estudios");
-        //console.log("checks seleccionados" ,selectedRowKeys);
-        var areaForm = await getareaOptions(values.idDepartamento);
-        const user = await getById(idUser);
-        if (user?.sucursalDestinoId == null) {
-          user!.sucursalDestinoId = user?.maquiladorId!.toString();
-        }
-        form.setFieldsValue(user!);
-        studis = studis?.map((x) => {
-          var activo = user?.estudio.find((y) => y.id === x.id) != null;
+    setDepartmentOptions(
+      areaByDeparmentOptions?.map((x) => ({ value: x.value, label: x.label }))
+    );
+  }, [areaByDeparmentOptions]);
+
+  useEffect(() => {
+    setAreaOptions(
+      areaByDeparmentOptions
+        .filter((x) => selectedDepartment?.includes(x.value as number))
+        .flatMap((x) => x.options ?? [])
+    );
+    formAreaByDepartment.setFieldValue("area", []);
+  }, [selectedDepartment, areaByDeparmentOptions, formAreaByDepartment]);
+
+  useEffect(() => {
+    const readRoute = async (routeId: string) => {
+      setLoading(true);
+      var studies = await getAllStudy();
+      const route = await getById(routeId);
+
+      if (route) {
+        setTimeType(route.tipoTiempo ?? 1);
+
+        studies = studies?.map((x) => {
+          var activo = route?.estudio.find((y) => y.id === x.id) != null;
           return { ...x, activo };
         });
         setSelectedRowKeys(
-          studis?.filter((x) => x.activo)?.map((x) => x.id) ?? []
-        ); //aqui
-        setAreaForm(areaForm!);
-        setValues(user!);
-        setLista(studis!);
-        setLoading(false);
+          studies?.filter((x) => x.activo)?.map((x) => x.id) ?? []
+        );
 
-        // user!.maquiladorId = value!;
-        setSelectedTags(user?.dias!);
-      } catch {
-      } finally {
-        setLoading(false);
+        setValues(route);
+        setStudiesSelected(route.estudio);
+        setStudyList(studies!);
+
+        if (route.destinoId || route.maquiladorId) {
+          const branch = treeData
+            .map((x) => x.children)
+            .flat()
+            .find((x) => x.value === route.destinoId);
+          const maquila = treeData
+            .map((x) => x.children)
+            .flat()
+            .find((x) => x.value === route.maquiladorId);
+
+          if (branch) {
+            route.destinoId = branch.value as string;
+          }
+          if (maquila) {
+            route.destinoId = maquila.value as string;
+          }
+        }
+
+        route.horaDeRecoleccion = moment(route.horaDeRecoleccion);
       }
+
+      setLoading(false);
+      setSelectedTags(route?.dias!);
+      form.setFieldsValue(route!);
+
+      setLoading(false);
     };
     if (id) {
-      readuser(String(id));
+      readRoute(id);
     } else {
-      form.setFieldsValue({ idDepartamento: undefined, idArea: undefined });
+      form.setFieldValue("origenId", profile?.sucursal);
     }
   }, [form, getById, id]);
-
-  useEffect(() => {
-    if (routes.length === 0) {
-      getAll(searchParams.get("search") ?? "all");
-    }
-  }, [getAll, routes.length, searchParams]);
 
   const onFinish = async (newValues: IRouteForm) => {
     setLoading(true);
     const route = { ...values, ...newValues };
-    route.estudio = lista.filter((x) => x.activo === true);
+    route.estudio = studyList.filter((x) => x.activo === true);
     route.dias = selectedTags;
+    route.horaDeRecoleccion = moment(newValues.horaDeRecoleccion)
+      .utcOffset(0, true)
+      .toDate();
+
     const parent = treeData.find((x) =>
-      x.children.map((x) => x.value).includes(newValues.sucursalDestinoId!)
+      x.children.map((x) => x.value).includes(newValues.destinoId!)
     );
+
     if (parent?.title === "Sucursales") {
       route.maquiladorId = undefined;
-      console.log("Llega el valor a SucursalDestino?", route.sucursalDestinoId);
     } else {
-      route.maquiladorId = newValues.sucursalDestinoId;
-      route.sucursalDestinoId = undefined;
-      console.log("Llega el valor a Maquilador?", route.maquiladorId);
+      route.maquiladorId = newValues.destinoId;
+      route.destinoId = undefined;
     }
-    //console.log("checks seleccionados" ,selectedRowKeys);
     let success = false;
     if (!route.id) {
-      //console.log(route.id, "Valor del id");
-
       success = await create(route);
     } else {
       success = await update(route);
@@ -208,7 +229,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     setLoading(false);
     if (success) {
       goBack();
-      getAll("all");
+      await getAll("all");
     }
   };
 
@@ -238,18 +259,16 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   });
 
   const handleChange = (tag: IDias, checked: Boolean) => {
-    //console.log(tag, "el tag");
     const nextSelectedTags = checked
       ? [...selectedTags!, tag]
       : selectedTags.filter((t) => t.id !== tag.id);
-    //console.log("You are interested in: ", nextSelectedTags);
     setSelectedTags(nextSelectedTags!);
   };
 
   const treeData = [
     {
       title: "Sucursales",
-      value: "sucursalDestinoId",
+      value: "destinoId",
       children: BranchOptions.map((x) => ({
         title: x.label,
         value: x.value,
@@ -265,12 +284,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
     },
   ];
 
-  const onChange = (newDestinoValue: string) => {
-    //console.log("Aqui esta el destino", newDestinoValue);
-    setValue(newDestinoValue);
-  };
-
-  const columnsEstudios: IColumns<IRouteEstudioList> = [
+  const columnsEstudios: IColumns<IStudyRouteList> = [
     {
       ...getDefaultColumnProps("clave", "Clave", {
         searchState,
@@ -288,7 +302,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-      ...getDefaultColumnProps("area", "Área", {
+      ...getDefaultColumnProps("departamento", "Departamento", {
         searchState,
         setSearchState,
         width: "20%",
@@ -296,7 +310,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
       }),
     },
     {
-      ...getDefaultColumnProps("departamento", "Departamento", {
+      ...getDefaultColumnProps("area", "Área", {
         searchState,
         setSearchState,
         width: "20%",
@@ -307,108 +321,68 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
   ];
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    //console.log("selectedRowKeys changed: ", selectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys); //console.log("checks seleccionados" ,selectedRowKeys);
+    const newSelectedRowKeysCopy = [...selectedRowKeys, ...newSelectedRowKeys];
+    const filteredSelectedRowKeys = newSelectedRowKeysCopy.filter(
+      (item, index) => newSelectedRowKeysCopy.indexOf(item) === index
+    );
+    setSelectedRowKeys(filteredSelectedRowKeys);
   };
 
   const rowSelection = {
     selectedRowKeys,
-
     onChange: onSelectChange,
-
-    onSelect: (record: IRouteEstudioList, selected: boolean) => {
+    onSelect: (record: IStudyRouteList, selected: boolean) => {
       setStudy(selected, record);
-      //console.log("checks seleccionados" ,selectedRowKeys);
     },
-    onSelectAll: (selected: boolean, _: any, studies: IRouteEstudioList[]) => {
+    onSelectAll: (selected: boolean, _: any, studies: IStudyRouteList[]) => {
       for (const study of studies) {
         setStudy(selected, study);
-      } //console.log("checks seleccionados" ,selectedRowKeys);
+      }
     },
   };
 
-  const hasSelected = selectedRowKeys.length > 0;
+  const setStudy = (active: boolean, item: IStudyRouteList) => {
+    setStudyList((prevList) => {
+      const updatedList = prevList.map((x) =>
+        x.id === item.id ? { ...item, activo: active } : x
+      );
+      return updatedList;
+    });
 
-  const onValuesChange = async (changedValues: any) => {
-    const field = Object.keys(changedValues)[0];
-
-    if (field === "idDepartamento") {
-      //console.log("deparatemento");
-      const value = changedValues[field];
-      var areaForm = await getareaOptions(value);
-      setAreaForm(areaForm!);
-      form.setFieldsValue({ idArea: undefined });
-    }
-
-    if (field === "formatoDeTiempoId") {
-      const value = changedValues[field];
-      let horas = value * 24;
-      horas = Math.round(horas * 100) / 100;
-      form.setFieldsValue({ tiempoDeEntrega: horas });
-    }
-    if (field === "tiempoDeEntrega") {
-      const value = changedValues[field];
-      let dias = value / 24;
-      if (dias < 1) {
-        dias = 0;
-      } else {
-        dias = Math.round(dias * 100) / 100;
+    setStudiesSelected(prevSelected => {
+      const selectedIds = [...prevSelected];
+      if (active && !selectedIds.includes(item)) {
+        selectedIds.push(item);
+      } else if (!active) {
+        const index = selectedIds.indexOf(item);
+        if (index !== -1) {
+          selectedIds.splice(index, 1);
+        }
       }
+      return selectedIds;
+    });
 
-      //console.log(dias);
-      form.setFieldsValue({ formatoDeTiempoId: dias });
-    }
-  };
-
-  const setStudy = (active: boolean, item: IRouteEstudioList) => {
-    var index = lista.findIndex((x) => x.id === item.id);
-    var list = lista;
-    item.activo = active;
-    list[index] = item;
-    setLista(list);
-    var indexVal = values.estudio.findIndex((x) => x.id === item.id);
-    var val = values.estudio;
-    val[indexVal] = item;
-    setValues((prev) => ({ ...prev, estudio: val }));
-  };
-
-  const filterByDepartament = async (departament: number) => {
-    if (departament) {
-      var departamento = departmentOptions.filter(
-        (x) => x.value === departament
-      )[0].label;
-      var areaSearch = await getareaOptions(departament);
-      //console.log(departamento, "departamento");
-      var estudios = lista.filter((x) => x.departamento === departamento);
-      //console.log(lista, "lista");
-      //console.log(estudios, "estudios filtro dep");
-      setValues((prev) => ({ ...prev, estudio: estudios }));
-      setAreaSearch(areaSearch!);
-    } else {
-      estudios = lista;
-      if (estudios.length <= 0) {
-        estudios = lista;
-      }
-      setValues((prev) => ({ ...prev, estudio: estudios }));
-    }
-  };
-
-  const filterByArea = (area?: number) => {
-    if (area) {
-      var areaActive = areas.filter((x) => x.value === area)[0].label;
-      var estudios = lista.filter((x) => x.area === areaActive);
-      setValues((prev) => ({ ...prev, estudio: estudios }));
-    } else {
-      const dep = departmentOptions.find((x) => x.value === depId)?.label;
-      estudios = lista.filter((x) => x.departamento === dep);
-      setValues((prev) => ({ ...prev, estudio: estudios }));
-    }
+    setValues((prevValues) => {
+      const updatedValues = prevValues.estudio.map((x) =>
+        x.id === item.id ? { ...item, activo: active } : x
+      );
+      return { ...prevValues, estudio: updatedValues };
+    });
   };
 
   const filterBySearch = (search: string) => {
-    var estudios = lista.filter(
-      (x) => x.clave.includes(search) || x.nombre.includes(search)
+    if (search === "") {
+      let filterStudies = studyList.filter((x) => x.activo);
+      setValues({ ...values, estudio: filterStudies });
+      return;
+    }
+
+    var estudios = studyList.filter(
+      (x) =>
+        x.clave.toLocaleLowerCase().includes(search) ||
+        x.nombre.toLocaleLowerCase().includes(search)
     );
+
     setValues((prev) => ({ ...prev, estudio: estudios }));
   };
 
@@ -423,6 +397,7 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
               pageSize={1}
               current={getPage(id)}
               onChange={setPage}
+              showSizeChanger={false}
             />
           </Col>
         )}
@@ -451,64 +426,83 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
           </Col>
         )}
       </Row>
-      <div style={{ display: printing ? "" : "none" }}></div>
-      <div style={{ display: printing ? "none" : "" }}>
-        <div ref={componentRef}>
-          {printing && (
-            <PageHeader
-              ghost={false}
-              title={<HeaderTitle title="Catálogo de Rutas" image="ruta" />}
-              className="header-container"
-            ></PageHeader>
-          )}
-          {printing && <Divider className="header-divider" />}
-          <Form<IRouteForm>
-            {...formItemLayout}
-            form={form}
-            name="reagent"
-            initialValues={values}
-            onFinish={onFinish}
-            scrollToFirstError
-            onValuesChange={onValuesChange}
-          >
-            <Row>
-              <Col md={12} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "clave",
-                    label: "Clave",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
+      <div ref={componentRef} style={{ display: printing ? "none" : "" }}>
+        {printing && (
+          <PageHeader
+            ghost={false}
+            title={<HeaderTitle title="Catálogo de Rutas" image="ruta" />}
+            className="header-container"
+          ></PageHeader>
+        )}
+        {printing && <Divider className="header-divider" />}
+        <Form<IRouteForm>
+          {...formItemLayout}
+          form={form}
+          name="reagent"
+          initialValues={values}
+          onFinish={onFinish}
+          scrollToFirstError
+        >
+          <Row justify="space-between">
+            <Col md={8} sm={24} xs={12}>
+              <TextInput
+                formProps={{
+                  name: "clave",
+                  label: "Clave",
+                }}
+                max={100}
+                required
+                readonly={readonly}
+              />
+            </Col>
+            <Col md={8} sm={24} xs={12}>
+              <SelectInput
+                formProps={{
+                  name: "origenId",
+                  label: "Origen",
+                }}
+                readonly={readonly}
+                required
+                options={BranchOptions}
+              />
+            </Col>
+            <Col md={8} sm={24} xs={12}>
+              <Form.Item name="destinoId" label="Destino">
+                <TreeSelect
+                  dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                  treeData={treeData}
+                  placeholder="Seleccione un destino"
+                  treeDefaultExpandAll
+                  allowClear
                 />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <SelectInput
-                  formProps={{
-                    name: "paqueteriaId",
-                    label: "Paquetería ",
-                  }}
-                  readonly={readonly}
-                  required
-                  options={DeliveryOptions}
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <TextInput
-                  formProps={{
-                    name: "nombre",
-                    label: "Nombre",
-                  }}
-                  max={100}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <div style={{ marginLeft: "145px", marginBottom: "20px" }}>
-                  <span style={{ marginRight: 10 }}>Aplicar días:</span>
-                  {tagsData.map((tag) => (
+              </Form.Item>
+            </Col>
+            <Col md={8} sm={24} xs={12}>
+              <TextInput
+                formProps={{
+                  name: "nombre",
+                  label: "Nombre",
+                }}
+                max={100}
+                required
+                readonly={readonly}
+              />
+            </Col>
+            <Col md={8} sm={24} xs={12}>
+              <SelectInput
+                formProps={{
+                  name: "paqueteriaId",
+                  label: "Paquetería ",
+                }}
+                defaultValue={0}
+                readonly={readonly}
+                options={DeliveryOptions}
+              />
+            </Col>
+            <Col md={8} sm={24} xs={12}>
+              <Form.Item label="Aplica para días:" name="diasDeEntrega">
+                <Space size={[12, 0]} wrap>
+                  {daysOfWeek.map((tag) => (
                     <CheckableTag
                       key={tag.id}
                       checked={
@@ -519,160 +513,149 @@ const RouteForm: FC<RouteFormProps> = ({ componentRef, printing }) => {
                       {tag.dia}
                     </CheckableTag>
                   ))}
-                </div>
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <SelectInput
-                  formProps={{
-                    name: "sucursalOrigenId",
-                    label: "Sucursal Origen ",
-                    
-                  }}
-                  
-                  readonly={readonly}
-                  required
-                  options={BranchOptions}
-                />
-                {/* <div style={{ marginLeft: "170px", marginBottom: "20px" }}>
-                  <span style={{ marginRight: 10 }}>Destino:</span> */}
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <NumberInput
-                  formProps={{
-                    name: "horaDeRecoleccion",
-                    label: "Hora de Recolección",
-                  }}
-                  min={7}
-                  max={23}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <Form.Item name="sucursalDestinoId" label="Destino">
-                  <TreeSelect
-                    // style={{ width: "80%" }}
-                    // value={value}
-                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                    treeData={treeData}
-                    placeholder="Por favor seleccione"
-                    treeDefaultExpandAll
-                    // defaultValue={}
-                    onSelect={(value: any, node: any) => {
-                      console.log("valor", value);
-                      console.log("nodo", node);
+                </Space>
+              </Form.Item>
+            </Col>
 
-                      const parent = treeData.find((x) =>
-                        x.children.map((x) => x.value).includes(value)
-                      );
-                      console.log("parent", parent);
+            <Col md={8} sm={24} xs={12}>
+              <TimeInput
+                formProps={{
+                  name: "horaDeRecoleccion",
+                  label: "Hora de salida",
+                }}
+                readonly={readonly}
+                required
+              />
+            </Col>
+
+            <Col md={8} sm={24} xs={12}>
+              <Form.Item label="Tiempo de Entrega" required>
+                <Input.Group compact>
+                  <NumberInput
+                    formProps={{
+                      name: "tiempoDeEntrega",
+                      label: "",
                     }}
+                    min={1}
+                    max={timeType === 2 ? 365 : 24}
+                    readonly={readonly}
                   />
-                </Form.Item>
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <NumberInput
-                  formProps={{
-                    name: "tiempoDeEntrega",
-                    label: "Tiempo de Entrega",
-                  }}
-                  min={1}
-                  max={9999999999999999}
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-              <Col md={12} sm={24} xs={12}>
-                <TextAreaInput
-                  formProps={{
-                    name: "comentarios",
-                    label: "Comentarios",
-                  }}
-                  max={500}
-                  rows={5}
-                  readonly={readonly}
-                />
-                <SwitchInput
-                  name="activo"
-                  onChange={(value) => {
-                    if (value) {
-                      alerts.info(messages.confirmations.enable);
-                    } else {
-                      alerts.info(messages.confirmations.disable);
-                    }
-                  }}
-                  label="Activo"
-                  required
-                  readonly={readonly}
-                />
-              </Col>
-            </Row>
-          </Form>
-        </div>
+                  <SelectInput
+                    formProps={{
+                      name: "tipoTiempo",
+                      label: "",
+                    }}
+                    defaultValue={1}
+                    options={[
+                      {
+                        label: "Horas",
+                        value: 1,
+                      },
+                      {
+                        label: "Días",
+                        value: 2,
+                      },
+                    ]}
+                    readonly={readonly}
+                  />
+                </Input.Group>
+              </Form.Item>
+            </Col>
+            <Col md={8} sm={24} xs={12}>
+              <SwitchInput
+                name="activo"
+                onChange={(value) => {
+                  if (value) {
+                    alerts.info(messages.confirmations.enable);
+                  } else {
+                    alerts.info(messages.confirmations.disable);
+                  }
+                }}
+                label="Activo"
+                required
+                readonly={readonly}
+              />
+            </Col>
+            <Col md={8} sm={24} xs={12}>
+              <TextAreaInput
+                formProps={{
+                  name: "comentarios",
+                  label: "Comentarios",
+                }}
+                max={500}
+                rows={4}
+                autoSize
+                readonly={readonly}
+              />
+            </Col>
+          </Row>
+        </Form>
       </div>
       <Divider orientation="left">Asignación de Estudios</Divider>
-      <Row>
-        <Col md={4} sm={24} xs={12}>
-          <h3>Búsqueda por</h3>
-        </Col>
-      </Row>
-
-      <Row justify="space-between" gutter={[8, 12]} align="middle">
-        <Col md={8} sm={24} xs={12}>
-          <SelectInput
-            formProps={{
-              name: "departamento",
-              label: "Departamentos",
-            }}
-            options={departmentOptions}
-            onChange={(value) => {
-              setAreaId(undefined);
-              setDepId(value);
-              filterByDepartament(value);
-            }}
-            value={depId}
-            placeholder={"Departamentos"}
-          />
-        </Col>
-        <Col md={8} sm={24} xs={12}>
-          <SelectInput
-            formProps={{ name: "areaSearch", label: "Área" }}
-            options={aeraSearch}
-            onChange={(value) => {
-              setAreaId(value);
-              filterByArea(value);
-            }}
-            value={areaId}
-            placeholder={"Área"}
-          />
-        </Col>
-        <Col md={6} sm={24} xs={12}>
-          <Form.Item name="search" label="" labelAlign="right">
+      <Form<any>
+        {...formItemLayout}
+        form={formAreaByDepartment}
+        name="areaByDepartment"
+        scrollToFirstError
+      >
+        <Row gutter={[12, 0]} align="middle">
+          <Col md={24} sm={24} xs={12}>
+            <Title level={5}>Búsqueda por</Title>
+          </Col>
+          <Col md={8} sm={24} xs={12}>
             <Search
+              name="search"
               key="search"
               placeholder="Buscar"
               onSearch={(value) => {
                 filterBySearch(value);
-                setSearchvalue(value);
+                setSearchValue(value);
               }}
               onChange={(value) => {
-                setSearchvalue(value.target.value);
+                setSearchValue(value.target.value);
               }}
-              value={searchvalue}
+              value={searchValue}
             />
-          </Form.Item>
-        </Col>
-      </Row>
+          </Col>
+          <Col md={8} sm={24} xs={12}>
+            <SelectInput
+              form={formAreaByDepartment}
+              formProps={{
+                name: "departamento",
+                label: "Departamento",
+                noStyle: true,
+              }}
+              multiple
+              options={departmentOptions}
+            />
+          </Col>
+          <Col md={8} sm={24} xs={12}>
+            <SelectInput
+              form={formAreaByDepartment}
+              formProps={{
+                name: "area",
+                label: "Área",
+                noStyle: true,
+              }}
+              multiple
+              options={areaOptions}
+            />
+          </Col>
+        </Row>
+      </Form>
+      <br />
       <Row>
-        <Table<IRouteEstudioList>
-          size="small"
-          rowKey={(record) => record.id}
-          columns={columnsEstudios.slice(0, 6)}
-          pagination={false}
-          dataSource={[...(values.estudio ?? [])]}
-          rowSelection={rowSelection}
-          scroll={{ y: 240 }}
-        />
+        <Col md={24} sm={24} xs={24}>
+          <Table<IStudyRouteList>
+            size="small"
+            rowKey={(record) => record.id}
+            columns={columnsEstudios.slice(0, 6)}
+            pagination={false}
+            dataSource={[...values.estudio]}
+            rowSelection={rowSelection}
+            scroll={{ y: 240 }}
+          />
+        </Col>
       </Row>
     </Spin>
   );

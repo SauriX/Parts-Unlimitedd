@@ -1,16 +1,9 @@
-import {
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import "../../App.less";
 import ReagentDetail from "../../components/reagent/detail/ReagentDetail";
 import MedicsDetail from "../../components/medics/detail/MedicsDetail";
 import IndicationDetail from "../../components/indication/detail/IndicationDetail";
 import EquipmentDetails from "../../components/equipment/detail/EquipmentDetails";
-import CreationTrackingOrder from "../../components/trackingOrder/creation/CreationTrackingOrder"; // TEST IMPORT
 import UserDetail from "../../components/user/detail/UserDetail";
 import NewUser from "../../components/user/detail/NewUser";
 import Home from "../../views/Home";
@@ -69,18 +62,15 @@ import SamplingStudy from "../../views/SamplingStudy";
 import Equipment from "../../views/Equipment";
 import RequestedStudy from "../../views/RequestedStudy";
 import EquipmentMantain from "../../views/EquipmentMantain";
-import EquipmentMantainForm from "../../components/equipmentMantain/detail/EquipmentMantainForm";
 import EquipmentMantainDetails from "../../components/equipmentMantain/detail/EquipmentMantainDetails";
 import RouteTracking from "../../views/RouteTracking";
 import ClinicResults from "../../views/ClinicResults";
 import ClinicalResults from "../../components/clinicalResults/ClinicalResultsInfo";
 import ShipmentTracking from "../../views/ShipmentTracking";
-import ReciveTracking from "../../views/ReciveTracking";
+import ReceiveTracking from "../../views/ReceiveTracking";
 import WorkList from "../../views/WorkList";
 import MassResultSearch from "../../views/MassResultSearch";
 import ResultValidation from "../../views/ResultValidation";
-import RequestWee from "../../components/request/list/RequestWee";
-import RequestTokenValidation from "../../components/request/detail/RequestTokenValidation";
 import DeliveryResults from "../../views/DeliveryResults";
 import Invoice from "../../views/Invoice";
 import InvoiceCompanyCreate from "../../components/invoice/invoiceCompany/InvoiceCompanyCreate/InvoiceCompanyCreate";
@@ -93,11 +83,12 @@ import InvoiceCatalog from "../../views/InvoiceCatalog";
 import ReportStudy from "../../views/ReportStudy";
 import { useKeyPress } from "../hooks/useKeyPress";
 import CreditMonitoring from "../../views/CreditMonitoring";
+import RouteTrackingCreate from "../../components/routeTracking/detail/RouteTrackingCreate";
 import { INotificationFilter } from "../models/notifications";
 
 function App() {
-  const { profileStore, configurationStore,notificationStore } = useStore();
-  const { token, getProfile, getMenu,profile } = profileStore;
+  const { profileStore, configurationStore, notificationStore } = useStore();
+  const { token, getProfile, getMenu, profile } = profileStore;
   const { getNotification } = notificationStore;
   const { getGeneral } = configurationStore;
 
@@ -121,18 +112,18 @@ function App() {
       setLoading(false);
     }
   }, [token, setLoading, loadUser]);
-useEffect(()=>{
-  const readNotifications = async()=>{
-    var filter:INotificationFilter={
-        sucursalId:profile?.sucursal,
-        rolId:profile?.rol
+  useEffect(() => {
+    const readNotifications = async () => {
+      var filter: INotificationFilter = {
+        sucursalId: profile?.sucursal,
+        rolId: profile?.rol,
+      };
+      await getNotification(filter);
+    };
+    if (profile) {
+      readNotifications();
     }
-    await getNotification(filter);
-  }
-  if(profile){
-    readNotifications();
-  }
-},[getNotification,profile]);
+  }, [getNotification, profile]);
   useEffect(() => {
     if (!lastLocation) {
       setLastLocation(location.pathname);
@@ -190,14 +181,8 @@ useEffect(()=>{
             <Route path="users" element={<User />} />
             <Route path="users/:id" element={<UserDetail />} />
             <Route path="new-user" element={<NewUser />} />
-            <Route
-              path="trackingOrder/new"
-              element={<CreationTrackingOrder />}
-            />
-            <Route
-              path="trackingOrder/:id"
-              element={<CreationTrackingOrder />}
-            />
+            <Route path="trackingOrder/new" element={<RouteTrackingCreate />} />
+            <Route path="trackingOrder/:id" element={<RouteTrackingCreate />} />
             <Route
               path="clinicResultsDetails/:expedienteId/:requestId"
               element={<ClinicalResults />}
@@ -289,7 +274,7 @@ useEffect(()=>{
             <Route path="massResultSearch" element={<MassResultSearch />} />
             <Route path="deliveryResults" element={<DeliveryResults />} />
             <Route path={views.appointment} element={<Appointment />} />
-            <Route path={views.routeTraking} element={<RouteTracking />} />
+            <Route path={views.routeTracking} element={<RouteTracking />} />
             <Route path={views.workLists} element={<WorkList />} />
             <Route
               path={`${views.appointment}/:id`}
@@ -315,7 +300,7 @@ useEffect(()=>{
             />
             <Route
               path={`${views.recivetracking}/:id`}
-              element={<ReciveTracking />}
+              element={<ReceiveTracking />}
             />
             <Route
               path={`${views.resultValidation}`}

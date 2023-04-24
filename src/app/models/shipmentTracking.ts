@@ -1,29 +1,33 @@
 import moment from "moment";
-export  interface shipmentStudy{
-    id:string,
-    estudio:string,
-    paciente:string,
-    solicitud:string,
-    confirmacionOrigen:boolean,
-    confirmacionDestino:boolean
-}
-export  interface shipmenttracking {
-    id:string,
-    sucursalOrigen:string,
-    sucursalDestino:string,
-    responsableOrigen:string,
-    responsableDestino:string,
-    medioentrega:string,
-    fechaEnvio:moment.Moment,
-    horaEnvio:moment.Moment,
-    fechaEnestimada:moment.Moment,
-    horaEnestimada:moment.Moment,
-    fechaEnreal:moment.Moment,
-    horaEnreal:moment.Moment,
-    estudios:shipmentStudy[],
-    seguimiento:string,
-    ruta:string,
-    nombre:string,
-    temperatura:number
-} 
 
+export interface IShipmentTags {
+  id: string;
+  claveEtiqueta: string;
+  recipiente: string;
+  cantidad: number;
+  estudios: string;
+  solicitud: string;
+  estatus: number;
+  paciente: string;
+  confirmacionOrigen: boolean;
+  confirmacionDestino: boolean;
+}
+
+export interface IShipmentTracking {
+  id: string;
+  origen: string;
+  destino: string;
+  emisor: string;
+  receptor: string;
+  paqueteria: string;
+  fechaEnvio: moment.Moment;
+  fechaEstimada: moment.Moment;
+  fechaReal: moment.Moment;
+  estudios: IShipmentTags[];
+  seguimiento: string;
+  ruta: string;
+  nombre: string;
+  activo: boolean;
+  estatus: number;
+  extra: boolean;
+}

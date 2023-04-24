@@ -581,12 +581,11 @@ const PriceListForm: FC<PriceListFormProps> = ({
       return;
     }
     var paquetesSindescuento: IPriceListEstudioList[] = [];
-    values.paquete.forEach((element) => {
+    priceList.paquete.forEach((element) => {
       if (element.descuento === 0 || element.descuento === undefined) {
         paquetesSindescuento.push(element);
       }
     });
-
     if (paquetesSindescuento.length > 0) {
       openModal({
         title: "Paquetes sin descuento asignado",
@@ -604,13 +603,14 @@ const PriceListForm: FC<PriceListFormProps> = ({
               }
 
               setLoading(false);
-
+              
               if (success) {
                 goBack();
               }
             }}
           />
         ),
+        width: "50%",
         onClose() {
           setLoading(false);
         },

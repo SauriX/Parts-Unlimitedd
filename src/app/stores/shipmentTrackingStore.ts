@@ -5,7 +5,7 @@ import history from "../util/history";
 import messages from "../util/messages";
 import { getErrors } from "../util/utils";
 import shipmentTracking from "../api/shipmentTracking";
-import { shipmenttracking } from "../models/shipmentTracking";
+import { IShipmentTracking } from "../models/shipmentTracking";
 import moment from "moment";
 import { reciveTracking } from "../models/ReciveTracking";
 
@@ -15,13 +15,13 @@ export default class shipmentTackingStore {
   }
 
   scopes?: IScopes;
- shipment?:shipmenttracking;
-  recive?:reciveTracking
+  shipment?: IShipmentTracking;
+  recive?: reciveTracking;
+  loadingOrders: boolean = false;
+
   clearScopes = () => {
     this.scopes = undefined;
   };
-
-
 
   access = async () => {
     try {
@@ -33,52 +33,48 @@ export default class shipmentTackingStore {
     }
   };
 
-  getashipment = async (id:string)=>{
+  getShipmentById = async (id: string) => {
     try {
-        const scopes = await shipmentTracking.getAll(id);
-
-        scopes.fechaEnvio = moment(scopes.fechaEnvio);
-        scopes.horaEnvio = moment(scopes.horaEnvio);
-        scopes.fechaEnestimada = moment(scopes.fechaEnestimada);
-        scopes.horaEnestimada = moment(scopes.horaEnestimada);
-        scopes.fechaEnreal=moment(scopes.fechaEnreal);
-        scopes.horaEnreal=moment(scopes.horaEnreal);
-        this.shipment = scopes;
-        return scopes
-      } catch (error) {
-        alerts.warning(getErrors(error));
-        //history.push("/forbidden");
-      }
+      this.loadingOrders = true;
+      const shipmentOrder = await shipmentTracking.getShipmentById(id);
+      this.shipment = shipmentOrder;
+      return shipmentOrder;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+    } finally {
+      this.loadingOrders = false;
+    }
   };
-  getaRecive = async (id:string)=>{
+
+  getaRecive = async (id: string) => {
     try {
-        const scopes = await shipmentTracking.getReciveById(id);
+      const scopes = await shipmentTracking.getReciveById(id);
 
-        scopes.fechaEnvio = moment(scopes.fechaEnvio);
-        scopes.horaEnvio = moment(scopes.horaEnvio);
-        scopes.fechaEnestimada = moment(scopes.fechaEnestimada);
-        scopes.horaEnestimada = moment(scopes.horaEnestimada);
-        scopes.fechaEnreal=moment(scopes.fechaEnreal);
-        scopes.horaEnreal=moment(scopes.horaEnreal);
-        this.recive = scopes;
-        return scopes
-      } catch (error) {
-        alerts.warning(getErrors(error));
-        //history.push("/forbidden");
-      }
-  };
-  updateRecive = async (Recive:reciveTracking)=>{
-    try{
-        const data = await shipmentTracking.updaterecive(Recive);
-        return data;
+      scopes.fechaEnvio = moment(scopes.fechaEnvio);
+      scopes.horaEnvio = moment(scopes.horaEnvio);
+      scopes.fechaEnestimada = moment(scopes.fechaEnestimada);
+      scopes.horaEnestimada = moment(scopes.horaEnestimada);
+      scopes.fechaEnreal = moment(scopes.fechaEnreal);
+      scopes.horaEnreal = moment(scopes.horaEnreal);
+      this.recive = scopes;
+      return scopes;
     } catch (error) {
       alerts.warning(getErrors(error));
       //history.push("/forbidden");
     }
-  }
-  printTicket = async (id:string) => {
+  };
+  updateRecive = async (Recive: reciveTracking) => {
     try {
-      var response=  await shipmentTracking.getById(id);
+      const data = await shipmentTracking.updaterecive(Recive);
+      return data;
+    } catch (error) {
+      alerts.warning(getErrors(error));
+      //history.push("/forbidden");
+    }
+  };
+  printTicket = async (id: string) => {
+    try {
+      var response = await shipmentTracking.getById(id);
       await shipmentTracking.exportList(response);
     } catch (error: any) {
       alerts.warning(getErrors(error));
