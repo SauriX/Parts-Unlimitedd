@@ -1,107 +1,99 @@
 import { uniqueId } from "lodash";
 import moment from "moment";
+import { ITagTrackingOrder } from "./routeTracking";
 
-export interface IEstudiosList {
-  taponNombre: string;
-  estudio?: ITrackingOrderList;
-  escaneado: boolean;
-  temperatura: number;
-  solicitud: string;
-  nombrePaciente: string;
+export interface ITagRouteList {
   id?: string;
-  solicitudId: string;
-  IsInRute?: boolean;
-  isExtra?:boolean;
+  claveEtiqueta: string;
+  recipiente: string;
+  cantidad: number;
+  estudios: string;
+  solicitud: string;
+  ruta: string;
+  estatus: string;
+  escaneo: boolean;
 }
 
 export interface searchstudies {
+  estudios: number[];
+  solicitud: string;
+}
 
-estudios:number[];
-solicitud :string;
-}
 export interface IRequestStudyOrder {
-  id:number;
-  clave:string;
-  estudio:string;
-  estatus:string;
-  dias:string;
-  fecha:string;
-  estatusId:number;
-}
-export interface ITrackingOrderList {
-  id?: number;
+  id: number;
   clave: string;
   estudio: string;
-  solicitud: string;
-  nombrePaciente: string;
-  escaneado?: boolean;
-  temperatura: number;
-  solicitudId: string;
-  estudioId: number;
-  expedienteId: string;
-  isExtra?:boolean;
+  estatus: string;
+  dias: string;
+  fecha: string;
+  estatusId: number;
 }
 
-export interface ITrackingOrderForm {
+export interface IStudyTrackinOrder {
+  id?: number;
+  etiquetaId: number;
+  solicitudId?: string;
+  solicitud: string;
+  claveEtiqueta: string;
+  recipiente: string;
+  cantidad: number;
+  estudios: string;
+  claveRuta: string;
+  estatus: number;
+  escaneo?: boolean;
+  extra?: boolean;
+}
+
+export interface IRouteTrackingForm {
   id?: string;
-  sucursalOrigenId?: string;
-  SucursalDestinoNombre: string;
-  sucursalDestinoId: string;
-  SucrusalOrigenNombre: string;
-  maquiladorId: number;
+  origen: string;
+  origenId: string;
+  destino: string;
+  destinoId: string;
   rutaId: string;
-  RutaNombre: string;
-  muestraId: string;
-  escaneoCodigoBarras: boolean;
+  muestra: string;
+  escaneo: boolean;
   temperatura: number;
   activo: boolean;
   clave: string;
-  isInRute: boolean;
-  estudiosAgrupados?: IEstudiosList[];
-  estudios: ITrackingOrderList[];
-  horaDeRecoleccion: number | undefined;
-  fecha: moment.Moment;
-  solicitudId: string;
-  claveEstudio: string;
-  estudio: string;
-  pacienteId: string;
-  escaneado: boolean;
+  cancelacion?: boolean
+  editar?: boolean;
+  diaRecoleccion: moment.Moment;
+  estudios: IStudyTrackinOrder[];
+  etiquetas: ITagTrackingOrder[];
 }
-export class TrackingOrderListValues implements IEstudiosList {
-  taponNombre = "";
-  escaneado = false;
-  temperatura = 0;
+
+export class TrackingOrderListValues implements ITagRouteList {
+  claveEtiqueta = "";
+  recipiente = "";
+  cantidad = 0;
+  estudios = "";
   solicitud = "";
-  nombrePaciente = "";
-  solicitudId = "";
-  id = uniqueId();
-  constructor(init?: IEstudiosList) {
+  ruta = "";
+  estatus = "";
+  escaneo = false;
+
+  constructor(init?: ITagRouteList) {
     Object.assign(this, init);
   }
 }
-export class TrackingOrderFormValues implements ITrackingOrderForm {
-  fecha = moment();
+export class TrackingOrderFormValues implements IRouteTrackingForm {
   rutaId = "";
-  RutaNombre = "";
-  sucursalDestinoId = "";
-  SucursalDestinoNombre = "";
-  sucursalOrigenId = "";
-  SucrusalOrigenNombre = "";
-  muestraId = "";
-  solicitudId = "";
-  escaneoCodigoBarras = false;
+  destino = "";
+  destinoId = "";
+  origenId = "";
+  origen = "";
+  muestra = "";
+  escaneo = false;
   temperatura = 0;
-  claveEstudio = "";
-  estudio = "";
-  pacienteId = "";
   escaneado = false;
-  estudios: ITrackingOrderList[] = [];
+  diaRecoleccion = moment().utcOffset(0, true);
+  estudios: IStudyTrackinOrder[] = [];
+  etiquetas: ITagTrackingOrder[] = [];
   activo = true;
-  maquiladorId = 0;
-  horaDeRecoleccion = 0;
   clave = "";
-  isInRute = false;
-  constructor(init?: ITrackingOrderForm) {
+
+  constructor(init?: IRouteTrackingForm) {
     Object.assign(this, init);
   }
 }

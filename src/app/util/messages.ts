@@ -18,6 +18,8 @@ const messages = {
   activeWallet: "El monedero electrónico ha sido activado exitosamente",
   loyaltyWallet: "Monedero electrónico aplicado",
   loyaltyWalletDeny: "No aplica para monedero electrónico",
+  originNotFound: "Debe seleccionar un origen",
+  destinationNotFound: "Debe seleccionar un destino",
 
   confirmations: {
     enableTitle: "¿Desea activar el registro?",

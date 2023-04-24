@@ -1,27 +1,39 @@
-import { IBranchCity, IBranchForm, IBranchInfo } from "../models/branch";
-import { ISearchPending,IRecibe } from "../models/pendingRecive";
-import { IRouteTrackingList, SearchTracking } from "../models/routeTracking";
+import { ISearchPending, IRecibe } from "../models/pendingRecive";
+import {
+  IRouteTrackingList,
+  ITagTrackingOrder,
+  ISearchTracking,
+} from "../models/routeTracking";
 import { IUpdate } from "../models/sampling";
+import { IRouteTrackingForm } from "../models/trackingOrder";
 import requests from "./agent";
 
 const RouteTracking = {
   access: (): Promise<void> => requests.get("/user/scopes"),
-    getAll: (search: SearchTracking): Promise<IRouteTrackingList[]> => requests.post(`RouteTracking/all`,search),
-    update: (update: IUpdate[]): Promise<void> => requests.put("RouteTracking", update),
-    exportForm: (id: string): Promise<void> =>
-    requests.print(`RouteTracking/exportOrder/${id}`,),
-    getRecive: (search: ISearchPending): Promise<IRecibe[]> => requests.post(`RouteTracking/allrecive`,search),
-    exportFormpending: (id: ISearchPending): Promise<void> =>
-    requests.download(`RouteTracking/report`,id),
+  getAllPendingSend: (search: ISearchTracking): Promise<IRouteTrackingList[]> =>
+    requests.post(`RouteTracking/allSend`, search),
+  getById: (id: string): Promise<IRouteTrackingForm> =>
+    requests.get(`RouteTracking/${id}`),
+  getAllTags: (search: string): Promise<ITagTrackingOrder[]> =>
+    requests.get(`RouteTracking/tags/all/${!search ? "all" : search}`),
+  getFindTags: (routeId: string): Promise<ITagTrackingOrder[]> =>
+    requests.get(`RouteTracking/findTags/${routeId}`),
+  getActive: (): Promise<IRouteTrackingList[]> =>
+    requests.get(`RouteTracking/getActive`),
 
-/*   getById: (id: string): Promise<IBranchForm> => requests.get(`Branch/${id}`),
-  getBranchByCity: (): Promise<IBranchCity[]> => requests.get(`Branch/getSucursalByCity`),
-  //getPermission: (): Promise<IRolePermission[]> => requests.get(`Rol/permisos`), 
-  create: (branch: IBranchForm): Promise<boolean> => requests.post("/Branch", branch),
-  update: (branch: IBranchForm): Promise<boolean> => requests.put("/Branch", branch),
-  exportList: (search: string): Promise<void> =>
-    requests.download(`Branch/export/list/${!search ? "all" : search}`),
-  exportForm: (id: string, clave?: string): Promise<void> => requests.download(`Branch/export/form/${id}`), */
+  createTrackingOrder: (order: IRouteTrackingForm): Promise<void> =>
+    requests.post("RouteTracking/trackingOrder", order),
+  updateTrackingOrder: (order: IRouteTrackingForm): Promise<void> =>
+    requests.put("RouteTracking/trackingOrder", order),
+  exportTrackingOrderForm: (id: string): Promise<void> =>
+    requests.print(`RouteTracking/exportOrder/${id}`),
+
+  getAllPendingReceive: (
+    search: ISearchTracking
+  ): Promise<IRouteTrackingList[]> =>
+    requests.post(`RouteTracking/allReceive`, search),
+  exportReceiveForm: (id: ISearchTracking): Promise<void> =>
+    requests.download(`RouteTracking/report`, id),
 };
 
 export default RouteTracking;

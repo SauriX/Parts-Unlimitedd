@@ -269,7 +269,7 @@ export interface IRequestStudy {
   usuarioLiberado?: string;
   usuarioEnviado?: string;
   tipo?: string;
-  destinoTipo: number;
+  destinoTipo?: number;
   destinoId: string;
   destino: string;
 }
@@ -337,11 +337,12 @@ export interface IRequestPack {
   areaId: number;
   dias: number;
   horas: number;
+  precioEstudios: number;
+  paqueteDescuento: number;
+  paqueteDescuentoPorcentaje: number;
   precio: number;
-  descuento: number;
-  descuentoPorcentaje: number;
-  promocionDescuento?: number;
-  promocionDescuentoPorcentaje?: number;
+  descuento?: number;
+  descuentoPorcentaje?: number;
   precioFinal: number;
   nuevo: boolean;
   asignado: boolean;
@@ -371,6 +372,7 @@ export interface IRequestTagStudy {
   nombreEstudio: string;
   orden: number;
   cantidad: number;
+  claveEstudio: string;
 }
 
 export interface IRequestTotal extends IRequestBase {

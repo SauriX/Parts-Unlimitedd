@@ -89,7 +89,7 @@ const QuotationAssignment = ({
       }),
     },
     {
-      ...getDefaultColumnProps("nomprePaciente", "Paciente", {
+      ...getDefaultColumnProps("nombrePaciente", "Paciente", {
         searchState,
         setSearchState,
         width: "30%",

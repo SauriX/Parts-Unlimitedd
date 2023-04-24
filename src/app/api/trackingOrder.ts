@@ -1,7 +1,7 @@
 import {
-  ITrackingOrderForm,
-  ITrackingOrderList,
-  IEstudiosList,
+  IRouteTrackingForm,
+  IStudyTrackinOrder,
+  ITagRouteList,
   IRequestStudyOrder,
   searchstudies,
 } from "../models/trackingOrder";
@@ -10,21 +10,21 @@ import requests from "./agent";
 
 const TrackingOrder = {
   access: (): Promise<IScopes> => requests.get("scopes/tracking-order"),
-  getAll: (search: string): Promise<IEstudiosList[]> =>
+  getAll: (search: string): Promise<ITagRouteList[]> =>
     requests.get(`tracking-order/all/${!search ? "all" : search}`),
-  getById: (id: string): Promise<ITrackingOrderForm> =>
+  getById: (id: string): Promise<IRouteTrackingForm> =>
     requests.get(`tracking-order/${id}`),
-  create: (trackingOrder: ITrackingOrderForm): Promise<any> =>
+  create: (trackingOrder: IRouteTrackingForm): Promise<any> =>
     requests.post("tracking-order", trackingOrder),
-  update: (trackingOrder: ITrackingOrderForm): Promise<void> =>
+  update: (trackingOrder: IRouteTrackingForm): Promise<void> =>
     requests.put("tracking-order/general", trackingOrder),
-  exportList: (trackingOrder: ITrackingOrderForm): Promise<void> =>
+  exportList: (trackingOrder: IRouteTrackingForm): Promise<void> =>
     requests.download(`tracking-order/export/form`, trackingOrder),
   exportForm: (id: number): Promise<void> =>
     requests.download(`tracking-order/export/form/${id}`),
-  findStudies: (study: number[]): Promise<IEstudiosList[]> =>
+  findStudies: (study: number[]): Promise<ITagRouteList[]> =>
     requests.post(`tracking-order/findStudies`, study),
-    findStudiesAll: (study: searchstudies): Promise<IEstudiosList[]> =>
+    findStudiesAll: (study: searchstudies): Promise<ITagRouteList[]> =>
     requests.post(`tracking-order/findStudiesall`, study),
     findRequestStudies: (solicitud:string): Promise<IRequestStudyOrder[]> =>
     requests.get(`tracking-order/findStudies/${solicitud}`),

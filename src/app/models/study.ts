@@ -63,6 +63,7 @@ export interface IStudyTag {
   color: string;
   observaciones?: string;
   nombreEstudio: string;
+  claveEstudio: string;
 }
 
 export interface IStudyDatasheet {

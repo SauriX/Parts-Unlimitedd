@@ -4,6 +4,7 @@ import messages from "./messages";
 import { UploadRequestOption } from "rc-upload/lib/interface";
 import { IGrouped } from "../models/shared";
 import { toJS } from "mobx";
+import { FormItemProps } from "antd";
 
 export const tokenName = process.env.REACT_APP_TOKEN_NAME!;
 

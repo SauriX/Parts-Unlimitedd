@@ -13,6 +13,11 @@ const Route = {
     requests.put("/route", route),
   find: (route: IRouteForm): Promise<IRouteForm[]> =>
     requests.post("/route/find", route),
+  getByOriginDestination: (
+    destination: string,
+    origin: string
+  ): Promise<IRouteForm[]> =>
+    requests.get(`/route/routeList/${destination}/${origin}`),
   exportList: (search: string): Promise<void> =>
     requests.download(`route/export/list/${!search ? "all" : search}`),
   exportForm: (id: string): Promise<void> =>

@@ -1,19 +1,15 @@
 import { Divider } from "antd";
 import { observer } from "mobx-react-lite";
-import React, { Fragment, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import { useStore } from "../app/stores/store";
-import RouteHeader from "../components/route/RouteHeader";
-import RouteTable from "../components/route/RouteTable";
 import RouteTrackingHeader from "../components/routeTracking/RouteHeader";
 import RouteTrackingTable from "../components/routeTracking/RouteTrackingTable";
 
 const RouteTracking = () => {
   const { routeTrackingStore } = useStore();
-  const { scopes, access, clearScopes, exportFormPending,searchPending } = routeTrackingStore;
-
-  const [searchParams] = useSearchParams();
+  const { scopes, access, clearScopes, exportFormPending } =
+    routeTrackingStore;
 
   const [loading, setLoading] = useState(false);
 
@@ -31,7 +27,7 @@ const RouteTracking = () => {
 
   const handleDownload = async () => {
     setLoading(true);
-    await exportFormPending(searchPending!);
+    // await exportFormPending(searchPending!);
     setLoading(false);
   };
 
@@ -53,9 +49,12 @@ const RouteTracking = () => {
 
   return (
     <Fragment>
-      <RouteTrackingHeader handlePrint={handlePrint} handleDownload={handleDownload} />
+      <RouteTrackingHeader
+        handlePrint={handlePrint}
+        handleDownload={handleDownload}
+      />
       <Divider className="header-divider" />
-      <RouteTrackingTable componentRef={componentRef} printing={loading} />
+      <RouteTrackingTable printing={loading} />
     </Fragment>
   );
 };

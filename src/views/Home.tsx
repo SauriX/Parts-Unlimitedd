@@ -5,8 +5,8 @@ import { IDashBoard } from "../app/models/dashboard";
 import { useStore } from "../app/stores/store";
 import moment from "moment";
 import {
-  SearchTracking,
-  TrackingFormValues,
+  ISearchTracking,
+  PendingSendValues,
 } from "../app/models/routeTracking";
 import AppointmentCalendar from "../components/dashboard/dashCalendar";
 import { useReactToPrint } from "react-to-print";
@@ -30,7 +30,7 @@ const Home = () => {
   const { setGeneralFilter, generalFilter } = generalStore;
   const { getAllLab, search } = appointmentStore;
   const { getRequests } = requestStore;
-  const { getAll, getAllRecive, searchPending } = routeTrackingStore;
+  const { getAllPendingSend: getAll, getAllPendingReceive: getAllRecive } = routeTrackingStore;
   const [calendar, setCalendar] = useState<boolean>(false);
   const [vista, setVista] = useState<number>(1);
   const [citas, setCitas] = useState<number>(0);
@@ -188,7 +188,7 @@ const Home = () => {
 
   useEffect(() => {
     const readsend = async () => {
-      var search: SearchTracking = new TrackingFormValues();
+      var search: ISearchTracking = new PendingSendValues();
       var envia = await getAll(search);
 
       const weeknumber = moment().week();
@@ -211,25 +211,25 @@ const Home = () => {
       }
 
       setEnviar(envia?.length!);
-      if (vista == 1) {
-        var recibe = await getAllRecive({
-          ...searchPending!,
-          sucursaldest: profile?.sucursal!,
-        });
-        setRecibir(recibe?.length!);
-      }
+      // if (vista == 1) {
+      //   var recibe = await getAllRecive({
+      //     ...searchPending!,
+      //     sucursaldest: profile?.sucursal!,
+      //   });
+      //   setRecibir(recibe?.length!);
+      // }
 
       if (vista == 2) {
         var contador = 0;
         for (var i = 0; i <= 5; i++) {
           var dia = moment().isoWeek(weeknumber).startOf("W");
           dia = dia.add(i, "d");
-          var recibe = await getAllRecive({
-            ...searchPending!,
-            fecha: dia,
-            sucursaldest: profile?.sucursal!,
-          });
-          contador += recibe?.length!;
+          // var recibe = await getAllRecive({
+          //   ...searchPending!,
+          //   fecha: dia,
+          //   sucursaldest: profile?.sucursal!,
+          // });
+          // contador += recibe?.length!;
         }
         setRecibir(contador);
       }

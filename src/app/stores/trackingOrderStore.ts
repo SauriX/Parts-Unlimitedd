@@ -8,9 +8,9 @@ import { makeAutoObservable } from "mobx";
 import { getParsedCommandLineOfConfigFile } from "typescript";
 import TrackingOrder from "../api/trackingOrder";
 import {
-  ITrackingOrderForm,
-  ITrackingOrderList,
-  IEstudiosList,
+  IRouteTrackingForm,
+  IStudyTrackinOrder,
+  ITagRouteList,
 } from "../models/trackingOrder";
 import { IScopes } from "../models/shared";
 import alerts from "../util/alerts";
@@ -18,6 +18,7 @@ import history from "../util/history";
 import messages from "../util/messages";
 import responses from "../util/responses";
 import { getErrors } from "../util/utils";
+import { ITagTrackingOrder } from "../models/routeTracking";
 
 export default class TrackingOrdertStore {
   constructor() {
@@ -25,17 +26,21 @@ export default class TrackingOrdertStore {
   }
 
   scopes?: IScopes;
-  trackingOrder: IEstudiosList[] = [];
-  trackingOrderStudies: ITrackingOrderList[] = [];
-  estudios: IEstudiosList[] = [];
+  trackingOrder: ITagRouteList[] = [];
+  trackingOrderStudies: IStudyTrackinOrder[] = [];
+
+  estudios: ITagRouteList[] = [];
   temperatura: number = 0;
-  TranckingOrderSend: ITrackingOrderForm = new TrackingOrderFormValues();
-  setSendData = (tranckingOrderSend: ITrackingOrderForm) => {
+  TranckingOrderSend: IRouteTrackingForm = new TrackingOrderFormValues();
+
+  setSendData = (tranckingOrderSend: IRouteTrackingForm) => {
     this.TranckingOrderSend = tranckingOrderSend;
   };
+
   setTemperatura = (temepratura: number) => {
     this.temperatura = temepratura;
   };
+
   confirmarRecoleccionSend = async () => {
     try {
       await TrackingOrder.confirmarRecoleccion(this.OrderId);
@@ -45,6 +50,7 @@ export default class TrackingOrdertStore {
       alerts.warning(getErrors(error));
     }
   };
+
   cancelarRecoleccionSend = async () => {
     try {
       await TrackingOrder.cancelarRecoleccion(this.OrderId);
@@ -54,18 +60,12 @@ export default class TrackingOrdertStore {
       alerts.warning(getErrors(error));
     }
   };
-  setEscaneado = (escaneado: boolean, id: string) => {
+
+  setEscaneado = (escaneo: boolean, id: string) => {
     try {
       const estudios = this.trackingOrder.map((estudio) => {
         let a = new TrackingOrderListValues(estudio);
-        if (a.id === id) {
-          a.escaneado = escaneado;
-          if (!escaneado) {
-            a.temperatura = 0;
-          } else {
-            a.temperatura = this.temperatura!;
-          }
-        }
+
         return a;
       });
       this.trackingOrder = estudios;
@@ -73,6 +73,7 @@ export default class TrackingOrdertStore {
       alerts.warning(getErrors(error));
     }
   };
+
   setTemperature = (temperature: number, id: string | null = null) => {
     try {
       if (id) {
@@ -81,15 +82,10 @@ export default class TrackingOrdertStore {
           const trackingOrder = this.trackingOrder[index];
           this.trackingOrder[index] = {
             ...trackingOrder,
-            temperatura: temperature,
           };
         }
       } else {
         const estudios = this.trackingOrder.map((estudio) => {
-          if (estudio.escaneado) {
-            estudio.temperatura = temperature;
-          }
-
           return estudio;
         });
         this.trackingOrder = estudios;
@@ -117,10 +113,6 @@ export default class TrackingOrdertStore {
     this.scopes = undefined;
   };
 
-  clearTrackingOrders = () => {
-    this.trackingOrder = [];
-  };
-
   access = async () => {
     try {
       const scopes = await TrackingOrder.access();
@@ -145,9 +137,9 @@ export default class TrackingOrdertStore {
     try {
       const trackingOrder = await TrackingOrder.getById(id);
       this.OrderId = trackingOrder.id!;
-      this.trackingOrder = trackingOrder.estudiosAgrupados!.map((x: any) => {
+      this.trackingOrder = trackingOrder.etiquetas!.map((x: any) => {
         let a = new TrackingOrderListValues(x);
-        a.escaneado = true;
+        a.escaneo = true;
         return a;
       });
       return trackingOrder;
@@ -155,9 +147,11 @@ export default class TrackingOrdertStore {
       alerts.warning(getErrors(error));
     }
   };
+
   OrderCreated = "";
   OrderId = "";
-  create = async (trackingOrder: ITrackingOrderForm) => {
+
+  create = async (trackingOrder: IRouteTrackingForm) => {
     try {
       const orderCreated = await TrackingOrder.create(trackingOrder);
       this.OrderCreated = orderCreated.clave;
@@ -170,7 +164,7 @@ export default class TrackingOrdertStore {
     }
   };
 
-  update = async (trackingOrder: ITrackingOrderForm) => {
+  update = async (trackingOrder: IRouteTrackingForm) => {
     try {
       await TrackingOrder.update(trackingOrder);
       alerts.success(messages.updated);
@@ -207,26 +201,23 @@ export default class TrackingOrdertStore {
       let studies =await TrackingOrder.findRequestStudies(solicitud);
       return studies
     } catch (error: any) {
-
-        alerts.warning(getErrors(error));
-      
+      alerts.warning(getErrors(error));
     }
   };
   getStudiesByRequest = async (study: searchstudies) => {
     try {
-
       const studies = await TrackingOrder.findStudiesAll(study);
 
       let studiesR = studies.map((x) => {
         let a = new TrackingOrderListValues(x);
         return a;
       });
-      if(this.trackingOrder.length<=0){
+      if (this.trackingOrder.length <= 0) {
         this.trackingOrder = studiesR;
-      }else{
-         let studiescopi = [... this.trackingOrder];    
-         studiescopi= studiescopi.concat(studiesR);
-         this.trackingOrder = studiescopi;
+      } else {
+        let studiescopi = [...this.trackingOrder];
+        studiescopi = studiescopi.concat(studiesR);
+        this.trackingOrder = studiescopi;
       }
     } catch (error) {
       alerts.warning(getErrors(error));
