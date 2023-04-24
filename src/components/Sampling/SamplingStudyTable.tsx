@@ -65,7 +65,7 @@ const SamplingStudyTable = ({
       )}
       <Table<ISamplingList>
         loading={loadingStudies}
-        size="small"
+        size="middle"
         rowKey={(record) => record.id}
         columns={columns}
         pagination={false}

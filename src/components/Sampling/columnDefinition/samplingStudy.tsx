@@ -95,7 +95,7 @@ const SamplingStudyColumns = ({ printOrder }: tableProps) => {
       ),
     },
     {
-      ...getDefaultColumnProps("registro", "Registro", {
+      ...getDefaultColumnProps("registro", "Fecha Alta Solicitud", {
         searchState,
         setSearchState,
         width: "20%",
@@ -158,7 +158,7 @@ export const SamplingStudyExpandable = ({
   const nestedColumns: IColumns<IStudySampling> = [
     {
       ...getDefaultColumnProps("clave", "Estudio", {
-        width: "59%",
+        width: "50%",
       }),
       render: (_value, record) => record.clave + " - " + record.nombre,
     },
@@ -207,21 +207,21 @@ export const SamplingStudyExpandable = ({
     },
     {
       ...getDefaultColumnProps("fechaActualizacion", "Fecha de Actualización", {
-        width: "10%",
+        width: "15%",
       }),
       render: (_value, record) =>
         record.fechaActualizacion == null
           ? " - "
-          : record.fechaActualizacion + " - " + record.usuarioActualizacion +" 38 (FA)",
+          : record.fechaActualizacion + " - " + record.usuarioActualizacion +" (Actualización)",
     },
     {
       ...getDefaultColumnProps("entrega", "Fecha de Entrega", {
-        width: "10%",
+        width: "15%",
       }),
       render: (_value, record) => (
         <Typography>
           <Text style={record.urgencia > 1 ? { color: "red" } : {}}>
-            {record.entrega} (FE)
+            {record.entrega} (Entrega)
           </Text>
         </Typography>
       ),
